@@ -4,36 +4,39 @@
 import os
 import sys
 
-from PyQt5.QtCore import QDir, Qt, QUrl, QFileInfo, QSize
+from PyQt5.QtCore import QDir, Qt, QUrl, QFile, QFileInfo, QSize
 from PyQt5.QtGui import QIcon
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtWidgets import (QAction, QAbstractItemView, QApplication, QFileDialog, QHBoxLayout, QMainWindow,
-                             QPushButton, QSizePolicy, QSlider, QTableWidget, QTableWidgetItem, QToolBar,
-                             QVBoxLayout, QWidget)
+                             QPushButton, QSizePolicy, QSlider, QStyle, QStyleFactory, QStyleOptionButton, QTableWidget,
+                             QTableWidgetItem, QToolBar, QVBoxLayout, QWidget, qApp)
 
 
 class VideoCutter(QWidget):
     def __init__(self, parent):
         super(VideoCutter, self).__init__(parent)
+        self.parent = parent
         self.mediaPlayer = QMediaPlayer(None, QMediaPlayer.VideoSurface)
 
         self.videoWidget = QVideoWidget()
 
-        root = QFileInfo(__file__).absolutePath()
-        self.playIcon = QIcon(os.path.join(root, 'icons', 'play.png'))
-        self.pauseIcon = QIcon(os.path.join(root, 'icons', 'pause.png'))
+        self.rootPath = QFileInfo(__file__).absolutePath()
 
-        self.playButton = QPushButton()
-        self.playButton.setIconSize(QSize(24, 24))
-        self.playButton.setToolTip("Play")
-        self.playButton.setStatusTip("Play video")
-        self.playButton.setEnabled(False)
-        self.playButton.setIcon(self.playIcon)
-        self.playButton.clicked.connect(self.playVideo)
+        self.openIcon = QIcon(os.path.join(self.rootPath, 'icons', 'open.png'))
+        self.playIcon = QIcon(os.path.join(self.rootPath, 'icons', 'play.png'))
+        self.pauseIcon = QIcon(os.path.join(self.rootPath, 'icons', 'pause.png'))
+        self.markStartIcon = QIcon(os.path.join(self.rootPath, 'icons', 'start.png'))
+        self.markEndIcon = QIcon(os.path.join(self.rootPath, 'icons', 'end.png'))
+
+        self.initActions()
+        self.initToolbar()
+
+        # MainWindow.loadStyleSheet(os.path.join(self.rootPath, 'qss', 'qslider.qss'))
 
         self.positionSlider = QSlider(Qt.Horizontal)
-        self.positionSlider.setRange(0, 100)
+        self.positionSlider.setStyle(QStyleFactory.create('Oxygen'))
+        self.positionSlider.setRange(0, 1000)
         # self.positionSlider.setTickPosition(QSlider.TicksBelow)
         # self.positionSlider.setTickInterval(5)
         self.positionSlider.sliderMoved.connect(self.setPosition)
@@ -46,26 +49,28 @@ class VideoCutter(QWidget):
         self.timelist.horizontalScrollBar().setVisible(False)
         self.timelist.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding)
         self.timelist.setColumnCount(2)
-        self.timelist.setRowCount(1)
+        self.timelist.setRowCount(2)
         self.timelist.verticalHeader().setVisible(False)
-        self.timelist.setHorizontalHeaderLabels(['Type', 'Position'])
+        self.timelist.setHorizontalHeaderLabels(['Position', 'Time'])
         self.timelist.setSelectionBehavior(QAbstractItemView.SelectRows)
-        self.timelist.setSelectionMode(QAbstractItemView.SingleSelection)
-        self.timelist.setItem(0, 1, QTableWidgetItem("test"))
+        self.timelist.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.timelist.setSelectionMode(QAbstractItemView.MultiSelection)
+        self.timelist.setItem(0, 0, QTableWidgetItem('start'))
+        self.timelist.setItem(0, 1, QTableWidgetItem('00:04:03'))
+        self.timelist.setItem(1, 0, QTableWidgetItem('end'))
+        self.timelist.setItem(1, 1, QTableWidgetItem('00:12:42'))
 
         videoLayout = QHBoxLayout()
         videoLayout.setContentsMargins(0, 0, 0, 0)
         videoLayout.addWidget(self.videoWidget)
         videoLayout.addWidget(self.timelist)
 
-        controlLayout = QHBoxLayout()
-        controlLayout.setContentsMargins(10, 10, 10, 10)
-        controlLayout.addWidget(self.playButton)
-        controlLayout.addWidget(self.positionSlider)
-
         layout = QVBoxLayout()
+        layout.setContentsMargins(10, 10, 10, 10)
+        layout.setAlignment(Qt.AlignCenter)
         layout.addLayout(videoLayout)
-        layout.addLayout(controlLayout)
+        layout.addWidget(self.toolbar)
+        layout.addWidget(self.positionSlider)
         # layout.addWidget(self.errorLabel)
 
         self.setLayout(layout)
@@ -76,24 +81,64 @@ class VideoCutter(QWidget):
         self.mediaPlayer.durationChanged.connect(self.durationChanged)
         self.mediaPlayer.error.connect(self.handleError)
 
+    def initActions(self):
+        self.openAction = QAction(self.openIcon, 'Open', self, statusTip='Select video', triggered=self.openFile)
+        self.playAction = QAction(self.playIcon, 'Play', self, statusTip='Play video', triggered=self.playVideo,
+                                  enabled=False)
+        self.markStartAction = QAction(self.markStartIcon, 'Mark Start', self, statusTip='Mark start of clip',
+                                       triggered=self.markStart, enabled=False)
+        self.markEndAction = QAction(self.markEndIcon, 'Mark End', self, statusTip='Mark end of clip',
+                                     triggered=self.markEnd, enabled=False)
+
+    def initToolbar(self):
+        self.toolbar = QToolBar()
+        self.toolbar.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        self.toolbar.setFloatable(False)
+        self.toolbar.setMovable(False)
+        self.toolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.toolbar.setIconSize(QSize(24, 24))
+        self.toolbar.addAction(self.openAction)
+        self.toolbar.addSeparator()
+        self.toolbar.addAction(self.playAction)
+        self.toolbar.addSeparator()
+        self.toolbar.addAction(self.markStartAction)
+        self.toolbar.addSeparator()
+        self.toolbar.addAction(self.markEndAction)
+
+    def openFile(self):
+        fileName, _ = QFileDialog.getOpenFileName(parent=self.parent, caption='Select video', directory=QDir.homePath())
+        if fileName != '':
+            self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(fileName)))
+            self.playAction.setEnabled(True)
+            self.markStartAction.setEnabled(True)
+
     def playVideo(self):
         if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
             self.mediaPlayer.pause()
-            self.playButton.setIcon(self.playIcon)
         else:
             self.mediaPlayer.play()
-            self.playButton.setIcon(self.pauseIcon)
 
-    def setPosition(self):
-        pass
+    def setPosition(self, position):
+        self.mediaPlayer.setPosition(position)
+
+    def positionChanged(self, position):
+        self.positionSlider.setValue(position)
 
     def mediaStateChanged(self):
+        if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
+            self.playAction.setIcon(self.pauseIcon)
+            self.playAction.setText('Pause')
+        else:
+            self.playAction.setIcon(self.playIcon)
+            self.playAction.setText('Play')
+
+    def durationChanged(self, duration):
+        self.positionSlider.setRange(0, duration)
+
+    def markStart(self):
         pass
 
-    def positionChanged(self):
-        pass
-
-    def durationChanged(self):
+    def markEnd(self):
         pass
 
     def handleError(self):
@@ -101,45 +146,26 @@ class VideoCutter(QWidget):
 
 
 class MainWindow(QMainWindow):
-    cutter = VideoCutter
-
     def __init__(self, parent=None, flags=Qt.Window):
         super(MainWindow, self).__init__(parent, flags)
-        self.createActions()
-        self.initToolbar()
-        self.createStatusBar()
         self.cutter = VideoCutter(self)
+        self.statusBar()
         self.setCentralWidget(self.cutter)
-        self.setWindowTitle("VideoCutter")
+        self.setWindowTitle('VideoCutter')
+        self.setWindowIcon(QIcon(os.path.join(QFileInfo(__file__).absolutePath(), 'icons', 'app.png')))
         self.resize(800, 600)
 
-    def createActions(self):
-        root = QFileInfo(__file__).absolutePath()
-        self.openAction = QAction(QIcon(os.path.join(root, "icons", "open.png")), "Open", self)
-        self.openAction.setStatusTip("Open an existing file")
-        self.openAction.triggered.connect(self.openFile)
-
-    def initToolbar(self):
-        self.toolbar = QToolBar(self)
-        self.toolbar.setMovable(False)
-        self.toolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        self.toolbar.setIconSize(QSize(24, 24))
-        self.toolbar.addAction(self.openAction)
-        self.addToolBar(self.toolbar)
-
-    def openFile(self):
-        fileName, _ = QFileDialog.getOpenFileName(parent=self, caption="Select video", directory=QDir.homePath())
-        if fileName != '':
-            self.cutter.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(fileName)))
-            self.cutter.playButton.setEnabled(True)
-
-    def createStatusBar(self):
-        self.statusBar().showMessage("Ready")
+    @staticmethod
+    def loadStyleSheet(sheetFile):
+        file = QFile(sheetFile)
+        file.open(QFile.ReadOnly)
+        styleSheet = str(file.readAll(), encoding='utf8')
+        qApp.setStyleSheet(styleSheet)
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    app.setStyle('fusion')
+    app.setStyle('Fusion')
     win = MainWindow()
     win.show()
     sys.exit(app.exec_())
