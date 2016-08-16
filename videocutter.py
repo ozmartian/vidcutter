@@ -28,6 +28,7 @@ class VideoCutter(QWidget):
         self.pauseIcon = QIcon(os.path.join(self.rootPath, 'icons', 'pause.png'))
         self.markStartIcon = QIcon(os.path.join(self.rootPath, 'icons', 'start.png'))
         self.markEndIcon = QIcon(os.path.join(self.rootPath, 'icons', 'end.png'))
+        self.saveIcon = QIcon(os.path.join(self.rootPath, 'icons', 'save.png'))
 
         self.initActions()
         self.initToolbar()
@@ -89,6 +90,8 @@ class VideoCutter(QWidget):
                                        triggered=self.markStart, enabled=False)
         self.markEndAction = QAction(self.markEndIcon, 'Mark End', self, statusTip='Mark end of clip',
                                      triggered=self.markEnd, enabled=False)
+        self.saveAction = QAction(self.saveIcon, 'Save video', self, statusTip='Save cuts to video file',
+                                  triggered=self.saveVideo, enabled=False)
 
     def initToolbar(self):
         self.toolbar = QToolBar()
@@ -98,12 +101,10 @@ class VideoCutter(QWidget):
         self.toolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         self.toolbar.setIconSize(QSize(24, 24))
         self.toolbar.addAction(self.openAction)
-        self.toolbar.addSeparator()
         self.toolbar.addAction(self.playAction)
-        self.toolbar.addSeparator()
         self.toolbar.addAction(self.markStartAction)
-        self.toolbar.addSeparator()
         self.toolbar.addAction(self.markEndAction)
+        self.toolbar.addAction(self.saveAction)
 
     def openFile(self):
         fileName, _ = QFileDialog.getOpenFileName(parent=self.parent, caption='Select video', directory=QDir.homePath())
@@ -139,6 +140,9 @@ class VideoCutter(QWidget):
         pass
 
     def markEnd(self):
+        pass
+
+    def saveVideo(self):
         pass
 
     def handleError(self):
