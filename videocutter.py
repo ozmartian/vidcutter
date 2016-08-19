@@ -1,4 +1,4 @@
-    #!/usr/bin/env python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 import os
@@ -8,9 +8,8 @@ from PyQt5.QtCore import QDir, Qt, QUrl, QFile, QFileInfo, QSize
 from PyQt5.QtGui import QIcon, QPalette
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtMultimediaWidgets import QVideoWidget
-from PyQt5.QtWidgets import (QAction, QAbstractItemView, QApplication, QFileDialog, QHBoxLayout, QHeaderView, QLabel, QMainWindow,
-                             QSizePolicy, QSlider, QStyle, QStyleFactory, QListWidget, QListWidgetItem, QPushButton,
-                             QToolBar, QToolButton, QVBoxLayout, QWidget, qApp)
+from PyQt5.QtWidgets import (QAction, QApplication, QFileDialog, QHBoxLayout, QHeaderView, QLabel, QMainWindow,
+                             QSizePolicy, QSlider, QListWidget, QToolBar, QToolButton, QVBoxLayout, QWidget, qApp)
 
 
 class VideoWidget(QVideoWidget):
@@ -121,7 +120,6 @@ class VideoCutter(QWidget):
         self.cutStartIcon = QIcon(os.path.join(self.rootPath, 'icons', 'start.png'))
         self.cutEndIcon = QIcon(os.path.join(self.rootPath, 'icons', 'end.png'))
         self.saveIcon = QIcon(os.path.join(self.rootPath, 'icons', 'save.png'))
-        # self.fscreenIcon = QIcon(os.path.join(self.rootPath, 'icons', 'fullscreen.png'))
         self.muteIcon = QIcon(os.path.join(self.rootPath, 'icons', 'muted.png'))
         self.unmuteIcon = QIcon(os.path.join(self.rootPath, 'icons', 'unmuted.png'))
 
@@ -135,8 +133,6 @@ class VideoCutter(QWidget):
                                      triggered=self.cutEnd, enabled=False)
         self.saveAction = QAction(self.saveIcon, 'Save', self, statusTip='Save cuts to new video file',
                                   triggered=self.saveVideo, enabled=False)
-        # self.fscreenAction = QAction(self.fscreenIcon, 'Fullscreen', self, statusTip='View in fullscreen mode',
-        #                              triggered=self.toggleFullscreen, enabled=False)
 
     def initToolbar(self):
         self.lefttoolbar = QToolBar()
@@ -154,7 +150,6 @@ class VideoCutter(QWidget):
         self.centertoolbar.setIconSize(QSize(24, 24))
         self.centertoolbar.addAction(self.cutStartAction)
         self.centertoolbar.addAction(self.cutEndAction)
-        # self.centertoolbar.addAction(self.fscreenAction)
 
     def openFile(self):
         fileName, _ = QFileDialog.getOpenFileName(parent=self.parent, caption='Select video', directory=QDir.homePath())
@@ -176,7 +171,6 @@ class VideoCutter(QWidget):
         self.playAction.setEnabled(flag)
         self.cutStartAction.setEnabled(flag)
         self.cutEndAction.setEnabled(flag)
-        # self.fscreenAction.setEnabled(flag)
 
     def setPosition(self, position):
         if self.mediaPlayer.isVideoAvailable():
