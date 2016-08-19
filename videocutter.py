@@ -8,8 +8,8 @@ from PyQt5.QtCore import QDir, Qt, QUrl, QFile, QFileInfo, QSize
 from PyQt5.QtGui import QIcon, QPalette
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtMultimediaWidgets import QVideoWidget
-from PyQt5.QtWidgets import (QAction, QAbstractItemView, QApplication, QFileDialog, QHBoxLayout, QLabel, QMainWindow,
-                             QSizePolicy, QSlider, QStyle, QStyleFactory, QListWidget, QListWidgetItem,
+from PyQt5.QtWidgets import (QAction, QAbstractItemView, QApplication, QFileDialog, QHBoxLayout, QHeaderView, QLabel, QMainWindow,
+                             QSizePolicy, QSlider, QStyle, QStyleFactory, QListWidget, QListWidgetItem, QPushButton,
                              QToolBar, QToolButton, QVBoxLayout, QWidget, qApp)
 
 
@@ -52,12 +52,11 @@ class VideoCutter(QWidget):
 
         # MainWindow.loadStyleSheet(filepath=os.path.join(self.rootPath, 'qss', 'qslider.qss'))
 
-        self.positionSlider = QSlider(Qt.Horizontal, sliderMoved=self.setPosition)
+        self.positionSlider = QSlider(Qt.Horizontal, statusTip='Set video frame position', sliderMoved=self.setPosition)
         self.positionSlider.setRange(0, 0)
         self.positionSlider.setStyleSheet('margin:8px 5px;')
         self.timeCounter = QLabel('00:00:00')
-        self.timeCounter.setFixedWidth(85)
-        self.timeCounter.setStyleSheet('font-weight:bold; font-size:15px;')
+        self.timeCounter.setStyleSheet('font-size:15px;')
 
         sliderLayout = QHBoxLayout()
         sliderLayout.addWidget(self.positionSlider)
@@ -66,23 +65,33 @@ class VideoCutter(QWidget):
         self.zonelist = QListWidget()
         self.zonelist.setContextMenuPolicy(Qt.CustomContextMenu)
         self.zonelist.setFixedWidth(200)
-        listItem = QListWidgetItem('"START => 00:04:35.000\nEND => 00:04:35.000')
-        listItem.setSizeHint(QSize(0, 50))
-        self.zonelist.addItem(listItem)
+        header = QHeaderView(Qt.Horizontal, self.zonelist)
+        header.setSectionResizeMode(QHeaderView.Stretch)
+        # listItem = QListWidgetItem('START => 00:04:35.000\nEND => 00:04:35.000')
+        # listItem.setSizeHint(QSize(0, 50))
+        # self.zonelist.addItem(listItem)
 
-        videoLayout = QHBoxLayout()
-        videoLayout.setContentsMargins(0, 0, 0, 0)
-        videoLayout.addWidget(self.videoWidget)
-        videoLayout.addWidget(self.zonelist)
+        self.movieLabel = QLabel("No movie loaded")
+        self.movieLabel.setAlignment(Qt.AlignCenter)
+        self.movieLabel.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
+        self.movieLabel.setBackgroundRole(QPalette.Dark)
+        self.movieLabel.setAutoFillBackground(True)
+        self.movieLoaded = False
+
+        self.videoLayout = QHBoxLayout()
+        self.videoLayout.setContentsMargins(0, 0, 0, 0)
+        self.videoLayout.addWidget(self.movieLabel)
+        self.videoLayout.addWidget(self.zonelist)
 
         layout = QVBoxLayout()
         layout.setContentsMargins(10, 10, 10, 10)
-        layout.addLayout(videoLayout)
+        layout.addLayout(self.videoLayout)
         layout.addLayout(sliderLayout)
 
-        self.muteButton = QToolButton(clicked=self.muteAudio)
+        self.muteButton = QToolButton(statusTip='Toggle audio mute', clicked=self.muteAudio)
         self.muteButton.setIcon(self.unmuteIcon)
-        self.volumeSlider = QSlider(Qt.Horizontal, sliderMoved=self.setVolume)
+        self.muteButton.setToolTip('Mute')
+        self.volumeSlider = QSlider(Qt.Horizontal, statusTip='Adjust volume level', sliderMoved=self.setVolume)
         self.volumeSlider.setValue(50)
         self.volumeSlider.setFixedWidth(100)
         self.volumeSlider.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Minimum)
@@ -120,11 +129,11 @@ class VideoCutter(QWidget):
         self.openAction = QAction(self.openIcon, 'Open', self, statusTip='Select video', triggered=self.openFile)
         self.playAction = QAction(self.playIcon, 'Play', self, statusTip='Play video', triggered=self.playVideo,
                                   enabled=False)
-        self.cutStartAction = QAction(self.cutStartIcon, 'Set Start', self, statusTip='Set clip start marker',
+        self.cutStartAction = QAction(self.cutStartIcon, 'Set Start', self, statusTip='Set cut start marker',
                                        triggered=self.cutStart, enabled=False)
-        self.cutEndAction = QAction(self.cutEndIcon, 'Set End', self, statusTip='Set clip end marker',
+        self.cutEndAction = QAction(self.cutEndIcon, 'Set End', self, statusTip='Set cut end marker',
                                      triggered=self.cutEnd, enabled=False)
-        self.saveAction = QAction(self.saveIcon, 'Save', self, statusTip='Save scenes to new video file',
+        self.saveAction = QAction(self.saveIcon, 'Save', self, statusTip='Save cuts to new video file',
                                   triggered=self.saveVideo, enabled=False)
         # self.fscreenAction = QAction(self.fscreenIcon, 'Fullscreen', self, statusTip='View in fullscreen mode',
         #                              triggered=self.toggleFullscreen, enabled=False)
@@ -143,7 +152,6 @@ class VideoCutter(QWidget):
         self.centertoolbar.setMovable(False)
         self.centertoolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         self.centertoolbar.setIconSize(QSize(24, 24))
-        self.centertoolbar.addWidget(QLabel('Set Start'))
         self.centertoolbar.addAction(self.cutStartAction)
         self.centertoolbar.addAction(self.cutEndAction)
         # self.centertoolbar.addAction(self.fscreenAction)
@@ -152,7 +160,11 @@ class VideoCutter(QWidget):
         fileName, _ = QFileDialog.getOpenFileName(parent=self.parent, caption='Select video', directory=QDir.homePath())
         if fileName != '':
             self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(fileName)))
-            self.enableMediaControls(True)
+            if not self.movieLoaded:
+                self.enableMediaControls(True)
+                self.videoLayout.replaceWidget(self.movieLabel, self.videoWidget)
+                self.movieLabel.deleteLater()
+                self.movieLoaded = True
 
     def playVideo(self):
         if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
@@ -218,7 +230,7 @@ class MainWindow(QMainWindow):
         self.statusBar().showMessage('Ready')
         self.setCentralWidget(VideoCutter(self))
         self.setWindowTitle('VideoCutter')
-        self.setWindowIcon(QIcon(os.path.join(QFileInfo(__file__).absolutePath(), 'icons', 'app.png')))
+        self.setWindowIcon(QIcon(os.path.join(QFileInfo(__file__).absolutePath(), 'icons', 'videocutter.png')))
         self.resize(800, 600)
 
     @staticmethod
