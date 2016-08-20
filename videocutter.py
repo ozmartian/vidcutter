@@ -64,8 +64,6 @@ class VideoCutter(QWidget):
         self.zonelist = QListWidget()
         self.zonelist.setContextMenuPolicy(Qt.CustomContextMenu)
         self.zonelist.setFixedWidth(200)
-        header = QHeaderView(Qt.Horizontal, self.zonelist)
-        header.setSectionResizeMode(QHeaderView.Stretch)
         # listItem = QListWidgetItem('START => 00:04:35.000\nEND => 00:04:35.000')
         # listItem.setSizeHint(QSize(0, 50))
         # self.zonelist.addItem(listItem)
