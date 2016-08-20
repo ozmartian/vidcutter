@@ -4,7 +4,7 @@
 import os
 import sys
 
-from PyQt5.QtCore import QDir, QFile, QFileInfo, QSize, Qt, QTime, QUrl
+from PyQt5.QtCore import QDir, QFileInfo, QSize, Qt, QTime, QUrl
 from PyQt5.QtGui import QFont, QIcon, QPalette
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
@@ -12,6 +12,7 @@ from PyQt5.QtWidgets import (QAction, QApplication, QFileDialog, QHBoxLayout,
                              QLabel, QListWidget, QListWidgetItem,
                              QMainWindow, QSizePolicy, QSlider, QToolBar,
                              QToolButton, QVBoxLayout, QWidget, qApp)
+from ffmpy import FFmpeg
 
 
 class VideoWidget(QVideoWidget):
@@ -47,24 +48,26 @@ class VideoCutter(QWidget):
         self.rootPath = QFileInfo(__file__).absolutePath()
 
         self.cutTimes = []
+        self.timeformat = 'hh:mm:ss'
 
         self.initIcons()
         self.initActions()
         self.initToolbar()
 
-        # MainWindow.loadStyleSheet(filepath=os.path.join(self.rootPath, 'qss', 'videocutter.qss'))
-
         self.positionSlider = QSlider(Qt.Horizontal, statusTip='Set video frame position', sliderMoved=self.setPosition)
         self.positionSlider.setRange(0, 0)
         self.positionSlider.setStyleSheet('margin:8px 5px;')
+
         sliderLayout = QHBoxLayout()
         sliderLayout.addWidget(self.positionSlider)
 
         self.cutlist = QListWidget()
         self.cutlist.setUniformItemSizes(True)
         self.cutlist.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.cutlist.setFont(QFont('Droid Sans Mono'))
         self.cutlist.setFixedWidth(150)
+        listfont = QFont('Droid Sans Mono')
+        listfont.setStyleHint(QFont.Monospace)
+        self.cutlist.setFont(listfont)
         self.cutlist.setStyleSheet('QListView::item { margin-bottom:15px; }')
 
         self.movieLabel = QLabel('No movie loaded')
@@ -85,8 +88,10 @@ class VideoCutter(QWidget):
         layout.addLayout(sliderLayout)
 
         self.timeCounter = QLabel('00:00:00 / 00:00:00')
-        self.timeCounter.setFont(QFont('Droid Sans Mono'))
-        self.timeCounter.setStyleSheet('color:#666; margin-right:6px;') 
+        timefont = QFont('Droid Sans Mono')
+        timefont.setStyleHint(QFont.Monospace)
+        self.timeCounter.setFont(timefont)
+        self.timeCounter.setStyleSheet('color:#666; margin-right:6px;')
 
         self.muteButton = QToolButton(statusTip='Toggle audio mute', clicked=self.muteAudio)
         self.muteButton.setIcon(self.unmuteIcon)
@@ -135,7 +140,7 @@ class VideoCutter(QWidget):
 
     def initToolbar(self):
         self.lefttoolbar = QToolBar()
-        self.lefttoolbar.setStyleSheet('QToolBar QToolButton { width:82px; }')
+        self.lefttoolbar.setStyleSheet('QToolBar QToolButton { min-width:82px; }')
         self.lefttoolbar.setFloatable(False)
         self.lefttoolbar.setMovable(False)
         self.lefttoolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
@@ -186,8 +191,7 @@ class VideoCutter(QWidget):
         duration = self.mediaPlayer.duration() / 1000
         currentTime = QTime((progress/3600)%60, (progress/60)%60, progress%60, (progress*1000)%1000)
         totalTime = QTime((duration/3600)%60, (duration/60)%60, duration%60, (duration*1000)%1000);
-        format = 'hh:mm:ss' # if duration > 3600 else 'mm:ss'
-        timer = currentTime.toString(format) + " / " + totalTime.toString(format)
+        timer = currentTime.toString(self.timeformat) + " / " + totalTime.toString(self.timeformat)
         self.timeCounter.setText(timer)
 
     def mediaStateChanged(self):
@@ -217,14 +221,14 @@ class VideoCutter(QWidget):
 
     def cutStart(self):
         position = self.mediaPlayer.position() / 1000
-        starttime = QTime((position/3600)%60, (position/60)%60, position%60, (position*1000)%1000).toString('hh:mm:ss')
+        starttime = QTime((position/3600)%60, (position/60)%60, position%60, (position*1000)%1000).toString(self.timeformat)
         self.cutTimes.append([starttime])
         self.cutStartAction.setDisabled(True)
         self.cutEndAction.setEnabled(True)
 
     def cutEnd(self):
         position = self.mediaPlayer.position() / 1000
-        endtime = QTime((position/3600)%60, (position/60)%60, position%60, (position*1000)%1000).toString('hh:mm:ss')
+        endtime = QTime((position/3600)%60, (position/60)%60, position%60, (position*1000)%1000).toString(self.timeformat)
         index = len(self.cutTimes) - 1
         self.cutTimes[index].append(endtime)
         self.cutStartAction.setEnabled(True)
@@ -240,11 +244,30 @@ class VideoCutter(QWidget):
             self.saveAction.setEnabled(True)
 
     def saveVideo(self):
-        pass
+        if not len(self.cutTimes):
+            return
+        for item in self.cutTimes:
+            self.cutVideo(item[0], item[1])
+
+    def cutVideo(self, start, end):
+        #
+        # ffmpeg -ss 00:05:00 -i in.m2t -ss 00:00:30.00 -t 00:29:00 -vcodec copy -acodec copy out.mp4
+        #
+        ff = FFmpeg(
+            inputs = { self.mediaPlayer.currentMedia().canonicalUrl().path(): None },
+            outputs= { None: None }
+        )
+        result = ff.run()
+
+    def timedeltaToString(self, deltaTime):
+        s = deltaTime.seconds
+        hours, remainder = divmod(s, 3600)
+        minutes, seconds = divmod(remainder, 60)
+        return '%s:%s:%s' % (hours, minutes, seconds)
 
     def handleError(self):
         self.initMediaControls(False)
-        print('ERROR: ' + self.mediaPlayer.errorString())
+        print('ERROR: %s' % self.mediaPlayer.errorString())
 
     def closeEvent(self, event):
         self.parent.closeEvent(event)
@@ -259,15 +282,6 @@ class MainWindow(QMainWindow):
         self.setWindowTitle('VideoCutter')
         self.setWindowIcon(QIcon(os.path.join(QFileInfo(__file__).absolutePath(), 'icons', 'videocutter.png')))
         self.resize(800, 600)
-
-    @staticmethod
-    def loadStyleSheet(filepath=None, stylesheet=None):
-        if filepath is not None:
-            stylefile = QFile(filepath)
-            stylefile.open(QFile.ReadOnly)
-            stylesheet = str(stylefile.readAll(), encoding='utf8')
-        if stylesheet is not None:
-            qApp.setStyleSheet(stylesheet)
 
     def closeEvent(self, event):
         self.cutter.deleteLater()
