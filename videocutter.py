@@ -4,7 +4,7 @@
 import os
 import sys
 
-from PyQt5.QtCore import QDir, Qt, QUrl, QFile, QFileInfo, QSize
+from PyQt5.QtCore import QDir, Qt, QUrl, QFile, QFileInfo, QSize, QTime
 from PyQt5.QtGui import QIcon, QPalette
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtMultimediaWidgets import QVideoWidget
@@ -52,14 +52,15 @@ class VideoCutter(QWidget):
         # MainWindow.loadStyleSheet(filepath=os.path.join(self.rootPath, 'qss', 'qslider.qss'))
 
         self.positionSlider = QSlider(Qt.Horizontal, statusTip='Set video frame position', sliderMoved=self.setPosition)
+        self.positionSlider.setToolTip('Seek')
         self.positionSlider.setRange(0, 0)
         self.positionSlider.setStyleSheet('margin:8px 5px;')
-        self.timeCounter = QLabel('00:00:00')
-        self.timeCounter.setStyleSheet('font-size:15px;')
+        self.timeCounter = QLabel('00:00:00 / 00:00:00')
+        self.timeCounter.setStyleSheet('font-size:14px; color:#666;')
 
         sliderLayout = QHBoxLayout()
         sliderLayout.addWidget(self.positionSlider)
-        sliderLayout.addWidget(self.timeCounter)
+        # sliderLayout.addWidget(self.timeCounter)
 
         self.zonelist = QListWidget()
         self.zonelist.setContextMenuPolicy(Qt.CustomContextMenu)
@@ -68,7 +69,7 @@ class VideoCutter(QWidget):
         # listItem.setSizeHint(QSize(0, 50))
         # self.zonelist.addItem(listItem)
 
-        self.movieLabel = QLabel("No movie loaded")
+        self.movieLabel = QLabel('No movie loaded')
         self.movieLabel.setAlignment(Qt.AlignCenter)
         self.movieLabel.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
         self.movieLabel.setBackgroundRole(QPalette.Dark)
@@ -89,6 +90,7 @@ class VideoCutter(QWidget):
         self.muteButton.setIcon(self.unmuteIcon)
         self.muteButton.setToolTip('Mute')
         self.volumeSlider = QSlider(Qt.Horizontal, statusTip='Adjust volume level', sliderMoved=self.setVolume)
+        self.volumeSlider.setToolTip('Volume')
         self.volumeSlider.setValue(50)
         self.volumeSlider.setFixedWidth(100)
         self.volumeSlider.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Minimum)
@@ -98,6 +100,8 @@ class VideoCutter(QWidget):
         controlsLayout.addWidget(self.lefttoolbar)
         controlsLayout.addStretch(1)
         controlsLayout.addWidget(self.centertoolbar)
+        controlsLayout.addStretch(1)
+        controlsLayout.addWidget(self.timeCounter)
         controlsLayout.addStretch(1)
         controlsLayout.addWidget(self.muteButton)
         controlsLayout.addWidget(self.volumeSlider)
@@ -175,8 +179,15 @@ class VideoCutter(QWidget):
             self.mediaPlayer.pause()
         self.mediaPlayer.setPosition(position)
 
-    def positionChanged(self, position):
-        self.positionSlider.setValue(position)
+    def positionChanged(self, progress):
+        self.positionSlider.setValue(progress)
+        progress /= 1000
+        duration = self.mediaPlayer.duration()
+        currentTime = QTime((progress/3600)%60, (progress/60)%60, progress%60, (progress*1000)%1000)
+        totalTime = QTime((duration/3600)%60, (duration/60)%60, duration%60, (duration*1000)%1000);
+        format = 'hh:mm:ss' # if duration > 3600 else 'mm:ss'
+        timer = currentTime.toString(format) + " / " + totalTime.toString(format)
+        self.timeCounter.setText(timer)
 
     def mediaStateChanged(self):
         if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
@@ -213,14 +224,16 @@ class VideoCutter(QWidget):
         pass
 
     def handleError(self):
-        pass
+        self.enableMediaControls(False)
+        print('ERROR: ' + self.mediaPlayer.errorString())
 
 
 class MainWindow(QMainWindow):
     def __init__(self, parent=None, flags=Qt.Window):
         super(MainWindow, self).__init__(parent, flags)
         self.statusBar().showMessage('Ready')
-        self.setCentralWidget(VideoCutter(self))
+        self.cutter = VideoCutter(self)
+        self.setCentralWidget(self.cutter)
         self.setWindowTitle('VideoCutter')
         self.setWindowIcon(QIcon(os.path.join(QFileInfo(__file__).absolutePath(), 'icons', 'videocutter.png')))
         self.resize(800, 600)
@@ -233,6 +246,11 @@ class MainWindow(QMainWindow):
             stylesheet = str(stylefile.readAll(), encoding='utf8')
         if stylesheet is not None:
             qApp.setStyleSheet(stylesheet)
+
+    def closeEvent(self, event):
+        self.cutter.deleteLater()
+        self.deleteLater()
+        event.accept()
 
 
 if __name__ == '__main__':
