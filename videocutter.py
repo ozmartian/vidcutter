@@ -9,8 +9,7 @@ from PyQt5.QtGui import QFont, QIcon, QPalette
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtWidgets import (QAction, QApplication, QFileDialog, QHBoxLayout,
-                             QLabel, QListWidget, QListWidgetItem,
-                             QMainWindow, QSizePolicy, QSlider, QToolBar,
+                             QLabel, QListWidget, QMainWindow, QSizePolicy, QSlider, QToolBar,
                              QToolButton, QVBoxLayout, QWidget, qApp)
 from ffmpy import FFmpeg
 
@@ -48,6 +47,7 @@ class VideoCutter(QWidget):
         self.rootPath = QFileInfo(__file__).absolutePath()
 
         self.cutTimes = []
+        self.cutResults = []
         self.timeformat = 'hh:mm:ss'
 
         self.initIcons()
@@ -92,6 +92,7 @@ class VideoCutter(QWidget):
         timefont.setStyleHint(QFont.Monospace)
         self.timeCounter.setFont(timefont)
         self.timeCounter.setStyleSheet('color:#666; margin-right:6px;')
+        self.parent.statusBar().addPermanentWidget(self.timeCounter)
 
         self.muteButton = QToolButton(statusTip='Toggle audio mute', clicked=self.muteAudio)
         self.muteButton.setIcon(self.unmuteIcon)
@@ -108,7 +109,7 @@ class VideoCutter(QWidget):
         controlsLayout.addStretch(1)
         controlsLayout.addWidget(self.centertoolbar)
         controlsLayout.addStretch(1)
-        controlsLayout.addWidget(self.timeCounter)
+        # controlsLayout.addWidget(self.timeCounter)
         controlsLayout.addWidget(self.muteButton)
         controlsLayout.addWidget(self.volumeSlider)
 
@@ -134,9 +135,9 @@ class VideoCutter(QWidget):
     def initActions(self):
         self.openAction = QAction(self.openIcon, 'Open', self, statusTip='Select video', triggered=self.openFile)
         self.playAction = QAction(self.playIcon, 'Play', self, statusTip='Play video', triggered=self.playVideo, enabled=False)
-        self.cutStartAction = QAction(self.cutStartIcon, 'Set Start', self, statusTip='Set cut start marker', triggered=self.cutStart, enabled=False)
-        self.cutEndAction = QAction(self.cutEndIcon, 'Set End', self, statusTip='Set cut end marker', triggered=self.cutEnd, enabled=False)
-        self.saveAction = QAction(self.saveIcon, 'Save', self, statusTip='Save cuts to new video file', triggered=self.saveVideo, enabled=False)
+        self.cutStartAction = QAction(self.cutStartIcon, 'Set Start', self, statusTip='Set start marker', triggered=self.cutStart, enabled=False)
+        self.cutEndAction = QAction(self.cutEndIcon, 'Set End', self, statusTip='Set end marker', triggered=self.cutEnd, enabled=False)
+        self.saveAction = QAction(self.saveIcon, 'Save', self, statusTip='Add clip to cutting list', triggered=self.saveVideo, enabled=False)
 
     def initToolbar(self):
         self.lefttoolbar = QToolBar()
@@ -157,9 +158,9 @@ class VideoCutter(QWidget):
         self.centertoolbar.addAction(self.cutEndAction)
 
     def openFile(self):
-        fileName, _ = QFileDialog.getOpenFileName(parent=self.parent, caption='Select video', directory=QDir.homePath())
-        if fileName != '':
-            self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(fileName)))
+        filename, _ = QFileDialog.getOpenFileName(parent=self.parent, caption='Select video', directory=QDir.homePath())
+        if filename != '':
+            self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(filename)))
             self.initMediaControls(True)
             self.cutlist.clear()
             self.cutTimes = []
@@ -187,12 +188,9 @@ class VideoCutter(QWidget):
 
     def positionChanged(self, progress):
         self.positionSlider.setValue(progress)
-        progress /= 1000
-        duration = self.mediaPlayer.duration() / 1000
-        currentTime = QTime((progress/3600)%60, (progress/60)%60, progress%60, (progress*1000)%1000)
-        totalTime = QTime((duration/3600)%60, (duration/60)%60, duration%60, (duration*1000)%1000);
-        timer = currentTime.toString(self.timeformat) + " / " + totalTime.toString(self.timeformat)
-        self.timeCounter.setText(timer)
+        currentTime = self.deltaToQTime(progress)
+        totalTime = self.deltaToQTime(self.mediaPlayer.duration())
+        self.timeCounter.setText('%s / %s' % (currentTime.toString(self.timeformat), totalTime.toString(self.timeformat)))
 
     def mediaStateChanged(self):
         if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
@@ -220,17 +218,12 @@ class VideoCutter(QWidget):
         self.videoWidget.setFullScreen(not self.videoWidget.isFullScreen())
 
     def cutStart(self):
-        position = self.mediaPlayer.position() / 1000
-        starttime = QTime((position/3600)%60, (position/60)%60, position%60, (position*1000)%1000).toString(self.timeformat)
-        self.cutTimes.append([starttime])
+        self.cutTimes.append([self.deltaToQTime(self.mediaPlayer.position())])
         self.cutStartAction.setDisabled(True)
         self.cutEndAction.setEnabled(True)
 
     def cutEnd(self):
-        position = self.mediaPlayer.position() / 1000
-        endtime = QTime((position/3600)%60, (position/60)%60, position%60, (position*1000)%1000).toString(self.timeformat)
-        index = len(self.cutTimes) - 1
-        self.cutTimes[index].append(endtime)
+        self.cutTimes[len(self.cutTimes)-1].append(self.deltaToQTime(self.mediaPlayer.position()))
         self.cutStartAction.setEnabled(True)
         self.cutEndAction.setDisabled(True)
         self.renderTimes()
@@ -238,32 +231,34 @@ class VideoCutter(QWidget):
     def renderTimes(self):
         self.cutlist.clear()
         for item in self.cutTimes:
-            val = QListWidgetItem('START => ' + item[0] + '\n  END => ' + item[1])
-            self.cutlist.addItem(val)
+            self.cutlist.addItem('START => ' + item[0].toString(self.timeformat) + '\n  END => ' + item[1].toString(self.timeformat))
         if len(self.cutTimes):
             self.saveAction.setEnabled(True)
+
+    @staticmethod
+    def deltaToQTime(millisecs):
+        secs = millisecs / 1000
+        return QTime((secs / 3600) % 60, (secs / 60) % 60, secs % 60, (secs * 1000) % 1000)
 
     def saveVideo(self):
         if not len(self.cutTimes):
             return
+        self.cutResults.clear()
         for item in self.cutTimes:
-            self.cutVideo(item[0], item[1])
+            self.cutResults.append(self.cutVideo(item[0], item[1]))
 
-    def cutVideo(self, start, end):
-        #
-        # ffmpeg -ss 00:05:00 -i in.m2t -ss 00:00:30.00 -t 00:29:00 -vcodec copy -acodec copy out.mp4
-        #
-        ff = FFmpeg(
-            inputs = { self.mediaPlayer.currentMedia().canonicalUrl().path(): None },
-            outputs= { None: None }
-        )
-        result = ff.run()
-
-    def timedeltaToString(self, deltaTime):
-        s = deltaTime.seconds
-        hours, remainder = divmod(s, 3600)
-        minutes, seconds = divmod(remainder, 60)
-        return '%s:%s:%s' % (hours, minutes, seconds)
+    def cutVideo(self, start: QTime, end: QTime):
+        source = self.mediaPlayer.currentMedia().canonicalUrl().path()
+        target = source # '%s_NEW%s' % os.path.splitext(source)
+        cliplen = self.deltaToQTime(start.msecsTo(end)).toString(self.timeformat)
+        filename, _ = QFileDialog.getSaveFileName(parent=self.parent, caption='Save video', directory=os.path.dirname(source))
+        if filename != '':
+            ff = FFmpeg(
+                inputs={source: None},
+                outputs={target: '-ss %s -t %s -vcodec copy -acodec copy -y' % (start.toString(self.timeformat), cliplen)}
+            )
+            return ff.run()
+        return
 
     def handleError(self):
         self.initMediaControls(False)
