@@ -18,14 +18,15 @@ from PyQt5.QtWidgets import (QAction, QApplication, QFileDialog, QHBoxLayout,
 
 FFMPEG_bin = 'ffmpeg'
 if sys.platform == 'win32':
-    FFMPEG_bin = 'C:\ProgramData\chocolatey\bin\ffmpeg.exe'
+    FFMPEG_bin = 'C:\\ProgramData\\chocolatey\\bin\\ffmpeg.exe'
 
 try:
     subprocess.Popen(args=[FFMPEG_bin, '-version'], stdout=subprocess.PIPE)
 except:
-    print('\nERROR:\n')
+    print('\nERROR:')
     print('Could not locate or execute the FFMPEG binary needed for this software to function.')
-    print('Please ensure a valid path to is set for vaiable FFMPEG_bin, located at the top of the source code,')
+    print('Please ensure a valid path set for the FFMPEG_bin variable at the top of the source code,')
+    print(sys.exc_info()[0])
     sys.exit(1)
  
 class VideoWidget(QVideoWidget):
@@ -96,11 +97,11 @@ class VideoCutter(QWidget):
         self.videoLayout.addWidget(self.movieLabel)
         self.videoLayout.addWidget(self.cutlist)
 
-        self.timeCounter = QLabel('00:00:00 / 00:00:00')
+        self.timeCounter = QLabel('00:00:00 | 00:00:00')
         timefont = QFont('Droid Sans Mono')
         timefont.setStyleHint(QFont.Monospace)
         self.timeCounter.setFont(timefont)
-        self.timeCounter.setStyleSheet('color:#666; margin-right:6px;')
+        self.timeCounter.setStyleSheet('font-size:14px; color:#666; margin-right:6px;')
         self.parent.statusBar().addPermanentWidget(self.timeCounter)
 
         self.muteButton = QToolButton(statusTip='Toggle audio mute', clicked=self.muteAudio)
@@ -115,10 +116,8 @@ class VideoCutter(QWidget):
 
         controlsLayout = QHBoxLayout()
         controlsLayout.addWidget(self.lefttoolbar)
-        controlsLayout.addStretch(1)
         controlsLayout.addWidget(self.centertoolbar)
         controlsLayout.addStretch(1)
-        # controlsLayout.addWidget(self.timeCounter)
         controlsLayout.addWidget(self.muteButton)
         controlsLayout.addWidget(self.volumeSlider)
 
@@ -197,7 +196,8 @@ class VideoCutter(QWidget):
 
     def setPosition(self, position):
         if self.mediaPlayer.isVideoAvailable():
-            self.mediaPlayer.play()
+            if self.mediaPlayer.state() == QMediaPlayer.StoppedState:
+                self.mediaPlayer.play()
             self.mediaPlayer.pause()
         self.mediaPlayer.setPosition(position)
 
@@ -205,7 +205,7 @@ class VideoCutter(QWidget):
         self.positionSlider.setValue(progress)
         currentTime = self.deltaToQTime(progress)
         totalTime = self.deltaToQTime(self.mediaPlayer.duration())
-        self.timeCounter.setText('%s / %s' % (currentTime.toString(self.timeformat), totalTime.toString(self.timeformat)))
+        self.timeCounter.setText('%s | %s' % (currentTime.toString(self.timeformat), totalTime.toString(self.timeformat)))
 
     def mediaStateChanged(self):
         if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
@@ -246,7 +246,7 @@ class VideoCutter(QWidget):
     def renderTimes(self):
         self.cutlist.clear()
         for item in self.cutTimes:
-            self.cutlist.addItem('START => ' + item[0].toString(self.timeformat) + '\n  END => ' + item[1].toString(self.timeformat))
+            self.cutlist.addItem('START => %s\n  END => %s' % (item[0].toString(self.timeformat), item[1].toString(self.timeformat)))
         if len(self.cutTimes):
             self.saveAction.setEnabled(True)
 
@@ -263,15 +263,16 @@ class VideoCutter(QWidget):
             self.cutResults.append(self.cutVideo(item[0], item[1]))
 
     def cutVideo(self, start: QTime, end: QTime):
-        source = self.mediaPlayer.currentMedia().canonicalUrl().path()
+        source = self.mediaPlayer.currentMedia().canonicalUrl().toLocalFile()
         runtime = self.deltaToQTime(start.msecsTo(end)).toString(self.timeformat)
         target, _ = QFileDialog.getSaveFileName(parent=self.parent, caption='Save video', directory=os.path.dirname(source))
         if target != '':
             ff = FFmpeg(
                 executable=FFMPEG_bin,
                 inputs={source: None},
-                outputs={target: '-ss %s -t %s -vcodec copy -acodec copy -y' % (start.toString(self.timeformat), runtime)}
+                outputs={target: '-ss %s -t %s -c:v copy -c:a copy -y' % (start.toString(self.timeformat), runtime)}
             )
+            print(ff.cmd)
             return ff.run()
         return
 
