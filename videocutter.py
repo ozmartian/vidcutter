@@ -2,18 +2,32 @@
 # -*- coding: utf-8 -*-
 
 import os
+import subprocess
 import sys
 
+from ffmpy import FFmpeg
 from PyQt5.QtCore import QDir, QFileInfo, QSize, Qt, QTime, QUrl
 from PyQt5.QtGui import QFont, QIcon, QPalette
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtWidgets import (QAction, QApplication, QFileDialog, QHBoxLayout,
-                             QLabel, QListWidget, QMainWindow, QSizePolicy, QSlider, QToolBar,
-                             QToolButton, QVBoxLayout, QWidget, qApp)
-from ffmpy import FFmpeg
+                             QLabel, QListWidget, QMainWindow, QSizePolicy,
+                             QSlider, QToolBar, QToolButton, QVBoxLayout,
+                             QWidget, qApp)
 
 
+FFMPEG_bin = 'ffmpeg'
+if sys.platform == 'win32':
+    FFMPEG_bin = 'C:\ProgramData\chocolatey\bin\ffmpeg.exe'
+
+try:
+    subprocess.Popen(args=[FFMPEG_bin, '-version'], stdout=subprocess.PIPE)
+except:
+    print('\nERROR:\n')
+    print('Could not locate or execute the FFMPEG binary needed for this software to function.')
+    print('Please ensure a valid path to is set for vaiable FFMPEG_bin, located at the top of the source code,')
+    sys.exit(1)
+ 
 class VideoWidget(QVideoWidget):
     def __init__(self, parent=None):
         super(VideoWidget, self).__init__(parent)
@@ -82,11 +96,6 @@ class VideoCutter(QWidget):
         self.videoLayout.addWidget(self.movieLabel)
         self.videoLayout.addWidget(self.cutlist)
 
-        layout = QVBoxLayout()
-        layout.setContentsMargins(10, 10, 10, 10)
-        layout.addLayout(self.videoLayout)
-        layout.addLayout(sliderLayout)
-
         self.timeCounter = QLabel('00:00:00 / 00:00:00')
         timefont = QFont('Droid Sans Mono')
         timefont.setStyleHint(QFont.Monospace)
@@ -112,6 +121,11 @@ class VideoCutter(QWidget):
         # controlsLayout.addWidget(self.timeCounter)
         controlsLayout.addWidget(self.muteButton)
         controlsLayout.addWidget(self.volumeSlider)
+
+        layout = QVBoxLayout()
+        layout.setContentsMargins(10, 10, 10, 10)
+        layout.addLayout(self.videoLayout)
+        layout.addLayout(sliderLayout)
 
         layout.addLayout(controlsLayout)
         self.setLayout(layout)
@@ -183,6 +197,7 @@ class VideoCutter(QWidget):
 
     def setPosition(self, position):
         if self.mediaPlayer.isVideoAvailable():
+            self.mediaPlayer.play()
             self.mediaPlayer.pause()
         self.mediaPlayer.setPosition(position)
 
@@ -249,13 +264,13 @@ class VideoCutter(QWidget):
 
     def cutVideo(self, start: QTime, end: QTime):
         source = self.mediaPlayer.currentMedia().canonicalUrl().path()
-        target = source # '%s_NEW%s' % os.path.splitext(source)
-        cliplen = self.deltaToQTime(start.msecsTo(end)).toString(self.timeformat)
-        filename, _ = QFileDialog.getSaveFileName(parent=self.parent, caption='Save video', directory=os.path.dirname(source))
-        if filename != '':
+        runtime = self.deltaToQTime(start.msecsTo(end)).toString(self.timeformat)
+        target, _ = QFileDialog.getSaveFileName(parent=self.parent, caption='Save video', directory=os.path.dirname(source))
+        if target != '':
             ff = FFmpeg(
+                executable=FFMPEG_bin,
                 inputs={source: None},
-                outputs={target: '-ss %s -t %s -vcodec copy -acodec copy -y' % (start.toString(self.timeformat), cliplen)}
+                outputs={target: '-ss %s -t %s -vcodec copy -acodec copy -y' % (start.toString(self.timeformat), runtime)}
             )
             return ff.run()
         return
