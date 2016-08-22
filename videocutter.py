@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import logging
 import os
+import signal
 import subprocess
 import sys
 
-from ffmpy import FFmpeg
 from PyQt5.QtCore import QDir, QFileInfo, QSize, Qt, QTime, QUrl
 from PyQt5.QtGui import QFont, QIcon, QPalette
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
@@ -14,7 +15,13 @@ from PyQt5.QtWidgets import (QAction, QApplication, QFileDialog, QHBoxLayout,
                              QLabel, QListWidget, QMainWindow, QSizePolicy,
                              QSlider, QToolBar, QToolButton, QVBoxLayout,
                              QWidget, qApp)
+from ffmpy import FFmpeg
 
+logging.basicConfig(filename='videocutter.log', level=logging.INFO)
+logging.captureWarnings(True)
+
+signal.signal(signal.SIGINT, signal.SIG_DFL)
+signal.signal(signal.SIGTERM, signal.SIG_DFL)
 
 FFMPEG_bin = 'ffmpeg'
 if sys.platform == 'win32':
@@ -28,7 +35,8 @@ except:
     print('Please ensure a valid path set for the FFMPEG_bin variable at the top of the source code,')
     print(sys.exc_info()[0])
     sys.exit(1)
- 
+
+
 class VideoWidget(QVideoWidget):
     def __init__(self, parent=None):
         super(VideoWidget, self).__init__(parent)
@@ -62,7 +70,6 @@ class VideoCutter(QWidget):
         self.rootPath = QFileInfo(__file__).absolutePath()
 
         self.cutTimes = []
-        self.cutResults = []
         self.timeformat = 'hh:mm:ss'
 
         self.initIcons()
@@ -86,6 +93,7 @@ class VideoCutter(QWidget):
         self.cutlist.setStyleSheet('QListView::item { margin-bottom:15px; }')
 
         self.movieLabel = QLabel('No movie loaded')
+        self.movieLabel.setStyleSheet('font-size:16px; font-weight:bold; font-family:sans-serif;')
         self.movieLabel.setAlignment(Qt.AlignCenter)
         self.movieLabel.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
         self.movieLabel.setBackgroundRole(QPalette.Dark)
@@ -97,11 +105,11 @@ class VideoCutter(QWidget):
         self.videoLayout.addWidget(self.movieLabel)
         self.videoLayout.addWidget(self.cutlist)
 
-        self.timeCounter = QLabel('00:00:00 | 00:00:00')
+        self.timeCounter = QLabel('00:00:00 / 00:00:00')
         timefont = QFont('Droid Sans Mono')
         timefont.setStyleHint(QFont.Monospace)
         self.timeCounter.setFont(timefont)
-        self.timeCounter.setStyleSheet('font-size:14px; color:#666; margin-right:6px;')
+        self.timeCounter.setStyleSheet('font-size:14px; color:#666;')
         self.parent.statusBar().addPermanentWidget(self.timeCounter)
 
         self.muteButton = QToolButton(statusTip='Toggle audio mute', clicked=self.muteAudio)
@@ -150,7 +158,7 @@ class VideoCutter(QWidget):
         self.playAction = QAction(self.playIcon, 'Play', self, statusTip='Play video', triggered=self.playVideo, enabled=False)
         self.cutStartAction = QAction(self.cutStartIcon, 'Set Start', self, statusTip='Set start marker', triggered=self.cutStart, enabled=False)
         self.cutEndAction = QAction(self.cutEndIcon, 'Set End', self, statusTip='Set end marker', triggered=self.cutEnd, enabled=False)
-        self.saveAction = QAction(self.saveIcon, 'Save', self, statusTip='Add clip to cutting list', triggered=self.saveVideo, enabled=False)
+        self.saveAction = QAction(self.saveIcon, 'Save', self, statusTip='Add clip to cutting list', triggered=self.cutVideo, enabled=False)
 
     def initToolbar(self):
         self.lefttoolbar = QToolBar()
@@ -205,7 +213,7 @@ class VideoCutter(QWidget):
         self.positionSlider.setValue(progress)
         currentTime = self.deltaToQTime(progress)
         totalTime = self.deltaToQTime(self.mediaPlayer.duration())
-        self.timeCounter.setText('%s | %s' % (currentTime.toString(self.timeformat), totalTime.toString(self.timeformat)))
+        self.timeCounter.setText('%s / %s' % (currentTime.toString(self.timeformat), totalTime.toString(self.timeformat)))
 
     def mediaStateChanged(self):
         if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
@@ -255,28 +263,60 @@ class VideoCutter(QWidget):
         secs = millisecs / 1000
         return QTime((secs / 3600) % 60, (secs / 60) % 60, secs % 60, (secs * 1000) % 1000)
 
-    def saveVideo(self):
-        if not len(self.cutTimes):
-            return
-        self.cutResults.clear()
-        for item in self.cutTimes:
-            self.cutResults.append(self.cutVideo(item[0], item[1]))
-
-    def cutVideo(self, start: QTime, end: QTime):
+    def cutVideo(self):
+        self.setCursor(Qt.BusyCursor)
+        filename = ''
+        filelist = []
         source = self.mediaPlayer.currentMedia().canonicalUrl().toLocalFile()
-        runtime = self.deltaToQTime(start.msecsTo(end)).toString(self.timeformat)
-        target, _ = QFileDialog.getSaveFileName(parent=self.parent, caption='Save video', directory=os.path.dirname(source))
-        if target != '':
-            ff = FFmpeg(
-                executable=FFMPEG_bin,
-                inputs={source: None},
-                outputs={target: '-ss %s -t %s -c:v copy -c:a copy -y' % (start.toString(self.timeformat), runtime)}
-            )
-            print(ff.cmd)
-            return ff.run()
-        return
+        if len(self.cutTimes):
+            target, _ = QFileDialog.getSaveFileName(parent=self.parent, caption='Save video', directory=os.path.dirname(source))
+            if target != '':
+                file, ext = os.path.splitext(target)
+                index = 1
+                for clip in self.cutTimes:
+                    runtime = self.deltaToQTime(clip[0].msecsTo(clip[1])).toString(self.timeformat)
+                    filename = '%s_%s%s' % (file, '{0:0>2}'.format(index), ext)
+                    filelist.append(filename)
+                    ff = FFmpeg(
+                        executable=FFMPEG_bin,
+                        inputs={source: None},
+                        outputs={filename: '-ss %s -t %s -vcodec copy -acodec copy -y' % (clip[0].toString(self.timeformat), runtime)}
+                    )
+                    ff.run()
+                    index += 1
+            if len(filelist) > 1:
+                self.joinVideos(filelist, target)
+            else:
+                try:
+                    os.remove(target)
+                    os.rename(filename, target)
+                except:
+                    pass
+            return True
+        return False
+
+    def joinVideos(self, joinlist, filename):
+        listfile = os.path.join(os.path.dirname(joinlist[0]), '_cutter.list')
+        fobj = open(listfile, 'w')
+        for file in joinlist:
+            fobj.write('file %s\n' % file)
+        fobj.close()
+        ff = FFmpeg(
+            executable=FFMPEG_bin,
+            inputs={listfile: '-f concat -safe 0'},
+            outputs={filename: '-c copy -y'}
+        )
+        try:
+            ff.run()
+        except:
+            print('"Error occurred: %s' % sys.exc_info()[0])
+        os.remove(listfile)
+        for file in joinlist:
+            if os.path.isfile(file):
+                os.remove(file)
 
     def handleError(self):
+        self.unsetCursor()
         self.initMediaControls(False)
         print('ERROR: %s' % self.mediaPlayer.errorString())
 
