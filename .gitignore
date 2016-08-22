@@ -2,3 +2,7 @@
 __pycache__
 .directory
 .vscode/
+build/
+dist/
+videocutter.log
+videocutter.spec

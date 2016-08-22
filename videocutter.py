@@ -24,17 +24,6 @@ signal.signal(signal.SIGINT, signal.SIG_DFL)
 signal.signal(signal.SIGTERM, signal.SIG_DFL)
 
 FFMPEG_bin = 'ffmpeg'
-if sys.platform == 'win32':
-    FFMPEG_bin = 'C:\\ProgramData\\chocolatey\\bin\\ffmpeg.exe'
-
-try:
-    subprocess.Popen(args=[FFMPEG_bin, '-version'], stdout=subprocess.PIPE)
-except:
-    print('\nERROR:')
-    print('Could not locate or execute the FFMPEG binary needed for this software to function.')
-    print('Please ensure a valid path set for the FFMPEG_bin variable at the top of the source code,')
-    print(sys.exc_info()[0])
-    sys.exit(1)
 
 
 class VideoWidget(QVideoWidget):
@@ -67,7 +56,6 @@ class VideoCutter(QWidget):
         self.parent = parent
         self.mediaPlayer = QMediaPlayer(None, QMediaPlayer.VideoSurface)
         self.videoWidget = VideoWidget()
-        self.rootPath = QFileInfo(__file__).absolutePath()
 
         self.cutTimes = []
         self.timeformat = 'hh:mm:ss'
@@ -144,14 +132,14 @@ class VideoCutter(QWidget):
         self.mediaPlayer.error.connect(self.handleError)
 
     def initIcons(self):
-        self.openIcon = QIcon(os.path.join(self.rootPath, 'icons', 'open.png'))
-        self.playIcon = QIcon(os.path.join(self.rootPath, 'icons', 'play.png'))
-        self.pauseIcon = QIcon(os.path.join(self.rootPath, 'icons', 'pause.png'))
-        self.cutStartIcon = QIcon(os.path.join(self.rootPath, 'icons', 'start.png'))
-        self.cutEndIcon = QIcon(os.path.join(self.rootPath, 'icons', 'end.png'))
-        self.saveIcon = QIcon(os.path.join(self.rootPath, 'icons', 'save.png'))
-        self.muteIcon = QIcon(os.path.join(self.rootPath, 'icons', 'muted.png'))
-        self.unmuteIcon = QIcon(os.path.join(self.rootPath, 'icons', 'unmuted.png'))
+        self.openIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'open.png'))
+        self.playIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'play.png'))
+        self.pauseIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'pause.png'))
+        self.cutStartIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'start.png'))
+        self.cutEndIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'end.png'))
+        self.saveIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'save.png'))
+        self.muteIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'muted.png'))
+        self.unmuteIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'unmuted.png'))
 
     def initActions(self):
         self.openAction = QAction(self.openIcon, 'Open', self, statusTip='Select video', triggered=self.openFile)
@@ -315,6 +303,12 @@ class VideoCutter(QWidget):
             if os.path.isfile(file):
                 os.remove(file)
 
+    @staticmethod
+    def getFilePath():
+        if getattr(sys, 'frozen', False):
+            return sys._MEIPASS
+        return os.path.dirname(os.path.realpath(sys.argv[0]))
+
     def handleError(self):
         self.unsetCursor()
         self.initMediaControls(False)
@@ -340,9 +334,15 @@ class MainWindow(QMainWindow):
         qApp.quit()
 
 
-if __name__ == '__main__':
+def main():
+    if sys.platform == 'win32':
+        global FFMPEG_bin
+        FFMPEG_bin = os.path.join(VideoCutter.getFilePath(), 'bin', 'ffmpeg.exe')
     app = QApplication(sys.argv)
     app.setStyle('Fusion')
     win = MainWindow()
     win.show()
     sys.exit(app.exec_())
+
+if __name__ == '__main__':
+    main()
