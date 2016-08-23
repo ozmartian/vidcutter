@@ -277,11 +277,12 @@ class VideoCutter(QWidget):
                     os.rename(filename, target)
                 except:
                     pass
+            self.unsetCursor()
             return True
         return False
 
     def joinVideos(self, joinlist, filename):
-        listfile = os.path.join(os.path.dirname(joinlist[0]), '_cutter.list')
+        listfile = os.path.normpath(os.path.join(os.path.dirname(joinlist[0]), '_cutter.list'))
         fobj = open(listfile, 'w')
         for file in joinlist:
             fobj.write('file %s\n' % file)
@@ -295,6 +296,7 @@ class VideoCutter(QWidget):
             ff.run()
         except:
             print('"Error occurred: %s' % sys.exc_info()[0])
+            return
         try:
             os.remove(listfile)
             for file in joinlist:
