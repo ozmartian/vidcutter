@@ -1,10 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import logging
 import os
 import signal
-import subprocess
 import sys
 
 from PyQt5.QtCore import QDir, QFileInfo, QSize, Qt, QTime, QUrl
@@ -17,13 +15,8 @@ from PyQt5.QtWidgets import (QAction, QApplication, QFileDialog, QHBoxLayout,
                              QWidget, qApp)
 from ffmpy import FFmpeg
 
-logging.basicConfig(filename='videocutter.log', level=logging.INFO)
-logging.captureWarnings(True)
-
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 signal.signal(signal.SIGTERM, signal.SIG_DFL)
-
-FFMPEG_bin = 'ffmpeg'
 
 
 class VideoWidget(QVideoWidget):
@@ -56,6 +49,10 @@ class VideoCutter(QWidget):
         self.parent = parent
         self.mediaPlayer = QMediaPlayer(None, QMediaPlayer.VideoSurface)
         self.videoWidget = VideoWidget()
+
+        self.FFMPEG_bin = 'ffmpeg'
+        if sys.platform == 'win32':
+            self.FFMPEG_bin = os.path.join(self.getFilePath(), 'bin', 'ffmpeg.exe')
 
         self.cutTimes = []
         self.timeformat = 'hh:mm:ss'
@@ -266,7 +263,7 @@ class VideoCutter(QWidget):
                     filename = '%s_%s%s' % (file, '{0:0>2}'.format(index), ext)
                     filelist.append(filename)
                     ff = FFmpeg(
-                        executable=FFMPEG_bin,
+                        executable=self.FFMPEG_bin,
                         inputs={source: None},
                         outputs={filename: '-ss %s -t %s -vcodec copy -acodec copy -y' % (clip[0].toString(self.timeformat), runtime)}
                     )
@@ -290,7 +287,7 @@ class VideoCutter(QWidget):
             fobj.write('file %s\n' % file)
         fobj.close()
         ff = FFmpeg(
-            executable=FFMPEG_bin,
+            executable=self.FFMPEG_bin,
             inputs={listfile: '-f concat -safe 0'},
             outputs={filename: '-c copy -y'}
         )
@@ -298,10 +295,13 @@ class VideoCutter(QWidget):
             ff.run()
         except:
             print('"Error occurred: %s' % sys.exc_info()[0])
-        os.remove(listfile)
-        for file in joinlist:
-            if os.path.isfile(file):
-                os.remove(file)
+        try:
+            os.remove(listfile)
+            for file in joinlist:
+                if os.path.isfile(file):
+                    os.remove(file)
+        except:
+            pass
 
     @staticmethod
     def getFilePath():
@@ -325,7 +325,7 @@ class MainWindow(QMainWindow):
         self.cutter = VideoCutter(self)
         self.setCentralWidget(self.cutter)
         self.setWindowTitle('VideoCutter')
-        self.setWindowIcon(QIcon(os.path.join(QFileInfo(__file__).absolutePath(), 'icons', 'videocutter.png')))
+        self.setWindowIcon(QIcon(os.path.join(VideoCutter.getFilePath(), 'icons', 'videocutter.png')))
         self.resize(800, 600)
 
     def closeEvent(self, event):
@@ -335,9 +335,6 @@ class MainWindow(QMainWindow):
 
 
 def main():
-    if sys.platform == 'win32':
-        global FFMPEG_bin
-        FFMPEG_bin = os.path.join(VideoCutter.getFilePath(), 'bin', 'ffmpeg.exe')
     app = QApplication(sys.argv)
     app.setStyle('Fusion')
     win = MainWindow()
