@@ -5,7 +5,7 @@ import os
 import signal
 import sys
 
-from PyQt5.QtCore import QDir, QFileInfo, QSize, Qt, QTime, QUrl
+from PyQt5.QtCore import QDir, QSize, Qt, QTime, QUrl
 from PyQt5.QtGui import QFont, QIcon, QPalette
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
@@ -14,6 +14,8 @@ from PyQt5.QtWidgets import (QAction, QApplication, QFileDialog, QHBoxLayout,
                              QSlider, QToolBar, QToolButton, QVBoxLayout,
                              QWidget, qApp)
 from ffmpy import FFmpeg
+
+# from qrangeslider import qrangeslider
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 signal.signal(signal.SIGTERM, signal.SIG_DFL)
@@ -62,6 +64,8 @@ class VideoCutter(QWidget):
         self.initToolbar()
 
         self.positionSlider = QSlider(Qt.Horizontal, statusTip='Set video frame position', sliderMoved=self.setPosition)
+        # self.positionSlider = qrangeslider.QRangeSlider()
+        # self.positionSlider.setStatusTip('Set video clip range')
         self.positionSlider.setRange(0, 0)
         self.positionSlider.setStyleSheet('margin:8px 5px;')
 
@@ -103,7 +107,6 @@ class VideoCutter(QWidget):
         self.volumeSlider = QSlider(Qt.Horizontal, statusTip='Adjust volume level', sliderMoved=self.setVolume)
         self.volumeSlider.setToolTip('Volume')
         self.volumeSlider.setValue(50)
-        # self.volumeSlider.setFixedWidth(100)
         self.volumeSlider.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Minimum)
         self.volumeSlider.setRange(0, 100)
 
@@ -143,7 +146,7 @@ class VideoCutter(QWidget):
         self.playAction = QAction(self.playIcon, 'Play', self, statusTip='Play video', triggered=self.playVideo, enabled=False)
         self.cutStartAction = QAction(self.cutStartIcon, 'Set Start', self, statusTip='Set start marker', triggered=self.cutStart, enabled=False)
         self.cutEndAction = QAction(self.cutEndIcon, 'Set End', self, statusTip='Set end marker', triggered=self.cutEnd, enabled=False)
-        self.saveAction = QAction(self.saveIcon, 'Save', self, statusTip='Add clip to cutting list', triggered=self.cutVideo, enabled=False)
+        self.saveAction = QAction(self.saveIcon, 'Save', self, statusTip='Save new video', triggered=self.cutVideo, enabled=False)
 
     def initToolbar(self):
         self.lefttoolbar = QToolBar()
@@ -229,6 +232,7 @@ class VideoCutter(QWidget):
         self.cutTimes.append([self.deltaToQTime(self.mediaPlayer.position())])
         self.cutStartAction.setDisabled(True)
         self.cutEndAction.setEnabled(True)
+        self.renderTimes()
 
     def cutEnd(self):
         self.cutTimes[len(self.cutTimes)-1].append(self.deltaToQTime(self.mediaPlayer.position()))
@@ -239,7 +243,10 @@ class VideoCutter(QWidget):
     def renderTimes(self):
         self.cutlist.clear()
         for item in self.cutTimes:
-            self.cutlist.addItem('START => %s\n  END => %s' % (item[0].toString(self.timeformat), item[1].toString(self.timeformat)))
+            endItem = ''
+            if len(item) == 2:
+                endItem = item[1].toString(self.timeformat)
+            self.cutlist.addItem('START => %s\n  END => %s' % (item[0].toString(self.timeformat), endItem))
         if len(self.cutTimes):
             self.saveAction.setEnabled(True)
 
