@@ -10,7 +10,7 @@ from PyQt5.QtGui import QFont, QIcon, QPalette
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtWidgets import (QAction, QApplication, QFileDialog, QHBoxLayout,
-                             QLabel, QListWidget, QMainWindow, QMenu, QSizePolicy,
+                             QLabel, QListWidget, QMainWindow, QMenu, QMessageBox, QSizePolicy,
                              QSlider, QToolBar, QToolButton, QVBoxLayout,
                              QWidget, qApp)
 from ffmpy import FFmpeg
@@ -344,6 +344,7 @@ class VideoCutter(QWidget):
             ff.run()
         except:
             print('"Error occurred: %s' % sys.exc_info()[0])
+            QMessageBox.critical(self, 'Error Alert', sys.exc_info()[0])
             return
         try:
             os.remove(listfile)
@@ -363,6 +364,7 @@ class VideoCutter(QWidget):
         self.unsetCursor()
         self.initMediaControls(False)
         print('ERROR: %s' % self.mediaPlayer.errorString())
+        QMessageBox.critical(self, 'Error Alert', self.mediaPlayer.errorString())
 
     def closeEvent(self, event):
         self.parent.closeEvent(event)
