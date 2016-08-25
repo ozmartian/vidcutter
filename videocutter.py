@@ -343,6 +343,7 @@ class VideoCutter(QWidget):
                 except:
                     pass
             self.unsetCursor()
+            QMessageBox.information(self, 'Success', 'Your new video was successfully created.')
             return True
         return False
 
