@@ -152,7 +152,7 @@ class VideoCutter(QWidget):
 
     def initToolbar(self):
         self.lefttoolbar = QToolBar()
-        self.lefttoolbar.setStyleSheet('QToolBar QToolButton { min-width:82px; }')
+        self.lefttoolbar.setStyleSheet('QToolBar QToolButton { min-width:82px; font-size:14px; }')
         self.lefttoolbar.setFloatable(False)
         self.lefttoolbar.setMovable(False)
         self.lefttoolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
@@ -161,6 +161,7 @@ class VideoCutter(QWidget):
         self.lefttoolbar.addAction(self.playAction)
         self.lefttoolbar.addAction(self.saveAction)
         self.centertoolbar = QToolBar()
+        self.centertoolbar.setStyleSheet('QToolBar QToolButton { font-size:14px; }')
         self.centertoolbar.setFloatable(False)
         self.centertoolbar.setMovable(False)
         self.centertoolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
