@@ -276,7 +276,12 @@ class VideoCutter(QWidget):
         self.renderTimes()
 
     def cutEnd(self):
-        self.cutTimes[len(self.cutTimes)-1].append(self.deltaToQTime(self.mediaPlayer.position()))
+        item = self.cutTimes[len(self.cutTimes) - 1]
+        selected = self.deltaToQTime(self.mediaPlayer.position())
+        if selected.__lt__(item[0]):
+            QMessageBox.critical(self, 'Invalid Selection', 'End time must be AFTER the start time.\nPlease try again.')
+            return
+        item.append(selected)
         self.cutStartAction.setEnabled(True)
         self.cutEndAction.setDisabled(True)
         self.renderTimes()
@@ -290,6 +295,8 @@ class VideoCutter(QWidget):
             self.cutlist.addItem('START => %s\n  END => %s' % (item[0].toString(self.timeformat), endItem))
         if len(self.cutTimes):
             self.saveAction.setEnabled(True)
+        if len(self.cutTimes) == 0 or len(self.cutTimes[0]) != 2:
+            self.saveAction.setEnabled(False)
 
     @staticmethod
     def deltaToQTime(millisecs):
