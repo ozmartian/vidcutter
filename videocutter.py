@@ -120,7 +120,7 @@ class VideoCutter(QWidget):
         controlsLayout.addWidget(self.volumeSlider)
 
         layout = QVBoxLayout()
-        layout.setContentsMargins(10, 10, 10, 10)
+        layout.setContentsMargins(10, 10, 10, 4)
         layout.addLayout(self.videoLayout)
         layout.addLayout(timerLayout)
         layout.addLayout(sliderLayout)
