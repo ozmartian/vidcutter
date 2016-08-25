@@ -124,7 +124,6 @@ class VideoCutter(QWidget):
         layout.addLayout(self.videoLayout)
         layout.addLayout(timerLayout)
         layout.addLayout(sliderLayout)
-
         layout.addLayout(controlsLayout)
         self.setLayout(layout)
 
