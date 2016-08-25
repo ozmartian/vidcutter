@@ -1,18 +1,19 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 import os
 import signal
 import sys
 
-from PyQt5.QtCore import QDir, QSize, Qt, QTime, QUrl, QPoint
+from PyQt5.QtCore import QDir, QPoint, QSize, Qt, QTime, QUrl
 from PyQt5.QtGui import QFont, QIcon, QPalette
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtWidgets import (QAction, QApplication, QFileDialog, QHBoxLayout,
-                             QLabel, QListWidget, QMainWindow, QMenu, QMessageBox, QSizePolicy,
-                             QSlider, QToolBar, QToolButton, QVBoxLayout,
-                             QWidget, qApp)
+                             QLabel, QListWidget, QMainWindow, QMenu,
+                             QMessageBox, QSizePolicy, QSlider, QToolBar,
+                             QToolButton, QVBoxLayout, QWidget, qApp)
+
 from ffmpy import FFmpeg
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
@@ -63,7 +64,7 @@ class VideoCutter(QWidget):
 
         self.positionSlider = QSlider(Qt.Horizontal, statusTip='Set video frame position', sliderMoved=self.setPosition)
         self.positionSlider.setRange(0, 0)
-        self.positionSlider.setStyleSheet('margin:8px 5px;')
+        self.positionSlider.setStyleSheet('margin:12px 5px 8px;')
 
         sliderLayout = QHBoxLayout()
         sliderLayout.addWidget(self.positionSlider)
@@ -94,8 +95,12 @@ class VideoCutter(QWidget):
         timefont = QFont('Droid Sans Mono')
         timefont.setStyleHint(QFont.Monospace)
         self.timeCounter.setFont(timefont)
-        self.timeCounter.setStyleSheet('font-size:14px; color:#666;')
-        self.parent.statusBar().addPermanentWidget(self.timeCounter)
+        self.timeCounter.setStyleSheet('font-size:13px; color:#888; margin-right:150px; margin-bottom:6px;')
+
+        timerLayout = QHBoxLayout()
+        timerLayout.addStretch(1)
+        timerLayout.addWidget(self.timeCounter)
+        timerLayout.addStretch(1)
 
         self.muteButton = QToolButton(statusTip='Toggle audio mute', clicked=self.muteAudio)
         self.muteButton.setIcon(self.unmuteIcon)
@@ -107,6 +112,7 @@ class VideoCutter(QWidget):
         self.volumeSlider.setRange(0, 100)
 
         controlsLayout = QHBoxLayout()
+        controlsLayout.addStretch(1)
         controlsLayout.addWidget(self.lefttoolbar)
         controlsLayout.addWidget(self.centertoolbar)
         controlsLayout.addStretch(1)
@@ -116,6 +122,7 @@ class VideoCutter(QWidget):
         layout = QVBoxLayout()
         layout.setContentsMargins(10, 10, 10, 10)
         layout.addLayout(self.videoLayout)
+        layout.addLayout(timerLayout)
         layout.addLayout(sliderLayout)
 
         layout.addLayout(controlsLayout)
@@ -280,7 +287,7 @@ class VideoCutter(QWidget):
         item = self.cutTimes[len(self.cutTimes) - 1]
         selected = self.deltaToQTime(self.mediaPlayer.position())
         if selected.__lt__(item[0]):
-            QMessageBox.critical(self, 'Invalid Selection', 'End time must be AFTER the start time.\nPlease try again.')
+            QMessageBox.critical(self, 'Invalid END Time', 'The clip end time must come AFTER it\'s start time. Please try again.')
             return
         item.append(selected)
         self.cutStartAction.setEnabled(True)
