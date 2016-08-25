@@ -5,12 +5,12 @@ import os
 import signal
 import sys
 
-from PyQt5.QtCore import QDir, QSize, Qt, QTime, QUrl
+from PyQt5.QtCore import QDir, QSize, Qt, QTime, QUrl, QPoint
 from PyQt5.QtGui import QFont, QIcon, QPalette
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtWidgets import (QAction, QApplication, QFileDialog, QHBoxLayout,
-                             QLabel, QListWidget, QMainWindow, QSizePolicy,
+                             QLabel, QListWidget, QMainWindow, QMenu, QSizePolicy,
                              QSlider, QToolBar, QToolButton, QVBoxLayout,
                              QWidget, qApp)
 from ffmpy import FFmpeg
@@ -72,7 +72,7 @@ class VideoCutter(QWidget):
         sliderLayout = QHBoxLayout()
         sliderLayout.addWidget(self.positionSlider)
 
-        self.cutlist = QListWidget()
+        self.cutlist = QListWidget(customContextMenuRequested=self.itemMenu)
         self.cutlist.setUniformItemSizes(True)
         self.cutlist.setContextMenuPolicy(Qt.CustomContextMenu)
         self.cutlist.setFixedWidth(150)
@@ -140,6 +140,9 @@ class VideoCutter(QWidget):
         self.saveIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'save.png'))
         self.muteIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'muted.png'))
         self.unmuteIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'unmuted.png'))
+        self.upIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'up.png'))
+        self.downIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'down.png'))
+        self.removeIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'remove.png'))
 
     def initActions(self):
         self.openAction = QAction(self.openIcon, 'Open', self, statusTip='Select video', triggered=self.openFile)
@@ -147,6 +150,9 @@ class VideoCutter(QWidget):
         self.cutStartAction = QAction(self.cutStartIcon, 'Set Start', self, statusTip='Set start marker', triggered=self.cutStart, enabled=False)
         self.cutEndAction = QAction(self.cutEndIcon, 'Set End', self, statusTip='Set end marker', triggered=self.cutEnd, enabled=False)
         self.saveAction = QAction(self.saveIcon, 'Save', self, statusTip='Save new video', triggered=self.cutVideo, enabled=False)
+        self.moveItemUpAction = QAction(self.upIcon, 'Move Up', self, statusTip='Move clip up in clip list', triggered=self.moveItemUp, enabled=False)
+        self.moveItemDownAction = QAction(self.downIcon, 'Move Down', self, statusTip='Move clip down in clip list', triggered=self.moveItemDown, enabled=False)
+        self.removeItemAction = QAction(self.removeIcon, 'Remove clip', self, statusTip='Remove clip from list', triggered=self.removeItem, enabled=False)
 
     def initToolbar(self):
         self.lefttoolbar = QToolBar()
@@ -165,6 +171,35 @@ class VideoCutter(QWidget):
         self.centertoolbar.setIconSize(QSize(24, 24))
         self.centertoolbar.addAction(self.cutStartAction)
         self.centertoolbar.addAction(self.cutEndAction)
+
+    def itemMenu(self, pos):
+        globalPos = self.cutlist.mapToGlobal(pos)
+        self.cutlistMenu = QMenu()
+        self.cutlistMenu.addAction(self.moveItemUpAction)
+        self.cutlistMenu.addAction(self.moveItemDownAction)
+        self.cutlistMenu.addSeparator()
+        self.cutlistMenu.addAction(self.removeItemAction)
+        self.moveItemUpAction.setEnabled(False)
+        self.moveItemDownAction.setEnabled(False)
+        self.removeItemAction.setEnabled(False)
+        index = self.cutlist.currentRow()
+        if index != -1:
+            if index > 0:
+                self.moveItemUpAction.setEnabled(True)
+            if index < self.cutlist.count()-1:
+                self.moveItemDownAction.setEnabled(True)
+            if self.cutlist.count() > 0:
+                self.removeItemAction.setEnabled(True)
+        self.cutlistMenu.exec(globalPos)
+
+    def moveItemUp(self):
+        pass
+
+    def moveItemDown(self):
+        pass
+
+    def removeItem(self):
+        pass
 
     def openFile(self):
         filename, _ = QFileDialog.getOpenFileName(parent=self.parent, caption='Select video', directory=QDir.homePath())
