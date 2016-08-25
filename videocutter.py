@@ -15,8 +15,6 @@ from PyQt5.QtWidgets import (QAction, QApplication, QFileDialog, QHBoxLayout,
                              QWidget, qApp)
 from ffmpy import FFmpeg
 
-# from qrangeslider import qrangeslider
-
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 signal.signal(signal.SIGTERM, signal.SIG_DFL)
 
@@ -64,8 +62,6 @@ class VideoCutter(QWidget):
         self.initToolbar()
 
         self.positionSlider = QSlider(Qt.Horizontal, statusTip='Set video frame position', sliderMoved=self.setPosition)
-        # self.positionSlider = qrangeslider.QRangeSlider()
-        # self.positionSlider.setStatusTip('Set video clip range')
         self.positionSlider.setRange(0, 0)
         self.positionSlider.setStyleSheet('margin:8px 5px;')
 
@@ -193,13 +189,23 @@ class VideoCutter(QWidget):
         self.cutlistMenu.exec(globalPos)
 
     def moveItemUp(self):
-        pass
+        index = self.cutlist.currentRow()
+        tmpItem = self.cutTimes[index]
+        del self.cutTimes[index]
+        self.cutTimes.insert(index-1, tmpItem)
+        self.renderTimes()
 
     def moveItemDown(self):
-        pass
+        index = self.cutlist.currentRow()
+        tmpItem = self.cutTimes[index]
+        del self.cutTimes[index]
+        self.cutTimes.insert(index+1, tmpItem)
+        self.renderTimes()
 
     def removeItem(self):
-        pass
+        index = self.cutlist.currentRow()
+        del self.cutTimes[index]
+        self.renderTimes()
 
     def openFile(self):
         filename, _ = QFileDialog.getOpenFileName(parent=self.parent, caption='Select video', directory=QDir.homePath())

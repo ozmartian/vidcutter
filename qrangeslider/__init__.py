@@ -1,1 +1,0 @@
-from qrangeslider import *
