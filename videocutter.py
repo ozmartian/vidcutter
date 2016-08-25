@@ -213,6 +213,9 @@ class VideoCutter(QWidget):
         index = self.cutlist.currentRow()
         del self.cutTimes[index]
         self.renderTimes()
+        self.initMediaControls()
+        if len(self.cutTimes) > 0:
+            self.saveAction.setEnabled(True)
 
     def openFile(self):
         filename, _ = QFileDialog.getOpenFileName(parent=self.parent, caption='Select video', directory=QDir.homePath())
