@@ -5,13 +5,13 @@ import os
 import signal
 import sys
 
-from PyQt5.QtCore import QDir, QPoint, QSize, Qt, QTime, QUrl
+from PyQt5.QtCore import QDir, QEvent, QSize, Qt, QTime, QUrl
 from PyQt5.QtGui import QFont, QIcon, QPalette
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtWidgets import (QAction, QApplication, QFileDialog, QHBoxLayout,
                              QLabel, QListWidget, QMainWindow, QMenu,
-                             QMessageBox, QSizePolicy, QSlider, QToolBar,
+                             QMessageBox, QSizePolicy, QSlider, QStyle, QToolBar,
                              QToolButton, QVBoxLayout, QWidget, qApp)
 
 from ffmpy import FFmpeg
@@ -62,9 +62,43 @@ class VideoCutter(QWidget):
         self.initActions()
         self.initToolbar()
 
+        sliderQSS = '''QSlider:horizontal {
+    margin: 12px 5px 8px;
+}
+
+QSlider::groove:horizontal {
+    border: 1px solid #999;
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #B1B1B1, stop:1 #c4c4c4);
+    height: 8px;
+    position: absolute;
+    left: 2px;
+    right: 2px;
+    margin: -2px 0;
+}
+
+QSlider::sub-page:horizontal {
+    border: 1px solid #999;
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #0083c5, stop:1 #c8dbf9);
+    height: 8px;
+    position: absolute;
+    left: 2px;
+    right: 2px;
+    margin: -2px 0;
+}
+
+QSlider::handle:horizontal {
+    background: #FAFAFA;
+    border: 1px solid #777;
+    width: 18px;
+    margin: -3px -2px;
+    border-radius: 2px;
+}'''
+
         self.positionSlider = QSlider(Qt.Horizontal, statusTip='Set video frame position', sliderMoved=self.setPosition)
+        self.positionSlider.setObjectName('PositionSlider')
         self.positionSlider.setRange(0, 0)
-        self.positionSlider.setStyleSheet('margin:12px 5px 8px;')
+        self.positionSlider.setStyleSheet(sliderQSS)
+        self.positionSlider.installEventFilter(self)
 
         sliderLayout = QHBoxLayout()
         sliderLayout.addWidget(self.positionSlider)
@@ -377,6 +411,13 @@ class VideoCutter(QWidget):
         if getattr(sys, 'frozen', False):
             return sys._MEIPASS
         return os.path.dirname(os.path.realpath(sys.argv[0]))
+
+    def eventFilter(self, object, event):
+        if event.type() == QEvent.MouseButtonRelease:
+            if isinstance(object, QSlider) and object.objectName() == 'PositionSlider':
+                object.setValue(QStyle.sliderValueFromPosition(object.minimum(), object.maximum(), event.x(), object.width()))
+                self.mediaPlayer.setPosition(object.sliderPosition())
+        return QWidget.eventFilter(self, object, event)
 
     def handleError(self):
         self.unsetCursor()
