@@ -414,7 +414,7 @@ QSlider::handle:horizontal {
 
     def eventFilter(self, object, event):
         if event.type() == QEvent.MouseButtonRelease:
-            if isinstance(object, QSlider) and object.objectName() == 'PositionSlider':
+            if isinstance(object, QSlider) and object.objectName() == 'PositionSlider' and self.mediaPlayer.isVideoAvailable():
                 object.setValue(QStyle.sliderValueFromPosition(object.minimum(), object.maximum(), event.x(), object.width()))
                 self.mediaPlayer.setPosition(object.sliderPosition())
         return QWidget.eventFilter(self, object, event)
