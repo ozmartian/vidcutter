@@ -179,6 +179,7 @@ QSlider::handle:horizontal {
         self.upIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'up.png'))
         self.downIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'down.png'))
         self.removeIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'remove.png'))
+        self.successIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'success.png'))
 
     def initActions(self):
         self.openAction = QAction(self.openIcon, 'Open', self, statusTip='Select video', triggered=self.openFile)
@@ -227,7 +228,7 @@ QSlider::handle:horizontal {
                 self.moveItemDownAction.setEnabled(True)
             if self.cutlist.count() > 0:
                 self.removeItemAction.setEnabled(True)
-        self.cutlistMenu.exec(globalPos)
+        self.cutlistMenu.exec_(globalPos)
 
     def moveItemUp(self):
         index = self.cutlist.currentRow()
@@ -377,7 +378,18 @@ QSlider::handle:horizontal {
                 except:
                     pass
             self.unsetCursor()
-            QMessageBox.information(self, 'Success', 'Your new video was successfully created.')
+            msgbox = QMessageBox(self.successIcon, 'Success',
+                                 'Your new video was successfully created.\nWhat would you like to do?',
+                                 QMessageBox.NoButton, self)
+            msgbox.setStyleSheet('QMessageBox QPushButton { color:#FFF; background-color:#4278d0; border-radius:3px; border:1px solid #2d538f; }')
+            msgbox.addButton('Play video', QMessageBox.AcceptRole)
+            msgbox.addButton('Open folder', QMessageBox.ApplyRole)
+            msgbox.addButton('Continue', QMessageBox.RejectRole)
+            selected = msgbox.exec_()
+            if selected == QMessageBox.AcceptRole:
+                self.externalPlayer(target)
+            elif selected == QMessageBox.ApplyRole:
+                self.openFolder(os.path.dirname(target))
             return True
         return False
 
@@ -406,6 +418,12 @@ QSlider::handle:horizontal {
         except:
             pass
 
+    def externalPlayer(self, path):
+        pass
+
+    def openFolder(self, path):
+        pass
+
     @staticmethod
     def getFilePath():
         if getattr(sys, 'frozen', False):
@@ -413,8 +431,8 @@ QSlider::handle:horizontal {
         return os.path.dirname(os.path.realpath(sys.argv[0]))
 
     def eventFilter(self, object, event):
-        if event.type() == QEvent.MouseButtonRelease:
-            if isinstance(object, QSlider) and object.objectName() == 'PositionSlider' and (self.mediaPlayer.isVideoAvailable() or self.mediaPlayer.isAudioAvailable()):
+        if event.type() == QEvent.MouseButtonRelease and isinstance(object, QSlider):
+            if object.objectName() == 'PositionSlider' and (self.mediaPlayer.isVideoAvailable() or self.mediaPlayer.isAudioAvailable()):
                 object.setValue(QStyle.sliderValueFromPosition(object.minimum(), object.maximum(), event.x(), object.width()))
                 self.mediaPlayer.setPosition(object.sliderPosition())
         return QWidget.eventFilter(self, object, event)
