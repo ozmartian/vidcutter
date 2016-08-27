@@ -2,7 +2,9 @@
 # -*- coding: utf-8 -*-
 
 import os
+import shlex
 import signal
+import subprocess
 import sys
 
 from PyQt5.QtCore import QDir, QEvent, QSize, Qt, QTime, QUrl
@@ -130,7 +132,7 @@ QSlider::handle:horizontal {
         timefont = QFont('Droid Sans Mono')
         timefont.setStyleHint(QFont.Monospace)
         self.timeCounter.setFont(timefont)
-        self.timeCounter.setStyleSheet('font-size:13px; color:#888; margin-right:150px; margin-bottom:6px;')
+        self.timeCounter.setStyleSheet('font-size:13px; color:#666; margin-right:150px; margin-bottom:6px;')
 
         timerLayout = QHBoxLayout()
         timerLayout.addStretch(1)
@@ -260,6 +262,7 @@ QSlider::handle:horizontal {
             self.initMediaControls(True)
             self.cutlist.clear()
             self.cutTimes = []
+            self.parent.setWindowTitle('VideoCutter - %s' % os.path.basename(filename))
             if not self.movieLoaded:
                 self.videoLayout.replaceWidget(self.movieLabel, self.videoWidget)
                 self.movieLabel.deleteLater()
@@ -420,11 +423,32 @@ QSlider::handle:horizontal {
         except:
             pass
 
-    def externalPlayer(self, path):
-        print('Going to play video file at "%s" with external OS default video player.' % path)
+    def externalPlayer(self):
+        if len(self.finalFilename) and os.path.exists(self.finalFilename):
+            if sys.platform == 'win32':
+                cmd = self.finalFilename
+            else:
+                cmd = 'xdg-open %s' % self.finalFilename
+            returncode = self.cmdexec(cmd)
 
-    def openFolder(self, path):
-        print('Going to open OS specific file manager at folder path "%s".' % path)
+    def openFolder(self):
+        if len(self.finalFilename) and os.path.exists(self.finalFilename):
+            dirname = os.path.dirname(self.finalFilename)
+            if sys.platform == 'win32':
+                cmd = 'C:\\Windows\\explorer.exe %s' % dirname
+            elif sys.platform == 'darwin':
+                cmd = 'open %s' % dirname
+            else:
+                cmd = 'xdg-open %s' % dirname
+            returncode = self.cmdexec(cmd)
+
+    def cmdexec(self, cmd):
+        if sys.platform == 'win32':
+            si = subprocess.STARTUPINFO()
+            si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+            return subprocess.Popen(args=shlex.split(cmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE, startupinfo=si, env=os.environ, shell=False)
+        else:
+            return subprocess.Popen(args=shlex.split(cmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)    
 
     @staticmethod
     def getFilePath():
