@@ -66,7 +66,7 @@ class VideoCutter(QWidget):
         self.initToolbar()
 
         sliderQSS = '''QSlider:horizontal {
-    margin: 12px 5px 8px;
+    margin: 10px 5px;
 }
 
 QSlider::groove:horizontal {
