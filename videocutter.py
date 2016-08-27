@@ -6,13 +6,13 @@ import signal
 import sys
 
 from PyQt5.QtCore import QDir, QEvent, QSize, Qt, QTime, QUrl
-from PyQt5.QtGui import QFont, QIcon, QPalette
+from PyQt5.QtGui import QFont, QIcon, QPalette, QPixmap
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtWidgets import (QAction, QApplication, QFileDialog, QHBoxLayout,
                              QLabel, QListWidget, QMainWindow, QMenu,
-                             QMessageBox, QSizePolicy, QSlider, QStyle, QToolBar,
-                             QToolButton, QVBoxLayout, QWidget, qApp)
+                             QMessageBox, QSizePolicy, QSlider, QStyle,
+                             QToolBar, QToolButton, QVBoxLayout, QWidget, qApp)
 
 from ffmpy import FFmpeg
 
@@ -57,6 +57,7 @@ class VideoCutter(QWidget):
 
         self.cutTimes = []
         self.timeformat = 'hh:mm:ss'
+        self.finalFilename = ''
 
         self.initIcons()
         self.initActions()
@@ -354,9 +355,9 @@ QSlider::handle:horizontal {
         filelist = []
         source = self.mediaPlayer.currentMedia().canonicalUrl().toLocalFile()
         if len(self.cutTimes):
-            target, _ = QFileDialog.getSaveFileName(parent=self.parent, caption='Save video', directory=os.path.dirname(source))
-            if target != '':
-                file, ext = os.path.splitext(target)
+            self.finalFilename, _ = QFileDialog.getSaveFileName(parent=self.parent, caption='Save video', directory=os.path.dirname(source))
+            if self.finalFilename != '':
+                file, ext = os.path.splitext(self.finalFilename)
                 index = 1
                 for clip in self.cutTimes:
                     runtime = self.deltaToQTime(clip[0].msecsTo(clip[1])).toString(self.timeformat)
@@ -370,26 +371,27 @@ QSlider::handle:horizontal {
                     ff.run()
                     index += 1
             if len(filelist) > 1:
-                self.joinVideos(filelist, target)
+                self.joinVideos(filelist, self.finalFilename)
             else:
                 try:
-                    os.remove(target)
-                    os.rename(filename, target)
+                    os.remove(self.finalFilename)
+                    os.rename(filename, self.finalFilename)
                 except:
                     pass
             self.unsetCursor()
-            msgbox = QMessageBox(self.successIcon, 'Success',
-                                 'Your new video was successfully created.\nWhat would you like to do?',
-                                 QMessageBox.NoButton, self)
-            msgbox.setStyleSheet('QMessageBox QPushButton { color:#FFF; background-color:#4278d0; border-radius:3px; border:1px solid #2d538f; }')
-            msgbox.addButton('Play video', QMessageBox.AcceptRole)
-            msgbox.addButton('Open folder', QMessageBox.ApplyRole)
-            msgbox.addButton('Continue', QMessageBox.RejectRole)
-            selected = msgbox.exec_()
-            if selected == QMessageBox.AcceptRole:
-                self.externalPlayer(target)
-            elif selected == QMessageBox.ApplyRole:
-                self.openFolder(os.path.dirname(target))
+            msgbox = QMessageBox()
+            msgbox.setWindowTitle('Success')
+            msgbox.setWindowIcon(self.parent.windowIcon())
+            msgbox.setIconPixmap(self.successIcon.pixmap(QSize(48, 48)))
+            msgbox.setText('Your new video was successfully created. How would you like to proceed?')
+            play = msgbox.addButton('Play video', QMessageBox.AcceptRole)
+            play.clicked.connect(self.externalPlayer)
+            fileman = msgbox.addButton('Open folder', QMessageBox.AcceptRole)
+            fileman.clicked.connect(self.openFolder)
+            cont = msgbox.addButton('Continue', QMessageBox.AcceptRole)
+            msgbox.setDefaultButton(cont)
+            msgbox.setEscapeButton(cont)
+            msgbox.exec_()
             return True
         return False
 
@@ -419,10 +421,10 @@ QSlider::handle:horizontal {
             pass
 
     def externalPlayer(self, path):
-        pass
+        print('Going to play video file at "%s" with external OS default video player.' % path)
 
     def openFolder(self, path):
-        pass
+        print('Going to open OS specific file manager at folder path "%s".' % path)
 
     @staticmethod
     def getFilePath():
@@ -451,10 +453,10 @@ class MainWindow(QMainWindow):
     def __init__(self, parent=None, flags=Qt.Window):
         super(MainWindow, self).__init__(parent, flags)
         self.statusBar().showMessage('Ready')
-        self.cutter = VideoCutter(self)
-        self.setCentralWidget(self.cutter)
         self.setWindowTitle('VideoCutter')
         self.setWindowIcon(QIcon(os.path.join(VideoCutter.getFilePath(), 'icons', 'videocutter.png')))
+        self.cutter = VideoCutter(self)
+        self.setCentralWidget(self.cutter)
         self.resize(800, 600)
 
     def closeEvent(self, event):
