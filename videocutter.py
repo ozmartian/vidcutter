@@ -357,8 +357,10 @@ QSlider::handle:horizontal {
         filename = ''
         filelist = []
         source = self.mediaPlayer.currentMedia().canonicalUrl().toLocalFile()
+        _, sourceext = os.path.splitext(source)
         if len(self.cutTimes):
-            self.finalFilename, _ = QFileDialog.getSaveFileName(parent=self.parent, caption='Save video', directory=os.path.dirname(source))
+            self.finalFilename, _ = QFileDialog.getSaveFileName(parent=self, caption='Save video', directory=source,
+                                                                filter='Video files (*%s)' % sourceext)
             if self.finalFilename != '':
                 file, ext = os.path.splitext(self.finalFilename)
                 index = 1
@@ -373,28 +375,28 @@ QSlider::handle:horizontal {
                     )
                     ff.run()
                     index += 1
-            if len(filelist) > 1:
-                self.joinVideos(filelist, self.finalFilename)
-            else:
-                try:
-                    os.remove(self.finalFilename)
-                    os.rename(filename, self.finalFilename)
-                except:
-                    pass
-            self.unsetCursor()
-            msgbox = QMessageBox()
-            msgbox.setWindowTitle('Success')
-            msgbox.setWindowIcon(self.parent.windowIcon())
-            msgbox.setIconPixmap(self.successIcon.pixmap(QSize(48, 48)))
-            msgbox.setText('Your new video was successfully created. How would you like to proceed?')
-            play = msgbox.addButton('Play video', QMessageBox.AcceptRole)
-            play.clicked.connect(self.externalPlayer)
-            fileman = msgbox.addButton('Open folder', QMessageBox.AcceptRole)
-            fileman.clicked.connect(self.openFolder)
-            cont = msgbox.addButton('Continue', QMessageBox.AcceptRole)
-            msgbox.setDefaultButton(cont)
-            msgbox.setEscapeButton(cont)
-            msgbox.exec_()
+                if len(filelist) > 1:
+                    self.joinVideos(filelist, self.finalFilename)
+                else:
+                    try:
+                        os.remove(self.finalFilename)
+                        os.rename(filename, self.finalFilename)
+                    except:
+                        pass
+                self.unsetCursor()
+                msgbox = QMessageBox()
+                msgbox.setWindowTitle('Success')
+                msgbox.setWindowIcon(self.parent.windowIcon())
+                msgbox.setIconPixmap(self.successIcon.pixmap(QSize(48, 48)))
+                msgbox.setText('Your new video was successfully created. How would you like to proceed?')
+                play = msgbox.addButton('Play video', QMessageBox.AcceptRole)
+                play.clicked.connect(self.externalPlayer)
+                fileman = msgbox.addButton('Open folder', QMessageBox.AcceptRole)
+                fileman.clicked.connect(self.openFolder)
+                cont = msgbox.addButton('Continue', QMessageBox.AcceptRole)
+                msgbox.setDefaultButton(cont)
+                msgbox.setEscapeButton(cont)
+                msgbox.exec_()
             return True
         return False
 
