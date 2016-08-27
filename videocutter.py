@@ -182,6 +182,7 @@ QSlider::handle:horizontal {
         self.upIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'up.png'))
         self.downIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'down.png'))
         self.removeIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'remove.png'))
+        self.removeAllIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'remove-all.png'))
         self.successIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'success.png'))
 
     def initActions(self):
@@ -193,6 +194,7 @@ QSlider::handle:horizontal {
         self.moveItemUpAction = QAction(self.upIcon, 'Move Up', self, statusTip='Move clip up in clip list', triggered=self.moveItemUp, enabled=False)
         self.moveItemDownAction = QAction(self.downIcon, 'Move Down', self, statusTip='Move clip down in clip list', triggered=self.moveItemDown, enabled=False)
         self.removeItemAction = QAction(self.removeIcon, 'Remove clip', self, statusTip='Remove clip from list', triggered=self.removeItem, enabled=False)
+        self.removeAllAction = QAction(self.removeAllIcon, 'Remove all', self, statusTip='Remove all clips from list', triggered=self.clearList, enabled=False)
 
     def initToolbar(self):
         self.lefttoolbar = QToolBar()
@@ -220,9 +222,11 @@ QSlider::handle:horizontal {
         self.cutlistMenu.addAction(self.moveItemDownAction)
         self.cutlistMenu.addSeparator()
         self.cutlistMenu.addAction(self.removeItemAction)
+        self.cutlistMenu.addAction(self.removeAllAction)
         self.moveItemUpAction.setEnabled(False)
         self.moveItemDownAction.setEnabled(False)
         self.removeItemAction.setEnabled(False)
+        self.removeAllAction.setEnabled(False)
         index = self.cutlist.currentRow()
         if index != -1:
             if index > 0:
@@ -231,6 +235,7 @@ QSlider::handle:horizontal {
                 self.moveItemDownAction.setEnabled(True)
             if self.cutlist.count() > 0:
                 self.removeItemAction.setEnabled(True)
+                self.removeAllAction.setEnabled(True)
         self.cutlistMenu.exec_(globalPos)
 
     def moveItemUp(self):
@@ -254,6 +259,11 @@ QSlider::handle:horizontal {
         self.initMediaControls()
         if len(self.cutTimes) > 0:
             self.saveAction.setEnabled(True)
+
+    def clearList(self):
+        self.cutTimes.clear()
+        self.cutlist.clear()
+        self.initMediaControls()
 
     def openFile(self):
         filename, _ = QFileDialog.getOpenFileName(parent=self.parent, caption='Select video', directory=QDir.homePath())
