@@ -194,7 +194,7 @@ QSlider::handle:horizontal {
         self.moveItemUpAction = QAction(self.upIcon, 'Move Up', self, statusTip='Move clip up in clip list', triggered=self.moveItemUp, enabled=False)
         self.moveItemDownAction = QAction(self.downIcon, 'Move Down', self, statusTip='Move clip down in clip list', triggered=self.moveItemDown, enabled=False)
         self.removeItemAction = QAction(self.removeIcon, 'Remove clip', self, statusTip='Remove clip from list', triggered=self.removeItem, enabled=False)
-        self.removeAllAction = QAction(self.removeAllIcon, 'Remove all', self, statusTip='Remove all clips from list', triggered=self.clearList, enabled=False)
+        self.removeAllAction = QAction(self.removeAllIcon, 'Clear list', self, statusTip='Remove all clips from list', triggered=self.clearList, enabled=False)
 
     def initToolbar(self):
         self.lefttoolbar = QToolBar()
