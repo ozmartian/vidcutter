@@ -404,7 +404,7 @@ QSlider::handle:horizontal {
         listfile = os.path.normpath(os.path.join(os.path.dirname(joinlist[0]), '_cutter.list'))
         fobj = open(listfile, 'w')
         for file in joinlist:
-            fobj.write('file %s\n' % file)
+            fobj.write('file \'%s\'\n' % file.replace("'", "\\'"))
         fobj.close()
         ff = FFmpeg(
             executable=self.FFMPEG_bin,
