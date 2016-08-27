@@ -8,13 +8,14 @@ import subprocess
 import sys
 
 from PyQt5.QtCore import QDir, QEvent, QSize, Qt, QTime, QUrl
-from PyQt5.QtGui import QFont, QIcon, QPalette, QPixmap
+from PyQt5.QtGui import QFont, QFontDatabase, QIcon, QPalette, QPixmap
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtWidgets import (QAction, QApplication, QFileDialog, QHBoxLayout,
                              QLabel, QListWidget, QMainWindow, QMenu,
-                             QMessageBox, QSizePolicy, QSlider, QStyle,
-                             QToolBar, QToolButton, QVBoxLayout, QWidget, qApp)
+                             QMessageBox, QPushButton, QSizePolicy, QSlider,
+                             QStyle, QStyleFactory, QToolBar, QVBoxLayout,
+                             QWidget, qApp)
 
 from ffmpy import FFmpeg
 
@@ -53,6 +54,8 @@ class VideoCutter(QWidget):
         self.mediaPlayer = QMediaPlayer(None, QMediaPlayer.VideoSurface)
         self.videoWidget = VideoWidget()
 
+        QFontDatabase.addApplicationFont(os.path.join(self.getFilePath(), 'fonts', 'DroidSansMono.ttf'))
+
         self.FFMPEG_bin = 'ffmpeg'
         if sys.platform == 'win32':
             self.FFMPEG_bin = os.path.join(self.getFilePath(), 'bin', 'ffmpeg.exe')
@@ -65,20 +68,16 @@ class VideoCutter(QWidget):
         self.initActions()
         self.initToolbar()
 
-        sliderQSS = '''QSlider:horizontal {
-    margin: 10px 5px;
-}
-
+        sliderQSS = '''QSlider:horizontal { margin: 12px 5px; }
 QSlider::groove:horizontal {
     border: 1px solid #999;
-    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #B1B1B1, stop:1 #c4c4c4);
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #B1B1B1, stop:1 #f4f4f4);
     height: 8px;
     position: absolute;
     left: 2px;
     right: 2px;
     margin: -2px 0;
 }
-
 QSlider::sub-page:horizontal {
     border: 1px solid #999;
     background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #0083c5, stop:1 #c8dbf9);
@@ -88,18 +87,22 @@ QSlider::sub-page:horizontal {
     right: 2px;
     margin: -2px 0;
 }
-
 QSlider::handle:horizontal {
-    background: #FAFAFA;
+    background: #FEFEFE;
     border: 1px solid #777;
-    width: 18px;
-    margin: -3px -2px;
+    width: 10px;
+    height: 12px;
+    margin: -12px -2px;
     border-radius: 2px;
+}
+QSlider::handle:horizontal:hover {
+    background: rgba(77, 77, 77, 0.65);
 }'''
 
         self.positionSlider = QSlider(Qt.Horizontal, statusTip='Set video frame position', sliderMoved=self.setPosition)
         self.positionSlider.setObjectName('PositionSlider')
         self.positionSlider.setRange(0, 0)
+        self.positionSlider.setStyle(QStyleFactory.create('Windows'))
         self.positionSlider.setStyleSheet(sliderQSS)
         self.positionSlider.installEventFilter(self)
 
@@ -110,10 +113,7 @@ QSlider::handle:horizontal {
         self.cutlist.setUniformItemSizes(True)
         self.cutlist.setContextMenuPolicy(Qt.CustomContextMenu)
         self.cutlist.setFixedWidth(150)
-        listfont = QFont('Droid Sans Mono')
-        listfont.setStyleHint(QFont.Monospace)
-        self.cutlist.setFont(listfont)
-        self.cutlist.setStyleSheet('QListView::item { margin-bottom:15px; }')
+        self.cutlist.setStyleSheet('QListView { font-family:Droid Sans Mono; font-size:10.35pt; } QListView::item { margin-bottom:15px; }')
 
         self.movieLabel = QLabel('No movie loaded')
         self.movieLabel.setStyleSheet('font-size:16px; font-weight:bold; font-family:sans-serif;')
@@ -129,17 +129,14 @@ QSlider::handle:horizontal {
         self.videoLayout.addWidget(self.cutlist)
 
         self.timeCounter = QLabel('00:00:00 / 00:00:00')
-        timefont = QFont('Droid Sans Mono')
-        timefont.setStyleHint(QFont.Monospace)
-        self.timeCounter.setFont(timefont)
-        self.timeCounter.setStyleSheet('font-size:13px; color:#666; margin-right:150px; margin-bottom:6px;')
+        self.timeCounter.setStyleSheet('font-family:Droid Sans Mono; font-size:10.35pt; color:#444; margin-right:150px; margin-bottom:6px;')
 
         timerLayout = QHBoxLayout()
         timerLayout.addStretch(1)
         timerLayout.addWidget(self.timeCounter)
         timerLayout.addStretch(1)
 
-        self.muteButton = QToolButton(statusTip='Toggle audio mute', clicked=self.muteAudio)
+        self.muteButton = QPushButton(statusTip='Toggle audio mute', clicked=self.muteAudio)
         self.muteButton.setIcon(self.unmuteIcon)
         self.muteButton.setToolTip('Mute')
         self.volumeSlider = QSlider(Qt.Horizontal, statusTip='Adjust volume level', sliderMoved=self.setVolume)
