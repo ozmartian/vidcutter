@@ -8,7 +8,7 @@ import subprocess
 import sys
 
 from PyQt5.QtCore import QDir, QEvent, QSize, Qt, QTime, QUrl
-from PyQt5.QtGui import QDropEvent, QFontDatabase, QIcon, QPalette
+from PyQt5.QtGui import QFontDatabase, QIcon, QPalette
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtWidgets import (QAction, QApplication, QFileDialog, QHBoxLayout,
