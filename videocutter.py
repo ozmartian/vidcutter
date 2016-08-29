@@ -8,7 +8,7 @@ import subprocess
 import sys
 
 from PyQt5.QtCore import QDir, QEvent, QSize, Qt, QTime, QUrl
-from PyQt5.QtGui import QFont, QFontDatabase, QIcon, QPalette, QPixmap
+from PyQt5.QtGui import QDropEvent, QFontDatabase, QIcon, QPalette
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtWidgets import (QAction, QApplication, QFileDialog, QHBoxLayout,
@@ -96,7 +96,7 @@ QSlider::handle:horizontal {
     border-radius: 2px;
 }
 QSlider::handle:horizontal:hover {
-    background: rgba(77, 77, 77, 0.65);
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #AAA, stop:1 #CCC);
 }'''
 
         self.positionSlider = QSlider(Qt.Horizontal, statusTip='Set video frame position', sliderMoved=self.setPosition)
@@ -129,7 +129,7 @@ QSlider::handle:horizontal:hover {
         self.videoLayout.addWidget(self.cutlist)
 
         self.timeCounter = QLabel('00:00:00 / 00:00:00')
-        self.timeCounter.setStyleSheet('font-family:Droid Sans Mono; font-size:10.35pt; color:#444; margin-right:150px; margin-bottom:6px;')
+        self.timeCounter.setStyleSheet('font-family:Droid Sans Mono; font-size:10.35pt; color:#444; margin-top:-2px; margin-right:150px; margin-bottom:6px;')
 
         timerLayout = QHBoxLayout()
         timerLayout.addStretch(1)
@@ -265,15 +265,18 @@ QSlider::handle:horizontal:hover {
     def openFile(self):
         filename, _ = QFileDialog.getOpenFileName(parent=self.parent, caption='Select video', directory=QDir.homePath())
         if filename != '':
-            self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(filename)))
-            self.initMediaControls(True)
-            self.cutlist.clear()
-            self.cutTimes = []
-            self.parent.setWindowTitle('VideoCutter - %s' % os.path.basename(filename))
-            if not self.movieLoaded:
-                self.videoLayout.replaceWidget(self.movieLabel, self.videoWidget)
-                self.movieLabel.deleteLater()
-                self.movieLoaded = True
+            self.loadFile(filename)
+
+    def loadFile(self, filename):
+        self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(filename)))
+        self.initMediaControls(True)
+        self.cutlist.clear()
+        self.cutTimes = []
+        self.parent.setWindowTitle('VideoCutter - %s' % os.path.basename(filename))
+        if not self.movieLoaded:
+            self.videoLayout.replaceWidget(self.movieLabel, self.videoWidget)
+            self.movieLabel.deleteLater()
+            self.movieLoaded = True
 
     def playVideo(self):
         if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
@@ -358,6 +361,14 @@ QSlider::handle:horizontal:hover {
     def deltaToQTime(millisecs):
         secs = millisecs / 1000
         return QTime((secs / 3600) % 60, (secs / 60) % 60, secs % 60, (secs * 1000) % 1000)
+
+    def videoSnapshot(self, snaptime):
+        filename = 'vidframe.png'
+        ff = FFmpeg(
+            executable=self.FFMPEG_bin,
+            inputs={self.mediaPlayer.currentMedia().canonicalUrl().toLocalFile(): None},
+            outputs={filename: '-ss %s -vframes 1' % snaptime.toString(self.timeformat)}
+        )
 
     def cutVideo(self):
         self.setCursor(Qt.BusyCursor)
@@ -444,7 +455,7 @@ QSlider::handle:horizontal:hover {
         if len(self.finalFilename) and os.path.exists(self.finalFilename):
             dirname = os.path.dirname(self.finalFilename)
             if sys.platform == 'win32':
-                cmd = 'C:\\Windows\\explorer.exe %s' % dirname
+                cmd = 'C:\\Windows\\explorer.exe "%s"' % dirname
             elif sys.platform == 'darwin':
                 cmd = 'open %s' % dirname
             else:
@@ -472,6 +483,13 @@ QSlider::handle:horizontal:hover {
                 self.mediaPlayer.setPosition(object.sliderPosition())
         return QWidget.eventFilter(self, object, event)
 
+    def dropEvent(self, event):
+        if event.mimeData().hasUrls():
+            print(event.mimeData())
+            event.accept()
+        else:
+            event.ignore()
+
     def handleError(self):
         self.unsetCursor()
         self.initMediaControls(False)
@@ -490,7 +508,16 @@ class MainWindow(QMainWindow):
         self.setWindowIcon(QIcon(os.path.join(VideoCutter.getFilePath(), 'icons', 'videocutter.png')))
         self.cutter = VideoCutter(self)
         self.setCentralWidget(self.cutter)
+        self.setAcceptDrops(True)
         self.resize(800, 600)
+
+    def dragEnterEvent(self, event):
+        if event.mimeData().hasUrls():
+            event.accept()
+
+    def dropEvent(self, event):
+        filename = event.mimeData().urls()[0].toLocalFile()
+        self.cutter.loadFile(filename)
 
     def closeEvent(self, event):
         self.cutter.deleteLater()
