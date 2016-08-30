@@ -37,7 +37,7 @@ class VideoWidget(QVideoWidget):
             self.setFullScreen(False)
             event.accept()
         elif event.key() == Qt.Key_Enter and not self.isFullScreen():
-            self.setFullScreen(not self.isFullScreen())
+            self.setFullScreen(True)
             event.accept()
         else:
             super(VideoWidget, self).keyPressEvent(event)
@@ -48,7 +48,7 @@ class VideoWidget(QVideoWidget):
 
 
 class VideoCutter(QWidget):
-    def __init__(self, parent):
+    def __init__(self, parent=None):
         super(VideoCutter, self).__init__(parent)
         self.parent = parent
         self.mediaPlayer = QMediaPlayer(None, QMediaPlayer.VideoSurface)
@@ -71,7 +71,7 @@ class VideoCutter(QWidget):
         sliderQSS = '''QSlider:horizontal { margin: 12px 5px; }
 QSlider::groove:horizontal {
     border: 1px solid #999;
-    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #B1B1B1, stop:1 #f4f4f4);
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFF, stop:1 #FFF);
     height: 8px;
     position: absolute;
     left: 2px;
@@ -80,7 +80,7 @@ QSlider::groove:horizontal {
 }
 QSlider::sub-page:horizontal {
     border: 1px solid #999;
-    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #0083c5, stop:1 #c8dbf9);
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #59acff, stop:1 #59acff);
     height: 8px;
     position: absolute;
     left: 2px;
@@ -88,7 +88,7 @@ QSlider::sub-page:horizontal {
     margin: -2px 0;
 }
 QSlider::handle:horizontal {
-    background: #FEFEFE;
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #CCC, stop:1 #BBB);
     border: 1px solid #777;
     width: 10px;
     height: 12px;
@@ -96,14 +96,16 @@ QSlider::handle:horizontal {
     border-radius: 2px;
 }
 QSlider::handle:horizontal:hover {
-    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #AAA, stop:1 #CCC);
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #AAA, stop:1 #888);
 }'''
 
         self.positionSlider = QSlider(Qt.Horizontal, statusTip='Set video frame position', sliderMoved=self.setPosition)
         self.positionSlider.setObjectName('PositionSlider')
+        self.positionSlider.setSingleStep(1)
         self.positionSlider.setRange(0, 0)
         self.positionSlider.setStyle(QStyleFactory.create('Windows'))
         self.positionSlider.setStyleSheet(sliderQSS)
+        self.positionSlider.setCursor(Qt.PointingHandCursor)
         self.positionSlider.installEventFilter(self)
 
         sliderLayout = QHBoxLayout()
@@ -129,7 +131,7 @@ QSlider::handle:horizontal:hover {
         self.videoLayout.addWidget(self.cutlist)
 
         self.timeCounter = QLabel('00:00:00 / 00:00:00')
-        self.timeCounter.setStyleSheet('font-family:Droid Sans Mono; font-size:10.35pt; color:#444; margin-top:-2px; margin-right:150px; margin-bottom:6px;')
+        self.timeCounter.setStyleSheet('font-family:Droid Sans Mono; font-size:10pt; color:#666; margin-top:-2px; margin-right:150px; margin-bottom:6px;')
 
         timerLayout = QHBoxLayout()
         timerLayout.addStretch(1)
@@ -137,9 +139,12 @@ QSlider::handle:horizontal:hover {
         timerLayout.addStretch(1)
 
         self.muteButton = QPushButton(statusTip='Toggle audio mute', clicked=self.muteAudio)
+        self.muteButton.setCursor(Qt.PointingHandCursor)
+        self.muteButton.setFlat(True)
         self.muteButton.setIcon(self.unmuteIcon)
         self.muteButton.setToolTip('Mute')
         self.volumeSlider = QSlider(Qt.Horizontal, statusTip='Adjust volume level', sliderMoved=self.setVolume)
+        self.volumeSlider.setCursor(Qt.PointingHandCursor)
         self.volumeSlider.setToolTip('Volume')
         self.volumeSlider.setValue(50)
         self.volumeSlider.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Minimum)
@@ -147,8 +152,9 @@ QSlider::handle:horizontal:hover {
 
         controlsLayout = QHBoxLayout()
         controlsLayout.addStretch(1)
-        controlsLayout.addWidget(self.lefttoolbar)
-        controlsLayout.addWidget(self.centertoolbar)
+        controlsLayout.addWidget(self.toolbar)
+        controlsLayout.addWidget(QLabel('    '))
+        controlsLayout.addWidget(self.cuttoolbar)
         controlsLayout.addStretch(1)
         controlsLayout.addWidget(self.muteButton)
         controlsLayout.addWidget(self.volumeSlider)
@@ -194,23 +200,23 @@ QSlider::handle:horizontal:hover {
         self.removeAllAction = QAction(self.removeAllIcon, 'Clear list', self, statusTip='Remove all clips from list', triggered=self.clearList, enabled=False)
 
     def initToolbar(self):
-        self.lefttoolbar = QToolBar()
-        self.lefttoolbar.setStyleSheet('QToolBar QToolButton { min-width:82px; font-size:14px; }')
-        self.lefttoolbar.setFloatable(False)
-        self.lefttoolbar.setMovable(False)
-        self.lefttoolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        self.lefttoolbar.setIconSize(QSize(24, 24))
-        self.lefttoolbar.addAction(self.openAction)
-        self.lefttoolbar.addAction(self.playAction)
-        self.lefttoolbar.addAction(self.saveAction)
-        self.centertoolbar = QToolBar()
-        self.centertoolbar.setStyleSheet('QToolBar QToolButton { font-size:14px; }')
-        self.centertoolbar.setFloatable(False)
-        self.centertoolbar.setMovable(False)
-        self.centertoolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        self.centertoolbar.setIconSize(QSize(24, 24))
-        self.centertoolbar.addAction(self.cutStartAction)
-        self.centertoolbar.addAction(self.cutEndAction)
+        self.toolbar = QToolBar()
+        self.toolbar.setStyleSheet('QToolBar QToolButton { min-width:82px; font-size:14px; }')
+        self.toolbar.setFloatable(False)
+        self.toolbar.setMovable(False)
+        self.toolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.toolbar.setIconSize(QSize(24, 24))
+        self.toolbar.addAction(self.openAction)
+        self.toolbar.addAction(self.playAction)
+        self.toolbar.addAction(self.saveAction)
+        self.cuttoolbar = QToolBar()
+        self.cuttoolbar.setStyleSheet('QToolBar QToolButton { min-width:82px; font-size:14px; }')
+        self.cuttoolbar.setFloatable(False)
+        self.cuttoolbar.setMovable(False)
+        self.cuttoolbar.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
+        self.cuttoolbar.setIconSize(QSize(24, 24))
+        self.cuttoolbar.addAction(self.cutStartAction)
+        self.cuttoolbar.addAction(self.cutEndAction)
 
     def itemMenu(self, pos):
         globalPos = self.cutlist.mapToGlobal(pos)
@@ -286,9 +292,9 @@ QSlider::handle:horizontal:hover {
 
     def initMediaControls(self, flag=True):
         self.playAction.setEnabled(flag)
+        self.saveAction.setEnabled(False)
         self.cutStartAction.setEnabled(flag)
         self.cutEndAction.setEnabled(False)
-        self.saveAction.setEnabled(False)
 
     def setPosition(self, position):
         if self.mediaPlayer.isVideoAvailable():
@@ -361,14 +367,6 @@ QSlider::handle:horizontal:hover {
     def deltaToQTime(millisecs):
         secs = millisecs / 1000
         return QTime((secs / 3600) % 60, (secs / 60) % 60, secs % 60, (secs * 1000) % 1000)
-
-    def videoSnapshot(self, snaptime):
-        filename = 'vidframe.png'
-        ff = FFmpeg(
-            executable=self.FFMPEG_bin,
-            inputs={self.mediaPlayer.currentMedia().canonicalUrl().toLocalFile(): None},
-            outputs={filename: '-ss %s -vframes 1' % snaptime.toString(self.timeformat)}
-        )
 
     def cutVideo(self):
         self.setCursor(Qt.BusyCursor)
@@ -501,8 +499,8 @@ QSlider::handle:horizontal:hover {
 
 
 class MainWindow(QMainWindow):
-    def __init__(self, parent=None, flags=Qt.Window):
-        super(MainWindow, self).__init__(parent, flags)
+    def __init__(self, parent=None):
+        super(MainWindow, self).__init__(parent)
         self.statusBar().showMessage('Ready')
         self.setWindowTitle('VideoCutter')
         self.setWindowIcon(QIcon(os.path.join(VideoCutter.getFilePath(), 'icons', 'videocutter.png')))
