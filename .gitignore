@@ -4,5 +4,4 @@ __pycache__
 .vscode/
 build/
 dist/
-videocutter.log
-videocutter.spec
+*.log

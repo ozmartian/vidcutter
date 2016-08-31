@@ -14,8 +14,8 @@ from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtWidgets import (QAction, QApplication, QFileDialog, QHBoxLayout,
                              QLabel, QListWidget, QMainWindow, QMenu,
                              QMessageBox, QPushButton, QSizePolicy, QSlider,
-                             QStyle, QStyleFactory, QToolBar, QVBoxLayout,
-                             QWidget, qApp)
+                             QStyle, QStyleFactory, QToolBar, QToolButton,
+                             QVBoxLayout, QWidget, qApp)
 
 from ffmpy import FFmpeg
 
@@ -99,13 +99,10 @@ QSlider::handle:horizontal:hover {
     background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #AAA, stop:1 #888);
 }'''
 
-        self.positionSlider = QSlider(Qt.Horizontal, statusTip='Set video frame position', sliderMoved=self.setPosition)
-        self.positionSlider.setObjectName('PositionSlider')
-        self.positionSlider.setSingleStep(1)
-        self.positionSlider.setRange(0, 0)
+        self.positionSlider = QSlider(Qt.Horizontal, statusTip='Set video frame position', objectName='PositionSlider',
+                                      cursor=Qt.PointingHandCursor, minimum=0, maximum=0, singleStep=1,
+                                      styleSheet=sliderQSS, sliderMoved=self.setPosition)
         self.positionSlider.setStyle(QStyleFactory.create('Windows'))
-        self.positionSlider.setStyleSheet(sliderQSS)
-        self.positionSlider.setCursor(Qt.PointingHandCursor)
         self.positionSlider.installEventFilter(self)
 
         sliderLayout = QHBoxLayout()
@@ -118,7 +115,7 @@ QSlider::handle:horizontal:hover {
         self.cutlist.setStyleSheet('QListView { font-family:Droid Sans Mono; font-size:10.35pt; } QListView::item { margin-bottom:15px; }')
 
         self.movieLabel = QLabel('No movie loaded')
-        self.movieLabel.setStyleSheet('font-size:16px; font-weight:bold; font-family:sans-serif;')
+        self.movieLabel.setStyleSheet('padding-top:300px; padding-right:50px; background:#444 url("icons/app.png") center center no-repeat; font-size:16px; font-weight:bold; font-family:sans-serif;')
         self.movieLabel.setAlignment(Qt.AlignCenter)
         self.movieLabel.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
         self.movieLabel.setBackgroundRole(QPalette.Dark)
@@ -138,19 +135,20 @@ QSlider::handle:horizontal:hover {
         timerLayout.addWidget(self.timeCounter)
         timerLayout.addStretch(1)
 
-        self.muteButton = QPushButton(statusTip='Toggle audio mute', clicked=self.muteAudio)
-        self.muteButton.setCursor(Qt.PointingHandCursor)
-        self.muteButton.setFlat(True)
-        self.muteButton.setIcon(self.unmuteIcon)
-        self.muteButton.setToolTip('Mute')
-        self.volumeSlider = QSlider(Qt.Horizontal, statusTip='Adjust volume level', sliderMoved=self.setVolume)
-        self.volumeSlider.setCursor(Qt.PointingHandCursor)
-        self.volumeSlider.setToolTip('Volume')
-        self.volumeSlider.setValue(50)
-        self.volumeSlider.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Minimum)
-        self.volumeSlider.setRange(0, 100)
+        self.muteButton = QPushButton(icon=self.unmuteIcon, flat=True, toolTip='Mute', statusTip='Toggle audio mute',
+                                      cursor=Qt.PointingHandCursor, clicked=self.muteAudio)
+
+        self.volumeSlider = QSlider(Qt.Horizontal, toolTip='Volume', statusTip='Adjust volume level', cursor=Qt.PointingHandCursor,
+                                    value=50, sizePolicy=QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Minimum),
+                                    minimum=0, maximum=100, sliderMoved=self.setVolume)
+
+        # self.aboutApp = QPushButton(icon=self.appIcon, flat=True, toolTip='About', statusTip='About VideoCutter',
+        #                            iconSize=QSize(50, 50), cursor=Qt.PointingHandCursor, clicked=self.aboutInfo)
 
         controlsLayout = QHBoxLayout()
+        # controlsLayout.setContentsMargins(10, 10, 5, 5)
+        # controlsLayout.addStretch(1)
+        # controlsLayout.addWidget(self.aboutApp)
         controlsLayout.addStretch(1)
         controlsLayout.addWidget(self.toolbar)
         controlsLayout.addWidget(QLabel('    '))
@@ -174,6 +172,7 @@ QSlider::handle:horizontal:hover {
         self.mediaPlayer.error.connect(self.handleError)
 
     def initIcons(self):
+        self.appIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'app.png'))
         self.openIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'open.png'))
         self.playIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'play.png'))
         self.pauseIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'pause.png'))
@@ -267,6 +266,26 @@ QSlider::handle:horizontal:hover {
         self.cutTimes.clear()
         self.cutlist.clear()
         self.initMediaControls()
+
+    def aboutInfo(self):
+        aboutApp = '''<style>
+    a { color:#441d4e; text-decoration:none; font-weight:bold; }
+    a:hover { text-decoration:underline; }
+</style>
+<h1>VideoCutter</h1>
+<h3 style="font-weight:normal;"><b>Version:</b> 1.0.0</h3>
+<p>Copyright &copy; 2016 <a href="mailto:pete@ozmartians.com">Pete Alexandrou</a></p>
+<p style="font-size:13px">
+    A special thanks & acknowledgements to the teams behind the <b>PyQt5</b> and <b>FFmpeg</b> software projects.
+    None of this would be possible without you!
+</p>
+<p style="font-size:11px">
+    This program is free software; you can redistribute it and/or
+    modify it under the terms of the GNU General Public License
+    as published by the Free Software Foundation; either version 2
+    of the License, or (at your option) any later version.
+</p>'''
+        QMessageBox.about(self, 'About VideoCutter', aboutApp)
 
     def openFile(self):
         filename, _ = QFileDialog.getOpenFileName(parent=self.parent, caption='Select video', directory=QDir.homePath())
@@ -502,11 +521,11 @@ class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
         self.statusBar().showMessage('Ready')
-        self.setWindowTitle('VideoCutter')
-        self.setWindowIcon(QIcon(os.path.join(VideoCutter.getFilePath(), 'icons', 'videocutter.png')))
         self.cutter = VideoCutter(self)
         self.setCentralWidget(self.cutter)
         self.setAcceptDrops(True)
+        self.setWindowTitle('VideoCutter')
+        self.setWindowIcon(self.cutter.appIcon)
         self.resize(800, 600)
 
     def dragEnterEvent(self, event):
