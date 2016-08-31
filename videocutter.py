@@ -114,8 +114,8 @@ QSlider::handle:horizontal:hover {
         self.cutlist.setFixedWidth(150)
         self.cutlist.setStyleSheet('QListView { font-family:Droid Sans Mono; font-size:10.35pt; } QListView::item { margin-bottom:15px; }')
 
-        self.movieLabel = QLabel('No movie loaded')
-        self.movieLabel.setStyleSheet('padding-top:300px; padding-right:50px; background:#444 url("icons/app.png") center center no-repeat; font-size:16px; font-weight:bold; font-family:sans-serif;')
+        self.movieLabel = QLabel('No video loaded')
+        self.movieLabel.setStyleSheet('font-size:16px; font-weight:bold; font-family:sans-serif;')
         self.movieLabel.setAlignment(Qt.AlignCenter)
         self.movieLabel.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
         self.movieLabel.setBackgroundRole(QPalette.Dark)
@@ -142,13 +142,13 @@ QSlider::handle:horizontal:hover {
                                     value=50, sizePolicy=QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Minimum),
                                     minimum=0, maximum=100, sliderMoved=self.setVolume)
 
-        # self.aboutApp = QPushButton(icon=self.appIcon, flat=True, toolTip='About', statusTip='About VideoCutter',
-        #                            iconSize=QSize(50, 50), cursor=Qt.PointingHandCursor, clicked=self.aboutInfo)
+        self.aboutApp = QPushButton(icon=self.appIcon, flat=True, toolTip='About', statusTip='About VideoCutter',
+                                    iconSize=QSize(50, 50), cursor=Qt.PointingHandCursor, clicked=self.aboutInfo)
 
         controlsLayout = QHBoxLayout()
-        # controlsLayout.setContentsMargins(10, 10, 5, 5)
-        # controlsLayout.addStretch(1)
-        # controlsLayout.addWidget(self.aboutApp)
+        controlsLayout.setContentsMargins(10, 10, 5, 5)
+        controlsLayout.addStretch(1)
+        controlsLayout.addWidget(self.aboutApp)
         controlsLayout.addStretch(1)
         controlsLayout.addWidget(self.toolbar)
         controlsLayout.addWidget(QLabel('    '))
@@ -172,7 +172,7 @@ QSlider::handle:horizontal:hover {
         self.mediaPlayer.error.connect(self.handleError)
 
     def initIcons(self):
-        self.appIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'app.png'))
+        self.appIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'videocutter.png'))
         self.openIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'open.png'))
         self.playIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'play.png'))
         self.pauseIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'pause.png'))
@@ -316,7 +316,10 @@ QSlider::handle:horizontal:hover {
         self.cutEndAction.setEnabled(False)
 
     def setPosition(self, position):
-        if self.mediaPlayer.isVideoAvailable():
+        # if self.deltaToQTime(self.mediaPlayer.position()).__lt__(self.cutTimes[len(self.cutTimes)-1]:
+        #    self.positionSlider.setPosition
+        if not self.cutStartAction.isEnabled() and self.cutEndAction.isEnabled():
+            item = self.cutTimes[len(self.cutTimes) - 1]
             if self.mediaPlayer.state() == QMediaPlayer.StoppedState:
                 self.mediaPlayer.play()
             self.mediaPlayer.pause()
@@ -355,6 +358,7 @@ QSlider::handle:horizontal:hover {
 
     def cutStart(self):
         self.cutTimes.append([self.deltaToQTime(self.mediaPlayer.position())])
+        self.positionSlider.setRestrictValue(self.mediaPlayer.position())
         self.cutStartAction.setDisabled(True)
         self.cutEndAction.setEnabled(True)
         self.renderTimes()
@@ -366,6 +370,7 @@ QSlider::handle:horizontal:hover {
             QMessageBox.critical(self, 'Invalid END Time', 'The clip end time must come AFTER it\'s start time. Please try again.')
             return
         item.append(selected)
+        self.positionSlider.setRestrictValue(0)
         self.cutStartAction.setEnabled(True)
         self.cutEndAction.setDisabled(True)
         self.renderTimes()
@@ -493,12 +498,12 @@ QSlider::handle:horizontal:hover {
             return sys._MEIPASS
         return os.path.dirname(os.path.realpath(sys.argv[0]))
 
-    def eventFilter(self, object, event):
-        if event.type() == QEvent.MouseButtonRelease and isinstance(object, QSlider):
-            if object.objectName() == 'PositionSlider' and (self.mediaPlayer.isVideoAvailable() or self.mediaPlayer.isAudioAvailable()):
-                object.setValue(QStyle.sliderValueFromPosition(object.minimum(), object.maximum(), event.x(), object.width()))
-                self.mediaPlayer.setPosition(object.sliderPosition())
-        return QWidget.eventFilter(self, object, event)
+    def eventFilter(self, obj, event):
+        if event.type() == QEvent.MouseButtonRelease and isinstance(obj, QSlider):
+            if obj.objectName() == 'PositionSlider' and (self.mediaPlayer.isVideoAvailable() or self.mediaPlayer.isAudioAvailable()):
+                obj.setValue(QStyle.sliderValueFromPosition(obj.minimum(), obj.maximum(), event.x(), obj.width()))
+                self.mediaPlayer.setPosition(obj.sliderPosition())
+        return QWidget.eventFilter(self, obj, event)
 
     def dropEvent(self, event):
         if event.mimeData().hasUrls():
