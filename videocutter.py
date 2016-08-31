@@ -11,10 +11,10 @@ from PyQt5.QtCore import QDir, QEvent, QSize, Qt, QTime, QUrl
 from PyQt5.QtGui import QFontDatabase, QIcon, QPalette
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
-from PyQt5.QtWidgets import (QAction, QApplication, QFileDialog, QHBoxLayout,
+from PyQt5.QtWidgets import (QAction, QAbstractSlider, QApplication, QFileDialog, QHBoxLayout,
                              QLabel, QListWidget, QMainWindow, QMenu,
                              QMessageBox, QPushButton, QSizePolicy, QSlider,
-                             QStyle, QStyleFactory, QToolBar, QToolButton,
+                             QStyle, QStyleFactory, QToolBar,
                              QVBoxLayout, QWidget, qApp)
 
 from ffmpy import FFmpeg
@@ -103,24 +103,20 @@ QSlider::handle:horizontal:hover {
                                       cursor=Qt.PointingHandCursor, minimum=0, maximum=0, singleStep=1,
                                       styleSheet=sliderQSS, sliderMoved=self.setPosition)
         self.positionSlider.setStyle(QStyleFactory.create('Windows'))
+        self.positionSlider.setTickPosition(QSlider.TicksBothSides)
+        self.positionSlider.setTickInterval(1)
         self.positionSlider.installEventFilter(self)
 
-        sliderLayout = QHBoxLayout()
-        sliderLayout.addWidget(self.positionSlider)
+        self.movieLabel = QLabel(alignment=Qt.AlignCenter, autoFillBackground=True, textFormat=Qt.RichText,
+                                 sizePolicy=QSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored),
+                                 styleSheet='font-size:20px; font-weight:bold; font-family:sans-serif;')
+        self.movieLabel.setBackgroundRole(QPalette.Dark)
+        self.movieLabel.setText('<img src="icons/videocutter.png" /><br/>No video loaded')
+        self.movieLoaded = False
 
-        self.cutlist = QListWidget(customContextMenuRequested=self.itemMenu)
-        self.cutlist.setUniformItemSizes(True)
-        self.cutlist.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.cutlist = QListWidget(contextMenuPolicy=Qt.CustomContextMenu, uniformItemSizes=True, customContextMenuRequested=self.itemMenu)
         self.cutlist.setFixedWidth(150)
         self.cutlist.setStyleSheet('QListView { font-family:Droid Sans Mono; font-size:10.35pt; } QListView::item { margin-bottom:15px; }')
-
-        self.movieLabel = QLabel('No video loaded')
-        self.movieLabel.setStyleSheet('font-size:16px; font-weight:bold; font-family:sans-serif;')
-        self.movieLabel.setAlignment(Qt.AlignCenter)
-        self.movieLabel.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
-        self.movieLabel.setBackgroundRole(QPalette.Dark)
-        self.movieLabel.setAutoFillBackground(True)
-        self.movieLoaded = False
 
         self.videoLayout = QHBoxLayout()
         self.videoLayout.setContentsMargins(0, 0, 0, 0)
@@ -135,6 +131,9 @@ QSlider::handle:horizontal:hover {
         timerLayout.addWidget(self.timeCounter)
         timerLayout.addStretch(1)
 
+        self.aboutApp = QPushButton(icon=self.aboutIcon, flat=True, toolTip='About', statusTip='About VideoCutter',
+                                    iconSize=QSize(22, 22), cursor=Qt.PointingHandCursor, clicked=self.aboutInfo)
+
         self.muteButton = QPushButton(icon=self.unmuteIcon, flat=True, toolTip='Mute', statusTip='Toggle audio mute',
                                       cursor=Qt.PointingHandCursor, clicked=self.muteAudio)
 
@@ -142,12 +141,7 @@ QSlider::handle:horizontal:hover {
                                     value=50, sizePolicy=QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Minimum),
                                     minimum=0, maximum=100, sliderMoved=self.setVolume)
 
-        self.aboutApp = QPushButton(icon=self.appIcon, flat=True, toolTip='About', statusTip='About VideoCutter',
-                                    iconSize=QSize(50, 50), cursor=Qt.PointingHandCursor, clicked=self.aboutInfo)
-
         controlsLayout = QHBoxLayout()
-        controlsLayout.setContentsMargins(10, 10, 5, 5)
-        controlsLayout.addStretch(1)
         controlsLayout.addWidget(self.aboutApp)
         controlsLayout.addStretch(1)
         controlsLayout.addWidget(self.toolbar)
@@ -161,8 +155,9 @@ QSlider::handle:horizontal:hover {
         layout.setContentsMargins(10, 10, 10, 4)
         layout.addLayout(self.videoLayout)
         layout.addLayout(timerLayout)
-        layout.addLayout(sliderLayout)
+        layout.addWidget(self.positionSlider)
         layout.addLayout(controlsLayout)
+
         self.setLayout(layout)
 
         self.mediaPlayer.setVideoOutput(self.videoWidget)
@@ -186,6 +181,7 @@ QSlider::handle:horizontal:hover {
         self.removeIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'remove.png'))
         self.removeAllIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'remove-all.png'))
         self.successIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'success.png'))
+        self.aboutIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'about.png'))
 
     def initActions(self):
         self.openAction = QAction(self.openIcon, 'Open', self, statusTip='Select video', triggered=self.openFile)
@@ -315,13 +311,18 @@ QSlider::handle:horizontal:hover {
         self.cutStartAction.setEnabled(flag)
         self.cutEndAction.setEnabled(False)
 
+    def actionTriggered(self, action):
+        # if action == QAbstractSlider.
+        pass
+
     def setPosition(self, position):
-        # if self.deltaToQTime(self.mediaPlayer.position()).__lt__(self.cutTimes[len(self.cutTimes)-1]:
-        #    self.positionSlider.setPosition
-        if not self.cutStartAction.isEnabled() and self.cutEndAction.isEnabled():
-            item = self.cutTimes[len(self.cutTimes) - 1]
-            if self.mediaPlayer.state() == QMediaPlayer.StoppedState:
-                self.mediaPlayer.play()
+        # if not self.cutStartAction.isEnabled() and self.cutEndAction.isEnabled():
+        #     item = self.cutTimes[len(self.cutTimes) - 1]
+        #     if self.deltaToQTime(self.mediaPlayer.position()).__lt__(item[0]):
+        #         position = item[0].msecsSinceStartOfDay()
+        #         self.positionSlider.blockSignals(True)
+        if self.mediaPlayer.state() == QMediaPlayer.StoppedState:
+            self.mediaPlayer.play()
             self.mediaPlayer.pause()
         self.mediaPlayer.setPosition(position)
 
@@ -358,7 +359,6 @@ QSlider::handle:horizontal:hover {
 
     def cutStart(self):
         self.cutTimes.append([self.deltaToQTime(self.mediaPlayer.position())])
-        self.positionSlider.setRestrictValue(self.mediaPlayer.position())
         self.cutStartAction.setDisabled(True)
         self.cutEndAction.setEnabled(True)
         self.renderTimes()
@@ -370,7 +370,6 @@ QSlider::handle:horizontal:hover {
             QMessageBox.critical(self, 'Invalid END Time', 'The clip end time must come AFTER it\'s start time. Please try again.')
             return
         item.append(selected)
-        self.positionSlider.setRestrictValue(0)
         self.cutStartAction.setEnabled(True)
         self.cutEndAction.setDisabled(True)
         self.renderTimes()
@@ -468,10 +467,13 @@ QSlider::handle:horizontal:hover {
     def externalPlayer(self):
         if len(self.finalFilename) and os.path.exists(self.finalFilename):
             if sys.platform == 'win32':
-                cmd = self.finalFilename
+                cmd = 'START /B /I "%s"' % self.finalFilename
+            elif sys.platform == 'darwin':
+                cmd = 'open "%s"' % self.finalFilename
             else:
-                cmd = 'xdg-open %s' % self.finalFilename
-            returncode = self.cmdexec(cmd)
+                cmd = 'xdg-open "%s"' % self.finalFilename
+            proc = self.cmdexec(cmd)
+            return proc.returncode
 
     def openFolder(self):
         if len(self.finalFilename) and os.path.exists(self.finalFilename):
@@ -479,18 +481,19 @@ QSlider::handle:horizontal:hover {
             if sys.platform == 'win32':
                 cmd = 'C:\\Windows\\explorer.exe "%s"' % dirname
             elif sys.platform == 'darwin':
-                cmd = 'open %s' % dirname
+                cmd = 'open "%s"' % dirname
             else:
-                cmd = 'xdg-open %s' % dirname
-            returncode = self.cmdexec(cmd)
+                cmd = 'xdg-open "%s"' % dirname
+            proc = self.cmdexec(cmd)
+            return proc.returncode
 
-    def cmdexec(self, cmd):
+    def cmdexec(self, cmd, shell=False):
         if sys.platform == 'win32':
             si = subprocess.STARTUPINFO()
             si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-            return subprocess.Popen(args=shlex.split(cmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE, startupinfo=si, env=os.environ, shell=False)
+            return subprocess.Popen(args=shlex.split(cmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE, startupinfo=si, env=os.environ, shell=shell)
         else:
-            return subprocess.Popen(args=shlex.split(cmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)    
+            return subprocess.Popen(args=shlex.split(cmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=shell)
 
     @staticmethod
     def getFilePath():
