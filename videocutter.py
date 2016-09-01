@@ -11,13 +11,14 @@ from PyQt5.QtCore import QDir, QEvent, QSize, Qt, QTime, QUrl
 from PyQt5.QtGui import QFontDatabase, QIcon, QPalette
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
-from PyQt5.QtWidgets import (QAction, QAbstractSlider, QApplication, QFileDialog, QHBoxLayout,
-                             QLabel, QListWidget, QMainWindow, QMenu,
-                             QMessageBox, QPushButton, QSizePolicy, QSlider,
-                             QStyle, QStyleFactory, QToolBar,
-                             QVBoxLayout, QWidget, qApp)
+from PyQt5.QtWidgets import (QAbstractSlider, QAction, QApplication,
+                             QFileDialog, QHBoxLayout, QLabel, QListWidget,
+                             QMainWindow, QMenu, QMessageBox, QPushButton,
+                             QSizePolicy, QSlider, QStyle, QStyleFactory,
+                             QToolBar, QVBoxLayout, QWidget, qApp)
 
 from ffmpy import FFmpeg
+from slider import VideoSlider
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 signal.signal(signal.SIGTERM, signal.SIG_DFL)
@@ -68,43 +69,7 @@ class VideoCutter(QWidget):
         self.initActions()
         self.initToolbar()
 
-        sliderQSS = '''QSlider:horizontal { margin: 12px 5px; }
-QSlider::groove:horizontal {
-    border: 1px solid #999;
-    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFF, stop:1 #FFF);
-    height: 8px;
-    position: absolute;
-    left: 2px;
-    right: 2px;
-    margin: -2px 0;
-}
-QSlider::sub-page:horizontal {
-    border: 1px solid #999;
-    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #59acff, stop:1 #59acff);
-    height: 8px;
-    position: absolute;
-    left: 2px;
-    right: 2px;
-    margin: -2px 0;
-}
-QSlider::handle:horizontal {
-    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #CCC, stop:1 #BBB);
-    border: 1px solid #777;
-    width: 10px;
-    height: 12px;
-    margin: -12px -2px;
-    border-radius: 2px;
-}
-QSlider::handle:horizontal:hover {
-    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #AAA, stop:1 #888);
-}'''
-
-        self.positionSlider = QSlider(Qt.Horizontal, statusTip='Set video frame position', objectName='PositionSlider',
-                                      cursor=Qt.PointingHandCursor, minimum=0, maximum=0, singleStep=1,
-                                      styleSheet=sliderQSS, sliderMoved=self.setPosition)
-        self.positionSlider.setStyle(QStyleFactory.create('Windows'))
-        self.positionSlider.setTickPosition(QSlider.TicksBothSides)
-        self.positionSlider.setTickInterval(1)
+        self.positionSlider = VideoSlider(objectName='VideoSlider', sliderMoved=self.setPosition)
         self.positionSlider.installEventFilter(self)
 
         self.movieLabel = QLabel(alignment=Qt.AlignCenter, autoFillBackground=True, textFormat=Qt.RichText,
@@ -502,8 +467,8 @@ QSlider::handle:horizontal:hover {
         return os.path.dirname(os.path.realpath(sys.argv[0]))
 
     def eventFilter(self, obj, event):
-        if event.type() == QEvent.MouseButtonRelease and isinstance(obj, QSlider):
-            if obj.objectName() == 'PositionSlider' and (self.mediaPlayer.isVideoAvailable() or self.mediaPlayer.isAudioAvailable()):
+        if event.type() == QEvent.MouseButtonRelease and isinstance(obj, VideoSlider):
+            if obj.objectName() == 'VideoSlider' and (self.mediaPlayer.isVideoAvailable() or self.mediaPlayer.isAudioAvailable()):
                 obj.setValue(QStyle.sliderValueFromPosition(obj.minimum(), obj.maximum(), event.x(), obj.width()))
                 self.mediaPlayer.setPosition(obj.sliderPosition())
         return QWidget.eventFilter(self, obj, event)
