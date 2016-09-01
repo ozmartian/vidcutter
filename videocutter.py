@@ -111,7 +111,7 @@ QSlider::handle:horizontal:hover {
                                  sizePolicy=QSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored),
                                  styleSheet='font-size:20px; font-weight:bold; font-family:sans-serif;')
         self.movieLabel.setBackgroundRole(QPalette.Dark)
-        self.movieLabel.setText('<img src="icons/videocutter.png" /><br/>No video loaded')
+        self.movieLabel.setText('<img src="%s" /><br/>No video loaded' % os.path.relpath(os.path.join(self.getFilePath(), 'icons', 'videocutter.png')))
         self.movieLoaded = False
 
         self.cutlist = QListWidget(contextMenuPolicy=Qt.CustomContextMenu, uniformItemSizes=True, customContextMenuRequested=self.itemMenu)
