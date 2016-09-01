@@ -11,14 +11,13 @@ from PyQt5.QtCore import QDir, QEvent, QSize, Qt, QTime, QUrl
 from PyQt5.QtGui import QFontDatabase, QIcon, QPalette
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
-from PyQt5.QtWidgets import (QAbstractSlider, QAction, QApplication,
+from PyQt5.QtWidgets import (QAction, QApplication,
                              QFileDialog, QHBoxLayout, QLabel, QListWidget,
                              QMainWindow, QMenu, QMessageBox, QPushButton,
-                             QSizePolicy, QSlider, QStyle, QStyleFactory,
-                             QToolBar, QVBoxLayout, QWidget, qApp)
+                             QSizePolicy, QSlider, QStyle, QToolBar, QVBoxLayout, QWidget, qApp)
 
 from ffmpy import FFmpeg
-from slider import VideoSlider
+from videoslider import VideoSlider
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 signal.signal(signal.SIGTERM, signal.SIG_DFL)
@@ -275,17 +274,10 @@ class VideoCutter(QWidget):
         self.saveAction.setEnabled(False)
         self.cutStartAction.setEnabled(flag)
         self.cutEndAction.setEnabled(False)
-
-    def actionTriggered(self, action):
-        # if action == QAbstractSlider.
-        pass
+        if flag:
+            self.positionSlider.setRestrictValue(0)
 
     def setPosition(self, position):
-        # if not self.cutStartAction.isEnabled() and self.cutEndAction.isEnabled():
-        #     item = self.cutTimes[len(self.cutTimes) - 1]
-        #     if self.deltaToQTime(self.mediaPlayer.position()).__lt__(item[0]):
-        #         position = item[0].msecsSinceStartOfDay()
-        #         self.positionSlider.blockSignals(True)
         if self.mediaPlayer.state() == QMediaPlayer.StoppedState:
             self.mediaPlayer.play()
             self.mediaPlayer.pause()
@@ -326,6 +318,7 @@ class VideoCutter(QWidget):
         self.cutTimes.append([self.deltaToQTime(self.mediaPlayer.position())])
         self.cutStartAction.setDisabled(True)
         self.cutEndAction.setEnabled(True)
+        self.positionSlider.setRestrictValue(self.positionSlider.value())
         self.renderTimes()
 
     def cutEnd(self):
@@ -337,6 +330,7 @@ class VideoCutter(QWidget):
         item.append(selected)
         self.cutStartAction.setEnabled(True)
         self.cutEndAction.setDisabled(True)
+        self.positionSlider.setRestrictValue(0)
         self.renderTimes()
 
     def renderTimes(self):
