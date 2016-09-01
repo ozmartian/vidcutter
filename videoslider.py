@@ -13,7 +13,7 @@ class VideoSlider(QSlider):
         self.sliderQSS = '''QSlider:horizontal { margin: 12px 5px; }
 QSlider::groove:horizontal {
     border: 1px inset #666;
-    background: #FFF; /* qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFF, stop:1 #FFF); */
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #CCC, stop:1 #FFF);
     height: 8px;
     position: absolute;
     left: 2px;
@@ -22,7 +22,7 @@ QSlider::groove:horizontal {
 }
 QSlider::sub-page:horizontal {
     border: 1px solid #999;
-    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #59acff, stop:1 #59acff);
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFF, stop:1 #6a4572);
     height: 8px;
     position: absolute;
     left: 2px;
@@ -30,8 +30,8 @@ QSlider::sub-page:horizontal {
     margin: -2px 0;
 }
 QSlider::handle:horizontal {
-    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #CCC, stop:1 #BBB);
-    border: 1px solid #777;
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #6a4572, stop:1 #6a4572);
+    border: 1px solid #444;
     width: 10px;
     height: 12px;
     margin: -12px -2px;
