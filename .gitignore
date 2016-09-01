@@ -6,3 +6,4 @@ build/
 dist/
 videocutter.*/
 *.log
+*.exe
