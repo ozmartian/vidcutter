@@ -11,9 +11,11 @@ from PyQt5.QtCore import QDir, QEvent, QSize, Qt, QTime, QUrl
 from PyQt5.QtGui import QFontDatabase, QIcon, QPalette
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
-from PyQt5.QtWidgets import (QAction, QApplication, QFileDialog, QHBoxLayout, QLabel, QListWidget,
-                             QMainWindow, QMenu, QMessageBox, QPushButton, QSizePolicy, QSlider,
-                             QStyle, QToolBar, QVBoxLayout, QWidget, qApp)
+from PyQt5.QtWidgets import (QAction, QApplication, QFileDialog, QHBoxLayout,
+                             QLabel, QListWidget, QMainWindow, QMenu,
+                             QMessageBox, QPushButton, QSizePolicy, QSlider,
+                             QStyle, QToolBar, QToolButton, QVBoxLayout,
+                             QWidget, qApp)
 
 from ffmpy import FFmpeg
 from videoslider import VideoSlider
@@ -114,8 +116,6 @@ class VideoCutter(QWidget):
         controlsLayout = QHBoxLayout()
         controlsLayout.addStretch(1)
         controlsLayout.addWidget(self.toolbar)
-        controlsLayout.addSpacing(1)
-        controlsLayout.addWidget(self.cuttoolbar)
         controlsLayout.addStretch(1)
         controlsLayout.addWidget(self.muteButton)
         controlsLayout.addWidget(self.volumeSlider)
@@ -157,11 +157,7 @@ class VideoCutter(QWidget):
     def initActions(self):
         self.openAction = QAction(self.openIcon, 'Open', self, statusTip='Select video', triggered=self.openFile)
         self.playAction = QAction(self.playIcon, 'Play', self, statusTip='Play video', triggered=self.playVideo,
-                                  enabled=False)
-        self.cutStartAction = QAction(self.cutStartIcon, 'Set Start', self, statusTip='Set start marker',
-                                      triggered=self.cutStart, enabled=False)
-        self.cutEndAction = QAction(self.cutEndIcon, 'Set End', self, statusTip='Set end marker', triggered=self.cutEnd,
-                                    enabled=False)
+                                  enabled=False)                                    
         self.saveAction = QAction(self.saveIcon, 'Save', self, statusTip='Save new video', triggered=self.cutVideo,
                                   enabled=False)
         self.moveItemUpAction = QAction(self.upIcon, 'Move Up', self, statusTip='Move clip position up in list',
@@ -179,24 +175,27 @@ class VideoCutter(QWidget):
         self.mediaInfoAction = QAction('Media Information', self, statusTip='Media information from loaded video file',
                                        triggered=self.mediaInfo, enabled=False)
 
+        self.cutStartAction = QToolButton(self, icon=self.cutStartIcon, text='Set Start', toolTip='Set Start',
+                                          toolButtonStyle=Qt.ToolButtonTextUnderIcon, statusTip='Set start marker', 
+                                          clicked=self.cutStart, enabled=False)
+        self.cutEndAction = QToolButton(self, icon=self.cutEndIcon, text='Set End', toolTip='Set End',
+                                        toolButtonStyle=Qt.ToolButtonTextUnderIcon, statusTip='Set end marker',
+                                        clicked=self.cutEnd, enabled=False)
+
     def initToolbar(self):
         self.toolbar = QToolBar()
-        self.toolbar.setStyleSheet('QToolBar QToolButton { min-width:82px; font-size:14px; }')
+        self.toolbar.setStyleSheet('QToolBar QToolButton { min-width:82px; margin-left:10px; margin-right:10px; font-size:14px; }')
         self.toolbar.setFloatable(False)
         self.toolbar.setMovable(False)
         self.toolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         self.toolbar.setIconSize(QSize(24, 24))
         self.toolbar.addAction(self.openAction)
         self.toolbar.addAction(self.playAction)
+        self.toolbar.addSeparator()
+        self.toolbar.addWidget(self.cutStartAction)
+        self.toolbar.addWidget(self.cutEndAction)
+        self.toolbar.addSeparator()
         self.toolbar.addAction(self.saveAction)
-        self.cuttoolbar = QToolBar()
-        self.cuttoolbar.setStyleSheet('QToolBar QToolButton { min-width:82px; font-size:14px; }')
-        self.cuttoolbar.setFloatable(False)
-        self.cuttoolbar.setMovable(False)
-        self.cuttoolbar.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
-        self.cuttoolbar.setIconSize(QSize(24, 24))
-        self.cuttoolbar.addAction(self.cutStartAction)
-        self.cuttoolbar.addAction(self.cutEndAction)
 
     def initMenu(self):
         self.aboutMenu = QMenu()
