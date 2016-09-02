@@ -10,10 +10,10 @@ class VideoSlider(QSlider):
     def __init__(self, *arg, **kwargs):
         super(QSlider, self).__init__(*arg, **kwargs)
 
-        self.sliderQSS = '''QSlider:horizontal { margin: 12px 5px; }
+        self.sliderQSS = '''QSlider:horizontal { margin: 10px 5px 6px; }
 QSlider::groove:horizontal {
-    border: 1px inset #666;
-    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #CCC, stop:1 #FFF);
+    border: 1px inset #999;
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFF, stop:1 #FFF);
     height: 8px;
     position: absolute;
     left: 2px;

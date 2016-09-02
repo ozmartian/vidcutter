@@ -11,10 +11,9 @@ from PyQt5.QtCore import QDir, QEvent, QSize, Qt, QTime, QUrl
 from PyQt5.QtGui import QFontDatabase, QIcon, QPalette
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
-from PyQt5.QtWidgets import (QAction, QApplication,
-                             QFileDialog, QHBoxLayout, QLabel, QListWidget,
-                             QMainWindow, QMenu, QMessageBox, QPushButton,
-                             QSizePolicy, QSlider, QStyle, QToolBar, QVBoxLayout, QWidget, qApp)
+from PyQt5.QtWidgets import (QAction, QApplication, QFileDialog, QHBoxLayout, QLabel, QListWidget,
+                             QMainWindow, QMenu, QMessageBox, QPushButton, QSizePolicy, QSlider,
+                             QStyle, QToolBar, QVBoxLayout, QWidget, qApp)
 
 from ffmpy import FFmpeg
 from videoslider import VideoSlider
@@ -67,6 +66,7 @@ class VideoCutter(QWidget):
         self.initIcons()
         self.initActions()
         self.initToolbar()
+        self.initMenu()
 
         self.positionSlider = VideoSlider(objectName='VideoSlider', sliderMoved=self.setPosition)
         self.positionSlider.installEventFilter(self)
@@ -75,12 +75,15 @@ class VideoCutter(QWidget):
                                  sizePolicy=QSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored),
                                  styleSheet='font-size:20px; font-weight:bold; font-family:sans-serif;')
         self.movieLabel.setBackgroundRole(QPalette.Dark)
-        self.movieLabel.setText('<img src="%s" /><br/>No video loaded' % os.path.relpath(os.path.join(self.getFilePath(), 'icons', 'videocutter.png')))
+        self.movieLabel.setText('<img src="%s" /><br/>No video loaded' % os.path.relpath(
+            os.path.join(self.getFilePath(), 'icons', 'videocutter.png')))
         self.movieLoaded = False
 
-        self.cutlist = QListWidget(contextMenuPolicy=Qt.CustomContextMenu, uniformItemSizes=True, customContextMenuRequested=self.itemMenu)
+        self.cutlist = QListWidget(contextMenuPolicy=Qt.CustomContextMenu, uniformItemSizes=True,
+                                   customContextMenuRequested=self.itemMenu)
         self.cutlist.setFixedWidth(150)
-        self.cutlist.setStyleSheet('QListView { font-family:Droid Sans Mono; font-size:10.35pt; } QListView::item { margin-bottom:15px; }')
+        self.cutlist.setStyleSheet(
+            'QListView { font-family:Droid Sans Mono; font-size:10.35pt; } QListView::item { margin-bottom:15px; }')
 
         self.videoLayout = QHBoxLayout()
         self.videoLayout.setContentsMargins(0, 0, 0, 0)
@@ -88,32 +91,36 @@ class VideoCutter(QWidget):
         self.videoLayout.addWidget(self.cutlist)
 
         self.timeCounter = QLabel('00:00:00 / 00:00:00')
-        self.timeCounter.setStyleSheet('font-family:Droid Sans Mono; font-size:10pt; color:#666; margin-top:-2px; margin-right:150px; margin-bottom:6px;')
+        self.timeCounter.setStyleSheet(
+            'font-family:Droid Sans Mono; font-size:10pt; color:#666; margin-top:-2px; margin-right:150px; margin-bottom:6px;')
 
         timerLayout = QHBoxLayout()
         timerLayout.addStretch(1)
         timerLayout.addWidget(self.timeCounter)
         timerLayout.addStretch(1)
 
-        self.aboutApp = QPushButton(icon=self.aboutIcon, flat=True, toolTip='About', statusTip='About VideoCutter',
-                                    iconSize=QSize(22, 22), cursor=Qt.PointingHandCursor, clicked=self.aboutInfo)
+        self.menuButton = QPushButton(icon=self.aboutIcon, flat=True, toolTip='About', statusTip='About VideoCutter',
+                                      iconSize=QSize(24, 24), cursor=Qt.PointingHandCursor)
+        self.menuButton.setMenu(self.aboutMenu)
 
         self.muteButton = QPushButton(icon=self.unmuteIcon, flat=True, toolTip='Mute', statusTip='Toggle audio mute',
                                       cursor=Qt.PointingHandCursor, clicked=self.muteAudio)
 
-        self.volumeSlider = QSlider(Qt.Horizontal, toolTip='Volume', statusTip='Adjust volume level', cursor=Qt.PointingHandCursor,
+        self.volumeSlider = QSlider(Qt.Horizontal, toolTip='Volume', statusTip='Adjust volume level',
+                                    cursor=Qt.PointingHandCursor,
                                     value=50, sizePolicy=QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Minimum),
                                     minimum=0, maximum=100, sliderMoved=self.setVolume)
 
         controlsLayout = QHBoxLayout()
-        controlsLayout.addWidget(self.aboutApp)
         controlsLayout.addStretch(1)
         controlsLayout.addWidget(self.toolbar)
-        controlsLayout.addWidget(QLabel('    '))
+        controlsLayout.addSpacing(1)
         controlsLayout.addWidget(self.cuttoolbar)
         controlsLayout.addStretch(1)
         controlsLayout.addWidget(self.muteButton)
         controlsLayout.addWidget(self.volumeSlider)
+        controlsLayout.addSpacing(4)
+        controlsLayout.addWidget(self.menuButton)
 
         layout = QVBoxLayout()
         layout.setContentsMargins(10, 10, 10, 4)
@@ -149,14 +156,28 @@ class VideoCutter(QWidget):
 
     def initActions(self):
         self.openAction = QAction(self.openIcon, 'Open', self, statusTip='Select video', triggered=self.openFile)
-        self.playAction = QAction(self.playIcon, 'Play', self, statusTip='Play video', triggered=self.playVideo, enabled=False)
-        self.cutStartAction = QAction(self.cutStartIcon, 'Set Start', self, statusTip='Set start marker', triggered=self.cutStart, enabled=False)
-        self.cutEndAction = QAction(self.cutEndIcon, 'Set End', self, statusTip='Set end marker', triggered=self.cutEnd, enabled=False)
-        self.saveAction = QAction(self.saveIcon, 'Save', self, statusTip='Save new video', triggered=self.cutVideo, enabled=False)
-        self.moveItemUpAction = QAction(self.upIcon, 'Move Up', self, statusTip='Move clip up in clip list', triggered=self.moveItemUp, enabled=False)
-        self.moveItemDownAction = QAction(self.downIcon, 'Move Down', self, statusTip='Move clip down in clip list', triggered=self.moveItemDown, enabled=False)
-        self.removeItemAction = QAction(self.removeIcon, 'Remove clip', self, statusTip='Remove clip from list', triggered=self.removeItem, enabled=False)
-        self.removeAllAction = QAction(self.removeAllIcon, 'Clear list', self, statusTip='Remove all clips from list', triggered=self.clearList, enabled=False)
+        self.playAction = QAction(self.playIcon, 'Play', self, statusTip='Play video', triggered=self.playVideo,
+                                  enabled=False)
+        self.cutStartAction = QAction(self.cutStartIcon, 'Set Start', self, statusTip='Set start marker',
+                                      triggered=self.cutStart, enabled=False)
+        self.cutEndAction = QAction(self.cutEndIcon, 'Set End', self, statusTip='Set end marker', triggered=self.cutEnd,
+                                    enabled=False)
+        self.saveAction = QAction(self.saveIcon, 'Save', self, statusTip='Save new video', triggered=self.cutVideo,
+                                  enabled=False)
+        self.moveItemUpAction = QAction(self.upIcon, 'Move Up', self, statusTip='Move clip position up in list',
+                                        triggered=self.moveItemUp, enabled=False)
+        self.moveItemDownAction = QAction(self.downIcon, 'Move Down', self, statusTip='Move clip position down in list',
+                                          triggered=self.moveItemDown, enabled=False)
+        self.removeItemAction = QAction(self.removeIcon, 'Remove clip', self,
+                                        statusTip='Remove selected clip from list', triggered=self.removeItem,
+                                        enabled=False)
+        self.removeAllAction = QAction(self.removeAllIcon, 'Clear list', self, statusTip='Clear all clips from list',
+                                       triggered=self.clearList, enabled=False)
+        self.aboutAction = QAction('About VideoCutter', self, statusTip='Credits and acknowledgements',
+                                   triggered=self.aboutInfo)
+        self.aboutQtAction = QAction('About Qt', self, statusTip='About Qt', triggered=qApp.aboutQt)
+        self.mediaInfoAction = QAction('Media Information', self, statusTip='Media information from loaded video file',
+                                       triggered=self.mediaInfo, enabled=False)
 
     def initToolbar(self):
         self.toolbar = QToolBar()
@@ -177,6 +198,13 @@ class VideoCutter(QWidget):
         self.cuttoolbar.addAction(self.cutStartAction)
         self.cuttoolbar.addAction(self.cutEndAction)
 
+    def initMenu(self):
+        self.aboutMenu = QMenu()
+        self.aboutMenu.addAction(self.mediaInfoAction)
+        self.aboutMenu.addSeparator()
+        self.aboutMenu.addAction(self.aboutQtAction)
+        self.aboutMenu.addAction(self.aboutAction)
+
     def itemMenu(self, pos):
         globalPos = self.cutlist.mapToGlobal(pos)
         self.cutlistMenu = QMenu()
@@ -193,7 +221,7 @@ class VideoCutter(QWidget):
         if index != -1:
             if index > 0:
                 self.moveItemUpAction.setEnabled(True)
-            if index < self.cutlist.count()-1:
+            if index < self.cutlist.count() - 1:
                 self.moveItemDownAction.setEnabled(True)
             if self.cutlist.count() > 0:
                 self.removeItemAction.setEnabled(True)
@@ -204,14 +232,14 @@ class VideoCutter(QWidget):
         index = self.cutlist.currentRow()
         tmpItem = self.cutTimes[index]
         del self.cutTimes[index]
-        self.cutTimes.insert(index-1, tmpItem)
+        self.cutTimes.insert(index - 1, tmpItem)
         self.renderTimes()
 
     def moveItemDown(self):
         index = self.cutlist.currentRow()
         tmpItem = self.cutTimes[index]
         del self.cutTimes[index]
-        self.cutTimes.insert(index+1, tmpItem)
+        self.cutTimes.insert(index + 1, tmpItem)
         self.renderTimes()
 
     def removeItem(self):
@@ -226,6 +254,21 @@ class VideoCutter(QWidget):
         self.cutTimes.clear()
         self.cutlist.clear()
         self.initMediaControls()
+
+    def mediaInfo(self):
+        if self.mediaPlayer.isMetaDataAvailable():
+            content = '<table cellpadding="4">'
+            for key in self.mediaPlayer.availableMetaData():
+                val = self.mediaPlayer.metaData(key)
+                if type(val) is QSize:
+                    val = '%s x %s' % (val.width(), val.height())
+                content += '<tr><td align="right"><b>%s:</b></td><td>%s</td></tr>\n' % (key, val)
+            content += '</table>'
+            mbox = QMessageBox(windowTitle='Media Information', windowIcon=self.parent.windowIcon(),
+                               textFormat=Qt.RichText)
+            mbox.setText(os.path.basename(self.mediaPlayer.currentMedia().canonicalUrl().toLocalFile()))
+            mbox.setInformativeText(content)
+            mbox.exec_()
 
     def aboutInfo(self):
         aboutApp = '''<style>
@@ -274,6 +317,7 @@ class VideoCutter(QWidget):
         self.saveAction.setEnabled(False)
         self.cutStartAction.setEnabled(flag)
         self.cutEndAction.setEnabled(False)
+        self.mediaInfoAction.setEnabled(flag)
         if flag:
             self.positionSlider.setRestrictValue(0)
 
@@ -287,7 +331,8 @@ class VideoCutter(QWidget):
         self.positionSlider.setValue(progress)
         currentTime = self.deltaToQTime(progress)
         totalTime = self.deltaToQTime(self.mediaPlayer.duration())
-        self.timeCounter.setText('%s / %s' % (currentTime.toString(self.timeformat), totalTime.toString(self.timeformat)))
+        self.timeCounter.setText(
+            '%s / %s' % (currentTime.toString(self.timeformat), totalTime.toString(self.timeformat)))
 
     def mediaStateChanged(self):
         if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
@@ -304,9 +349,11 @@ class VideoCutter(QWidget):
         if self.mediaPlayer.isMuted():
             self.mediaPlayer.setMuted(not self.mediaPlayer.isMuted())
             self.muteButton.setIcon(self.unmuteIcon)
+            self.muteButton.setToolTip('Mute')
         else:
             self.mediaPlayer.setMuted(not self.mediaPlayer.isMuted())
             self.muteButton.setIcon(self.muteIcon)
+            self.muteButton.setToolTip('Unmute')
 
     def setVolume(self, volume):
         self.mediaPlayer.setVolume(volume)
@@ -325,7 +372,8 @@ class VideoCutter(QWidget):
         item = self.cutTimes[len(self.cutTimes) - 1]
         selected = self.deltaToQTime(self.mediaPlayer.position())
         if selected.__lt__(item[0]):
-            QMessageBox.critical(self, 'Invalid END Time', 'The clip end time must come AFTER it\'s start time. Please try again.')
+            QMessageBox.critical(self, 'Invalid END Time',
+                                 'The clip end time must come AFTER it\'s start time. Please try again.')
             return
         item.append(selected)
         self.cutStartAction.setEnabled(True)
@@ -369,7 +417,8 @@ class VideoCutter(QWidget):
                     ff = FFmpeg(
                         executable=self.FFMPEG_bin,
                         inputs={source: None},
-                        outputs={filename: '-ss %s -t %s -vcodec copy -acodec copy -y' % (clip[0].toString(self.timeformat), runtime)}
+                        outputs={filename: '-ss %s -t %s -vcodec copy -acodec copy -y' % (
+                        clip[0].toString(self.timeformat), runtime)}
                     )
                     ff.run()
                     index += 1
@@ -450,7 +499,8 @@ class VideoCutter(QWidget):
         if sys.platform == 'win32':
             si = subprocess.STARTUPINFO()
             si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-            return subprocess.Popen(args=shlex.split(cmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE, startupinfo=si, env=os.environ, shell=shell)
+            return subprocess.Popen(args=shlex.split(cmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                    stdin=subprocess.PIPE, startupinfo=si, env=os.environ, shell=shell)
         else:
             return subprocess.Popen(args=shlex.split(cmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=shell)
 
@@ -462,7 +512,8 @@ class VideoCutter(QWidget):
 
     def eventFilter(self, obj, event):
         if event.type() == QEvent.MouseButtonRelease and isinstance(obj, VideoSlider):
-            if obj.objectName() == 'VideoSlider' and (self.mediaPlayer.isVideoAvailable() or self.mediaPlayer.isAudioAvailable()):
+            if obj.objectName() == 'VideoSlider' and (
+                self.mediaPlayer.isVideoAvailable() or self.mediaPlayer.isAudioAvailable()):
                 obj.setValue(QStyle.sliderValueFromPosition(obj.minimum(), obj.maximum(), event.x(), obj.width()))
                 self.mediaPlayer.setPosition(obj.sliderPosition())
         return QWidget.eventFilter(self, obj, event)
@@ -515,6 +566,7 @@ def main():
     win = MainWindow()
     win.show()
     sys.exit(app.exec_())
+
 
 if __name__ == '__main__':
     main()
