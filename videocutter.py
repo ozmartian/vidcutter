@@ -34,11 +34,7 @@ class VideoWidget(QVideoWidget):
         self.setAttribute(Qt.WA_OpaquePaintEvent)
 
     def keyPressEvent(self, event):
-        if event.key() == Qt.LeftArrow:
-            print('Left arrow was pressed')
-        elif event.key() == Qt.RightArrow:
-            print('Right arrow was pressed')
-        elif event.key() == Qt.Key_Escape and self.isFullScreen():
+        if event.key() == Qt.Key_Escape and self.isFullScreen():
             self.setFullScreen(False)
             event.accept()
         elif event.key() == Qt.Key_Enter and not self.isFullScreen():
@@ -81,7 +77,7 @@ class VideoCutter(QWidget):
                                  sizePolicy=QSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored),
                                  styleSheet='font-size:20px; font-weight:bold; font-family:sans-serif;')
         self.movieLabel.setBackgroundRole(QPalette.Dark)
-        self.movieLabel.setText('<img src="%s" /><br/>No video loaded' % os.path.relpath(os.path.join(self.getFilePath(), 'icons', 'videocutter.png')))
+        self.movieLabel.setText('&nbsp;&nbsp;&nbsp;<img src="%s" /><br/>No video loaded' % os.path.relpath(os.path.join(self.getFilePath(), 'icons', 'videocutter.png')))
         self.movieLoaded = False
 
         self.cutlist = QListWidget(contextMenuPolicy=Qt.CustomContextMenu, uniformItemSizes=True,
@@ -102,7 +98,8 @@ class VideoCutter(QWidget):
         timerLayout.addWidget(self.timeCounter)
         timerLayout.addStretch(1)
 
-        self.menuButton = QPushButton(icon=self.aboutIcon, flat=True, toolTip='About', statusTip='About VideoCutter',
+        self.menuButton = QPushButton(icon=self.aboutIcon, flat=True, toolTip='About',
+                                      statusTip='About %s' % qApp.applicationName(),
                                       iconSize=QSize(24, 24), cursor=Qt.PointingHandCursor)
         self.menuButton.setMenu(self.aboutMenu)
 
@@ -174,7 +171,7 @@ class VideoCutter(QWidget):
                                         enabled=False)
         self.removeAllAction = QAction(self.removeAllIcon, 'Clear list', self, statusTip='Clear all clips from list',
                                        triggered=self.clearList, enabled=False)
-        self.aboutAction = QAction('About VideoCutter', self, statusTip='Credits and acknowledgements',
+        self.aboutAction = QAction('About %s' % qApp.applicationName(), self, statusTip='Credits and acknowledgements',
                                    triggered=self.aboutInfo)
         self.aboutQtAction = QAction('About Qt', self, statusTip='About Qt', triggered=qApp.aboutQt)
         self.mediaInfoAction = QAction('Media Information', self, statusTip='Media information from loaded video file',
@@ -185,7 +182,7 @@ class VideoCutter(QWidget):
         self.toolbar.setStyleSheet('QToolBar QToolButton { min-width:82px; margin-left:10px; margin-right:10px; font-size:14px; }')
         self.toolbar.setFloatable(False)
         self.toolbar.setMovable(False)
-        self.toolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.toolbar.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
         self.toolbar.setIconSize(QSize(24, 24))
         self.toolbar.addAction(self.openAction)
         self.toolbar.addAction(self.playAction)
@@ -194,8 +191,6 @@ class VideoCutter(QWidget):
         self.toolbar.addAction(self.cutEndAction)
         self.toolbar.addSeparator()
         self.toolbar.addAction(self.saveAction)
-        self.toolbar.widgetForAction(self.cutStartAction).setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
-        self.toolbar.widgetForAction(self.cutEndAction).setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
 
     def initMenu(self):
         self.aboutMenu = QMenu()
@@ -273,8 +268,8 @@ class VideoCutter(QWidget):
     a { color:#441d4e; text-decoration:none; font-weight:bold; }
     a:hover { text-decoration:underline; }
 </style>
-<h1>VideoCutter</h1>
-<h3 style="font-weight:normal;"><b>Version:</b> 1.0.0</h3>
+<h1>%s</h1>
+<h3 style="font-weight:normal;"><b>Version:</b> %s</h3>
 <p>Copyright &copy; 2016 <a href="mailto:pete@ozmartians.com">Pete Alexandrou</a></p>
 <p style="font-size:13px">
     A special thanks & acknowledgements to the teams behind the <b>PyQt5</b> and <b>FFmpeg</b> software projects.
@@ -285,8 +280,8 @@ class VideoCutter(QWidget):
     modify it under the terms of the GNU General Public License
     as published by the Free Software Foundation; either version 2
     of the License, or (at your option) any later version.
-</p>'''
-        QMessageBox.about(self, 'About VideoCutter', aboutApp)
+</p>''' % (qApp.applicationName(), qApp.applicationVersion())
+        QMessageBox.about(self, 'About %s' % qApp.applicationName(), aboutApp)
 
     def openFile(self):
         filename, _ = QFileDialog.getOpenFileName(parent=self.parent, caption='Select video', directory=QDir.homePath())
@@ -298,7 +293,7 @@ class VideoCutter(QWidget):
         self.initMediaControls(True)
         self.cutlist.clear()
         self.cutTimes = []
-        self.parent.setWindowTitle('VideoCutter - %s' % os.path.basename(filename))
+        self.parent.setWindowTitle('%s %s - %s' % (qApp.applicationName(), qApp.applicationVersion(), os.path.basename(filename)))
         if not self.movieLoaded:
             self.videoLayout.replaceWidget(self.movieLabel, self.videoWidget)
             self.movieLabel.deleteLater()
@@ -492,7 +487,7 @@ class VideoCutter(QWidget):
         if len(self.finalFilename) and os.path.exists(self.finalFilename):
             dirname = os.path.dirname(self.finalFilename)
             if sys.platform == 'win32':
-                cmd = 'C:\\Windows\\explorer.exe "%s"' % dirname
+                cmd = 'explorer.exe "%s"' % dirname
             elif sys.platform == 'darwin':
                 cmd = 'open "%s"' % dirname
             else:
@@ -518,11 +513,30 @@ class VideoCutter(QWidget):
     def wheelEvent(self, event):
         if self.mediaPlayer.isVideoAvailable() or self.mediaPlayer.isAudioAvailable():
             if event.angleDelta().y() > 0:
-                self.positionSlider.setValue(self.positionSlider.value() - 1000)
+                newval = self.positionSlider.value() - 1000
             else:
-                self.positionSlider.setValue(self.positionSlider.value() + 1000)
-            self.positionSlider.setSliderPosition(self.positionSlider.value())
-            self.mediaPlayer.setPosition(self.positionSlider.value())
+                newval = self.positionSlider.value() + 1000
+            self.positionSlider.setValue(newval)
+            self.positionSlider.setSliderPosition(newval)
+            self.mediaPlayer.setPosition(newval)
+        event.accept()
+
+    def keyPressEvent(self, event):
+        if self.mediaPlayer.isVideoAvailable() or self.mediaPlayer.isAudioAvailable():
+            addtime = 0
+            if event.key() == Qt.Key_Left:
+                addtime = -1000
+            elif event.key() == Qt.Key_PageUp or event.key() == Qt.Key_Up:
+                addtime = -10000
+            elif event.key() == Qt.Key_Right:
+                addtime = 1000
+            elif event.key() == Qt.Key_PageDown or event.key() == Qt.Key_Down:
+                addtime = 10000
+            if addtime != 0:
+                newval = self.positionSlider.value() + addtime
+                self.positionSlider.setValue(newval)
+                self.positionSlider.setSliderPosition(newval)
+                self.mediaPlayer.setPosition(newval)
         event.accept()
 
     def eventFilter(self, obj, event):
@@ -549,7 +563,7 @@ class MainWindow(QMainWindow):
         self.cutter = VideoCutter(self)
         self.setCentralWidget(self.cutter)
         self.setAcceptDrops(True)
-        self.setWindowTitle('VideoCutter')
+        self.setWindowTitle('%s %s' % (qApp.applicationName(), qApp.applicationVersion()))
         self.setWindowIcon(self.cutter.appIcon)
         self.resize(800, 600)
 
@@ -571,6 +585,9 @@ class MainWindow(QMainWindow):
 def main():
     app = QApplication(sys.argv)
     app.setStyle('Fusion')
+    app.setApplicationName('VideoCutter')
+    app.setApplicationVersion('1.0')
+    app.setQuitOnLastWindowClosed(True)
     win = MainWindow()
     win.show()
     sys.exit(app.exec_())

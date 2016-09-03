@@ -65,3 +65,6 @@ QSlider::handle:horizontal:hover {
 
     def wheelEvent(self, event):
         qApp.sendEvent(self.parentWidget(), event)
+
+    def keyPressEvent(self, event):
+        qApp.sendEvent(self.parentWidget(), event)
