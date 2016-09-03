@@ -77,15 +77,13 @@ class VideoCutter(QWidget):
                                  sizePolicy=QSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored),
                                  styleSheet='font-size:20px; font-weight:bold; font-family:sans-serif;')
         self.movieLabel.setBackgroundRole(QPalette.Dark)
-        self.movieLabel.setText('<img src="%s" /><br/>No video loaded' % os.path.relpath(
-            os.path.join(self.getFilePath(), 'icons', 'videocutter.png')))
+        self.movieLabel.setText('<img src="%s" /><br/>No video loaded' % os.path.relpath(os.path.join(self.getFilePath(), 'icons', 'videocutter.png')))
         self.movieLoaded = False
 
         self.cutlist = QListWidget(contextMenuPolicy=Qt.CustomContextMenu, uniformItemSizes=True,
                                    customContextMenuRequested=self.itemMenu)
-        self.cutlist.setFixedWidth(150)
-        self.cutlist.setStyleSheet(
-            'QListView { font-family:Droid Sans Mono; font-size:10.35pt; } QListView::item { margin-bottom:15px; }')
+        self.cutlist.setFixedWidth(160)
+        self.cutlist.setStyleSheet('QListView { font-family:Droid Sans Mono; font-size:10.35pt; } QListView::item { margin-bottom:15px; }')
 
         self.videoLayout = QHBoxLayout()
         self.videoLayout.setContentsMargins(0, 0, 0, 0)
@@ -93,8 +91,7 @@ class VideoCutter(QWidget):
         self.videoLayout.addWidget(self.cutlist)
 
         self.timeCounter = QLabel('00:00:00 / 00:00:00')
-        self.timeCounter.setStyleSheet(
-            'font-family:Droid Sans Mono; font-size:10pt; color:#666; margin-top:-2px; margin-right:150px; margin-bottom:6px;')
+        self.timeCounter.setStyleSheet('font-family:Droid Sans Mono; font-size:10pt; color:#666; margin-top:-2px; margin-right:150px; margin-bottom:6px;')
 
         timerLayout = QHBoxLayout()
         timerLayout.addStretch(1)
@@ -263,8 +260,7 @@ class VideoCutter(QWidget):
                     val = '%s x %s' % (val.width(), val.height())
                 content += '<tr><td align="right"><b>%s:</b></td><td>%s</td></tr>\n' % (key, val)
             content += '</table>'
-            mbox = QMessageBox(windowTitle='Media Information', windowIcon=self.parent.windowIcon(),
-                               textFormat=Qt.RichText)
+            mbox = QMessageBox(windowTitle='Media Information', windowIcon=self.parent.windowIcon(), textFormat=Qt.RichText)
             mbox.setText(os.path.basename(self.mediaPlayer.currentMedia().canonicalUrl().toLocalFile()))
             mbox.setInformativeText(content)
             mbox.exec_()
@@ -330,8 +326,7 @@ class VideoCutter(QWidget):
         self.positionSlider.setValue(progress)
         currentTime = self.deltaToQTime(progress)
         totalTime = self.deltaToQTime(self.mediaPlayer.duration())
-        self.timeCounter.setText(
-            '%s / %s' % (currentTime.toString(self.timeformat), totalTime.toString(self.timeformat)))
+        self.timeCounter.setText('%s / %s' % (currentTime.toString(self.timeformat), totalTime.toString(self.timeformat)))
 
     def mediaStateChanged(self):
         if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
@@ -371,8 +366,7 @@ class VideoCutter(QWidget):
         item = self.cutTimes[len(self.cutTimes) - 1]
         selected = self.deltaToQTime(self.mediaPlayer.position())
         if selected.__lt__(item[0]):
-            QMessageBox.critical(self, 'Invalid END Time',
-                                 'The clip end time must come AFTER it\'s start time. Please try again.')
+            QMessageBox.critical(self, 'Invalid END Time', 'The clip end time must come AFTER it\'s start time. Please try again.')
             return
         item.append(selected)
         self.cutStartAction.setEnabled(True)
@@ -416,8 +410,7 @@ class VideoCutter(QWidget):
                     ff = FFmpeg(
                         executable=self.FFMPEG_bin,
                         inputs={source: None},
-                        outputs={filename: '-ss %s -t %s -vcodec copy -acodec copy -y' % (
-                        clip[0].toString(self.timeformat), runtime)}
+                        outputs={filename: '-ss %s -t %s -vcodec copy -acodec copy -y' % (clip[0].toString(self.timeformat), runtime)}
                     )
                     ff.run()
                     index += 1
@@ -511,8 +504,7 @@ class VideoCutter(QWidget):
 
     def eventFilter(self, obj, event):
         if event.type() == QEvent.MouseButtonRelease and isinstance(obj, VideoSlider):
-            if obj.objectName() == 'VideoSlider' and (
-                self.mediaPlayer.isVideoAvailable() or self.mediaPlayer.isAudioAvailable()):
+            if obj.objectName() == 'VideoSlider' and (self.mediaPlayer.isVideoAvailable() or self.mediaPlayer.isAudioAvailable()):
                 obj.setValue(QStyle.sliderValueFromPosition(obj.minimum(), obj.maximum(), event.x(), obj.width()))
                 self.mediaPlayer.setPosition(obj.sliderPosition())
         return QWidget.eventFilter(self, obj, event)
