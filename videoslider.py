@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QSlider, QStyleFactory
+from PyQt5.QtWidgets import QSlider, QStyleFactory, qApp
 
 
 class VideoSlider(QSlider):
@@ -51,6 +51,7 @@ QSlider::handle:horizontal:hover {
         self.setStyle(QStyleFactory.create('Windows'))
         self.setTickPosition(self.TicksBothSides)
         self.setTickInterval(1)
+        self.setFocus()
         self.restrictValue = 0
 
         self.valueChanged.connect(self.restrictMove)
@@ -61,3 +62,6 @@ QSlider::handle:horizontal:hover {
     def restrictMove(self, index):
         if index < self.restrictValue:
             self.setSliderPosition(self.restrictValue)
+
+    def wheelEvent(self, event):
+        qApp.sendEvent(self.parentWidget(), event)

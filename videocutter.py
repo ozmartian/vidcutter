@@ -6,6 +6,7 @@ import shlex
 import signal
 import subprocess
 import sys
+import tempfile
 
 from PyQt5.QtCore import QDir, QEvent, QSize, Qt, QTime, QUrl
 from PyQt5.QtGui import QFontDatabase, QIcon, QPalette
@@ -14,8 +15,7 @@ from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtWidgets import (QAction, QApplication, QFileDialog, QHBoxLayout,
                              QLabel, QListWidget, QMainWindow, QMenu,
                              QMessageBox, QPushButton, QSizePolicy, QSlider,
-                             QStyle, QToolBar, QToolButton, QVBoxLayout,
-                             QWidget, qApp)
+                             QStyle, QToolBar, QVBoxLayout, QWidget, qApp)
 
 from ffmpy import FFmpeg
 from videoslider import VideoSlider
@@ -34,7 +34,11 @@ class VideoWidget(QVideoWidget):
         self.setAttribute(Qt.WA_OpaquePaintEvent)
 
     def keyPressEvent(self, event):
-        if event.key() == Qt.Key_Escape and self.isFullScreen():
+        if event.key() == Qt.LeftArrow:
+            print('Left arrow was pressed')
+        elif event.key() == Qt.RightArrow:
+            print('Right arrow was pressed')
+        elif event.key() == Qt.Key_Escape and self.isFullScreen():
             self.setFullScreen(False)
             event.accept()
         elif event.key() == Qt.Key_Enter and not self.isFullScreen():
@@ -152,10 +156,14 @@ class VideoCutter(QWidget):
         self.aboutIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'about.png'))
 
     def initActions(self):
-        self.openAction = QAction(self.openIcon, 'Open', self, statusTip='Select video', triggered=self.openFile)
-        self.playAction = QAction(self.playIcon, 'Play', self, statusTip='Play video', triggered=self.playVideo,
+        self.openAction = QAction(self.openIcon, '&Open', self, statusTip='Select video', triggered=self.openFile)
+        self.playAction = QAction(self.playIcon, '&Play', self, statusTip='Play video', triggered=self.playVideo,
                                   enabled=False)                                    
-        self.saveAction = QAction(self.saveIcon, 'Save', self, statusTip='Save new video', triggered=self.cutVideo,
+        self.cutStartAction = QAction(self.cutStartIcon, 'Set St&art', self, toolTip='Set Start', statusTip='Set start marker',
+                                      triggered=self.cutStart, enabled=False)
+        self.cutEndAction = QAction(self.cutEndIcon, 'Set &End', self, statusTip='Set end marker',
+                                    triggered=self.cutEnd, enabled=False)
+        self.saveAction = QAction(self.saveIcon, 'Sa&ve', self, statusTip='Save new video', triggered=self.cutVideo,
                                   enabled=False)
         self.moveItemUpAction = QAction(self.upIcon, 'Move Up', self, statusTip='Move clip position up in list',
                                         triggered=self.moveItemUp, enabled=False)
@@ -172,13 +180,6 @@ class VideoCutter(QWidget):
         self.mediaInfoAction = QAction('Media Information', self, statusTip='Media information from loaded video file',
                                        triggered=self.mediaInfo, enabled=False)
 
-        self.cutStartAction = QToolButton(self, icon=self.cutStartIcon, text='Set Start', toolTip='Set Start',
-                                          toolButtonStyle=Qt.ToolButtonTextUnderIcon, statusTip='Set start marker', 
-                                          clicked=self.cutStart, enabled=False)
-        self.cutEndAction = QToolButton(self, icon=self.cutEndIcon, text='Set End', toolTip='Set End',
-                                        toolButtonStyle=Qt.ToolButtonTextUnderIcon, statusTip='Set end marker',
-                                        clicked=self.cutEnd, enabled=False)
-
     def initToolbar(self):
         self.toolbar = QToolBar()
         self.toolbar.setStyleSheet('QToolBar QToolButton { min-width:82px; margin-left:10px; margin-right:10px; font-size:14px; }')
@@ -189,10 +190,12 @@ class VideoCutter(QWidget):
         self.toolbar.addAction(self.openAction)
         self.toolbar.addAction(self.playAction)
         self.toolbar.addSeparator()
-        self.toolbar.addWidget(self.cutStartAction)
-        self.toolbar.addWidget(self.cutEndAction)
+        self.toolbar.addAction(self.cutStartAction)
+        self.toolbar.addAction(self.cutEndAction)
         self.toolbar.addSeparator()
         self.toolbar.addAction(self.saveAction)
+        self.toolbar.widgetForAction(self.cutStartAction).setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
+        self.toolbar.widgetForAction(self.cutEndAction).setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
 
     def initMenu(self):
         self.aboutMenu = QMenu()
@@ -261,7 +264,7 @@ class VideoCutter(QWidget):
                 content += '<tr><td align="right"><b>%s:</b></td><td>%s</td></tr>\n' % (key, val)
             content += '</table>'
             mbox = QMessageBox(windowTitle='Media Information', windowIcon=self.parent.windowIcon(), textFormat=Qt.RichText)
-            mbox.setText(os.path.basename(self.mediaPlayer.currentMedia().canonicalUrl().toLocalFile()))
+            mbox.setText('<b>%s</b>' % os.path.basename(self.mediaPlayer.currentMedia().canonicalUrl().toLocalFile()))
             mbox.setInformativeText(content)
             mbox.exec_()
 
@@ -391,6 +394,16 @@ class VideoCutter(QWidget):
         secs = millisecs / 1000
         return QTime((secs / 3600) % 60, (secs / 60) % 60, secs % 60, (secs * 1000) % 1000)
 
+    def captureImage(self):
+        frame = self.deltaToQTime(self.mediaPlayer.position()).toString(self.timeformat)
+        tmpfile = tempfile.TemporaryFile()
+        ff = FFmpeg(
+            executable=self.FFMPEG_bin,
+            inputs={self.mediaPlayer.currentMedia().canonicalUrl().toLocalFile(): None},
+            outputs={tmpfile: '-ss %s -vframe 1 -s 85x60 -f image2' % frame}
+        )
+        ff.run()
+
     def cutVideo(self):
         self.setCursor(Qt.BusyCursor)
         filename = ''
@@ -502,19 +515,22 @@ class VideoCutter(QWidget):
             return sys._MEIPASS
         return os.path.dirname(os.path.realpath(sys.argv[0]))
 
+    def wheelEvent(self, event):
+        if self.mediaPlayer.isVideoAvailable() or self.mediaPlayer.isAudioAvailable():
+            if event.angleDelta().y() > 0:
+                self.positionSlider.setValue(self.positionSlider.value() - 1000)
+            else:
+                self.positionSlider.setValue(self.positionSlider.value() + 1000)
+            self.positionSlider.setSliderPosition(self.positionSlider.value())
+            self.mediaPlayer.setPosition(self.positionSlider.value())
+        event.accept()
+
     def eventFilter(self, obj, event):
         if event.type() == QEvent.MouseButtonRelease and isinstance(obj, VideoSlider):
             if obj.objectName() == 'VideoSlider' and (self.mediaPlayer.isVideoAvailable() or self.mediaPlayer.isAudioAvailable()):
                 obj.setValue(QStyle.sliderValueFromPosition(obj.minimum(), obj.maximum(), event.x(), obj.width()))
                 self.mediaPlayer.setPosition(obj.sliderPosition())
         return QWidget.eventFilter(self, obj, event)
-
-    def dropEvent(self, event):
-        if event.mimeData().hasUrls():
-            print(event.mimeData())
-            event.accept()
-        else:
-            event.ignore()
 
     def handleError(self):
         self.unsetCursor()
@@ -544,6 +560,7 @@ class MainWindow(QMainWindow):
     def dropEvent(self, event):
         filename = event.mimeData().urls()[0].toLocalFile()
         self.cutter.loadFile(filename)
+        event.accept()
 
     def closeEvent(self, event):
         self.cutter.deleteLater()
