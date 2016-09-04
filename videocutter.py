@@ -77,7 +77,8 @@ class VideoCutter(QWidget):
                                  sizePolicy=QSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored),
                                  styleSheet='font-size:20px; font-weight:bold; font-family:sans-serif;')
         self.movieLabel.setBackgroundRole(QPalette.Dark)
-        self.movieLabel.setText('&nbsp;&nbsp;&nbsp;<img src="%s" /><br/>No video loaded' % os.path.relpath(os.path.join(self.getFilePath(), 'icons', 'videocutter.png')))
+        self.movieLabel.setAlignment(Qt.AlignCenter)
+        self.movieLabel.setPixmap(QPixmap(os.path.join(self.getFilePath(), 'icons', 'novideo.png'), 'PNG'))
         self.movieLoaded = False
 
         self.cutlist = QListWidget(contextMenuPolicy=Qt.CustomContextMenu, uniformItemSizes=True, customContextMenuRequested=self.itemMenu)
@@ -594,7 +595,7 @@ class MainWindow(QMainWindow):
         self.setAcceptDrops(True)
         self.setWindowTitle('%s %s' % (qApp.applicationName(), qApp.applicationVersion()))
         self.setWindowIcon(self.cutter.appIcon)
-        self.resize(900, 600)
+        self.resize(900, 650)
 
     def dragEnterEvent(self, event):
         if event.mimeData().hasUrls():
