@@ -9,12 +9,12 @@ import sys
 import tempfile
 
 from PyQt5.QtCore import QDir, QEvent, QSize, Qt, QTime, QUrl
-from PyQt5.QtGui import QFontDatabase, QIcon, QPalette
+from PyQt5.QtGui import QFontDatabase, QIcon, QPalette, QPixmap
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtWidgets import (QAction, QApplication, QFileDialog, QHBoxLayout,
-                             QLabel, QListWidget, QMainWindow, QMenu,
-                             QMessageBox, QPushButton, QSizePolicy, QSlider,
+                             QLabel, QListWidget, QListWidgetItem, QMainWindow,
+                             QMenu, QMessageBox, QPushButton, QSizePolicy, QSlider,
                              QStyle, QToolBar, QVBoxLayout, QWidget, qApp)
 
 from ffmpy import FFmpeg
@@ -82,8 +82,10 @@ class VideoCutter(QWidget):
 
         self.cutlist = QListWidget(contextMenuPolicy=Qt.CustomContextMenu, uniformItemSizes=True,
                                    customContextMenuRequested=self.itemMenu)
-        self.cutlist.setFixedWidth(160)
-        self.cutlist.setStyleSheet('QListView { font-family:Droid Sans Mono; font-size:10.35pt; } QListView::item { margin-bottom:15px; }')
+        self.cutlist.setFixedWidth(180)
+        self.cutlist.setIconSize(QSize(100, 70))
+        self.cutlist.setAlternatingRowColors(True)
+        self.cutlist.setStyleSheet('QListView::item { padding-bottom:10px; }')
 
         self.videoLayout = QHBoxLayout()
         self.videoLayout.setContentsMargins(0, 0, 0, 0)
@@ -354,7 +356,7 @@ class VideoCutter(QWidget):
         self.videoWidget.setFullScreen(not self.videoWidget.isFullScreen())
 
     def cutStart(self):
-        self.cutTimes.append([self.deltaToQTime(self.mediaPlayer.position())])
+        self.cutTimes.append([self.deltaToQTime(self.mediaPlayer.position()), '', self.captureImage()])
         self.cutStartAction.setDisabled(True)
         self.cutEndAction.setEnabled(True)
         self.positionSlider.setRestrictValue(self.positionSlider.value())
@@ -366,7 +368,7 @@ class VideoCutter(QWidget):
         if selected.__lt__(item[0]):
             QMessageBox.critical(self, 'Invalid END Time', 'The clip end time must come AFTER it\'s start time. Please try again.')
             return
-        item.append(selected)
+        item[1] = selected
         self.cutStartAction.setEnabled(True)
         self.cutEndAction.setDisabled(True)
         self.positionSlider.setRestrictValue(0)
@@ -376,12 +378,18 @@ class VideoCutter(QWidget):
         self.cutlist.clear()
         for item in self.cutTimes:
             endItem = ''
-            if len(item) == 2:
+            if type(item[1]) is QTime:
                 endItem = item[1].toString(self.timeformat)
-            self.cutlist.addItem('START => %s\n  END => %s' % (item[0].toString(self.timeformat), endItem))
+            listitem = QListWidgetItem()
+            listitem.setTextAlignment(Qt.AlignVCenter)
+            if type(item[2]) is QPixmap:
+                listitem.setIcon(QIcon(item[2]))
+            self.cutlist.addItem(listitem)
+            marker = QLabel('<style>b { font-size:8pt; } p { margin:5px; }</style><p><b>START</b><br/>%s</p><p><b>END</b><br/>%s</p>' % (item[0].toString(self.timeformat), endItem))
+            self.cutlist.setItemWidget(listitem, marker)
         if len(self.cutTimes):
             self.saveAction.setEnabled(True)
-        if len(self.cutTimes) == 0 or len(self.cutTimes[0]) != 2:
+        if len(self.cutTimes) == 0 or not type(self.cutTimes[0][1]) is QTime:
             self.saveAction.setEnabled(False)
 
     @staticmethod
@@ -389,15 +397,17 @@ class VideoCutter(QWidget):
         secs = millisecs / 1000
         return QTime((secs / 3600) % 60, (secs / 60) % 60, secs % 60, (secs * 1000) % 1000)
 
-    def captureImage(self):
-        frame = self.deltaToQTime(self.mediaPlayer.position()).toString(self.timeformat)
-        tmpfile = tempfile.TemporaryFile()
-        ff = FFmpeg(
-            executable=self.FFMPEG_bin,
-            inputs={self.mediaPlayer.currentMedia().canonicalUrl().toLocalFile(): None},
-            outputs={tmpfile: '-ss %s -vframe 1 -s 85x60 -f image2' % frame}
-        )
-        ff.run()
+    def captureImage(self) -> QPixmap:
+        frametime = self.deltaToQTime(self.mediaPlayer.position()).addSecs(1).toString(self.timeformat)
+        with tempfile.NamedTemporaryFile(suffix='.jpg') as imagecap:
+            ff = FFmpeg(
+                executable=self.FFMPEG_bin,
+                inputs={self.mediaPlayer.currentMedia().canonicalUrl().toLocalFile(): '-ss %s' % frametime},
+                outputs={imagecap.name: '-vframes 1 -s 100x70 -y'}
+            )
+            ff.run()
+            capres = QPixmap(imagecap.name, 'JPG')
+        return capres
 
     def cutVideo(self):
         self.setCursor(Qt.BusyCursor)
@@ -565,7 +575,7 @@ class MainWindow(QMainWindow):
         self.setAcceptDrops(True)
         self.setWindowTitle('%s %s' % (qApp.applicationName(), qApp.applicationVersion()))
         self.setWindowIcon(self.cutter.appIcon)
-        self.resize(800, 600)
+        self.resize(900, 600)
 
     def dragEnterEvent(self, event):
         if event.mimeData().hasUrls():
