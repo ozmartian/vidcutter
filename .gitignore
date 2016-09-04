@@ -7,3 +7,4 @@ dist/
 videocutter.*/
 *.log
 *.exe
+setup.py
