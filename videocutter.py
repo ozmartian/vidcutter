@@ -80,12 +80,11 @@ class VideoCutter(QWidget):
         self.movieLabel.setText('&nbsp;&nbsp;&nbsp;<img src="%s" /><br/>No video loaded' % os.path.relpath(os.path.join(self.getFilePath(), 'icons', 'videocutter.png')))
         self.movieLoaded = False
 
-        self.cutlist = QListWidget(contextMenuPolicy=Qt.CustomContextMenu, uniformItemSizes=True,
-                                   customContextMenuRequested=self.itemMenu)
+        self.cutlist = QListWidget(contextMenuPolicy=Qt.CustomContextMenu, uniformItemSizes=True, customContextMenuRequested=self.itemMenu)
         self.cutlist.setFixedWidth(180)
         self.cutlist.setIconSize(QSize(100, 70))
         self.cutlist.setAlternatingRowColors(True)
-        self.cutlist.setStyleSheet('QListView::item { padding-bottom:10px; }')
+        self.cutlist.setStyleSheet('QListView::item { margin:10px 5px; }')
 
         self.videoLayout = QHBoxLayout()
         self.videoLayout.setContentsMargins(0, 0, 0, 0)
@@ -264,6 +263,8 @@ class VideoCutter(QWidget):
             mbox.setText('<b>%s</b>' % os.path.basename(self.mediaPlayer.currentMedia().canonicalUrl().toLocalFile()))
             mbox.setInformativeText(content)
             mbox.exec_()
+        else:
+            QMessageBox.critical(self, 'Could not retrieve media information', 'There was a problem in tring to retrieve media information.\n\nThis DOES NOT mean there is a problem with the file and you should be able to continue using it.')
 
     def aboutInfo(self):
         aboutApp = '''<style>
@@ -286,7 +287,7 @@ class VideoCutter(QWidget):
         QMessageBox.about(self, 'About %s' % qApp.applicationName(), aboutApp)
 
     def openFile(self):
-        filename, _ = QFileDialog.getOpenFileName(parent=self.parent, caption='Select video', directory=QDir.homePath())
+        filename, _ = QFileDialog.getOpenFileName(self, caption='Select video', directory=QDir.homePath())
         if filename != '':
             self.loadFile(filename)
 
@@ -299,6 +300,8 @@ class VideoCutter(QWidget):
         if not self.movieLoaded:
             self.videoLayout.replaceWidget(self.movieLabel, self.videoWidget)
             self.movieLabel.deleteLater()
+            self.mediaPlayer.play()
+            self.mediaPlayer.pause()
             self.movieLoaded = True
 
     def playVideo(self):
@@ -399,14 +402,30 @@ class VideoCutter(QWidget):
 
     def captureImage(self) -> QPixmap:
         frametime = self.deltaToQTime(self.mediaPlayer.position()).addSecs(1).toString(self.timeformat)
-        with tempfile.NamedTemporaryFile(suffix='.jpg') as imagecap:
-            ff = FFmpeg(
-                executable=self.FFMPEG_bin,
-                inputs={self.mediaPlayer.currentMedia().canonicalUrl().toLocalFile(): '-ss %s' % frametime},
-                outputs={imagecap.name: '-vframes 1 -s 100x70 -y'}
-            )
-            ff.run()
-            capres = QPixmap(imagecap.name, 'JPG')
+        capres = QPixmap()
+        if sys.platform == 'win32':
+            fd, imagecap = tempfile.mkstemp(suffix='.jpg') 
+            try:
+                os.write(fd, b'dummy data')
+                os.close(fd)
+                ff = FFmpeg(
+                    executable=self.FFMPEG_bin,
+                    inputs={self.mediaPlayer.currentMedia().canonicalUrl().toLocalFile(): '-ss %s' % frametime},
+                    outputs={imagecap: '-vframes 1 -s 100x70 -y'}
+                )
+                ff.run()
+                capres = QPixmap(imagecap, 'JPG')
+            finally:
+                os.remove(imagecap)
+        else:
+            with tempfile.NamedTemporaryFile(suffix='.jpg') as imagecap:
+                ff = FFmpeg(
+                    executable=self.FFMPEG_bin,
+                    inputs={self.mediaPlayer.currentMedia().canonicalUrl().toLocalFile(): '-ss %s' % frametime},
+                    outputs={imagecap.name: '-vframes 1 -s 100x70 -y'}
+                )
+                ff.run()
+                capres = QPixmap(imagecap.name, 'JPG')
         return capres
 
     def cutVideo(self):
