@@ -62,6 +62,7 @@ class VideoCutter(QWidget):
             self.FFMPEG_bin = os.path.join(self.getFilePath(), 'bin', 'ffmpeg.exe')
 
         self.cutTimes = []
+        self.inCut = False
         self.timeformat = 'hh:mm:ss'
         self.finalFilename = ''
 
@@ -214,14 +215,16 @@ class VideoCutter(QWidget):
         self.removeItemAction.setEnabled(False)
         self.removeAllAction.setEnabled(False)
         index = self.cutlist.currentRow()
+        if self.cutlist.count() > 0:
+            self.removeAllAction.setEnabled(True)
         if index != -1:
-            if index > 0:
-                self.moveItemUpAction.setEnabled(True)
-            if index < self.cutlist.count() - 1:
-                self.moveItemDownAction.setEnabled(True)
+            if not self.inCut:
+                if index > 0:
+                    self.moveItemUpAction.setEnabled(True)
+                if index < self.cutlist.count() - 1:
+                    self.moveItemDownAction.setEnabled(True)
             if self.cutlist.count() > 0:
                 self.removeItemAction.setEnabled(True)
-                self.removeAllAction.setEnabled(True)
         self.cutlistMenu.exec_(globalPos)
 
     def moveItemUp(self):
@@ -304,6 +307,8 @@ class VideoCutter(QWidget):
             self.mediaPlayer.play()
             self.mediaPlayer.pause()
             self.movieLoaded = True
+        if not self.videoWidget.isVisible():
+            self.videoWidget.show()
 
     def playVideo(self):
         if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
@@ -364,6 +369,7 @@ class VideoCutter(QWidget):
         self.cutStartAction.setDisabled(True)
         self.cutEndAction.setEnabled(True)
         self.positionSlider.setRestrictValue(self.positionSlider.value())
+        self.inCut = True
         self.renderTimes()
 
     def cutEnd(self):
@@ -376,6 +382,7 @@ class VideoCutter(QWidget):
         self.cutStartAction.setEnabled(True)
         self.cutEndAction.setDisabled(True)
         self.positionSlider.setRestrictValue(0)
+        self.inCut = False
         self.renderTimes()
 
     def renderTimes(self):
