@@ -12,7 +12,7 @@ from PyQt5.QtCore import QDir, QEvent, QSize, Qt, QTime, QUrl
 from PyQt5.QtGui import QFontDatabase, QIcon, QPalette, QPixmap
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
-from PyQt5.QtWidgets import (QAction, QApplication, QFileDialog, QHBoxLayout,
+from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDialog, QHBoxLayout,
                              QLabel, QListWidget, QListWidgetItem, QMainWindow,
                              QMenu, QMessageBox, QPushButton, QSizePolicy, QSlider,
                              QStyle, QToolBar, QVBoxLayout, QWidget, qApp)
@@ -61,7 +61,7 @@ class VideoCutter(QWidget):
         if sys.platform == 'win32':
             self.FFMPEG_bin = os.path.join(self.getFilePath(), 'bin', 'ffmpeg.exe')
 
-        self.cutTimes = []
+        self.clipTimes = []
         self.inCut = False
         self.timeformat = 'hh:mm:ss'
         self.finalFilename = ''
@@ -82,16 +82,20 @@ class VideoCutter(QWidget):
         self.movieLabel.setPixmap(QPixmap(os.path.join(self.getFilePath(), 'icons', 'novideo.png'), 'PNG'))
         self.movieLoaded = False
 
-        self.cutlist = QListWidget(contextMenuPolicy=Qt.CustomContextMenu, uniformItemSizes=True, customContextMenuRequested=self.itemMenu)
-        self.cutlist.setFixedWidth(180)
-        self.cutlist.setIconSize(QSize(100, 70))
-        self.cutlist.setAlternatingRowColors(True)
-        self.cutlist.setStyleSheet('QListView::item { margin:10px 5px; }')
+        self.cliplist = QListWidget(contextMenuPolicy=Qt.CustomContextMenu, uniformItemSizes=True,
+                                    sizePolicy=QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding),
+                                    customContextMenuRequested=self.itemMenu)
+        self.cliplist.setFixedWidth(180)
+        self.cliplist.setIconSize(QSize(100, 70))
+        self.cliplist.setAlternatingRowColors(True)
+        self.cliplist.setDragDropMode(QAbstractItemView.InternalMove)
+        self.cliplist.setStyleSheet('QListView::item { margin:10px 5px; }')
+        self.cliplist.model().rowsMoved.connect(self.syncClipList)
 
         self.videoLayout = QHBoxLayout()
         self.videoLayout.setContentsMargins(0, 0, 0, 0)
         self.videoLayout.addWidget(self.movieLabel)
-        self.videoLayout.addWidget(self.cutlist)
+        self.videoLayout.addWidget(self.cliplist)
 
         self.timeCounter = QLabel('00:00:00 / 00:00:00')
         self.timeCounter.setStyleSheet('font-family:Droid Sans Mono; font-size:10pt; color:#666; margin-top:-2px; margin-right:150px; margin-bottom:6px;')
@@ -203,55 +207,55 @@ class VideoCutter(QWidget):
         self.aboutMenu.addAction(self.aboutAction)
 
     def itemMenu(self, pos):
-        globalPos = self.cutlist.mapToGlobal(pos)
-        self.cutlistMenu = QMenu()
-        self.cutlistMenu.addAction(self.moveItemUpAction)
-        self.cutlistMenu.addAction(self.moveItemDownAction)
-        self.cutlistMenu.addSeparator()
-        self.cutlistMenu.addAction(self.removeItemAction)
-        self.cutlistMenu.addAction(self.removeAllAction)
+        globalPos = self.cliplist.mapToGlobal(pos)
+        self.cliplistMenu = QMenu()
+        self.cliplistMenu.addAction(self.moveItemUpAction)
+        self.cliplistMenu.addAction(self.moveItemDownAction)
+        self.cliplistMenu.addSeparator()
+        self.cliplistMenu.addAction(self.removeItemAction)
+        self.cliplistMenu.addAction(self.removeAllAction)
         self.moveItemUpAction.setEnabled(False)
         self.moveItemDownAction.setEnabled(False)
         self.removeItemAction.setEnabled(False)
         self.removeAllAction.setEnabled(False)
-        index = self.cutlist.currentRow()
-        if self.cutlist.count() > 0:
+        index = self.cliplist.currentRow()
+        if self.cliplist.count() > 0:
             self.removeAllAction.setEnabled(True)
         if index != -1:
             if not self.inCut:
                 if index > 0:
                     self.moveItemUpAction.setEnabled(True)
-                if index < self.cutlist.count() - 1:
+                if index < self.cliplist.count() - 1:
                     self.moveItemDownAction.setEnabled(True)
-            if self.cutlist.count() > 0:
+            if self.cliplist.count() > 0:
                 self.removeItemAction.setEnabled(True)
-        self.cutlistMenu.exec_(globalPos)
+        self.cliplistMenu.exec_(globalPos)
 
     def moveItemUp(self):
-        index = self.cutlist.currentRow()
-        tmpItem = self.cutTimes[index]
-        del self.cutTimes[index]
-        self.cutTimes.insert(index - 1, tmpItem)
+        index = self.cliplist.currentRow()
+        tmpItem = self.clipTimes[index]
+        del self.clipTimes[index]
+        self.clipTimes.insert(index - 1, tmpItem)
         self.renderTimes()
 
     def moveItemDown(self):
-        index = self.cutlist.currentRow()
-        tmpItem = self.cutTimes[index]
-        del self.cutTimes[index]
-        self.cutTimes.insert(index + 1, tmpItem)
+        index = self.cliplist.currentRow()
+        tmpItem = self.clipTimes[index]
+        del self.clipTimes[index]
+        self.clipTimes.insert(index + 1, tmpItem)
         self.renderTimes()
 
     def removeItem(self):
-        index = self.cutlist.currentRow()
-        del self.cutTimes[index]
+        index = self.cliplist.currentRow()
+        del self.clipTimes[index]
         self.renderTimes()
         self.initMediaControls()
-        if len(self.cutTimes) > 0:
+        if len(self.clipTimes) > 0:
             self.saveAction.setEnabled(True)
 
     def clearList(self):
-        self.cutTimes.clear()
-        self.cutlist.clear()
+        self.clipTimes.clear()
+        self.cliplist.clear()
         self.initMediaControls()
 
     def mediaInfo(self):
@@ -298,8 +302,8 @@ class VideoCutter(QWidget):
     def loadFile(self, filename):
         self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(filename)))
         self.initMediaControls(True)
-        self.cutlist.clear()
-        self.cutTimes = []
+        self.cliplist.clear()
+        self.clipTimes = []
         self.parent.setWindowTitle('%s %s - %s' % (qApp.applicationName(), qApp.applicationVersion(), os.path.basename(filename)))
         if not self.movieLoaded:
             self.videoLayout.replaceWidget(self.movieLabel, self.videoWidget)
@@ -365,7 +369,7 @@ class VideoCutter(QWidget):
         self.videoWidget.setFullScreen(not self.videoWidget.isFullScreen())
 
     def cutStart(self):
-        self.cutTimes.append([self.deltaToQTime(self.mediaPlayer.position()), '', self.captureImage()])
+        self.clipTimes.append([self.deltaToQTime(self.mediaPlayer.position()), '', self.captureImage()])
         self.cutStartAction.setDisabled(True)
         self.cutEndAction.setEnabled(True)
         self.positionSlider.setRestrictValue(self.positionSlider.value())
@@ -373,7 +377,7 @@ class VideoCutter(QWidget):
         self.renderTimes()
 
     def cutEnd(self):
-        item = self.cutTimes[len(self.cutTimes) - 1]
+        item = self.clipTimes[len(self.clipTimes) - 1]
         selected = self.deltaToQTime(self.mediaPlayer.position())
         if selected.__lt__(item[0]):
             QMessageBox.critical(self, 'Invalid END Time', 'The clip end time must come AFTER it\'s start time. Please try again.')
@@ -385,10 +389,22 @@ class VideoCutter(QWidget):
         self.inCut = False
         self.renderTimes()
 
+    def syncClipList(self, parent, start, end, destination, row):
+        if start < row:
+            index = row - 1
+        else:
+            index = row
+        clip = self.clipTimes.pop(start)
+        self.clipTimes.insert(index, clip)
+
     def renderTimes(self):
-        self.cutlist.clear()
+        self.cliplist.clear()
         self.positionSlider.setCutMode(self.inCut)
-        for item in self.cutTimes:
+        if len(self.clipTimes) > 5:
+            self.cliplist.setFixedWidth(195)
+        else:
+            self.cliplist.setFixedWidth(180)
+        for item in self.clipTimes:
             endItem = ''
             if type(item[1]) is QTime:
                 endItem = item[1].toString(self.timeformat)
@@ -396,12 +412,13 @@ class VideoCutter(QWidget):
             listitem.setTextAlignment(Qt.AlignVCenter)
             if type(item[2]) is QPixmap:
                 listitem.setIcon(QIcon(item[2]))
-            self.cutlist.addItem(listitem)
+            self.cliplist.addItem(listitem)
             marker = QLabel('<style>b { font-size:8pt; } p { margin:5px; }</style><p><b>START</b><br/>%s</p><p><b>END</b><br/>%s</p>' % (item[0].toString(self.timeformat), endItem))
-            self.cutlist.setItemWidget(listitem, marker)
-        if len(self.cutTimes):
+            self.cliplist.setItemWidget(listitem, marker)
+            listitem.setFlags(Qt.ItemIsSelectable | Qt.ItemIsDragEnabled | Qt.ItemIsEnabled)
+        if len(self.clipTimes):
             self.saveAction.setEnabled(True)
-        if len(self.cutTimes) == 0 or not type(self.cutTimes[0][1]) is QTime:
+        if len(self.clipTimes) == 0 or not type(self.clipTimes[0][1]) is QTime:
             self.saveAction.setEnabled(False)
 
     @staticmethod
@@ -442,13 +459,13 @@ class VideoCutter(QWidget):
         filelist = []
         source = self.mediaPlayer.currentMedia().canonicalUrl().toLocalFile()
         _, sourceext = os.path.splitext(source)
-        if len(self.cutTimes):
+        if len(self.clipTimes):
             self.finalFilename, _ = QFileDialog.getSaveFileName(parent=self, caption='Save video', directory=source,
                                                                 filter='Video files (*%s)' % sourceext)
             if self.finalFilename != '':
                 file, ext = os.path.splitext(self.finalFilename)
                 index = 1
-                for clip in self.cutTimes:
+                for clip in self.clipTimes:
                     runtime = self.deltaToQTime(clip[0].msecsTo(clip[1])).toString(self.timeformat)
                     filename = '%s_%s%s' % (file, '{0:0>2}'.format(index), ext)
                     filelist.append(filename)
