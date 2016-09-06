@@ -411,7 +411,6 @@ class VideoCutter(QWidget):
 
     def captureImage(self) -> QPixmap:
         frametime = self.deltaToQTime(self.mediaPlayer.position()).addSecs(1).toString(self.timeformat)
-        capres = QPixmap()
         if sys.platform == 'win32':
             fd, imagecap = tempfile.mkstemp(suffix='.jpg') 
             try:
