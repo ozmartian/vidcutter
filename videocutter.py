@@ -387,6 +387,7 @@ class VideoCutter(QWidget):
 
     def renderTimes(self):
         self.cutlist.clear()
+        self.positionSlider.setCutMode(self.inCut)
         for item in self.cutTimes:
             endItem = ''
             if type(item[1]) is QTime:
