@@ -9,3 +9,4 @@ videocutter.*/
 *.exe
 *.dll
 setup.py
+build-windows.bat
