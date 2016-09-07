@@ -94,8 +94,8 @@ class VideoCutter(QWidget):
         self.cliplist.model().rowsMoved.connect(self.syncClipList)
         self.cliplist.customContextMenuRequested.connect(self.itemMenu)
 
-        listHeader = QLabel('CLIP INDEX', alignment=Qt.AlignCenter)
-        listHeader.setStyleSheet('font-family:sans-serif; padding:5px; font-size:9pt; color:#888; border:1px solid #b9b9b9; border-bottom:none; background-color:qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFF, stop: 0.5 #EAEAEA, stop: 0.6 #EAEAEA stop:1 #FFF);')
+        listHeader = QLabel(pixmap=QPixmap(os.path.join(self.getFilePath(), 'icons', 'clipindex.png')), alignment=Qt.AlignCenter)
+        listHeader.setStyleSheet('padding:5px; padding-top:8px; border:1px solid #b9b9b9; border-bottom:none; background-color:qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFF, stop: 0.5 #EAEAEA, stop: 0.6 #EAEAEA stop:1 #FFF);')
 
         clipLayout = QVBoxLayout()
         clipLayout.setContentsMargins(0, 0, 0, 0)
@@ -410,7 +410,7 @@ class VideoCutter(QWidget):
     def renderTimes(self):
         self.cliplist.clear()
         self.positionSlider.setCutMode(self.inCut)
-        if len(self.clipTimes) > 5:
+        if len(self.clipTimes) > 4:
             self.cliplist.setFixedWidth(195)
         else:
             self.cliplist.setFixedWidth(180)
