@@ -82,20 +82,31 @@ class VideoCutter(QWidget):
         self.movieLabel.setPixmap(QPixmap(os.path.join(self.getFilePath(), 'icons', 'novideo.png'), 'PNG'))
         self.movieLoaded = False
 
-        self.cliplist = QListWidget(contextMenuPolicy=Qt.CustomContextMenu, uniformItemSizes=True,
-                                    sizePolicy=QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding),
-                                    customContextMenuRequested=self.itemMenu)
+        self.cliplist = QListWidget()
+        self.cliplist.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.cliplist.setUniformItemSizes(True)
+        self.cliplist.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding)
         self.cliplist.setFixedWidth(180)
         self.cliplist.setIconSize(QSize(100, 70))
         self.cliplist.setAlternatingRowColors(True)
         self.cliplist.setDragDropMode(QAbstractItemView.InternalMove)
         self.cliplist.setStyleSheet('QListView::item { margin:10px 5px; }')
         self.cliplist.model().rowsMoved.connect(self.syncClipList)
+        self.cliplist.customContextMenuRequested.connect(self.itemMenu)
+
+        listHeader = QLabel('CLIP INDEX', alignment=Qt.AlignCenter)
+        listHeader.setStyleSheet('font-family:sans-serif; padding:5px; font-size:9pt; color:#888; border:1px solid #b9b9b9; border-bottom:none; background-color:qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFF, stop: 0.5 #EAEAEA, stop: 0.6 #EAEAEA stop:1 #FFF);')
+
+        clipLayout = QVBoxLayout()
+        clipLayout.setContentsMargins(0, 0, 0, 0)
+        clipLayout.setSpacing(0)
+        clipLayout.addWidget(listHeader)
+        clipLayout.addWidget(self.cliplist)
 
         self.videoLayout = QHBoxLayout()
         self.videoLayout.setContentsMargins(0, 0, 0, 0)
         self.videoLayout.addWidget(self.movieLabel)
-        self.videoLayout.addWidget(self.cliplist)
+        self.videoLayout.addLayout(clipLayout)
 
         self.timeCounter = QLabel('00:00:00 / 00:00:00')
         self.timeCounter.setStyleSheet('font-family:Droid Sans Mono; font-size:10pt; color:#666; margin-top:-2px; margin-right:150px; margin-bottom:6px;')
@@ -308,11 +319,10 @@ class VideoCutter(QWidget):
         if not self.movieLoaded:
             self.videoLayout.replaceWidget(self.movieLabel, self.videoWidget)
             self.movieLabel.deleteLater()
-            self.mediaPlayer.play()
+            self.videoWidget.show()
+            # self.mediaPlayer.play()
             self.mediaPlayer.pause()
             self.movieLoaded = True
-        if not self.videoWidget.isVisible():
-            self.videoWidget.show()
 
     def playVideo(self):
         if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
@@ -330,9 +340,9 @@ class VideoCutter(QWidget):
             self.positionSlider.setRestrictValue(0)
 
     def setPosition(self, position):
-        if self.mediaPlayer.state() == QMediaPlayer.StoppedState:
-            self.mediaPlayer.play()
-            self.mediaPlayer.pause()
+        # if self.mediaPlayer.state() == QMediaPlayer.StoppedState:
+        #     self.mediaPlayer.play()
+        #     self.mediaPlayer.pause()
         self.mediaPlayer.setPosition(position)
 
     def positionChanged(self, progress):

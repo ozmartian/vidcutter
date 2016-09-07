@@ -77,9 +77,9 @@ QSlider::handle:horizontal:hover {
             self.sliderGrooveBack1 = '#FFF'
             self.sliderGrooveBack2 = '#FFF'
             self.sliderSubBack1 = '#FFF'
-            self.sliderSubBack2 = '#0EB065'
-            self.sliderHandleBack1 = '#0EB065'
-            self.sliderHandleBack2 = '#0EB065'
+            self.sliderSubBack2 = '#1e88e5'
+            self.sliderHandleBack1 = '#1e88e5'
+            self.sliderHandleBack2 = '#1e88e5'
             self.sliderHandleHoverBack1 = '#AAA'
             self.sliderHandleHoverBack2 = '#888'
         else:
