@@ -267,6 +267,8 @@ class VideoCutter(QWidget):
     def clearList(self):
         self.clipTimes.clear()
         self.cliplist.clear()
+        self.inCut = False
+        self.renderTimes()
         self.initMediaControls()
 
     def mediaInfo(self):
