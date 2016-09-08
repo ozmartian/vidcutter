@@ -3,6 +3,7 @@
 
 import signal
 import sys
+import warnings
 
 from PyQt5.QtWidgets import QApplication, QMainWindow, qApp
 
@@ -11,6 +12,8 @@ from .videocutter import VideoCutter
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 signal.signal(signal.SIGTERM, signal.SIG_DFL)
+
+warnings.filterwarnings("ignore")
 
 
 class MainWindow(QMainWindow):
