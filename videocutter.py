@@ -52,11 +52,18 @@ class VideoCutter(QWidget):
 
         self.initIcons()
         self.initActions()
-        self.initToolbar()
-        self.initMenu()
 
-        self.positionSlider = VideoSlider(objectName='VideoSlider', sliderMoved=self.setPosition)
-        self.positionSlider.installEventFilter(self)
+        self.toolbar = QToolBar(floatable=False, movable=False, cursor=Qt.PointingHandCursor,
+                                iconSize=QSize(24, 24), toolButtonStyle=Qt.ToolButtonTextUnderIcon,
+                                styleSheet='QToolBar QToolButton { min-width:82px; margin-left:10px; margin-right:10px; font-size:14px; }')
+        self.initToolbar()
+
+        self.aboutMenu = QMenu()
+        self.cliplistMenu = QMenu()
+        self.initMenus()
+
+        self.seekSlider = VideoSlider(objectName='VideoSlider', sliderMoved=self.setPosition)
+        self.seekSlider.installEventFilter(self)
 
         self.movieLabel = QLabel(alignment=Qt.AlignCenter, autoFillBackground=True, textFormat=Qt.RichText,
                                  sizePolicy=QSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored),
@@ -66,17 +73,13 @@ class VideoCutter(QWidget):
         self.movieLabel.setPixmap(QPixmap(os.path.join(self.getAppPath(), 'icons', 'novideo.png'), 'PNG'))
         self.movieLoaded = False
 
-        self.cliplist = QListWidget()
-        self.cliplist.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.cliplist.setUniformItemSizes(True)
-        self.cliplist.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding)
+        self.cliplist = QListWidget(sizePolicy=QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding),
+                                    contextMenuPolicy=Qt.CustomContextMenu, uniformItemSizes=True,
+                                    iconSize=QSize(100, 700), dragDropMode=QAbstractItemView.InternalMove,
+                                    alternatingRowColors=True, customContextMenuRequested=self.itemMenu,
+                                    styleSheet='QListView::item { margin:10px 5px; }')
         self.cliplist.setFixedWidth(180)
-        self.cliplist.setIconSize(QSize(100, 70))
-        self.cliplist.setAlternatingRowColors(True)
-        self.cliplist.setDragDropMode(QAbstractItemView.InternalMove)
-        self.cliplist.setStyleSheet('QListView::item { margin:10px 5px; }')
         self.cliplist.model().rowsMoved.connect(self.syncClipList)
-        self.cliplist.customContextMenuRequested.connect(self.itemMenu)
 
         listHeader = QLabel(pixmap=QPixmap(os.path.join(self.getAppPath(), 'icons', 'clipindex.png')), alignment=Qt.AlignCenter)
         listHeader.setStyleSheet('padding:5px; padding-top:8px; border:1px solid #b9b9b9; border-bottom:none; background-color:qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFF, stop: 0.5 #EAEAEA, stop: 0.6 #EAEAEA stop:1 #FFF);')
@@ -109,8 +112,8 @@ class VideoCutter(QWidget):
                                       cursor=Qt.PointingHandCursor, clicked=self.muteAudio)
 
         self.volumeSlider = QSlider(Qt.Horizontal, toolTip='Volume', statusTip='Adjust volume level',
-                                    cursor=Qt.PointingHandCursor,
-                                    value=50, sizePolicy=QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Minimum),
+                                    cursor=Qt.PointingHandCursor, value=50,
+                                    sizePolicy=QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Minimum),
                                     minimum=0, maximum=100, sliderMoved=self.setVolume)
 
         controlsLayout = QHBoxLayout()
@@ -126,7 +129,7 @@ class VideoCutter(QWidget):
         layout.setContentsMargins(10, 10, 10, 4)
         layout.addLayout(self.videoLayout)
         layout.addLayout(timerLayout)
-        layout.addWidget(self.positionSlider)
+        layout.addWidget(self.seekSlider)
         layout.addLayout(controlsLayout)
 
         self.setLayout(layout)
@@ -159,11 +162,11 @@ class VideoCutter(QWidget):
         self.cutEndMovie.frameChanged.connect(self.setCutEndIcon)
 
     def initActions(self):
-        self.openAction = QAction(self.openIcon, '&Open', self, statusTip='Select video', triggered=self.openFile)
-        self.playAction = QAction(self.playIcon, '&Play', self, statusTip='Play video', triggered=self.playVideo, enabled=False)
-        self.cutStartAction = QAction(self.cutStartIcon, 'Set St&art', self, toolTip='Set Start', statusTip='Set start marker', triggered=self.cutStart, enabled=False)
-        self.cutEndAction = QAction(self.cutEndIcon, 'Set &End', self, statusTip='Set end marker', triggered=self.cutEnd, enabled=False)
-        self.saveAction = QAction(self.saveIcon, 'Sa&ve', self, statusTip='Save new video', triggered=self.cutVideo, enabled=False)
+        self.openAction = QAction(self.openIcon, 'Open', self, statusTip='Select video', triggered=self.openFile)
+        self.playAction = QAction(self.playIcon, 'Play', self, statusTip='Play video', triggered=self.playVideo, enabled=False)
+        self.cutStartAction = QAction(self.cutStartIcon, 'Set Start', self, toolTip='Set Start', statusTip='Set start marker', triggered=self.cutStart, enabled=False)
+        self.cutEndAction = QAction(self.cutEndIcon, 'Set End', self, statusTip='Set end marker', triggered=self.cutEnd, enabled=False)
+        self.saveAction = QAction(self.saveIcon, 'Save', self, statusTip='Save new video', triggered=self.cutVideo, enabled=False)
         self.moveItemUpAction = QAction(self.upIcon, 'Move Up', self, statusTip='Move clip position up in list', triggered=self.moveItemUp, enabled=False)
         self.moveItemDownAction = QAction(self.downIcon, 'Move Down', self, statusTip='Move clip position down in list', triggered=self.moveItemDown, enabled=False)
         self.removeItemAction = QAction(self.removeIcon, 'Remove clip', self, statusTip='Remove selected clip from list', triggered=self.removeItem, enabled=False)
@@ -173,12 +176,6 @@ class VideoCutter(QWidget):
         self.mediaInfoAction = QAction('Media Information', self, statusTip='Media information from loaded video file', triggered=self.mediaInfo, enabled=False)
 
     def initToolbar(self):
-        self.toolbar = QToolBar()
-        self.toolbar.setStyleSheet('QToolBar QToolButton { min-width:82px; margin-left:10px; margin-right:10px; font-size:14px; }')
-        self.toolbar.setFloatable(False)
-        self.toolbar.setMovable(False)
-        self.toolbar.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
-        self.toolbar.setIconSize(QSize(24, 24))
         self.toolbar.addAction(self.openAction)
         self.toolbar.addAction(self.playAction)
         self.toolbar.addSeparator()
@@ -187,28 +184,24 @@ class VideoCutter(QWidget):
         self.toolbar.addSeparator()
         self.toolbar.addAction(self.saveAction)
 
-    def initMenu(self):
-        self.aboutMenu = QMenu()
+    def initMenus(self):
         self.aboutMenu.addAction(self.mediaInfoAction)
         self.aboutMenu.addSeparator()
         self.aboutMenu.addAction(self.aboutQtAction)
         self.aboutMenu.addAction(self.aboutAction)
-
-    def itemMenu(self, pos):
-        globalPos = self.cliplist.mapToGlobal(pos)
-        self.cliplistMenu = QMenu()
         self.cliplistMenu.addAction(self.moveItemUpAction)
         self.cliplistMenu.addAction(self.moveItemDownAction)
         self.cliplistMenu.addSeparator()
         self.cliplistMenu.addAction(self.removeItemAction)
         self.cliplistMenu.addAction(self.removeAllAction)
+
+    def itemMenu(self, pos):
+        globalPos = self.cliplist.mapToGlobal(pos)
         self.moveItemUpAction.setEnabled(False)
         self.moveItemDownAction.setEnabled(False)
         self.removeItemAction.setEnabled(False)
         self.removeAllAction.setEnabled(False)
         index = self.cliplist.currentRow()
-        if self.cliplist.count() > 0:
-            self.removeAllAction.setEnabled(True)
         if index != -1:
             if not self.inCut:
                 if index > 0:
@@ -217,6 +210,8 @@ class VideoCutter(QWidget):
                     self.moveItemDownAction.setEnabled(True)
             if self.cliplist.count() > 0:
                 self.removeItemAction.setEnabled(True)
+        if self.cliplist.count() > 0:
+            self.removeAllAction.setEnabled(True)
         self.cliplistMenu.exec_(globalPos)
 
     def moveItemUp(self):
@@ -316,7 +311,7 @@ class VideoCutter(QWidget):
         self.cutEndAction.setEnabled(False)
         self.mediaInfoAction.setEnabled(flag)
         if flag:
-            self.positionSlider.setRestrictValue(0)
+            self.seekSlider.setRestrictValue(0)
 
     def setCutStartIcon(self, frame):
         self.cutStartAction.setIcon(QIcon(self.cutStartMovie.currentPixmap()))
@@ -328,7 +323,7 @@ class VideoCutter(QWidget):
         self.mediaPlayer.setPosition(position)
 
     def positionChanged(self, progress):
-        self.positionSlider.setValue(progress)
+        self.seekSlider.setValue(progress)
         currentTime = self.deltaToQTime(progress)
         totalTime = self.deltaToQTime(self.mediaPlayer.duration())
         self.timeCounter.setText('%s / %s' % (currentTime.toString(self.timeformat), totalTime.toString(self.timeformat)))
@@ -342,7 +337,7 @@ class VideoCutter(QWidget):
             self.playAction.setText('Play')
 
     def durationChanged(self, duration):
-        self.positionSlider.setRange(0, duration)
+        self.seekSlider.setRange(0, duration)
 
     def muteAudio(self, muted):
         if self.mediaPlayer.isMuted():
@@ -374,7 +369,7 @@ class VideoCutter(QWidget):
         self.clipTimes.append([self.deltaToQTime(self.mediaPlayer.position()), '', self.captureImage()])
         self.cutStartAction.setDisabled(True)
         self.cutEndAction.setEnabled(True)
-        self.positionSlider.setRestrictValue(self.positionSlider.value())
+        self.seekSlider.setRestrictValue(self.seekSlider.value())
         self.inCut = True
         self.renderTimes()
         self.setAnimatedIcon(False)
@@ -388,7 +383,7 @@ class VideoCutter(QWidget):
         item[1] = selected
         self.cutStartAction.setEnabled(True)
         self.cutEndAction.setDisabled(True)
-        self.positionSlider.setRestrictValue(0)
+        self.seekSlider.setRestrictValue(0)
         self.inCut = False
         self.renderTimes()
         self.setAnimatedIcon(True)
@@ -403,7 +398,7 @@ class VideoCutter(QWidget):
 
     def renderTimes(self):
         self.cliplist.clear()
-        self.positionSlider.setCutMode(self.inCut)
+        self.seekSlider.setCutMode(self.inCut)
         if len(self.clipTimes) > 4:
             self.cliplist.setFixedWidth(200)
         else:
@@ -565,11 +560,11 @@ class VideoCutter(QWidget):
     def wheelEvent(self, event):
         if self.mediaPlayer.isVideoAvailable() or self.mediaPlayer.isAudioAvailable():
             if event.angleDelta().y() > 0:
-                newval = self.positionSlider.value() - 1000
+                newval = self.seekSlider.value() - 1000
             else:
-                newval = self.positionSlider.value() + 1000
-            self.positionSlider.setValue(newval)
-            self.positionSlider.setSliderPosition(newval)
+                newval = self.seekSlider.value() + 1000
+            self.seekSlider.setValue(newval)
+            self.seekSlider.setSliderPosition(newval)
             self.mediaPlayer.setPosition(newval)
         event.accept()
 
@@ -585,9 +580,9 @@ class VideoCutter(QWidget):
             elif event.key() == Qt.Key_PageDown or event.key() == Qt.Key_Down:
                 addtime = 10000
             if addtime != 0:
-                newval = self.positionSlider.value() + addtime
-                self.positionSlider.setValue(newval)
-                self.positionSlider.setSliderPosition(newval)
+                newval = self.seekSlider.value() + addtime
+                self.seekSlider.setValue(newval)
+                self.seekSlider.setSliderPosition(newval)
                 self.mediaPlayer.setPosition(newval)
         event.accept()
 
@@ -605,8 +600,7 @@ class VideoCutter(QWidget):
         QMessageBox.critical(self, 'Error Alert', self.mediaPlayer.errorString())
 
     def getAppPath(self):
-        # pyinstaller temp extraction folder
-        if getattr(sys, 'frozen', False):
+        if getattr(sys, 'frozen', False): # for pyinstaller; temp extraction folder
             return sys._MEIPASS
         return os.path.dirname(os.path.abspath(__file__))
 

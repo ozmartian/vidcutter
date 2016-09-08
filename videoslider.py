@@ -10,20 +10,23 @@ class VideoSlider(QSlider):
         super(QSlider, self).__init__(*arg, **kwargs)
         self.setStyle(QStyleFactory.create('Windows'))
         self.setOrientation(Qt.Horizontal)
-        self.setStatusTip('Set video frame position')
+        self.setStatusTip('Set clip start and end ranges')
         self.setCursor(Qt.PointingHandCursor)
         self.setMinimum(0)
         self.setMaximum(0)
         self.setSingleStep(1)
-        self.setTickPosition(self.TicksBothSides)
-        self.setTickInterval(1)
+        # self.setTickPosition(self.TicksBothSides)
+        # self.setTickInterval(1)
+        self.setTracking(True)
         self.setFocus()
         self.valueChanged.connect(self.restrictMove)
+        # self.sliderMoved.connect(self.restrictMove)
+        # self.actionTriggered.connect(self.restrictMove)
         self.setCutMode(False)
         self.restrictValue = 0
 
     def setSliderColor(self):
-        self.sliderQSS = '''QSlider:horizontal { margin: 10px 5px 6px; }
+        self.sliderQSS = '''QSlider:horizontal { margin: 10px 5px 8px; }
 QSlider::groove:horizontal {
     border: 1px inset #999;
     background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 %s, stop:1 %s);
@@ -52,36 +55,37 @@ QSlider::handle:horizontal {
 }
 QSlider::handle:horizontal:hover {
     background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 %s, stop:1 %s);
-}''' % (self.sliderGrooveBack1, self.sliderGrooveBack2, self.sliderSubBack1, self.sliderSubBack2,
-        self.sliderHandleBack1, self.sliderHandleBack2, self.sliderHandleHoverBack1, self.sliderHandleHoverBack2)
+}''' % (self.grooveBack1, self.grooveBack2, self.subBack1, self.subBack2,
+        self.handleBack1, self.handleBack2, self.handleHoverBack1, self.handleHoverBack2)
         self.setStyleSheet(self.sliderQSS)
 
     def setRestrictValue(self, value):
         self.restrictValue = value
 
-    def restrictMove(self, index):
-        if index < self.restrictValue:
+    def restrictMove(self, value):
+        if value < self.restrictValue:
             self.setSliderPosition(self.restrictValue)
+            # self.setValue(self.restrictValue)
 
     def setCutMode(self, flag):
         if flag:
-            self.sliderGrooveBack1 = '#FFF'
-            self.sliderGrooveBack2 = '#FFF'
-            self.sliderSubBack1 = '#FFF'
-            self.sliderSubBack2 = '#1e88e5'
-            self.sliderHandleBack1 = '#1e88e5'
-            self.sliderHandleBack2 = '#1e88e5'
-            self.sliderHandleHoverBack1 = '#AAA'
-            self.sliderHandleHoverBack2 = '#888'
+            self.grooveBack1 = '#FFF'
+            self.grooveBack2 = '#1e88e5'
+            self.subBack1 = '#FFF'
+            self.subBack2 = '#6A4572'
+            self.handleBack1 = '#1e88e5'
+            self.handleBack2 = '#1e88e5'
+            self.handleHoverBack1 = '#AAA'
+            self.handleHoverBack2 = '#888'
         else:
-            self.sliderGrooveBack1 = '#FFF'
-            self.sliderGrooveBack2 = '#FFF'
-            self.sliderSubBack1 = '#FFF'
-            self.sliderSubBack2 = '#6A4572'
-            self.sliderHandleBack1 = '#6A4572'
-            self.sliderHandleBack2 = '#6A4572'
-            self.sliderHandleHoverBack1 = '#AAA'
-            self.sliderHandleHoverBack2 = '#888'
+            self.grooveBack1 = '#FFF'
+            self.grooveBack2 = '#FFF'
+            self.subBack1 = '#FFF'
+            self.subBack2 = '#6A4572'
+            self.handleBack1 = '#6A4572'
+            self.handleBack2 = '#6A4572'
+            self.handleHoverBack1 = '#AAA'
+            self.handleHoverBack2 = '#888'
         self.setSliderColor()
 
     def wheelEvent(self, event):
