@@ -3,23 +3,33 @@
 
 import os
 import shlex
-import signal
 import subprocess
+import signal
 import sys
 import tempfile
+import warnings
 
 from PyQt5.QtCore import QDir, QEvent, QSize, Qt, QTime, QUrl
 from PyQt5.QtGui import QFontDatabase, QIcon, QPalette, QPixmap
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
-from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDialog, QHBoxLayout,
-                             QLabel, QListWidget, QListWidgetItem,
+                             QLabel, QListWidget, QListWidgetItem, QMainWindow,
                              QMenu, QMessageBox, QPushButton, QSizePolicy, QSlider,
                              QStyle, QToolBar, QVBoxLayout, QWidget, qApp)
 
-from .ffmpy import FFmpeg
-from .videoslider import VideoSlider
-from .videowidget import VideoWidget
+if __name__ == '__main__':
+    from ffmpy import FFmpeg
+    from videoslider import VideoSlider
+    from videowidget import VideoWidget
+else:
+    from .ffmpy import FFmpeg
+    from .videoslider import VideoSlider
+    from .videowidget import VideoWidget
+
+
+signal.signal(signal.SIGINT, signal.SIG_DFL)
+signal.signal(signal.SIGTERM, signal.SIG_DFL)
+warnings.filterwarnings("ignore")
 
 
 class VideoCutter(QWidget):
@@ -29,11 +39,11 @@ class VideoCutter(QWidget):
         self.mediaPlayer = QMediaPlayer(None, QMediaPlayer.VideoSurface)
         self.videoWidget = VideoWidget()
 
-        QFontDatabase.addApplicationFont(os.path.join(self.getFilePath(), 'fonts', 'DroidSansMono.ttf'))
+        QFontDatabase.addApplicationFont(os.path.join(self.getAppPath(), 'fonts', 'DroidSansMono.ttf'))
 
         self.FFMPEG_bin = 'ffmpeg'
         if sys.platform == 'win32':
-            self.FFMPEG_bin = os.path.join(self.getFilePath(), 'bin', 'ffmpeg.exe')
+            self.FFMPEG_bin = os.path.join(self.getAppPath(), 'bin', 'ffmpeg.exe')
 
         self.clipTimes = []
         self.inCut = False
@@ -53,7 +63,7 @@ class VideoCutter(QWidget):
                                  styleSheet='font-size:20px; font-weight:bold; font-family:sans-serif;')
         self.movieLabel.setBackgroundRole(QPalette.Dark)
         self.movieLabel.setAlignment(Qt.AlignCenter)
-        self.movieLabel.setPixmap(QPixmap(os.path.join(self.getFilePath(), 'icons', 'novideo.png'), 'PNG'))
+        self.movieLabel.setPixmap(QPixmap(os.path.join(self.getAppPath(), 'icons', 'novideo.png'), 'PNG'))
         self.movieLoaded = False
 
         self.cliplist = QListWidget()
@@ -68,7 +78,7 @@ class VideoCutter(QWidget):
         self.cliplist.model().rowsMoved.connect(self.syncClipList)
         self.cliplist.customContextMenuRequested.connect(self.itemMenu)
 
-        listHeader = QLabel(pixmap=QPixmap(os.path.join(self.getFilePath(), 'icons', 'clipindex.png')), alignment=Qt.AlignCenter)
+        listHeader = QLabel(pixmap=QPixmap(os.path.join(self.getAppPath(), 'icons', 'clipindex.png')), alignment=Qt.AlignCenter)
         listHeader.setStyleSheet('padding:5px; padding-top:8px; border:1px solid #b9b9b9; border-bottom:none; background-color:qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFF, stop: 0.5 #EAEAEA, stop: 0.6 #EAEAEA stop:1 #FFF);')
 
         clipLayout = QVBoxLayout()
@@ -128,21 +138,21 @@ class VideoCutter(QWidget):
         self.mediaPlayer.error.connect(self.handleError)
 
     def initIcons(self):
-        self.appIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'videocutter.png'))
-        self.openIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'open.png'))
-        self.playIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'play.png'))
-        self.pauseIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'pause.png'))
-        self.cutStartIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'start.png'))
-        self.cutEndIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'end.png'))
-        self.saveIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'save.png'))
-        self.muteIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'muted.png'))
-        self.unmuteIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'unmuted.png'))
-        self.upIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'up.png'))
-        self.downIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'down.png'))
-        self.removeIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'remove.png'))
-        self.removeAllIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'remove-all.png'))
-        self.successIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'success.png'))
-        self.aboutIcon = QIcon(os.path.join(self.getFilePath(), 'icons', 'about.png'))
+        self.appIcon = QIcon(os.path.join(self.getAppPath(), 'icons', 'videocutter.png'))
+        self.openIcon = QIcon(os.path.join(self.getAppPath(), 'icons', 'open.png'))
+        self.playIcon = QIcon(os.path.join(self.getAppPath(), 'icons', 'play.png'))
+        self.pauseIcon = QIcon(os.path.join(self.getAppPath(), 'icons', 'pause.png'))
+        self.cutStartIcon = QIcon(os.path.join(self.getAppPath(), 'icons', 'start.png'))
+        self.cutEndIcon = QIcon(os.path.join(self.getAppPath(), 'icons', 'end.png'))
+        self.saveIcon = QIcon(os.path.join(self.getAppPath(), 'icons', 'save.png'))
+        self.muteIcon = QIcon(os.path.join(self.getAppPath(), 'icons', 'muted.png'))
+        self.unmuteIcon = QIcon(os.path.join(self.getAppPath(), 'icons', 'unmuted.png'))
+        self.upIcon = QIcon(os.path.join(self.getAppPath(), 'icons', 'up.png'))
+        self.downIcon = QIcon(os.path.join(self.getAppPath(), 'icons', 'down.png'))
+        self.removeIcon = QIcon(os.path.join(self.getAppPath(), 'icons', 'remove.png'))
+        self.removeAllIcon = QIcon(os.path.join(self.getAppPath(), 'icons', 'remove-all.png'))
+        self.successIcon = QIcon(os.path.join(self.getAppPath(), 'icons', 'success.png'))
+        self.aboutIcon = QIcon(os.path.join(self.getAppPath(), 'icons', 'about.png'))
 
     def initActions(self):
         self.openAction = QAction(self.openIcon, '&Open', self, statusTip='Select video', triggered=self.openFile)
@@ -533,12 +543,6 @@ class VideoCutter(QWidget):
         else:
             return subprocess.Popen(args=shlex.split(cmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=shell)
 
-    @staticmethod
-    def getFilePath():
-        if getattr(sys, 'frozen', False):
-            return sys._MEIPASS
-        return os.path.dirname(os.path.realpath(sys.argv[0]))
-
     def wheelEvent(self, event):
         if self.mediaPlayer.isVideoAvailable() or self.mediaPlayer.isAudioAvailable():
             if event.angleDelta().y() > 0:
@@ -581,5 +585,52 @@ class VideoCutter(QWidget):
         print('ERROR: %s' % self.mediaPlayer.errorString())
         QMessageBox.critical(self, 'Error Alert', self.mediaPlayer.errorString())
 
+    def getAppPath(self):
+        # pyinstaller temp extraction folder
+        if getattr(sys, 'frozen', False):
+            return sys._MEIPASS
+        return os.path.dirname(os.path.abspath(__file__))
+
     def closeEvent(self, event):
         self.parent.closeEvent(event)
+
+
+class MainWindow(QMainWindow):
+    def __init__(self, parent=None):
+        super(MainWindow, self).__init__(parent)
+        self.statusBar().showMessage('Ready')
+        self.cutter = VideoCutter(self)
+        self.setCentralWidget(self.cutter)
+        self.setAcceptDrops(True)
+        self.setWindowTitle('%s %s' % (qApp.applicationName(), qApp.applicationVersion()))
+        self.setWindowIcon(self.cutter.appIcon)
+        self.resize(900, 650)
+
+    def dragEnterEvent(self, event):
+        if event.mimeData().hasUrls():
+            event.accept()
+
+    def dropEvent(self, event):
+        filename = event.mimeData().urls()[0].toLocalFile()
+        self.cutter.loadFile(filename)
+        event.accept()
+
+    def closeEvent(self, event):
+        self.cutter.deleteLater()
+        self.deleteLater()
+        qApp.quit()
+
+
+def main():
+    app = QApplication(sys.argv)
+    app.setStyle('Fusion')
+    app.setApplicationName('VideoCutter')
+    app.setApplicationVersion('1.0')
+    app.setQuitOnLastWindowClosed(True)
+    win = MainWindow()
+    win.show()
+    sys.exit(app.exec_())
+
+
+if __name__ == '__main__':
+    main()
