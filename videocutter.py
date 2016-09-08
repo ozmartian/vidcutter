@@ -13,39 +13,13 @@ from PyQt5.QtGui import QFontDatabase, QIcon, QPalette, QPixmap
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDialog, QHBoxLayout,
-                             QLabel, QListWidget, QListWidgetItem, QMainWindow,
+                             QLabel, QListWidget, QListWidgetItem,
                              QMenu, QMessageBox, QPushButton, QSizePolicy, QSlider,
                              QStyle, QToolBar, QVBoxLayout, QWidget, qApp)
 
-from ffmpy import FFmpeg
-from videoslider import VideoSlider
-
-signal.signal(signal.SIGINT, signal.SIG_DFL)
-signal.signal(signal.SIGTERM, signal.SIG_DFL)
-
-
-class VideoWidget(QVideoWidget):
-    def __init__(self, parent=None):
-        super(VideoWidget, self).__init__(parent)
-        self.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
-        p = self.palette()
-        p.setColor(QPalette.Window, Qt.black)
-        self.setPalette(p)
-        self.setAttribute(Qt.WA_OpaquePaintEvent)
-
-    def keyPressEvent(self, event):
-        if event.key() == Qt.Key_Escape and self.isFullScreen():
-            self.setFullScreen(False)
-            event.accept()
-        elif event.key() == Qt.Key_Enter and not self.isFullScreen():
-            self.setFullScreen(True)
-            event.accept()
-        else:
-            super(VideoWidget, self).keyPressEvent(event)
-
-    def mouseDoubleClickEvent(self, event):
-        self.setFullScreen(not self.isFullScreen())
-        event.accept()
+from .ffmpy import FFmpeg
+from .videoslider import VideoSlider
+from .videowidget import VideoWidget
 
 
 class VideoCutter(QWidget):
@@ -172,28 +146,17 @@ class VideoCutter(QWidget):
 
     def initActions(self):
         self.openAction = QAction(self.openIcon, '&Open', self, statusTip='Select video', triggered=self.openFile)
-        self.playAction = QAction(self.playIcon, '&Play', self, statusTip='Play video', triggered=self.playVideo,
-                                  enabled=False)                                    
-        self.cutStartAction = QAction(self.cutStartIcon, 'Set St&art', self, toolTip='Set Start', statusTip='Set start marker',
-                                      triggered=self.cutStart, enabled=False)
-        self.cutEndAction = QAction(self.cutEndIcon, 'Set &End', self, statusTip='Set end marker',
-                                    triggered=self.cutEnd, enabled=False)
-        self.saveAction = QAction(self.saveIcon, 'Sa&ve', self, statusTip='Save new video', triggered=self.cutVideo,
-                                  enabled=False)
-        self.moveItemUpAction = QAction(self.upIcon, 'Move Up', self, statusTip='Move clip position up in list',
-                                        triggered=self.moveItemUp, enabled=False)
-        self.moveItemDownAction = QAction(self.downIcon, 'Move Down', self, statusTip='Move clip position down in list',
-                                          triggered=self.moveItemDown, enabled=False)
-        self.removeItemAction = QAction(self.removeIcon, 'Remove clip', self,
-                                        statusTip='Remove selected clip from list', triggered=self.removeItem,
-                                        enabled=False)
-        self.removeAllAction = QAction(self.removeAllIcon, 'Clear list', self, statusTip='Clear all clips from list',
-                                       triggered=self.clearList, enabled=False)
-        self.aboutAction = QAction('About %s' % qApp.applicationName(), self, statusTip='Credits and acknowledgements',
-                                   triggered=self.aboutInfo)
+        self.playAction = QAction(self.playIcon, '&Play', self, statusTip='Play video', triggered=self.playVideo, enabled=False)
+        self.cutStartAction = QAction(self.cutStartIcon, 'Set St&art', self, toolTip='Set Start', statusTip='Set start marker', triggered=self.cutStart, enabled=False)
+        self.cutEndAction = QAction(self.cutEndIcon, 'Set &End', self, statusTip='Set end marker', triggered=self.cutEnd, enabled=False)
+        self.saveAction = QAction(self.saveIcon, 'Sa&ve', self, statusTip='Save new video', triggered=self.cutVideo, enabled=False)
+        self.moveItemUpAction = QAction(self.upIcon, 'Move Up', self, statusTip='Move clip position up in list', triggered=self.moveItemUp, enabled=False)
+        self.moveItemDownAction = QAction(self.downIcon, 'Move Down', self, statusTip='Move clip position down in list', triggered=self.moveItemDown, enabled=False)
+        self.removeItemAction = QAction(self.removeIcon, 'Remove clip', self, statusTip='Remove selected clip from list', triggered=self.removeItem, enabled=False)
+        self.removeAllAction = QAction(self.removeAllIcon, 'Clear list', self, statusTip='Clear all clips from list', triggered=self.clearList, enabled=False)
+        self.aboutAction = QAction('About %s' % qApp.applicationName(), self, statusTip='Credits and acknowledgements', triggered=self.aboutInfo)
         self.aboutQtAction = QAction('About Qt', self, statusTip='About Qt', triggered=qApp.aboutQt)
-        self.mediaInfoAction = QAction('Media Information', self, statusTip='Media information from loaded video file',
-                                       triggered=self.mediaInfo, enabled=False)
+        self.mediaInfoAction = QAction('Media Information', self, statusTip='Media information from loaded video file', triggered=self.mediaInfo, enabled=False)
 
     def initToolbar(self):
         self.toolbar = QToolBar()
@@ -441,7 +404,7 @@ class VideoCutter(QWidget):
     def captureImage(self):
         frametime = self.deltaToQTime(self.mediaPlayer.position()).addSecs(1).toString(self.timeformat)
         if sys.platform == 'win32':
-            fd, imagecap = tempfile.mkstemp(suffix='.jpg') 
+            fd, imagecap = tempfile.mkstemp(suffix='.jpg')
             try:
                 os.write(fd, b'dummy data')
                 os.close(fd)
@@ -620,44 +583,3 @@ class VideoCutter(QWidget):
 
     def closeEvent(self, event):
         self.parent.closeEvent(event)
-
-
-class MainWindow(QMainWindow):
-    def __init__(self, parent=None):
-        super(MainWindow, self).__init__(parent)
-        self.statusBar().showMessage('Ready')
-        self.cutter = VideoCutter(self)
-        self.setCentralWidget(self.cutter)
-        self.setAcceptDrops(True)
-        self.setWindowTitle('%s %s' % (qApp.applicationName(), qApp.applicationVersion()))
-        self.setWindowIcon(self.cutter.appIcon)
-        self.resize(900, 650)
-
-    def dragEnterEvent(self, event):
-        if event.mimeData().hasUrls():
-            event.accept()
-
-    def dropEvent(self, event):
-        filename = event.mimeData().urls()[0].toLocalFile()
-        self.cutter.loadFile(filename)
-        event.accept()
-
-    def closeEvent(self, event):
-        self.cutter.deleteLater()
-        self.deleteLater()
-        qApp.quit()
-
-
-def main():
-    app = QApplication(sys.argv)
-    app.setStyle('Fusion')
-    app.setApplicationName('VideoCutter')
-    app.setApplicationVersion('1.0')
-    app.setQuitOnLastWindowClosed(True)
-    win = MainWindow()
-    win.show()
-    sys.exit(app.exec_())
-
-
-if __name__ == '__main__':
-    main()

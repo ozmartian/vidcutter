@@ -8,9 +8,6 @@ from PyQt5.QtWidgets import QSlider, QStyleFactory, qApp
 class VideoSlider(QSlider):
     def __init__(self, *arg, **kwargs):
         super(QSlider, self).__init__(*arg, **kwargs)
-
-        self.setCutMode(False)
-
         self.setStyle(QStyleFactory.create('Windows'))
         self.setOrientation(Qt.Horizontal)
         self.setStatusTip('Set video frame position')
@@ -21,9 +18,9 @@ class VideoSlider(QSlider):
         self.setTickPosition(self.TicksBothSides)
         self.setTickInterval(1)
         self.setFocus()
-        self.restrictValue = 0
-
         self.valueChanged.connect(self.restrictMove)
+        self.setCutMode(False)
+        self.restrictValue = 0
 
     def setSliderColor(self):
         self.sliderQSS = '''QSlider:horizontal { margin: 10px 5px 6px; }
@@ -66,12 +63,6 @@ QSlider::handle:horizontal:hover {
         if index < self.restrictValue:
             self.setSliderPosition(self.restrictValue)
 
-    def wheelEvent(self, event):
-        qApp.sendEvent(self.parentWidget(), event)
-
-    def keyPressEvent(self, event):
-        qApp.sendEvent(self.parentWidget(), event)
-
     def setCutMode(self, flag):
         if flag:
             self.sliderGrooveBack1 = '#FFF'
@@ -92,3 +83,9 @@ QSlider::handle:horizontal:hover {
             self.sliderHandleHoverBack1 = '#AAA'
             self.sliderHandleHoverBack2 = '#888'
         self.setSliderColor()
+
+    def wheelEvent(self, event):
+        qApp.sendEvent(self.parentWidget(), event)
+
+    def keyPressEvent(self, event):
+        qApp.sendEvent(self.parentWidget(), event)
