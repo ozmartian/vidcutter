@@ -3,14 +3,14 @@
 
 import os
 import shlex
-import subprocess
 import signal
+import subprocess
 import sys
 import tempfile
 import warnings
 
 from PyQt5.QtCore import QDir, QEvent, QSize, Qt, QTime, QUrl
-from PyQt5.QtGui import QFontDatabase, QIcon, QPalette, QPixmap
+from PyQt5.QtGui import QFontDatabase, QIcon, QMovie, QPalette, QPixmap
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDialog, QHBoxLayout,
                              QLabel, QListWidget, QListWidgetItem, QMainWindow,
@@ -153,6 +153,10 @@ class VideoCutter(QWidget):
         self.removeAllIcon = QIcon(os.path.join(self.getAppPath(), 'icons', 'remove-all.png'))
         self.successIcon = QIcon(os.path.join(self.getAppPath(), 'icons', 'success.png'))
         self.aboutIcon = QIcon(os.path.join(self.getAppPath(), 'icons', 'about.png'))
+        self.cutStartMovie = QMovie(os.path.join(self.getAppPath(), 'icons', 'start-marker.gif'))
+        self.cutStartMovie.frameChanged.connect(self.setCutStartIcon)
+        self.cutEndMovie = QMovie(os.path.join(self.getAppPath(), 'icons', 'end-marker.gif'))
+        self.cutEndMovie.frameChanged.connect(self.setCutEndIcon)
 
     def initActions(self):
         self.openAction = QAction(self.openIcon, '&Open', self, statusTip='Select video', triggered=self.openFile)
@@ -295,9 +299,9 @@ class VideoCutter(QWidget):
             self.videoLayout.replaceWidget(self.movieLabel, self.videoWidget)
             self.movieLabel.deleteLater()
             self.videoWidget.show()
-            # self.mediaPlayer.play()
-            self.mediaPlayer.pause()
             self.movieLoaded = True
+        self.mediaPlayer.pause()
+        self.setAnimatedIcon(True)
 
     def playVideo(self):
         if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
@@ -314,10 +318,13 @@ class VideoCutter(QWidget):
         if flag:
             self.positionSlider.setRestrictValue(0)
 
+    def setCutStartIcon(self, frame):
+        self.cutStartAction.setIcon(QIcon(self.cutStartMovie.currentPixmap()))
+
+    def setCutEndIcon(self, frame):
+        self.cutEndAction.setIcon(QIcon(self.cutEndMovie.currentPixmap()))
+
     def setPosition(self, position):
-        # if self.mediaPlayer.state() == QMediaPlayer.StoppedState:
-        #     self.mediaPlayer.play()
-        #     self.mediaPlayer.pause()
         self.mediaPlayer.setPosition(position)
 
     def positionChanged(self, progress):
@@ -352,6 +359,16 @@ class VideoCutter(QWidget):
 
     def toggleFullscreen(self):
         self.videoWidget.setFullScreen(not self.videoWidget.isFullScreen())
+        
+    def setAnimatedIcon(self, startIcon):
+        if startIcon:
+            self.cutStartMovie.start()
+            self.cutEndMovie.stop()
+            self.cutEndAction.setIcon(self.cutEndIcon)
+        else:
+            self.cutEndMovie.start()
+            self.cutStartMovie.stop()
+            self.cutStartAction.setIcon(self.cutStartIcon)
 
     def cutStart(self):
         self.clipTimes.append([self.deltaToQTime(self.mediaPlayer.position()), '', self.captureImage()])
@@ -360,6 +377,7 @@ class VideoCutter(QWidget):
         self.positionSlider.setRestrictValue(self.positionSlider.value())
         self.inCut = True
         self.renderTimes()
+        self.setAnimatedIcon(False)
 
     def cutEnd(self):
         item = self.clipTimes[len(self.clipTimes) - 1]
@@ -373,6 +391,7 @@ class VideoCutter(QWidget):
         self.positionSlider.setRestrictValue(0)
         self.inCut = False
         self.renderTimes()
+        self.setAnimatedIcon(True)
 
     def syncClipList(self, parent, start, end, destination, row):
         if start < row:
@@ -386,9 +405,9 @@ class VideoCutter(QWidget):
         self.cliplist.clear()
         self.positionSlider.setCutMode(self.inCut)
         if len(self.clipTimes) > 4:
-            self.cliplist.setFixedWidth(195)
+            self.cliplist.setFixedWidth(200)
         else:
-            self.cliplist.setFixedWidth(180)
+            self.cliplist.setFixedWidth(185)
         for item in self.clipTimes:
             endItem = ''
             if type(item[1]) is QTime:
