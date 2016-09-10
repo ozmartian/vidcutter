@@ -18,8 +18,13 @@ from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDial
                              QMessageBox, QPushButton, QSizePolicy, QSlider,
                              QStyle, QToolBar, QVBoxLayout, QWidget, qApp)
 
-from .ffmpy import FFmpeg
-from .videoslider import VideoSlider
+
+if __name__ == '__main__':
+    from ffmpy import FFmpeg
+    from videoslider import VideoSlider
+else:
+    from .ffmpy import FFmpeg
+    from .videoslider import VideoSlider
 
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
