@@ -22,9 +22,11 @@ from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDial
 if __name__ == '__main__':
     from ffmpy import FFmpeg
     from videoslider import VideoSlider
+    from about import AboutVideoCutter
 else:
     from .ffmpy import FFmpeg
     from .videoslider import VideoSlider
+    from .about import AboutVideoCutter
 
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
@@ -102,7 +104,7 @@ class VideoCutter(QWidget):
                                     iconSize=QSize(100, 700), dragDropMode=QAbstractItemView.InternalMove,
                                     alternatingRowColors=True, customContextMenuRequested=self.itemMenu,
                                     styleSheet='QListView::item { margin:10px 5px; }')
-        self.cliplist.setFixedWidth(180)
+        self.cliplist.setFixedWidth(185)
         self.cliplist.model().rowsMoved.connect(self.syncClipList)
 
         listHeader = QLabel(pixmap=QPixmap(os.path.join(self.getAppPath(), 'icons', 'clipindex.png')), alignment=Qt.AlignCenter)
@@ -280,24 +282,8 @@ class VideoCutter(QWidget):
             QMessageBox.critical(self, 'Could not retrieve media information', 'There was a problem in tring to retrieve media information.\n\nThis DOES NOT mean there is a problem with the file and you should be able to continue using it.')
 
     def aboutInfo(self):
-        aboutApp = '''<style>
-    a { color:#441d4e; text-decoration:none; font-weight:bold; }
-    a:hover { text-decoration:underline; }
-</style>
-<h1>%s</h1>
-<h3 style="font-weight:normal;"><b>Version:</b> %s</h3>
-<p>Copyright &copy; 2016 <a href="mailto:pete@ozmartians.com">Pete Alexandrou</a></p>
-<p style="font-size:13px">
-    A special thanks & acknowledgements to the teams behind the <b>PyQt5</b> and <b>FFmpeg</b> software projects.
-    None of this would be possible without you!
-</p>
-<p style="font-size:11px">
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-</p>''' % (qApp.applicationName(), qApp.applicationVersion())
-        QMessageBox.about(self, 'About %s' % qApp.applicationName(), aboutApp)
+        about = AboutVideoCutter(self)
+        about.show()
 
     def openFile(self):
         filename, _ = QFileDialog.getOpenFileName(self, caption='Select video', directory=QDir.homePath())
