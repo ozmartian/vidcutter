@@ -93,10 +93,9 @@ class VideoCutter(QWidget):
 
         self.movieLabel = QLabel(alignment=Qt.AlignCenter, autoFillBackground=True, textFormat=Qt.RichText,
                                  sizePolicy=QSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored),
+                                 pixmap=QPixmap(os.path.join(self.getAppPath(), 'icons', 'novideo.png'), 'PNG'),
                                  styleSheet='font-size:20px; font-weight:bold; font-family:sans-serif;')
         self.movieLabel.setBackgroundRole(QPalette.Dark)
-        self.movieLabel.setAlignment(Qt.AlignCenter)
-        self.movieLabel.setPixmap(QPixmap(os.path.join(self.getAppPath(), 'icons', 'novideo.png'), 'PNG'))
         self.movieLoaded = False
 
         self.cliplist = QListWidget(sizePolicy=QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding),

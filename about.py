@@ -19,7 +19,7 @@ class AboutVideoCutter(QDialog):
 <p>Copyright &copy; 2016 <a href="mailto:pete@ozmartians.com">Pete Alexandrou</a></p>
 <p style="font-size:13px;">
     A special thanks & acknowledgements to the folks behind <b>PyQt5</b> and <b>FFmpeg</b>
-    projects and the Qt crew too, of course.
+    projects and the Qt crew too; thanks for opening the license up! :-)
 </p>
 <p style="font-size:12px;">
     This program is free software; you can redistribute it and/or
@@ -42,6 +42,6 @@ class AboutVideoCutter(QDialog):
         layout = QVBoxLayout()
         layout.addLayout(main)
         layout.addSpacing(10)
-        layout.addWidget(QPushButton('Close', cursor=Qt.PointingHandCursor, clicked=self.close), alignment=Qt.AlignRight)
+        layout.addWidget(QPushButton('OK', clicked=self.close), alignment=Qt.AlignRight)
 
         self.setLayout(layout)
