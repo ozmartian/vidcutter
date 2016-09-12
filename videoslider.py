@@ -69,8 +69,8 @@ QSlider::handle:horizontal:hover {
             self.grooveBack2 = '#1e88e5'
             self.subBack1 = '#FFF'
             self.subBack2 = '#6A4572'
-            self.handleBack1 = '#1e88e5'
-            self.handleBack2 = '#1e88e5'
+            self.handleBack1 = '#666666'
+            self.handleBack2 = '#666666'
             self.handleHoverBack1 = '#AAA'
             self.handleHoverBack2 = '#888'
         else:
@@ -78,8 +78,8 @@ QSlider::handle:horizontal:hover {
             self.grooveBack2 = '#FFF'
             self.subBack1 = '#FFF'
             self.subBack2 = '#6A4572'
-            self.handleBack1 = '#6A4572'
-            self.handleBack2 = '#6A4572'
+            self.handleBack1 = '#666666'
+            self.handleBack2 = '#666666'
             self.handleHoverBack1 = '#AAA'
             self.handleHoverBack2 = '#888'
         self.setSliderColor()
@@ -88,7 +88,4 @@ QSlider::handle:horizontal:hover {
         qApp.sendEvent(self.parentWidget(), event)
 
     def keyPressEvent(self, event):
-        qApp.sendEvent(self.parentWidget(), event)
-
-    def mousePressEvent(self, event):
         qApp.sendEvent(self.parentWidget(), event)
