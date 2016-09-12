@@ -23,7 +23,7 @@ class VideoSlider(QSlider):
         self.valueChanged.connect(self.restrictMove)
 
     def setSliderColor(self):
-        self.sliderQSS = '''QSlider:horizontal { margin: 15px 5px 8px; }
+        self.sliderQSS = '''QSlider:horizontal { margin: 15px 5px 10px; }
 QSlider::groove:horizontal {
     border: 1px inset #999;
     background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 %s, stop:1 %s);
@@ -71,8 +71,8 @@ QSlider::handle:horizontal:hover {
             self.subBack2 = '#6A4572'
             self.handleBack1 = '#666666'
             self.handleBack2 = '#666666'
-            self.handleHoverBack1 = '#AAA'
-            self.handleHoverBack2 = '#888'
+            self.handleHoverBack1 = '#CCC'
+            self.handleHoverBack2 = '#999'
         else:
             self.grooveBack1 = '#FFF'
             self.grooveBack2 = '#FFF'
@@ -80,8 +80,8 @@ QSlider::handle:horizontal:hover {
             self.subBack2 = '#6A4572'
             self.handleBack1 = '#666666'
             self.handleBack2 = '#666666'
-            self.handleHoverBack1 = '#AAA'
-            self.handleHoverBack2 = '#888'
+            self.handleHoverBack1 = '#CCC'
+            self.handleHoverBack2 = '#999'
         self.setSliderColor()
 
     def wheelEvent(self, event):
