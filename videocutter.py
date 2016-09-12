@@ -10,7 +10,7 @@ import tempfile
 import warnings
 
 from PyQt5.QtCore import QDir, QEvent, QSize, Qt, QTime, QUrl
-from PyQt5.QtGui import QFontDatabase, QIcon, QPalette, QPixmap
+from PyQt5.QtGui import QFontDatabase, QIcon, QMovie, QPalette, QPixmap
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDialog, QHBoxLayout,
@@ -47,8 +47,8 @@ class VideoWidget(QVideoWidget):
         if event.key() == Qt.Key_Escape and self.isFullScreen():
             self.setFullScreen(False)
             event.accept()
-        elif event.key() == Qt.Key_Enter and not self.isFullScreen():
-            self.setFullScreen(True)
+        elif event.key() == Qt.Key_Enter:
+            self.setFullScreen(not self.isFullScreen())
             event.accept()
         else:
             super(VideoWidget, self).keyPressEvent(event)
@@ -73,6 +73,7 @@ class VideoCutter(QWidget):
 
         self.clipTimes = []
         self.inCut = False
+        self.movieLoaded = False
         self.timeformat = 'hh:mm:ss'
         self.finalFilename = ''
 
@@ -88,15 +89,30 @@ class VideoCutter(QWidget):
         self.cliplistMenu = QMenu()
         self.initMenus()
 
-        self.seekSlider = VideoSlider(objectName='VideoSlider', sliderMoved=self.setPosition)
+        self.seekSlider = VideoSlider(sliderMoved=self.setPosition)
         self.seekSlider.installEventFilter(self)
 
-        self.movieLabel = QLabel(alignment=Qt.AlignCenter, autoFillBackground=True, textFormat=Qt.RichText,
-                                 sizePolicy=QSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored),
-                                 pixmap=QPixmap(os.path.join(self.getAppPath(), 'icons', 'novideo.png'), 'PNG'),
-                                 styleSheet='font-size:20px; font-weight:bold; font-family:sans-serif;')
-        self.movieLabel.setBackgroundRole(QPalette.Dark)
-        self.movieLoaded = False
+        novideoImage = QLabel(alignment=Qt.AlignCenter, autoFillBackground=True,
+                              sizePolicy=QSizePolicy(QSizePolicy.Expanding, QSizePolicy.MinimumExpanding),
+                              pixmap=QPixmap(os.path.join(self.getAppPath(), 'icons', 'novideo.png'), 'PNG'))
+        novideoImage.setBackgroundRole(QPalette.Dark)
+        novideoImage.setContentsMargins(0, 20, 0, 20)
+        self.novideoLabel = QLabel(alignment=Qt.AlignCenter, autoFillBackground=True,
+                                   sizePolicy=QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum))
+        self.novideoLabel.setBackgroundRole(QPalette.Dark)
+        self.novideoLabel.setContentsMargins(0, 20, 15, 60)
+
+        novideoLayout = QVBoxLayout(spacing=0)
+        novideoLayout.addWidget(novideoImage)
+        novideoLayout.addWidget(self.novideoLabel, alignment=Qt.AlignTop)
+
+        self.novideoMovie = QMovie(os.path.join(self.getAppPath(), 'icons', 'novideotext.gif'))
+        self.novideoMovie.frameChanged.connect(self.setNoVideoText)
+        self.novideoMovie.start()
+
+        self.novideoWidget = QWidget(self, autoFillBackground=True)
+        self.novideoWidget.setBackgroundRole(QPalette.Dark)
+        self.novideoWidget.setLayout(novideoLayout)
 
         self.cliplist = QListWidget(sizePolicy=QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding),
                                     contextMenuPolicy=Qt.CustomContextMenu, uniformItemSizes=True,
@@ -109,24 +125,27 @@ class VideoCutter(QWidget):
         listHeader = QLabel(pixmap=QPixmap(os.path.join(self.getAppPath(), 'icons', 'clipindex.png')), alignment=Qt.AlignCenter)
         listHeader.setStyleSheet('padding:5px; padding-top:8px; border:1px solid #b9b9b9; border-bottom:none; background-color:qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFF, stop: 0.5 #EAEAEA, stop: 0.6 #EAEAEA stop:1 #FFF);')
 
-        clipLayout = QVBoxLayout()
-        clipLayout.setContentsMargins(0, 0, 0, 0)
-        clipLayout.setSpacing(0)
-        clipLayout.addWidget(listHeader)
-        clipLayout.addWidget(self.cliplist)
+        self.clipindexLayout = QVBoxLayout(spacing=0)
+        self.clipindexLayout.setContentsMargins(0, 0, 0, 0)
+        self.clipindexLayout.addWidget(listHeader)
+        self.clipindexLayout.addWidget(self.cliplist)
 
         self.videoLayout = QHBoxLayout()
         self.videoLayout.setContentsMargins(0, 0, 0, 0)
-        self.videoLayout.addWidget(self.movieLabel)
-        self.videoLayout.addLayout(clipLayout)
+        self.videoLayout.addWidget(self.novideoWidget)
+        self.videoLayout.addLayout(self.clipindexLayout)
 
-        self.timeCounter = QLabel('00:00:00 / 00:00:00')
-        self.timeCounter.setStyleSheet('font-family:Droid Sans Mono; font-size:10.5pt; color:#666; margin-top:-2px; margin-right:150px; margin-bottom:6px;')
+        self.timeCounter = QLabel('00:00:00 / 00:00:00', autoFillBackground=True, alignment=Qt.AlignCenter,
+                                  sizePolicy=QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed))
+        self.timeCounter.setStyleSheet('color:#FFFFFF; background:#000000; font-family:Droid Sans Mono; font-size:10.5pt; padding:4px;')
 
-        timerLayout = QHBoxLayout()
-        timerLayout.addStretch(1)
-        timerLayout.addWidget(self.timeCounter)
-        timerLayout.addStretch(1)
+        videoplayerLayout = QVBoxLayout(spacing=0)
+        videoplayerLayout.setContentsMargins(0, 0, 0, 0)
+        videoplayerLayout.addWidget(self.videoWidget)
+        videoplayerLayout.addWidget(self.timeCounter)
+
+        self.videoplayerWidget = QWidget(self, visible=False)
+        self.videoplayerWidget.setLayout(videoplayerLayout)
 
         self.menuButton = QPushButton(icon=self.aboutIcon, flat=True, toolTip='About',
                                       statusTip='About %s' % qApp.applicationName(),
@@ -153,7 +172,6 @@ class VideoCutter(QWidget):
         layout = QVBoxLayout()
         layout.setContentsMargins(10, 10, 10, 4)
         layout.addLayout(self.videoLayout)
-        layout.addLayout(timerLayout)
         layout.addWidget(self.seekSlider)
         layout.addLayout(controlsLayout)
 
@@ -215,6 +233,9 @@ class VideoCutter(QWidget):
         self.cliplistMenu.addSeparator()
         self.cliplistMenu.addAction(self.removeItemAction)
         self.cliplistMenu.addAction(self.removeAllAction)
+
+    def setNoVideoText(self, frame):
+        self.novideoLabel.setPixmap(self.novideoMovie.currentPixmap())
 
     def itemMenu(self, pos):
         globalPos = self.cliplist.mapToGlobal(pos)
@@ -278,7 +299,11 @@ class VideoCutter(QWidget):
             mbox.setInformativeText(content)
             mbox.exec_()
         else:
-            QMessageBox.critical(self, 'Could not retrieve media information', 'There was a problem in tring to retrieve media information.\n\nThis DOES NOT mean there is a problem with the file and you should be able to continue using it.')
+            QMessageBox.critical(self, 'Could not retrieve media information',
+                                 '''There was a problem in tring to retrieve media information.
+                                    \n\n
+                                    This DOES NOT mean there is a problem with the file and you should
+                                    be able to continue using it.''')
 
     def aboutInfo(self):
         about = AboutVideoCutter(self)
@@ -296,8 +321,11 @@ class VideoCutter(QWidget):
         self.clipTimes = []
         self.parent.setWindowTitle('%s %s - %s' % (qApp.applicationName(), qApp.applicationVersion(), os.path.basename(filename)))
         if not self.movieLoaded:
-            self.videoLayout.replaceWidget(self.movieLabel, self.videoWidget)
-            self.movieLabel.deleteLater()
+            self.videoLayout.replaceWidget(self.novideoWidget, self.videoplayerWidget)
+            self.novideoMovie.stop()
+            self.novideoMovie.deleteLater()
+            self.novideoWidget.deleteLater()
+            self.videoplayerWidget.show()
             self.videoWidget.show()
             self.movieLoaded = True
         self.mediaPlayer.pause()
@@ -352,7 +380,7 @@ class VideoCutter(QWidget):
 
     def toggleFullscreen(self):
         self.videoWidget.setFullScreen(not self.videoWidget.isFullScreen())
-        
+
     def cutStart(self):
         self.clipTimes.append([self.deltaToQTime(self.mediaPlayer.position()), '', self.captureImage()])
         self.cutStartAction.setDisabled(True)
@@ -398,7 +426,9 @@ class VideoCutter(QWidget):
             if type(item[2]) is QPixmap:
                 listitem.setIcon(QIcon(item[2]))
             self.cliplist.addItem(listitem)
-            marker = QLabel('<style>b { font-size:8pt; } p { margin:5px; }</style><p><b>START</b><br/>%s</p><p><b>END</b><br/>%s</p>' % (item[0].toString(self.timeformat), endItem))
+            marker = QLabel('''<style>b { font-size:8pt; } p { margin:5px; }</style>
+                            <p><b>START</b><br/>%s</p><p><b>END</b><br/>%s</p>'''
+                            % (item[0].toString(self.timeformat), endItem))
             self.cliplist.setItemWidget(listitem, marker)
             listitem.setFlags(Qt.ItemIsSelectable | Qt.ItemIsDragEnabled | Qt.ItemIsEnabled)
         if len(self.clipTimes) and not self.inCut:
@@ -565,12 +595,26 @@ class VideoCutter(QWidget):
                 addtime = 1000
             elif event.key() == Qt.Key_PageDown or event.key() == Qt.Key_Down:
                 addtime = 10000
+            elif event.key() == Qt.Key_Enter:
+                self.toggleFullscreen()
+            elif event.key() == Qt.Key_Escape and self.videoWidget.isFullScreen():
+                self.videoWidget.setFullScreen(False)
             if addtime != 0:
                 newval = self.seekSlider.value() + addtime
                 self.seekSlider.setValue(newval)
                 self.seekSlider.setSliderPosition(newval)
                 self.mediaPlayer.setPosition(newval)
         event.accept()
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.BackButton and self.cutStartAction.isEnabled():
+            self.cutStart()
+            event.accept()
+        elif event.button() == Qt.ForwardButton and self.cutEndAction.isEnabled():
+            self.cutEnd()
+            event.accept()
+        else:
+            super(VideoCutter, self).mousePressEvent(event)
 
     def eventFilter(self, obj, event):
         if event.type() == QEvent.MouseButtonRelease and isinstance(obj, VideoSlider):
@@ -603,6 +647,7 @@ class MainWindow(QMainWindow):
         self.setAcceptDrops(True)
         self.setWindowTitle('%s %s' % (qApp.applicationName(), qApp.applicationVersion()))
         self.setWindowIcon(self.cutter.appIcon)
+        self.setMinimumSize(900, 650)
         self.resize(900, 650)
 
     def dragEnterEvent(self, event):
@@ -623,8 +668,8 @@ class MainWindow(QMainWindow):
 def main():
     app = QApplication(sys.argv)
     app.setStyle('Fusion')
-    app.setApplicationName('VideoCutter')
-    app.setApplicationVersion('1.0')
+    app.setApplicationName('VidCutter')
+    app.setApplicationVersion('1.0.1')
     app.setQuitOnLastWindowClosed(True)
     win = MainWindow()
     win.show()

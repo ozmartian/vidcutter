@@ -10,23 +10,20 @@ class VideoSlider(QSlider):
         super(QSlider, self).__init__(*arg, **kwargs)
         self.setStyle(QStyleFactory.create('Windows'))
         self.setOrientation(Qt.Horizontal)
+        self.setObjectName('VideoSlider')
         self.setStatusTip('Set clip start and end ranges')
         self.setCursor(Qt.PointingHandCursor)
         self.setMinimum(0)
         self.setMaximum(0)
         self.setSingleStep(1)
-        # self.setTickPosition(self.TicksBothSides)
-        # self.setTickInterval(1)
         self.setTracking(True)
         self.setFocus()
-        self.valueChanged.connect(self.restrictMove)
-        # self.sliderMoved.connect(self.restrictMove)
-        # self.actionTriggered.connect(self.restrictMove)
         self.setCutMode(False)
         self.restrictValue = 0
+        self.valueChanged.connect(self.restrictMove)
 
     def setSliderColor(self):
-        self.sliderQSS = '''QSlider:horizontal { margin: 10px 5px 8px; }
+        self.sliderQSS = '''QSlider:horizontal { margin: 15px 5px 8px; }
 QSlider::groove:horizontal {
     border: 1px inset #999;
     background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 %s, stop:1 %s);
@@ -65,7 +62,6 @@ QSlider::handle:horizontal:hover {
     def restrictMove(self, value):
         if value < self.restrictValue:
             self.setSliderPosition(self.restrictValue)
-            # self.setValue(self.restrictValue)
 
     def setCutMode(self, flag):
         if flag:
@@ -92,4 +88,7 @@ QSlider::handle:horizontal:hover {
         qApp.sendEvent(self.parentWidget(), event)
 
     def keyPressEvent(self, event):
+        qApp.sendEvent(self.parentWidget(), event)
+
+    def mousePressEvent(self, event):
         qApp.sendEvent(self.parentWidget(), event)
