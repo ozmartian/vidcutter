@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QSlider, QStyleFactory, qApp
+from PyQt5.QtCore import QPoint, Qt
+from PyQt5.QtWidgets import QSlider, QStyleFactory, QStyleOptionSlider, QToolTip, qApp
 
 
 class VideoSlider(QSlider):
@@ -11,7 +11,7 @@ class VideoSlider(QSlider):
         self.setStyle(QStyleFactory.create('Windows'))
         self.setOrientation(Qt.Horizontal)
         self.setObjectName('VideoSlider')
-        self.setStatusTip('Set clip start and end ranges')
+        self.setStatusTip('Set clip start and end points')
         self.setCursor(Qt.PointingHandCursor)
         self.setMinimum(0)
         self.setMaximum(0)
@@ -20,6 +20,8 @@ class VideoSlider(QSlider):
         self.setFocus()
         self.setCutMode(False)
         self.restrictValue = 0
+        self.style = qApp.style()
+        self.opt = QStyleOptionSlider()
         self.valueChanged.connect(self.restrictMove)
 
     def setSliderColor(self):
@@ -62,6 +64,13 @@ QSlider::handle:horizontal:hover {
     def restrictMove(self, value):
         if value < self.restrictValue:
             self.setSliderPosition(self.restrictValue)
+        else:
+            self.initStyleOption(self.opt)
+            rectHandle = self.style.subControlRect(self.style.CC_Slider, self.opt, self.style.SC_SliderHandle)
+            posLocal = rectHandle.topLeft() + QPoint(20, -20)
+            posGlobal = self.mapToGlobal(posLocal)
+            timerValue = self.parentWidget().timeCounter.text().split(' / ')[0]
+            QToolTip.showText(posGlobal, timerValue, self)
 
     def setCutMode(self, flag):
         if flag:
