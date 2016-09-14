@@ -2,13 +2,13 @@
 # -*- coding: utf-8 -*-
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QDialog, QLabel, QHBoxLayout, QPushButton, QVBoxLayout, qApp
+from PyQt5.QtWidgets import QDialog, QLabel, QHBoxLayout, QPushButton, QSizePolicy, QVBoxLayout, qApp
 
 
 class AboutVideoCutter(QDialog):
     def __init__(self, parent, flags=Qt.WindowTitleHint | Qt.WindowSystemMenuHint):
         super(AboutVideoCutter, self).__init__(parent, flags)
-        self.setMinimumWidth(560)
+        self.setFixedSize(590, 300)
         self.logo = QLabel(pixmap=self.parent().windowIcon().pixmap(120, 120))
         content = '''<style>
     a { color:#441d4e; text-decoration:none; font-weight:bold; }
@@ -32,6 +32,7 @@ class AboutVideoCutter(QDialog):
         self.setWindowIcon(self.parent().windowIcon())
         self.setWindowTitle('About %s' % qApp.applicationName())
         self.setContentsMargins(0, 0, 0, 0)
+        self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         self.setModal(True)
 
         main = QHBoxLayout()
