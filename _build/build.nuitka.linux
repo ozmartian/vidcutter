@@ -1,0 +1,5 @@
+#!/bin/bash
+
+cd ..
+nuitka --recurse-all --remove-output videocutter.py
+mv videocutter.exe vidcutter
