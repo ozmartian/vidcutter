@@ -18,15 +18,14 @@ from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDial
                              QMenu, QMessageBox, QPushButton, QSizePolicy, QSlider,
                              QStyle, QToolBar, QVBoxLayout, QWidget, qApp)
 
+import resources
 
 if __name__ == '__main__':
     from ffmpy import FFmpeg
     from videoslider import VideoSlider
-    from about import AboutVideoCutter
 else:
     from .ffmpy import FFmpeg
     from .videoslider import VideoSlider
-    from .about import AboutVideoCutter
 
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
@@ -69,7 +68,7 @@ class VideoCutter(QWidget):
 
         self.FFMPEG_bin = 'ffmpeg'
         if sys.platform == 'win32':
-            self.FFMPEG_bin = os.path.join(self.getAppPath(), 'bin', 'ffmpeg.exe')
+            self.FFMPEG_bin = os.path.join(self.getAppPath(internal_resource=False), 'bin', 'ffmpeg.exe')
 
         self.clipTimes = []
         self.inCut = False
@@ -147,12 +146,12 @@ class VideoCutter(QWidget):
         self.videoplayerWidget = QWidget(self, visible=False)
         self.videoplayerWidget.setLayout(videoplayerLayout)
 
-        self.menuButton = QPushButton(icon=self.aboutIcon, flat=True, toolTip='About',
-                                      statusTip='About %s' % qApp.applicationName(),
+        self.menuButton = QPushButton(icon=self.aboutIcon, flat=True, toolTip='About', statusTip='About',
                                       iconSize=QSize(24, 24), cursor=Qt.PointingHandCursor)
         self.menuButton.setMenu(self.aboutMenu)
 
-        self.muteButton = QPushButton(icon=self.unmuteIcon, flat=True, toolTip='Mute', statusTip='Toggle audio mute',
+        self.muteButton = QPushButton(icon=self.unmuteIcon, flat=True, toolTip='Mute',
+                                      statusTip='Toggle audio mute',
                                       cursor=Qt.PointingHandCursor, clicked=self.muteAudio)
 
         self.volumeSlider = QSlider(Qt.Horizontal, toolTip='Volume', statusTip='Adjust volume level',
@@ -306,8 +305,24 @@ class VideoCutter(QWidget):
                                     be able to continue using it.''')
 
     def aboutInfo(self):
-        about = AboutVideoCutter(self)
-        about.show()
+        about_html = '''<style>
+    a { color:#441d4e; text-decoration:none; font-weight:bold; }
+    a:hover { text-decoration:underline; }
+</style>
+<h1>%s</h1>
+<h3>Version: %s</h3>
+<p>Copyright &copy; 2016 <a href="mailto:pete@ozmartians.com">Pete Alexandrou</a></p>
+<p style="font-size:13px;">
+    Thanks to the folks behind the <b>Qt</b>, <b>PyQt</b> and <b>FFmpeg</b>
+    projects for all their hard and much appreciated work.
+</p>
+<p style="font-size:12px;">
+    This program is free software; you can redistribute it and/or
+    modify it under the terms of the GNU General Public License
+    as published by the Free Software Foundation; either version 2
+    of the License, or (at your option) any later version.
+</p>''' % (qApp.applicationName(), qApp.applicationVersion())
+        QMessageBox.about(self, 'About %s' % qApp.applicationName(), about_html)
 
     def openFile(self):
         filename, _ = QFileDialog.getOpenFileName(self, caption='Select video', directory=QDir.homePath())
@@ -629,10 +644,12 @@ class VideoCutter(QWidget):
         print('ERROR: %s' % self.mediaPlayer.errorString())
         QMessageBox.critical(self, 'Error Alert', self.mediaPlayer.errorString())
 
-    def getAppPath(self):
-        if getattr(sys, 'frozen', False):  # for pyinstaller; temp extraction folder
-            return sys._MEIPASS
-        return os.path.dirname(os.path.abspath(__file__))
+    def getAppPath(self, internal_resource=True):
+        if not internal_resource:
+            if getattr(sys, 'frozen', False):  # for pyinstaller; temp extraction folder
+              return sys._MEIPASS
+            return os.path.dirname(os.path.abspath(__file__))
+        return ':/'
 
     def closeEvent(self, event):
         self.parent.closeEvent(event)

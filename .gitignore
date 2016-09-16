@@ -4,6 +4,8 @@ __pycache__
 .vscode/
 build/
 dist/
+_build/build
+_build/dist
 videocutter.*/
 *.log
 *.exe
