@@ -58,7 +58,7 @@ class VideoWidget(QVideoWidget):
 
 
 class VideoCutter(QWidget):
-    def __init__(self, parent=None):
+    def __init__(self, parent):
         super(VideoCutter, self).__init__(parent)
         self.parent = parent
         self.mediaPlayer = QMediaPlayer(None, QMediaPlayer.VideoSurface)
@@ -88,7 +88,7 @@ class VideoCutter(QWidget):
         self.cliplistMenu = QMenu()
         self.initMenus()
 
-        self.seekSlider = VideoSlider(sliderMoved=self.setPosition)
+        self.seekSlider = VideoSlider(parent=self, sliderMoved=self.setPosition)
         self.seekSlider.installEventFilter(self)
 
         novideoImage = QLabel(alignment=Qt.AlignCenter, autoFillBackground=True,
@@ -272,6 +272,7 @@ class VideoCutter(QWidget):
     def removeItem(self):
         index = self.cliplist.currentRow()
         del self.clipTimes[index]
+        self.inCut = False
         self.renderTimes()
         self.initMediaControls()
         if len(self.clipTimes) > 0:
@@ -325,7 +326,7 @@ class VideoCutter(QWidget):
         QMessageBox.about(self, 'About %s' % qApp.applicationName(), about_html)
 
     def openFile(self):
-        filename, _ = QFileDialog.getOpenFileName(self, caption='Select video', directory=QDir.homePath())
+        filename, _ = QFileDialog.getOpenFileName(self.parent, caption='Select video', directory=QDir.homePath())
         if filename != '':
             self.loadFile(filename)
 

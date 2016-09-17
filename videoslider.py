@@ -75,9 +75,9 @@ QSlider::handle:horizontal:hover {
     def setCutMode(self, flag):
         if flag:
             self.grooveBack1 = '#FFF'
-            self.grooveBack2 = '#1E88E5'
-            self.subBack1 = '#412671'
-            self.subBack2 = '#6A4572'
+            self.grooveBack2 = '#6A4572'
+            self.subBack1 = '#FFF'
+            self.subBack2 = '#FFF'
             self.handleBack1 = '#666666'
             self.handleBack2 = '#666666'
             self.handleHoverBack1 = '#CCC'
