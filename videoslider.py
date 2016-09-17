@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from PyQt5.QtCore import QPoint, Qt
+from PyQt5.QtGui import QRegion
 from PyQt5.QtWidgets import QSlider, QStyleFactory, QStyleOptionSlider, QToolTip, qApp
 
 
@@ -22,6 +23,7 @@ class VideoSlider(QSlider):
         self.restrictValue = 0
         self.style = qApp.style()
         self.opt = QStyleOptionSlider()
+        self.posLocal, self.posGlobal = 0, 0
         self.valueChanged.connect(self.restrictMove)
 
     def setSliderColor(self):
@@ -48,8 +50,8 @@ QSlider::handle:horizontal {
     background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 %s, stop:1 %s);
     border: 1px solid #444;
     width: 10px;
-    height: 12px;
-    margin: -12px -2px;
+    height: 14px;
+    margin: -14px -2px;
     border-radius: 2px;
 }
 QSlider::handle:horizontal:hover {
@@ -82,6 +84,7 @@ QSlider::handle:horizontal:hover {
             self.handleBack2 = '#666666'
             self.handleHoverBack1 = '#CCC'
             self.handleHoverBack2 = '#999'
+            # self.setMask(QRegion(20, 0, self.width()-20, self.height()))
         else:
             self.grooveBack1 = '#FFF'
             self.grooveBack2 = '#FFF'

@@ -13,7 +13,7 @@ from PyQt5.QtCore import QDir, QEvent, QSize, Qt, QTime, QUrl
 from PyQt5.QtGui import QFontDatabase, QIcon, QMovie, QPalette, QPixmap
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
-from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDialog,
+from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDialog, QGraphicsDropShadowEffect,
                              QHBoxLayout, QLabel, QListWidget, QListWidgetItem, QMainWindow,
                              QMenu, QMessageBox, QPushButton, QSizePolicy, QSlider,
                              QStyle, QToolBar, QVBoxLayout, QWidget, qApp)
@@ -91,11 +91,16 @@ class VideoCutter(QWidget):
         self.seekSlider = VideoSlider(parent=self, sliderMoved=self.setPosition)
         self.seekSlider.installEventFilter(self)
 
-        novideoImage = QLabel(alignment=Qt.AlignCenter, autoFillBackground=True,
-                              sizePolicy=QSizePolicy(QSizePolicy.Expanding, QSizePolicy.MinimumExpanding),
-                              pixmap=QPixmap(os.path.join(self.getAppPath(), 'icons', 'novideo.png'), 'PNG'))
+        novideoImage = QLabel(alignment=Qt.AlignCenter, autoFillBackground=False,
+                              pixmap=QPixmap(os.path.join(self.getAppPath(), 'icons', 'novideo.png'), 'PNG'),
+                              sizePolicy=QSizePolicy(QSizePolicy.Expanding, QSizePolicy.MinimumExpanding))
         novideoImage.setBackgroundRole(QPalette.Dark)
         novideoImage.setContentsMargins(0, 20, 0, 20)
+        shadow = QGraphicsDropShadowEffect(self)
+        shadow.setBlurRadius(8)
+        shadow.setXOffset(0)
+        novideoImage.setGraphicsEffect(shadow)
+
         self.novideoLabel = QLabel(alignment=Qt.AlignCenter, autoFillBackground=True,
                                    sizePolicy=QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum))
         self.novideoLabel.setBackgroundRole(QPalette.Dark)
@@ -272,11 +277,12 @@ class VideoCutter(QWidget):
     def removeItem(self):
         index = self.cliplist.currentRow()
         del self.clipTimes[index]
-        self.inCut = False
+        if self.inCut and index >= self.cliplist.count():
+            self.inCut = False
+            self.initMediaControls()
+            if len(self.clipTimes) > 0:
+                self.saveAction.setEnabled(True)
         self.renderTimes()
-        self.initMediaControls()
-        if len(self.clipTimes) > 0:
-            self.saveAction.setEnabled(True)
 
     def clearList(self):
         self.clipTimes.clear()
@@ -331,6 +337,8 @@ class VideoCutter(QWidget):
             self.loadFile(filename)
 
     def loadFile(self, filename):
+        if not os.path.exists(filename):
+            return False
         self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(filename)))
         self.initMediaControls(True)
         self.cliplist.clear()
@@ -667,6 +675,8 @@ class MainWindow(QMainWindow):
         self.setWindowIcon(self.cutter.appIcon)
         self.setMinimumSize(900, 650)
         self.resize(900, 650)
+        if len(sys.argv) >= 2:
+            self.cutter.loadFile(sys.argv[1])
 
     def dragEnterEvent(self, event):
         if event.mimeData().hasUrls():
