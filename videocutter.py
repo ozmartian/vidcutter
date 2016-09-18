@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import platform
 import shlex
 import signal
 import subprocess
@@ -313,22 +314,38 @@ class VideoCutter(QWidget):
 
     def aboutInfo(self):
         about_html = '''<style>
+    * { font-family:Corbel, Tahoma, sans-serif; }
     a { color:#441d4e; text-decoration:none; font-weight:bold; }
     a:hover { text-decoration:underline; }
+    span.title, span.version, span.arch { font-weight:bold; }
+    span.title { font-size:26pt !important; }
+    span.version { font-size:13pt; }
+    span.arch { font-size:10pt; }
 </style>
-<h1>%s</h1>
-<h3>Version: %s</h3>
-<p>Copyright &copy; 2016 <a href="mailto:pete@ozmartians.com">Pete Alexandrou</a></p>
+<p>
+    <span class="title">%s</span>
+</p>
+<p>
+    <span class="version">Version: %s</span>
+    <span class="arch">%s</span>
+</p>
+<p style="font-size:13px;">
+    Copyright &copy; 2016 <a href="mailto:pete@ozmartians.com">Pete Alexandrou</a>
+    <br/>
+    Website: <a href="%s">%s</a>
+</p>
 <p style="font-size:13px;">
     Thanks to the folks behind the <b>Qt</b>, <b>PyQt</b> and <b>FFmpeg</b>
     projects for all their hard and much appreciated work.
 </p>
-<p style="font-size:12px;">
+<p style="font-size:10px;">
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
     as published by the Free Software Foundation; either version 2
     of the License, or (at your option) any later version.
-</p>''' % (qApp.applicationName(), qApp.applicationVersion())
+</p>''' % (qApp.applicationName(), qApp.applicationVersion(),
+           'x64' if platform.architecture()[0] == '64bit' else 'x86',
+           qApp.organizationDomain(), qApp.organizationDomain())
         QMessageBox.about(self, 'About %s' % qApp.applicationName(), about_html)
 
     def openFile(self):
@@ -524,21 +541,24 @@ class VideoCutter(QWidget):
                     except:
                         pass
                 self.unsetCursor()
-                msgbox = QMessageBox()
-                msgbox.setWindowTitle('Success')
-                msgbox.setWindowIcon(self.parent.windowIcon())
-                msgbox.setIconPixmap(self.successIcon.pixmap(QSize(48, 48)))
-                msgbox.setText('Your new video was successfully created. How would you like to proceed?')
-                play = msgbox.addButton('Play video', QMessageBox.AcceptRole)
-                play.clicked.connect(self.externalPlayer)
-                fileman = msgbox.addButton('Open folder', QMessageBox.AcceptRole)
-                fileman.clicked.connect(self.openFolder)
-                cont = msgbox.addButton('Continue', QMessageBox.AcceptRole)
-                msgbox.setDefaultButton(cont)
-                msgbox.setEscapeButton(cont)
-                msgbox.exec_()
+                self.completionDialog()
             return True
         return False
+
+    def completioonDialog(self):
+        completeMbox = QMessageBox()
+        completeMbox.setWindowTitle('Success')
+        completeMbox.setWindowIcon(self.parent.windowIcon())
+        completeMbox.setIconPixmap(self.successIcon.pixmap(QSize(48, 48)))
+        completeMbox.setText('Your new video was successfully created. How would you like to proceed?')
+        play = completeMbox.addButton('Play video', QMessageBox.AcceptRole)
+        play.clicked.connect(self.externalPlayer)
+        fileman = completeMbox.addButton('Open folder', QMessageBox.AcceptRole)
+        fileman.clicked.connect(self.openFolder)
+        cont = completeMbox.addButton('Continue', QMessageBox.AcceptRole)
+        completeMbox.setDefaultButton(cont)
+        completeMbox.setEscapeButton(cont)
+        completeMbox.exec_()
 
     def joinVideos(self, joinlist, filename):
         listfile = os.path.normpath(os.path.join(os.path.dirname(joinlist[0]), '_cutter.list'))
@@ -698,6 +718,7 @@ def main():
     app.setStyle('Fusion')
     app.setApplicationName('VidCutter')
     app.setApplicationVersion('1.0.1')
+    app.setOrganizationDomain('https://vidcutter.github.io')
     app.setQuitOnLastWindowClosed(True)
     win = MainWindow()
     win.show()

@@ -13,3 +13,4 @@ videocutter.*/
 setup.py
 build-windows.bat
 vidcutter
+*.BAK

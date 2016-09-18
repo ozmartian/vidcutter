@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from PyQt5.QtCore import QPoint, Qt
-from PyQt5.QtGui import QRegion
+from PyQt5.QtGui import QRegion, QPainter, QPen
 from PyQt5.QtWidgets import QSlider, QStyleFactory, QStyleOptionSlider, QToolTip, qApp
 
 
@@ -56,8 +56,8 @@ QSlider::handle:horizontal {
 }
 QSlider::handle:horizontal:hover {
     background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 %s, stop:1 %s);
-}''' % (self.grooveBack1, self.grooveBack2, self.subBack1, self.subBack2,
-        self.handleBack1, self.handleBack2, self.handleHoverBack1, self.handleHoverBack2)
+}''' % (self.grooveBack1, self.grooveBack2, self.subBack1, self.subBack2, self.handleBack1, self.handleBack2,
+        self.handleHoverBack1, self.handleHoverBack2)
         self.setStyleSheet(self.sliderQSS)
 
     def setRestrictValue(self, value):
@@ -66,6 +66,7 @@ QSlider::handle:horizontal:hover {
     def restrictMove(self, value):
         if value < self.restrictValue:
             self.setSliderPosition(self.restrictValue)
+            self.releaseMouse()
         else:
             self.initStyleOption(self.opt)
             rectHandle = self.style.subControlRect(self.style.CC_Slider, self.opt, self.style.SC_SliderHandle)
@@ -84,7 +85,6 @@ QSlider::handle:horizontal:hover {
             self.handleBack2 = '#666666'
             self.handleHoverBack1 = '#CCC'
             self.handleHoverBack2 = '#999'
-            # self.setMask(QRegion(20, 0, self.width()-20, self.height()))
         else:
             self.grooveBack1 = '#FFF'
             self.grooveBack2 = '#FFF'
@@ -95,6 +95,13 @@ QSlider::handle:horizontal:hover {
             self.handleHoverBack1 = '#CCC'
             self.handleHoverBack2 = '#999'
         self.setSliderColor()
+
+    # def paintEvent(self, event):
+    #     painter = QPainter(self)
+    #     pen = QPen(Qt.NoPen)
+    #     painter.setPen(pen)
+    #     painter.fillRect(0, 0, self.width(), self.height(), Qt.white)
+    #     painter.fillRect(0, 0, 0.3 * self.width(), self.height(), Qt.magenta)
 
     def wheelEvent(self, event):
         qApp.sendEvent(self.parentWidget(), event)
