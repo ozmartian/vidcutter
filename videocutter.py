@@ -716,7 +716,7 @@ def main():
     app.setStyle('Fusion')
     app.setApplicationName('VidCutter')
     app.setApplicationVersion('1.0.1')
-    app.setOrganizationDomain('https://vidcutter.github.io')
+    app.setOrganizationDomain('http://vidcutter.ozmartians.com')
     app.setQuitOnLastWindowClosed(True)
     win = MainWindow()
     win.show()
