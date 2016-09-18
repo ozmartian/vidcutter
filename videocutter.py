@@ -10,7 +10,7 @@ import sys
 import tempfile
 import warnings
 
-from PyQt5.QtCore import QDir, QEvent, QSize, Qt, QTime, QUrl
+from PyQt5.QtCore import QDir, QEvent, QFileInfo, QSize, Qt, QTime, QUrl
 from PyQt5.QtGui import QFontDatabase, QIcon, QMovie, QPalette, QPixmap
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
@@ -18,8 +18,6 @@ from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDial
                              QHBoxLayout, QLabel, QListWidget, QListWidgetItem, QMainWindow,
                              QMenu, QMessageBox, QPushButton, QSizePolicy, QSlider,
                              QStyle, QToolBar, QVBoxLayout, QWidget, qApp)
-
-import resources
 
 if __name__ == '__main__':
     from ffmpy import FFmpeg
@@ -69,7 +67,7 @@ class VideoCutter(QWidget):
 
         self.FFMPEG_bin = 'ffmpeg'
         if sys.platform == 'win32':
-            self.FFMPEG_bin = os.path.join(self.getAppPath(internal_resource=False), 'bin', 'ffmpeg.exe')
+            self.FFMPEG_bin = os.path.join(self.getAppPath(), 'bin', 'ffmpeg.exe')
 
         self.clipTimes = []
         self.inCut = False
@@ -314,7 +312,6 @@ class VideoCutter(QWidget):
 
     def aboutInfo(self):
         about_html = '''<style>
-    * { font-family:Corbel, Tahoma, sans-serif; }
     a { color:#441d4e; text-decoration:none; font-weight:bold; }
     a:hover { text-decoration:underline; }
     span.title, span.version, span.arch { font-weight:bold; }
@@ -673,12 +670,13 @@ class VideoCutter(QWidget):
         print('ERROR: %s' % self.mediaPlayer.errorString())
         QMessageBox.critical(self, 'Error Alert', self.mediaPlayer.errorString())
 
-    def getAppPath(self, internal_resource=True):
-        if not internal_resource:
-            if getattr(sys, 'frozen', False):  # for pyinstaller; temp extraction folder
-              return sys._MEIPASS
-            return os.path.dirname(os.path.abspath(__file__))
-        return ':/'
+    def getAppPath(self):
+        return QFileInfo(__file__).absolutePath()
+        # if not internal_resource:
+        #     if getattr(sys, 'frozen', False):  # for pyinstaller; temp extraction folder
+        #       return sys._MEIPASS
+        #     return os.path.dirname(os.path.abspath(__file__))
+        # return ':/'
 
     def closeEvent(self, event):
         self.parent.closeEvent(event)

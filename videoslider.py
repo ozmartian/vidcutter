@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from PyQt5.QtCore import QPoint, Qt
-from PyQt5.QtGui import QRegion, QPainter, QPen
+# from PyQt5.QtGui import QRegion, QPainter, QPen
 from PyQt5.QtWidgets import QSlider, QStyleFactory, QStyleOptionSlider, QToolTip, qApp
 
 
