@@ -96,7 +96,7 @@ class VideoCutter(QWidget):
         self.seekSlider = VideoSlider(parent=self, sliderMoved=self.setPosition)
         self.seekSlider.installEventFilter(self)
 
-        self.rangeSlider = Vide()
+        self.rangeSlider = VideoRanger(self)
 
         novideoImage = QLabel(alignment=Qt.AlignCenter, autoFillBackground=False,
                               pixmap=QPixmap(os.path.join(self.getAppPath(), 'icons', 'novideo.png'), 'PNG'),
@@ -184,7 +184,7 @@ class VideoCutter(QWidget):
         layout.setContentsMargins(10, 10, 10, 4)
         layout.addLayout(self.videoLayout)
         layout.addWidget(self.seekSlider)
-        layout.addWiget(self.rangeSlider)
+        layout.addWidget(self.rangeSlider)
         layout.addLayout(controlsLayout)
 
         self.setLayout(layout)
