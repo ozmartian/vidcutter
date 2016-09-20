@@ -4,9 +4,9 @@
 from setuptools import setup, setuptools
 
 setup(
-    name='videocutter',
-    version='1.0',
-    url='https://github.com/ozmartian/videocutter',
+    name='VidCutter',
+    version='1.0.1',
+    url='http://vidcutter.ozmartians.com',
     license='GPL2',
     author='Pete Alexandrou',
     author_email='pete@ozmartians.com',

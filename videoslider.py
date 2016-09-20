@@ -3,12 +3,55 @@
 
 from PyQt5.QtCore import QPoint, Qt
 # from PyQt5.QtGui import QRegion, QPainter, QPen
-from PyQt5.QtWidgets import QSlider, QStyleFactory, QStyleOptionSlider, QToolTip, qApp
+from PyQt5.QtWidgets import QSlider, QStyleFactory, QStyle, QStyleOptionSlider, QToolTip, qApp
+
+from qrangeslider import QRangeSlider
+
+
+class VideoRanger(QRangeSlider):
+    def __init__(self, parent):
+        super(VideoRanger, self).__init__(parent)
+
+        # self.setBackgroundStyle('background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #222, stop:1 #333);')
+        # self.setSpanStyle('background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #282, stop:1 #393);')
+
+        self.setFixedWidth(400)
+        self.setFixedHeight(36)
+        self.setMin(0)
+        self.setMax(100)
+        self.setRange(30, 80)
+        self.setDrawValues(False)
+        self.handle.setTextColor(Qt.darkMagenta)
+        self.setStyleSheet('''
+QRangeSlider * {
+    border: 0px;
+    padding: 0px;
+}
+QRangeSlider #Head {
+    background: url(data/filmstrip.png) repeat-x;
+}
+QRangeSlider #Span {
+    background: url(data/clip.png) repeat-x;
+}
+QRangeSlider #Tail {
+    background: url(data/filmstrip.png) repeat-x;
+}
+QRangeSlider > QSplitter::handle {
+    background: #fff;
+}
+QRangeSlider > QSplitter::handle:vertical {
+    height: 2px;
+}
+QRangeSlider > QSplitter::handle:pressed {
+    background: #ca5;
+}
+''')
+        self.show()
 
 
 class VideoSlider(QSlider):
     def __init__(self, *arg, **kwargs):
-        super(QSlider, self).__init__(*arg, **kwargs)
+        super(VideoSlider, self).__init__(*arg, **kwargs)
         self.setStyle(QStyleFactory.create('Windows'))
         self.setOrientation(Qt.Horizontal)
         self.setObjectName('VideoSlider')
@@ -97,10 +140,12 @@ QSlider::handle:horizontal:hover {
         self.setSliderColor()
 
     # def paintEvent(self, event):
+    #     self.initStyleOption(self.opt)
+    #     rectHandle = self.style.subControlRect(self.style.CC_Slider, self.opt, self.style.SC_SliderHandle)
     #     painter = QPainter(self)
     #     pen = QPen(Qt.NoPen)
     #     painter.setPen(pen)
-    #     painter.fillRect(0, 0, self.width(), self.height(), Qt.white)
+    #     painter.fillRect(0, 0, QStyle.sliderPositionFromValue(0, self.maximum(), self.sliderPosition(), self.width()), self.height(), Qt.white)
     #     painter.fillRect(0, 0, 0.3 * self.width(), self.height(), Qt.magenta)
 
     def wheelEvent(self, event):

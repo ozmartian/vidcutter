@@ -19,10 +19,10 @@ from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDial
 
 if __name__ == '__main__':
     from ffmpy import FFmpeg
-    from videoslider import VideoSlider
+    from videoslider import VideoSlider, VideoRanger
 else:
     from .ffmpy import FFmpeg
-    from .videoslider import VideoSlider
+    from .videoslider import VideoSlider, VideoRanger
 
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
@@ -85,7 +85,7 @@ class VideoCutter(QWidget):
         self.initActions()
 
         self.toolbar = QToolBar(floatable=False, movable=False, cursor=Qt.PointingHandCursor,
-                                iconSize=QSize(24, 24), toolButtonStyle=Qt.ToolButtonTextUnderIcon,
+                                iconSize=QSize(28, 28), toolButtonStyle=Qt.ToolButtonTextUnderIcon,
                                 styleSheet='QToolBar QToolButton { min-width:82px; margin-left:10px; margin-right:10px; font-size:14px; }')
         self.initToolbar()
 
@@ -95,6 +95,8 @@ class VideoCutter(QWidget):
 
         self.seekSlider = VideoSlider(parent=self, sliderMoved=self.setPosition)
         self.seekSlider.installEventFilter(self)
+
+        self.rangeSlider = Vide()
 
         novideoImage = QLabel(alignment=Qt.AlignCenter, autoFillBackground=False,
                               pixmap=QPixmap(os.path.join(self.getAppPath(), 'icons', 'novideo.png'), 'PNG'),
@@ -182,6 +184,7 @@ class VideoCutter(QWidget):
         layout.setContentsMargins(10, 10, 10, 4)
         layout.addLayout(self.videoLayout)
         layout.addWidget(self.seekSlider)
+        layout.addWiget(self.rangeSlider)
         layout.addLayout(controlsLayout)
 
         self.setLayout(layout)
@@ -210,8 +213,8 @@ class VideoCutter(QWidget):
         self.aboutIcon = QIcon(os.path.join(self.getAppPath(), 'icons', 'about.png'))
 
     def initActions(self):
-        self.openAction = QAction(self.openIcon, 'Add', self, statusTip='Select media source', triggered=self.openFile)
-        self.playAction = QAction(self.playIcon, 'Play', self, statusTip='Play video', triggered=self.playVideo, enabled=False)
+        self.openAction = QAction(self.openIcon, 'Add Media', self, statusTip='Select media source', triggered=self.openFile)
+        self.playAction = QAction(self.playIcon, 'Play/Pause', self, statusTip='Play/Pause media', triggered=self.playVideo, enabled=False)
         self.cutStartAction = QAction(self.cutStartIcon, 'Set Start', self, toolTip='Set Start', statusTip='Set start marker', triggered=self.cutStart, enabled=False)
         self.cutEndAction = QAction(self.cutEndIcon, 'Set End', self, statusTip='Set end marker', triggered=self.cutEnd, enabled=False)
         self.saveAction = QAction(self.saveIcon, 'Save', self, statusTip='Save new video', triggered=self.cutVideo, enabled=False)
@@ -310,7 +313,6 @@ class VideoCutter(QWidget):
         else:
             QMessageBox.critical(self, 'Could not retrieve media information',
                                  '''There was a problem in tring to retrieve media information.
-                                    \n\n
                                     This DOES NOT mean there is a problem with the file and you should
                                     be able to continue using it.''')
 
@@ -399,10 +401,8 @@ class VideoCutter(QWidget):
     def mediaStateChanged(self):
         if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
             self.playAction.setIcon(self.pauseIcon)
-            self.playAction.setText('Pause')
         else:
             self.playAction.setIcon(self.playIcon)
-            self.playAction.setText('Play')
 
     def durationChanged(self, duration):
         self.seekSlider.setRange(0, duration)
