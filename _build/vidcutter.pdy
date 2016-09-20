@@ -1,2 +1,117 @@
 <?xml version='1.0' encoding='utf-8'?>
-<Project version="6"><Python hostinterpreter="C:/DEV/sysroot/bin/python.exe" major="3" minor="5" patch="2" platformpython="win32" sourcedir="C:\DEV\sysroot\src\Python-3.5.2" ssl="0" targetincludedir="C:\DEV\sysroot\include\python3.5" targetlibrary="C:\DEV\sysroot\lib\libpython35.a" targetstdlibdir="C:\DEV\sysroot\lib\python3.5" /><Application entrypoint="" isbundle="0" isconsole="0" ispyqt5="1" name="VidCutter" script="C:\DEV\videocutter\videocutter.py" syspath=""><Package name="C:\DEV\videocutter"><PackageContent included="0" isdirectory="0" name=".gitignore" /><PackageContent included="1" isdirectory="0" name="__init__.py" /><PackageContent included="1" isdirectory="0" name="__main__.py" /><PackageContent included="1" isdirectory="1" name="bin"><PackageContent included="1" isdirectory="0" name="ffmpeg.exe" /></PackageContent><PackageContent included="0" isdirectory="1" name="_build"><PackageContent included="0" isdirectory="0" name="build.nuitka.linux" /><PackageContent included="0" isdirectory="0" name="build.nuitka.win.bat" /><PackageContent included="0" isdirectory="0" name="build.pyinstaller.win.bat" /><PackageContent included="0" isdirectory="0" name="build.pyinstaller34.win.bat" /><PackageContent included="0" isdirectory="0" name="vidcutter.pdy" /><PackageContent included="0" isdirectory="0" name="vidcutter.spec" /></PackageContent><PackageContent included="0" isdirectory="1" name="docs"><PackageContent included="0" isdirectory="0" name="CNAME" /><PackageContent included="0" isdirectory="1" name="images"><PackageContent included="0" isdirectory="0" name="screenshot-01.png" /><PackageContent included="0" isdirectory="0" name="screenshot-02.png" /></PackageContent><PackageContent included="0" isdirectory="0" name="index.html" /><PackageContent included="0" isdirectory="0" name="params.json" /><PackageContent included="0" isdirectory="1" name="stylesheets"><PackageContent included="0" isdirectory="0" name="github-light.css" /><PackageContent included="0" isdirectory="0" name="normalize.css" /><PackageContent included="0" isdirectory="0" name="stylesheet.css" /></PackageContent></PackageContent><PackageContent included="1" isdirectory="0" name="ffmpy.py" /><PackageContent included="1" isdirectory="1" name="fonts"><PackageContent included="1" isdirectory="0" name="DroidSansMono.ttf" /></PackageContent><PackageContent included="1" isdirectory="1" name="icons"><PackageContent included="1" isdirectory="0" name="about.png" /><PackageContent included="1" isdirectory="0" name="clipindex.png" /><PackageContent included="1" isdirectory="0" name="down.png" /><PackageContent included="1" isdirectory="0" name="end.png" /><PackageContent included="1" isdirectory="0" name="fullscreen.png" /><PackageContent included="1" isdirectory="0" name="muted.png" /><PackageContent included="1" isdirectory="0" name="novideo.png" /><PackageContent included="1" isdirectory="0" name="novideotext.gif" /><PackageContent included="1" isdirectory="0" name="open.png" /><PackageContent included="1" isdirectory="0" name="pause.png" /><PackageContent included="1" isdirectory="0" name="play.png" /><PackageContent included="1" isdirectory="0" name="remove-all.png" /><PackageContent included="1" isdirectory="0" name="remove.png" /><PackageContent included="1" isdirectory="0" name="save.png" /><PackageContent included="1" isdirectory="0" name="start.png" /><PackageContent included="1" isdirectory="0" name="success.png" /><PackageContent included="1" isdirectory="0" name="unmuted.png" /><PackageContent included="1" isdirectory="0" name="up.png" /><PackageContent included="1" isdirectory="0" name="videocutter.ico" /><PackageContent included="1" isdirectory="0" name="videocutter.png" /></PackageContent><PackageContent included="1" isdirectory="0" name="README.md" /><PackageContent included="0" isdirectory="0" name="setup.py" /><PackageContent included="1" isdirectory="0" name="videocutter.py" /><PackageContent included="1" isdirectory="0" name="videoslider.py" /><Exclude name="*.pyc" /><Exclude name="*.pyd" /><Exclude name="*.pyo" /><Exclude name="*.pyx" /><Exclude name="*.pxi" /><Exclude name="__pycache__" /><Exclude name="*-info" /><Exclude name="EGG_INFO" /><Exclude name="*.so" /></Package></Application><PyQtModule name="QtMultimedia" /><PyQtModule name="Qt" /><PyQtModule name="QtGui" /><PyQtModule name="QtMultimediaWidgets" /><PyQtModule name="QtNetwork" /><PyQtModule name="QtCore" /><PyQtModule name="QtWidgets" /><PyQtModule name="sip" /><Others builddir="C:\DEV\sysroot\_build" qmake="C:/Qt/Qt5.7.0/5.7/msvc2015_64/bin/qmake.exe" /></Project>
+<Project version="6">
+    <Python hostinterpreter="C:/Users/pete/AppData/Local/Programs/Python/Python35/python.exe" major="3" minor="5" patch="2" platformpython="win32" sourcedir="$SYSROOT/src/Python-$PDY_PY_MAJOR.$PDY_PY_MINOR.$PDY_PY_MICRO" ssl="0" targetincludedir="C:\Users\pete\AppData\Local\Programs\Python\Python35\include" targetlibrary="C:\Users\pete\AppData\Local\Programs\Python\Python35\libs\libpython35.a" targetstdlibdir="C:\Users\pete\AppData\Local\Programs\Python\Python35\Lib"/>
+    <Application entrypoint="videocutter:main" isbundle="0" isconsole="0" ispyqt5="1" name="VidCutter" script="" syspath="C:\DEV\videocutter">
+        <Package name=".">
+            <PackageContent included="0" isdirectory="0" name=".gitignore"/>
+            <PackageContent included="0" isdirectory="1" name=".idea">
+                <PackageContent included="0" isdirectory="1" name="dictionaries">
+                    <PackageContent included="0" isdirectory="0" name="ozmartian.xml"/>
+                </PackageContent>
+                <PackageContent included="0" isdirectory="0" name="encodings.xml"/>
+                <PackageContent included="0" isdirectory="1" name="inspectionProfiles">
+                    <PackageContent included="0" isdirectory="0" name="profiles_settings.xml"/>
+                    <PackageContent included="0" isdirectory="0" name="Project_Default.xml"/>
+                </PackageContent>
+                <PackageContent included="0" isdirectory="0" name="misc.xml"/>
+                <PackageContent included="0" isdirectory="0" name="modules.xml"/>
+                <PackageContent included="0" isdirectory="0" name="vcs.xml"/>
+                <PackageContent included="0" isdirectory="0" name="videocutter.iml"/>
+                <PackageContent included="0" isdirectory="0" name="workspace.xml"/>
+            </PackageContent>
+            <PackageContent included="0" isdirectory="1" name=".vscode">
+                <PackageContent included="0" isdirectory="0" name="launch.json"/>
+            </PackageContent>
+            <PackageContent included="1" isdirectory="0" name="__init__.py"/>
+            <PackageContent included="1" isdirectory="0" name="__main__.py"/>
+            <PackageContent included="1" isdirectory="1" name="bin">
+                <PackageContent included="1" isdirectory="0" name="ffmpeg.exe"/>
+            </PackageContent>
+            <PackageContent included="0" isdirectory="1" name="_build">
+                <PackageContent included="0" isdirectory="0" name="build.nuitka.linux"/>
+                <PackageContent included="0" isdirectory="0" name="build.nuitka.win.bat"/>
+                <PackageContent included="0" isdirectory="0" name="build.pyinstaller.win.bat"/>
+                <PackageContent included="0" isdirectory="0" name="build.pyinstaller34.win.bat"/>
+                <PackageContent included="0" isdirectory="0" name="vidcutter.spec"/>
+            </PackageContent>
+            <PackageContent included="0" isdirectory="1" name="build.pyqtdeploy">
+                <PackageContent included="0" isdirectory="1" name="debug"/>
+                <PackageContent included="0" isdirectory="0" name="frozen_bootstrap.h"/>
+                <PackageContent included="0" isdirectory="0" name="frozen_bootstrap_external.h"/>
+                <PackageContent included="0" isdirectory="0" name="Makefile"/>
+                <PackageContent included="0" isdirectory="0" name="Makefile.Debug"/>
+                <PackageContent included="0" isdirectory="0" name="Makefile.Release"/>
+                <PackageContent included="0" isdirectory="0" name="pdytools_module.cpp"/>
+                <PackageContent included="0" isdirectory="0" name="pyqtdeploy_main.cpp"/>
+                <PackageContent included="0" isdirectory="0" name="pyqtdeploy_start.cpp"/>
+                <PackageContent included="0" isdirectory="0" name="pyqtdeploy_version.h"/>
+                <PackageContent included="0" isdirectory="1" name="release">
+                    <PackageContent included="0" isdirectory="0" name="pdytools_module.obj"/>
+                    <PackageContent included="0" isdirectory="0" name="pyqtdeploy_main.obj"/>
+                    <PackageContent included="0" isdirectory="0" name="pyqtdeploy_start.obj"/>
+                    <PackageContent included="0" isdirectory="0" name="qrc_pyqtdeploy.cpp"/>
+                    <PackageContent included="0" isdirectory="0" name="qrc_pyqtdeploy.obj"/>
+                </PackageContent>
+                <PackageContent included="0" isdirectory="1" name="resources">
+                    <PackageContent included="0" isdirectory="1" name="collections"/>
+                    <PackageContent included="0" isdirectory="1" name="encodings"/>
+                    <PackageContent included="0" isdirectory="1" name="importlib"/>
+                    <PackageContent included="0" isdirectory="1" name="PyQt5"/>
+                    <PackageContent included="0" isdirectory="0" name="pyqtdeploy.qrc"/>
+                </PackageContent>
+                <PackageContent included="0" isdirectory="0" name="VidCutter.pro"/>
+            </PackageContent>
+            <PackageContent included="1" isdirectory="0" name="ffmpy.py"/>
+            <PackageContent included="0" isdirectory="1" name="fonts">
+                <PackageContent included="0" isdirectory="0" name="DroidSansMono.ttf"/>
+            </PackageContent>
+            <PackageContent included="0" isdirectory="1" name="icons">
+                <PackageContent included="0" isdirectory="0" name="about.png"/>
+                <PackageContent included="0" isdirectory="0" name="clipindex.png"/>
+                <PackageContent included="0" isdirectory="0" name="down.png"/>
+                <PackageContent included="0" isdirectory="0" name="end.png"/>
+                <PackageContent included="0" isdirectory="0" name="fullscreen.png"/>
+                <PackageContent included="0" isdirectory="0" name="muted.png"/>
+                <PackageContent included="0" isdirectory="0" name="novideo.png"/>
+                <PackageContent included="0" isdirectory="0" name="novideotext.gif"/>
+                <PackageContent included="0" isdirectory="0" name="open.png"/>
+                <PackageContent included="0" isdirectory="0" name="pause.png"/>
+                <PackageContent included="0" isdirectory="0" name="play.png"/>
+                <PackageContent included="0" isdirectory="0" name="remove-all.png"/>
+                <PackageContent included="0" isdirectory="0" name="remove.png"/>
+                <PackageContent included="0" isdirectory="0" name="save.png"/>
+                <PackageContent included="0" isdirectory="0" name="screenshot.jpg"/>
+                <PackageContent included="0" isdirectory="0" name="start.png"/>
+                <PackageContent included="0" isdirectory="0" name="success.png"/>
+                <PackageContent included="0" isdirectory="0" name="unmuted.png"/>
+                <PackageContent included="0" isdirectory="0" name="up.png"/>
+                <PackageContent included="0" isdirectory="0" name="videocutter.ico"/>
+                <PackageContent included="0" isdirectory="0" name="videocutter.png"/>
+            </PackageContent>
+            <PackageContent included="1" isdirectory="0" name="README.md"/>
+            <PackageContent included="1" isdirectory="0" name="resources.py"/>
+            <PackageContent included="0" isdirectory="0" name="resources.qrc"/>
+            <PackageContent included="0" isdirectory="0" name="vidcutter.pdy"/>
+            <PackageContent included="1" isdirectory="0" name="videocutter.py"/>
+            <PackageContent included="1" isdirectory="0" name="videoslider.py"/>
+            <Exclude name="*.pyc"/>
+            <Exclude name="*.pyd"/>
+            <Exclude name="*.pyo"/>
+            <Exclude name="*.pyx"/>
+            <Exclude name="*.pxi"/>
+            <Exclude name="__pycache__"/>
+            <Exclude name="*-info"/>
+            <Exclude name="EGG_INFO"/>
+            <Exclude name="*.so"/>
+        </Package>
+    </Application>
+    <PyQtModule name="QtMultimedia"/>
+    <PyQtModule name="QtMultimediaWidgets"/>
+    <PyQtModule name="Qt"/>
+    <PyQtModule name="QtGui"/>
+    <PyQtModule name="QtCore"/>
+    <PyQtModule name="QtWidgets"/>
+    <PyQtModule name="sip"/>
+    <PyQtModule name="QtNetwork"/>
+    <Others builddir="build.pyqtdeploy" qmake="C:/DEV/Qt/Qt5.6.1/5.6/msvc2015_64/bin/qmake.exe"/>
+</Project>

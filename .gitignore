@@ -10,7 +10,6 @@ videocutter.*/
 *.log
 *.exe
 *.dll
-setup.py
 build-windows.bat
 vidcutter
 *.BAK

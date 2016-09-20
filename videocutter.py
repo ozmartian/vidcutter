@@ -3,21 +3,19 @@
 
 import os
 import platform
-import shlex
 import signal
-import subprocess
 import sys
 import tempfile
 import warnings
 
-from PyQt5.QtCore import QDir, QEvent, QFileInfo, QSize, Qt, QTime, QUrl
+from PyQt5.QtCore import QDir, QEvent, QFileInfo, QProcess, QSize, Qt, QTime, QUrl
 from PyQt5.QtGui import QFontDatabase, QIcon, QMovie, QPalette, QPixmap
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDialog, QGraphicsDropShadowEffect,
                              QHBoxLayout, QLabel, QListWidget, QListWidgetItem, QMainWindow,
                              QMenu, QMessageBox, QPushButton, QSizePolicy, QSlider,
-                             QStyle, QToolBar, QVBoxLayout, QWidget, qApp)
+                             QStyle, QTextEdit, QToolBar, QVBoxLayout, QWidget, qApp)
 
 if __name__ == '__main__':
     from ffmpy import FFmpeg
@@ -74,6 +72,14 @@ class VideoCutter(QWidget):
         self.movieLoaded = False
         self.timeformat = 'hh:mm:ss'
         self.finalFilename = ''
+
+        self.proc = QProcess(self)
+        self.proc.setProcessChannelMode(QProcess.MergedChannels)
+        self.proc.setWorkingDirectory(self.getAppPath())
+        self.proc.error.connect(self.cmdError)
+        self.proc.finished.connect(self.cmdFinished)
+
+        self.proc_output = QTextEdit(self.parent, readOnly=True,  enabled=False, visible=False)
 
         self.initIcons()
         self.initActions()
@@ -188,7 +194,7 @@ class VideoCutter(QWidget):
 
     def initIcons(self):
         self.appIcon = QIcon(os.path.join(self.getAppPath(), 'icons', 'videocutter.png'))
-        self.openIcon = QIcon(os.path.join(self.getAppPath(), 'icons', 'open.png'))
+        self.openIcon = QIcon(os.path.join(self.getAppPath(), 'icons', 'addmedia.png'))
         self.playIcon = QIcon(os.path.join(self.getAppPath(), 'icons', 'play.png'))
         self.pauseIcon = QIcon(os.path.join(self.getAppPath(), 'icons', 'pause.png'))
         self.cutStartIcon = QIcon(os.path.join(self.getAppPath(), 'icons', 'start.png'))
@@ -204,7 +210,7 @@ class VideoCutter(QWidget):
         self.aboutIcon = QIcon(os.path.join(self.getAppPath(), 'icons', 'about.png'))
 
     def initActions(self):
-        self.openAction = QAction(self.openIcon, 'Open', self, statusTip='Select video', triggered=self.openFile)
+        self.openAction = QAction(self.openIcon, 'Add', self, statusTip='Select media source', triggered=self.openFile)
         self.playAction = QAction(self.playIcon, 'Play', self, statusTip='Play video', triggered=self.playVideo, enabled=False)
         self.cutStartAction = QAction(self.cutStartIcon, 'Set Start', self, toolTip='Set Start', statusTip='Set start marker', triggered=self.cutStart, enabled=False)
         self.cutEndAction = QAction(self.cutEndIcon, 'Set End', self, statusTip='Set end marker', triggered=self.cutEnd, enabled=False)
@@ -276,11 +282,9 @@ class VideoCutter(QWidget):
     def removeItem(self):
         index = self.cliplist.currentRow()
         del self.clipTimes[index]
-        if self.inCut and index >= self.cliplist.count():
+        if self.inCut and index == self.cliplist.count()-1:
             self.inCut = False
             self.initMediaControls()
-            if len(self.clipTimes) > 0:
-                self.saveAction.setEnabled(True)
         self.renderTimes()
 
     def clearList(self):
@@ -542,7 +546,7 @@ class VideoCutter(QWidget):
             return True
         return False
 
-    def completioonDialog(self):
+    def completionDialog(self):
         completeMbox = QMessageBox()
         completeMbox.setWindowTitle('Success')
         completeMbox.setWindowIcon(self.parent.windowIcon())
@@ -590,29 +594,41 @@ class VideoCutter(QWidget):
                 cmd = 'open "%s"' % self.finalFilename
             else:
                 cmd = 'xdg-open "%s"' % self.finalFilename
-            proc = self.cmdexec(cmd)
+            proc = self.cmdExec(cmd)
             return proc.returncode
 
     def openFolder(self):
         if len(self.finalFilename) and os.path.exists(self.finalFilename):
             dirname = os.path.dirname(self.finalFilename)
             if sys.platform == 'win32':
-                cmd = 'explorer.exe "%s"' % dirname
+                cmd = 'explorer /select,"%s"' % self.finalFilename
             elif sys.platform == 'darwin':
                 cmd = 'open "%s"' % dirname
             else:
                 cmd = 'xdg-open "%s"' % dirname
-            proc = self.cmdexec(cmd)
-            return proc.returncode
+            return self.cmdExec(cmd)
 
-    def cmdexec(self, cmd, shell=False):
-        if sys.platform == 'win32':
-            si = subprocess.STARTUPINFO()
-            si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-            return subprocess.Popen(args=shlex.split(cmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                                    stdin=subprocess.PIPE, startupinfo=si, env=os.environ, shell=shell)
-        else:
-            return subprocess.Popen(args=shlex.split(cmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=shell)
+    def cmdExec(self, cmd):
+        if self.proc.state() == QProcess.Not:
+            self.proc.start(cmd)
+            self.proc.waitForFinished(-1)
+            if self.proc.exitStatus() == QProcess.NormalExit and self.proc.exitCode() == 0:
+                return True
+        return False
+        # if sys.platform == 'win32':
+        #     si = subprocess.STARTUPINFO()
+        #     si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+        #     return subprocess.Popen(args=shlex.split(cmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+        #                             stdin=subprocess.PIPE, startupinfo=si, env=os.environ, shell=shell)
+        # else:
+        #     return subprocess.Popen(args=shlex.split(cmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=shell)
+
+    def cmdFinished(self, code, status):
+        return code == 0 and status == QProcess.NormalExit
+
+    def cmdError(self, error):
+        if error != QProcess.Crashed:
+            QMessageBox.critical(None, "Error calling an external process", self.proc.errorString(), buttons=QMessageBox.Cancel)
 
     def wheelEvent(self, event):
         if self.mediaPlayer.isVideoAvailable() or self.mediaPlayer.isAudioAvailable():
@@ -668,7 +684,7 @@ class VideoCutter(QWidget):
         self.unsetCursor()
         self.initMediaControls(False)
         print('ERROR: %s' % self.mediaPlayer.errorString())
-        QMessageBox.critical(self, 'Error Alert', self.mediaPlayer.errorString())
+        QMessageBox.critical(None, 'Error Alert', self.mediaPlayer.errorString())
 
     def getAppPath(self):
         return QFileInfo(__file__).absolutePath()
