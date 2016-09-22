@@ -15,26 +15,26 @@ class VideoRanger(QRangeSlider):
         # self.setBackgroundStyle('background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #222, stop:1 #333);')
         # self.setSpanStyle('background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #282, stop:1 #393);')
 
-        self.setFixedWidth(400)
+        # self.setFixedWidth(400)
         self.setFixedHeight(36)
         self.setMin(0)
         self.setMax(100)
         self.setRange(30, 80)
         self.setDrawValues(False)
-        self.handle.setTextColor(Qt.darkMagenta)
+        self.handle.setTextColor(Qt.white)
         self.setStyleSheet('''
 QRangeSlider * {
     border: 0px;
     padding: 0px;
 }
 QRangeSlider #Head {
-    background: url(data/filmstrip.png) repeat-x;
+    background: url(icons/filmstrip.png) repeat-x;
 }
 QRangeSlider #Span {
-    background: url(data/clip.png) repeat-x;
+    background: #434343;
 }
 QRangeSlider #Tail {
-    background: url(data/filmstrip.png) repeat-x;
+    background: url(icons/filmstrip.png) repeat-x;
 }
 QRangeSlider > QSplitter::handle {
     background: #fff;

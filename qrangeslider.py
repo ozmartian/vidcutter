@@ -77,13 +77,13 @@ QRangeSlider * {
     padding: 0px;
 }
 QRangeSlider #Head {
-    background: url(data/filmstrip.png) repeat-x;
+    background: url(icons/filmstrip.png) repeat-x;
 }
 QRangeSlider #Span {
-    background: url(data/clip.png) repeat-x;
+    background: url(icons/clip.png) repeat-x;
 }
 QRangeSlider #Tail {
-    background: url(data/filmstrip.png) repeat-x;
+    background: url(icons/filmstrip.png) repeat-x;
 }
 QRangeSlider > QSplitter::handle {
     background: #fff;

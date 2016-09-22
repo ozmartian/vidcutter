@@ -18,7 +18,7 @@ from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDial
                              QStyle, QTextEdit, QToolBar, QVBoxLayout, QWidget, qApp)
 
 if __name__ == '__main__':
-    from ffmpy import FFmpeg
+    from ffmpy import FFmpeg3
     from videoslider import VideoSlider, VideoRanger
 else:
     from .ffmpy import FFmpeg
