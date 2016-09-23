@@ -12,7 +12,7 @@ from PyQt5.QtCore import QDir, QEvent, QFileInfo, QSize, Qt, QTime, QUrl
 from PyQt5.QtGui import QFontDatabase, QIcon, QMovie, QPalette, QPixmap
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
-from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDialog, QGraphicsDropShadowEffect,
+from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDialog,
                              QHBoxLayout, QLabel, QListWidget, QListWidgetItem, QMainWindow,
                              QMenu, QMessageBox, QPushButton, QSizePolicy, QSlider,
                              QStyle, QToolBar, QVBoxLayout, QWidget, qApp)
@@ -29,7 +29,7 @@ else:
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 signal.signal(signal.SIGTERM, signal.SIG_DFL)
-warnings.filterwarnings("ignore")
+warnings.filterwarnings('ignore')
 
 
 class VideoWidget(QVideoWidget):
@@ -92,11 +92,6 @@ class VidCutter(QWidget):
                               sizePolicy=QSizePolicy(QSizePolicy.Expanding, QSizePolicy.MinimumExpanding))
         novideoImage.setBackgroundRole(QPalette.Dark)
         novideoImage.setContentsMargins(0, 20, 0, 20)
-        shadow = QGraphicsDropShadowEffect(self)
-        shadow.setBlurRadius(8)
-        shadow.setXOffset(0)
-        novideoImage.setGraphicsEffect(shadow)
-
         self.novideoLabel = QLabel(alignment=Qt.AlignCenter, autoFillBackground=True,
                                    sizePolicy=QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum))
         self.novideoLabel.setBackgroundRole(QPalette.Dark)
