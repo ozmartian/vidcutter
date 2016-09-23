@@ -8,7 +8,7 @@ import sys
 import tempfile
 import warnings
 
-from PyQt5.QtCore import QDir, QEvent, QFileInfo, QProcess, QSize, Qt, QTime, QUrl
+from PyQt5.QtCore import QDir, QEvent, QFileInfo, QSize, Qt, QTime, QUrl
 from PyQt5.QtGui import QFontDatabase, QIcon, QMovie, QPalette, QPixmap
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
@@ -18,11 +18,13 @@ from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDial
                              QStyle, QTextEdit, QToolBar, QVBoxLayout, QWidget, qApp)
 
 if __name__ == '__main__':
-    from ffmpy import FFmpeg3
-    from videoslider import VideoSlider, VideoRanger
+    from ffmpy import FFmpeg
+    from videoslider import VideoSlider
+    from videoservice import VideoService
 else:
     from .ffmpy import FFmpeg
-    from .videoslider import VideoSlider, VideoRanger
+    from .videoslider import VideoSlider
+    from .videoservice import VideoService
 
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
@@ -63,23 +65,12 @@ class VideoCutter(QWidget):
 
         QFontDatabase.addApplicationFont(os.path.join(self.getAppPath(), 'fonts', 'DroidSansMono.ttf'))
 
-        self.FFMPEG_bin = 'ffmpeg'
-        if sys.platform == 'win32':
-            self.FFMPEG_bin = os.path.join(self.getAppPath(), 'bin', 'ffmpeg.exe')
-
         self.clipTimes = []
         self.inCut = False
         self.movieLoaded = False
         self.timeformat = 'hh:mm:ss'
         self.finalFilename = ''
-
-        self.proc = QProcess(self)
-        self.proc.setProcessChannelMode(QProcess.MergedChannels)
-        self.proc.setWorkingDirectory(self.getAppPath())
-        self.proc.error.connect(self.cmdError)
-        self.proc.finished.connect(self.cmdFinished)
-
-        self.proc_output = QTextEdit(self.parent, readOnly=True,  enabled=False, visible=False)
+        self.viewConsole = False
 
         self.initIcons()
         self.initActions()
@@ -95,8 +86,6 @@ class VideoCutter(QWidget):
 
         self.seekSlider = VideoSlider(parent=self, sliderMoved=self.setPosition)
         self.seekSlider.installEventFilter(self)
-
-        self.rangeSlider = VideoRanger(self)
 
         novideoImage = QLabel(alignment=Qt.AlignCenter, autoFillBackground=False,
                               pixmap=QPixmap(os.path.join(self.getAppPath(), 'icons', 'novideo.png'), 'PNG'),
@@ -184,7 +173,6 @@ class VideoCutter(QWidget):
         layout.setContentsMargins(10, 10, 10, 4)
         layout.addLayout(self.videoLayout)
         layout.addWidget(self.seekSlider)
-        layout.addWidget(self.rangeSlider)
         layout.addLayout(controlsLayout)
 
         self.setLayout(layout)
@@ -225,6 +213,7 @@ class VideoCutter(QWidget):
         self.aboutAction = QAction('About %s' % qApp.applicationName(), self, statusTip='Credits and acknowledgements', triggered=self.aboutInfo)
         self.aboutQtAction = QAction('About Qt', self, statusTip='About Qt', triggered=qApp.aboutQt)
         self.mediaInfoAction = QAction('Media Information', self, statusTip='Media information from loaded video file', triggered=self.mediaInfo, enabled=False)
+        self.viewConsoleAction = QAction('View Console',self, checkable=True, statusTip='View console output from FFmpeg backend commands', triggered=self.toggleConsole)
 
     def initToolbar(self):
         self.toolbar.addAction(self.openAction)
@@ -237,6 +226,7 @@ class VideoCutter(QWidget):
 
     def initMenus(self):
         self.aboutMenu.addAction(self.mediaInfoAction)
+        self.aboutMenu.addAction(self.viewConsoleAction)
         self.aboutMenu.addSeparator()
         self.aboutMenu.addAction(self.aboutQtAction)
         self.aboutMenu.addAction(self.aboutAction)
@@ -296,6 +286,9 @@ class VideoCutter(QWidget):
         self.inCut = False
         self.renderTimes()
         self.initMediaControls()
+
+    def toggleConsole(self):
+        self.viewConsole = self.viewConsoleAction.isChecked()
 
     def mediaInfo(self):
         if self.mediaPlayer.isMetaDataAvailable():
@@ -608,28 +601,6 @@ class VideoCutter(QWidget):
                 cmd = 'xdg-open "%s"' % dirname
             return self.cmdExec(cmd)
 
-    def cmdExec(self, cmd):
-        if self.proc.state() == QProcess.Not:
-            self.proc.start(cmd)
-            self.proc.waitForFinished(-1)
-            if self.proc.exitStatus() == QProcess.NormalExit and self.proc.exitCode() == 0:
-                return True
-        return False
-        # if sys.platform == 'win32':
-        #     si = subprocess.STARTUPINFO()
-        #     si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-        #     return subprocess.Popen(args=shlex.split(cmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-        #                             stdin=subprocess.PIPE, startupinfo=si, env=os.environ, shell=shell)
-        # else:
-        #     return subprocess.Popen(args=shlex.split(cmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=shell)
-
-    def cmdFinished(self, code, status):
-        return code == 0 and status == QProcess.NormalExit
-
-    def cmdError(self, error):
-        if error != QProcess.Crashed:
-            QMessageBox.critical(None, "Error calling an external process", self.proc.errorString(), buttons=QMessageBox.Cancel)
-
     def wheelEvent(self, event):
         if self.mediaPlayer.isVideoAvailable() or self.mediaPlayer.isAudioAvailable():
             if event.angleDelta().y() > 0:
@@ -732,7 +703,7 @@ def main():
     app.setStyle('Fusion')
     app.setApplicationName('VidCutter')
     app.setApplicationVersion('1.0.1')
-    app.setOrganizationDomain('http://vidcutter.ozmartians.com')
+    app.setOrganizationDomain('https://vidcutter.ozmartians.com')
     app.setQuitOnLastWindowClosed(True)
     win = MainWindow()
     win.show()

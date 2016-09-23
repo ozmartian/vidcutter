@@ -5,49 +5,6 @@ from PyQt5.QtCore import QPoint, Qt
 # from PyQt5.QtGui import QRegion, QPainter, QPen
 from PyQt5.QtWidgets import QSlider, QStyleFactory, QStyle, QStyleOptionSlider, QToolTip, qApp
 
-from qrangeslider import QRangeSlider
-
-
-class VideoRanger(QRangeSlider):
-    def __init__(self, parent):
-        super(VideoRanger, self).__init__(parent)
-
-        # self.setBackgroundStyle('background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #222, stop:1 #333);')
-        # self.setSpanStyle('background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #282, stop:1 #393);')
-
-        # self.setFixedWidth(400)
-        self.setFixedHeight(36)
-        self.setMin(0)
-        self.setMax(100)
-        self.setRange(30, 80)
-        self.setDrawValues(False)
-        self.handle.setTextColor(Qt.white)
-        self.setStyleSheet('''
-QRangeSlider * {
-    border: 0px;
-    padding: 0px;
-}
-QRangeSlider #Head {
-    background: url(icons/filmstrip.png) repeat-x;
-}
-QRangeSlider #Span {
-    background: #434343;
-}
-QRangeSlider #Tail {
-    background: url(icons/filmstrip.png) repeat-x;
-}
-QRangeSlider > QSplitter::handle {
-    background: #fff;
-}
-QRangeSlider > QSplitter::handle:vertical {
-    height: 2px;
-}
-QRangeSlider > QSplitter::handle:pressed {
-    background: #ca5;
-}
-''')
-        self.show()
-
 
 class VideoSlider(QSlider):
     def __init__(self, *arg, **kwargs):
