@@ -5,7 +5,7 @@ import os
 import sys
 
 from PyQt5.QtCore import QFileInfo, QObject, QProcess, QProcessEnvironment
-from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QMessageBox, QTextEdit
 
 
 class VideoService(QObject):
@@ -18,6 +18,14 @@ class VideoService(QObject):
             self.backend = os.path.join(self.getAppPath(), 'bin', 'ffmpeg.exe')
 
         self.proc = QProcess(self)
+        self.proc.setProcessChannelMode(QProcess.MergedChannels)
+        self.proc.setWorkingDirectory(self.getAppPath())
+
+        self.proc.readyReadStandardOutput.connect(self.readyReadStandardOutput)
+        self.proc.error.connect(self.cmdError)
+        self.proc.finished.connect(self.cmdFinished)
+
+        self.console = QTextEdit(self.parent, readOnly=True, enabled=False, visible=False)
 
     def cmdExec(self, cmd):
         if self.proc.state() == QProcess.NotRunning:

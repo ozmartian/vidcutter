@@ -15,7 +15,7 @@ from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDialog, QGraphicsDropShadowEffect,
                              QHBoxLayout, QLabel, QListWidget, QListWidgetItem, QMainWindow,
                              QMenu, QMessageBox, QPushButton, QSizePolicy, QSlider,
-                             QStyle, QTextEdit, QToolBar, QVBoxLayout, QWidget, qApp)
+                             QStyle, QToolBar, QVBoxLayout, QWidget, qApp)
 
 if __name__ == '__main__':
     from ffmpy import FFmpeg
@@ -703,7 +703,7 @@ def main():
     app.setStyle('Fusion')
     app.setApplicationName('VidCutter')
     app.setApplicationVersion('1.0.1')
-    app.setOrganizationDomain('https://vidcutter.ozmartians.com')
+    app.setOrganizationDomain('http://vidcutter.ozmartians.com')
     app.setQuitOnLastWindowClosed(True)
     win = MainWindow()
     win.show()
