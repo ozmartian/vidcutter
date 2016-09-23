@@ -56,9 +56,9 @@ class VideoWidget(QVideoWidget):
         event.accept()
 
 
-class VideoCutter(QWidget):
+class VidCutter(QWidget):
     def __init__(self, parent):
-        super(VideoCutter, self).__init__(parent)
+        super(VidCutter, self).__init__(parent)
         self.parent = parent
         self.mediaPlayer = QMediaPlayer(None, QMediaPlayer.VideoSurface)
         self.videoWidget = VideoWidget()
@@ -184,7 +184,7 @@ class VideoCutter(QWidget):
         self.mediaPlayer.error.connect(self.handleError)
 
     def initIcons(self):
-        self.appIcon = QIcon(os.path.join(self.getAppPath(), 'icons', 'videocutter.png'))
+        self.appIcon = QIcon(os.path.join(self.getAppPath(), 'icons', 'vidcutter.png'))
         self.openIcon = QIcon(os.path.join(self.getAppPath(), 'icons', 'addmedia.png'))
         self.playIcon = QIcon(os.path.join(self.getAppPath(), 'icons', 'play.png'))
         self.pauseIcon = QIcon(os.path.join(self.getAppPath(), 'icons', 'pause.png'))
@@ -642,7 +642,7 @@ class VideoCutter(QWidget):
             self.cutEnd()
             event.accept()
         else:
-            super(VideoCutter, self).mousePressEvent(event)
+            super(VidCutter, self).mousePressEvent(event)
 
     def eventFilter(self, obj, event):
         if event.type() == QEvent.MouseButtonRelease and isinstance(obj, VideoSlider):
@@ -673,7 +673,7 @@ class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
         self.statusBar().showMessage('Ready')
-        self.cutter = VideoCutter(self)
+        self.cutter = VidCutter(self)
         self.setCentralWidget(self.cutter)
         self.setAcceptDrops(True)
         self.setWindowTitle('%s %s' % (qApp.applicationName(), qApp.applicationVersion()))

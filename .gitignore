@@ -6,7 +6,7 @@ build/
 dist/
 _build/build
 _build/dist
-videocutter.*/
+vidcutter.*/
 *.log
 *.exe
 *.dll

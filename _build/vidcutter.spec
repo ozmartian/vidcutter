@@ -2,8 +2,8 @@
 
 block_cipher = None
 
-a = Analysis(['..\\videocutter.py'],
-             pathex=['C:\\DEV\\videocutter'],
+a = Analysis(['..\\vidcutter.py'],
+             pathex=['C:\\DEV\\vidcutter'],
              binaries=[],
              datas=[('../bin/ffmpeg.exe', './bin/')],
              hiddenimports=[],
@@ -24,4 +24,4 @@ exe = EXE(pyz,
           debug=False,
           strip=False,
           upx=False,
-          console=False , icon='..\\icons\\videocutter.ico')
+          console=False , icon='..\\icons\\vidcutter.ico')

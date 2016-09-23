@@ -12,7 +12,10 @@ class VideoService(QObject):
     def __init__(self, parent):
         super(VideoService, self).__init__(parent)
         self.consoleOutput = ''
-        self.backend = 'ffmpeg' if not sys.platform == 'win32' else self.backend =  os.path.join(self.getAppPath(), 'bin', 'ffmpeg.exe')
+        
+        self.backend = 'ffmpeg'
+        if sys.platform == 'win32':
+            self.backend = os.path.join(self.getAppPath(), 'bin', 'ffmpeg.exe')
 
         self.proc = QProcess(self)
 

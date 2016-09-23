@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from .videocutter import main
+from .vidcutter import main
 
 
 if __name__ == "__main__":
