@@ -4,9 +4,8 @@
 import os
 import shlex
 import sys
-import tempfile
 
-from PyQt5.QtCore import QFileInfo, QObject, QProcess
+from PyQt5.QtCore import QDir, QFileInfo, QObject, QProcess, QTemporaryFile
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QMessageBox, QTextEdit
 
@@ -31,38 +30,18 @@ class VideoService(QObject):
         self.console = QTextEdit(self.parent, readOnly=True, enabled=False, visible=False)
 
     def imageCapture(self, source, frametime):
-        capres = None
-        if sys.platform == 'win32':
-            fd, imagecap = tempfile.mkstemp(suffix='.jpg')
-            try:
-                os.write(fd, b'dummy data')
-                os.close(fd)
+        img, capres = None, None
+        try:
+            img = QTemporaryFile(os.path.join(QDir.tempPath(), 'XXXXXX.jpg'))
+            if img.open():
+                imagecap = img.fileName()
                 args = shlex.split('-ss %s -i "%s" -vframes 1 -s 100x70 -y %s' % (frametime, source, imagecap))
                 self.proc.start(self.backend, args)
                 self.proc.waitForFinished(-1)
                 if self.proc.exitCode() == 0 and self.proc.exitStatus() == QProcess.NormalExit:
                     capres = QPixmap(imagecap, 'JPG')
-                # ff = FFmpeg(
-                #     executable=self.backend,
-                #     inputs={source: '-ss %s' % frametime},
-                #     outputs={imagecap: '-vframes 1 -s 100x70 -y'}
-                # )
-                # ff.run()
-            finally:
-                os.remove(imagecap)
-        else:
-            with tempfile.NamedTemporaryFile(suffix='.jpg') as imagecap:
-                args = shlex.split('-ss %s -i "%s" -vframes 1 -s 100x70 -y %s' % (frametime, source, imagecap.name))
-                self.proc.start(self.backend, args)
-                self.proc.waitForFinished(-1)
-                if self.proc.exitCode() == 0 and self.proc.exitStatus() == QProcess.NormalExit:
-                    capres = QPixmap(imagecap.name, 'JPG')
-                # ff = FFmpeg(
-                #     executable=self.backend,
-                #     inputs={source: '-ss %s' % frametime},
-                #     outputs={imagecap.name: '-vframes 1 -s 100x70 -y'}
-                # )
-                # ff.run()
+        finally:
+            del img
         return capres
 
     def readyReadStandardOutput(self):
