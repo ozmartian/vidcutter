@@ -88,7 +88,7 @@ class VidCutter(QWidget):
         self.seekSlider.installEventFilter(self)
 
         novideoImage = QLabel(alignment=Qt.AlignCenter, autoFillBackground=False,
-                              pixmap=QPixmap(os.path.join(self.getAppPath(), 'icons', 'novideo.png'), 'PNG'),
+                              pixmap=QPixmap(os.path.join(self.getAppPath(), 'images', 'novideo.png'), 'PNG'),
                               sizePolicy=QSizePolicy(QSizePolicy.Expanding, QSizePolicy.MinimumExpanding))
         novideoImage.setBackgroundRole(QPalette.Dark)
         novideoImage.setContentsMargins(0, 20, 0, 20)
@@ -101,7 +101,7 @@ class VidCutter(QWidget):
         novideoLayout.addWidget(novideoImage)
         novideoLayout.addWidget(self.novideoLabel, alignment=Qt.AlignTop)
 
-        self.novideoMovie = QMovie(os.path.join(self.getAppPath(), 'icons', 'novideotext.gif'))
+        self.novideoMovie = QMovie(os.path.join(self.getAppPath(), 'images', 'novideotext.gif'))
         self.novideoMovie.frameChanged.connect(self.setNoVideoText)
         self.novideoMovie.start()
 
@@ -117,7 +117,7 @@ class VidCutter(QWidget):
         self.cliplist.setFixedWidth(185)
         self.cliplist.model().rowsMoved.connect(self.syncClipList)
 
-        listHeader = QLabel(pixmap=QPixmap(os.path.join(self.getAppPath(), 'icons', 'clipindex.png')), alignment=Qt.AlignCenter)
+        listHeader = QLabel(pixmap=QPixmap(os.path.join(self.getAppPath(), 'images', 'clipindex.png')), alignment=Qt.AlignCenter)
         listHeader.setStyleSheet('padding:5px; padding-top:8px; border:1px solid #b9b9b9; border-bottom:none; background-color:qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFF, stop: 0.5 #EAEAEA, stop: 0.6 #EAEAEA stop:1 #FFF);')
 
         self.clipindexLayout = QVBoxLayout(spacing=0)
@@ -179,21 +179,21 @@ class VidCutter(QWidget):
         self.mediaPlayer.error.connect(self.handleError)
 
     def initIcons(self):
-        self.appIcon = QIcon(os.path.join(self.getAppPath(), 'icons', 'vidcutter.png'))
-        self.openIcon = QIcon(os.path.join(self.getAppPath(), 'icons', 'addmedia.png'))
-        self.playIcon = QIcon(os.path.join(self.getAppPath(), 'icons', 'play.png'))
-        self.pauseIcon = QIcon(os.path.join(self.getAppPath(), 'icons', 'pause.png'))
-        self.cutStartIcon = QIcon(os.path.join(self.getAppPath(), 'icons', 'start.png'))
-        self.cutEndIcon = QIcon(os.path.join(self.getAppPath(), 'icons', 'end.png'))
-        self.saveIcon = QIcon(os.path.join(self.getAppPath(), 'icons', 'save.png'))
-        self.muteIcon = QIcon(os.path.join(self.getAppPath(), 'icons', 'muted.png'))
-        self.unmuteIcon = QIcon(os.path.join(self.getAppPath(), 'icons', 'unmuted.png'))
-        self.upIcon = QIcon(os.path.join(self.getAppPath(), 'icons', 'up.png'))
-        self.downIcon = QIcon(os.path.join(self.getAppPath(), 'icons', 'down.png'))
-        self.removeIcon = QIcon(os.path.join(self.getAppPath(), 'icons', 'remove.png'))
-        self.removeAllIcon = QIcon(os.path.join(self.getAppPath(), 'icons', 'remove-all.png'))
-        self.successIcon = QIcon(os.path.join(self.getAppPath(), 'icons', 'success.png'))
-        self.aboutIcon = QIcon(os.path.join(self.getAppPath(), 'icons', 'about.png'))
+        self.appIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'vidcutter.png'))
+        self.openIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'addmedia.png'))
+        self.playIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'play.png'))
+        self.pauseIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'pause.png'))
+        self.cutStartIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'start.png'))
+        self.cutEndIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'end.png'))
+        self.saveIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'save.png'))
+        self.muteIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'muted.png'))
+        self.unmuteIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'unmuted.png'))
+        self.upIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'up.png'))
+        self.downIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'down.png'))
+        self.removeIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'remove.png'))
+        self.removeAllIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'remove-all.png'))
+        self.successIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'success.png'))
+        self.aboutIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'about.png'))
 
     def initActions(self):
         self.openAction = QAction(self.openIcon, 'Add Media', self, statusTip='Select media source', triggered=self.openFile)
