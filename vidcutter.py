@@ -5,10 +5,9 @@ import os
 import platform
 import signal
 import sys
-import tempfile
 import warnings
 
-from PyQt5.QtCore import QDir, QEvent, QFileInfo, QProcess, QSize, Qt, QTime, QUrl
+from PyQt5.QtCore import QDir, QEvent, QFileInfo, QSize, Qt, QTime, QUrl
 from PyQt5.QtGui import QFontDatabase, QIcon, QMovie, QPalette, QPixmap
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
@@ -87,7 +86,7 @@ class VidCutter(QWidget):
         self.seekSlider = VideoSlider(parent=self, sliderMoved=self.setPosition)
         self.seekSlider.installEventFilter(self)
 
-        self.videoService = VideoService(self, finishedHandler=self.cmdFinished)
+        self.videoService = VideoService(self)
 
         novideoImage = QLabel(alignment=Qt.AlignCenter, autoFillBackground=False,
                               pixmap=QPixmap(os.path.join(self.getAppPath(), 'images', 'novideo.png'), 'PNG'),
@@ -475,30 +474,10 @@ class VidCutter(QWidget):
 
     def captureImage(self):
         frametime = self.deltaToQTime(self.mediaPlayer.position()).addSecs(1).toString(self.timeformat)
-        if sys.platform == 'win32':
-            fd, imagecap = tempfile.mkstemp(suffix='.jpg')
-            try:
-                os.write(fd, b'dummy data')
-                os.close(fd)
-                ff = FFmpeg(
-                    executable=self.FFMPEG_bin,
-                    inputs={self.mediaPlayer.currentMedia().canonicalUrl().toLocalFile(): '-ss %s' % frametime},
-                    outputs={imagecap: '-vframes 1 -s 100x70 -y'}
-                )
-                ff.run()
-                capres = QPixmap(imagecap, 'JPG')
-            finally:
-                os.remove(imagecap)
-        else:
-            with tempfile.NamedTemporaryFile(suffix='.jpg') as imagecap:
-                ff = FFmpeg(
-                    executable=self.FFMPEG_bin,
-                    inputs={self.mediaPlayer.currentMedia().canonicalUrl().toLocalFile(): '-ss %s' % frametime},
-                    outputs={imagecap.name: '-vframes 1 -s 100x70 -y'}
-                )
-                ff.run()
-                capres = QPixmap(imagecap.name, 'JPG')
-        return capres
+        inputfile = self.mediaPlayer.currentMedia().canonicalUrl().toLocalFile()
+        imagecap = self.videoService.imageCapture(inputfile, frametime)
+        if type(imagecap) is QPixmap:
+            return imagecap
 
     def cutVideo(self):
         self.setCursor(Qt.BusyCursor)
@@ -546,9 +525,11 @@ class VidCutter(QWidget):
         play.clicked.connect(self.externalPlayer)
         fileman = completeMbox.addButton('Open folder', QMessageBox.AcceptRole)
         fileman.clicked.connect(self.openFolder)
-        cont = completeMbox.addButton('Continue', QMessageBox.AcceptRole)
-        completeMbox.setDefaultButton(cont)
-        completeMbox.setEscapeButton(cont)
+        completeMbox.addButton('Continue', QMessageBox.AcceptRole)
+        new = completeMbox.addButton('Start New', QMessageBox.AcceptRole)
+        new.clicked.connect(self.clearList)
+        completeMbox.setDefaultButton(new)
+        completeMbox.setEscapeButton(new)
         completeMbox.exec_()
 
     def joinVideos(self, joinlist, filename):
@@ -575,9 +556,6 @@ class VidCutter(QWidget):
                     os.remove(file)
         except:
             pass
-
-    def cmdFinished(self, code, status):
-        return code == 0 and status == QProcess.NormalExit
 
     def externalPlayer(self):
         if len(self.finalFilename) and os.path.exists(self.finalFilename):
