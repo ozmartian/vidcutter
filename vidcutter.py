@@ -569,6 +569,7 @@ class VidCutter(QWidget):
         self.initNoVideo()
         self.videoLayout.replaceWidget(self.videoplayerWidget, self.novideoWidget)
         self.initMediaControls(False)
+        self.parent.setWindowTitle('%s %s' % (qApp.applicationName(), qApp.applicationVersion()))
 
     def wheelEvent(self, event):
         if self.mediaPlayer.isVideoAvailable() or self.mediaPlayer.isAudioAvailable():
