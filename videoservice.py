@@ -56,9 +56,6 @@ class VideoService(QObject):
             return True
         return False
 
-    # def readyReadStandardOutput(self):
-    #     self.consoleOutput += self.proc.readAllStandardOutput()
-
     def cmdExec(self, cmd):
         if self.proc.state() == QProcess.NotRunning:
             self.proc.start(cmd)

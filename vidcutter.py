@@ -336,7 +336,7 @@ class VidCutter(QWidget):
 </p>''' % (qApp.applicationName(), qApp.applicationVersion(),
            'x64' if platform.architecture()[0] == '64bit' else 'x86',
            qApp.organizationDomain(), qApp.organizationDomain())
-        QMessageBox.about(self, 'About %s' % qApp.applicationName(), about_html)
+        QMessageBox.about(self.parent, 'About %s' % qApp.applicationName(), about_html)
 
     def openFile(self):
         filename, _ = QFileDialog.getOpenFileName(self.parent, caption='Select video', directory=QDir.homePath())
@@ -462,7 +462,7 @@ class VidCutter(QWidget):
             listitem.setFlags(Qt.ItemIsSelectable | Qt.ItemIsDragEnabled | Qt.ItemIsEnabled)
         if len(self.clipTimes) and not self.inCut:
             self.saveAction.setEnabled(True)
-        if len(self.clipTimes) == 0 or not type(self.clipTimes[0][1]) is QTime:
+        if self.inCut or len(self.clipTimes) == 0 or not type(self.clipTimes[0][1]) is QTime:
             self.saveAction.setEnabled(False)
 
     @staticmethod
@@ -481,6 +481,7 @@ class VidCutter(QWidget):
         self.setCursor(Qt.BusyCursor)
         filename = ''
         filelist = []
+        self.totalRuntime = 0
         source = self.mediaPlayer.currentMedia().canonicalUrl().toLocalFile()
         _, sourceext = os.path.splitext(source)
         if len(self.clipTimes):
@@ -490,7 +491,9 @@ class VidCutter(QWidget):
                 file, ext = os.path.splitext(self.finalFilename)
                 index = 1
                 for clip in self.clipTimes:
-                    runtime = self.deltaToQTime(clip[0].msecsTo(clip[1])).toString(self.timeformat)
+                    runtime = clip[0].msecsTo(clip[1])
+                    self.totalRuntime += runtime
+                    runtime = self.deltaToQTime(runtime).toString(self.timeformat)
                     filename = '%s_%s%s' % (file, '{0:0>2}'.format(index), ext)
                     filelist.append(filename)
                     self.videoService.cut(source, filename, clip[0].toString(self.timeformat), runtime)
@@ -501,7 +504,7 @@ class VidCutter(QWidget):
                     QFile.remove(self.finalFilename)
                     QFile.rename(filename, self.finalFilename)
                 self.unsetCursor()
-                self.completionDialog()
+                self.complete()
             return True
         self.unsetCursor()
         return False
@@ -521,23 +524,47 @@ class VidCutter(QWidget):
         except:
             pass
 
-    def completionDialog(self):
-        completeMbox = QMessageBox()
-        completeMbox.setWindowTitle('Success')
-        completeMbox.setWindowIcon(self.parent.windowIcon())
-        completeMbox.setIconPixmap(self.successIcon.pixmap(QSize(48, 48)))
-        completeMbox.setText('Your video was successfully created at:\n%s\n\nHow would you like to proceed?'
-                             % QDir.toNativeSeparators(self.finalFilename))
-        play = completeMbox.addButton('Play video', QMessageBox.AcceptRole)
+    def complete(self):
+        info = QFileInfo(self.finalFilename)
+        mbox = QMessageBox(windowTitle='Success', windowIcon=self.parent.windowIcon(),
+                           iconPixmap=self.successIcon.pixmap(48, 49), textFormat=Qt.RichText)
+        mbox.setText('''<p>Your video was successfully created. Here re its details:</p>
+                        <p align="center">
+                            <table border="0" cellpadding="2">
+                                <tr nowrap>
+                                    <td colspan="2"><b>File:</b> %s</td>
+                                </tr>
+                                <tr nowrap>
+                                    <td align="left"><b>Size:</b> %s</td>
+                                    <td align="right"><b>Runtime:</b> %s</td>
+                                </tr>
+                            </table>
+                        </p>
+                        <p>How would you like to proceed?</p>'''
+                     % (QDir.toNativeSeparators(self.finalFilename),
+                        self.sizeof_fmt(int(info.size())),
+                        self.deltaToQTime(self.totalRuntime).toString(self.timeformat)))
+        play = mbox.addButton('Play video', QMessageBox.AcceptRole)
+        play.setIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
         play.clicked.connect(self.externalPlayer)
-        fileman = completeMbox.addButton('Open folder', QMessageBox.AcceptRole)
+        fileman = mbox.addButton('Open folder', QMessageBox.AcceptRole)
+        fileman.setIcon(self.style().standardIcon(QStyle.SP_DialogOpenButton))
         fileman.clicked.connect(self.openFolder)
-        completeMbox.addButton('Continue', QMessageBox.AcceptRole)
-        new = completeMbox.addButton('Start New', QMessageBox.AcceptRole)
+        cont = mbox.addButton('Continue', QMessageBox.AcceptRole)
+        cont.setIcon(self.style().standardIcon(QStyle.SP_ArrowRight))
+        new = mbox.addButton('Start New', QMessageBox.AcceptRole)
+        new.setIcon(self.style().standardIcon(QStyle.SP_FileDialogStart))
         new.clicked.connect(self.startNew)
-        completeMbox.setDefaultButton(new)
-        completeMbox.setEscapeButton(new)
-        completeMbox.exec_()
+        mbox.setDefaultButton(new)
+        mbox.setEscapeButton(new)
+        mbox.exec_()
+
+    def sizeof_fmt(self, num, suffix='B'):
+        for unit in ['','K','M','G','T','P','E','Z']:
+            if abs(num) < 1024.0:
+                return "%3.1f%s%s" % (num, unit, suffix)
+            num /= 1024.0
+        return "%.1f%s%s" % (num, 'Y', suffix)
 
     def externalPlayer(self):
         if len(self.finalFilename) and os.path.exists(self.finalFilename):
@@ -565,7 +592,7 @@ class VidCutter(QWidget):
         self.clearList()
         self.seekSlider.setValue(0)
         self.seekSlider.setRange(0, 0)
-        self.mediaPlayer.setMedia(QMediaContent(None))
+        self.mediaPlayer.setMedia(QMediaContent())
         self.initNoVideo()
         self.videoLayout.replaceWidget(self.videoplayerWidget, self.novideoWidget)
         self.initMediaControls(False)
@@ -629,11 +656,6 @@ class VidCutter(QWidget):
 
     def getAppPath(self):
         return QFileInfo(__file__).absolutePath()
-        # if not internal_resource:
-        #     if getattr(sys, 'frozen', False):  # for pyinstaller; temp extraction folder
-        #       return sys._MEIPASS
-        #     return os.path.dirname(os.path.abspath(__file__))
-        # return ':/'
 
     def closeEvent(self, event):
         self.parent.closeEvent(event)
