@@ -15,18 +15,15 @@ class VideoService(QObject):
         super(VideoService, self).__init__(parent)
         self.parent = parent
         self.consoleOutput = ''
-        
         self.backend = 'ffmpeg'
         if sys.platform == 'win32':
             self.backend = os.path.join(self.getAppPath(), 'bin', 'ffmpeg.exe')
-
         self.proc = QProcess(self)
         self.proc.setProcessChannelMode(QProcess.MergedChannels)
         self.proc.setWorkingDirectory(self.getAppPath())
         # self.proc.readyReadStandardOutput.connect(self.readyReadStandardOutput)
         # self.proc.finished.connect(self.finished)
         self.proc.errorOccurred.connect(self.cmdError)
-
         self.console = QTextEdit(self.parent, readOnly=True, enabled=False, visible=False)
 
     def imageCapture(self, source, frametime):
@@ -54,14 +51,6 @@ class VideoService(QObject):
             if self.proc.exitStatus() == QProcess.NormalExit and self.proc.exitCode() == 0:
                 return True
         return False
-
-        # if sys.platform == 'win32':
-        #     si = subprocess.STARTUPINFO()
-        #     si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-        #     return subprocess.Popen(args=shlex.split(cmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-        #                             stdin=subprocess.PIPE, startupinfo=si, env=os.environ, shell=shell)
-        # else:
-        #     return subprocess.Popen(args=shlex.split(cmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=shell)
 
     def cmdError(self, error):
         if error != QProcess.Crashed:
