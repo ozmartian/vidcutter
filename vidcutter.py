@@ -7,7 +7,7 @@ import signal
 import sys
 import warnings
 
-from PyQt5.QtCore import QDir, QEvent, QFileInfo, QSize, Qt, QTime, QUrl
+from PyQt5.QtCore import QDir, QEvent, QFile, QFileInfo, QSize, Qt, QTime, QUrl
 from PyQt5.QtGui import QFontDatabase, QIcon, QMovie, QPalette, QPixmap
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
@@ -17,14 +17,13 @@ from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDial
                              QStyle, QToolBar, QVBoxLayout, QWidget, qApp)
 
 if __name__ == '__main__':
-    from ffmpy import FFmpeg
     from videoslider import VideoSlider
     from videoservice import VideoService
 else:
-    from .ffmpy import FFmpeg
     from .videoslider import VideoSlider
     from .videoservice import VideoService
 
+__version__ = '1.0.5'
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 signal.signal(signal.SIGTERM, signal.SIG_DFL)
@@ -61,6 +60,7 @@ class VidCutter(QWidget):
         self.parent = parent
         self.mediaPlayer = QMediaPlayer(None, QMediaPlayer.VideoSurface)
         self.videoWidget = VideoWidget()
+        self.videoService = VideoService(self)
 
         QFontDatabase.addApplicationFont(os.path.join(self.getAppPath(), 'fonts', 'DroidSansMono.ttf'))
 
@@ -86,29 +86,7 @@ class VidCutter(QWidget):
         self.seekSlider = VideoSlider(parent=self, sliderMoved=self.setPosition)
         self.seekSlider.installEventFilter(self)
 
-        self.videoService = VideoService(self)
-
-        novideoImage = QLabel(alignment=Qt.AlignCenter, autoFillBackground=False,
-                              pixmap=QPixmap(os.path.join(self.getAppPath(), 'images', 'novideo.png'), 'PNG'),
-                              sizePolicy=QSizePolicy(QSizePolicy.Expanding, QSizePolicy.MinimumExpanding))
-        novideoImage.setBackgroundRole(QPalette.Dark)
-        novideoImage.setContentsMargins(0, 20, 0, 20)
-        self.novideoLabel = QLabel(alignment=Qt.AlignCenter, autoFillBackground=True,
-                                   sizePolicy=QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum))
-        self.novideoLabel.setBackgroundRole(QPalette.Dark)
-        self.novideoLabel.setContentsMargins(0, 20, 15, 60)
-
-        novideoLayout = QVBoxLayout(spacing=0)
-        novideoLayout.addWidget(novideoImage)
-        novideoLayout.addWidget(self.novideoLabel, alignment=Qt.AlignTop)
-
-        self.novideoMovie = QMovie(os.path.join(self.getAppPath(), 'images', 'novideotext.gif'))
-        self.novideoMovie.frameChanged.connect(self.setNoVideoText)
-        self.novideoMovie.start()
-
-        self.novideoWidget = QWidget(self, autoFillBackground=True)
-        self.novideoWidget.setBackgroundRole(QPalette.Dark)
-        self.novideoWidget.setLayout(novideoLayout)
+        self.initNoVideo()
 
         self.cliplist = QListWidget(sizePolicy=QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding),
                                     contextMenuPolicy=Qt.CustomContextMenu, uniformItemSizes=True,
@@ -179,6 +157,26 @@ class VidCutter(QWidget):
         self.mediaPlayer.durationChanged.connect(self.durationChanged)
         self.mediaPlayer.error.connect(self.handleError)
 
+    def initNoVideo(self):
+        novideoImage = QLabel(alignment=Qt.AlignCenter, autoFillBackground=False,
+                              pixmap=QPixmap(os.path.join(self.getAppPath(), 'images', 'novideo.png'), 'PNG'),
+                              sizePolicy=QSizePolicy(QSizePolicy.Expanding, QSizePolicy.MinimumExpanding))
+        novideoImage.setBackgroundRole(QPalette.Dark)
+        novideoImage.setContentsMargins(0, 20, 0, 20)
+        self.novideoLabel = QLabel(alignment=Qt.AlignCenter, autoFillBackground=True,
+                                   sizePolicy=QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum))
+        self.novideoLabel.setBackgroundRole(QPalette.Dark)
+        self.novideoLabel.setContentsMargins(0, 20, 15, 60)
+        novideoLayout = QVBoxLayout(spacing=0)
+        novideoLayout.addWidget(novideoImage)
+        novideoLayout.addWidget(self.novideoLabel, alignment=Qt.AlignTop)
+        self.novideoMovie = QMovie(os.path.join(self.getAppPath(), 'images', 'novideotext.gif'))
+        self.novideoMovie.frameChanged.connect(self.setNoVideoText)
+        self.novideoMovie.start()
+        self.novideoWidget = QWidget(self, autoFillBackground=True)
+        self.novideoWidget.setBackgroundRole(QPalette.Dark)
+        self.novideoWidget.setLayout(novideoLayout)
+
     def initIcons(self):
         self.appIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'vidcutter.png'))
         self.openIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'addmedia.png'))
@@ -209,7 +207,7 @@ class VidCutter(QWidget):
         self.aboutAction = QAction('About %s' % qApp.applicationName(), self, statusTip='Credits and acknowledgements', triggered=self.aboutInfo)
         self.aboutQtAction = QAction('About Qt', self, statusTip='About Qt', triggered=qApp.aboutQt)
         self.mediaInfoAction = QAction('Media Information', self, statusTip='Media information from loaded video file', triggered=self.mediaInfo, enabled=False)
-        self.viewConsoleAction = QAction('View Console',self, checkable=True, statusTip='View console output from FFmpeg backend commands', triggered=self.toggleConsole)
+        # self.viewConsoleAction = QAction('View Console',self, checkable=True, statusTip='View console output from FFmpeg backend commands', triggered=self.toggleConsole)
 
     def initToolbar(self):
         self.toolbar.addAction(self.openAction)
@@ -222,7 +220,7 @@ class VidCutter(QWidget):
 
     def initMenus(self):
         self.aboutMenu.addAction(self.mediaInfoAction)
-        self.aboutMenu.addAction(self.viewConsoleAction)
+        # self.aboutMenu.addAction(self.viewConsoleAction)
         self.aboutMenu.addSeparator()
         self.aboutMenu.addAction(self.aboutQtAction)
         self.aboutMenu.addAction(self.aboutAction)
@@ -300,7 +298,7 @@ class VidCutter(QWidget):
             mbox.setInformativeText(content)
             mbox.exec_()
         else:
-            QMessageBox.critical(self, 'Could not retrieve media information',
+            QMessageBox.critical(self.parent, 'Could not retrieve media information',
                                  '''There was a problem in tring to retrieve media information.
                                     This DOES NOT mean there is a problem with the file and you should
                                     be able to continue using it.''')
@@ -424,7 +422,7 @@ class VidCutter(QWidget):
         item = self.clipTimes[len(self.clipTimes) - 1]
         selected = self.deltaToQTime(self.mediaPlayer.position())
         if selected.__lt__(item[0]):
-            QMessageBox.critical(self, 'Invalid END Time', 'The clip end time must come AFTER it\'s start time. Please try again.')
+            QMessageBox.critical(self.parent, 'Invalid END Time', 'The clip end time must come AFTER it\'s start time. Please try again.')
             return
         item[1] = selected
         self.cutStartAction.setEnabled(True)
@@ -475,7 +473,7 @@ class VidCutter(QWidget):
     def captureImage(self):
         frametime = self.deltaToQTime(self.mediaPlayer.position()).addSecs(1).toString(self.timeformat)
         inputfile = self.mediaPlayer.currentMedia().canonicalUrl().toLocalFile()
-        imagecap = self.videoService.imageCapture(inputfile, frametime)
+        imagecap = self.videoService.capture(inputfile, frametime)
         if type(imagecap) is QPixmap:
             return imagecap
 
@@ -486,8 +484,8 @@ class VidCutter(QWidget):
         source = self.mediaPlayer.currentMedia().canonicalUrl().toLocalFile()
         _, sourceext = os.path.splitext(source)
         if len(self.clipTimes):
-            self.finalFilename, _ = QFileDialog.getSaveFileName(parent=self, caption='Save video', directory=source,
-                                                                filter='Video files (*%s)' % sourceext)
+            self.finalFilename, _ = QFileDialog.getSaveFileName(self.parent, 'Save video', source,
+                                                                'Video files (*%s)' % sourceext)
             if self.finalFilename != '':
                 file, ext = os.path.splitext(self.finalFilename)
                 index = 1
@@ -495,60 +493,26 @@ class VidCutter(QWidget):
                     runtime = self.deltaToQTime(clip[0].msecsTo(clip[1])).toString(self.timeformat)
                     filename = '%s_%s%s' % (file, '{0:0>2}'.format(index), ext)
                     filelist.append(filename)
-                    ff = FFmpeg(
-                        executable=self.FFMPEG_bin,
-                        inputs={source: None},
-                        outputs={filename: '-ss %s -t %s -vcodec copy -acodec copy -y' % (clip[0].toString(self.timeformat), runtime)}
-                    )
-                    ff.run()
+                    self.videoService.cut(source, filename, clip[0].toString(self.timeformat), runtime)
                     index += 1
                 if len(filelist) > 1:
                     self.joinVideos(filelist, self.finalFilename)
                 else:
-                    try:
-                        os.remove(self.finalFilename)
-                        os.rename(filename, self.finalFilename)
-                    except:
-                        pass
+                    QFile.remove(self.finalFilename)
+                    QFile.rename(filename, self.finalFilename)
                 self.unsetCursor()
                 self.completionDialog()
             return True
+        self.unsetCursor()
         return False
 
-    def completionDialog(self):
-        completeMbox = QMessageBox()
-        completeMbox.setWindowTitle('Success')
-        completeMbox.setWindowIcon(self.parent.windowIcon())
-        completeMbox.setIconPixmap(self.successIcon.pixmap(QSize(48, 48)))
-        completeMbox.setText('Your new video was successfully created. How would you like to proceed?')
-        play = completeMbox.addButton('Play video', QMessageBox.AcceptRole)
-        play.clicked.connect(self.externalPlayer)
-        fileman = completeMbox.addButton('Open folder', QMessageBox.AcceptRole)
-        fileman.clicked.connect(self.openFolder)
-        completeMbox.addButton('Continue', QMessageBox.AcceptRole)
-        new = completeMbox.addButton('Start New', QMessageBox.AcceptRole)
-        new.clicked.connect(self.clearList)
-        completeMbox.setDefaultButton(new)
-        completeMbox.setEscapeButton(new)
-        completeMbox.exec_()
-
     def joinVideos(self, joinlist, filename):
-        listfile = os.path.normpath(os.path.join(os.path.dirname(joinlist[0]), '_cutter.list'))
+        listfile = os.path.normpath(os.path.join(os.path.dirname(joinlist[0]), '.vidcutter.list'))
         fobj = open(listfile, 'w')
         for file in joinlist:
             fobj.write('file \'%s\'\n' % file.replace("'", "\\'"))
         fobj.close()
-        ff = FFmpeg(
-            executable=self.FFMPEG_bin,
-            inputs={listfile: '-f concat -safe 0'},
-            outputs={filename: '-c copy -y'}
-        )
-        try:
-            ff.run()
-        except:
-            print('"Error occurred: %s' % sys.exc_info()[0])
-            QMessageBox.critical(self, 'Error Alert', sys.exc_info()[0])
-            return
+        self.videoService.join(listfile, filename)
         try:
             os.remove(listfile)
             for file in joinlist:
@@ -556,6 +520,24 @@ class VidCutter(QWidget):
                     os.remove(file)
         except:
             pass
+
+    def completionDialog(self):
+        completeMbox = QMessageBox()
+        completeMbox.setWindowTitle('Success')
+        completeMbox.setWindowIcon(self.parent.windowIcon())
+        completeMbox.setIconPixmap(self.successIcon.pixmap(QSize(48, 48)))
+        completeMbox.setText('Your video was successfully created at:\n%s\n\nHow would you like to proceed?'
+                             % QDir.toNativeSeparators(self.finalFilename))
+        play = completeMbox.addButton('Play video', QMessageBox.AcceptRole)
+        play.clicked.connect(self.externalPlayer)
+        fileman = completeMbox.addButton('Open folder', QMessageBox.AcceptRole)
+        fileman.clicked.connect(self.openFolder)
+        completeMbox.addButton('Continue', QMessageBox.AcceptRole)
+        new = completeMbox.addButton('Start New', QMessageBox.AcceptRole)
+        new.clicked.connect(self.startNew)
+        completeMbox.setDefaultButton(new)
+        completeMbox.setEscapeButton(new)
+        completeMbox.exec_()
 
     def externalPlayer(self):
         if len(self.finalFilename) and os.path.exists(self.finalFilename):
@@ -578,6 +560,15 @@ class VidCutter(QWidget):
             else:
                 cmd = 'xdg-open "%s"' % dirname
             return self.cmdExec(cmd)
+
+    def startNew(self):
+        self.clearList()
+        self.seekSlider.setValue(0)
+        self.seekSlider.setRange(0, 0)
+        self.mediaPlayer.setMedia(QMediaContent(None))
+        self.initNoVideo()
+        self.videoLayout.replaceWidget(self.videoplayerWidget, self.novideoWidget)
+        self.initMediaControls(False)
 
     def wheelEvent(self, event):
         if self.mediaPlayer.isVideoAvailable() or self.mediaPlayer.isAudioAvailable():
@@ -633,7 +624,7 @@ class VidCutter(QWidget):
         self.unsetCursor()
         self.initMediaControls(False)
         print('ERROR: %s' % self.mediaPlayer.errorString())
-        QMessageBox.critical(None, 'Error Alert', self.mediaPlayer.errorString())
+        QMessageBox.critical(self.parent, 'Error Alert', self.mediaPlayer.errorString())
 
     def getAppPath(self):
         return QFileInfo(__file__).absolutePath()
@@ -680,7 +671,7 @@ def main():
     app = QApplication(sys.argv)
     app.setStyle('Fusion')
     app.setApplicationName('VidCutter')
-    app.setApplicationVersion('1.0.1')
+    app.setApplicationVersion(__version__)
     app.setOrganizationDomain('http://vidcutter.ozmartians.com')
     app.setQuitOnLastWindowClosed(True)
     win = MainWindow()
