@@ -56,8 +56,8 @@ QSlider::handle:horizontal {
 }
 QSlider::handle:horizontal:hover {
     background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 %s, stop:1 %s);
-}''' % (self.grooveBack1, self.grooveBack2, self.subBack1, self.subBack2, self.handleBack1, self.handleBack2,
-        self.handleHoverBack1, self.handleHoverBack2)
+}''' % (self.grooveBack1, self.grooveBack2, self.subBack1, self.subBack2, self.handleBack1,
+        self.handleBack2, self.handleHoverBack1, self.handleHoverBack2)
         self.setStyleSheet(self.sliderQSS)
 
     def setRestrictValue(self, value):

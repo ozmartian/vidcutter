@@ -8,7 +8,7 @@ import sys
 import tempfile
 import warnings
 
-from PyQt5.QtCore import QDir, QEvent, QFileInfo, QSize, Qt, QTime, QUrl
+from PyQt5.QtCore import QDir, QEvent, QFileInfo, QProcess, QSize, Qt, QTime, QUrl
 from PyQt5.QtGui import QFontDatabase, QIcon, QMovie, QPalette, QPixmap
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
@@ -86,6 +86,8 @@ class VidCutter(QWidget):
 
         self.seekSlider = VideoSlider(parent=self, sliderMoved=self.setPosition)
         self.seekSlider.installEventFilter(self)
+
+        self.videoService = VideoService(self, finishedHandler=self.cmdFinished)
 
         novideoImage = QLabel(alignment=Qt.AlignCenter, autoFillBackground=False,
                               pixmap=QPixmap(os.path.join(self.getAppPath(), 'images', 'novideo.png'), 'PNG'),
@@ -573,6 +575,9 @@ class VidCutter(QWidget):
                     os.remove(file)
         except:
             pass
+
+    def cmdFinished(self, code, status):
+        return code == 0 and status == QProcess.NormalExit
 
     def externalPlayer(self):
         if len(self.finalFilename) and os.path.exists(self.finalFilename):

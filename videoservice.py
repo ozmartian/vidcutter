@@ -9,7 +9,7 @@ from PyQt5.QtWidgets import QMessageBox, QTextEdit
 
 
 class VideoService(QObject):
-    def __init__(self, parent):
+    def __init__(self, parent, finishedHandler):
         super(VideoService, self).__init__(parent)
         self.consoleOutput = ''
         
@@ -23,7 +23,7 @@ class VideoService(QObject):
 
         self.proc.readyReadStandardOutput.connect(self.readyReadStandardOutput)
         self.proc.error.connect(self.cmdError)
-        self.proc.finished.connect(self.cmdFinished)
+        self.proc.finished.connect(finishedHandler)
 
         self.console = QTextEdit(self.parent, readOnly=True, enabled=False, visible=False)
 
@@ -45,9 +45,6 @@ class VideoService(QObject):
 
     def readyReadStandardOutput(self):
         self.consoleOutput += self.proc.readAllStandardOutput()
-
-    def cmdFinished(self, code, status):
-        return code == 0 and status == QProcess.NormalExit
 
     def cmdError(self, error):
         if error != QProcess.Crashed:
