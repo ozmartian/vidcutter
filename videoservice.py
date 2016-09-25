@@ -7,7 +7,7 @@ import sys
 
 from PyQt5.QtCore import QDir, QFileInfo, QObject, QProcess, QTemporaryFile
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QMessageBox, QTextEdit
+from PyQt5.QtWidgets import QMessageBox
 
 
 class VideoService(QObject):
@@ -18,11 +18,13 @@ class VideoService(QObject):
         self.backend = 'ffmpeg'
         if sys.platform == 'win32':
             self.backend = os.path.join(self.getAppPath(), 'bin', 'ffmpeg.exe')
-        self.proc = QProcess(self)
+        self.initProc()
+
+    def initProc(self):
+        self.proc = QProcess(self.parent)
         self.proc.setProcessChannelMode(QProcess.MergedChannels)
         self.proc.setWorkingDirectory(self.getAppPath())
         self.proc.errorOccurred.connect(self.cmdError)
-        self.console = QTextEdit(self.parent, readOnly=True, enabled=False, visible=False)
 
     def capture(self, source, frametime):
         img, capres = None, None
@@ -42,23 +44,15 @@ class VideoService(QObject):
     def cut(self, source, output, frametime, duration):
         args = '-i "%s" -ss %s -t %s -vcodec copy -acodec copy -y "%s"'\
                % (source, frametime, duration, QDir.fromNativeSeparators(output))
-        self.proc.start(self.backend, shlex.split(args))
-        self.proc.waitForFinished(-1)
-        if self.proc.exitCode() == 0 and self.proc.exitStatus() == QProcess.NormalExit:
-            return True
-        return False
+        return self.cmdExec(self.backend, args)
 
     def join(self, filelist, output):
         args = '-f concat -safe 0 -i "%s" -c copy -y "%s"' % (filelist, QDir.fromNativeSeparators(output))
-        self.proc.start(self.backend, shlex.split(args))
-        self.proc.waitForFinished(-1)
-        if self.proc.exitCode() == 0 and self.proc.exitStatus() == QProcess.NormalExit:
-            return True
-        return False
+        return self.cmdExec(self.backend, args)
 
-    def cmdExec(self, cmd):
+    def cmdExec(self, cmd, args=None):
         if self.proc.state() == QProcess.NotRunning:
-            self.proc.start(cmd)
+            self.proc.start(cmd, shlex.split(args))
             self.proc.waitForFinished(-1)
             if self.proc.exitStatus() == QProcess.NormalExit and self.proc.exitCode() == 0:
                 return True
