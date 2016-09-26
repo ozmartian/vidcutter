@@ -196,6 +196,10 @@ class VidCutter(QWidget):
         self.removeAllIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'remove-all.png'))
         self.successIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'success.png'))
         self.aboutIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'about.png'))
+        self.completePlayIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'complete-play.png'))
+        self.completeOpenIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'complete-open.png'))
+        self.completeRestartIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'complete-restart.png'))
+        self.completeExitIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'complete-exit.png'))
 
     def initActions(self):
         self.openAction = QAction(self.openIcon, 'Add Media', self, statusTip='Select media source',
@@ -563,7 +567,7 @@ class VidCutter(QWidget):
         info = QFileInfo(self.finalFilename)
         mbox = QMessageBox(windowTitle='Success', windowIcon=self.parent.windowIcon(),
                            iconPixmap=self.successIcon.pixmap(48, 49), textFormat=Qt.RichText)
-        mbox.setText('''<p>Your video was successfully created. Here re its details:</p>
+        mbox.setText('''<p>Your video was successfully created.</p>
                         <p align="center">
                             <table border="0" cellpadding="2">
                                 <tr nowrap>
@@ -579,16 +583,17 @@ class VidCutter(QWidget):
                      % (QDir.toNativeSeparators(self.finalFilename),
                         self.sizeof_fmt(int(info.size())),
                         self.deltaToQTime(self.totalRuntime).toString(self.timeformat)))
-        play = mbox.addButton('Play video', QMessageBox.AcceptRole)
-        play.setIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
+        play = mbox.addButton('Play', QMessageBox.AcceptRole)
+        play.setIcon(self.completePlayIcon)
         play.clicked.connect(self.externalPlayer)
-        fileman = mbox.addButton('Open folder', QMessageBox.AcceptRole)
-        fileman.setIcon(self.style().standardIcon(QStyle.SP_DialogOpenButton))
+        fileman = mbox.addButton('Open', QMessageBox.AcceptRole)
+        fileman.setIcon(self.completeOpenIcon)
         fileman.clicked.connect(self.openFolder)
-        cont = mbox.addButton('Continue', QMessageBox.AcceptRole)
-        cont.setIcon(self.style().standardIcon(QStyle.SP_ArrowRight))
-        new = mbox.addButton('Start New', QMessageBox.AcceptRole)
-        new.setIcon(self.style().standardIcon(QStyle.SP_FileDialogStart))
+        end = mbox.addButton('Exit', QMessageBox.AcceptRole)
+        end.setIcon(self.completeExitIcon)
+        end.clicked.connect(self.close)
+        new = mbox.addButton('Restart', QMessageBox.AcceptRole)
+        new.setIcon(self.completeRestartIcon)
         new.clicked.connect(self.startNew)
         mbox.setDefaultButton(new)
         mbox.setEscapeButton(new)
@@ -602,17 +607,17 @@ class VidCutter(QWidget):
         return "%.1f%s%s" % (num, 'Y', suffix)
 
     def externalPlayer(self):
+        self.startNew()
         if len(self.finalFilename) and os.path.exists(self.finalFilename):
             if sys.platform == 'win32':
-                cmd = 'START /B /I "%s"' % self.finalFilename
+                return self.videoService.cmdExec('START', '/B /I "%s"' % self.finalFilename)
             elif sys.platform == 'darwin':
-                cmd = 'open "%s"' % self.finalFilename
+                return self.videoService.cmdExec('open', '"%s"' % self.finalFilename)
             else:
-                cmd = 'xdg-open "%s"' % self.finalFilename
-            proc = self.cmdExec(cmd)
-            return proc.returncode
+                return self.videoService.cmdExec('xdg-open', '"%s"' % self.finalFilename)
 
     def openFolder(self):
+        self.startNew()
         if len(self.finalFilename) and os.path.exists(self.finalFilename):
             dirname = os.path.dirname(self.finalFilename)
             if sys.platform == 'win32':
