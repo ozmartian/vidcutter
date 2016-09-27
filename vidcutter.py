@@ -8,8 +8,8 @@ import sys
 import warnings
 
 from PyQt5.QtCore import QDir, QEvent, QFile, QFileInfo, QModelIndex, QObject, QPoint, QSize, Qt, QTime, QUrl
-from PyQt5.QtGui import (QCloseEvent, QDragEnterEvent, QDropEvent, QFontDatabase, QIcon, QKeyEvent, QMouseEvent,
-                         QMovie, QPalette, QPixmap, QWheelEvent)
+from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QDragEnterEvent, QDropEvent, QFontDatabase, QIcon,
+                         QKeyEvent, QMouseEvent, QMovie, QPalette, QPixmap, QWheelEvent)
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer, QVideoFrame
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDialog,
@@ -24,25 +24,11 @@ else:
     from .videoslider import VideoSlider
     from .videoservice import VideoService
 
-__version__ = '1.0.5'
-
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 signal.signal(signal.SIGTERM, signal.SIG_DFL)
 warnings.filterwarnings('ignore')
 
-
-def nongui(steps: int):
-    from multiprocessing.pool import ThreadPool
-
-    def wrap(*args, **kwargs):
-        pool = ThreadPool(processes=1)
-        async = pool.apply_async(steps, args, kwargs)
-        while not async.ready():
-            async.wait(0.01)
-            qApp.processEvents()
-        return async.get()
-
-    return wrap
+__version__ = '1.0.5'
 
 
 class VideoWidget(QVideoWidget):
@@ -114,8 +100,9 @@ class VidCutter(QWidget):
 
         listHeader = QLabel(pixmap=QPixmap(os.path.join(self.getAppPath(), 'images', 'clipindex.png')),
                             alignment=Qt.AlignCenter)
-        listHeader.setStyleSheet(
-            'padding:5px; padding-top:8px; border:1px solid #b9b9b9; border-bottom:none; background-color:qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFF, stop: 0.5 #EAEAEA, stop: 0.6 #EAEAEA stop:1 #FFF);')
+        listHeader.setStyleSheet('padding:5px; padding-top:8px; border:1px solid #b9b9b9; border-bottom:none;' +
+                                 'background-color:qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFF,' +
+                                 'stop: 0.5 #EAEAEA, stop: 0.6 #EAEAEA stop:1 #FFF);')
 
         self.clipindexLayout = QVBoxLayout(spacing=0)
         self.clipindexLayout.setContentsMargins(0, 0, 0, 0)
@@ -129,8 +116,8 @@ class VidCutter(QWidget):
 
         self.timeCounter = QLabel('00:00:00 / 00:00:00', autoFillBackground=True, alignment=Qt.AlignCenter,
                                   sizePolicy=QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed))
-        self.timeCounter.setStyleSheet(
-            'color:#FFFFFF; background:#000000; font-family:Droid Sans Mono; font-size:10.5pt; padding:4px;')
+        self.timeCounter.setStyleSheet('color:#FFFFFF; background:#000000; font-family:Droid Sans Mono;' +
+                                       'font-size:10.5pt; padding:4px;')
 
         videoplayerLayout = QVBoxLayout(spacing=0)
         videoplayerLayout.setContentsMargins(0, 0, 0, 0)
@@ -571,13 +558,12 @@ class VidCutter(QWidget):
         except:
             pass
 
-    @nongui
     def showProgress(self, steps: int, label: str = 'Processing video...') -> None:
         self.progress = QProgressDialog(label, None, 0, 0, self.parent, windowModality=Qt.ApplicationModal,
                                         windowIcon=self.parent.windowIcon(), minimumDuration=0)
+        self.progress.show()
         for i in range(steps):
             self.progress.setValue(i)
-            self.progress.show()
             qApp.processEvents()
 
     def complete(self) -> None:
@@ -602,7 +588,7 @@ class VidCutter(QWidget):
                         self.deltaToQTime(self.totalRuntime).toString(self.timeformat)))
         play = mbox.addButton('Play', QMessageBox.AcceptRole)
         play.setIcon(self.completePlayIcon)
-        play.clicked.connect(self.externalPlayer)
+        play.clicked.connect(self.openResult)
         fileman = mbox.addButton('Open', QMessageBox.AcceptRole)
         fileman.setIcon(self.completeOpenIcon)
         fileman.clicked.connect(self.openFolder)
@@ -623,26 +609,20 @@ class VidCutter(QWidget):
             num /= 1024.0
         return "%.1f%s%s" % (num, 'Y', suffix)
 
-    def externalPlayer(self) -> None:
-        self.startNew()
-        if len(self.finalFilename) and os.path.exists(self.finalFilename):
-            if sys.platform == 'win32':
-                return self.videoService.cmdExec('START', '/B /I "%s"' % self.finalFilename)
-            elif sys.platform == 'darwin':
-                return self.videoService.cmdExec('open', '"%s"' % self.finalFilename)
-            else:
-                return self.videoService.cmdExec('xdg-open', '"%s"' % self.finalFilename)
-
     def openFolder(self) -> None:
+        self.openResult(pathonly=True)
+
+    def openResult(self, pathonly: bool = False) -> None:
         self.startNew()
         if len(self.finalFilename) and os.path.exists(self.finalFilename):
-            dirname = os.path.dirname(self.finalFilename)
-            if sys.platform == 'win32':
-                return self.videoService.cmdExec('explorer', '/select,"%s"' % self.finalFilename)
-            elif sys.platform == 'darwin':
-                return self.videoService.cmdExec('open', '"%s"' % dirname)
-            else:
-                return self.videoService.cmdExec('xdg-open', '"%s"' % dirname)
+            target = self.finalFilename if not pathonly else os.path.dirname(self.finalFilename)
+            QDesktopServices.openUrl(QUrl.fromLocalFile(target))
+            # if sys.platform == 'win32':
+            #     return self.videoService.cmdExec('explorer', '/select,"%s"' % self.finalFilename)
+            # elif sys.platform == 'darwin':
+            #     return self.videoService.cmdExec('open', '"%s"' % dirname)
+            # else:
+            #     return self.videoService.cmdExec('xdg-open', '"%s"' % dirname)
 
     def startNew(self) -> None:
         self.unsetCursor()
