@@ -617,12 +617,6 @@ class VidCutter(QWidget):
         if len(self.finalFilename) and os.path.exists(self.finalFilename):
             target = self.finalFilename if not pathonly else os.path.dirname(self.finalFilename)
             QDesktopServices.openUrl(QUrl.fromLocalFile(target))
-            # if sys.platform == 'win32':
-            #     return self.videoService.cmdExec('explorer', '/select,"%s"' % self.finalFilename)
-            # elif sys.platform == 'darwin':
-            #     return self.videoService.cmdExec('open', '"%s"' % dirname)
-            # else:
-            #     return self.videoService.cmdExec('xdg-open', '"%s"' % dirname)
 
     def startNew(self) -> None:
         self.unsetCursor()
