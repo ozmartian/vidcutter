@@ -81,6 +81,7 @@ class VidCutter(QWidget):
 
         self.clipTimes = []
         self.inCut = False
+        self.movieFilename = ''
         self.movieLoaded = False
         self.timeformat = 'hh:mm:ss'
         self.finalFilename = ''
@@ -379,14 +380,14 @@ class VidCutter(QWidget):
             self.loadFile(filename)
 
     def loadFile(self, filename: str) -> None:
+        self.movieFilename = filename
         if not os.path.exists(filename):
             return
         self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(filename)))
         self.initMediaControls(True)
         self.cliplist.clear()
         self.clipTimes = []
-        self.parent.setWindowTitle(
-            '%s %s - %s' % (qApp.applicationName(), qApp.applicationVersion(), os.path.basename(filename)))
+        self.parent.setWindowTitle('%s - %s' % (qApp.applicationName(), os.path.basename(filename)))
         if not self.movieLoaded:
             self.videoLayout.replaceWidget(self.novideoWidget, self.videoplayerWidget)
             self.novideoMovie.stop()
@@ -576,8 +577,8 @@ class VidCutter(QWidget):
                                         windowIcon=self.parent.windowIcon(), minimumDuration=0)
         for i in range(steps):
             self.progress.setValue(i)
-            # self.progress.show()
-            # qApp.processEvents()
+            self.progress.show()
+            qApp.processEvents()
 
     def complete(self) -> None:
         info = QFileInfo(self.finalFilename)
@@ -644,6 +645,7 @@ class VidCutter(QWidget):
                 return self.videoService.cmdExec('xdg-open', '"%s"' % dirname)
 
     def startNew(self) -> None:
+        self.unsetCursor()
         self.clearList()
         self.seekSlider.setValue(0)
         self.seekSlider.setRange(0, 0)
@@ -651,7 +653,7 @@ class VidCutter(QWidget):
         self.initNoVideo()
         self.videoLayout.replaceWidget(self.videoplayerWidget, self.novideoWidget)
         self.initMediaControls(False)
-        self.parent.setWindowTitle('%s %s' % (qApp.applicationName(), qApp.applicationVersion()))
+        self.parent.setWindowTitle('%s' % qApp.applicationName())
 
     def wheelEvent(self, event: QWheelEvent) -> None:
         if self.mediaPlayer.isVideoAvailable() or self.mediaPlayer.isAudioAvailable():
@@ -704,11 +706,13 @@ class VidCutter(QWidget):
                 self.mediaPlayer.setPosition(obj.sliderPosition())
         return QWidget.eventFilter(self, obj, event)
 
-    def handleError(self) -> None:
-        self.unsetCursor()
-        self.initMediaControls(False)
-        print('ERROR: %s' % self.mediaPlayer.errorString())
-        QMessageBox.critical(self.parent, 'Error Alert', self.mediaPlayer.errorString())
+    def handleError(self, error: QMediaPlayer.Error) -> None:
+        self.startNew()
+        if error == QMediaPlayer.ResourceError:
+            QMessageBox.critical(self.parent, 'Error', 'Invalid media file detected at:<br/><br/><b>%s</b><br/><br/>%s'
+                                 % (self.movieFilename, self.mediaPlayer.errorString()))
+        else:
+            QMessageBox.critical(self.parent, 'Error', self.mediaPlayer.errorString())
 
     def getAppPath(self) -> str:
         return QFileInfo(__file__).absolutePath()
@@ -724,7 +728,7 @@ class MainWindow(QMainWindow):
         self.cutter = VidCutter(self)
         self.setCentralWidget(self.cutter)
         self.setAcceptDrops(True)
-        self.setWindowTitle('%s %s' % (qApp.applicationName(), qApp.applicationVersion()))
+        self.setWindowTitle('%s' % qApp.applicationName())
         self.setWindowIcon(self.cutter.appIcon)
         self.setMinimumSize(900, 650)
         self.resize(900, 650)
