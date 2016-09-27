@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from PyQt5.QtCore import QPoint, Qt
+from PyQt5.QtCore import QEvent, QPoint, Qt
 # from PyQt5.QtGui import QRegion, QPainter, QPen
-from PyQt5.QtWidgets import QSlider, QStyleFactory, QStyle, QStyleOptionSlider, QToolTip, qApp
+from PyQt5.QtWidgets import QSlider, QStyleFactory, QStyleOptionSlider, QToolTip, qApp
 
 
 class VideoSlider(QSlider):
@@ -25,7 +25,7 @@ class VideoSlider(QSlider):
         self.posLocal, self.posGlobal = 0, 0
         self.valueChanged.connect(self.restrictMove)
 
-    def setSliderColor(self):
+    def setSliderColor(self) -> None:
         self.sliderQSS = '''QSlider:horizontal { margin: 15px 5px 10px; }
 QSlider::groove:horizontal {
     border: 1px inset #999;
@@ -59,10 +59,10 @@ QSlider::handle:horizontal:hover {
         self.handleBack2, self.handleHoverBack1, self.handleHoverBack2)
         self.setStyleSheet(self.sliderQSS)
 
-    def setRestrictValue(self, value):
+    def setRestrictValue(self, value: int) -> None:
         self.restrictValue = value
 
-    def restrictMove(self, value):
+    def restrictMove(self, value: int) -> None:
         if value < self.restrictValue:
             self.setSliderPosition(self.restrictValue)
             self.releaseMouse()
@@ -74,7 +74,7 @@ QSlider::handle:horizontal:hover {
             timerValue = self.parentWidget().timeCounter.text().split(' / ')[0]
             QToolTip.showText(posGlobal, timerValue, self)
 
-    def setCutMode(self, flag):
+    def setCutMode(self, flag: bool) -> None:
         if flag:
             self.grooveBack1 = '#FFF'
             self.grooveBack2 = '#6A4572'
@@ -104,8 +104,8 @@ QSlider::handle:horizontal:hover {
     #     painter.fillRect(0, 0, QStyle.sliderPositionFromValue(0, self.maximum(), self.sliderPosition(), self.width()), self.height(), Qt.white)
     #     painter.fillRect(0, 0, 0.3 * self.width(), self.height(), Qt.magenta)
 
-    def wheelEvent(self, event):
+    def wheelEvent(self, event: QEvent) -> None:
         qApp.sendEvent(self.parentWidget(), event)
 
-    def keyPressEvent(self, event):
+    def keyPressEvent(self, event: QEvent) -> None:
         qApp.sendEvent(self.parentWidget(), event)

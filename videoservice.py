@@ -20,13 +20,13 @@ class VideoService(QObject):
             self.backend = os.path.join(self.getAppPath(), 'bin', 'ffmpeg.exe')
         self.initProc()
 
-    def initProc(self):
+    def initProc(self) -> None:
         self.proc = QProcess(self.parent)
         self.proc.setProcessChannelMode(QProcess.MergedChannels)
         self.proc.setWorkingDirectory(self.getAppPath())
         self.proc.errorOccurred.connect(self.cmdError)
 
-    def capture(self, source, frametime):
+    def capture(self, source: str, frametime: str) -> QPixmap:
         img, capres = None, None
         try:
             img = QTemporaryFile(os.path.join(QDir.tempPath(), 'XXXXXX.jpg'))
@@ -41,16 +41,16 @@ class VideoService(QObject):
             del img
         return capres
 
-    def cut(self, source, output, frametime, duration):
+    def cut(self, source: str, output: str, frametime: str, duration: str) -> bool:
         args = '-i "%s" -ss %s -t %s -vcodec copy -acodec copy -y "%s"'\
                % (source, frametime, duration, QDir.fromNativeSeparators(output))
         return self.cmdExec(self.backend, args)
 
-    def join(self, filelist, output):
+    def join(self, filelist: list, output: str) -> bool:
         args = '-f concat -safe 0 -i "%s" -c copy -y "%s"' % (filelist, QDir.fromNativeSeparators(output))
         return self.cmdExec(self.backend, args)
 
-    def cmdExec(self, cmd, args=None):
+    def cmdExec(self, cmd: str, args: list = None) -> bool:
         if self.proc.state() == QProcess.NotRunning:
             self.proc.start(cmd, shlex.split(args))
             self.proc.waitForFinished(-1)
@@ -58,10 +58,10 @@ class VideoService(QObject):
                 return True
         return False
 
-    def cmdError(self, error):
+    def cmdError(self, error: QProcess.ProcessError) -> None:
         if error != QProcess.Crashed:
             QMessageBox.critical(self.parent.parent, "Error calling an external process",
                                  self.proc.errorString(), buttons=QMessageBox.Cancel)
 
-    def getAppPath(self):
+    def getAppPath(self) -> str:
         return QFileInfo(__file__).absolutePath()
