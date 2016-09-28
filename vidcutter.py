@@ -5,6 +5,7 @@ import os
 import platform
 import signal
 import sys
+import time
 import warnings
 
 from PyQt5.QtCore import QDir, QEvent, QFile, QFileInfo, QModelIndex, QObject, QPoint, QSize, Qt, QTime, QUrl
@@ -511,13 +512,13 @@ class VidCutter(QWidget):
         source = self.mediaPlayer.currentMedia().canonicalUrl().toLocalFile()
         _, sourceext = os.path.splitext(source)
         if clips > 0:
-            self.finalFilename, _ = QFileDialog.getSaveFileName(self.parent, 'Save video', source,
-                                                                'Video files (*%s)' % sourceext)
+            self.finalFilename, _ = QFileDialog.getSaveFileName(self.parent, 'Save video', source, 'Video files (*%s)' % sourceext)
             if self.finalFilename != '':
                 self.showProgress(clips)
                 file, ext = os.path.splitext(self.finalFilename)
                 index = 1
                 self.progress.setLabelText('Cutting video clips...')
+                qApp.processEvents()
                 for clip in self.clipTimes:
                     runtime = clip[0].msecsTo(clip[1])
                     self.totalRuntime += runtime
@@ -531,9 +532,9 @@ class VidCutter(QWidget):
                 else:
                     QFile.remove(self.finalFilename)
                     QFile.rename(filename, self.finalFilename)
-
                 self.unsetCursor()
                 self.progress.setLabelText('Complete...')
+                qApp.processEvents()
                 self.saveAction.setEnabled(True)
                 self.progress.close()
                 self.progress.deleteLater()
@@ -559,12 +560,13 @@ class VidCutter(QWidget):
             pass
 
     def showProgress(self, steps: int, label: str = 'Processing video...') -> None:
-        self.progress = QProgressDialog(label, None, 0, 0, self.parent, windowModality=Qt.ApplicationModal,
-                                        windowIcon=self.parent.windowIcon(), minimumDuration=0)
+        self.progress = QProgressDialog(label, None, 0, steps, self.parent, windowModality=Qt.ApplicationModal,
+                                        windowIcon=self.parent.windowIcon(), minimumDuration=0, minimumWidth=500)
         self.progress.show()
         for i in range(steps):
             self.progress.setValue(i)
             qApp.processEvents()
+            time.sleep(1)
 
     def complete(self) -> None:
         info = QFileInfo(self.finalFilename)
