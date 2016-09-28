@@ -1,0 +1,23 @@
+[Desktop Entry]
+Categories=Qt;KDE;AudioVideo;AudioVideoEditing;Python;PyQt5;
+Comment[en_US]=Simple & fast FFmpeg based video cutter & joiner
+Comment=Simple & fast FFmpeg based video cutter & joiner
+Exec=vidcutter %U
+GenericName[en_US]=Video Cutter + Joiner
+GenericName=Video Cutter + Joiner
+Icon=vidcutter
+Keywords=editing;video;audio;ffmpeg;qt;python;pyqt5;
+MimeType=application/x-vidcutter;
+Name[en_US]=VidCutter
+Name=VidCutter
+NoDisplay=false
+Path[$e]=
+StartupNotify=true
+Terminal=0
+TerminalOptions=
+Type=Application
+X-DBUS-ServiceName=
+X-DBUS-StartupType=
+X-DocPath=
+X-KDE-SubstituteUID=false
+X-KDE-Username=

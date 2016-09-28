@@ -399,6 +399,7 @@ class VidCutter(QWidget):
         self.mediaPlayer.setPosition(position)
 
     def positionChanged(self, progress: int) -> None:
+        self.setCursor(Qt.ClosedHandCursor)
         self.seekSlider.setValue(progress)
         currentTime = self.deltaToQTime(progress)
         totalTime = self.deltaToQTime(self.mediaPlayer.duration())

@@ -8,7 +8,7 @@ _build/build
 _build/dist
 vidcutter.*/
 *.log
-*.exe
+vidcutter.exe
 *.dll
 build-windows.bat
 vidcutter

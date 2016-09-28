@@ -12,12 +12,12 @@ def read(fname):
 setup(
     name='VidCutter',
     version='1.0.5',
-    packages=find_packages(),
+    packages=find_packages('vidcutter'),
     url='http://vidcutter.ozmartians.com',
     license='GPLv3+',
     author='Pete Alexandrou',
     author_email='pete@ozmartians.com',
-    description='Simple video cutter & joiner based on FFmpeg',
+    description='Simple FFmpeg based media cutter + joiner',
     long_description=read('README.md'),
-    install_requires=['PyQt5']
+    # install_requires=['pyqt5']
 )
