@@ -72,7 +72,6 @@ class VidCutter(QWidget):
         self.movieLoaded = False
         self.timeformat = 'hh:mm:ss'
         self.finalFilename = ''
-        self.viewConsole = False
 
         self.initIcons()
         self.initActions()
@@ -230,7 +229,6 @@ class VidCutter(QWidget):
         self.aboutQtAction = QAction('About Qt', self, statusTip='About Qt', triggered=qApp.aboutQt)
         self.mediaInfoAction = QAction('Media Information', self, statusTip='Media information from loaded video file',
                                        triggered=self.mediaInfo, enabled=False)
-        # self.viewConsoleAction = QAction('View Console',self, checkable=True, statusTip='View console output from FFmpeg backend commands', triggered=self.toggleConsole)
 
     def initToolbar(self) -> None:
         self.toolbar.addAction(self.openAction)
@@ -243,7 +241,6 @@ class VidCutter(QWidget):
 
     def initMenus(self) -> None:
         self.aboutMenu.addAction(self.mediaInfoAction)
-        # self.aboutMenu.addAction(self.viewConsoleAction)
         self.aboutMenu.addSeparator()
         self.aboutMenu.addAction(self.aboutQtAction)
         self.aboutMenu.addAction(self.aboutAction)
@@ -303,9 +300,6 @@ class VidCutter(QWidget):
         self.inCut = False
         self.renderTimes()
         self.initMediaControls()
-
-    def toggleConsole(self) -> None:
-        self.viewConsole = self.viewConsoleAction.isChecked()
 
     def mediaInfo(self) -> None:
         if self.mediaPlayer.isMetaDataAvailable():
