@@ -24,7 +24,8 @@ class VideoService(QObject):
         self.proc = QProcess(self.parent)
         self.proc.setProcessChannelMode(QProcess.MergedChannels)
         self.proc.setWorkingDirectory(self.getAppPath())
-        self.proc.errorOccurred.connect(self.cmdError)
+        if hasattr(self.proc, 'errorOccurred'):
+            self.proc.errorOccurred.connect(self.cmdError)
 
     def capture(self, source: str, frametime: str) -> QPixmap:
         img, capres = None, None
