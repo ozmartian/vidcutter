@@ -2,10 +2,11 @@
 
 block_cipher = None
 
+
 a = Analysis(['..\\vidcutter.py'],
-             pathex=['C:\\DEV\\vidcutter'],
+             pathex=['C:\\Python35\\Lib\\site-packages\\PyQt5\\Qt\\bin', 'C:\\DEV\\vidcutter'],
              binaries=[],
-             datas=[('../bin/ffmpeg.exe', './bin/')],
+             datas=[('..\\bin\\ffmpeg.exe', '.\\bin\\')],
              hiddenimports=[],
              hookspath=[],
              runtime_hooks=[],

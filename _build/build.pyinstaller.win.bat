@@ -1,4 +1,5 @@
 @echo off
 
-rm -rf dist build
-pyinstaller -F -w --clean -n vidcutter -i ..\images\vidcutter.ico vidcutter.win.spec
+rd /s /q build
+rd /s /q dist
+pyinstaller --clean vidcutter.win.spec
