@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from PyQt5.QtCore import QPoint, Qt
-from PyQt5.QtGui import QColor, QKeyEvent, QWheelEvent
+from PyQt5.QtGui import QColor, QKeyEvent, QPaintEvent, QWheelEvent
 from PyQt5.QtWidgets import QSlider, QStyle, QStyleFactory, QStyleOptionSlider, QStylePainter, QToolTip, qApp
 
 
@@ -33,7 +33,8 @@ class VideoSlider(QSlider):
         self.sliderQSS = '''QSlider:horizontal { margin: 20px 0 10px; }
 QSlider::groove:horizontal {
     border: 1px inset #999;
-    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 %s, stop:1 %s);
+    /* background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FEFEFE, stop:1 #FEFEFE); */
+    background: url(:images/filmstrip.png) repeat-x;
     height: 14px;
     position: absolute;
     left: 0;
@@ -42,7 +43,8 @@ QSlider::groove:horizontal {
 }
 QSlider::sub-page:horizontal {
     border: 1px inset #999;
-    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 %s, stop:1 %s);
+    /* background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #CCC, stop:1 #666); */
+    background: rgba(255, 255, 255, 0.6);
     height: 14px;
     position: absolute;
     left: 0;
@@ -51,11 +53,11 @@ QSlider::sub-page:horizontal {
 }
 QSlider::handle:horizontal {
     border: none;
-    background: url(:images/slider-handle.png) no-repeat;
+    background: url(:images/slider-handle.png) no-repeat top center;
     width: 20px;
-    height: 50px;
-    margin: -20px 0;
-}''' % (self.grooveBack1, self.grooveBack2, self.subBack1, self.subBack2)
+    height: 47px;
+    margin: -21px 0;
+}'''
         self.setStyleSheet(self.sliderQSS)
 
     def setValueNoSignal(self, value: int) -> None:
@@ -85,13 +87,13 @@ QSlider::handle:horizontal {
         #     self.subBack1 = '#FFF'
         #     self.subBack2 = '#FFF'
         # else:
-        self.grooveBack1 = '#CDCDCD'
-        self.grooveBack2 = '#CDCDCD'
-        self.subBack1 = '#FFF'
-        self.subBack2 = '#653970'
+        #     self.grooveBack1 = '#FEFEFE'
+        #     self.grooveBack2 = '#FEFEFE'
+        #     self.subBack1 = '#CCC'
+        #     self.subBack2 = '#666'
         self.setSliderColor()
 
-    def paintEvent(self, event):
+    def paintEvent(self, event: QPaintEvent) -> None:
         painter = QStylePainter(self)
         opt = QStyleOptionSlider()
         self.initStyleOption(opt)
@@ -103,13 +105,18 @@ QSlider::handle:horizontal {
             for i in range(self.minimum(), self.maximum(), interval):
                 x = round((((i - self.minimum()) / (self.maximum() - self.minimum()))
                            * (self.width() - handle.width()) + (handle.width() / 2.0))) - 1
-                h = 6
+                if i % 500000 == 0:
+                    h = 12
+                    z = 8
+                else:
+                    h = 6
+                    z = 14
                 painter.setPen(QColor('#A5A294'))
                 if self.tickPosition() in (QSlider.TicksBothSides, QSlider.TicksAbove):
-                    y = self.rect().top() + 13
+                    y = self.rect().top() + z
                     painter.drawLine(x, y, x, y + h)
                 if self.tickPosition() in (QSlider.TicksBothSides, QSlider.TicksBelow):
-                    y = self.rect().bottom() - 13
+                    y = self.rect().bottom() - z
                     painter.drawLine(x, y, x, y - h)
         opt.subControls = QStyle.SC_SliderGroove
         painter.drawComplexControl(QStyle.CC_Slider, opt)
