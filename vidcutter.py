@@ -697,11 +697,8 @@ class VidCutter(QWidget):
         else:
             QMessageBox.critical(self.parent, 'Error', self.mediaPlayer.errorString())
 
-    def getAppPath(self, isResource: bool = True) -> str:
-        if isResource:
-            return ':'
-        else:
-            return QFileInfo(__file__).absolutePath()
+    def getAppPath(self) -> str:
+        return ':'
 
     def closeEvent(self, event: QCloseEvent) -> None:
         self.parent.closeEvent(event)
