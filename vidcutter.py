@@ -18,12 +18,11 @@ from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDial
                              QMenu, QMessageBox, QProgressDialog, QPushButton, QSizePolicy, QSlider,
                              QStyle, QToolBar, QVBoxLayout, QWidget, qApp)
 
-if __name__ == '__main__':
-    from videoslider import VideoSlider
-    from videoservice import VideoService
-else:
-    from .videoslider import VideoSlider
-    from .videoservice import VideoService
+from videoslider import VideoSlider
+from videoservice import VideoService
+
+import resources
+
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 signal.signal(signal.SIGTERM, signal.SIG_DFL)
@@ -378,6 +377,8 @@ class VidCutter(QWidget):
             self.videoplayerWidget.show()
             self.videoWidget.show()
             self.movieLoaded = True
+        if self.mediaPlayer.isVideoAvailable():
+            self.mediaPlayer.setPosition(1)
         self.mediaPlayer.pause()
 
     def playVideo(self) -> None:
@@ -399,7 +400,6 @@ class VidCutter(QWidget):
         self.mediaPlayer.setPosition(position)
 
     def positionChanged(self, progress: int) -> None:
-        self.setCursor(Qt.ClosedHandCursor)
         self.seekSlider.setValue(progress)
         currentTime = self.deltaToQTime(progress)
         totalTime = self.deltaToQTime(self.mediaPlayer.duration())
@@ -434,7 +434,7 @@ class VidCutter(QWidget):
         self.clipTimes.append([self.deltaToQTime(self.mediaPlayer.position()), '', self.captureImage()])
         self.cutStartAction.setDisabled(True)
         self.cutEndAction.setEnabled(True)
-        self.seekSlider.setRestrictValue(self.seekSlider.value())
+        self.seekSlider.setRestrictValue(self.seekSlider.value() + 1000)
         self.inCut = True
         self.renderTimes()
 
@@ -685,8 +685,11 @@ class VidCutter(QWidget):
         else:
             QMessageBox.critical(self.parent, 'Error', self.mediaPlayer.errorString())
 
-    def getAppPath(self) -> str:
-        return QFileInfo(__file__).absolutePath()
+    def getAppPath(self, isResource: bool = True) -> str:
+        if isResource:
+            return ':'
+        else:
+            return QFileInfo(__file__).absolutePath()
 
     def closeEvent(self, event: QCloseEvent) -> None:
         self.parent.closeEvent(event)

@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from PyQt5.QtCore import QEvent, QPoint, Qt
-# from PyQt5.QtGui import QRegion, QPainter, QPen
-from PyQt5.QtWidgets import QSlider, QStyleFactory, QStyleOptionSlider, QToolTip, qApp
+from PyQt5.QtCore import QPoint, Qt
+from PyQt5.QtGui import QColor, QKeyEvent, QWheelEvent
+from PyQt5.QtWidgets import QSlider, QStyle, QStyleFactory, QStyleOptionSlider, QStylePainter, QToolTip, qApp
 
+
+# from QxtSpanSlider import QxtSpanSlider
 
 class VideoSlider(QSlider):
     def __init__(self, *arg, **kwargs):
@@ -13,10 +15,13 @@ class VideoSlider(QSlider):
         self.setOrientation(Qt.Horizontal)
         self.setObjectName('VideoSlider')
         self.setStatusTip('Set clip start and end points')
-        self.setCursor(Qt.PointingHandCursor)
+        self.setCursor(Qt.ClosedHandCursor)
+        self.setValue(0)
         self.setRange(0, 0)
         self.setSingleStep(1)
         self.setTracking(True)
+        self.setTickInterval(100000)
+        self.setTickPosition(QSlider.TicksAbove)
         self.setFocus()
         self.setCutMode(False)
         self.restrictValue = 0
@@ -26,32 +31,31 @@ class VideoSlider(QSlider):
         self.valueChanged.connect(self.restrictMove)
 
     def setSliderColor(self) -> None:
-        self.sliderQSS = '''QSlider:horizontal { margin: 15px 5px 10px; }
+        self.sliderQSS = '''QSlider:horizontal { margin: 20px 0 10px; }
 QSlider::groove:horizontal {
     border: 1px inset #999;
     background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 %s, stop:1 %s);
-    height: 8px;
+    height: 14px;
     position: absolute;
-    left: 2px;
-    right: 2px;
-    margin: -2px 0;
+    left: 0;
+    right: 0;
+    margin: 0 0;
 }
 QSlider::sub-page:horizontal {
-    border: 1px solid #999;
+    border: 1px inset #999;
     background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 %s, stop:1 %s);
-    height: 8px;
+    height: 14px;
     position: absolute;
-    left: 2px;
-    right: 2px;
-    margin: -2px 0;
+    left: 0;
+    right: 0;
+    margin: 0 0;
 }
 QSlider::handle:horizontal {
-    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 %s, stop:1 %s);
-    border: 1px solid #444;
-    width: 10px;
-    height: 14px;
-    margin: -14px -2px;
-    border-radius: 2px;
+    border: none;
+    background: url('images/slider-handle.png') no-repeat;
+    width: 20px;
+    height: 50px;
+    margin: -20px 0;
 }
 QSlider::handle:horizontal:hover {
     background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 %s, stop:1 %s);
@@ -59,53 +63,66 @@ QSlider::handle:horizontal:hover {
         self.handleBack2, self.handleHoverBack1, self.handleHoverBack2)
         self.setStyleSheet(self.sliderQSS)
 
+    def setValueNoSignal(self, value: int) -> None:
+        self.blockSignals(True)
+        self.setValue(value)
+        self.blockSignals(False)
+
     def setRestrictValue(self, value: int) -> None:
         self.restrictValue = value
 
     def restrictMove(self, value: int) -> None:
         if value < self.restrictValue:
             self.setSliderPosition(self.restrictValue)
-            self.releaseMouse()
         else:
-            self.initStyleOption(self.opt)
-            rectHandle = self.style.subControlRect(self.style.CC_Slider, self.opt, self.style.SC_SliderHandle)
+            opt = QStyleOptionSlider()
+            self.initStyleOption(opt)
+            rectHandle = self.style.subControlRect(self.style.CC_Slider, opt, self.style.SC_SliderHandle, self)
             posLocal = rectHandle.topLeft() + QPoint(20, -20)
             posGlobal = self.mapToGlobal(posLocal)
             timerValue = self.parentWidget().timeCounter.text().split(' / ')[0]
             QToolTip.showText(posGlobal, timerValue, self)
 
     def setCutMode(self, flag: bool) -> None:
-        if flag:
-            self.grooveBack1 = '#FFF'
-            self.grooveBack2 = '#6A4572'
-            self.subBack1 = '#FFF'
-            self.subBack2 = '#FFF'
-            self.handleBack1 = '#666666'
-            self.handleBack2 = '#666666'
-            self.handleHoverBack1 = '#CCC'
-            self.handleHoverBack2 = '#999'
-        else:
-            self.grooveBack1 = '#FFF'
-            self.grooveBack2 = '#FFF'
-            self.subBack1 = '#FFF'
-            self.subBack2 = '#6A4572'
-            self.handleBack1 = '#666666'
-            self.handleBack2 = '#666666'
-            self.handleHoverBack1 = '#CCC'
-            self.handleHoverBack2 = '#999'
+        # if flag:
+        #     self.grooveBack1 = '#6A4572'
+        #     self.grooveBack2 = '#FFF'
+        #     self.subBack1 = '#FFF'
+        #     self.subBack2 = '#FFF'
+        # else:
+        self.grooveBack1 = '#CDCDCD'
+        self.grooveBack2 = '#CDCDCD'
+        self.subBack1 = '#FFF'
+        self.subBack2 = '#653970'
         self.setSliderColor()
 
-    # def paintEvent(self, event):
-    #     self.initStyleOption(self.opt)
-    #     rectHandle = self.style.subControlRect(self.style.CC_Slider, self.opt, self.style.SC_SliderHandle)
-    #     painter = QPainter(self)
-    #     pen = QPen(Qt.NoPen)
-    #     painter.setPen(pen)
-    #     painter.fillRect(0, 0, QStyle.sliderPositionFromValue(0, self.maximum(), self.sliderPosition(), self.width()), self.height(), Qt.white)
-    #     painter.fillRect(0, 0, 0.3 * self.width(), self.height(), Qt.magenta)
+    def paintEvent(self, event):
+        painter = QStylePainter(self)
+        opt = QStyleOptionSlider()
+        self.initStyleOption(opt)
+        handle = self.style.subControlRect(self.style.CC_Slider, opt, self.style.SC_SliderHandle, self)
+        interval = self.tickInterval()
+        if interval == 0:
+            interval = self.pageStep()
+        if self.tickPosition() != QSlider.NoTicks:
+            for i in range(self.minimum(), self.maximum(), interval):
+                x = round((((i - self.minimum()) / (self.maximum() - self.minimum()))
+                           * (self.width() - handle.width()) + (handle.width() / 2.0))) - 1
+                h = 6
+                painter.setPen(QColor('#A5A294'))
+                if self.tickPosition() in (QSlider.TicksBothSides, QSlider.TicksAbove):
+                    y = self.rect().top() + 13
+                    painter.drawLine(x, y, x, y + h)
+                if self.tickPosition() in (QSlider.TicksBothSides, QSlider.TicksBelow):
+                    y = self.rect().bottom() - 13
+                    painter.drawLine(x, y, x, y - h)
+        opt.subControls = QStyle.SC_SliderGroove
+        painter.drawComplexControl(QStyle.CC_Slider, opt)
+        opt.subControls = QStyle.SC_SliderHandle
+        painter.drawComplexControl(QStyle.CC_Slider, opt)
 
-    def wheelEvent(self, event: QEvent) -> None:
+    def wheelEvent(self, event: QWheelEvent) -> None:
         qApp.sendEvent(self.parentWidget(), event)
 
-    def keyPressEvent(self, event: QEvent) -> None:
+    def keyPressEvent(self, event: QKeyEvent) -> None:
         qApp.sendEvent(self.parentWidget(), event)
