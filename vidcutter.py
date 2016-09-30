@@ -162,6 +162,8 @@ class VidCutter(QWidget):
         self.mediaPlayer.durationChanged.connect(self.durationChanged)
         self.mediaPlayer.error.connect(self.handleError)
 
+        self.complete()
+
     def initNoVideo(self) -> None:
         novideoImage = QLabel(alignment=Qt.AlignCenter, autoFillBackground=False,
                               pixmap=QPixmap(os.path.join(self.getAppPath(), 'images', 'novideo.png'), 'PNG'),
@@ -564,18 +566,31 @@ class VidCutter(QWidget):
             time.sleep(1)
 
     def complete(self) -> None:
+        self.finalFilename = 'C://Temp//Surrealism_MIX_Source_Master_32b.wav'
+        self.totalRuntime = 696900
         info = QFileInfo(self.finalFilename)
-        mbox = QMessageBox(windowTitle='Success', windowIcon=self.parent.windowIcon(),
+        mbox = QMessageBox(windowTitle='Success', windowIcon=self.parent.windowIcon(), minimumWidth=500,
                            iconPixmap=self.successIcon.pixmap(48, 49), textFormat=Qt.RichText)
-        mbox.setText('''<p>Your video was successfully created.</p>
+        mbox.setText('''
+                        <style>
+                            table.info { margin:8px; padding:4px 15px; }
+                            td.label { font-weight:bold; font-size:9pt; text-align:right; background-color:#444; color:#FFF; }
+                            td.value { background-color:#FFF !important; font-size:10pt; }
+                        </style>
+                        <p>Your video was successfully created.</p>
                         <p align="center">
-                            <table border="0" cellpadding="2">
-                                <tr nowrap>
-                                    <td colspan="2"><b>File:</b> %s</td>
+                            <table class="info" cellpadding="6" cellspacing="0">
+                                <tr>
+                                    <td class="label"><b>Filename</b></td>
+                                    <td class="value" nowrap>%s</td>
                                 </tr>
-                                <tr nowrap>
-                                    <td align="left"><b>Size:</b> %s</td>
-                                    <td align="right"><b>Runtime:</b> %s</td>
+                                <tr>
+                                    <td class="label"><b>Size</b></td>
+                                    <td class="value">%s</td>
+                                </tr>
+                                <tr>
+                                    <td class="label"><b>Runtime</b></td>
+                                    <td class="value">%s</td>
                                 </tr>
                             </table>
                         </p>
