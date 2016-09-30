@@ -162,8 +162,6 @@ class VidCutter(QWidget):
         self.mediaPlayer.durationChanged.connect(self.durationChanged)
         self.mediaPlayer.error.connect(self.handleError)
 
-        self.complete()
-
     def initNoVideo(self) -> None:
         novideoImage = QLabel(alignment=Qt.AlignCenter, autoFillBackground=False,
                               pixmap=QPixmap(os.path.join(self.getAppPath(), 'images', 'novideo.png'), 'PNG'),
@@ -566,8 +564,6 @@ class VidCutter(QWidget):
             time.sleep(1)
 
     def complete(self) -> None:
-        self.finalFilename = 'C://Temp//Surrealism_MIX_Source_Master_32b.wav'
-        self.totalRuntime = 696900
         info = QFileInfo(self.finalFilename)
         mbox = QMessageBox(windowTitle='Success', windowIcon=self.parent.windowIcon(), minimumWidth=500,
                            iconPixmap=self.successIcon.pixmap(48, 49), textFormat=Qt.RichText)
