@@ -435,6 +435,7 @@ class VidCutter(QWidget):
         self.cutStartAction.setDisabled(True)
         self.cutEndAction.setEnabled(True)
         self.seekSlider.setRestrictValue(self.seekSlider.value() + 1000)
+        self.mediaPlayer.setPosition(self.seekSlider.restrictValue)
         self.inCut = True
         self.renderTimes()
 
