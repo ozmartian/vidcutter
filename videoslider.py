@@ -3,15 +3,12 @@
 
 from PyQt5.QtCore import QPoint, Qt
 from PyQt5.QtGui import QColor, QKeyEvent, QPaintEvent, QWheelEvent
-from PyQt5.QtWidgets import QSlider, QStyle, QStyleFactory, QStyleOptionSlider, QStylePainter, QToolTip, qApp
+from PyQt5.QtWidgets import QSlider, QStyle, QStyleOptionSlider, QStylePainter, QToolTip, qApp
 
-
-# from QxtSpanSlider import QxtSpanSlider
 
 class VideoSlider(QSlider):
     def __init__(self, *arg, **kwargs):
         super(VideoSlider, self).__init__(*arg, **kwargs)
-        self.setStyle(QStyleFactory.create('Windows'))
         self.setOrientation(Qt.Horizontal)
         self.setObjectName('VideoSlider')
         self.setStatusTip('Set clip start and end points')
@@ -30,33 +27,31 @@ class VideoSlider(QSlider):
         self.valueChanged.connect(self.restrictMove)
 
     def setSliderColor(self) -> None:
-        self.sliderQSS = '''QSlider:horizontal { margin: 20px 0 10px; }
+        self.sliderQSS = '''QSlider:horizontal { margin: 24px 0 15px; }
 QSlider::groove:horizontal {
     border: 1px inset #999;
-    /* background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FEFEFE, stop:1 #FEFEFE); */
-    background: url(:images/filmstrip.png) repeat-x;
-    height: 14px;
+    background: #3A3A3A url(:images/filmstrip.png) repeat-x;
+    height: 32px;
     position: absolute;
     left: 0;
     right: 0;
-    margin: 0 0;
+    margin: 0;
 }
 QSlider::sub-page:horizontal {
     border: 1px inset #999;
-    /* background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #CCC, stop:1 #666); */
     background: rgba(255, 255, 255, 0.6);
-    height: 14px;
+    height: 20px;
     position: absolute;
     left: 0;
     right: 0;
-    margin: 0 0;
+    margin: 0;
 }
 QSlider::handle:horizontal {
     border: none;
     background: url(:images/slider-handle.png) no-repeat top center;
     width: 20px;
-    height: 47px;
-    margin: -21px 0;
+    height: 58px;
+    margin: -18px 0;
 }'''
         self.setStyleSheet(self.sliderQSS)
 
@@ -81,16 +76,6 @@ QSlider::handle:horizontal {
             QToolTip.showText(posGlobal, timerValue, self)
 
     def setCutMode(self, flag: bool) -> None:
-        # if flag:
-        #     self.grooveBack1 = '#6A4572'
-        #     self.grooveBack2 = '#FFF'
-        #     self.subBack1 = '#FFF'
-        #     self.subBack2 = '#FFF'
-        # else:
-        #     self.grooveBack1 = '#FEFEFE'
-        #     self.grooveBack2 = '#FEFEFE'
-        #     self.subBack1 = '#CCC'
-        #     self.subBack2 = '#666'
         self.setSliderColor()
 
     def paintEvent(self, event: QPaintEvent) -> None:

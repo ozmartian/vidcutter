@@ -71,6 +71,7 @@ class VidCutter(QWidget):
         self.movieLoaded = False
         self.timeformat = 'hh:mm:ss'
         self.finalFilename = ''
+        self.totalRuntime = 0
 
         self.initIcons()
         self.initActions()
@@ -97,16 +98,22 @@ class VidCutter(QWidget):
         self.cliplist.setFixedWidth(185)
         self.cliplist.model().rowsMoved.connect(self.syncClipList)
 
-        listHeader = QLabel(pixmap=QPixmap(os.path.join(self.getAppPath(), 'images', 'clipindex.png')),
+        listHeader = QLabel(pixmap=QPixmap(os.path.join(self.getAppPath(), 'images', 'clipindex.png'), 'PNG'),
                             alignment=Qt.AlignCenter)
         listHeader.setStyleSheet('padding:5px; padding-top:8px; border:1px solid #b9b9b9; border-bottom:none;' +
                                  'background-color:qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFF,' +
                                  'stop: 0.5 #EAEAEA, stop: 0.6 #EAEAEA stop:1 #FFF);')
 
+        listFooter = QLabel(pixmap=QPixmap(os.path.join('.', 'images', 'runtime.png')), enabled=False)
+        listFooter.setStyleSheet('padding:3px; padding-top:6px; border:1px solid #b9b9b9; border-top:none;' +
+                                 'background-color:qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #666,' +
+                                 'stop: 0.5 #222, stop: 0.6 #222 stop:1 #666); color:#FFF;')
+
         self.clipindexLayout = QVBoxLayout(spacing=0)
         self.clipindexLayout.setContentsMargins(0, 0, 0, 0)
         self.clipindexLayout.addWidget(listHeader)
         self.clipindexLayout.addWidget(self.cliplist)
+        self.clipindexLayout.addWidget(listFooter)
 
         self.videoLayout = QHBoxLayout()
         self.videoLayout.setContentsMargins(0, 0, 0, 0)
@@ -248,6 +255,9 @@ class VidCutter(QWidget):
         self.cliplistMenu.addSeparator()
         self.cliplistMenu.addAction(self.removeItemAction)
         self.cliplistMenu.addAction(self.removeAllAction)
+
+    def setRunningTime(self, time: QTime):
+        pass
 
     def setNoVideoText(self, frame: QVideoFrame) -> None:
         self.novideoLabel.setPixmap(self.novideoMovie.currentPixmap())
@@ -472,6 +482,7 @@ class VidCutter(QWidget):
             endItem = ''
             if type(item[1]) is QTime:
                 endItem = item[1].toString(self.timeformat)
+                self.totalRuntime += item[0].msecsTo(item[1])
             listitem = QListWidgetItem()
             listitem.setTextAlignment(Qt.AlignVCenter)
             if type(item[2]) is QPixmap:
@@ -486,6 +497,7 @@ class VidCutter(QWidget):
             self.saveAction.setEnabled(True)
         if self.inCut or len(self.clipTimes) == 0 or not type(self.clipTimes[0][1]) is QTime:
             self.saveAction.setEnabled(False)
+        self.runtimeLabel = self.deltaToQTime(self.totalRuntime).toString(self.timeformat)
 
     @staticmethod
     def deltaToQTime(millisecs: int) -> QTime:
@@ -504,7 +516,6 @@ class VidCutter(QWidget):
         self.saveAction.setDisabled(True)
         clips = len(self.clipTimes)
         filename, filelist = '', []
-        self.totalRuntime = 0
         source = self.mediaPlayer.currentMedia().canonicalUrl().toLocalFile()
         _, sourceext = os.path.splitext(source)
         if clips > 0:
@@ -516,12 +527,10 @@ class VidCutter(QWidget):
                 self.progress.setLabelText('Cutting video clips...')
                 qApp.processEvents()
                 for clip in self.clipTimes:
-                    runtime = clip[0].msecsTo(clip[1])
-                    self.totalRuntime += runtime
-                    runtime = self.deltaToQTime(runtime).toString(self.timeformat)
+                    duration = self.deltaToQTime(clip[0].msecsTo(clip[1])).toString(self.timeformat)
                     filename = '%s_%s%s' % (file, '{0:0>2}'.format(index), ext)
                     filelist.append(filename)
-                    self.videoService.cut(source, filename, clip[0].toString(self.timeformat), runtime)
+                    self.videoService.cut(source, filename, clip[0].toString(self.timeformat), duration)
                     index += 1
                 if len(filelist) > 1:
                     self.joinVideos(filelist, self.finalFilename)
