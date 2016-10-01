@@ -1,5 +1,5 @@
 #!/bin/bash
 
-cd ..
+cd ../..
 nuitka --recurse-all --remove-output vidcutter.py
 mv vidcutter.exe vidcutter

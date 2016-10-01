@@ -1,17 +1,12 @@
 #!/usr/bin/env python3
 # -*- mode: python -*-
 
-import os
-
-
 block_cipher = None
 
-a = Analysis(['..\\vidcutter.py'],
-             pathex=['%s\\Lib\\site-packages\\PyQt5\\Qt\\bin' % str(os.getenv('PYTHONPATH')),
-             'C:\\Program Files (x86)\\Windows Kits\\10\Redist\\ucrt\\DLLs\\x64',
-             'C:\\DEV\\vidcutter'],
+a = Analysis(['../../vidcutter.py'],
+             pathex=['../..'],
              binaries=[],
-             datas=[('..\\bin\\ffmpeg.exe', '.\\bin\\')],
+             datas=[],
              hiddenimports=[],
              hookspath=[],
              runtime_hooks=[],
@@ -28,6 +23,6 @@ exe = EXE(pyz,
           a.datas,
           name='vidcutter',
           debug=False,
-          strip=False,
-          upx=False,
-          console=False , icon='..\\images\\vidcutter.ico')
+          strip=True,
+          upx=True,
+          console=False )
