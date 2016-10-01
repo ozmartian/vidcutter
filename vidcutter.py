@@ -109,7 +109,7 @@ class VidCutter(QWidget):
                                       'background:qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #45284B, ' +
                                       'stop: 0.5 #6a4572, stop: 0.6 #6a4572 stop:1 #45284B) url(:images/runtime.png) ' +
                                       'no-repeat left center; border-top:none; color:#FFF; font-weight:normal; ' +
-                                      'font-size:10pt; font-family:Droid Sans Mono; padding-right:18px; }')
+                                      'font-size:9pt; font-family:Droid Sans Mono; padding-right:18px; }')
         self.setRunningTime('00:00:00')
 
         self.clipindexLayout = QVBoxLayout(spacing=0)
