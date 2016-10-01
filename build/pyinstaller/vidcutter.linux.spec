@@ -24,5 +24,5 @@ exe = EXE(pyz,
           name='vidcutter',
           debug=False,
           strip=True,
-          upx=True,
+          upx=False,
           console=False )

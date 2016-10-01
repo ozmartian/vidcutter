@@ -100,16 +100,16 @@ class VidCutter(QWidget):
 
         listHeader = QLabel(pixmap=QPixmap(os.path.join(self.getAppPath(), 'images', 'clipindex.png'), 'PNG'),
                             alignment=Qt.AlignCenter)
-        listHeader.setStyleSheet('padding:5px; padding-top:8px; border:1px solid #b9b9b9; border-bottom:none;' +
-                                 'background-color:qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFF,' +
+        listHeader.setStyleSheet('padding:5px; padding-top:8px; border:1px solid #b9b9b9; border-bottom:none; ' +
+                                 'background-color:qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFF, ' +
                                  'stop: 0.5 #EAEAEA, stop: 0.6 #EAEAEA stop:1 #FFF);')
 
         self.listFooter = QLabel(textFormat=Qt.RichText)
-        self.listFooter.setStyleSheet('''QLabel { padding:4px; padding-top:2px; border:1px solid #b9b9b9;
-background:qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #666, stop: 0.5 #222,
-stop: 0.6 #222 stop:1 #666) url(:images/runtime.png) no-repeat left center;
-border-top:none; color:#FFF; font-weight:bold; font-size:10pt;
-font-family:Droid Sans Mono; padding-right:15px; }''')
+        self.listFooter.setStyleSheet('QLabel { padding:4px; padding-top:3px; border:1px solid #b9b9b9; ' +
+                                      'background:qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #666, ' +
+                                      'stop: 0.5 #444, stop: 0.6 #444 stop:1 #666) url(:images/runtime.png) ' +
+                                      'no-repeat left center; border-top:none; color:#FFF; font-weight:bold; ' +
+                                      'font-size:10pt; font-family:Droid Sans Mono; padding-right:15px; }')
         self.setRunningTime('00:00:00')
 
         self.clipindexLayout = QVBoxLayout(spacing=0)
