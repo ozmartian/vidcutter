@@ -26,8 +26,8 @@ class VideoSlider(QSlider):
         self.posLocal, self.posGlobal = 0, 0
         self.valueChanged.connect(self.restrictMove)
 
-    def setSliderColor(self) -> None:
-        self.sliderQSS = '''QSlider:horizontal { margin: 24px 0 15px; }
+    def setSliderColor(self) -> None:   
+        self.sliderQSS = '''QSlider:horizontal { margin: 25px 0 15px; }
 QSlider::groove:horizontal {
     border: 1px inset #999;
     background: #3A3A3A url(:images/filmstrip.png) repeat-x;
