@@ -63,7 +63,7 @@ class VidCutter(QWidget):
         self.videoWidget = VideoWidget()
         self.videoService = VideoService(self)
 
-        QFontDatabase.addApplicationFont(os.path.join(self.getAppPath(), 'fonts', 'DroidSansMono.ttf'))
+        fontdata = QFile(os.path.join(self.getAppPath(), 'fonts', 'DroidSansMono.ttf'))
 
         self.clipTimes = []
         self.inCut = False
@@ -108,7 +108,7 @@ class VidCutter(QWidget):
         self.listFooter.setStyleSheet('QLabel { padding:2px; border:1px solid #b9b9b9; ' +
                                       'background:qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #45284B, ' +
                                       'stop: 0.5 #6a4572, stop: 0.6 #6a4572 stop:1 #45284B) url(:images/runtime.png) ' +
-                                      'no-repeat left center; border-top:none; color:#FFF; font-weight:bold; ' +
+                                      'no-repeat left center; border-top:none; color:#FFF; font-weight:normal; ' +
                                       'font-size:10pt; font-family:Droid Sans Mono; padding-right:18px; }')
         self.setRunningTime('00:00:00')
 
