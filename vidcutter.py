@@ -104,16 +104,19 @@ class VidCutter(QWidget):
                                  'background-color:qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFF,' +
                                  'stop: 0.5 #EAEAEA, stop: 0.6 #EAEAEA stop:1 #FFF);')
 
-        listFooter = QLabel(pixmap=QPixmap(os.path.join('.', 'images', 'runtime.png')), enabled=False)
-        listFooter.setStyleSheet('padding:3px; padding-top:6px; border:1px solid #b9b9b9; border-top:none;' +
-                                 'background-color:qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #666,' +
-                                 'stop: 0.5 #222, stop: 0.6 #222 stop:1 #666); color:#FFF;')
+        self.listFooter = QLabel(textFormat=Qt.RichText)
+        self.listFooter.setStyleSheet('''QLabel { padding:4px; padding-top:2px; border:1px solid #b9b9b9;
+background:qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #666, stop: 0.5 #222,
+stop: 0.6 #222 stop:1 #666) url(:images/runtime.png) no-repeat left center;
+border-top:none; color:#FFF; font-weight:bold; font-size:10pt;
+font-family:Droid Sans Mono; padding-right:15px; }''')
+        self.setRunningTime('00:00:00')
 
         self.clipindexLayout = QVBoxLayout(spacing=0)
         self.clipindexLayout.setContentsMargins(0, 0, 0, 0)
         self.clipindexLayout.addWidget(listHeader)
         self.clipindexLayout.addWidget(self.cliplist)
-        self.clipindexLayout.addWidget(listFooter)
+        self.clipindexLayout.addWidget(self.listFooter)
 
         self.videoLayout = QHBoxLayout()
         self.videoLayout.setContentsMargins(0, 0, 0, 0)
@@ -122,7 +125,7 @@ class VidCutter(QWidget):
 
         self.timeCounter = QLabel('00:00:00 / 00:00:00', autoFillBackground=True, alignment=Qt.AlignCenter,
                                   sizePolicy=QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed))
-        self.timeCounter.setStyleSheet('color:#FFFFFF; background:#000000; font-family:Droid Sans Mono;' +
+        self.timeCounter.setStyleSheet('color:#FFF; background:#000; font-family:Droid Sans Mono;' +
                                        'font-size:10.5pt; padding:4px;')
 
         videoplayerLayout = QVBoxLayout(spacing=0)
@@ -256,8 +259,8 @@ class VidCutter(QWidget):
         self.cliplistMenu.addAction(self.removeItemAction)
         self.cliplistMenu.addAction(self.removeAllAction)
 
-    def setRunningTime(self, time: QTime):
-        pass
+    def setRunningTime(self, runtime: str) -> None:
+        self.listFooter.setText('<div align="right">%s</div>' % runtime)
 
     def setNoVideoText(self, frame: QVideoFrame) -> None:
         self.novideoLabel.setPixmap(self.novideoMovie.currentPixmap())
@@ -478,6 +481,7 @@ class VidCutter(QWidget):
             self.cliplist.setFixedWidth(200)
         else:
             self.cliplist.setFixedWidth(185)
+        self.totalRuntime = 0
         for item in self.clipTimes:
             endItem = ''
             if type(item[1]) is QTime:
@@ -497,7 +501,7 @@ class VidCutter(QWidget):
             self.saveAction.setEnabled(True)
         if self.inCut or len(self.clipTimes) == 0 or not type(self.clipTimes[0][1]) is QTime:
             self.saveAction.setEnabled(False)
-        self.runtimeLabel = self.deltaToQTime(self.totalRuntime).toString(self.timeformat)
+        self.setRunningTime(self.deltaToQTime(self.totalRuntime).toString(self.timeformat))
 
     @staticmethod
     def deltaToQTime(millisecs: int) -> QTime:

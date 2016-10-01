@@ -1,5 +1,5 @@
 <RCC>
-  <qresource prefix="/">
+  <qresource>
     <file>fonts/DroidSansMono.ttf</file>
     <file>images/about.png</file>
     <file>images/addmedia.png</file>
@@ -19,6 +19,7 @@
     <file>images/play.png</file>
     <file>images/remove-all.png</file>
     <file>images/remove.png</file>
+    <file>images/runtime.png</file>
     <file>images/save.png</file>
     <file>images/slider-handle.png</file>
     <file>images/start.png</file>
