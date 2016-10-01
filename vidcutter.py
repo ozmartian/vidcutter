@@ -105,11 +105,11 @@ class VidCutter(QWidget):
                                  'stop: 0.5 #EAEAEA, stop: 0.6 #EAEAEA stop:1 #FFF);')
 
         self.listFooter = QLabel(textFormat=Qt.RichText)
-        self.listFooter.setStyleSheet('QLabel { padding:4px; padding-top:3px; border:1px solid #b9b9b9; ' +
+        self.listFooter.setStyleSheet('QLabel { padding:2px; border:1px solid #b9b9b9; ' +
                                       'background:qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #666, ' +
                                       'stop: 0.5 #444, stop: 0.6 #444 stop:1 #666) url(:images/runtime.png) ' +
                                       'no-repeat left center; border-top:none; color:#FFF; font-weight:bold; ' +
-                                      'font-size:10pt; font-family:Droid Sans Mono; padding-right:15px; }')
+                                      'font-size:10pt; font-family:Droid Sans Mono; padding-right:18px; }')
         self.setRunningTime('00:00:00')
 
         self.clipindexLayout = QVBoxLayout(spacing=0)
