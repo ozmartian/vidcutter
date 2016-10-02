@@ -542,7 +542,6 @@ QPushButton:pressed {
 
     def cutVideo(self) -> bool:
         self.setCursor(Qt.BusyCursor)
-        self.saveAction.setDisabled(True)
         clips = len(self.clipTimes)
         filename, filelist = '', []
         source = self.mediaPlayer.currentMedia().canonicalUrl().toLocalFile()
@@ -550,6 +549,7 @@ QPushButton:pressed {
         if clips > 0:
             self.finalFilename, _ = QFileDialog.getSaveFileName(self.parent, 'Save video', source, 'Video files (*%s)' % sourceext)
             if self.finalFilename != '':
+                self.saveAction.setDisabled(True)
                 self.showProgress(clips)
                 file, ext = os.path.splitext(self.finalFilename)
                 index = 1
@@ -573,9 +573,9 @@ QPushButton:pressed {
                 self.progress.close()
                 self.progress.deleteLater()
                 self.complete()
+                self.saveAction.setEnabled(True)
             return True
         self.unsetCursor()
-        self.saveAction.setEnabled(True)
         return False
 
     def joinVideos(self, joinlist: list, filename: str) -> None:
@@ -728,6 +728,7 @@ QPushButton:pressed {
         return QWidget.eventFilter(self, obj, event)
 
     def handleError(self, error: QMediaPlayer.Error) -> None:
+        self.unsetCursor()
         self.startNew()
         if error == QMediaPlayer.ResourceError:
             QMessageBox.critical(self.parent, 'Error', 'Invalid media file detected at:<br/><br/><b>%s</b><br/><br/>%s'
