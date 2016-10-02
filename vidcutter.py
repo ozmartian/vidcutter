@@ -15,8 +15,8 @@ from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer, QVideoFrame
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDialog,
                              QHBoxLayout, QLabel, QListWidget, QListWidgetItem, QMainWindow,
-                             QMenu, QMessageBox, QProgressDialog, QPushButton, QSizePolicy, QSlider,
-                             QStyle, QToolBar, QVBoxLayout, QWidget, qApp)
+                             QMenu, QMessageBox, QProgressDialog, QPushButton, QSizePolicy, QSpacerItem,
+                             QSlider, QStyle, QToolBar, QVBoxLayout, QWidget, qApp)
 
 from videoslider import VideoSlider
 from videoservice import VideoService
@@ -63,7 +63,7 @@ class VidCutter(QWidget):
         self.videoWidget = VideoWidget()
         self.videoService = VideoService(self)
 
-        fontdata = QFile(os.path.join(self.getAppPath(), 'fonts', 'DroidSansMono.ttf'))
+        QFontDatabase.addApplicationFont(os.path.join(self.getAppPath(), 'fonts', 'DroidSansMono.ttf'))
 
         self.clipTimes = []
         self.inCut = False
@@ -76,8 +76,8 @@ class VidCutter(QWidget):
         self.initIcons()
         self.initActions()
 
-        self.toolbar = QToolBar(floatable=False, movable=False, cursor=Qt.PointingHandCursor,
-                                iconSize=QSize(28, 28), toolButtonStyle=Qt.ToolButtonTextUnderIcon,
+        self.toolbar = QToolBar(floatable=False, movable=False, iconSize=QSize(28, 28),
+                                toolButtonStyle=Qt.ToolButtonTextUnderIcon,
                                 styleSheet='QToolBar QToolButton { min-width:82px; margin-left:10px; margin-right:10px; font-size:14px; }')
         self.initToolbar()
 
@@ -149,13 +149,42 @@ class VidCutter(QWidget):
                                     sizePolicy=QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Minimum),
                                     minimum=0, maximum=100, sliderMoved=self.setVolume)
 
+        self.saveAction = QPushButton(icon=self.saveIcon, text='Save Video', flat=False, toolTip='Save video',
+                                      clicked=self.cutVideo, cursor=Qt.PointingHandCursor, iconSize=QSize(30, 30),
+                                      statusTip='Save video clips merged as a new video file', enabled=False)
+        self.saveActionQSS = '''
+QPushButton {
+    color: #222;
+    padding: 8px 6px;
+    font-size: 12pt;
+    border: 1px inset #58365F;
+    border-radius: 4px;
+    background-color: rgba(111, 39, 122, 0.25);
+}
+QPushButton:!enabled {
+    background-color: rgba(0, 0, 0, 0.1);
+    color: rgba(0, 0, 0, 0.3);
+    border: 1px inset rgba(0, 0, 0, 0.2);
+}
+QPushButton:hover {
+    background-color: rgba(255, 255, 255, 0.8);
+}
+QPushButton:pressed {
+    background-color: rgba(218, 218, 219, 0.8);
+}
+'''
+        self.saveAction.setStyleSheet(self.saveActionQSS)
+        self.saveAction.setCursor(Qt.PointingHandCursor)
+
         controlsLayout = QHBoxLayout()
         controlsLayout.addStretch(1)
         controlsLayout.addWidget(self.toolbar)
         controlsLayout.addStretch(1)
+        controlsLayout.addWidget(self.saveAction)
+        controlsLayout.addSpacerItem(QSpacerItem(50, 1))
         controlsLayout.addWidget(self.muteButton)
         controlsLayout.addWidget(self.volumeSlider)
-        controlsLayout.addSpacing(4)
+        controlsLayout.addSpacing(1)
         controlsLayout.addWidget(self.menuButton)
 
         layout = QVBoxLayout()
@@ -222,8 +251,6 @@ class VidCutter(QWidget):
                                       statusTip='Set start marker', triggered=self.cutStart, enabled=False)
         self.cutEndAction = QAction(self.cutEndIcon, 'Set End', self, statusTip='Set end marker', triggered=self.cutEnd,
                                     enabled=False)
-        self.saveAction = QAction(self.saveIcon, 'Save', self, statusTip='Save new video', triggered=self.cutVideo,
-                                  enabled=False)
         self.moveItemUpAction = QAction(self.upIcon, 'Move Up', self, statusTip='Move clip position up in list',
                                         triggered=self.moveItemUp, enabled=False)
         self.moveItemDownAction = QAction(self.downIcon, 'Move Down', self, statusTip='Move clip position down in list',
@@ -245,8 +272,6 @@ class VidCutter(QWidget):
         self.toolbar.addSeparator()
         self.toolbar.addAction(self.cutStartAction)
         self.toolbar.addAction(self.cutEndAction)
-        self.toolbar.addSeparator()
-        self.toolbar.addAction(self.saveAction)
 
     def initMenus(self) -> None:
         self.aboutMenu.addAction(self.mediaInfoAction)

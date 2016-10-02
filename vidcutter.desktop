@@ -1,3 +1,4 @@
+#!/usr/bin/env xdg-open
 [Desktop Entry]
 Categories=Qt;KDE;AudioVideo;AudioVideoEditing;
 Comment[en_US]=Simple & fast FFmpeg based video cutter & joiner
