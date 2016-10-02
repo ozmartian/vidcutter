@@ -179,9 +179,9 @@ QPushButton:pressed {
         controlsLayout = QHBoxLayout()
         controlsLayout.addStretch(1)
         controlsLayout.addWidget(self.toolbar)
-        controlsLayout.addStretch(1)
+        controlsLayout.addSpacerItem(QSpacerItem(20, 1))
         controlsLayout.addWidget(self.saveAction)
-        controlsLayout.addSpacerItem(QSpacerItem(50, 1))
+        controlsLayout.addStretch(1)
         controlsLayout.addWidget(self.muteButton)
         controlsLayout.addWidget(self.volumeSlider)
         controlsLayout.addSpacing(1)
@@ -272,6 +272,7 @@ QPushButton:pressed {
         self.toolbar.addSeparator()
         self.toolbar.addAction(self.cutStartAction)
         self.toolbar.addAction(self.cutEndAction)
+        self.toolbar.addSeparator()
 
     def initMenus(self) -> None:
         self.aboutMenu.addAction(self.mediaInfoAction)
