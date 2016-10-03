@@ -30,15 +30,13 @@ class VideoService(QObject):
             self.proc.errorOccurred.connect(self.cmdError)
 
     def capture(self, source: str, frametime: str) -> QPixmap:
-        img, capres = None, None
+        img, capres = None, QPixmap()
         try:
             img = QTemporaryFile(os.path.join(QDir.tempPath(), 'XXXXXX.jpg'))
             if img.open():
                 imagecap = img.fileName()
                 args = '-ss %s -i "%s" -vframes 1 -s 100x70 -y %s' % (frametime, source, imagecap)
-                self.proc.start(self.backend, shlex.split(args))
-                self.proc.waitForFinished(-1)
-                if self.proc.exitCode() == 0 and self.proc.exitStatus() == QProcess.NormalExit:
+                if self.cmdExec(self.backend, args):
                     capres = QPixmap(imagecap, 'JPG')
         finally:
             del img
@@ -53,7 +51,7 @@ class VideoService(QObject):
         args = '-f concat -safe 0 -i "%s" -c copy -y "%s"' % (filelist, QDir.fromNativeSeparators(output))
         return self.cmdExec(self.backend, args)
 
-    def cmdExec(self, cmd: str, args: list = None) -> bool:
+    def cmdExec(self, cmd: str, args: str = None) -> bool:
         if self.proc.state() == QProcess.NotRunning:
             self.proc.start(cmd, shlex.split(args))
             self.proc.waitForFinished(-1)
@@ -67,4 +65,6 @@ class VideoService(QObject):
                                  self.proc.errorString(), buttons=QMessageBox.Cancel)
 
     def getAppPath(self) -> str:
+        if getattr(sys, 'frozen', False):
+            return sys._MEIPASS
         return QFileInfo(__file__).absolutePath()
