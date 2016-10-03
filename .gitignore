@@ -3,12 +3,11 @@ __pycache__
 .directory
 .vscode/
 dist/
-build/build
-build/dist
+build/pyinstaller/build
+build/pyinstaller/dist
 vidcutter.*/
 *.log
 *.dll
 *.BAK
 vidcutter
 vidcutter.exe
-
