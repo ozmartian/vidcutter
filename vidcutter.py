@@ -105,11 +105,7 @@ class VidCutter(QWidget):
                                  'stop: 0.5 #EAEAEA, stop: 0.6 #EAEAEA stop:1 #FFF);')
 
         totalLabel = QLabel(textFormat=Qt.RichText)
-        totalLabel.setStyleSheet('QLabel { padding:2px; border:1px solid #b9b9b9; ' +
-                                      'background:qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #917ea4, ' +
-                                      'stop: 0.5 #917ea4, stop: 0.6 #917ea4 stop:1 #917ea4) url(:images/runtime.png) ' +
-                                      'no-repeat left center; border-top:none; color:#FFF; font-weight:normal; ' +
-                                      'font-size:9pt; font-family:Droid Sans Mono; padding-right:18px; }')
+        totalLabel.setStyleSheet('QLabel { padding:2px; border:1px solid #b9b9b9; background:background:qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #917ea4, stop: 0.5 #917ea4, stop: 0.6 #917ea4 stop:1 #917ea4) url(:images/runtime.png) no-repeat left center; border-top:none; color:#FFF; font-weight:normal; font-size:9pt; font-family:Droid Sans Mono; padding-right:18px; }')
 
 #         totalLabel = QLabel('Total Runtime')
 #         totalLabel.setStyleSheet('''
@@ -123,7 +119,7 @@ class VidCutter(QWidget):
 #     background: url(:images/runtime.png) no-repeat left center;
 # }
 # ''')
-        self.runtimeLabel = QLabel(styleSheet='font-family:Droid Sans Mono; font-size:10pt; color:#444;')
+        self.runtimeLabel = QLabel(styleSheet='font-family:Droid Sans Mono; font-size:10pt; color:#FFF; background:qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #917ea4, stop: 0.5 #917ea4, stop: 0.6 #917ea4 stop:1 #917ea4);')
 
         self.listFooter = QHBoxLayout()
         self.listFooter.addWidget(totalLabel)
@@ -305,8 +301,7 @@ QPushButton:pressed {
         self.cliplistMenu.addAction(self.removeAllAction)
 
     def setRunningTime(self, runtime: str) -> None:
-        self.runtimeLabel.setText(runtime)
-        # self.listFooter.setText('<div align="right">%s</div>' % runtime)
+        self.runtimeLabel.setText('<div align="right">%s</div>' % runtime)
 
     def setNoVideoText(self, frame: QVideoFrame) -> None:
         self.novideoLabel.setPixmap(self.novideoMovie.currentPixmap())

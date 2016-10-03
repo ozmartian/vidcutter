@@ -2,14 +2,15 @@
 # -*- mode: python -*-
 
 import os
+import sys
 
 
 block_cipher = None
 
 a = Analysis(['..\\..\\vidcutter.py'],
-             pathex=['%s\\Lib\\site-packages\\PyQt5\\Qt\\bin' % str(os.getenv('PYTHONPATH')),
+             pathex=['%s\\Lib\\site-packages\\PyQt5\\Qt\\bin' % os.path.dirname(sys.executable),
              'C:\\Program Files (x86)\\Windows Kits\\10\Redist\\ucrt\\DLLs\\x64',
-             'C:\\DEV\\vidcutter'],
+             '..\\..'],
              binaries=[],
              datas=[('..\\..\\bin\\ffmpeg.exe', '.\\bin\\')],
              hiddenimports=[],
