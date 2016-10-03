@@ -381,14 +381,15 @@ QPushButton:pressed {
     span.title, span.version, span.arch { font-weight:bold; }
     span.title { font-size:26pt !important; }
     span.version { font-size:13pt; }
-    span.arch { font-size:10pt; }
+    span.arch { font-weight:normal; font-size:10pt; margin-left:5px; }
 </style>
 <p>
     <span class="title">%s</span>
 </p>
 <p>
     <span class="version">Version: %s</span>
-    <span class="arch">%s</span>
+    &nbsp;&nbsp;-&nbsp;&nbsp;
+    <span class="arch"> %s release</span>
 </p>
 <p style="font-size:13px;">
     Copyright &copy; 2016 <a href="mailto:pete@ozmartians.com">Pete Alexandrou</a>
@@ -404,8 +405,7 @@ QPushButton:pressed {
     modify it under the terms of the GNU General Public License
     as published by the Free Software Foundation; either version 2
     of the License, or (at your option) any later version.
-</p>''' % (qApp.applicationName(), qApp.applicationVersion(),
-           'x64' if platform.architecture()[0] == '64bit' else 'x86',
+</p>''' % (qApp.applicationName(), qApp.applicationVersion(), platform.architecture()[0],
            qApp.organizationDomain(), qApp.organizationDomain())
         QMessageBox.about(self.parent, 'About %s' % qApp.applicationName(), about_html)
 
