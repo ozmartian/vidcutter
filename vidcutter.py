@@ -104,19 +104,38 @@ class VidCutter(QWidget):
                                  'background-color:qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFF, ' +
                                  'stop: 0.5 #EAEAEA, stop: 0.6 #EAEAEA stop:1 #FFF);')
 
-        self.listFooter = QLabel(textFormat=Qt.RichText)
-        self.listFooter.setStyleSheet('QLabel { padding:2px; border:1px solid #b9b9b9; ' +
-                                      'background:qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #45284B, ' +
-                                      'stop: 0.5 #6a4572, stop: 0.6 #6a4572 stop:1 #45284B) url(:images/runtime.png) ' +
+        totalLabel = QLabel(textFormat=Qt.RichText)
+        totalLabel.setStyleSheet('QLabel { padding:2px; border:1px solid #b9b9b9; ' +
+                                      'background:qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #917ea4, ' +
+                                      'stop: 0.5 #917ea4, stop: 0.6 #917ea4 stop:1 #917ea4) url(:images/runtime.png) ' +
                                       'no-repeat left center; border-top:none; color:#FFF; font-weight:normal; ' +
                                       'font-size:9pt; font-family:Droid Sans Mono; padding-right:18px; }')
+
+#         totalLabel = QLabel('Total Runtime')
+#         totalLabel.setStyleSheet('''
+# QLabel {
+#     font-weight: bold;
+#     font-size: 9pt;
+#     color: #666;
+#     padding: 15px 2px;
+#     font-family: Raleway, sans-serif;
+#     margin: 0;
+#     background: url(:images/runtime.png) no-repeat left center;
+# }
+# ''')
+        self.runtimeLabel = QLabel(styleSheet='font-family:Droid Sans Mono; font-size:10pt; color:#444;')
+
+        self.listFooter = QHBoxLayout()
+        self.listFooter.addWidget(totalLabel)
+        self.listFooter.addWidget(self.runtimeLabel)
+
         self.setRunningTime('00:00:00')
 
         self.clipindexLayout = QVBoxLayout(spacing=0)
         self.clipindexLayout.setContentsMargins(0, 0, 0, 0)
         self.clipindexLayout.addWidget(listHeader)
         self.clipindexLayout.addWidget(self.cliplist)
-        self.clipindexLayout.addWidget(self.listFooter)
+        self.clipindexLayout.addLayout(self.listFooter)
 
         self.videoLayout = QHBoxLayout()
         self.videoLayout.setContentsMargins(0, 0, 0, 0)
@@ -164,7 +183,7 @@ QPushButton {
 QPushButton:!enabled {
     background-color: rgba(0, 0, 0, 0.1);
     color: rgba(0, 0, 0, 0.3);
-    border: 1px inset rgba(0, 0, 0, 0.2);
+    border: 1px inset #999;
 }
 QPushButton:hover {
     background-color: rgba(255, 255, 255, 0.8);
@@ -286,7 +305,8 @@ QPushButton:pressed {
         self.cliplistMenu.addAction(self.removeAllAction)
 
     def setRunningTime(self, runtime: str) -> None:
-        self.listFooter.setText('<div align="right">%s</div>' % runtime)
+        self.runtimeLabel.setText(runtime)
+        # self.listFooter.setText('<div align="right">%s</div>' % runtime)
 
     def setNoVideoText(self, frame: QVideoFrame) -> None:
         self.novideoLabel.setPixmap(self.novideoMovie.currentPixmap())
@@ -418,6 +438,7 @@ QPushButton:pressed {
             self.movieLoaded = True
         if self.mediaPlayer.isVideoAvailable():
             self.mediaPlayer.setPosition(1)
+        self.mediaPlayer.play()
         self.mediaPlayer.pause()
 
     def playVideo(self) -> None:
