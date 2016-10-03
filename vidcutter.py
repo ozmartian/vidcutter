@@ -105,33 +105,25 @@ class VidCutter(QWidget):
                                  'stop: 0.5 #EAEAEA, stop: 0.6 #EAEAEA stop:1 #FFF);')
 
         totalLabel = QLabel(textFormat=Qt.RichText)
-        totalLabel.setStyleSheet('QLabel { padding:2px; border:1px solid #b9b9b9; background:background:qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #917ea4, stop: 0.5 #917ea4, stop: 0.6 #917ea4 stop:1 #917ea4) url(:images/runtime.png) no-repeat left center; border-top:none; color:#FFF; font-weight:normal; font-size:9pt; font-family:Droid Sans Mono; padding-right:18px; }')
+        totalLabel.setStyleSheet('QLabel { padding:2px; border:1px inset #b9b9b9; ' +
+                                 'background:qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #9C739E, ' +
+                                 'stop: 0.5 #9C739E, stop: 0.6 #9C739E stop:1 #9C739E) url(:images/runtime.png) ' +
+                                 'no-repeat left center; border-top:none; color:#FFF; font-weight:normal; ' +
+                                 'font-size:10pt; font-family:Droid Sans Mono; padding-right:18px; }')
 
-#         totalLabel = QLabel('Total Runtime')
-#         totalLabel.setStyleSheet('''
-# QLabel {
-#     font-weight: bold;
-#     font-size: 9pt;
-#     color: #666;
-#     padding: 15px 2px;
-#     font-family: Raleway, sans-serif;
-#     margin: 0;
-#     background: url(:images/runtime.png) no-repeat left center;
-# }
-# ''')
-        self.runtimeLabel = QLabel(styleSheet='font-family:Droid Sans Mono; font-size:10pt; color:#FFF; background:qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #917ea4, stop: 0.5 #917ea4, stop: 0.6 #917ea4 stop:1 #917ea4);')
-
-        self.listFooter = QHBoxLayout()
-        self.listFooter.addWidget(totalLabel)
-        self.listFooter.addWidget(self.runtimeLabel)
-
+        self.runtimeLabel = QLabel(textFormat=Qt.RichText)
+        self.runtimeLabel.setStyleSheet('''QLabel { font-family:Droid Sans Mono; font-size:10pt; color:#FFF;
+                                            background:qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #9C739E,
+                                            stop: 0.5 #9C739E, stop: 0.6 #9C739E stop:1 #9C739E) url(:images/runtime.png)
+                                            no-repeat left center; padding:2px; padding-right:18px;
+                                            border:1px solid #b9b9b9; border-top:none; }''')
         self.setRunningTime('00:00:00')
 
         self.clipindexLayout = QVBoxLayout(spacing=0)
         self.clipindexLayout.setContentsMargins(0, 0, 0, 0)
         self.clipindexLayout.addWidget(listHeader)
         self.clipindexLayout.addWidget(self.cliplist)
-        self.clipindexLayout.addLayout(self.listFooter)
+        self.clipindexLayout.addWidget(self.runtimeLabel)
 
         self.videoLayout = QHBoxLayout()
         self.videoLayout.setContentsMargins(0, 0, 0, 0)
@@ -167,7 +159,7 @@ class VidCutter(QWidget):
         self.saveAction = QPushButton(icon=self.saveIcon, text='Save Video', flat=False, toolTip='Save video',
                                       clicked=self.cutVideo, cursor=Qt.PointingHandCursor, iconSize=QSize(30, 30),
                                       statusTip='Save video clips merged as a new video file', enabled=False)
-        self.saveActionQSS = '''
+        self.saveAction.setStyleSheet('''
 QPushButton {
     color: #222;
     padding: 8px 6px;
@@ -186,9 +178,7 @@ QPushButton:hover {
 }
 QPushButton:pressed {
     background-color: rgba(218, 218, 219, 0.8);
-}
-'''
-        self.saveAction.setStyleSheet(self.saveActionQSS)
+}''')
         self.saveAction.setCursor(Qt.PointingHandCursor)
 
         controlsLayout = QHBoxLayout()
