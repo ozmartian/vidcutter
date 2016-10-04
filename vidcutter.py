@@ -13,7 +13,7 @@ from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QDragEnterEvent, QDropEv
                          QKeyEvent, QMouseEvent, QMovie, QPalette, QPixmap, QWheelEvent)
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer, QVideoFrame
 from PyQt5.QtMultimediaWidgets import QVideoWidget
-from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDialog,
+from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDialog, QFrame,
                              QHBoxLayout, QLabel, QListWidget, QListWidgetItem, QMainWindow,
                              QMenu, QMessageBox, QProgressDialog, QPushButton, QSizePolicy, QSpacerItem,
                              QSlider, QStyle, QToolBar, QVBoxLayout, QWidget, qApp)
@@ -100,24 +100,16 @@ class VidCutter(QWidget):
 
         listHeader = QLabel(pixmap=QPixmap(os.path.join(self.getAppPath(), 'images', 'clipindex.png'), 'PNG'),
                             alignment=Qt.AlignCenter)
-        listHeader.setStyleSheet('padding:5px; padding-top:8px; border:1px solid #b9b9b9; border-bottom:none; ' +
-                                 'background-color:qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFF, ' +
-                                 'stop: 0.5 #EAEAEA, stop: 0.6 #EAEAEA stop:1 #FFF);')
+        listHeader.setStyleSheet('''QLabel { padding:5px; padding-top:8px; border:1px solid #b9b9b9; border-bottom:none;
+                                    background-color:qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFF,
+                                    stop: 0.5 #EAEAEA, stop: 0.6 #EAEAEA stop:1 #FFF); }''')
 
-        totalLabel = QLabel(textFormat=Qt.RichText)
-        totalLabel.setStyleSheet('QLabel { padding:2px; border:1px inset #b9b9b9; ' +
-                                 'background:qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #9C739E, ' +
-                                 'stop: 0.5 #9C739E, stop: 0.6 #9C739E stop:1 #9C739E) url(:images/runtime.png) ' +
-                                 'no-repeat left center; border-top:none; color:#FFF; font-weight:normal; ' +
-                                 'font-size:10pt; font-family:Droid Sans Mono; padding-right:18px; }')
-
-        self.runtimeLabel = QLabel(textFormat=Qt.RichText)
+        self.runtimeLabel = QLabel('<div align="right">00:00:00</div>', textFormat=Qt.RichText)
         self.runtimeLabel.setStyleSheet('''QLabel { font-family:Droid Sans Mono; font-size:10pt; color:#FFF;
-                                            background:qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #9C739E,
-                                            stop: 0.5 #9C739E, stop: 0.6 #9C739E stop:1 #9C739E) url(:images/runtime.png)
+                                            background:qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 rgba(255, 255, 255, 0.4),
+                                            stop: 0.5 #9C739E, stop: 0.6 #9C739E stop:1 rgba(255, 255, 255, 0.4)) url(:images/runtime.png)
                                             no-repeat left center; padding:2px; padding-right:18px;
                                             border:1px solid #b9b9b9; border-top:none; }''')
-        self.setRunningTime('00:00:00')
 
         self.clipindexLayout = QVBoxLayout(spacing=0)
         self.clipindexLayout.setContentsMargins(0, 0, 0, 0)
@@ -132,8 +124,8 @@ class VidCutter(QWidget):
 
         self.timeCounter = QLabel('00:00:00 / 00:00:00', autoFillBackground=True, alignment=Qt.AlignCenter,
                                   sizePolicy=QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed))
-        self.timeCounter.setStyleSheet('color:#FFF; background:#000; font-family:Droid Sans Mono;' +
-                                       'font-size:10.5pt; padding:4px;')
+        self.timeCounter.setStyleSheet('QLabel { color:#FFF; background:#000; font-family:Droid Sans Mono;' +
+                                       'font-size:10.5pt; padding:4px; }')
 
         videoplayerLayout = QVBoxLayout(spacing=0)
         videoplayerLayout.setContentsMargins(0, 0, 0, 0)
@@ -159,27 +151,12 @@ class VidCutter(QWidget):
         self.saveAction = QPushButton(icon=self.saveIcon, text='Save Video', flat=False, toolTip='Save video',
                                       clicked=self.cutVideo, cursor=Qt.PointingHandCursor, iconSize=QSize(30, 30),
                                       statusTip='Save video clips merged as a new video file', enabled=False)
-        self.saveAction.setStyleSheet('''
-QPushButton {
-    color: #222;
-    padding: 8px 6px;
-    font-size: 12pt;
-    border: 1px inset #58365F;
-    border-radius: 4px;
-    background-color: rgba(111, 39, 122, 0.25);
-}
-QPushButton:!enabled {
-    background-color: rgba(0, 0, 0, 0.1);
-    color: rgba(0, 0, 0, 0.3);
-    border: 1px inset #999;
-}
-QPushButton:hover {
-    background-color: rgba(255, 255, 255, 0.8);
-}
-QPushButton:pressed {
-    background-color: rgba(218, 218, 219, 0.8);
-}''')
-        self.saveAction.setCursor(Qt.PointingHandCursor)
+        self.saveAction.setStyleSheet('''QPushButton { color:#222; padding:8px 6px; font-size:12pt; border:1px inset #58365F;
+                                            border-radius:4px; background-color: rgba(111, 39, 122, 0.25); }
+                                         QPushButton:!enabled { background-color:rgba(0, 0, 0, 0.1); color:rgba(0, 0, 0, 0.3);
+                                            border: 1px inset #999; }
+                                         QPushButton:hover { background-color: rgba(255, 255, 255, 0.8); }
+                                         QPushButton:pressed { background-color: rgba(218, 218, 219, 0.8); }''')
 
         controlsLayout = QHBoxLayout()
         controlsLayout.addStretch(1)
@@ -231,8 +208,8 @@ QPushButton:pressed {
         self.openIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'addmedia.png'))
         self.playIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'play.png'))
         self.pauseIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'pause.png'))
-        self.cutStartIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'start.png'))
-        self.cutEndIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'end.png'))
+        self.cutStartIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'cut-start.png'))
+        self.cutEndIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'cut-end.png'))
         self.saveIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'save.png'))
         self.muteIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'muted.png'))
         self.unmuteIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'unmuted.png'))
@@ -390,11 +367,15 @@ QPushButton:pressed {
     Thanks to the folks behind the <b>Qt</b>, <b>PyQt</b> and <b>FFmpeg</b>
     projects for all their hard and much appreciated work.
 </p>
-<p style="font-size:10px;">
+<p style="font-size:11px;">
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
     as published by the Free Software Foundation; either version 2
     of the License, or (at your option) any later version.
+</p>
+<p tyle="font-size:11px;">
+    This software uses libraries from the <a href="https://www.ffmpeg.org">FFmpeg</a> project under the
+    <a href="https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html">LGPLv2.1</a>
 </p>''' % (qApp.applicationName(), qApp.applicationVersion(), platform.architecture()[0],
            qApp.organizationDomain(), qApp.organizationDomain())
         QMessageBox.about(self.parent, 'About %s' % qApp.applicationName(), about_html)

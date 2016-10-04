@@ -8,9 +8,12 @@
     <file>images/complete-open.png</file>
     <file>images/complete-play.png</file>
     <file>images/complete-restart.png</file>
+    <file>images/cut-start.png</file>
+    <file>images/cut-end.png</file>
     <file>images/down.png</file>
     <file>images/end.png</file>
     <file>images/filmstrip.png</file>
+    <file>images/handle.png</file>
     <file>images/muted.png</file>
     <file>images/novideo.png</file>
     <file>images/novideotext.gif</file>
@@ -21,7 +24,6 @@
     <file>images/remove.png</file>
     <file>images/runtime.png</file>
     <file>images/save.png</file>
-    <file>images/slider-handle.png</file>
     <file>images/start.png</file>
     <file>images/success.png</file>
     <file>images/unmuted.png</file>

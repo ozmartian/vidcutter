@@ -27,11 +27,11 @@ class VideoSlider(QSlider):
         self.valueChanged.connect(self.restrictMove)
 
     def setSliderColor(self) -> None:
-        self.sliderQSS = '''QSlider:horizontal { margin: 25px 0 15px; }
+        self.setStyleSheet('''QSlider:horizontal { margin: 25px 0 15px; }
 QSlider::groove:horizontal {
     border: 1px inset #999;
-    background: rgba(0, 0, 0, 0.85) url(:images/filmstrip.png) repeat-x;
     height: 32px;
+    background: #444 url(:images/filmstrip.png) repeat-x;
     position: absolute;
     left: 0;
     right: 0;
@@ -41,19 +41,18 @@ QSlider::sub-page:horizontal {
     border: 1px inset #999;
     background: rgba(255, 255, 255, 0.6);
     height: 20px;
-    position: absolute;
+    position: absolute;3
     left: 0;
     right: 0;
     margin: 0;
 }
 QSlider::handle:horizontal {
     border: none;
-    background: url(:images/slider-handle.png) no-repeat top center;
+    background: url(:images/handle.png) no-repeat top center;
     width: 20px;
     height: 58px;
     margin: -18px 0;
-}'''
-        self.setStyleSheet(self.sliderQSS)
+}''')
 
     def setValueNoSignal(self, value: int) -> None:
         self.blockSignals(True)
@@ -92,11 +91,11 @@ QSlider::handle:horizontal {
                            * (self.width() - handle.width()) + (handle.width() / 2.0))) - 1
                 if i % 500000 == 0:
                     h = 12
-                    z = 8
+                    z = 5
                 else:
                     h = 6
-                    z = 14
-                painter.setPen(QColor('#A5A294'))
+                    z = 11
+                painter.setPen(QColor('#484640'))
                 if self.tickPosition() in (QSlider.TicksBothSides, QSlider.TicksAbove):
                     y = self.rect().top() + z
                     painter.drawLine(x, y, x, y + h)
