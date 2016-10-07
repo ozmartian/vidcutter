@@ -10,13 +10,12 @@ import warnings
 
 from PyQt5.QtCore import QDir, QEvent, QFile, QFileInfo, QModelIndex, QObject, QPoint, QSize, Qt, QTime, QUrl
 from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QDragEnterEvent, QDropEvent, QFontDatabase, QIcon,
-                         QKeyEvent, QMouseEvent, QMovie, QPalette, QPixmap, QWheelEvent)
+                         QKeyEvent, QKeySequence, QMouseEvent, QMovie, QPalette, QPixmap, QWheelEvent)
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer, QVideoFrame
 from PyQt5.QtMultimediaWidgets import QVideoWidget
-from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDialog, QFrame,
-                             QHBoxLayout, QLabel, QListWidget, QListWidgetItem, QMainWindow,
-                             QMenu, QMessageBox, QProgressDialog, QPushButton, QSizePolicy, QSpacerItem,
-                             QSlider, QStyle, QToolBar, QVBoxLayout, QWidget, qApp)
+from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDialog, QHBoxLayout, QLabel, QListWidget,
+                             QListWidgetItem, QMainWindow, QMenu, QMessageBox, QProgressDialog, QPushButton,
+                             QSizePolicy, QSpacerItem, QSlider, QStyle, QToolBar, QVBoxLayout, QWidget, qApp)
 
 from videoslider import VideoSlider
 from videoservice import VideoService
@@ -27,6 +26,7 @@ import resources
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 signal.signal(signal.SIGTERM, signal.SIG_DFL)
 warnings.filterwarnings('ignore')
+
 
 __version__ = '1.5'
 
@@ -64,6 +64,9 @@ class VidCutter(QWidget):
         self.videoService = VideoService(self)
 
         QFontDatabase.addApplicationFont(os.path.join(self.getAppPath(), 'fonts', 'DroidSansMono.ttf'))
+        QFontDatabase.addApplicationFont(os.path.join(self.getAppPath(), 'fonts', 'HelveticaNeue.ttf'))
+
+        self.setStyleSheet('font-family:HelveticaNeue, sans-serif;')
 
         self.clipTimes = []
         self.inCut = False
@@ -81,8 +84,7 @@ class VidCutter(QWidget):
                                 styleSheet='QToolBar QToolButton { min-width:82px; margin-left:10px; margin-right:10px; font-size:14px; }')
         self.initToolbar()
 
-        self.aboutMenu = QMenu()
-        self.cliplistMenu = QMenu()
+        self.aboutMenu, self.cliplistMenu = QMenu(), QMenu()
         self.initMenus()
 
         self.seekSlider = VideoSlider(parent=self, sliderMoved=self.setPosition)
@@ -100,16 +102,15 @@ class VidCutter(QWidget):
 
         listHeader = QLabel(pixmap=QPixmap(os.path.join(self.getAppPath(), 'images', 'clipindex.png'), 'PNG'),
                             alignment=Qt.AlignCenter)
-        listHeader.setStyleSheet('''QLabel { padding:5px; padding-top:8px; border:1px solid #b9b9b9; border-bottom:none;
+        listHeader.setStyleSheet('''padding:5px; padding-top:8px; border:1px solid #b9b9b9; border-bottom:none;
                                     background-color:qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFF,
-                                    stop: 0.5 #EAEAEA, stop: 0.6 #EAEAEA stop:1 #FFF); }''')
+                                    stop: 0.5 #EAEAEA, stop: 0.6 #EAEAEA stop:1 #FFF);''')
 
         self.runtimeLabel = QLabel('<div align="right">00:00:00</div>', textFormat=Qt.RichText)
-        self.runtimeLabel.setStyleSheet('''QLabel { font-family:Droid Sans Mono; font-size:10pt; color:#FFF;
-                                            background:qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 rgba(255, 255, 255, 0.4),
-                                            stop: 0.5 #9C739E, stop: 0.6 #9C739E stop:1 rgba(255, 255, 255, 0.4)) url(:images/runtime.png)
-                                            no-repeat left center; padding:2px; padding-right:18px;
-                                            border:1px solid #b9b9b9; border-top:none; }''')
+        self.runtimeLabel.setStyleSheet('''font-family:Droid Sans Mono; font-size:10pt; color:#FFF;
+                                           background:rgba(111, 75, 124, 0.85) url(:images/runtime.png)
+                                           no-repeat left center; padding:2px; padding-right:8px;
+                                           border:1px solid #b9b9b9; border-top:none;''')
 
         self.clipindexLayout = QVBoxLayout(spacing=0)
         self.clipindexLayout.setContentsMargins(0, 0, 0, 0)
@@ -124,8 +125,7 @@ class VidCutter(QWidget):
 
         self.timeCounter = QLabel('00:00:00 / 00:00:00', autoFillBackground=True, alignment=Qt.AlignCenter,
                                   sizePolicy=QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed))
-        self.timeCounter.setStyleSheet('QLabel { color:#FFF; background:#000; font-family:Droid Sans Mono;' +
-                                       'font-size:10.5pt; padding:4px; }')
+        self.timeCounter.setStyleSheet('color:#FFF; background:#000; font-family:Droid Sans Mono; font-size:10.5pt; padding:4px;')
 
         videoplayerLayout = QVBoxLayout(spacing=0)
         videoplayerLayout.setContentsMargins(0, 0, 0, 0)
@@ -148,15 +148,17 @@ class VidCutter(QWidget):
                                     sizePolicy=QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Minimum),
                                     minimum=0, maximum=100, sliderMoved=self.setVolume)
 
-        self.saveAction = QPushButton(icon=self.saveIcon, text='Save Video', flat=False, toolTip='Save video',
+        self.saveAction = QPushButton(self.parent, icon=self.saveIcon, text='Save Video', flat=False, toolTip='Save video',
                                       clicked=self.cutVideo, cursor=Qt.PointingHandCursor, iconSize=QSize(30, 30),
                                       statusTip='Save video clips merged as a new video file', enabled=False)
-        self.saveAction.setStyleSheet('''QPushButton { color:#222; padding:8px 6px; font-size:12pt; border:1px inset #58365F;
-                                            border-radius:4px; background-color: rgba(111, 39, 122, 0.25); }
-                                         QPushButton:!enabled { background-color:rgba(0, 0, 0, 0.1); color:rgba(0, 0, 0, 0.3);
-                                            border: 1px inset #999; }
-                                         QPushButton:hover { background-color: rgba(255, 255, 255, 0.8); }
-                                         QPushButton:pressed { background-color: rgba(218, 218, 219, 0.8); }''')
+        self.saveAction.setFixedSize(129, 48)
+        self.saveAction.setStyleSheet('''QPushButton { color:#222; padding:8px 6px; font-size:12pt;
+                                            border:1px inset #58365F; border-radius:4px;
+                                            background-color:rgba(111, 39, 122, 0.25); }
+                                         QPushButton:!enabled { background-color:rgba(0, 0, 0, 0.1);
+                                            color:rgba(0, 0, 0, 0.3); border:1px solid #CCC; }
+                                         QPushButton:hover { background-color:rgba(255, 255, 255, 0.8); }
+                                         QPushButton:pressed { background-color:rgba(218, 218, 219, 0.8); }''')
 
         controlsLayout = QHBoxLayout()
         controlsLayout.addStretch(1)
@@ -227,7 +229,7 @@ class VidCutter(QWidget):
     def initActions(self) -> None:
         self.openAction = QAction(self.openIcon, 'Add Media', self, statusTip='Select media source',
                                   triggered=self.openFile)
-        self.playAction = QAction(self.playIcon, 'Play/Pause', self, statusTip='Play/Pause media',
+        self.playAction = QAction(self.playIcon, 'Play Video', self, statusTip='Play selected media',
                                   triggered=self.playVideo, enabled=False)
         self.cutStartAction = QAction(self.cutStartIcon, 'Set Start', self, toolTip='Set Start',
                                       statusTip='Set start marker', triggered=self.cutStart, enabled=False)
@@ -345,18 +347,11 @@ class VidCutter(QWidget):
         about_html = '''<style>
     a { color:#441d4e; text-decoration:none; font-weight:bold; }
     a:hover { text-decoration:underline; }
-    span.title, span.version, span.arch { font-weight:bold; }
-    span.title { font-size:26pt !important; }
-    span.version { font-size:13pt; }
-    span.arch { font-weight:normal; font-size:10pt; margin-left:5px; }
 </style>
+<p style="font-size:26pt; font-weight:bold;">%s</p>
 <p>
-    <span class="title">%s</span>
-</p>
-<p>
-    <span class="version">Version: %s</span>
-    &nbsp;&nbsp;-&nbsp;&nbsp;
-    <span class="arch"> %s release</span>
+    <span style="font-size:13pt;"><b>Version: %s</b></span>
+    <span style="font-size:10pt;position:relative;left:5px;">( %s )</span>
 </p>
 <p style="font-size:13px;">
     Copyright &copy; 2016 <a href="mailto:pete@ozmartians.com">Pete Alexandrou</a>
@@ -373,7 +368,7 @@ class VidCutter(QWidget):
     as published by the Free Software Foundation; either version 2
     of the License, or (at your option) any later version.
 </p>
-<p tyle="font-size:11px;">
+<p style="font-size:11px;">
     This software uses libraries from the <a href="https://www.ffmpeg.org">FFmpeg</a> project under the
     <a href="https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html">LGPLv2.1</a>
 </p>''' % (qApp.applicationName(), qApp.applicationVersion(), platform.architecture()[0],
@@ -410,8 +405,10 @@ class VidCutter(QWidget):
     def playVideo(self) -> None:
         if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
             self.mediaPlayer.pause()
+            self.playAction.setText('Play Video')
         else:
             self.mediaPlayer.play()
+            self.playAction.setText('Pause Video')
 
     def initMediaControls(self, flag: bool = True) -> None:
         self.playAction.setEnabled(flag)

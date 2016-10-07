@@ -12,7 +12,7 @@ class VideoSlider(QSlider):
         self.setOrientation(Qt.Horizontal)
         self.setObjectName('VideoSlider')
         self.setStatusTip('Set clip start and end points')
-        self.setCursor(Qt.ClosedHandCursor)
+        self.setCursor(Qt.PointingHandCursor)
         self.setRange(0, 0)
         self.setSingleStep(1)
         self.setTracking(True)
@@ -22,7 +22,6 @@ class VideoSlider(QSlider):
         self.setCutMode(False)
         self.restrictValue = 0
         self.style = qApp.style()
-        self.opt = QStyleOptionSlider()
         self.posLocal, self.posGlobal = 0, 0
         self.valueChanged.connect(self.restrictMove)
 
@@ -41,7 +40,7 @@ QSlider::sub-page:horizontal {
     border: 1px inset #999;
     background: rgba(255, 255, 255, 0.6);
     height: 20px;
-    position: absolute;3
+    position: absolute;
     left: 0;
     right: 0;
     margin: 0;
