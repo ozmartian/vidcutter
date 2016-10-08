@@ -17,10 +17,14 @@ from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDial
                              QListWidgetItem, QMainWindow, QMenu, QMessageBox, QProgressDialog, QPushButton,
                              QSizePolicy, QSpacerItem, QSlider, QStyle, QToolBar, QVBoxLayout, QWidget, qApp)
 
-from videoslider import VideoSlider
-from videoservice import VideoService
-
-import resources
+if __name__ == '__main__':
+    from videoslider import VideoSlider
+    from videoservice import VideoService
+    import resources
+else:    
+    from .videoslider import VideoSlider
+    from .videoservice import VideoService
+    from . import resources
 
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
@@ -769,5 +773,5 @@ def main():
     sys.exit(app.exec_())
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
