@@ -9,7 +9,7 @@ import time
 import warnings
 
 from PyQt5.QtCore import QDir, QEvent, QFile, QFileInfo, QModelIndex, QObject, QPoint, QSize, Qt, QTime, QUrl
-from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QDragEnterEvent, QDropEvent, QFontDatabase, QIcon,
+from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QDragEnterEvent, QDropEvent, QFont, QFontDatabase, QIcon,
                          QKeyEvent, QKeySequence, QMouseEvent, QMovie, QPalette, QPixmap, QWheelEvent)
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer, QVideoFrame
 from PyQt5.QtMultimediaWidgets import QVideoWidget
@@ -69,8 +69,7 @@ class VidCutter(QWidget):
 
         QFontDatabase.addApplicationFont(os.path.join(self.getAppPath(), 'fonts', 'DroidSansMono.ttf'))
         QFontDatabase.addApplicationFont(os.path.join(self.getAppPath(), 'fonts', 'HelveticaNeue.ttf'))
-
-        self.setStyleSheet('font-family:HelveticaNeue, sans-serif;')
+        qApp.setFont(QFont('Helvetica Neue', 10))
 
         self.clipTimes = []
         self.inCut = False
@@ -112,7 +111,7 @@ class VidCutter(QWidget):
 
         self.runtimeLabel = QLabel('<div align="right">00:00:00</div>', textFormat=Qt.RichText)
         self.runtimeLabel.setStyleSheet('''font-family:Droid Sans Mono; font-size:10pt; color:#FFF;
-                                           background:rgba(111, 75, 124, 0.85) url(:images/runtime.png)
+                                           background:rgb(106, 69, 114) url(:images/runtime.png)
                                            no-repeat left center; padding:2px; padding-right:8px;
                                            border:1px solid #b9b9b9; border-top:none;''')
 
@@ -155,12 +154,11 @@ class VidCutter(QWidget):
         self.saveAction = QPushButton(self.parent, icon=self.saveIcon, text='Save Video', flat=False, toolTip='Save video',
                                       clicked=self.cutVideo, cursor=Qt.PointingHandCursor, iconSize=QSize(30, 30),
                                       statusTip='Save video clips merged as a new video file', enabled=False)
-        self.saveAction.setFixedSize(129, 48)
-        self.saveAction.setStyleSheet('''QPushButton { color:#222; padding:8px 6px; font-size:12pt;
-                                            border:1px inset #58365F; border-radius:4px;
-                                            background-color:rgba(111, 39, 122, 0.25); }
+        self.saveAction.setStyleSheet('''QPushButton { color:#222; padding:6px 8px; font-size:12pt;
+                                            border:1px inset #555; border-radius:4px;
+                                            background-color:rgba(106, 69, 114, 0.25); }
                                          QPushButton:!enabled { background-color:rgba(0, 0, 0, 0.1);
-                                            color:rgba(0, 0, 0, 0.3); border:1px solid #CCC; }
+                                            color:rgba(0, 0, 0, 0.3); border:1px inset #CCC; }
                                          QPushButton:hover { background-color:rgba(255, 255, 255, 0.8); }
                                          QPushButton:pressed { background-color:rgba(218, 218, 219, 0.8); }''')
 
