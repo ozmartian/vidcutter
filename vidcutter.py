@@ -145,12 +145,16 @@ class VidCutter(QWidget):
                                     cursor=Qt.PointingHandCursor, value=50,
                                     sizePolicy=QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Minimum),
                                     minimum=0, maximum=100, sliderMoved=self.setVolume)
+        self.volumeSlider.setStyleSheet('''
+QSlider::groove:horizontal { height:40px; }
+QSlider::sub-page:horizontal { border:1px outset #6A4572; background:#6A4572; margin:2px; }
+QSlider::handle:horizontal { image: url(:images/knob.png) no-repeat top left; }''')
 
-        self.saveAction = QPushButton(self.parent, icon=self.saveIcon, text='Save Video', flat=False, toolTip='Save video',
+        self.saveAction = QPushButton(self.parent, icon=self.saveIcon, text='Save Video', flat=False, toolTip='Save Video',
                                       clicked=self.cutVideo, cursor=Qt.PointingHandCursor, iconSize=QSize(30, 30),
                                       statusTip='Save video clips merged as a new video file', enabled=False)
         self.saveAction.setStyleSheet('''QPushButton { color:#222; padding:6px 8px; font-size:12pt;
-                                            border:1px inset #555; border-radius:4px;
+                                            border:1px inset #555; border-radius:6px;
                                             background-color:rgba(106, 69, 114, 0.25); }
                                          QPushButton:!enabled { background-color:rgba(0, 0, 0, 0.1);
                                             color:rgba(0, 0, 0, 0.3); border:1px inset #CCC; }
