@@ -145,10 +145,9 @@ class VidCutter(QWidget):
                                     cursor=Qt.PointingHandCursor, value=50,
                                     sizePolicy=QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Minimum),
                                     minimum=0, maximum=100, sliderMoved=self.setVolume)
-        self.volumeSlider.setStyleSheet('''
-QSlider::groove:horizontal { height:40px; }
-QSlider::sub-page:horizontal { border:1px outset #6A4572; background:#6A4572; margin:2px; }
-QSlider::handle:horizontal { image: url(:images/knob.png) no-repeat top left; }''')
+        self.volumeSlider.setStyleSheet('''QSlider::groove:horizontal { height:40px; }
+                                           QSlider::sub-page:horizontal { border:1px outset #6A4572; background:#6A4572; margin:2px; }
+                                           QSlider::handle:horizontal { image: url(:images/knob.png) no-repeat top left; }''')
 
         self.saveAction = QPushButton(self.parent, icon=self.saveIcon, text='Save Video', flat=False, toolTip='Save Video',
                                       clicked=self.cutVideo, cursor=Qt.PointingHandCursor, iconSize=QSize(30, 30),
@@ -560,8 +559,11 @@ QSlider::handle:horizontal { image: url(:images/knob.png) no-repeat top left; }'
                 self.progress.deleteLater()
                 self.complete()
                 self.saveAction.setEnabled(True)
+            self.unsetCursor()
+            self.saveAction.setDisabled(True)
             return True
         self.unsetCursor()
+        self.saveAction.setDisabled(True)
         return False
 
     def joinVideos(self, joinlist: list, filename: str) -> None:
@@ -593,32 +595,30 @@ QSlider::handle:horizontal { image: url(:images/knob.png) no-repeat top left; }'
         mbox = QMessageBox(windowTitle='Success', windowIcon=self.parent.windowIcon(), minimumWidth=500,
                            iconPixmap=self.successIcon.pixmap(48, 49), textFormat=Qt.RichText)
         mbox.setText('''
-                        <style>
-                            table.info { margin:8px; padding:4px 15px; }
-                            td.label { font-weight:bold; font-size:9pt; text-align:right; background-color:#444; color:#FFF; }
-                            td.value { background-color:#FFF !important; font-size:10pt; }
-                        </style>
-                        <p>Your video was successfully created.</p>
-                        <p align="center">
-                            <table class="info" cellpadding="6" cellspacing="0">
-                                <tr>
-                                    <td class="label"><b>Filename</b></td>
-                                    <td class="value" nowrap>%s</td>
-                                </tr>
-                                <tr>
-                                    <td class="label"><b>Size</b></td>
-                                    <td class="value">%s</td>
-                                </tr>
-                                <tr>
-                                    <td class="label"><b>Runtime</b></td>
-                                    <td class="value">%s</td>
-                                </tr>
-                            </table>
-                        </p>
-                        <p>How would you like to proceed?</p>'''
-                     % (QDir.toNativeSeparators(self.finalFilename),
-                        self.sizeof_fmt(int(info.size())),
-                        self.deltaToQTime(self.totalRuntime).toString(self.timeformat)))
+<style>
+    table.info { margin:8px; padding:4px 15px; }
+    td.label { font-weight:bold; font-size:9pt; text-align:right; background-color:#444; color:#FFF; }
+    td.value { background-color:#FFF !important; font-size:10pt; }
+</style>
+<p>Your video was successfully created.</p>
+<p align="center">
+    <table class="info" cellpadding="6" cellspacing="0">
+        <tr>
+            <td class="label"><b>Filename</b></td>
+            <td class="value" nowrap>%s</td>
+        </tr>
+        <tr>
+            <td class="label"><b>Size</b></td>
+            <td class="value">%s</td>
+        </tr>
+        <tr>
+            <td class="label"><b>Runtime</b></td>
+            <td class="value">%s</td>
+        </tr>
+    </table>
+</p>
+<p>How would you like to proceed?</p>''' % (QDir.toNativeSeparators(self.finalFilename), self.sizeof_fmt(int(info.size())),
+                                            self.deltaToQTime(self.totalRuntime).toString(self.timeformat)))
         play = mbox.addButton('Play', QMessageBox.AcceptRole)
         play.setIcon(self.completePlayIcon)
         play.clicked.connect(self.openResult)
