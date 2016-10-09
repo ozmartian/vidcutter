@@ -17,14 +17,9 @@ from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDial
                              QListWidgetItem, QMainWindow, QMenu, QMessageBox, QProgressDialog, QPushButton,
                              QSizePolicy, QSpacerItem, QSlider, QStyle, QToolBar, QVBoxLayout, QWidget, qApp)
 
-if __name__ == '__main__':
-    from videoslider import VideoSlider
-    from videoservice import VideoService
-    import resources
-else:    
-    from .videoslider import VideoSlider
-    from .videoservice import VideoService
-    from . import resources
+from videoservice import VideoService
+from videoslider import VideoSlider
+import resources
 
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
