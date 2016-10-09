@@ -8,10 +8,10 @@ import sys
 import time
 import warnings
 
-from PyQt5.QtCore import QDir, QEvent, QFile, QFileInfo, QModelIndex, QObject, QPoint, QSize, Qt, QTime, QUrl
+from PyQt5.QtCore import QDir, QEvent, QFile, QFileInfo, QModelIndex, QObject, QPoint, QSize, Qt, QTime, QUrl, pyqtSlot
 from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QDragEnterEvent, QDropEvent, QFont, QFontDatabase, QIcon,
-                         QKeyEvent, QKeySequence, QMouseEvent, QMovie, QPalette, QPixmap, QWheelEvent)
-from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer, QVideoFrame
+                         QKeyEvent, QMouseEvent, QMovie, QPalette, QPixmap, QWheelEvent)
+from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDialog, QHBoxLayout, QLabel, QListWidget,
                              QListWidgetItem, QMainWindow, QMenu, QMessageBox, QProgressDialog, QPushButton,
@@ -272,7 +272,8 @@ class VidCutter(QWidget):
     def setRunningTime(self, runtime: str) -> None:
         self.runtimeLabel.setText('<div align="right">%s</div>' % runtime)
 
-    def setNoVideoText(self, frame: QVideoFrame) -> None:
+    @pyqtSlot(int)
+    def setNoVideoText(self, frame: int) -> None:
         self.novideoLabel.setPixmap(self.novideoMovie.currentPixmap())
 
     def itemMenu(self, pos: QPoint) -> None:
@@ -428,6 +429,7 @@ class VidCutter(QWidget):
         totalTime = self.deltaToQTime(self.mediaPlayer.duration())
         self.timeCounter.setText('%s / %s' % (currentTime.toString(self.timeformat), totalTime.toString(self.timeformat)))
 
+    @pyqtSlot()
     def mediaStateChanged(self) -> None:
         if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
             self.playAction.setIcon(self.pauseIcon)
@@ -476,6 +478,7 @@ class VidCutter(QWidget):
         self.inCut = False
         self.renderTimes()
 
+    @pyqtSlot(QModelIndex, int, int, QModelIndex, int)
     def syncClipList(self, parent: QModelIndex, start: int, end: int, destination: QModelIndex, row: int) -> None:
         if start < row:
             index = row - 1
@@ -642,15 +645,18 @@ class VidCutter(QWidget):
             num /= 1024.0
         return "%.1f%s%s" % (num, 'Y', suffix)
 
+    @pyqtSlot()
     def openFolder(self) -> None:
         self.openResult(pathonly=True)
 
+    @pyqtSlot(bool)
     def openResult(self, pathonly: bool = False) -> None:
         self.startNew()
         if len(self.finalFilename) and os.path.exists(self.finalFilename):
             target = self.finalFilename if not pathonly else os.path.dirname(self.finalFilename)
             QDesktopServices.openUrl(QUrl.fromLocalFile(target))
 
+    @pyqtSlot()
     def startNew(self) -> None:
         self.unsetCursor()
         self.clearList()
@@ -713,6 +719,7 @@ class VidCutter(QWidget):
                 self.mediaPlayer.setPosition(obj.sliderPosition())
         return QWidget.eventFilter(self, obj, event)
 
+    @pyqtSlot(QMediaPlayer.Error)
     def handleError(self, error: QMediaPlayer.Error) -> None:
         self.unsetCursor()
         self.startNew()

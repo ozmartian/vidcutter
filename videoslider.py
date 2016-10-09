@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from PyQt5.QtCore import QPoint, Qt
+from PyQt5.QtCore import QPoint, Qt, pyqtSlot
 from PyQt5.QtGui import QColor, QKeyEvent, QPaintEvent, QWheelEvent
 from PyQt5.QtWidgets import QSlider, QStyle, QStyleOptionSlider, QStylePainter, QToolTip, qApp
 
@@ -61,6 +61,7 @@ QSlider::handle:horizontal {
     def setRestrictValue(self, value: int) -> None:
         self.restrictValue = value
 
+    @pyqtSlot(int)
     def restrictMove(self, value: int) -> None:
         if value < self.restrictValue:
             self.setSliderPosition(self.restrictValue)

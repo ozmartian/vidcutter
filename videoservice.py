@@ -6,7 +6,7 @@ import platform
 import shlex
 import sys
 
-from PyQt5.QtCore import QDir, QFileInfo, QObject, QProcess, QTemporaryFile
+from PyQt5.QtCore import QDir, QFileInfo, QObject, QProcess, QTemporaryFile, pyqtSlot
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QMessageBox
 
@@ -59,6 +59,7 @@ class VideoService(QObject):
                 return True
         return False
 
+    @pyqtSlot(QProcess.ProcessError)
     def cmdError(self, error: QProcess.ProcessError) -> None:
         if error != QProcess.Crashed:
             QMessageBox.critical(self.parent.parent, "Error calling an external process",
