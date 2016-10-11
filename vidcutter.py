@@ -147,18 +147,18 @@ class VidCutter(QWidget):
                                     minimum=0, maximum=100, sliderMoved=self.setVolume)
         self.volumeSlider.setStyleSheet('''QSlider::groove:horizontal { height:40px; }
                                            QSlider::sub-page:horizontal { border:1px outset #6A4572; background:#6A4572; margin:2px; }
-                                           QSlider::handle:horizontal { image: url(:images/knob.png) no-repeat top left; }''')
+                                           QSlider::handle:horizontal { image: url(:images/knob.png) no-repeat top left; width:20px; }''')
 
-        self.saveAction = QPushButton(self.parent, icon=self.saveIcon, text='Save Video', flat=False, toolTip='Save Video',
+        self.saveAction = QPushButton(self.parent, icon=self.saveIcon, text='Save Video', flat=True, toolTip='Save Video',
                                       clicked=self.cutVideo, cursor=Qt.PointingHandCursor, iconSize=QSize(30, 30),
                                       statusTip='Save video clips merged as a new video file', enabled=False)
-        self.saveAction.setStyleSheet('''QPushButton { color:#222; padding:6px 8px; font-size:12pt;
-                                            border:1px inset #555; border-radius:6px;
-                                            background-color:rgba(106, 69, 114, 0.25); }
+        self.saveAction.setStyleSheet('''QPushButton { color:#FFF; padding:8px; font-size:12pt;
+                                            border:1px inset #481953; border-radius:4px;
+                                            background-color:rgb(106, 69, 114); }
                                          QPushButton:!enabled { background-color:rgba(0, 0, 0, 0.1);
-                                            color:rgba(0, 0, 0, 0.3); border:1px inset #CCC; }
-                                         QPushButton:hover { background-color:rgba(255, 255, 255, 0.8); }
-                                         QPushButton:pressed { background-color:rgba(218, 218, 219, 0.8); }''')
+                                            color:rgba(0, 0, 0, 0.3); border:1px inset #CDCDCD; }
+                                         QPushButton:hover { background-color:rgba(255, 255, 255, 0.8); color:#444; }
+                                         QPushButton:pressed { background-color:rgba(218, 218, 219, 0.8); color:#444; }''')
 
         controlsLayout = QHBoxLayout()
         controlsLayout.addStretch(1)
