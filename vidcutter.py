@@ -94,7 +94,7 @@ class VidCutter(QWidget):
                                     contextMenuPolicy=Qt.CustomContextMenu, uniformItemSizes=True,
                                     iconSize=QSize(100, 700), dragDropMode=QAbstractItemView.InternalMove,
                                     alternatingRowColors=True, customContextMenuRequested=self.itemMenu,
-                                    styleSheet='QListView::item { margin:10px 5px; }')
+                                    dragEnabled=True, styleSheet='QListView::item { margin:10px 5px; }')
         self.cliplist.setFixedWidth(185)
         self.cliplist.model().rowsMoved.connect(self.syncClipList)
 
