@@ -17,9 +17,9 @@ from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDial
                              QListWidgetItem, QMainWindow, QMenu, QMessageBox, QProgressDialog, QPushButton,
                              QSizePolicy, QSpacerItem, QSlider, QStyle, QToolBar, QVBoxLayout, QWidget, qApp)
 
-from videoservice import VideoService
-from videoslider import VideoSlider
-import resources
+from vidcutter.videoservice import VideoService
+from vidcutter.videoslider import VideoSlider
+import vidcutter.resources
 
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
@@ -27,7 +27,7 @@ signal.signal(signal.SIGTERM, signal.SIG_DFL)
 warnings.filterwarnings('ignore')
 
 
-__version__ = '1.5.0'
+__version__ = '1.5.1'
 
 
 class VideoWidget(QVideoWidget):
@@ -133,7 +133,7 @@ class VidCutter(QWidget):
         self.videoplayerWidget = QWidget(self, visible=False)
         self.videoplayerWidget.setLayout(videoplayerLayout)
 
-        self.menuButton = QPushButton(icon=self.aboutIcon, flat=True, toolTip='About', statusTip='About',
+        self.menuButton = QPushButton(icon=self.aboutIcon, flat=True, toolTip='Menu', statusTip='Media + application information',
                                       iconSize=QSize(24, 24), cursor=Qt.PointingHandCursor)
         self.menuButton.setMenu(self.aboutMenu)
 
@@ -145,13 +145,13 @@ class VidCutter(QWidget):
                                     cursor=Qt.PointingHandCursor, value=50,
                                     sizePolicy=QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Minimum),
                                     minimum=0, maximum=100, sliderMoved=self.setVolume)
-        self.volumeSlider.setStyleSheet('''QSlider::groove:horizontal { height:40px; }
+        self.volumeSlider.setStyleSheet('''QSlider::groove:horizontal { position:absolute; top:20px; }
                                            QSlider::sub-page:horizontal { border:1px outset #6A4572; background:#6A4572; margin:2px; }
-                                           QSlider::handle:horizontal { image: url(:images/knob.png) no-repeat top left; width:20px; }''')
+                                           QSlider::handle:horizontal { image: url(:images/knob.png) no-repeat center center; width:20px; }''')
 
         self.saveAction = QPushButton(self.parent, icon=self.saveIcon, text='Save Video', flat=True, toolTip='Save Video',
                                       clicked=self.cutVideo, cursor=Qt.PointingHandCursor, iconSize=QSize(30, 30),
-                                      statusTip='Save video clips merged as a new video file', enabled=False)
+                                      statusTip='Cut and join media bits to form new media file as per the Clip Index', enabled=False)
         self.saveAction.setStyleSheet('''QPushButton { color:#FFF; padding:8px; font-size:12pt;
                                             border:1px inset #481953; border-radius:4px;
                                             background-color:rgb(106, 69, 114); }
@@ -167,7 +167,7 @@ class VidCutter(QWidget):
         controlsLayout.addWidget(self.saveAction)
         controlsLayout.addStretch(1)
         controlsLayout.addWidget(self.muteButton)
-        controlsLayout.addWidget(self.volumeSlider)
+        controlsLayout.addWidget(self.volumeSlider, Qt.AlignVCenter)
         controlsLayout.addSpacing(1)
         controlsLayout.addWidget(self.menuButton)
 
@@ -227,14 +227,14 @@ class VidCutter(QWidget):
         self.completeExitIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'complete-exit.png'))
 
     def initActions(self) -> None:
-        self.openAction = QAction(self.openIcon, 'Add Media', self, statusTip='Select media source',
+        self.openAction = QAction(self.openIcon, 'Add Media', self, statusTip='Add source media file',
                                   triggered=self.openFile)
-        self.playAction = QAction(self.playIcon, 'Play Video', self, statusTip='Play selected media',
+        self.playAction = QAction(self.playIcon, 'Play Media', self, statusTip='Play media file',
                                   triggered=self.playVideo, enabled=False)
         self.cutStartAction = QAction(self.cutStartIcon, 'Set Start', self, toolTip='Set Start',
-                                      statusTip='Set start marker', triggered=self.cutStart, enabled=False)
-        self.cutEndAction = QAction(self.cutEndIcon, 'Set End', self, statusTip='Set end marker', triggered=self.cutEnd,
-                                    enabled=False)
+                                      statusTip='Start from current media position', triggered=self.cutStart, enabled=False)
+        self.cutEndAction = QAction(self.cutEndIcon, 'Set End', self, toolTip='Set End',
+                                      statusTip='End at current media position', triggered=self.cutEnd, enabled=False)
         self.moveItemUpAction = QAction(self.upIcon, 'Move Up', self, statusTip='Move clip position up in list',
                                         triggered=self.moveItemUp, enabled=False)
         self.moveItemDownAction = QAction(self.downIcon, 'Move Down', self, statusTip='Move clip position down in list',
@@ -244,10 +244,10 @@ class VidCutter(QWidget):
                                         enabled=False)
         self.removeAllAction = QAction(self.removeAllIcon, 'Clear list', self, statusTip='Clear all clips from list',
                                        triggered=self.clearList, enabled=False)
-        self.aboutAction = QAction('About %s' % qApp.applicationName(), self, statusTip='Credits and acknowledgements',
+        self.aboutAction = QAction('About %s' % qApp.applicationName(), self, statusTip='Credits and licensing',
                                    triggered=self.aboutInfo)
         self.aboutQtAction = QAction('About Qt', self, statusTip='About Qt', triggered=qApp.aboutQt)
-        self.mediaInfoAction = QAction('Media Information', self, statusTip='Media information from loaded video file',
+        self.mediaInfoAction = QAction('Media Information', self, statusTip='View current media codec information',
                                        triggered=self.mediaInfo, enabled=False)
 
     def initToolbar(self) -> None:
@@ -529,44 +529,40 @@ class VidCutter(QWidget):
             return imagecap
 
     def cutVideo(self) -> bool:
-        self.setCursor(Qt.BusyCursor)
         clips = len(self.clipTimes)
         filename, filelist = '', []
         source = self.mediaPlayer.currentMedia().canonicalUrl().toLocalFile()
         _, sourceext = os.path.splitext(source)
         if clips > 0:
             self.finalFilename, _ = QFileDialog.getSaveFileName(self.parent, 'Save video', source, 'Video files (*%s)' % sourceext)
-            if self.finalFilename != '':
-                self.saveAction.setDisabled(True)
-                self.showProgress(clips)
-                file, ext = os.path.splitext(self.finalFilename)
-                index = 1
-                self.progress.setLabelText('Cutting video clips...')
-                qApp.processEvents()
-                for clip in self.clipTimes:
-                    duration = self.deltaToQTime(clip[0].msecsTo(clip[1])).toString(self.timeformat)
-                    filename = '%s_%s%s' % (file, '{0:0>2}'.format(index), ext)
-                    filelist.append(filename)
-                    self.videoService.cut(source, filename, clip[0].toString(self.timeformat), duration)
-                    index += 1
-                if len(filelist) > 1:
-                    self.joinVideos(filelist, self.finalFilename)
-                else:
-                    QFile.remove(self.finalFilename)
-                    QFile.rename(filename, self.finalFilename)
-                self.unsetCursor()
-                self.progress.setLabelText('Complete...')
-                qApp.processEvents()
-                self.saveAction.setEnabled(True)
-                self.progress.close()
-                self.progress.deleteLater()
-                self.complete()
-                self.saveAction.setEnabled(True)
-            self.unsetCursor()
+            if self.finalFilename == '':
+                return False
+            qApp.setOverrideCursor(Qt.BusyCursor)
             self.saveAction.setDisabled(True)
+            self.showProgress(clips)
+            file, ext = os.path.splitext(self.finalFilename)
+            index = 1
+            self.progress.setLabelText('Cutting media files...')
+            qApp.processEvents()
+            for clip in self.clipTimes:
+                duration = self.deltaToQTime(clip[0].msecsTo(clip[1])).toString(self.timeformat)
+                filename = '%s_%s%s' % (file, '{0:0>2}'.format(index), ext)
+                filelist.append(filename)
+                self.videoService.cut(source, filename, clip[0].toString(self.timeformat), duration)
+                index += 1
+            if len(filelist) > 1:
+                self.joinVideos(filelist, self.finalFilename)
+            else:
+                QFile.remove(self.finalFilename)
+                QFile.rename(filename, self.finalFilename)
+            self.progress.setLabelText('Complete...')
+            qApp.processEvents()
+            self.progress.close()
+            self.progress.deleteLater()
+            # self.saveAction.setEnabled(True)
+            qApp.restoreOverrideCursor()
+            self.complete()
             return True
-        self.unsetCursor()
-        self.saveAction.setDisabled(True)
         return False
 
     def joinVideos(self, joinlist: list, filename: str) -> None:
@@ -584,7 +580,7 @@ class VidCutter(QWidget):
         except:
             pass
 
-    def showProgress(self, steps: int, label: str = 'Processing video...') -> None:
+    def showProgress(self, steps: int, label: str = 'Analyzing media...') -> None:
         self.progress = QProgressDialog(label, None, 0, steps, self.parent, windowModality=Qt.ApplicationModal,
                                         windowIcon=self.parent.windowIcon(), minimumDuration=0, minimumWidth=500)
         self.progress.show()
@@ -658,7 +654,7 @@ class VidCutter(QWidget):
 
     @pyqtSlot()
     def startNew(self) -> None:
-        self.unsetCursor()
+        qApp.restoreOverrideCursor()
         self.clearList()
         self.seekSlider.setValue(0)
         self.seekSlider.setRange(0, 0)
@@ -721,7 +717,7 @@ class VidCutter(QWidget):
 
     @pyqtSlot(QMediaPlayer.Error)
     def handleError(self, error: QMediaPlayer.Error) -> None:
-        self.unsetCursor()
+        qApp.restoreOverrideCursor()
         self.startNew()
         if error == QMediaPlayer.ResourceError:
             QMessageBox.critical(self.parent, 'Error', 'Invalid media file detected at:<br/><br/><b>%s</b><br/><br/>%s'
@@ -747,8 +743,13 @@ class MainWindow(QMainWindow):
         self.setWindowIcon(self.cutter.appIcon)
         self.setMinimumSize(900, 650)
         self.resize(900, 650)
-        if len(sys.argv) >= 2:
-            self.cutter.loadFile(sys.argv[1])
+        try:
+            if len(sys.argv) >= 2:
+                self.cutter.loadFile(sys.argv[1])
+        except:
+            QMessageBox.critical(self, 'Error loading file', sys.exc_info()[0])
+            qApp.restoreOverrideCursor()
+            self.cutter.startNew()
 
     def dragEnterEvent(self, event: QDragEnterEvent) -> None:
         if event.mimeData().hasUrls():
@@ -772,8 +773,8 @@ def main():
     app.setApplicationVersion(__version__)
     app.setOrganizationDomain('http://vidcutter.ozmartians.com')
     app.setQuitOnLastWindowClosed(True)
-    win = MainWindow()
-    win.show()
+    vidcutter = MainWindow()
+    vidcutter.show()
     sys.exit(app.exec_())
 
 

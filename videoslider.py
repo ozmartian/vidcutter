@@ -90,10 +90,10 @@ QSlider::handle:horizontal {
                 x = round((((i - self.minimum()) / (self.maximum() - self.minimum()))
                            * (self.width() - handle.width()) + (handle.width() / 2.0))) - 1
                 if i % 500000 == 0:
-                    h = 12
+                    h = 10
                     z = 5
                 else:
-                    h = 6
+                    h = 5
                     z = 11
                 painter.setPen(QColor('#484640'))
                 if self.tickPosition() in (QSlider.TicksBothSides, QSlider.TicksAbove):

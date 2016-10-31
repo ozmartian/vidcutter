@@ -4,6 +4,7 @@
 import sys
 from codecs import open
 from os import path
+from platform import architecture
 from re import match
 
 from setuptools import setup
@@ -25,36 +26,35 @@ def get_description(filename='README.md'):
         return f.read()
 
 
+def get_package_data():
+    if sys.platform == 'win32':
+        return ['bin/x64/ffmpeg.exe'] if architecture()[0] == '64bit' else ['bin/x86/ffmpeg.exe']
+    return []
+
+
 setup(
-    name='tvlinker',
+    name='vidcutter',
     version=get_version(),
     author='Pete Alexandrou',
     author_email='pete@ozmartians.com',
-    description='''tv-release.net link scraper integrated with real-debrid to unrestrict links + supporting
-                   Aria2 RPC Daemon (windows/linux), pyLoad (windows/linux), Internet Download Manager (windows only).
-                   A built-in download accelerator is also available by default.''',
+    description='Video cutter & joiner',
     long_description=get_description(),
     url='https://github.com/ozmartian/vidcutter',
     license='GPLv3+',
 
-    packages=['tvlinker'],
+    packages=['vidcutter'],
 
-    package_dir={'tvlinker': '.'},
+    package_dir={'vidcutter': '.'},
 
     setup_requires=['setuptools >= 28.1.0'],
 
-    install_requires=['PyQt5 >= 5.7', 'beautifulsoup4 >= 4.5.1'] +
-                     ['lxml >= 3.6.4'] if 'win32' not in sys.platform else [],
+    install_requires=['PyQt5 >= 5.5'],
 
-    package_data={
-        'tvlinker': ['tvlinker.ini'] + ['tvlinker.ini.secret'] if path.exists('tvlinker.ini.secret') else []
-    },
+    package_data={ 'vidcutter': get_package_data() },
 
-    entry_points={
-        'gui_scripts': [
-            'tvlinker = tvlinker.tvlinker:main'
-        ]
-    },
+    entry_points={ 'gui_scripts': [ 'vidcutter = vidcutter.vidcutter:main' ] },
+
+    keywords='vidcutter audiovideoediting audiovideo videoeditor video videoedit pyqt Qt5 multimedia',
 
     classifiers=[
         'Development Status :: 4 - Beta',
@@ -65,11 +65,9 @@ setup(
         'Operating System :: Microsoft :: Windows',
         'Operating System :: POSIX :: Linux',
         'Topic :: Communications :: File Sharing',
-
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5'
     ],
-    keywords='tvlinker scraping tv-release filesharing'
 )

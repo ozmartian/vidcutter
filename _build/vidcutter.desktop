@@ -1,0 +1,12 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Application
+Name=VidCutter
+GenericName=Video Editor
+Comment=Video cutter & joiner
+Exec=/usr/bin/vidcutter %U
+Icon=vidcutter
+Terminal=false
+StartupNotify=true
+Categories=Qt;KDE;AudioVideo;Video;AudioVideoEditing;
+MimeType=application/x-vidcutter;
