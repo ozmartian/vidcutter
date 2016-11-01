@@ -27,7 +27,7 @@ signal.signal(signal.SIGTERM, signal.SIG_DFL)
 warnings.filterwarnings('ignore')
 
 
-__version__ = '1.5.1'
+__version__ = '1.6.0'
 
 
 class VideoWidget(QVideoWidget):

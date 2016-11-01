@@ -4,7 +4,6 @@
 import sys
 from codecs import open
 from os import path
-from platform import architecture
 from re import match
 
 from setuptools import setup
@@ -28,7 +27,7 @@ def get_description(filename='README.md'):
 
 def get_package_data():
     if sys.platform == 'win32':
-        return ['bin/x64/ffmpeg.exe'] if architecture()[0] == '64bit' else ['bin/x86/ffmpeg.exe']
+        return ['bin/x64/ffmpeg.exe', 'bin/x86/ffmpeg.exe']
     return []
 
 
@@ -69,5 +68,5 @@ setup(
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5'
-    ],
+    ]
 )
