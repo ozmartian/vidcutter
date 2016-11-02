@@ -1,5 +1,4 @@
 ![VidCutter](https://raw.githubusercontent.com/ozmartian/vidcutter/master/images/vidcutter.png)
-<h2 align="right">VidCutter</h2>
 
 <p><b>Homepage:</b> <a href="http://vidcutter.ozmartians.com" target=_blank">http://vidcutter.ozmartians.com</a></p>
 
