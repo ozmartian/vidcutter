@@ -36,7 +36,7 @@ setup(
     version=get_version(),
     author='Pete Alexandrou',
     author_email='pete@ozmartians.com',
-    description='Video cutter & joiner',
+    description='FFmpeg based video cutter & joiner with a modern PyQt5 GUI',
     long_description=get_description(),
     url='https://github.com/ozmartian/vidcutter',
     license='GPLv3+',
