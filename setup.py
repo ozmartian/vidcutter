@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import sys
+# import sys
 from codecs import open
 from os import path
 from re import match
 
 from setuptools import setup
-
 
 here = path.abspath(path.dirname(__file__))
 
@@ -25,10 +24,10 @@ def get_description(filename='README.md'):
         return f.read()
 
 
-def get_package_data():
-    if sys.platform == 'win32':
-        return ['bin/x64/ffmpeg.exe', 'bin/x86/ffmpeg.exe']
-    return []
+# def get_package_data():
+#     if sys.platform == 'win32':
+#         return ['bin/x64/ffmpeg.exe', 'bin/x86/ffmpeg.exe']
+#     return []
 
 
 setup(
@@ -49,9 +48,9 @@ setup(
 
     install_requires=['PyQt5 >= 5.5'],
 
-    package_data={ 'vidcutter': get_package_data() },
+    # package_data={ 'vidcutter': get_package_data() },
 
-    entry_points={ 'gui_scripts': [ 'vidcutter = vidcutter.vidcutter:main' ] },
+    entry_points={'gui_scripts': ['vidcutter = vidcutter.vidcutter:main']},
 
     keywords='vidcutter audiovideoediting audiovideo videoeditor video videoedit pyqt Qt5 multimedia',
 

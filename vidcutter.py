@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import codecs
 import os
 import platform
+import re
 import signal
 import sys
 import time
 import warnings
 
-from PyQt5.QtCore import QDir, QEvent, QFile, QFileInfo, QModelIndex, QObject, QPoint, QSize, Qt, QTime, QUrl, pyqtSlot
+from PyQt5.QtCore import (QDir, QEvent, QFile, QFileInfo, QModelIndex, QObject, QPoint, QSize, Qt, QTime,
+                          QUrl, pyqtSlot)
 from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QDragEnterEvent, QDropEvent, QFont, QFontDatabase, QIcon,
                          QKeyEvent, QMouseEvent, QMovie, QPalette, QPixmap, QWheelEvent)
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
@@ -17,9 +20,10 @@ from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDial
                              QListWidgetItem, QMainWindow, QMenu, QMessageBox, QProgressDialog, QPushButton,
                              QSizePolicy, QSpacerItem, QSlider, QStyle, QToolBar, QVBoxLayout, QWidget, qApp)
 
-from vidcutter.videoservice import VideoService
-from vidcutter.videoslider import VideoSlider
-import vidcutter.resources
+from downloader import Downloader, DownloaderUI
+from videoservice import VideoService
+from videoslider import VideoSlider
+import resources
 
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
@@ -27,7 +31,13 @@ signal.signal(signal.SIGTERM, signal.SIG_DFL)
 warnings.filterwarnings('ignore')
 
 
-__version__ = '1.7.0'
+def get_version(filename='__init__.py'):
+    here = os.path.abspath(os.path.dirname(__file__))
+    with codecs.open(os.path.join(here, filename), encoding='utf-8') as initfile:
+        for line in initfile.readlines():
+            m = re.match('__version__ *= *[\'](.*)[\']', line)
+            if m:
+                return m.group(1)
 
 
 class VideoWidget(QVideoWidget):
@@ -577,7 +587,7 @@ class VidCutter(QWidget):
             for file in joinlist:
                 if os.path.isfile(file):
                     QFile.remove(file)
-        except:
+        except:`
             pass
 
     def showProgress(self, steps: int, label: str = 'Analyzing media...') -> None:
@@ -735,6 +745,8 @@ class VidCutter(QWidget):
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
+        if sys.platfom == 'win32' and not self.ffmpeg_check():
+
         self.statusBar().showMessage('Ready')
         self.cutter = VidCutter(self)
         self.setCentralWidget(self.cutter)
@@ -750,6 +762,9 @@ class MainWindow(QMainWindow):
             QMessageBox.critical(self, 'Error loading file', sys.exc_info()[0])
             qApp.restoreOverrideCursor()
             self.cutter.startNew()
+
+    def ffmpeg_check(self) -> bool:
+        return os.path.exists(os.path.join(QFileInfo(__file__).absolutePath(), 'bin', 'ffmpeg.exe'))
 
     def dragEnterEvent(self, event: QDragEnterEvent) -> None:
         if event.mimeData().hasUrls():
@@ -767,14 +782,14 @@ class MainWindow(QMainWindow):
 
 
 def main():
+    qApp.setStyle('Fusion')
     app = QApplication(sys.argv)
-    app.setStyle('Fusion')
     app.setApplicationName('VidCutter')
-    app.setApplicationVersion(__version__)
+    app.setApplicationVersion(get_version())
     app.setOrganizationDomain('http://vidcutter.ozmartians.com')
     app.setQuitOnLastWindowClosed(True)
-    vidcutter = MainWindow()
-    vidcutter.show()
+    vidcutter_win = MainWindow()
+    vidcutter_win.show()
     sys.exit(app.exec_())
 
 
