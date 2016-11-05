@@ -13,9 +13,9 @@ from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QDragEnterEvent, QDropEv
                          QKeyEvent, QMouseEvent, QMovie, QPalette, QPixmap, QWheelEvent)
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
-from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDialog, QHBoxLayout, QLabel, QListWidget,
-                             QListWidgetItem, QMainWindow, QMenu, QMessageBox, QProgressDialog, QPushButton,
-                             QSizePolicy, QSpacerItem, QSlider, QStyle, QToolBar, QVBoxLayout, QWidget, qApp)
+from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDialog, QGroupBox, QHBoxLayout,
+                             QLabel, QListWidget, QListWidgetItem, QMainWindow, QMenu, QMessageBox, QProgressDialog,
+                             QPushButton, QSizePolicy, QSpacerItem, QSlider, QStyle, QToolBar, QVBoxLayout, QWidget, qApp)
 
 from vidcutter.videoservice import VideoService
 from vidcutter.videoslider import VideoSlider
