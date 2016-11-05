@@ -8,3 +8,12 @@ notifications:
 install:
 - python3 setup.py bdist_wheel
 script: echo "Less is more.."
+deploy:
+  provider: pypi
+  distributions: sdist bdist_wheel
+  user: ozmartian
+  password:
+    secure: hqZow36uoK8oGIScjj5VmvFkyrfpbxRTFx1tLZfp+kTjmCMfG3k6kFgcKCKskQGVofWNynMCH30iKuF07K5vMUFv+BrxBDKDw07bcWJ6UfW7vuDNsOosU3eRShzBBUsK9v90TCCFDFIFg4oImw6vvXYM1jO+fsO05quDEoZ4vHvVjaP+xri6h8P37h0swR2sQpOSh+JNaxYGLUQZWgXRlBVXCo0ShZs/iqixLaIVfNxKI/scGmO8KN4lk8mpw8q+jojS60VbzpvPZSu88Z4U2ndGQyhV1b2CJ96FPBnaofJNvKFIRx4sar8E7PIgy8lN7ZinDgFVO20JBLXEnTfR/qsOsrQKfpzSwQ2YSAaLua0MXTsTKam/tizVqW8AIyxoI2OEHaJ6tkUmOO31AgKvYBV74oaEp231/jdDHe2DqtOT+KmVB0kx7tnVOi48AhfXQA88jIhMFOjjobytDMBoGXXEjtshwAB1rS4ZadeFQHTKWbCvM53Btxggj9piipLbm0Wt1bf/sRtQEunVAtbRd74XQljsQyazcowafSnbImpUgCTGWJYYDM60mC1FxNZ6d8DEp9B+y0YFh9ajaTPn+DVDBkCEmeMSegtSCqDtdbj4GV1P2Aw3L3UcTP+SiHAF9VKz9Ga8Z6EsMVirbPR43TNXdcaSAGFSUANq0eKNwzw=
+  on:
+    branch: master
+    tags: true
