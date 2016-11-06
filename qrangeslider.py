@@ -18,7 +18,7 @@ class RangeSlider(QSlider):
 
     def __init__(self, *args):
         super(RangeSlider, self).__init__(*args)
-        # self.init_style()
+        self.init_style()
         self._low = self.minimum()
         self._high = self.maximum()
         self.pressed_control = QStyle.SC_None
@@ -43,47 +43,22 @@ class RangeSlider(QSlider):
 
     def init_style(self) -> None:
         self.setStyleSheet('''
-  QSlider::groove:horizontal {
-      border: 1px solid #999999;
-      height: 8px; /* the groove expands to the size of the slider by default. by giving it a height, it has a fixed size */
-      background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #B1B1B1, stop:1 #c4c4c4);
-      margin: 2px 0;
-  }
-
-  QSlider::handle:horizontal {
-      background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #b4b4b4, stop:1 #8f8f8f);
-      border: 1px solid #5c5c5c;
-      width: 18px;
-      margin: -2px 0; /* handle is placed by default on the contents rect of the groove. Expand outside the groove */
-      border-radius: 3px;
-  }
-            ''')
-#         self.setStyleSheet('''QSlider:horizontal { margin: 25px 0 15px; }
-# QSlider::groove:horizontal {
-#     border: 1px inset #999;
-#     height: 32px;
-#     background: #444 url(images/filmstrip.png) repeat-x;
-#     position: absolute;
-#     left: 0;
-#     right: 0;
-#     margin: 0;
-# }
-# QSlider::sub-page:horizontal {
-#     border: 1px inset #999;
-#     background: rgba(255, 255, 255, 0.6);
-#     height: 20px;
-#     position: absolute;
-#     left: 0;
-#     right: 0;
-#     margin: 0;
-# }
-# QSlider::handle:horizontal {
-#     border: none;
-#     background: url(images/handle.png) no-repeat top center;
-#     width: 20px;
-#     height: 58px;
-#     margin: -18px 0;
-# }''')
+ QSlider::groove:horizontal {
+     background: red;
+     position: absolute;
+     left: 4px; right: 4px;
+ }
+ QSlider::handle:horizontal {
+     height: 10px;
+     background: green;
+     margin: 0 -4px;
+ }
+ QSlider::add-page:horizontal {
+     background: white;
+ }
+ QSlider::sub-page:horizontal {
+     background: pink;
+ }''')
 
     def paintEvent(self, event):
         painter = QStylePainter(self)
@@ -91,13 +66,14 @@ class RangeSlider(QSlider):
         style = qApp.style()
         opt = QStyleOptionSlider()
         self.initStyleOption(opt)
+        # for i, value in enumerate([self._low, self._high]):
         for i, value in enumerate([self._low, self._high]):
             # Only draw the groove for the first slider so it doesn't get drawn
             # on top of the existing ones every time
-            if i == 0:
-                opt.subControls = QStyle.SC_SliderGroove | QStyle.SC_SliderHandle
-            else:
-                opt.subControls = QStyle.SC_SliderHandle
+            # if i == 0:
+            #    opt.subControls = QStyle.SC_SliderGroove | QStyle.SC_SliderHandle
+            #else:
+            opt.subControls = QStyle.SC_SliderGroove | QStyle.SC_SliderHandle
             if self.tickPosition() != self.NoTicks:
                 opt.subControls |= QStyle.SC_SliderTickmarks
             if self.pressed_control:
@@ -107,8 +83,8 @@ class RangeSlider(QSlider):
                 opt.activeSubControls = self.hover_control
             opt.sliderPosition = value
             opt.sliderValue = value
-            # style.drawComplexControl(QStyle.CC_Slider, opt, painter, self)
-            painter.drawComplexControl(QStyle.CC_Slider, opt)
+            style.drawComplexControl(QStyle.CC_Slider, opt, painter, self)
+            # painter.drawComplexControl(QStyle.CC_Slider, opt)
 
     def mousePressEvent(self, event):
         event.accept()
@@ -198,32 +174,25 @@ class RangeSlider(QSlider):
 
 if __name__ == "__main__":
     import sys
+
     app = QApplication(sys.argv)
-    app.setStyle('Fusion')
     slider = RangeSlider(Qt.Horizontal, None)
     slider.setTickInterval(1000)
-    slider.setTickPosition(QSlider.TicksBothSides)
+    slider.setTickPosition(QSlider.TicksAbove)
     slider.setMinimum(0)
     slider.setMaximum(10000)
     slider.setLow(2000)
     slider.setHigh(8000)
-    slider.setMinimumWidth(500)
-    slider.setStyleSheet('''
-  QSlider::groove:horizontal {
-      border: 1px solid #999999;
-      height: 8px; /* the groove expands to the size of the slider by default. by giving it a height, it has a fixed size */
-      background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #B1B1B1, stop:1 #c4c4c4);
-      margin: 2px 0;
-  }
-
-  QSlider::handle:horizontal {
-      background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #b4b4b4, stop:1 #8f8f8f);
-      border: 1px solid #5c5c5c;
-      width: 18px;
-      margin: -2px 0; /* handle is placed by default on the contents rect of the groove. Expand outside the groove */
-      border-radius: 3px;
-  }
-        ''')
     slider.sliderMoved.connect(print)
-    slider.show()
+
+    layout = QVBoxLayout()
+    layout.addStretch(1)
+    layout.addWidget(slider)
+    layout.addStretch(1)
+
+    dialog = QDialog(parent=None)
+    dialog.setLayout(layout)
+    dialog.resize(550, 65)
+    dialog.show()
+
     sys.exit(app.exec_())
