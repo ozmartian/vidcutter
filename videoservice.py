@@ -8,6 +8,7 @@ import sys
 
 from PyQt5.QtCore import QDir, QFileInfo, QObject, QProcess, QTemporaryFile, pyqtSlot
 from PyQt5.QtGui import QPixmap
+from PyQt5.QtMultimedia import QAbstractVideoBuffer, QAbstractVideoSurface, QVideoFrame
 from PyQt5.QtWidgets import QMessageBox
 
 

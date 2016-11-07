@@ -1,25 +1,29 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import codecs
 import os
 import platform
+import re
 import signal
 import sys
 import time
 import warnings
 
-from PyQt5.QtCore import QDir, QEvent, QFile, QFileInfo, QModelIndex, QObject, QPoint, QSize, Qt, QTime, QUrl, pyqtSlot
+from PyQt5.QtCore import (QDir, QEvent, QFile, QFileInfo, QModelIndex, QObject, QPoint, QSize, Qt, QTime,
+                          QUrl, pyqtSlot)
 from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QDragEnterEvent, QDropEvent, QFont, QFontDatabase, QIcon,
                          QKeyEvent, QMouseEvent, QMovie, QPalette, QPixmap, QWheelEvent)
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
-from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDialog, QGroupBox, QHBoxLayout,
-                             QLabel, QListWidget, QListWidgetItem, QMainWindow, QMenu, QMessageBox, QProgressDialog,
-                             QPushButton, QSizePolicy, QSpacerItem, QSlider, QStyle, QToolBar, QVBoxLayout, QWidget, qApp)
+from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDialog, QHBoxLayout, QLabel, QListWidget,
+                             QListWidgetItem, QMainWindow, QMenu, QMessageBox, QProgressDialog, QPushButton,
+                             QSizePolicy, QSpacerItem, QSlider, QStyle, QToolBar, QVBoxLayout,QWidget, qApp)
 
-from vidcutter.videoservice import VideoService
-from vidcutter.videoslider import VideoSlider
-import vidcutter.resources
+from ffmpeginstaller import Installer, InstallerUI
+from videoservice import VideoService
+from videoslider import VideoSlider
+import resources
 
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
@@ -27,7 +31,13 @@ signal.signal(signal.SIGTERM, signal.SIG_DFL)
 warnings.filterwarnings('ignore')
 
 
-__version__ = '1.6.0'
+def get_version(filename='__init__.py'):
+    here = os.path.abspath(os.path.dirname(__file__))
+    with codecs.open(os.path.join(here, filename), encoding='utf-8') as initfile:
+        for line in initfile.readlines():
+            m = re.match('__version__ *= *[\'](.*)[\']', line)
+            if m:
+                return m.group(1)
 
 
 class VideoWidget(QVideoWidget):
@@ -234,7 +244,7 @@ class VidCutter(QWidget):
         self.cutStartAction = QAction(self.cutStartIcon, 'Set Start', self, toolTip='Set Start',
                                       statusTip='Start from current media position', triggered=self.cutStart, enabled=False)
         self.cutEndAction = QAction(self.cutEndIcon, 'Set End', self, toolTip='Set End',
-                                      statusTip='End at current media position', triggered=self.cutEnd, enabled=False)
+                                    statusTip='End at current media position', triggered=self.cutEnd, enabled=False)
         self.moveItemUpAction = QAction(self.upIcon, 'Move Up', self, statusTip='Move clip position up in list',
                                         triggered=self.moveItemUp, enabled=False)
         self.moveItemDownAction = QAction(self.downIcon, 'Move Down', self, statusTip='Move clip position down in list',
@@ -710,7 +720,7 @@ class VidCutter(QWidget):
     def eventFilter(self, obj: QObject, event: QEvent) -> bool:
         if event.type() == QEvent.MouseButtonRelease and isinstance(obj, VideoSlider):
             if obj.objectName() == 'VideoSlider' and (
-                        self.mediaPlayer.isVideoAvailable() or self.mediaPlayer.isAudioAvailable()):
+                self.mediaPlayer.isVideoAvailable() or self.mediaPlayer.isAudioAvailable()):
                 obj.setValue(QStyle.sliderValueFromPosition(obj.minimum(), obj.maximum(), event.x(), obj.width()))
                 self.mediaPlayer.setPosition(obj.sliderPosition())
         return QWidget.eventFilter(self, obj, event)
@@ -731,6 +741,21 @@ class VidCutter(QWidget):
     def closeEvent(self, event: QCloseEvent) -> None:
         self.parent.closeEvent(event)
 
+    def ffmpeg_install(self) -> None:
+        qApp.setOverrideCursor(Qt.BusyCursor)
+        # qApp.processEvents()
+        self.installer_win = InstallerUI(parent=self.parent)
+        self.installer = Installer()
+        self.installer.installation_complete.connect(self.installer_win.install_complete)
+        self.installer.update_progressint.connect(self.installer_win.update_progress)
+        self.installer.update_progresstxt.connect(self.installer_win.update_progress_label)
+        self.installer.start()
+        self.installer_win.show()
+
+    def ffmpeg_check(self) -> bool:
+        ffmpeg_info = QFileInfo(os.path.join(QFileInfo(__file__).absolutePath(), 'bin', 'ffmpeg.exe'))
+        return ffmpeg_info.isExecutable()
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -743,6 +768,12 @@ class MainWindow(QMainWindow):
         self.setWindowIcon(self.cutter.appIcon)
         self.setMinimumSize(900, 650)
         self.resize(900, 650)
+        self.show()
+        # if sys.platform == 'win32' and not self.ffmpeg_check():
+        qApp.processEvents()
+        if not self.cutter.ffmpeg_check():
+            self.cutter.ffmpeg_install()
+            return
         try:
             if len(sys.argv) >= 2:
                 self.cutter.loadFile(sys.argv[1])
@@ -767,14 +798,15 @@ class MainWindow(QMainWindow):
 
 
 def main():
+    import sys
+    if sys.platform == 'win32':
+        qApp.setStyle('Fusion')
     app = QApplication(sys.argv)
-    app.setStyle('Fusion')
     app.setApplicationName('VidCutter')
-    app.setApplicationVersion(__version__)
+    app.setApplicationVersion(get_version())
     app.setOrganizationDomain('http://vidcutter.ozmartians.com')
     app.setQuitOnLastWindowClosed(True)
-    vidcutter = MainWindow()
-    vidcutter.show()
+    vidcutter_win = MainWindow()
     sys.exit(app.exec_())
 
 
