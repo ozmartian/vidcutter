@@ -733,8 +733,8 @@ class VidCutter(QWidget):
 
 
 class MainWindow(QMainWindow):
-    def __init__(self, parent=None):
-        super(MainWindow, self).__init__(parent)
+    def __init__(self):
+        super(MainWindow, self).__init__()
         self.statusBar().showMessage('Ready')
         self.cutter = VidCutter(self)
         self.setCentralWidget(self.cutter)
