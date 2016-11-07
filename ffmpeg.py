@@ -100,7 +100,7 @@ class FFmpegInstaller(QThread):
 
     def install(self) -> bool:
         # try:
-        self.progress_text.emit('Installing file on your system')
+        self.progresstxt_signal.emit('Installing file on your system')
         with ZipFile(os.path.join(self.install_path, 'ffmpeg.zip')) as archive:
             archive.extract('ffmpeg.exe', path=self.install_path)
         return QFileInfo('%s/ffmpeg.exe' % self.install_path).isExecutable()
@@ -109,4 +109,4 @@ class FFmpegInstaller(QThread):
         #     return False
 
     def run(self) -> None:
-        self.done.emit(self.download() and self.install(), self.error)
+        self.dlcomplete_signal.emit(self.download() and self.install(), self.error)

@@ -41,9 +41,9 @@ setup(
 
     setup_requires=['setuptools >= 28.1.0'],
 
-    install_requires=['PyQt5 >= 5.5'],
+    install_requires=['PyQt5 >= 5.7'],
 
-    package_data={ 'vidcutter': ['vidcutter.ico'] },
+    package_data={ 'vidcutter': ['vidcutter.ico', 'images/vidcutter.ico', 'images/vidcutter.png'] },
 
     entry_points={ 'gui_scripts': [ 'vidcutter = vidcutter.vidcutter:main' ] },
 

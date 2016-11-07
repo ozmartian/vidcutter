@@ -244,7 +244,7 @@ class VidCutter(QWidget):
         self.cutStartAction = QAction(self.cutStartIcon, 'Set Start', self, toolTip='Set Start',
                                       statusTip='Start from current media position', triggered=self.cutStart, enabled=False)
         self.cutEndAction = QAction(self.cutEndIcon, 'Set End', self, toolTip='Set End',
-                                      statusTip='End at current media position', triggered=self.cutEnd, enabled=False)
+                                    statusTip='End at current media position', triggered=self.cutEnd, enabled=False)
         self.moveItemUpAction = QAction(self.upIcon, 'Move Up', self, statusTip='Move clip position up in list',
                                         triggered=self.moveItemUp, enabled=False)
         self.moveItemDownAction = QAction(self.downIcon, 'Move Down', self, statusTip='Move clip position down in list',
@@ -720,7 +720,7 @@ class VidCutter(QWidget):
     def eventFilter(self, obj: QObject, event: QEvent) -> bool:
         if event.type() == QEvent.MouseButtonRelease and isinstance(obj, VideoSlider):
             if obj.objectName() == 'VideoSlider' and (
-                        self.mediaPlayer.isVideoAvailable() or self.mediaPlayer.isAudioAvailable()):
+                self.mediaPlayer.isVideoAvailable() or self.mediaPlayer.isAudioAvailable()):
                 obj.setValue(QStyle.sliderValueFromPosition(obj.minimum(), obj.maximum(), event.x(), obj.width()))
                 self.mediaPlayer.setPosition(obj.sliderPosition())
         return QWidget.eventFilter(self, obj, event)
@@ -771,9 +771,9 @@ class MainWindow(QMainWindow):
         # qApp.processEvents()
         self.installer_win = FFmpegInstallerUI(parent=self)
         self.installer = FFmpegInstaller()
-        self.installer.done.connect(self.installer_win.install_complete)
-        self.installer.progress_int.connect(self.installer_win.update_progress)
-        self.installer.progress_text.connect(self.installer_win.update_progress_label)
+        self.installer.dlcomplete_signal.connect(self.installer_win.install_complete, None)
+        self.installer.progressnum_signal.connect(self.installer_win.update_progress)
+        self.installer.progresstxt_signal.connect(self.installer_win.update_progress_label)
         self.installer.start()
         self.installer_win.show()
 
