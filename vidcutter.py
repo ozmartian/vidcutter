@@ -10,6 +10,8 @@ import sys
 import time
 import warnings
 
+from zipfile import ZipFile
+
 from PyQt5.QtCore import (QDir, QEvent, QFile, QFileInfo, QModelIndex, QObject, QPoint, QSize, Qt, QTime,
                           QUrl, pyqtSlot)
 from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QDragEnterEvent, QDropEvent, QFont, QFontDatabase, QIcon,
@@ -18,12 +20,11 @@ from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDialog, QHBoxLayout, QLabel, QListWidget,
                              QListWidgetItem, QMainWindow, QMenu, QMessageBox, QProgressDialog, QPushButton,
-                             QSizePolicy, QSpacerItem, QSlider, QStyle, QToolBar, QVBoxLayout, QWidget, qApp)
+                             QSizePolicy, QSpacerItem, QSlider, QStyle, QToolBar, QVBoxLayout,QWidget, qApp)
 
-from ffmpeg import FFmpegInstaller, FFmpegInstallerUI
-from videoservice import VideoService
-from videoslider import VideoSlider
-import resources
+from vidcutter.videoservice import VideoService
+from vidcutter.videoslider import VideoSlider
+import vidcutter.resources
 
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
@@ -743,8 +744,8 @@ class VidCutter(QWidget):
 
 
 class MainWindow(QMainWindow):
-    def __init__(self, parent=None):
-        super(MainWindow, self).__init__(parent)
+    def __init__(self):
+        super(MainWindow, self).__init__()
         self.statusBar().showMessage('Ready')
         self.cutter = VidCutter(self)
         self.setCentralWidget(self.cutter)
@@ -754,10 +755,10 @@ class MainWindow(QMainWindow):
         self.setMinimumSize(900, 650)
         self.resize(900, 650)
         self.show()
-        # if sys.platform == 'win32' and not self.ffmpeg_check():
-        if not self.ffmpeg_check():
-            self.ffmpeg_install()
-            return
+        if sys.platform == 'win32' and not self.ffmpeg_check():
+            if not self.ffmpeg_install():
+                pass
+                # TODO: handle error on Windows with no ffmpeg.zip
         try:
             if len(sys.argv) >= 2:
                 self.cutter.loadFile(sys.argv[1])
@@ -766,20 +767,17 @@ class MainWindow(QMainWindow):
             qApp.restoreOverrideCursor()
             self.cutter.startNew()
 
-    def ffmpeg_install(self) -> None:
-        qApp.setOverrideCursor(Qt.BusyCursor)
-        # qApp.processEvents()
-        self.installer_win = FFmpegInstallerUI(parent=self)
-        self.installer = FFmpegInstaller()
-        self.installer.dlcomplete_signal.connect(self.installer_win.install_complete, None)
-        self.installer.progressnum_signal.connect(self.installer_win.update_progress)
-        self.installer.progresstxt_signal.connect(self.installer_win.update_progress_label)
-        self.installer.start()
-        self.installer_win.show()
+    def ffmpeg_install(self) -> bool:
+        ffmpeg_zip = os.path.join(QFileInfo(__file__).absolutePath(), 'bin', 'ffmpeg.zip')
+        if os.path.exists(ffmpeg_zip):
+            with ZipFile(ffmpeg_zip) as archive:
+                archive.extract('ffmpeg.exe', path=os.path.dirname(ffmpeg_zip))
+            os.remove(ffmpeg_zip)
+            return True
+        return False
 
     def ffmpeg_check(self) -> bool:
-        ffmpeg_info = QFileInfo(os.path.join(QFileInfo(__file__).absolutePath(), 'bin', 'ffmpeg.exe'))
-        return ffmpeg_info.isExecutable()
+        return os.path.exists(os.path.join(QFileInfo(__file__).absolutePath(), 'bin', 'ffmpeg.exe'))
 
     def dragEnterEvent(self, event: QDragEnterEvent) -> None:
         if event.mimeData().hasUrls():
@@ -797,8 +795,10 @@ class MainWindow(QMainWindow):
 
 
 def main():
+    import sys
+    if sys.platform == 'win32':
+        qApp.setStyle('Fusion')
     app = QApplication(sys.argv)
-    qApp.setStyle('Fusion')
     app.setApplicationName('VidCutter')
     app.setApplicationVersion(get_version())
     app.setOrganizationDomain('http://vidcutter.ozmartians.com')
