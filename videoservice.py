@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import os
-import platform
 import shlex
 import sys
 
@@ -18,9 +17,8 @@ class VideoService(QObject):
         self.parent = parent
         self.consoleOutput = ''
         self.backend = 'ffmpeg'
-        self.arch = 'x86' if platform.architecture()[0] == '32bit' else 'x64'
         if sys.platform == 'win32':
-            self.backend = os.path.join(self.getAppPath(), 'bin', self.arch, 'ffmpeg.exe')
+            self.backend = os.path.join(self.getAppPath(), 'bin', 'ffmpeg.exe')
         self.initProc()
 
     def initProc(self) -> None:
