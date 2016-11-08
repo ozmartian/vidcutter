@@ -13,4 +13,5 @@ vidcutter.*/
 vidcutter
 vidcutter.exe
 .openshift
-bin/ffmpeg.*
+bin/ffmpeg.exe
+bin/ffmpeg.zip
