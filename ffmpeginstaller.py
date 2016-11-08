@@ -9,8 +9,8 @@ from zipfile import ZipFile
 from PyQt5.QtCore import QFileInfo, QThread, Qt, pyqtSignal, pyqtSlot
 from PyQt5.QtWidgets import QDialog, QMessageBox, QLabel, QProgressBar, QVBoxLayout, qApp
 
-ffmpeg_64bit = '%s/support/ffmpeg-win32/x64/ffmpeg.zip' % qApp.organizationDomain()
-ffmpeg_32bit = '%s/support/ffmpeg-win32/x86/ffmpeg.zip' % qApp.organizationDomain()
+ffmpeg_64bit = 'http://vidcutter.ozmartians.com/support/ffmpeg-win32/x64/ffmpeg.zip'
+ffmpeg_32bit = 'http://vidcutter.ozmartians.com/support/ffmpeg-win32/x86/ffmpeg.zip'
 
 
 class InstallerUI(QDialog):
@@ -21,7 +21,7 @@ class InstallerUI(QDialog):
         self.setMinimumWidth(485)
         self.setContentsMargins(20, 20, 20, 20)
         layout = QVBoxLayout()
-        self.progress_label = QLabel(alignment=Qt.AlignCenter)
+        self.progress_label = QLabel(alignment=Qt.AlignCenter, text='Starting download of FFmpeg...')
         self.progress = QProgressBar(self, minimum=0, maximum=100)
         layout.addWidget(self.progress_label)
         layout.addWidget(self.progress)
@@ -74,12 +74,14 @@ class Installer(QThread):
 
     def download(self) -> bool:
         # try:
+        if not os.path.exists(self.install_path):
+            os.mkdir(self.install_path)
         conn = urlopen(self.zip_install)
         fileSize = int(conn.info()['Content-Length'])
-        fileName = os.path.basename(os.path.join(self.install_path, 'ffmpeg.exe'))
+        fileName = 'ffmpeg.zip'
         downloadedChunk = 0
-        blockSize = 2048
-        with open(self.zip_install, 'wb') as sura:
+        blockSize = 1024
+        with open(self.install_path, 'wb') as sura:
             while True:
                 chunk = conn.read(blockSize)
                 if not chunk:
@@ -88,8 +90,8 @@ class Installer(QThread):
                 sura.write(chunk)
                 progress = float(downloadedChunk) / fileSize
                 self.update_progressint.emit(progress * 100)
-                progressTxt = '<b>Downloading {0}</b>:<br/>{1} [{2:.2%}] <b>of</b> {3} <b>bytes</b>.'\
-                    . format(fileName, downloadedChunk, progress, fileSize)
+                progressTxt = '<b>Downloading {0}</b>:<br/>{1} <b>of</b> {2} <b>bytes</b> [{3:.3%}]'\
+                    . format(fileName, downloadedChunk, fileSize, progress)
                 self.update_progresstxt.emit(progressTxt)
         return True
         # except:

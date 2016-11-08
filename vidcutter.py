@@ -770,7 +770,6 @@ class MainWindow(QMainWindow):
         self.resize(900, 650)
         self.show()
         # if sys.platform == 'win32' and not self.ffmpeg_check():
-        qApp.processEvents()
         if not self.cutter.ffmpeg_check():
             self.cutter.ffmpeg_install()
             return
