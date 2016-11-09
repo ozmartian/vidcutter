@@ -795,9 +795,7 @@ class MainWindow(QMainWindow):
 
 
 def main():
-    import sys
-    if sys.platform == 'win32':
-        qApp.setStyle('Fusion')
+    qApp.setStyle('Fusion')
     app = QApplication(sys.argv)
     app.setApplicationName('VidCutter')
     app.setApplicationVersion(get_version())
