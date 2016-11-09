@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cd ..
+rm -rf build dist vidcutter.egg-info
+python setup.py bdist_wheel
+twine upload dist/*
