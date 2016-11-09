@@ -795,8 +795,8 @@ class MainWindow(QMainWindow):
 
 
 def main():
-    qApp.setStyle('Fusion')
     app = QApplication(sys.argv)
+    qApp.setStyle('Fusion')
     app.setApplicationName('VidCutter')
     app.setApplicationVersion(get_version())
     app.setOrganizationDomain('http://vidcutter.ozmartians.com')
