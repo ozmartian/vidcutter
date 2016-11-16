@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import codecs
 import os
 import platform
 import re
@@ -22,23 +21,14 @@ from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDial
                              QListWidgetItem, QMainWindow, QMenu, QMessageBox, QProgressDialog, QPushButton,
                              QSizePolicy, QSpacerItem, QSlider, QStyle, QToolBar, QVBoxLayout,QWidget, qApp)
 
-from vidcutter.videoservice import VideoService
-from vidcutter.videoslider import VideoSlider
-import vidcutter.resources
+from videoservice import VideoService
+from videoslider import VideoSlider
+import resources
 
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 signal.signal(signal.SIGTERM, signal.SIG_DFL)
 warnings.filterwarnings('ignore')
-
-
-def get_version(filename='__init__.py'):
-    here = os.path.abspath(os.path.dirname(__file__))
-    with codecs.open(os.path.join(here, filename), encoding='utf-8') as initfile:
-        for line in initfile.readlines():
-            m = re.match('__version__ *= *[\'](.*)[\']', line)
-            if m:
-                return m.group(1)
 
 
 class VideoWidget(QVideoWidget):
@@ -793,12 +783,20 @@ class MainWindow(QMainWindow):
         self.deleteLater()
         qApp.quit()
 
+    @staticmethod
+    def get_version(filename: str = '__init__.py') -> str:
+        with open(os.path.join(QFileInfo(__file__).absolutePath(), filename), 'r') as initfile:
+            for line in initfile.readlines():   
+                m = re.match('__version__ *= *[\'](.*)[\']', line)
+                if m:
+                    return m.group(1)
+
 
 def main():
     app = QApplication(sys.argv)
     qApp.setStyle('Fusion')
     app.setApplicationName('VidCutter')
-    app.setApplicationVersion(get_version())
+    app.setApplicationVersion(MainWindow.get_version())
     app.setOrganizationDomain('http://vidcutter.ozmartians.com')
     app.setQuitOnLastWindowClosed(True)
     vidcutter_win = MainWindow()
