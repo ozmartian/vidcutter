@@ -8,7 +8,6 @@ import signal
 import sys
 import time
 import warnings
-
 from zipfile import ZipFile
 
 from PyQt5.QtCore import (QDir, QEvent, QFile, QFileInfo, QModelIndex, QObject, QPoint, QSize, Qt, QTime,
@@ -17,14 +16,19 @@ from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QDragEnterEvent, QDropEv
                          QKeyEvent, QMouseEvent, QMovie, QPalette, QPixmap, QWheelEvent)
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
-from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDialog, QHBoxLayout, QLabel, QListWidget,
+from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QDialog, QFileDialog, QHBoxLayout, QLabel, QListWidget,
                              QListWidgetItem, QMainWindow, QMenu, QMessageBox, QProgressDialog, QPushButton,
-                             QSizePolicy, QSpacerItem, QSlider, QStyle, QToolBar, QVBoxLayout,QWidget, qApp)
+                             QSizePolicy, QStyleFactory, QSlider, QStyle, QToolBar, QVBoxLayout, QWidget, qApp)
+from qtawesome import icon
 
-from videoservice import VideoService
-from videoslider import VideoSlider
-import resources
-
+try:
+    from vidcutter.videoservice import VideoService
+    from vidcutter.videoslider import VideoSlider
+    import vidcutter.resources
+except ImportError:
+    from videoservice import VideoService
+    from videoslider import VideoSlider
+    import resources
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 signal.signal(signal.SIGTERM, signal.SIG_DFL)
@@ -65,7 +69,10 @@ class VidCutter(QWidget):
 
         QFontDatabase.addApplicationFont(os.path.join(self.getAppPath(), 'fonts', 'DroidSansMono.ttf'))
         QFontDatabase.addApplicationFont(os.path.join(self.getAppPath(), 'fonts', 'HelveticaNeue.ttf'))
-        qApp.setFont(QFont('Helvetica Neue', 10))
+
+        fontSize = 12 if sys.platform == 'darwin' else 10
+        appFont = QFont('Helvetica Neue', fontSize, 300)
+        qApp.setFont(appFont)
 
         self.clipTimes = []
         self.inCut = False
@@ -78,9 +85,12 @@ class VidCutter(QWidget):
         self.initIcons()
         self.initActions()
 
-        self.toolbar = QToolBar(floatable=False, movable=False, iconSize=QSize(28, 28),
-                                toolButtonStyle=Qt.ToolButtonTextUnderIcon,
-                                styleSheet='QToolBar QToolButton { min-width:82px; margin-left:10px; margin-right:10px; font-size:14px; }')
+        self.toolbar = QToolBar(floatable=False, movable=False, iconSize=QSize(36, 36),
+                                toolButtonStyle=Qt.ToolButtonTextBesideIcon)
+        self.toolbar.setStyle(QStyleFactory.create('Fusion'))
+
+        self.toolbar.setStyleSheet('QToolBar QToolButton { min-width:90px; font-size:14px; font-weight:400; }')
+
         self.initToolbar()
 
         self.aboutMenu, self.cliplistMenu = QMenu(), QMenu()
@@ -95,13 +105,15 @@ class VidCutter(QWidget):
                                     contextMenuPolicy=Qt.CustomContextMenu, uniformItemSizes=True,
                                     iconSize=QSize(100, 700), dragDropMode=QAbstractItemView.InternalMove,
                                     alternatingRowColors=True, customContextMenuRequested=self.itemMenu,
-                                    dragEnabled=True, styleSheet='QListView::item { margin:10px 5px; }')
+                                    dragEnabled=True)
+        self.cliplist.setStyleSheet('''border-radius:0; border:none; border-left:1px solid #B9B9B9;
+                                       border-right:1px solid #B9B9B9;''')
         self.cliplist.setFixedWidth(185)
         self.cliplist.model().rowsMoved.connect(self.syncClipList)
 
         listHeader = QLabel(pixmap=QPixmap(os.path.join(self.getAppPath(), 'images', 'clipindex.png'), 'PNG'),
                             alignment=Qt.AlignCenter)
-        listHeader.setStyleSheet('''padding:5px; padding-top:8px; border:1px solid #b9b9b9; border-bottom:none;
+        listHeader.setStyleSheet('''padding:5px; padding-top:8px; border:1px solid #b9b9b9;
                                     background-color:qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFF,
                                     stop: 0.5 #EAEAEA, stop: 0.6 #EAEAEA stop:1 #FFF);''')
 
@@ -109,7 +121,7 @@ class VidCutter(QWidget):
         self.runtimeLabel.setStyleSheet('''font-family:Droid Sans Mono; font-size:10pt; color:#FFF;
                                            background:rgb(106, 69, 114) url(:images/runtime.png)
                                            no-repeat left center; padding:2px; padding-right:8px;
-                                           border:1px solid #b9b9b9; border-top:none;''')
+                                           border:1px solid #b9b9b9;''')
 
         self.clipindexLayout = QVBoxLayout(spacing=0)
         self.clipindexLayout.setContentsMargins(0, 0, 0, 0)
@@ -124,7 +136,8 @@ class VidCutter(QWidget):
 
         self.timeCounter = QLabel('00:00:00 / 00:00:00', autoFillBackground=True, alignment=Qt.AlignCenter,
                                   sizePolicy=QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed))
-        self.timeCounter.setStyleSheet('color:#FFF; background:#000; font-family:Droid Sans Mono; font-size:10.5pt; padding:4px;')
+        self.timeCounter.setStyleSheet(
+            'color:#FFF; background:#000; font-family:Droid Sans Mono; font-size:10.5pt; padding:4px;')
 
         videoplayerLayout = QVBoxLayout(spacing=0)
         videoplayerLayout.setContentsMargins(0, 0, 0, 0)
@@ -134,41 +147,32 @@ class VidCutter(QWidget):
         self.videoplayerWidget = QWidget(self, visible=False)
         self.videoplayerWidget.setLayout(videoplayerLayout)
 
-        self.menuButton = QPushButton(icon=self.aboutIcon, flat=True, toolTip='Menu', statusTip='Media + application information',
+        self.menuButton = QPushButton(icon=self.aboutIcon, flat=True, toolTip='Menu',
+                                      statusTip='Media + application information',
                                       iconSize=QSize(24, 24), cursor=Qt.PointingHandCursor)
         self.menuButton.setMenu(self.aboutMenu)
 
         self.muteButton = QPushButton(icon=self.unmuteIcon, flat=True, toolTip='Mute',
-                                      statusTip='Toggle audio mute',
+                                      statusTip='Toggle audio mute', iconSize=QSize(16, 16),
                                       cursor=Qt.PointingHandCursor, clicked=self.muteAudio)
 
         self.volumeSlider = QSlider(Qt.Horizontal, toolTip='Volume', statusTip='Adjust volume level',
                                     cursor=Qt.PointingHandCursor, value=50,
-                                    sizePolicy=QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Minimum),
                                     minimum=0, maximum=100, sliderMoved=self.setVolume)
-        self.volumeSlider.setStyleSheet('''QSlider::groove:horizontal { position:absolute; top:20px; }
-                                           QSlider::sub-page:horizontal { border:1px outset #6A4572; background:#6A4572; margin:2px; }
-                                           QSlider::handle:horizontal { image: url(:images/knob.png) no-repeat center center; width:20px; }''')
+        if sys.platform.startswith('linux'):
+            self.volumeSlider.setStyleSheet('''QSlider::groove:horizontal { position:absolute; left:4px; right:4px; }
+                                               QSlider::handle:horizontal { image:url(:images/knob.png); margin:0 -4px; }
+                                               QSlider::sub-page:horizontal { background-color:#6A4572; border-radius:3px; }''')
 
-        self.saveAction = QPushButton(self.parent, icon=self.saveIcon, text='Save Video', flat=True, toolTip='Save Video',
-                                      clicked=self.cutVideo, cursor=Qt.PointingHandCursor, iconSize=QSize(30, 30),
-                                      statusTip='Cut and join media bits to form new media file as per the Clip Index', enabled=False)
-        self.saveAction.setStyleSheet('''QPushButton { color:#FFF; padding:8px; font-size:12pt;
-                                            border:1px inset #481953; border-radius:4px;
-                                            background-color:rgb(106, 69, 114); }
-                                         QPushButton:!enabled { background-color:rgba(0, 0, 0, 0.1);
-                                            color:rgba(0, 0, 0, 0.3); border:1px inset #CDCDCD; }
-                                         QPushButton:hover { background-color:rgba(255, 255, 255, 0.8); color:#444; }
-                                         QPushButton:pressed { background-color:rgba(218, 218, 219, 0.8); color:#444; }''')
+        volumeLayout = QHBoxLayout()
+        volumeLayout.addWidget(self.muteButton)
+        volumeLayout.addWidget(self.volumeSlider)
 
         controlsLayout = QHBoxLayout()
         controlsLayout.addStretch(1)
         controlsLayout.addWidget(self.toolbar)
-        controlsLayout.addSpacerItem(QSpacerItem(20, 1))
-        controlsLayout.addWidget(self.saveAction)
         controlsLayout.addStretch(1)
-        controlsLayout.addWidget(self.muteButton)
-        controlsLayout.addWidget(self.volumeSlider, Qt.AlignVCenter)
+        controlsLayout.addLayout(volumeLayout)
         controlsLayout.addSpacing(1)
         controlsLayout.addWidget(self.menuButton)
 
@@ -208,37 +212,41 @@ class VidCutter(QWidget):
 
     def initIcons(self) -> None:
         self.appIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'vidcutter.png'))
-        self.openIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'addmedia.png'))
-        self.playIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'play.png'))
-        self.pauseIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'pause.png'))
-        self.cutStartIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'cut-start.png'))
-        self.cutEndIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'cut-end.png'))
-        self.saveIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'save.png'))
+        self.openIcon = icon('fa.plus-circle', color='#444444')
+        self.playIcon = icon('fa.play-circle', color='#444444')
+        self.pauseIcon = icon('fa.pause-circle', color='#444444')
+        self.cutStartIcon = icon('fa.scissors', color='#444444')
+        self.cutEndIcon = icon('fa.scissors', color='#444444')
+        endicon = self.cutEndIcon.pixmap(QSize(36, 36)).toImage()
+        self.cutEndIcon = QIcon(QPixmap.fromImage(endicon.mirrored(horizontal=True, vertical=False)))
+        self.saveIcon = icon('fa.video-camera', color='#6A4572')
         self.muteIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'muted.png'))
         self.unmuteIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'unmuted.png'))
-        self.upIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'up.png'))
-        self.downIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'down.png'))
-        self.removeIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'remove.png'))
-        self.removeAllIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'remove-all.png'))
+        self.upIcon = icon('ei.caret-up', color='#444444')
+        self.downIcon = icon('ei.caret-down', color='#444444')
+        self.removeIcon = icon('ei.remove', color='#B41D1D')
+        self.removeAllIcon = icon('ei.trash', color='#B41D1D')
         self.successIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'success.png'))
-        self.aboutIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'about.png'))
-        self.completePlayIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'complete-play.png'))
-        self.completeOpenIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'complete-open.png'))
-        self.completeRestartIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'complete-restart.png'))
-        self.completeExitIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'complete-exit.png'))
+        self.aboutIcon = icon('ei.info-circle', color='#6A4572')
+        self.completePlayIcon = icon('fa.play', color='#444444')
+        self.completeOpenIcon = icon('fa.folder-open', color='#444444')
+        self.completeRestartIcon = icon('fa.retweet', color='#444444')
+        self.completeExitIcon = icon('fa.sign-out', color='#444444')
 
     def initActions(self) -> None:
-        self.openAction = QAction(self.openIcon, 'Add Media', self, statusTip='Add source media file',
+        self.openAction = QAction(self.openIcon, 'Add', self, statusTip='Add source media file',
                                   triggered=self.openFile)
-        self.playAction = QAction(self.playIcon, 'Play Media', self, statusTip='Play media file',
+        self.playAction = QAction(self.playIcon, 'Play', self, statusTip='Play media file',
                                   triggered=self.playVideo, enabled=False)
-        self.cutStartAction = QAction(self.cutStartIcon, 'Set Start', self, toolTip='Set Start',
-                                      statusTip='Start from current media position', triggered=self.cutStart, enabled=False)
-        self.cutEndAction = QAction(self.cutEndIcon, 'Set End', self, toolTip='Set End',
-                                    statusTip='End at current media position', triggered=self.cutEnd, enabled=False)
-        self.moveItemUpAction = QAction(self.upIcon, 'Move Up', self, statusTip='Move clip position up in list',
+        self.cutStartAction = QAction(self.cutStartIcon, 'Start', self, statusTip='Set clip start marker',
+                                      triggered=self.cutStart, enabled=False)
+        self.cutEndAction = QAction(self.cutEndIcon, 'End', self, statusTip='Set clip end marker',
+                                    triggered=self.cutEnd, enabled=False)
+        self.saveAction = QAction(self.saveIcon, 'Save', self, toolTip='Save Video',
+                                  statusTip='Save clips to a new video file', triggered=self.cutVideo, enabled=False)
+        self.moveItemUpAction = QAction(self.upIcon, 'Move up', self, statusTip='Move clip position up in list',
                                         triggered=self.moveItemUp, enabled=False)
-        self.moveItemDownAction = QAction(self.downIcon, 'Move Down', self, statusTip='Move clip position down in list',
+        self.moveItemDownAction = QAction(self.downIcon, 'Move down', self, statusTip='Move clip position down in list',
                                           triggered=self.moveItemDown, enabled=False)
         self.removeItemAction = QAction(self.removeIcon, 'Remove clip', self,
                                         statusTip='Remove selected clip from list', triggered=self.removeItem,
@@ -254,10 +262,9 @@ class VidCutter(QWidget):
     def initToolbar(self) -> None:
         self.toolbar.addAction(self.openAction)
         self.toolbar.addAction(self.playAction)
-        self.toolbar.addSeparator()
         self.toolbar.addAction(self.cutStartAction)
         self.toolbar.addAction(self.cutEndAction)
-        self.toolbar.addSeparator()
+        self.toolbar.addAction(self.saveAction)
 
     def initMenus(self) -> None:
         self.aboutMenu.addAction(self.mediaInfoAction)
@@ -350,6 +357,7 @@ class VidCutter(QWidget):
     a { color:#441d4e; text-decoration:none; font-weight:bold; }
     a:hover { text-decoration:underline; }
 </style>
+<div style="min-width:650px;">
 <p style="font-size:26pt; font-weight:bold;">%s</p>
 <p>
     <span style="font-size:13pt;"><b>Version: %s</b></span>
@@ -373,8 +381,8 @@ class VidCutter(QWidget):
 <p style="font-size:11px;">
     This software uses libraries from the <a href="https://www.ffmpeg.org">FFmpeg</a> project under the
     <a href="https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html">LGPLv2.1</a>
-</p>''' % (qApp.applicationName(), qApp.applicationVersion(), platform.architecture()[0],
-           qApp.organizationDomain(), qApp.organizationDomain())
+</p></div>''' % (qApp.applicationName(), qApp.applicationVersion(), platform.architecture()[0],
+                 qApp.organizationDomain(), qApp.organizationDomain())
         QMessageBox.about(self.parent, 'About %s' % qApp.applicationName(), about_html)
 
     def openFile(self) -> None:
@@ -407,10 +415,10 @@ class VidCutter(QWidget):
     def playVideo(self) -> None:
         if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
             self.mediaPlayer.pause()
-            self.playAction.setText('Play Video')
+            self.playAction.setText('Play')
         else:
             self.mediaPlayer.play()
-            self.playAction.setText('Pause Video')
+            self.playAction.setText('Pause')
 
     def initMediaControls(self, flag: bool = True) -> None:
         self.playAction.setEnabled(flag)
@@ -428,7 +436,8 @@ class VidCutter(QWidget):
         self.seekSlider.setValue(progress)
         currentTime = self.deltaToQTime(progress)
         totalTime = self.deltaToQTime(self.mediaPlayer.duration())
-        self.timeCounter.setText('%s / %s' % (currentTime.toString(self.timeformat), totalTime.toString(self.timeformat)))
+        self.timeCounter.setText(
+            '%s / %s' % (currentTime.toString(self.timeformat), totalTime.toString(self.timeformat)))
 
     @pyqtSlot()
     def mediaStateChanged(self) -> None:
@@ -442,13 +451,12 @@ class VidCutter(QWidget):
 
     def muteAudio(self, muted: bool) -> None:
         if self.mediaPlayer.isMuted():
-            self.mediaPlayer.setMuted(not self.mediaPlayer.isMuted())
             self.muteButton.setIcon(self.unmuteIcon)
             self.muteButton.setToolTip('Mute')
         else:
-            self.mediaPlayer.setMuted(not self.mediaPlayer.isMuted())
             self.muteButton.setIcon(self.muteIcon)
             self.muteButton.setToolTip('Unmute')
+        self.mediaPlayer.setMuted(not self.mediaPlayer.isMuted())
 
     def setVolume(self, volume: int) -> None:
         self.mediaPlayer.setVolume(volume)
@@ -460,8 +468,8 @@ class VidCutter(QWidget):
         self.clipTimes.append([self.deltaToQTime(self.mediaPlayer.position()), '', self.captureImage()])
         self.cutStartAction.setDisabled(True)
         self.cutEndAction.setEnabled(True)
-        self.seekSlider.setRestrictValue(self.seekSlider.value() + 1000)
-        self.mediaPlayer.setPosition(self.seekSlider.restrictValue)
+        self.seekSlider.setRestrictValue(self.seekSlider.value())
+        # self.mediaPlayer.setPosition(self.seekSlider.restrictValue)
         self.inCut = True
         self.renderTimes()
 
@@ -490,7 +498,6 @@ class VidCutter(QWidget):
 
     def renderTimes(self) -> None:
         self.cliplist.clear()
-        self.seekSlider.setCutMode(self.inCut)
         if len(self.clipTimes) > 4:
             self.cliplist.setFixedWidth(200)
         else:
@@ -509,6 +516,7 @@ class VidCutter(QWidget):
             marker = QLabel('''<style>b { font-size:8pt; } p { margin:5px; }</style>
                             <p><b>START</b><br/>%s</p><p><b>END</b><br/>%s</p>'''
                             % (item[0].toString(self.timeformat), endItem))
+            marker.setStyleSheet('border:none;')
             self.cliplist.setItemWidget(listitem, marker)
             listitem.setFlags(Qt.ItemIsSelectable | Qt.ItemIsDragEnabled | Qt.ItemIsEnabled)
         if len(self.clipTimes) and not self.inCut:
@@ -522,7 +530,7 @@ class VidCutter(QWidget):
         secs = millisecs / 1000
         return QTime((secs / 3600) % 60, (secs / 60) % 60, secs % 60, (secs * 1000) % 1000)
 
-    def captureImage(self) -> None:
+    def captureImage(self) -> QPixmap:
         frametime = self.deltaToQTime(self.mediaPlayer.position()).addSecs(1).toString(self.timeformat)
         inputfile = self.mediaPlayer.currentMedia().canonicalUrl().toLocalFile()
         imagecap = self.videoService.capture(inputfile, frametime)
@@ -535,16 +543,16 @@ class VidCutter(QWidget):
         source = self.mediaPlayer.currentMedia().canonicalUrl().toLocalFile()
         _, sourceext = os.path.splitext(source)
         if clips > 0:
-            self.finalFilename, _ = QFileDialog.getSaveFileName(self.parent, 'Save video', source, 'Video files (*%s)' % sourceext)
+            self.finalFilename, _ = QFileDialog.getSaveFileName(self.parent, 'Save video', source,
+                                                                'Video files (*%s)' % sourceext)
             if self.finalFilename == '':
                 return False
             qApp.setOverrideCursor(Qt.BusyCursor)
             self.saveAction.setDisabled(True)
-            self.showProgress(clips)
+            self.showProgress()
             file, ext = os.path.splitext(self.finalFilename)
             index = 1
-            self.progress.setLabelText('Cutting media files...')
-            qApp.processEvents()
+            self.updateProgress('Cutting media files...', 50)
             for clip in self.clipTimes:
                 duration = self.deltaToQTime(clip[0].msecsTo(clip[1])).toString(self.timeformat)
                 filename = '%s_%s%s' % (file, '{0:0>2}'.format(index), ext)
@@ -556,11 +564,9 @@ class VidCutter(QWidget):
             else:
                 QFile.remove(self.finalFilename)
                 QFile.rename(filename, self.finalFilename)
-            self.progress.setLabelText('Complete...')
-            qApp.processEvents()
+            self.updateProgress('Complete...', 100)
             self.progress.close()
             self.progress.deleteLater()
-            # self.saveAction.setEnabled(True)
             qApp.restoreOverrideCursor()
             self.complete()
             return True
@@ -581,14 +587,15 @@ class VidCutter(QWidget):
         except:
             pass
 
-    def showProgress(self, steps: int, label: str = 'Analyzing media...') -> None:
-        self.progress = QProgressDialog(label, None, 0, steps, self.parent, windowModality=Qt.ApplicationModal,
+    def showProgress(self, label: str = 'Analyzing media...') -> None:
+        self.progress = QProgressDialog(label, None, 0, 100, self.parent, windowModality=Qt.ApplicationModal,
                                         windowIcon=self.parent.windowIcon(), minimumDuration=0, minimumWidth=500)
         self.progress.show()
-        for i in range(steps):
-            self.progress.setValue(i)
-            qApp.processEvents()
-            time.sleep(1)
+
+    def updateProgress(self, label: str, value: int):
+        self.progress.setLabelText(label)
+        self.progress.setValue(value)
+        qApp.processEvents()
 
     def complete(self) -> None:
         info = QFileInfo(self.finalFilename)
@@ -597,8 +604,8 @@ class VidCutter(QWidget):
         mbox.setText('''
 <style>
     table.info { margin:8px; padding:4px 15px; }
-    td.label { font-weight:bold; font-size:9pt; text-align:right; background-color:#444; color:#FFF; }
-    td.value { background-color:#FFF !important; font-size:10pt; }
+    td.label { font-weight:bold; font-size:9pt; text-align:right; }
+    td.value { font-size:10pt; }
 </style>
 <p>Your video was successfully created.</p>
 <p align="center">
@@ -617,8 +624,9 @@ class VidCutter(QWidget):
         </tr>
     </table>
 </p>
-<p>How would you like to proceed?</p>''' % (QDir.toNativeSeparators(self.finalFilename), self.sizeof_fmt(int(info.size())),
-                                            self.deltaToQTime(self.totalRuntime).toString(self.timeformat)))
+<p>How would you like to proceed?</p>''' % (
+        QDir.toNativeSeparators(self.finalFilename), self.sizeof_fmt(int(info.size())),
+        self.deltaToQTime(self.totalRuntime).toString(self.timeformat)))
         play = mbox.addButton('Play', QMessageBox.AcceptRole)
         play.setIcon(self.completePlayIcon)
         play.clicked.connect(self.openResult)
@@ -633,6 +641,7 @@ class VidCutter(QWidget):
         new.clicked.connect(self.startNew)
         mbox.setDefaultButton(new)
         mbox.setEscapeButton(new)
+        mbox.adjustSize()
         mbox.exec_()
 
     def sizeof_fmt(self, num: float, suffix: chr = 'B') -> str:
@@ -711,7 +720,7 @@ class VidCutter(QWidget):
     def eventFilter(self, obj: QObject, event: QEvent) -> bool:
         if event.type() == QEvent.MouseButtonRelease and isinstance(obj, VideoSlider):
             if obj.objectName() == 'VideoSlider' and (
-                self.mediaPlayer.isVideoAvailable() or self.mediaPlayer.isAudioAvailable()):
+                        self.mediaPlayer.isVideoAvailable() or self.mediaPlayer.isAudioAvailable()):
                 obj.setValue(QStyle.sliderValueFromPosition(obj.minimum(), obj.maximum(), event.x(), obj.width()))
                 self.mediaPlayer.setPosition(obj.sliderPosition())
         return QWidget.eventFilter(self, obj, event)
@@ -741,7 +750,7 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.cutter)
         self.setAcceptDrops(True)
         self.setWindowTitle('%s' % qApp.applicationName())
-        self.setWindowIcon(self.cutter.appIcon)
+        qApp.setWindowIcon(self.cutter.appIcon)
         self.setMinimumSize(900, 650)
         self.resize(900, 650)
         self.show()
@@ -784,9 +793,20 @@ class MainWindow(QMainWindow):
         qApp.quit()
 
     @staticmethod
+    def get_style(label: bool=False) -> str:
+        style = 'Fusion'
+        if sys.platform.startswith('linux'):
+            installed_styles = QStyleFactory.keys()
+            for stl in ('Breeze', 'GTK+'):
+                if stl.lower() in map(str.lower, installed_styles):
+                    style = stl
+                    break
+        return style
+
+    @staticmethod
     def get_version(filename: str = '__init__.py') -> str:
         with open(os.path.join(QFileInfo(__file__).absolutePath(), filename), 'r') as initfile:
-            for line in initfile.readlines():   
+            for line in initfile.readlines():
                 m = re.match('__version__ *= *[\'](.*)[\']', line)
                 if m:
                     return m.group(1)
@@ -794,12 +814,12 @@ class MainWindow(QMainWindow):
 
 def main():
     app = QApplication(sys.argv)
-    qApp.setStyle('Fusion')
+    qApp.setStyle(MainWindow.get_style())
     app.setApplicationName('VidCutter')
     app.setApplicationVersion(MainWindow.get_version())
     app.setOrganizationDomain('http://vidcutter.ozmartians.com')
     app.setQuitOnLastWindowClosed(True)
-    vidcutter_win = MainWindow()
+    vidcutter = MainWindow()
     sys.exit(app.exec_())
 
 

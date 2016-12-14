@@ -9,8 +9,8 @@ from re import match
 
 from setuptools import setup
 
-
 here = path.abspath(path.dirname(__file__))
+
 
 def get_version(filename='__init__.py'):
     with open(path.join(here, filename), encoding='utf-8') as initfile:
@@ -23,6 +23,7 @@ def get_version(filename='__init__.py'):
 def get_description(filename='README.md'):
     with open(path.join(here, filename), encoding='utf-8') as f:
         return f.read()
+
 
 def get_package_data():
     if sys.platform == 'win32':
@@ -45,7 +46,7 @@ setup(
     author_email='pete@ozmartians.com',
     description='FFmpeg based video cutter & joiner with a modern PyQt5 GUI',
     long_description=get_description(),
-    url='https://github.com/ozmartian/vidcutter',
+    url='https://vidcutter.ozmartians.com',
     license='GPLv3+',
 
     packages=['vidcutter'],
@@ -54,11 +55,11 @@ setup(
 
     setup_requires=['setuptools >= 28.1.0'],
 
-    install_requires=['PyQt5 >= 5.5'],
+    install_requires=['PyQt5 >= 5.5', 'qtawesome >= 0.3.3'],
 
-    package_data={ 'vidcutter': get_package_data() },
+    package_data={'vidcutter': get_package_data()},
 
-    entry_points={ 'gui_scripts': [ 'vidcutter = vidcutter.vidcutter:main' ] },
+    entry_points={'gui_scripts': ['vidcutter = vidcutter.vidcutter:main']},
 
     keywords='vidcutter audiovideoediting audiovideo videoeditor video videoedit pyqt Qt5 multimedia',
 

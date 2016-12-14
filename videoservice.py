@@ -7,7 +7,6 @@ import sys
 
 from PyQt5.QtCore import QDir, QFileInfo, QObject, QProcess, QTemporaryFile, pyqtSlot
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtMultimedia import QAbstractVideoBuffer, QAbstractVideoSurface, QVideoFrame
 from PyQt5.QtWidgets import QMessageBox
 
 
@@ -42,7 +41,7 @@ class VideoService(QObject):
         return capres
 
     def cut(self, source: str, output: str, frametime: str, duration: str) -> bool:
-        args = '-i "%s" -ss %s -t %s -vcodec copy -acodec copy -y "%s"'\
+        args = '-i "%s" -ss %s -t %s -vcodec copy -acodec copy -y "%s"' \
                % (source, frametime, duration, QDir.fromNativeSeparators(output))
         return self.cmdExec(self.backend, args)
 

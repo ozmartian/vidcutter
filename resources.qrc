@@ -2,34 +2,16 @@
   <qresource>
     <file>fonts/DroidSansMono.ttf</file>
     <file>fonts/HelveticaNeue.ttf</file>
-    <file>images/about.png</file>
-    <file>images/addmedia.png</file>
     <file>images/clipindex.png</file>
-    <file>images/complete-exit.png</file>
-    <file>images/complete-open.png</file>
-    <file>images/complete-play.png</file>
-    <file>images/complete-restart.png</file>
-    <file>images/cut-start.png</file>
-    <file>images/cut-end.png</file>
-    <file>images/down.png</file>
-    <file>images/end.png</file>
     <file>images/filmstrip.png</file>
     <file>images/handle.png</file>
     <file>images/knob.png</file>
     <file>images/muted.png</file>
     <file>images/novideo.png</file>
     <file>images/novideotext.gif</file>
-    <file>images/open.png</file>
-    <file>images/pause.png</file>
-    <file>images/play.png</file>
-    <file>images/remove-all.png</file>
-    <file>images/remove.png</file>
     <file>images/runtime.png</file>
-    <file>images/save.png</file>
-    <file>images/start.png</file>
     <file>images/success.png</file>
     <file>images/unmuted.png</file>
-    <file>images/up.png</file>
     <file>images/vidcutter.ico</file>
     <file>images/vidcutter.png</file>
   </qresource>
