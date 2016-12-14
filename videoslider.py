@@ -20,7 +20,6 @@ class VideoSlider(QSlider):
         self.setFocus()
         self.initStyle()
         self.restrictValue = 0
-        self.posLocal, self.posGlobal = 0, 0
         self.valueChanged.connect(self.restrictMove)
 
     def initStyle(self, selected: bool=False, margin: str='0') -> None:
@@ -64,7 +63,8 @@ QSlider::handle:horizontal {
         if value > 0:
             opt = QStyleOptionSlider()
             self.initStyleOption(opt)
-            handle = self.style().subControlRect(QStyle.CC_Slider, opt, QStyle.SC_SliderHandle, self)
+            handle = self.style().subControlRect(
+                QStyle.CC_Slider, opt, QStyle.SC_SliderHandle, self)
             self.initStyle(True, '%ipx' % (handle.x() + 5))
         else:
             self.initStyle()
@@ -78,7 +78,8 @@ QSlider::handle:horizontal {
         painter = QStylePainter(self)
         opt = QStyleOptionSlider()
         self.initStyleOption(opt)
-        handle = self.style().subControlRect(QStyle.CC_Slider, opt, QStyle.SC_SliderHandle, self)
+        handle = self.style().subControlRect(
+            QStyle.CC_Slider, opt, QStyle.SC_SliderHandle, self)
         interval = self.tickInterval()
         if interval == 0:
             interval = self.pageStep()

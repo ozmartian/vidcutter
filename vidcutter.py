@@ -258,6 +258,8 @@ class VidCutter(QWidget):
         self.aboutQtAction = QAction('About Qt', self, statusTip='About Qt', triggered=qApp.aboutQt)
         self.mediaInfoAction = QAction('Media Information', self, statusTip='View current media codec information',
                                        triggered=self.mediaInfo, enabled=False)
+        self.updateCheckAction = QAction('Check for Updates...', self, statusTip='Check for application updates',
+                                       triggered=self.updateCheck)
 
     def initToolbar(self) -> None:
         self.toolbar.addAction(self.openAction)
@@ -268,6 +270,7 @@ class VidCutter(QWidget):
 
     def initMenus(self) -> None:
         self.aboutMenu.addAction(self.mediaInfoAction)
+        self.aboutMenu.addAction(self.updateCheckAction)
         self.aboutMenu.addSeparator()
         self.aboutMenu.addAction(self.aboutQtAction)
         self.aboutMenu.addAction(self.aboutAction)
@@ -586,6 +589,9 @@ class VidCutter(QWidget):
                     QFile.remove(file)
         except:
             pass
+
+    def updateCheck(self) -> bool:
+        return False
 
     def showProgress(self, label: str = 'Analyzing media...') -> None:
         self.progress = QProgressDialog(label, None, 0, 100, self.parent, windowModality=Qt.ApplicationModal,
