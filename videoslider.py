@@ -25,12 +25,13 @@ class VideoSlider(QSlider):
     def initStyle(self, selected: bool=False, margin: str='0') -> None:
         bground = 'transparent'
         if selected:
-            bground = 'rgba(255, 255, 255, 0.75)'
+            # bground = 'rgba(255, 255, 255, 0.75)'
+            bground = 'rgba(225 , 198, 227, 0.75)'
         self.setStyleSheet('''QSlider:horizontal { margin: 25px 0 15px; }
 QSlider::groove:horizontal {
     border: 1px inset #999;
     height: 32px;
-    background: #444 url(:images/filmstrip.png) repeat-x;
+    background: #222 url(:images/filmstrip.png) repeat-x;
     position: absolute;
     left: 4px;
     right: 4px;

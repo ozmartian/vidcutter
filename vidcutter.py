@@ -67,8 +67,8 @@ class VidCutter(QWidget):
         self.videoWidget = VideoWidget()
         self.videoService = VideoService(self)
 
-        QFontDatabase.addApplicationFont(os.path.join(self.getAppPath(), 'fonts', 'DroidSansMono.ttf'))
-        QFontDatabase.addApplicationFont(os.path.join(self.getAppPath(), 'fonts', 'HelveticaNeue.ttf'))
+        QFontDatabase.addApplicationFont(MainWindow.get_path('fonts/DroidSansMono.ttf'))
+        QFontDatabase.addApplicationFont(MainWindow.get_path('fonts/HelveticaNeue.ttf'))
 
         fontSize = 12 if sys.platform == 'darwin' else 10
         appFont = QFont('Helvetica Neue', fontSize, 300)
@@ -111,7 +111,7 @@ class VidCutter(QWidget):
         self.cliplist.setFixedWidth(185)
         self.cliplist.model().rowsMoved.connect(self.syncClipList)
 
-        listHeader = QLabel(pixmap=QPixmap(os.path.join(self.getAppPath(), 'images', 'clipindex.png'), 'PNG'),
+        listHeader = QLabel(pixmap=QPixmap(MainWindow.get_path('images/clipindex.png'), 'PNG'),
                             alignment=Qt.AlignCenter)
         listHeader.setStyleSheet('''padding:5px; padding-top:8px; border:1px solid #b9b9b9;
                                     background-color:qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFF,
@@ -192,7 +192,7 @@ class VidCutter(QWidget):
 
     def initNoVideo(self) -> None:
         novideoImage = QLabel(alignment=Qt.AlignCenter, autoFillBackground=False,
-                              pixmap=QPixmap(os.path.join(self.getAppPath(), 'images', 'novideo.png'), 'PNG'),
+                              pixmap=QPixmap(MainWindow.get_path('images/novideo.png'), 'PNG'),
                               sizePolicy=QSizePolicy(QSizePolicy.Expanding, QSizePolicy.MinimumExpanding))
         novideoImage.setBackgroundRole(QPalette.Dark)
         novideoImage.setContentsMargins(0, 20, 0, 20)
@@ -203,7 +203,7 @@ class VidCutter(QWidget):
         novideoLayout = QVBoxLayout(spacing=0)
         novideoLayout.addWidget(novideoImage)
         novideoLayout.addWidget(self.novideoLabel, alignment=Qt.AlignTop)
-        self.novideoMovie = QMovie(os.path.join(self.getAppPath(), 'images', 'novideotext.gif'))
+        self.novideoMovie = QMovie(MainWindow.get_path('images/novideotext.gif'))
         self.novideoMovie.frameChanged.connect(self.setNoVideoText)
         self.novideoMovie.start()
         self.novideoWidget = QWidget(self, autoFillBackground=True)
@@ -211,7 +211,7 @@ class VidCutter(QWidget):
         self.novideoWidget.setLayout(novideoLayout)
 
     def initIcons(self) -> None:
-        self.appIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'vidcutter.png'))
+        self.appIcon = QIcon(MainWindow.get_path('images/vidcutter.png'))
         self.openIcon = icon('fa.plus-circle', color='#444444')
         self.playIcon = icon('fa.play-circle', color='#444444')
         self.pauseIcon = icon('fa.pause-circle', color='#444444')
@@ -220,13 +220,13 @@ class VidCutter(QWidget):
         endicon = self.cutEndIcon.pixmap(QSize(36, 36)).toImage()
         self.cutEndIcon = QIcon(QPixmap.fromImage(endicon.mirrored(horizontal=True, vertical=False)))
         self.saveIcon = icon('fa.video-camera', color='#6A4572')
-        self.muteIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'muted.png'))
-        self.unmuteIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'unmuted.png'))
+        self.muteIcon = QIcon(MainWindow.get_path('images/muted.png'))
+        self.unmuteIcon = QIcon(MainWindow.get_path('images/unmuted.png'))
         self.upIcon = icon('ei.caret-up', color='#444444')
         self.downIcon = icon('ei.caret-down', color='#444444')
         self.removeIcon = icon('ei.remove', color='#B41D1D')
         self.removeAllIcon = icon('ei.trash', color='#B41D1D')
-        self.successIcon = QIcon(os.path.join(self.getAppPath(), 'images', 'success.png'))
+        self.successIcon = QIcon(MainWindow.get_path('images/success.png'))
         self.aboutIcon = icon('ei.info-circle', color='#6A4572')
         self.completePlayIcon = icon('fa.play', color='#444444')
         self.completeOpenIcon = icon('fa.folder-open', color='#444444')
@@ -741,9 +741,6 @@ class VidCutter(QWidget):
         else:
             QMessageBox.critical(self.parent, 'Error', self.mediaPlayer.errorString())
 
-    def getAppPath(self) -> str:
-        return ':'
-
     def closeEvent(self, event: QCloseEvent) -> None:
         self.parent.closeEvent(event)
 
@@ -773,7 +770,7 @@ class MainWindow(QMainWindow):
             self.cutter.startNew()
 
     def ffmpeg_install(self) -> bool:
-        ffmpeg_zip = os.path.join(QFileInfo(__file__).absolutePath(), 'bin', 'ffmpeg.zip')
+        ffmpeg_zip = MainWindow.get_path('bin/ffmpeg.zip', override=True)
         if os.path.exists(ffmpeg_zip):
             with ZipFile(ffmpeg_zip) as archive:
                 archive.extract('ffmpeg.exe', path=os.path.dirname(ffmpeg_zip))
@@ -782,7 +779,7 @@ class MainWindow(QMainWindow):
         return False
 
     def ffmpeg_check(self) -> bool:
-        return os.path.exists(os.path.join(QFileInfo(__file__).absolutePath(), 'bin', 'ffmpeg.exe'))
+        return os.path.exists(MainWindow.get_path('bin/ffmpeg.exe', override=True))
 
     def dragEnterEvent(self, event: QDragEnterEvent) -> None:
         if event.mimeData().hasUrls():
@@ -799,6 +796,14 @@ class MainWindow(QMainWindow):
         qApp.quit()
 
     @staticmethod
+    def get_path(path: str = None, override: bool = False) -> str:
+        if override:
+            if getattr(sys, 'frozen', False):
+                return os.path.join(sys._MEIPASS, path)
+            return os.path.join(QFileInfo(__file__).absolutePath(), path)
+        return ':%s' % path
+
+    @staticmethod
     def get_style(label: bool=False) -> str:
         style = 'Fusion'
         if sys.platform.startswith('linux'):
@@ -810,8 +815,8 @@ class MainWindow(QMainWindow):
         return style
 
     @staticmethod
-    def get_version(filename: str = '__init__.py') -> str:
-        with open(os.path.join(QFileInfo(__file__).absolutePath(), filename), 'r') as initfile:
+    def get_version(filename: str='__init__.py') -> str:
+        with open(MainWindow.get_path(filename, override=True), 'r') as initfile:
             for line in initfile.readlines():
                 m = re.match('__version__ *= *[\'](.*)[\']', line)
                 if m:
