@@ -11,7 +11,6 @@ from setuptools import setup
 
 here = path.abspath(path.dirname(__file__))
 
-
 def get_version(filename='__init__.py'):
     with open(path.join(here, filename), encoding='utf-8') as initfile:
         for line in initfile.readlines():
@@ -19,11 +18,9 @@ def get_version(filename='__init__.py'):
             if m:
                 return m.group(1)
 
-
 def get_description(filename='README.md'):
     with open(path.join(here, filename), encoding='utf-8') as f:
         return f.read()
-
 
 def get_package_data():
     if sys.platform == 'win32':
@@ -34,10 +31,9 @@ def get_package_data():
             shutil.copy(path.join(here, 'bin', 'x86', 'ffmpeg.zip'), path.join(here, 'bin'))
         elif arch == 'win-amd64':
             shutil.copy(path.join(here, 'bin', 'x64', 'ffmpeg.zip'), path.join(here, 'bin'))
-        return ['vidcutter.ico', 'bin/ffmpeg.zip']
+        return ['bin/ffmpeg.zip', 'LICENSE', 'README.md']
     else:
-        return []
-
+        return ['LICENSE', 'README.md']
 
 setup(
     name='vidcutter',
@@ -46,7 +42,7 @@ setup(
     author_email='pete@ozmartians.com',
     description='FFmpeg based video cutter & joiner with a modern PyQt5 GUI',
     long_description=get_description(),
-    url='https://vidcutter.ozmartians.com',
+    url='http://vidcutter.ozmartians.com',
     license='GPLv3+',
 
     packages=['vidcutter'],
@@ -64,7 +60,7 @@ setup(
     keywords='vidcutter audiovideoediting audiovideo videoeditor video videoedit pyqt Qt5 multimedia',
 
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Environment :: X11 Applications :: Qt',
         'Intended Audience :: End Users/Desktop',
         'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
