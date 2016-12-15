@@ -12,7 +12,6 @@
     <file>images/runtime.png</file>
     <file>images/success.png</file>
     <file>images/unmuted.png</file>
-    <file>images/vidcutter.ico</file>
     <file>images/vidcutter.png</file>
   </qresource>
 </RCC>
