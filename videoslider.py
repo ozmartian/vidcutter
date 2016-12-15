@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from PyQt5.QtCore import QPoint, Qt, pyqtSlot
+from PyQt5.QtCore import Qt, pyqtSlot
 from PyQt5.QtGui import QColor, QKeyEvent, QPaintEvent, QWheelEvent
-from PyQt5.QtWidgets import QSlider, QStyle, QStyleOptionSlider, QStylePainter, QToolTip, qApp
+from PyQt5.QtWidgets import QSlider, QStyle, QStyleOptionSlider, QStylePainter, qApp
 
 
 class VideoSlider(QSlider):
@@ -22,7 +22,7 @@ class VideoSlider(QSlider):
         self.restrictValue = 0
         self.valueChanged.connect(self.restrictMove)
 
-    def initStyle(self, selected: bool=False, margin: str='0') -> None:
+    def initStyle(self, selected: bool = False, margin: str = '0') -> None:
         bground = 'transparent'
         if selected:
             # bground = 'rgba(255, 255, 255, 0.75)'

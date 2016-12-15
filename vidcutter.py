@@ -6,7 +6,6 @@ import platform
 import re
 import signal
 import sys
-import time
 import warnings
 from zipfile import ZipFile
 
@@ -16,7 +15,7 @@ from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QDragEnterEvent, QDropEv
                          QKeyEvent, QMouseEvent, QMovie, QPalette, QPixmap, QWheelEvent)
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
-from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QDialog, QFileDialog, QHBoxLayout, QLabel, QListWidget,
+from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDialog, QHBoxLayout, QLabel, QListWidget,
                              QListWidgetItem, QMainWindow, QMenu, QMessageBox, QProgressDialog, QPushButton,
                              QSizePolicy, QStyleFactory, QSlider, QStyle, QToolBar, QVBoxLayout, QWidget, qApp)
 from qtawesome import icon
@@ -161,8 +160,8 @@ class VidCutter(QWidget):
                                     minimum=0, maximum=100, sliderMoved=self.setVolume)
         if sys.platform.startswith('linux'):
             self.volumeSlider.setStyleSheet('''QSlider::groove:horizontal { position:absolute; left:4px; right:4px; }
-                                               QSlider::handle:horizontal { image:url(:images/knob.png); margin:0 -4px; }
-                                               QSlider::sub-page:horizontal { background-color:#6A4572; border-radius:3px; }''')
+                                QSlider::handle:horizontal { image:url(:images/knob.png); margin:0 -4px; }
+                                QSlider::sub-page:horizontal { background-color:#6A4572; border-radius:3px; }''')
 
         volumeLayout = QHBoxLayout()
         volumeLayout.addWidget(self.muteButton)
@@ -242,8 +241,9 @@ class VidCutter(QWidget):
                                       triggered=self.cutStart, enabled=False)
         self.cutEndAction = QAction(self.cutEndIcon, 'End', self, statusTip='Set clip end marker',
                                     triggered=self.cutEnd, enabled=False)
-        self.saveAction = QAction(self.saveIcon, 'Save', self, toolTip='Save Video',
-                                  statusTip='Save clips to a new video file', triggered=self.cutVideo, enabled=False)
+        self.saveAction = QAction(self.saveIcon, 'Save', self, toolTip='Save',
+                                  statusTip='Save clips to a new video file',
+                                  triggered=self.cutVideo, enabled=False)
         self.moveItemUpAction = QAction(self.upIcon, 'Move up', self, statusTip='Move clip position up in list',
                                         triggered=self.moveItemUp, enabled=False)
         self.moveItemDownAction = QAction(self.downIcon, 'Move down', self, statusTip='Move clip position down in list',
@@ -259,7 +259,7 @@ class VidCutter(QWidget):
         self.mediaInfoAction = QAction('Media Information', self, statusTip='View current media codec information',
                                        triggered=self.mediaInfo, enabled=False)
         self.updateCheckAction = QAction('Check for Updates...', self, statusTip='Check for application updates',
-                                       triggered=self.updateCheck)
+                                         triggered=self.updateCheck)
 
     def initToolbar(self) -> None:
         self.toolbar.addAction(self.openAction)
@@ -631,8 +631,8 @@ class VidCutter(QWidget):
     </table>
 </p>
 <p>How would you like to proceed?</p>''' % (
-        QDir.toNativeSeparators(self.finalFilename), self.sizeof_fmt(int(info.size())),
-        self.deltaToQTime(self.totalRuntime).toString(self.timeformat)))
+            QDir.toNativeSeparators(self.finalFilename), self.sizeof_fmt(int(info.size())),
+            self.deltaToQTime(self.totalRuntime).toString(self.timeformat)))
         play = mbox.addButton('Play', QMessageBox.AcceptRole)
         play.setIcon(self.completePlayIcon)
         play.clicked.connect(self.openResult)
@@ -804,7 +804,7 @@ class MainWindow(QMainWindow):
         return ':%s' % path
 
     @staticmethod
-    def get_style(label: bool=False) -> str:
+    def get_style(label: bool = False) -> str:
         style = 'Fusion'
         if sys.platform.startswith('linux'):
             installed_styles = QStyleFactory.keys()
@@ -815,7 +815,7 @@ class MainWindow(QMainWindow):
         return style
 
     @staticmethod
-    def get_version(filename: str='__init__.py') -> str:
+    def get_version(filename: str = '__init__.py') -> str:
         with open(MainWindow.get_path(filename, override=True), 'r') as initfile:
             for line in initfile.readlines():
                 m = re.match('__version__ *= *[\'](.*)[\']', line)
