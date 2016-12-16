@@ -25,8 +25,7 @@ class VideoSlider(QSlider):
     def initStyle(self, selected: bool = False, margin: str = '0') -> None:
         bground = 'transparent'
         if selected:
-            # bground = 'rgba(255, 255, 255, 0.75)'
-            bground = 'rgba(225 , 198, 227, 0.75)'
+            bground = 'rgba(162, 125, 165, 0.75)'
         self.setStyleSheet('''QSlider:horizontal { margin: 25px 0 15px; }
 QSlider::groove:horizontal {
     border: 1px inset #999;
@@ -59,9 +58,9 @@ QSlider::handle:horizontal {
     margin: -18px -8px;
 }''' % (bground, margin))
 
-    def setRestrictValue(self, value: int) -> None:
+    def setRestrictValue(self, value: int, force: bool = False) -> None:
         self.restrictValue = value
-        if value > 0:
+        if value > 0 or force:
             opt = QStyleOptionSlider()
             self.initStyleOption(opt)
             handle = self.style().subControlRect(
