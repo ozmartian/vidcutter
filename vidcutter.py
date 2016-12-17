@@ -211,11 +211,11 @@ class VidCutter(QWidget):
 
     def initIcons(self) -> None:
         self.appIcon = QIcon(MainWindow.get_path('images/vidcutter.png'))
-        self.openIcon = icon('fa.film', color='#444', scale_factor=0.85)
-        self.playIcon = icon('fa.play-circle', color='#444')
-        self.pauseIcon = icon('fa.pause-circle', color='#444')
-        self.cutStartIcon = icon('fa.scissors', scale_factor=1.15, color='#444')
-        self.cutEndIcon = icon('fa.scissors', scale_factor=1.15, color='#444')
+        self.openIcon = icon('fa.film', color='#6A4572', scale_factor=0.85)
+        self.playIcon = icon('fa.play-circle', color='#6A4572')
+        self.pauseIcon = icon('fa.pause-circle', color='#6A4572')
+        self.cutStartIcon = icon('fa.scissors', scale_factor=1.15, color='#6A4572')
+        self.cutEndIcon = icon('fa.scissors', scale_factor=1.15, color='#6A4572')
         endicon = self.cutEndIcon.pixmap(QSize(36, 36)).toImage()
         self.cutEndIcon = QIcon(QPixmap.fromImage(endicon.mirrored(horizontal=True, vertical=False)))
         self.saveIcon = icon('fa.video-camera', color='#6A4572')
@@ -501,7 +501,7 @@ class VidCutter(QWidget):
         item[1] = selected
         self.start_button.setEnabled(True)
         self.end_button.setDisabled(True)
-        self.seekSlider.setRestrictValue(0)
+        self.seekSlider.setRestrictValue(0, True)
         self.inCut = False
         self.renderTimes()
 
@@ -634,8 +634,8 @@ class VidCutter(QWidget):
         mbox.setText('''
 <style>
     table.info { margin:8px; padding:4px 15px; }
-    td.label { font-weight:bold; font-size:9pt; text-align:right; }
-    td.value { font-size:10pt; }
+    td.label { font-weight:bold; font-size:10pt; text-align:right; }
+    td.value { font-size:10.5pt; }
 </style>
 <p>Your video was successfully created.</p>
 <p align="center">
@@ -687,7 +687,7 @@ class VidCutter(QWidget):
 
     @pyqtSlot(bool)
     def openResult(self, pathonly: bool = False) -> None:
-        self.startNew()
+        self.parent.restart()
         if len(self.finalFilename) and os.path.exists(self.finalFilename):
             target = self.finalFilename if not pathonly else os.path.dirname(self.finalFilename)
             QDesktopServices.openUrl(QUrl.fromLocalFile(target))
