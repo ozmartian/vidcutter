@@ -55,7 +55,7 @@ class Updater(QThread):
     def run(self):
         if self.check_only:
             if sys.platform == 'win32':
-                self.check_latest_guthub()
+                self.check_latest_github()
             else:
                 self.check_latest_pypi()
         else:
