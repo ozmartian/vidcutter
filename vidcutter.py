@@ -22,10 +22,12 @@ from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDial
 from qtawesome import icon
 
 try:
+    from vidcutter.updater import Updater
     from vidcutter.videoservice import VideoService
     from vidcutter.videoslider import VideoSlider
     import vidcutter.resources
 except ImportError:
+    from updater import Updater
     from videoservice import VideoService
     from videoslider import VideoSlider
     import resources
@@ -173,7 +175,8 @@ class VidCutter(QWidget):
 
         controlsGroup = QGroupBox()
         controlsGroup.setLayout(controlsLayout)
-        controlsGroup.setStyleSheet('QGroupBox { background-color:rgba(0, 0, 0, 0.1); border:1px inset #888; border-radius:6px; margin:0 10px; }')
+        controlsGroup.setStyleSheet(
+            'QGroupBox { background-color:rgba(0, 0, 0, 0.1); border:1px inset #888; border-radius:6px; margin:0 10px; }')
 
         layout = QVBoxLayout()
         layout.setContentsMargins(10, 10, 10, 4)
@@ -257,17 +260,24 @@ class VidCutter(QWidget):
         self.open_button = QPushButton(self.openIcon, 'Open', self, flat=True, statusTip='Open source media file',
                                        cursor=Qt.PointingHandCursor, iconSize=QSize(36, 36), clicked=self.openMedia)
         self.open_button.setStyleSheet(self.toolbar_style)
-        self.play_button = QPushButton(self.playIcon, 'Play', self, flat=True, statusTip='Play media file', enabled=False,
+        self.play_button = QPushButton(self.playIcon, 'Play', self, flat=True, statusTip='Play media file',
+                                       enabled=False,
                                        cursor=Qt.PointingHandCursor, iconSize=QSize(36, 36), clicked=self.playMedia)
         self.play_button.setStyleSheet(self.toolbar_style)
-        self.start_button = QPushButton(self.cutStartIcon, ' Start', self, flat=True, toolTip='Start', statusTip='Set media start position',
-                                        enabled=False, cursor=Qt.PointingHandCursor, iconSize=QSize(36, 36), clicked=self.setCutStart)
+        self.start_button = QPushButton(self.cutStartIcon, ' Start', self, flat=True, toolTip='Start',
+                                        statusTip='Set media start position',
+                                        enabled=False, cursor=Qt.PointingHandCursor, iconSize=QSize(36, 36),
+                                        clicked=self.setCutStart)
         self.start_button.setStyleSheet(self.toolbar_style)
-        self.end_button = QPushButton(self.cutEndIcon, ' End', self, flat=True, toolTip='End', statusTip='Set media end position',
-                                      enabled=False, cursor=Qt.PointingHandCursor, iconSize=QSize(36, 36), clicked=self.setCutEnd)
+        self.end_button = QPushButton(self.cutEndIcon, ' End', self, flat=True, toolTip='End',
+                                      statusTip='Set media end position',
+                                      enabled=False, cursor=Qt.PointingHandCursor, iconSize=QSize(36, 36),
+                                      clicked=self.setCutEnd)
         self.end_button.setStyleSheet(self.toolbar_style)
-        self.save_button = QPushButton(self.saveIcon, 'Save', self, flat=True, statusTip='Merge clips to a new media file',
-                                       enabled=False, cursor=Qt.PointingHandCursor, iconSize=QSize(36, 36), clicked=self.cutVideo)
+        self.save_button = QPushButton(self.saveIcon, 'Save', self, flat=True,
+                                       statusTip='Merge clips to a new media file',
+                                       enabled=False, cursor=Qt.PointingHandCursor, iconSize=QSize(36, 36),
+                                       clicked=self.cutVideo)
         self.save_button.setStyleSheet(self.toolbar_style)
         self.toolbar = QHBoxLayout(spacing=10)
         self.toolbar.addWidget(self.open_button)
@@ -291,7 +301,8 @@ class VidCutter(QWidget):
         self.cliplistMenu.addAction(self.removeItemAction)
         self.cliplistMenu.addAction(self.removeAllAction)
 
-    def getSpacer(self) -> QWidget:
+    @staticmethod
+    def getSpacer() -> QWidget:
         spacer = QWidget()
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         return spacer
@@ -606,14 +617,37 @@ class VidCutter(QWidget):
         except:
             pass
 
-    def updateCheck(self) -> bool:
-        return False
+    def updateCheck(self) -> None:
+        self.updater = Updater()
+        self.updater.updateAvailable.connect(self.updateHandler)
+        self.updater.start()
+
+    def updateHandler(self, updateExists: bool, version: str = None):
+        if updateExists:
+            if sys.platform == 'win32':
+                answer = QMessageBox.question(self, 'New version available!',
+                                              'A new version <b>%s</b> of %s is available. '
+                                              % (version, qApp.applicationName()) +
+                                              'Would you like to visit the latest releases page?',
+                                              defaultButton=QMessageBox.Yes)
+                if answer == QMessageBox.Yes:
+                    QDesktopServices.openUrl(QUrl(MainWindow.latest_release_url))
+            else:
+                QMessageBox.information(self, 'New version available!',
+                                        'A new version <b>%s</b> of %s is available. '
+                                        % (version, qApp.applicationName()) +
+                                        'You can update at any time via terminal command:<br/><br/>' +
+                                        '&nbsp;&nbsp;&nbsp;&nbsp;<b>sudo pip3 install --upgrade vidcutter</b>',
+                                        QMessageBox.Ok)
+        else:
+            QMessageBox.information(self, 'You are up to date!',
+                                    'You are already running the latest version of %s available.'
+                                    % qApp.applicationName(), QMessageBox.Ok)
 
     def showProgress(self, label: str = 'Analyzing media...') -> None:
-        self.progress = QProgressDialog(label, None, 0, 100, self.parent, windowModality=Qt.ApplicationModal,
-                                        windowIcon=self.parent.windowIcon(), minimumDuration=0, minimumWidth=500)
+        self.progress = QProgressDialog(label, None, 0, 100, self.parent, minimumDuration=0, minimumWidth=500)
         self.progress.setStyle(QStyleFactory.create('Fusion'))
-        self.progress.show()
+        self.progress.setWindowModality(Qt.WindowModal)
         qApp.processEvents()
         # for i in range(steps):
         #     if self.progress.isVisible():
@@ -770,6 +804,8 @@ class VidCutter(QWidget):
 
 
 class MainWindow(QMainWindow):
+    latest_release_url = 'https://github.com/ozmartian/vidcutter/releases/latest'
+
     def __init__(self):
         super(MainWindow, self).__init__()
         QApplication.setStyle(QStyleFactory.create(self.get_style()))
@@ -857,7 +893,6 @@ class MainWindow(QMainWindow):
 
 def main():
     app = QApplication(sys.argv)
-    # qApp.setStyle(MainWindow.get_style())
     app.setApplicationName('VidCutter')
     app.setApplicationVersion(MainWindow.get_version())
     app.setOrganizationDomain('http://vidcutter.ozmartians.com')
