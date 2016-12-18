@@ -151,7 +151,7 @@ class VidCutter(QWidget):
         self.volumeSlider = QSlider(Qt.Horizontal, toolTip='Volume', statusTip='Adjust volume level',
                                     cursor=Qt.PointingHandCursor, value=50, minimum=0, maximum=100,
                                     sliderMoved=self.setVolume)
-        if sys.platform == 'win32':
+        if not sys.platform.startswith('linux'):
         	self.volumeSlider.setStyle(QStyleFactory.create('Fusion'))
         self.volumeSlider.setStyleSheet('''QSlider::groove:horizontal { position:absolute; left:4px; right:4px; }
                                                QSlider::handle:horizontal { image:url(:images/knob.png); margin:0 -4px; }
@@ -606,24 +606,21 @@ class VidCutter(QWidget):
     def updateHandler(self, updateExists: bool, version: str = None):
         if updateExists:
             if sys.platform == 'win32':
-                answer = QMessageBox.question(self, 'New version available!',
-                                              'A new version <b>%s</b> of %s is available. '
-                                              % (version, qApp.applicationName()) +
-                                              'Would you like to visit the latest releases page?',
+                answer = QMessageBox.question(self, 'UPDATE AVAILABLE',
+                                              '<p><b>VERSION: %s</b></p>' % version +
+                                              '<p>Would you like to visit the latest releases page now?</p>',
                                               defaultButton=QMessageBox.Yes)
                 if answer == QMessageBox.Yes:
-                    QDesktopServices.openUrl(QUrl(MainWindow.latest_release_url))
+                    QDesktopServices.openUrl(QUrl(Updater.latest_release_webpage))
             else:
-                QMessageBox.information(self, 'New version available!',
-                                        'A new version <b>%s</b> of %s is available. '
-                                        % (version, qApp.applicationName()) +
-                                        'You can update at any time via terminal command:<br/><br/>' +
-                                        '&nbsp;&nbsp;&nbsp;&nbsp;<b>sudo pip3 install --upgrade vidcutter</b>',
-                                        QMessageBox.Ok)
+                QMessageBox.information(self, 'UPDATE AVAILABLE',
+                                        '<p><b>VERSION: %s</b></p>' % version +
+                                        '<p>You can update at any time by running the following command in a terminal:<br/><br/>' +
+                                        '&nbsp;&nbsp;&nbsp;&nbsp;<b>sudo pip3 install --upgrade vidcutter</b></p>', QMessageBox.Ok)
         else:
-            QMessageBox.information(self, 'You are up to date!',
-                                    'You are already running the latest version of %s available.'
-                                    % qApp.applicationName(), QMessageBox.Ok)
+            QMessageBox.information(self, 'ALREADY USING LATEST VERSION',
+                                    'You are already running the latest version of %s.</p>' % qApp.applicationName() +
+                                    '<p>Be sure to check for updates again in the near future!</p>', QMessageBox.Ok)
 
     def showProgress(self, label: str = 'Analyzing media...') -> None:
         self.progress = QProgressDialog(label, None, 0, 100, self.parent, minimumDuration=0, minimumWidth=500)
@@ -784,8 +781,6 @@ class VidCutter(QWidget):
 
 
 class MainWindow(QMainWindow):
-    latest_release_url = 'https://github.com/ozmartian/vidcutter/releases/latest'
-
     def __init__(self):
         super(MainWindow, self).__init__()
         # QApplication.setStyle(QStyleFactory.create(self.get_style()))

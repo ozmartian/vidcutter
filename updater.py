@@ -14,8 +14,9 @@ from PyQt5.QtWidgets import qApp
 class Updater(QThread):
     updateAvailable = pyqtSignal(bool, str)
 
-    pypi_api_endpoint = 'http://pypi.python.org/pypi/vidcutter/json'
+    pypi_api_endpoint = 'https://pypi.python.org/pypi/vidcutter/json'
     github_api_endpoint = 'https://api.github.com/repos/ozmartian/vidcutter/releases/latest'
+    latest_release_webpage = 'https://github.com/ozmartian/vidcutter/releases/latest'
 
     def __init__(self, check_only: bool = True):
         QThread.__init__(self)
