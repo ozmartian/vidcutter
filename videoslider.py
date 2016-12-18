@@ -30,7 +30,7 @@ class VideoSlider(QSlider):
 QSlider::groove:horizontal {
     border: 1px inset #999;
     height: 32px;
-    background: #222 url(:images/filmstrip.png) repeat-x;
+    background: #444 url(:images/filmstrip.png) repeat-x;
     position: absolute;
     left: 4px;
     right: 4px;
@@ -58,13 +58,12 @@ QSlider::handle:horizontal {
     margin: -18px -8px;
 }''' % (bground, margin))
 
-    def setRestrictValue(self, value: int, force: bool = False) -> None:
+    def setRestrictValue(self, value: int, force: bool=False) -> None:
         self.restrictValue = value
         if value > 0 or force:
             opt = QStyleOptionSlider()
             self.initStyleOption(opt)
-            handle = self.style().subControlRect(
-                QStyle.CC_Slider, opt, QStyle.SC_SliderHandle, self)
+            handle = self.style().subControlRect(QStyle.CC_Slider, opt, QStyle.SC_SliderHandle, self)
             self.initStyle(True, '%ipx' % (handle.x() + 5))
         else:
             self.initStyle()

@@ -105,8 +105,7 @@ class VidCutter(QWidget):
                                     iconSize=QSize(100, 700), dragDropMode=QAbstractItemView.InternalMove,
                                     alternatingRowColors=True, customContextMenuRequested=self.itemMenu,
                                     dragEnabled=True)
-        self.cliplist.setStyleSheet('''border-radius:0; border:none; border-left:1px solid #B9B9B9;
-                                       border-right:1px solid #B9B9B9;''')
+        self.cliplist.setStyleSheet('QListView { border-radius:0; border:none; border-left:1px solid #B9B9B9; border-right:1px solid #B9B9B9; } QListView::item { padding:10px 0; }')
         self.cliplist.setFixedWidth(185)
         self.cliplist.model().rowsMoved.connect(self.syncClipList)
 
@@ -152,6 +151,8 @@ class VidCutter(QWidget):
         self.volumeSlider = QSlider(Qt.Horizontal, toolTip='Volume', statusTip='Adjust volume level',
                                     cursor=Qt.PointingHandCursor, value=50, minimum=0, maximum=100,
                                     sliderMoved=self.setVolume)
+        if sys.platform == 'win32':
+        	self.volumeSlider.setStyle(QStyleFactory.create('Fusion'))
         self.volumeSlider.setStyleSheet('''QSlider::groove:horizontal { position:absolute; left:4px; right:4px; }
                                                QSlider::handle:horizontal { image:url(:images/knob.png); margin:0 -4px; }
                                                QSlider::sub-page:horizontal { background-color:#6A4572; border-radius:3px; }''')
@@ -493,7 +494,7 @@ class VidCutter(QWidget):
         item[1] = selected
         self.cutStartAction.setEnabled(True)
         self.cutEndAction.setDisabled(True)
-        self.seekSlider.setRestrictValue(0, True)
+        self.seekSlider.setRestrictValue(0, False)
         self.inCut = False
         self.renderTimes()
 
@@ -526,7 +527,7 @@ class VidCutter(QWidget):
             marker = QLabel('''<style>b { font-size:8pt; } p { margin:5px; }</style>
                             <p><b>START</b><br/>%s</p><p><b>END</b><br/>%s</p>'''
                             % (item[0].toString(self.timeformat), endItem))
-            marker.setStyleSheet('border:none; margin:5px 0;')
+            marker.setStyleSheet('border:none;')
             self.cliplist.setItemWidget(listitem, marker)
             listitem.setFlags(Qt.ItemIsSelectable | Qt.ItemIsDragEnabled | Qt.ItemIsEnabled)
         if len(self.clipTimes) and not self.inCut:
@@ -643,27 +644,26 @@ class VidCutter(QWidget):
 
     def complete(self) -> None:
         info = QFileInfo(self.finalFilename)
-        mbox = QMessageBox(windowTitle='Success', windowIcon=self.parent.windowIcon(), minimumWidth=500,
-                           iconPixmap=self.successIcon.pixmap(48, 49), textFormat=Qt.RichText)
+        mbox = QMessageBox(windowTitle='Success', minimumWidth=500, iconPixmap=self.successIcon.pixmap(48, 49), textFormat=Qt.RichText)
         mbox.setText('''
 <style>
     table.info { margin:8px; padding:4px 15px; }
-    td.label { font-weight:bold; font-size:10pt; text-align:right; }
+    td.label { font-weight:bold; font-size:10.5pt; text-align:right; }
     td.value { font-size:10.5pt; }
 </style>
 <p>Your video was successfully created.</p>
 <p align="center">
-    <table class="info" cellpadding="6" cellspacing="0">
+    <table class="info" cellpadding="2" cellspacing="0">
         <tr>
-            <td class="label"><b>Filename</b></td>
+            <td class="label"><b>File:</b></td>
             <td class="value" nowrap>%s</td>
         </tr>
         <tr>
-            <td class="label"><b>Size</b></td>
+            <td class="label"><b>Size:</b></td>
             <td class="value">%s</td>
         </tr>
         <tr>
-            <td class="label"><b>Runtime</b></td>
+            <td class="label"><b>Length:</b></td>
             <td class="value">%s</td>
         </tr>
     </table>
@@ -788,7 +788,7 @@ class MainWindow(QMainWindow):
 
     def __init__(self):
         super(MainWindow, self).__init__()
-        QApplication.setStyle(QStyleFactory.create(self.get_style()))
+        # QApplication.setStyle(QStyleFactory.create(self.get_style()))
         self.init_cutter()
         self.setWindowTitle('%s' % qApp.applicationName())
         self.statusBar().showMessage('Ready')
