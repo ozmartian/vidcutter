@@ -1,0 +1,4 @@
+#!/bin/bash
+
+rm -rf build dist
+python3.5 -m PyInstaller --clean vidcutter.osx.spec
