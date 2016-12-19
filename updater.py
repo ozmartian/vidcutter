@@ -7,8 +7,9 @@ from distutils.version import LooseVersion
 from urllib.error import HTTPError
 from urllib.request import urlopen
 
-from PyQt5.QtCore import QThread, pyqtSignal
-from PyQt5.QtWidgets import qApp
+from PyQt5.QtCore import Qt, QThread, pyqtSignal
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import qApp, QMessageBox
 
 
 class Updater(QThread):
@@ -61,3 +62,29 @@ class Updater(QThread):
                 self.check_latest_pypi()
         else:
             self.download_latest()
+
+
+class UpdaterMsgBox(QMessageBox):
+    def __init__(self, parent):
+        super(UpdaterMsgBox, self).__init__(parent)
+        self.mbox = UpdaterMsgBox(self)
+        self.setMinimumWidth(500)
+        self.setTextFormat(Qt.RichText)
+        self.setIconPixmap(qApp.windowIcon().pixmap(64, 64))
+
+    def setWindowTitle(self, title: str):
+        super(UpdaterMsgBox, self).setWindowTitle(title.upper())
+
+    def question(self, title, text):
+        self.mbox.setStandardButtons(UpdaterMsgBox.Yes | UpdaterMsgBox.No)
+        self.mbox.setDefaultButton(UpdaterMsgBox.Yes)
+        self.mbox.setWindowTitle('<b>%s</b>'% title)
+        self.mbox.setText(text)
+        return self.mbox.exec_()
+
+    def information(self, title, text):
+        self.mbox.setStandardButtons(UpdaterMsgBox.Ok)
+        self.mbox.setWindowTitle('<b>%s</b>' % title)
+        self.mbox.setText(text)
+        self.mbox.adjustSize()
+        self.mbox.exec_()
