@@ -11,6 +11,7 @@ class VideoSlider(QSlider):
         super(VideoSlider, self).__init__(*arg, **kwargs)
         self.setOrientation(Qt.Horizontal)
         self.setObjectName('VideoSlider')
+        self.setAttribute(Qt.WA_Hover, True)
         self.setStatusTip('Set clip start and end points')
         self.setRange(0, 0)
         self.setSingleStep(1)

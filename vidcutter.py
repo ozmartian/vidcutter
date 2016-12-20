@@ -27,7 +27,7 @@ try:
     from vidcutter.videoservice import VideoService
     from vidcutter.videoslider import VideoSlider
     import vidcutter.resources
-except ImportError:
+except:
     from updater import Updater, UpdaterMsgBox
     from videoservice import VideoService
     from videoslider import VideoSlider
@@ -583,6 +583,7 @@ class VidCutter(QWidget):
                 QFile.remove(self.finalFilename)
                 QFile.rename(filename, self.finalFilename)
             self.progress.setLabelText('Complete...')
+            self.progress.setValue(100)
             qApp.processEvents()
             self.progress.close()
             self.progress.deleteLater()
@@ -612,23 +613,13 @@ class VidCutter(QWidget):
         self.updater.start()
 
     def updateHandler(self, updateExists: bool, version: str = None):
+        self.mbox = UpdaterMsgBox(parent=self)
         if updateExists:
-            if sys.platform == 'win32':
-                answer = UpdaterMsgBox.question(self, title='Update available',
-                                                text='<p><b>VERSION: %s</b></p>' % version +
-                                                     '<p>Visit the latest releases page now?</p>')
-                if answer == UpdaterMsgBox.Yes:
-                    QDesktopServices.openUrl(QUrl(Updater.latest_release_webpage))
-            else:
-                UpdaterMsgBox.information(self, title='Update available',
-                                          text='<p><b>VERSION: %s</b></p>' % version +
-                                               '<p>You can update at any time by running the following command'+
-                                               'in a terminal:<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;' +
-                                               '<b>sudo pip3 install --upgrade vidcutter</b></p>')
+            answer = self.mbox.notify_update(version)
+            if answer == UpdaterMsgBox.Yes:
+                QDesktopServices.openUrl(QUrl(Updater.latest_release_webpage))
         else:
-            UpdaterMsgBox.information(self, title='Already using latest version',
-                                      text='<p>You are already running the latest version of %s.</p>'
-                                           % qApp.applicationName())
+            self.mbox.notify_no_update()
 
     def showProgress(self, steps: int, label: str = 'Analyzing media...') -> None:
         self.progress = QProgressDialog(label, None, 0, steps, self.parent, windowModality=Qt.ApplicationModal,
