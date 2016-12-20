@@ -10,7 +10,7 @@ from urllib.request import urlopen
 
 from PyQt5.QtCore import QFileInfo, QProcess, Qt, QThread, pyqtSignal, pyqtSlot
 from PyQt5.QtGui import QCloseEvent
-from PyQt5.QtWidgets import qApp,  QMessageBox, QSizePolicy, QSpacerItem
+from PyQt5.QtWidgets import qApp, QMessageBox
 from qtawesome import icon
 
 

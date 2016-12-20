@@ -27,7 +27,7 @@ try:
     from vidcutter.videoservice import VideoService
     from vidcutter.videoslider import VideoSlider
     import vidcutter.resources
-except:
+except ImportError:
     from updater import Updater, UpdaterMsgBox
     from videoservice import VideoService
     from videoslider import VideoSlider
