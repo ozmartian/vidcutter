@@ -16,7 +16,7 @@ from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QDragEnterEvent, QDropEv
                          QKeyEvent, QMouseEvent, QMovie, QPalette, QPixmap, QWheelEvent)
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
-from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDialog, QHBoxLayout, QLabel,
+from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDialog, QGroupBox, QHBoxLayout, QLabel,
                              QListWidget, QListWidgetItem, QMainWindow, QMenu, QMessageBox, QProgressDialog,
                              QPushButton, QSizePolicy, QStyleFactory, QSlider, QStyle, QToolBar, QVBoxLayout, QWidget,
                              qApp)
@@ -88,10 +88,14 @@ class VidCutter(QWidget):
         self.initIcons()
         self.initActions()
 
-        self.toolbar = QToolBar(floatable=False, movable=False, iconSize=QSize(36, 36))
+        self.toolbar = QToolBar(floatable=False, movable=False, iconSize=QSize(40, 36))
+        self.toolbar.setCursor(Qt.PointingHandCursor)
         self.toolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         self.toolbar.setStyle(QStyleFactory.create('Fusion'))
-        self.toolbar.setStyleSheet('QToolBar QToolButton { min-width:90px; font-size:14px; font-weight:400; }')
+        self.toolbar.setStyleSheet('''QToolBar QToolButton { min-width:90px; font-size:11pt; font-weight:400; border-radius:5px; }
+                                      QToolBar QToolButton:hover { border:1px outset #6A4572; color:#FFF; background-color:rgba(106, 69, 114, 0.6); }                                       
+                                      QToolBar QToolButton:pressed { color:#FFF; background-color:#6A4572; }                                       
+                                   ''')
         self.initToolbar()
 
         self.appMenu, self.cliplistMenu = QMenu(), QMenu()
@@ -167,9 +171,15 @@ class VidCutter(QWidget):
         self.menuButton.setStyle(QStyleFactory.create('Fusion'))
         self.menuButton.setMenu(self.appMenu)
 
+        # toolbarLayout = QHBoxLayout()
+        # toolbarLayout.addWidget(self.toolbar)
+        # toolbarLayout.setContentsMargins(2, 2, 2, 2)
+
         # toolbarGroup = QGroupBox()
-        # toolbarGroup.setLayout(self.toolbar)
-        # toolbarGroup.setStyleSheet('QGroupBox { background-color:rgba(0, 0, 0, 0.1); border:1px inset #888; border-radius:6px; margin:0 50px; }')
+        # toolbarGroup.setFlat(False)
+        # toolbarGroup.setCursor(Qt.PointingHandCursor)
+        # toolbarGroup.setLayout(toolbarLayout)
+        # toolbarGroup.setStyleSheet('QGroupBox { background-color:rgba(0, 0, 0, 0.1); border:1px inset #888; border-radius:5px; margin:0 50px; }')
 
         controlsLayout = QHBoxLayout(spacing=0)
         controlsLayout.addStretch(1)
@@ -216,14 +226,14 @@ class VidCutter(QWidget):
 
     def initIcons(self) -> None:
         self.appIcon = QIcon(MainWindow.get_path('images/vidcutter.png'))
-        self.openIcon = icon('fa.film', color='#444', scale_factor=0.8)
-        self.playIcon = icon('fa.play-circle', color='#444')
-        self.pauseIcon = icon('fa.pause-circle', color='#444')
-        self.cutStartIcon = icon('fa.scissors', scale_factor=1.15, color='#444')
-        self.cutEndIcon = icon('fa.scissors', scale_factor=1.15, color='#444')
+        self.openIcon = icon('fa.film', color='#444', color_active='#FFF', scale_factor=0.8)
+        self.playIcon = icon('fa.play-circle', color='#444', color_active='#FFF')
+        self.pauseIcon = icon('fa.pause-circle', color='#444', color_active='#FFF')
+        self.cutStartIcon = icon('fa.scissors', scale_factor=1.15, color='#444', color_active='#FFF')
+        self.cutEndIcon = icon('fa.scissors', scale_factor=1.15, color='#444', color_active='#FFF')
         endicon = self.cutEndIcon.pixmap(QSize(36, 36)).toImage()
         self.cutEndIcon = QIcon(QPixmap.fromImage(endicon.mirrored(horizontal=True, vertical=False)))
-        self.saveIcon = icon('fa.video-camera', color='#444')
+        self.saveIcon = icon('fa.video-camera', color='#444', color_active='#FFF')
         self.muteIcon = QIcon(MainWindow.get_path('images/muted.png'))
         self.unmuteIcon = QIcon(MainWindow.get_path('images/unmuted.png'))
         self.upIcon = icon('ei.caret-up', color='#444')

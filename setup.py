@@ -3,6 +3,7 @@
 
 import shutil
 import sys
+import sysconfig
 from codecs import open
 from os import path, remove
 from re import match
@@ -22,11 +23,15 @@ def get_description(filename='README.md'):
     with open(path.join(here, filename), encoding='utf-8') as f:
         return f.read()
 
+def get_architecture():
+    bits = struct.calcsize('P') * 8
+    return 'win-amd64' if bits == 64 else 'win32'
+
 def get_package_data():
     if sys.platform == 'win32':
         if path.exists('bin/ffmpeg.zip'):
             remove('bin/ffmpeg.zip')
-        arch = sys.argv[3]
+        arch = sys.argv[3] if sys.argv[1] == 'bdist_wheel' else sysconfig.get_platform()
         if arch == 'win32':
             shutil.copy(path.join(here, 'bin', 'x86', 'ffmpeg.zip'), path.join(here, 'bin'))
         elif arch == 'win-amd64':

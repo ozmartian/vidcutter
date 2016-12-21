@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from PyQt5.QtCore import Qt, pyqtSlot
-from PyQt5.QtGui import QColor, QKeyEvent, QPaintEvent, QWheelEvent
+from PyQt5.QtGui import QColor, QKeyEvent, QMouseEvent, QPaintEvent, QWheelEvent
 from PyQt5.QtWidgets import QSlider, QStyle, QStyleOptionSlider, QStylePainter, qApp
 
 
@@ -13,6 +13,7 @@ class VideoSlider(QSlider):
         self.setObjectName('VideoSlider')
         self.setAttribute(Qt.WA_Hover, True)
         self.setStatusTip('Set clip start and end points')
+        self.setFocusPolicy(Qt.StrongFocus)
         self.setRange(0, 0)
         self.setSingleStep(1)
         self.setTracking(True)
@@ -80,6 +81,7 @@ QSlider::handle:horizontal {
         self.initStyleOption(opt)
         handle = self.style().subControlRect(
             QStyle.CC_Slider, opt, QStyle.SC_SliderHandle, self)
+        self.setCursor(Qt.SplitHCursor)
         interval = self.tickInterval()
         if interval == 0:
             interval = self.pageStep()

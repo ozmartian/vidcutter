@@ -80,7 +80,7 @@ class Updater(QThread):
 
     def install_update(self) -> None:
         returncode = self.cmd_exec('x-terminal-emulator', '-title "VidCutter Updater" -e "sudo pip3 install '
-                                   + '--upgrade vidcutter"')
+                          + '--upgrade vidcutter"')
         mbox = UpdaterMsgBox(self)
         mbox.confirm_update(update_success=returncode)
 
@@ -140,12 +140,6 @@ class UpdaterMsgBox(QMessageBox):
         reject_btn.setIcon(icon('fa.times', color='#444'))
         mbox.setDefaultButton(restart_btn)
         return mbox.exec_()
-
-    # @pyqtSlot()
-    # def install_update(self) -> None:
-    #     self.updater = Updater(check_only=False)
-    #     self.updater.updateInstalled.connect(self.confirm_update)
-    #     self.updater.start()
 
     @pyqtSlot(bool)
     def confirm_update(self, update_success: bool) -> None:
