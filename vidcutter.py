@@ -609,7 +609,6 @@ class VidCutter(QWidget):
 
     def updateCheck(self) -> None:
         self.updater = Updater()
-        self.updater.updateAvailable.connect(self.updateHandler)
         self.updater.start()
 
     def updateHandler(self, updateExists: bool, version: str = None):
