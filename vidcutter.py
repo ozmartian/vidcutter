@@ -195,7 +195,7 @@ class VidCutter(QWidget):
         layout.setContentsMargins(10, 10, 10, 4)
         layout.addLayout(self.videoLayout)
         layout.addWidget(self.seekSlider)
-        layout.addSpacing(10)
+        layout.addSpacing(5)
         layout.addLayout(controlsLayout)
         # layout.addSpacing(5)
 

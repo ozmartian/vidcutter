@@ -28,7 +28,7 @@ class VideoSlider(QSlider):
         bground = 'transparent'
         if selected:
             bground = 'rgba(255, 255, 255, 0.75)'
-        self.setStyleSheet('''QSlider:horizontal { margin: 25px 0 15px; }
+        self.setStyleSheet('''QSlider:horizontal { margin: 25px 0 18px; }
 QSlider::groove:horizontal {
     border: 1px inset #999;
     height: 32px;
@@ -57,7 +57,8 @@ QSlider::handle:horizontal {
     background: url(:images/handle.png) no-repeat top center;
     width: 20px;
     height: 58px;
-    margin: -18px -8px;
+    margin: -16px -8px;
+    overflow: visible;
 }
 QSlider::handle:horizontal:hover {
     border: 1px solid red;
