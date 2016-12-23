@@ -744,7 +744,7 @@ class VidCutter(QWidget):
                 self.seekSlider.setSliderPosition(newval)
                 self.mediaPlayer.setPosition(newval)
         event.accept()
-es
+
     def mousePressEvent(self, event: QMouseEvent) -> None:
         if event.button() == Qt.BackButton and self.cutStartAction.isEnabled():
             self.setCutStart()
