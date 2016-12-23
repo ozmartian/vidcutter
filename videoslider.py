@@ -58,6 +58,9 @@ QSlider::handle:horizontal {
     width: 20px;
     height: 58px;
     margin: -18px -8px;
+}
+QSlider::handle:horizontal:hover {
+    border: 1px solid red;
 }''' % (bground, margin))
 
     def setRestrictValue(self, value: int, force: bool=False) -> None:
@@ -81,7 +84,6 @@ QSlider::handle:horizontal {
         self.initStyleOption(opt)
         handle = self.style().subControlRect(
             QStyle.CC_Slider, opt, QStyle.SC_SliderHandle, self)
-        self.setCursor(Qt.SplitHCursor)
         interval = self.tickInterval()
         if interval == 0:
             interval = self.pageStep()
@@ -106,6 +108,11 @@ QSlider::handle:horizontal {
         painter.drawComplexControl(QStyle.CC_Slider, opt)
         opt.subControls = QStyle.SC_SliderHandle
         painter.drawComplexControl(QStyle.CC_Slider, opt)
+
+    # def mouseMoveEvent(self, event: QMouseEvent) -> None:
+    #     widget = qApp.widgetAt(event.globalPos())
+    #     print(type(widget))
+    #     event.accept()
 
     def wheelEvent(self, event: QWheelEvent) -> None:
         qApp.sendEvent(self.parentWidget(), event)
