@@ -18,7 +18,7 @@ from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDialog, QGroupBox, QHBoxLayout, QLabel,
                              QListWidget, QListWidgetItem, QMainWindow, QMenu, QMessageBox, QProgressDialog,
-                             QPushButton, QSizePolicy, QStyleFactory, QSlider, QStyle, QToolBar, QVBoxLayout, QWidget,
+                             QPushButton, QSizePolicy, QStyleFactory, QSlider, QStyle, QToolBar, QToolButton, QVBoxLayout, QWidget,
                              qApp)
 from qtawesome import icon
 
@@ -93,7 +93,7 @@ class VidCutter(QWidget):
         self.toolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         self.toolbar.setStyle(QStyleFactory.create('Fusion'))
         self.toolbar.setStyleSheet('''QToolBar { spacing:20px; }
-            QToolBar QToolButton { min-width:95px; font-size:11pt; font-weight:400; border-radius:5px; }
+            QToolBar QToolButton { min-width:95px; font-size:11pt; font-weight:400; border-radius:5px; padding:1 2px; }
             QToolBar QToolButton:hover { border:1px outset #412A46; color:#FFF; background-color:#6A4572; }
             QToolBar QToolButton:pressed { color:#FFF; background-color:#6A4572; }''')
         self.initToolbar()
@@ -102,7 +102,6 @@ class VidCutter(QWidget):
         self.initMenus()
 
         self.seekSlider = VideoSlider(parent=self, sliderMoved=self.setPosition)
-        self.seekSlider.installEventFilter(self)
 
         self.initNoVideo()
 
@@ -228,14 +227,16 @@ class VidCutter(QWidget):
 
     def initIcons(self) -> None:
         self.appIcon = QIcon(MainWindow.get_path('images/vidcutter.png'))
-        self.openIcon = icon('fa.film', color='#444', color_active='#FFF', scale_factor=0.9)
-        self.playIcon = icon('fa.play-circle-o', color='#444', color_active='#FFF', scale_factor=1.1)
-        self.pauseIcon = icon('fa.pause-circle-o', color='#444', color_active='#FFF', scale_factor=1.1)
-        self.cutStartIcon = icon('fa.scissors', scale_factor=1.15, color='#444', color_active='#FFF')
-        self.cutEndIcon = icon('fa.scissors', scale_factor=1.15, color='#444', color_active='#FFF')
-        endicon = self.cutEndIcon.pixmap(QSize(36, 36)).toImage()
-        self.cutEndIcon = QIcon(QPixmap.fromImage(endicon.mirrored(horizontal=True, vertical=False)))
-        self.saveIcon = icon('fa.video-camera', color='#6A4572', color_active='#F0DDFF')
+        self.openIcon = icon('fa.film', color='#444', color_active='#E4CDFF', scale_factor=0.9)
+        self.playIcon = icon('fa.play-circle-o', color='#444', color_active='#E4CDFF', scale_factor=1.1)
+        self.pauseIcon = icon('fa.pause-circle-o', color='#444', color_active='#E4CDFF', scale_factor=1.1)
+        self.cutStartIcon = icon('fa.scissors', scale_factor=1.15, color='#444', color_active='#E4CDFF')
+        endicon_normal = icon('fa.scissors', scale_factor=1.15, color='#444').pixmap(QSize(36, 36)).toImage()
+        endicon_active =  icon('fa.scissors', scale_factor=1.15, color='#E4CDFF').pixmap(QSize(36, 36)).toImage()
+        self.cutEndIcon = QIcon()
+        self.cutEndIcon.addPixmap(QPixmap.fromImage(endicon_normal.mirrored(horizontal=True, vertical=False)), QIcon.Normal, QIcon.Off)
+        self.cutEndIcon.addPixmap(QPixmap.fromImage(endicon_active.mirrored(horizontal=True, vertical=False)), QIcon.Active, QIcon.Off)
+        self.saveIcon = icon('fa.video-camera', color='#6A4572', color_active='#E4CDFF')
         self.muteIcon = QIcon(MainWindow.get_path('images/muted.png'))
         self.unmuteIcon = QIcon(MainWindow.get_path('images/unmuted.png'))
         self.upIcon = icon('ei.caret-up', color='#444')
@@ -755,14 +756,6 @@ class VidCutter(QWidget):
         else:
             super(VidCutter, self).mousePressEvent(event)
 
-    def eventFilter(self, obj: QObject, event: QEvent) -> bool:
-        if event.type() == QEvent.MouseButtonRelease and isinstance(obj, VideoSlider):
-            if obj.objectName() == 'VideoSlider' and (
-                        self.mediaPlayer.isVideoAvailable() or self.mediaPlayer.isAudioAvailable()):
-                obj.setValue(QStyle.sliderValueFromPosition(obj.minimum(), obj.maximum(), event.x(), obj.width()))
-                self.mediaPlayer.setPosition(obj.sliderPosition())
-        return QWidget.eventFilter(self, obj, event)
-
     @pyqtSlot(QMediaPlayer.Error)
     def handleError(self, error: QMediaPlayer.Error) -> None:
         qApp.restoreOverrideCursor()
@@ -852,7 +845,7 @@ class MainWindow(QMainWindow):
                 if stl.lower() in map(str.lower, installed_styles):
                     style = stl
                     break
-        elif sys.platform == 'darwin':
+        elif sys.platform == 'darwin':  
             style = 'Macintosh'
         return style
 
