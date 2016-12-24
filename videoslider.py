@@ -18,7 +18,6 @@ class VideoSlider(QSlider):
         self.setSingleStep(1)
         self.setMouseTracking(True)
         self.setTracking(True)
-        self.setTickInterval(50000)
         self.setTickPosition(QSlider.TicksAbove)
         self.setFocus()
         self.initStyle()
@@ -65,7 +64,7 @@ QSlider::handle:hover {
     background: purple;
 }''' % (bground, margin))
 
-    def setRestrictValue(self, value: int, force: bool=False) -> None:
+    def setRestrictValue(self, value: int, force: bool = False) -> None:
         self.restrictValue = value
         if value > 0 or force:
             opt = QStyleOptionSlider()
@@ -84,11 +83,6 @@ QSlider::handle:hover {
         painter = QStylePainter(self)
         opt = QStyleOptionSlider()
         self.initStyleOption(opt)
-        handle = self.style().subControlRect(
-            QStyle.CC_Slider, opt, QStyle.SC_SliderHandle, self)    
-        interval = self.tickInterval()
-        if interval == 0:
-            interval = self.pageStep()
         if self.tickPosition() != QSlider.NoTicks:
             x = 4
             for i in range(self.minimum(), self.width(), x):
@@ -114,7 +108,7 @@ QSlider::handle:hover {
     def wheelEvent(self, event: QWheelEvent) -> None:
         qApp.sendEvent(self.parentWidget(), event)
 
-    def keyPressEvent(self, event: QKeyEvent) -> None:  
+    def keyPressEvent(self, event: QKeyEvent) -> None:
         qApp.sendEvent(self.parentWidget(), event)
 
     def mouseMoveEvent(self, event: QMouseEvent) -> None:

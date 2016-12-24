@@ -10,7 +10,7 @@ import time
 import warnings
 from zipfile import ZipFile
 
-from PyQt5.QtCore import (QDir, QEvent, QFile, QFileInfo, QModelIndex, QObject, QPoint, QSize, Qt, QTime,
+from PyQt5.QtCore import (QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTime,
                           QUrl, pyqtSlot)
 from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QDragEnterEvent, QDropEvent, QFont, QFontDatabase, QIcon,
                          QKeyEvent, QMouseEvent, QMovie, QPalette, QPixmap, QWheelEvent)
@@ -18,7 +18,7 @@ from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDialog, QGroupBox, QHBoxLayout, QLabel,
                              QListWidget, QListWidgetItem, QMainWindow, QMenu, QMessageBox, QProgressDialog,
-                             QPushButton, QSizePolicy, QStyleFactory, QSlider, QStyle, QToolBar, QToolButton, QVBoxLayout, QWidget,
+                             QPushButton, QSizePolicy, QStyleFactory, QSlider, QToolBar, QVBoxLayout, QWidget,
                              qApp)
 from qtawesome import icon
 
@@ -94,8 +94,8 @@ class VidCutter(QWidget):
         self.toolbar.setStyle(QStyleFactory.create('Fusion'))
         self.toolbar.setStyleSheet('''QToolBar { spacing:20px; }
             QToolBar QToolButton { min-width:95px; font-size:11pt; font-weight:400; border-radius:5px; padding:1 2px; }
-            QToolBar QToolButton:hover { border:1px outset #412A46; color:#FFF; background-color:#6A4572; }
-            QToolBar QToolButton:pressed { color:#FFF; background-color:#6A4572; }''')
+            QToolBar QToolButton:hover { border:1px inset #412A46; color:#E4CDFF; background-color:#6A4572; }
+            QToolBar QToolButton:pressed { color:#E4CDFF; background-color:rgba(106, 69, 114, 0.4); }''')
         self.initToolbar()
 
         self.appMenu, self.cliplistMenu = QMenu(), QMenu()
@@ -110,8 +110,8 @@ class VidCutter(QWidget):
                                     iconSize=QSize(100, 700), dragDropMode=QAbstractItemView.InternalMove,
                                     alternatingRowColors=True, customContextMenuRequested=self.itemMenu,
                                     dragEnabled=True)
-        self.cliplist.setStyleSheet(
-            'QListView { border-radius:0; border:none; border-left:1px solid #B9B9B9; border-right:1px solid #B9B9B9; } QListView::item { padding:10px 0; }')
+        self.cliplist.setStyleSheet('QListView { border-radius:0; border:none; border-left:1px solid #B9B9B9; ' +
+                                    'border-right:1px solid #B9B9B9; } QListView::item { padding:10px 0; }')
         self.cliplist.setFixedWidth(185)
         self.cliplist.model().rowsMoved.connect(self.syncClipList)
 
@@ -160,9 +160,11 @@ class VidCutter(QWidget):
                                     sliderMoved=self.setVolume)
         self.volumeSlider.setStyle(QStyleFactory.create(MainWindow.get_style()))
         if sys.platform.startswith('linux'):
-            self.volumeSlider.setStyleSheet('''QSlider::groove:horizontal { position:absolute; left:4px; right:4px; }
-                                               QSlider::handle:horizontal { image:url(:images/knob.png); margin:0 -4px; }
-                                               QSlider::sub-page:horizontal { background-color:#6A4572; border-radius:3px; }''')
+            self.volumeSlider.setStyleSheet('''
+                QSlider::groove:horizontal { position:absolute; left:4px; right:4px; }
+                QSlider::handle:horizontal { image:url(:images/knob.png); margin:0 -4px; }
+                QSlider::sub-page:horizontal { background-color:#6A4572; border-radius:3px; }
+            ''')
 
         self.menuButton = QPushButton(icon=self.menuIcon, flat=True, toolTip='Menu',
                                       statusTip='Media + application information',
@@ -232,10 +234,12 @@ class VidCutter(QWidget):
         self.pauseIcon = icon('fa.pause-circle-o', color='#444', color_active='#E4CDFF', scale_factor=1.1)
         self.cutStartIcon = icon('fa.scissors', scale_factor=1.15, color='#444', color_active='#E4CDFF')
         endicon_normal = icon('fa.scissors', scale_factor=1.15, color='#444').pixmap(QSize(36, 36)).toImage()
-        endicon_active =  icon('fa.scissors', scale_factor=1.15, color='#E4CDFF').pixmap(QSize(36, 36)).toImage()
+        endicon_active = icon('fa.scissors', scale_factor=1.15, color='#E4CDFF').pixmap(QSize(36, 36)).toImage()
         self.cutEndIcon = QIcon()
-        self.cutEndIcon.addPixmap(QPixmap.fromImage(endicon_normal.mirrored(horizontal=True, vertical=False)), QIcon.Normal, QIcon.Off)
-        self.cutEndIcon.addPixmap(QPixmap.fromImage(endicon_active.mirrored(horizontal=True, vertical=False)), QIcon.Active, QIcon.Off)
+        self.cutEndIcon.addPixmap(QPixmap.fromImage(endicon_normal.mirrored(horizontal=True, vertical=False)),
+                                  QIcon.Normal, QIcon.Off)
+        self.cutEndIcon.addPixmap(QPixmap.fromImage(endicon_active.mirrored(horizontal=True, vertical=False)),
+                                  QIcon.Active, QIcon.Off)
         self.saveIcon = icon('fa.video-camera', color='#6A4572', color_active='#E4CDFF')
         self.muteIcon = QIcon(MainWindow.get_path('images/muted.png'))
         self.unmuteIcon = QIcon(MainWindow.get_path('images/unmuted.png'))
@@ -312,7 +316,7 @@ class VidCutter(QWidget):
         self.runtimeLabel.setText('<div align="right">%s</div>' % runtime)
 
     @pyqtSlot(int)
-    def setNoVideoText(self, frame: int) -> None:
+    def setNoVideoText(self) -> None:
         self.novideoLabel.setPixmap(self.novideoMovie.currentPixmap())
 
     def itemMenu(self, pos: QPoint) -> None:
@@ -480,7 +484,7 @@ class VidCutter(QWidget):
     def durationChanged(self, duration: int) -> None:
         self.seekSlider.setRange(0, duration)
 
-    def muteAudio(self, muted: bool) -> None:
+    def muteAudio(self) -> None:
         if self.mediaPlayer.isMuted():
             self.muteButton.setIcon(self.unmuteIcon)
             self.muteButton.setToolTip('Mute')
@@ -612,13 +616,10 @@ class VidCutter(QWidget):
             fobj.write('file \'%s\'\n' % file.replace("'", "\\'"))
         fobj.close()
         self.videoService.join(listfile, filename)
-        try:
-            QFile.remove(listfile)
-            for file in joinlist:
-                if os.path.isfile(file):
-                    QFile.remove(file)
-        except:
-            pass
+        QFile.remove(listfile)
+        for file in joinlist:
+            if os.path.isfile(file):
+                QFile.remove(file)
 
     def updateCheck(self) -> None:
         self.updater = Updater()
@@ -788,7 +789,7 @@ class MainWindow(QMainWindow):
         try:
             if len(sys.argv) >= 2:
                 self.cutter.loadFile(sys.argv[1])
-        except:
+        except FileNotFoundError | PermissionError:
             QMessageBox.critical(self, 'Error loading file', sys.exc_info()[0])
             qApp.restoreOverrideCursor()
             self.cutter.startNew()
@@ -845,7 +846,7 @@ class MainWindow(QMainWindow):
                 if stl.lower() in map(str.lower, installed_styles):
                     style = stl
                     break
-        elif sys.platform == 'darwin':  
+        elif sys.platform == 'darwin':
             style = 'Macintosh'
         return style
 
