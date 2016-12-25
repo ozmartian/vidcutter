@@ -777,6 +777,7 @@ class MainWindow(QMainWindow):
         self.init_cutter()
         self.setWindowTitle('%s' % qApp.applicationName())
         self.setContentsMargins(0, 0, 0, 0)
+        self.statusBar().setStyleSheet('QStatusBar::item { border:none; }')
         self.statusBar().showMessage('Ready')
         self.setAcceptDrops(True)
         self.setMinimumSize(900, 650)
