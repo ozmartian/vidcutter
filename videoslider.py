@@ -90,9 +90,9 @@ QSlider::handle:hover {
                     h = 13
                     z = 7
                 else:
-                    h = 8
+                    h = 7
                     z = 13
-                painter.setPen(QColor('#484640'))
+                painter.setPen(QColor('#888'))
                 if self.tickPosition() in (QSlider.TicksBothSides, QSlider.TicksAbove):
                     y = self.rect().top() + z
                     painter.drawLine(x, y, x, y + h)

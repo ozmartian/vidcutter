@@ -68,9 +68,9 @@ class VidCutter(QWidget):
         self.novideoWidget = QWidget(self, autoFillBackground=True)
         self.parent = parent
         self.mediaPlayer = QMediaPlayer(None, QMediaPlayer.VideoSurface)
-        self.videoWidget = VideoWidget()
+        self.videoWidget = VideoWidget(self)
         self.videoService = VideoService(self)
-
+        
         QFontDatabase.addApplicationFont(MainWindow.get_path('fonts/DroidSansMono.ttf'))
         QFontDatabase.addApplicationFont(MainWindow.get_path('fonts/HelveticaNeue.ttf'))
 
@@ -91,7 +91,7 @@ class VidCutter(QWidget):
 
         self.toolbar = QToolBar(floatable=False, movable=False, iconSize=QSize(40, 36))
         self.toolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        self.toolbar.setStyle(QStyleFactory.create('Fusion'))
+        # self.toolbar.setStyle(QStyleFactory.create('Fusion'))
         self.toolbar.setStyleSheet('''QToolBar { spacing:20px; }
             QToolBar QToolButton { min-width:95px; font-size:11pt; font-weight:400; border-radius:5px; padding:1 2px; }
             QToolBar QToolButton:hover { border:1px inset #412A46; color:#E4CDFF; background-color:#6A4572; }
@@ -158,18 +158,18 @@ class VidCutter(QWidget):
         self.volumeSlider = QSlider(Qt.Horizontal, toolTip='Volume', statusTip='Adjust volume level',
                                     cursor=Qt.PointingHandCursor, value=50, minimum=0, maximum=100,
                                     sliderMoved=self.setVolume)
-        self.volumeSlider.setStyle(QStyleFactory.create(MainWindow.get_style()))
-        if sys.platform.startswith('linux'):
-            self.volumeSlider.setStyleSheet('''
-                QSlider::groove:horizontal { position:absolute; left:4px; right:4px; }
-                QSlider::handle:horizontal { image:url(:images/knob.png); margin:0 -4px; }
-                QSlider::sub-page:horizontal { background-color:#6A4572; border-radius:3px; }
-            ''')
+        # self.volumeSlider.setStyle(QStyleFactory.create(MainWindow.get_style()))
+        # if sys.platform.startswith('linux'):
+        #     self.volumeSlider.setStyleSheet('''
+        #         QSlider::groove:horizontal { position:absolute; left:4px; right:4px; }
+        #         QSlider::handle:horizontal { image:url(:images/knob.png); margin:0 -4px; }
+        #         QSlider::sub-page:horizontal { background-color:#6A4572; border-radius:3px; }
+        #     ''')
 
         self.menuButton = QPushButton(icon=self.menuIcon, flat=True, toolTip='Menu',
                                       statusTip='Media + application information',
                                       iconSize=QSize(24, 24), cursor=Qt.PointingHandCursor)
-        self.menuButton.setStyle(QStyleFactory.create('Fusion'))
+        # self.menuButton.setStyle(QStyleFactory.create('Fusion'))
         self.menuButton.setMenu(self.appMenu)
 
         toolbarLayout = QHBoxLayout()
@@ -180,7 +180,7 @@ class VidCutter(QWidget):
         toolbarGroup.setFlat(False)
         toolbarGroup.setCursor(Qt.PointingHandCursor)
         toolbarGroup.setLayout(toolbarLayout)
-        toolbarGroup.setStyleSheet('''QGroupBox { background-color:rgba(0, 0, 0, 0.1);
+        toolbarGroup.setStyleSheet('''QGroupBox { background-color:rgba(255, 255, 255, 0.05);
             border:1px inset #888; border-radius:5px; margin:0 50px; }''')
 
         controlsLayout = QHBoxLayout(spacing=0)
