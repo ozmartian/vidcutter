@@ -158,18 +158,10 @@ class VidCutter(QWidget):
         self.volumeSlider = QSlider(Qt.Horizontal, toolTip='Volume', statusTip='Adjust volume level',
                                     cursor=Qt.PointingHandCursor, value=50, minimum=0, maximum=100,
                                     sliderMoved=self.setVolume)
-        # self.volumeSlider.setStyle(QStyleFactory.create(MainWindow.get_style()))
-        # if sys.platform.startswith('linux'):
-        #     self.volumeSlider.setStyleSheet('''
-        #         QSlider::groove:horizontal { position:absolute; left:4px; right:4px; }
-        #         QSlider::handle:horizontal { image:url(:images/knob.png); margin:0 -4px; }
-        #         QSlider::sub-page:horizontal { background-color:#6A4572; border-radius:3px; }
-        #     ''')
 
         self.menuButton = QPushButton(icon=self.menuIcon, flat=True, toolTip='Menu',
                                       statusTip='Media + application information',
                                       iconSize=QSize(24, 24), cursor=Qt.PointingHandCursor)
-        # self.menuButton.setStyle(QStyleFactory.create('Fusion'))
         self.menuButton.setMenu(self.appMenu)
 
         toolbarLayout = QHBoxLayout()
@@ -198,7 +190,7 @@ class VidCutter(QWidget):
         layout.addWidget(self.seekSlider)
         layout.addSpacing(5)
         layout.addLayout(controlsLayout)
-        # layout.addSpacing(5)
+        layout.addSpacing(2)
 
         self.setLayout(layout)
 
