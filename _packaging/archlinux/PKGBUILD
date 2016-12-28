@@ -1,23 +1,40 @@
 # Maintainer: Pete Alexandrou (ozmartian) <pete@ozmartians.com>
-pkgname=vidcutter
-pkgver=2.0
+pkgname=vidcutter-git
+pkgver=1.5.0.r76.ge465497
 pkgrel=1
-pkgdesc="Simple OpenVPN GUI written in PyQt for systemd based distributions"
+pkgdesc="FFmpeg based video cutter & joiner with a modern PyQt5 GUI"
 arch=('any')
 license=('GPL3')
 url="http://vidcutter.ozmartians.com"
-source=('git+https://github.com/ozmartian/vidcutter.git')
-depends=('python-pyqt5' 'qt5-multimedia' 'ffmpeg' 'python-qtawesome-git')
-makedepends=('git' 'gcc')
-provides=()
-conflicts=()
+source=('vidcutter-git::git+https://github.com/ozmartian/vidcutter.git')
+depends=('python-pyqt5' 'qt5-multimedia' 'ffmpeg' 'python-qtawesome-git' 'xdg-utils')
+makedepends=('git' 'python-setuptools')
+provides=('vidcutter')
+conflicts=('vidcutter')
 md5sums=('SKIP')
 
-# pkgver() { }
+pkgver() {
+    cd "${pkgname}"
+    git describe --long | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+}
 
-# build() { }
+build() {
+    cd "${srcdir}/${pkgname}"
+    python setup.py build
+}
 
 package() {
-  cd "${srcdir}/${pkgname}"
-  python3 setup.py install --root="${pkgdir}"
+    cd "${srcdir}/${pkgname}"
+    python3 setup.py install --root="${pkgdir}" --optimize=1 --skip-build
+
+    xdg-desktop-menu install --novendor --mode user _build/vidcutter.desktop
+
+    xdg-icon-resource install --novendor --mode user --size 256 _build/icons/icon_256.png vidcutter
+    xdg-icon-resource install --novendor --mode user --size 128 _build/icons/icon_128.png vidcutter
+    xdg-icon-resource install --novendor --mode user --size 64 _build/icons/icon_64.png vidcutter
+    xdg-icon-resource install --novendor --mode user --size 32 _build/icons/icon_32.png vidcutter
+    xdg-icon-resource install --novendor --mode user --size 16 _build/icons/icon_16.png vidcutter
+
+    xdg-desktop-menu forceupdate
+    xdg-icon-resource forceupdate
 }
