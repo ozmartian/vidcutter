@@ -93,9 +93,9 @@ class VidCutter(QWidget):
         self.toolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         # self.toolbar.setStyle(QStyleFactory.create('Fusion'))
         self.toolbar.setStyleSheet('''QToolBar { spacing:20px; }
-            QToolBar QToolButton { min-width:95px; font-size:11pt; font-weight:400; border-radius:5px; padding:1 2px; }
-            QToolBar QToolButton:hover { border:1px inset #412A46; color:#E4CDFF; background-color:#6A4572; }
-            QToolBar QToolButton:pressed { color:#E4CDFF; background-color:rgba(106, 69, 114, 0.4); }''')
+            QToolBar QToolButton { border:1px solid transparent; min-width:95px; font-size:11pt; font-weight:400; border-radius:5px; padding:1 2px; }
+            QToolBar QToolButton:hover { border:1px inset #6A4572; color:#6A4572; background-color:rgba(255, 255, 255, 0.65); }
+            QToolBar QToolButton:pressed { color:#6A4572; background-color:rgba(106, 69, 114, 0.4); }''')
         self.initToolbar()
 
         self.appMenu, self.cliplistMenu = QMenu(), QMenu()
@@ -172,8 +172,9 @@ class VidCutter(QWidget):
         toolbarGroup.setFlat(False)
         toolbarGroup.setCursor(Qt.PointingHandCursor)
         toolbarGroup.setLayout(toolbarLayout)
-        toolbarGroup.setStyleSheet('''QGroupBox { background-color:rgba(255, 255, 255, 0.05);
-            border:1px inset #888; border-radius:5px; margin:0 50px; }''')
+
+        toolbarGroup.setStyleSheet('''QGroupBox { background-color:rgba(0, 0, 0, 0.1);
+            border:1px inset #888; border-radius:5px; }''')
 
         controlsLayout = QHBoxLayout(spacing=0)
         controlsLayout.addStretch(1)
@@ -221,18 +222,18 @@ class VidCutter(QWidget):
 
     def initIcons(self) -> None:
         self.appIcon = QIcon(MainWindow.get_path('images/vidcutter.png'))
-        self.openIcon = icon('fa.film', color='#444', color_active='#E4CDFF', scale_factor=0.9)
-        self.playIcon = icon('fa.play-circle-o', color='#444', color_active='#E4CDFF', scale_factor=1.1)
-        self.pauseIcon = icon('fa.pause-circle-o', color='#444', color_active='#E4CDFF', scale_factor=1.1)
-        self.cutStartIcon = icon('fa.scissors', scale_factor=1.15, color='#444', color_active='#E4CDFF')
+        self.openIcon = icon('fa.film', color='#444', color_active='#6A4572', scale_factor=0.9)
+        self.playIcon = icon('fa.play-circle-o', color='#444', color_active='#6A4572', scale_factor=1.1)
+        self.pauseIcon = icon('fa.pause-circle-o', color='#444', color_active='#6A4572', scale_factor=1.1)
+        self.cutStartIcon = icon('fa.scissors', scale_factor=1.15, color='#444', color_active='#6A4572')
         endicon_normal = icon('fa.scissors', scale_factor=1.15, color='#444').pixmap(QSize(36, 36)).toImage()
-        endicon_active = icon('fa.scissors', scale_factor=1.15, color='#E4CDFF').pixmap(QSize(36, 36)).toImage()
+        endicon_active = icon('fa.scissors', scale_factor=1.15, color='#6A4572').pixmap(QSize(36, 36)).toImage()
         self.cutEndIcon = QIcon()
         self.cutEndIcon.addPixmap(QPixmap.fromImage(endicon_normal.mirrored(horizontal=True, vertical=False)),
                                   QIcon.Normal, QIcon.Off)
         self.cutEndIcon.addPixmap(QPixmap.fromImage(endicon_active.mirrored(horizontal=True, vertical=False)),
                                   QIcon.Active, QIcon.Off)
-        self.saveIcon = icon('fa.video-camera', color='#6A4572', color_active='#E4CDFF')
+        self.saveIcon = icon('fa.video-camera', color='#6A4572', color_active='#6A4572')
         self.muteIcon = QIcon(MainWindow.get_path('images/muted.png'))
         self.unmuteIcon = QIcon(MainWindow.get_path('images/unmuted.png'))
         self.upIcon = icon('ei.caret-up', color='#444')

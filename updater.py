@@ -109,10 +109,9 @@ class Updater(QThread):
         mbox = QMessageBox(parent)
         mbox.setIconPixmap(icon('fa.thumbs-up', color='#6A4572').pixmap(64, 64))
         mbox.setWindowTitle('%s UPDATER' % qApp.applicationName())
-        mbox.setText('<p><h3 style="color:#6A4572;">YOU ARE UP TO DATE</h3></p>' +
-                     '<p><table border="0" width="350"><tr><td><h4>%s %s</h4></td></tr></table><br/>'
+        mbox.setText('<h3 style="color:#6A4572;">%s %s</h3>'
                      % (qApp.applicationName(), qApp.applicationVersion()))
-        mbox.setInformativeText('You are already running the latest release of %s.' % qApp.applicationName())
+        mbox.setInformativeText('You are already running the latest version.<table width="350"><tr><td></td></tr></table>')
         mbox.setStandardButtons(QMessageBox.Close)
         mbox.setDefaultButton(QMessageBox.Close)
         return mbox.exec_()
