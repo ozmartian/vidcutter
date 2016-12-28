@@ -16,4 +16,7 @@ vidcutter.exe
 bin/ffmpeg.exe
 bin/ffmpeg.zip
 docs/_tvlinker
-
+_packaging/archlinux/pkg
+_packaging/archlinux/src
+_packaging/archlinux/vidcutter-git
+_packaging/archlinux/vidcutter-git-*.pkg.tar.xz
