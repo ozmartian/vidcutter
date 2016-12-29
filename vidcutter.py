@@ -10,8 +10,7 @@ import time
 import warnings
 from zipfile import ZipFile
 
-from PyQt5.QtCore import (QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTime,
-                          QUrl, pyqtSlot)
+from PyQt5.QtCore import QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTime, QUrl, pyqtSlot
 from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QDragEnterEvent, QDropEvent, QFont, QFontDatabase, QIcon,
                          QKeyEvent, QMouseEvent, QMovie, QPalette, QPixmap, QWheelEvent)
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
@@ -70,7 +69,7 @@ class VidCutter(QWidget):
         self.mediaPlayer = QMediaPlayer(None, QMediaPlayer.VideoSurface)
         self.videoWidget = VideoWidget(self)
         self.videoService = VideoService(self)
-        
+
         QFontDatabase.addApplicationFont(MainWindow.get_path('fonts/DroidSansMono.ttf'))
         QFontDatabase.addApplicationFont(MainWindow.get_path('fonts/HelveticaNeue.ttf'))
 
@@ -91,11 +90,12 @@ class VidCutter(QWidget):
 
         self.toolbar = QToolBar(floatable=False, movable=False, iconSize=QSize(40, 36))
         self.toolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        # self.toolbar.setStyle(QStyleFactory.create('Fusion'))
-        self.toolbar.setStyleSheet('''QToolBar { spacing:20px; }
-            QToolBar QToolButton { border:1px solid transparent; min-width:95px; font-size:11pt; font-weight:400; border-radius:5px; padding:1 2px; }
+        self.toolbar.setStyleSheet('''QToolBar { spacing:10px; }
+            QToolBar QToolButton { border:1px solid transparent; min-width:95px; font-size:11pt; font-weight:400;
+                border-radius:5px; padding:1px 2px; color:#444; }
             QToolBar QToolButton:hover { border:1px inset #6A4572; color:#6A4572; background-color:rgba(255, 255, 255, 0.65); }
-            QToolBar QToolButton:pressed { color:#6A4572; background-color:rgba(106, 69, 114, 0.4); }''')
+            QToolBar QToolButton:pressed { border:1px inset #FAFAFA; color:#6A4572; background-color:rgba(106, 69, 114, 0.4); }
+            QToolBar QToolButton:disabled { color:#999; }''')
         self.initToolbar()
 
         self.appMenu, self.cliplistMenu = QMenu(), QMenu()
@@ -375,10 +375,11 @@ class VidCutter(QWidget):
             mbox.setInformativeText(content)
             mbox.exec_()
         else:
-            QMessageBox.critical(self.parent, 'Could not retrieve media information',
-                                 '''There was a problem in tring to retrieve media information.
-                                    This DOES NOT mean there is a problem with the file and you should
-                                    be able to continue using it.''')
+            QMessageBox.critical(self.parent, 'MEDIA ERROR',
+                                 '<h3>Could not probe media file.</h3>' +
+                                 '<p>An error occurred while analyzing the media file for its metadata details.' +
+                                 '<br/><br/><b>This DOES NOT mean there is a problem with the file and you should ' +
+                                 'be able to continue using it.</b></p>')
 
     def aboutInfo(self) -> None:
         about_html = '''<style>
@@ -755,10 +756,10 @@ class VidCutter(QWidget):
         qApp.restoreOverrideCursor()
         self.startNew()
         if error == QMediaPlayer.ResourceError:
-            QMessageBox.critical(self.parent, 'Error', 'Invalid media file detected at:<br/><br/><b>%s</b><br/><br/>%s'
+            QMessageBox.critical(self.parent, 'INVALID MEDIA', 'Invalid media file detected at:<br/><br/><b>%s</b><br/><br/>%s'
                                  % (self.movieFilename, self.mediaPlayer.errorString()))
         else:
-            QMessageBox.critical(self.parent, 'Error', self.mediaPlayer.errorString())
+            QMessageBox.critical(self.parent, 'ERROR NOTIFICATION', self.mediaPlayer.errorString())
 
     def closeEvent(self, event: QCloseEvent) -> None:
         self.parent.closeEvent(event)
