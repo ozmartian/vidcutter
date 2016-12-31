@@ -2,7 +2,7 @@
   <qresource>
     <file>fonts/DroidSansMono.ttf</file>
     <file>fonts/HelveticaNeue.ttf</file>
-    <file>images/clipindex.png</file>
+    <file>fonts/OpenSans.ttf</file>
     <file>images/filmstrip.png</file>
     <file>images/handle.png</file>
     <file>images/knob.png</file>

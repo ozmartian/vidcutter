@@ -71,10 +71,10 @@ class VidCutter(QWidget):
         self.videoService = VideoService(self)
 
         QFontDatabase.addApplicationFont(MainWindow.get_path('fonts/DroidSansMono.ttf'))
-        QFontDatabase.addApplicationFont(MainWindow.get_path('fonts/HelveticaNeue.ttf'))
+        QFontDatabase.addApplicationFont(MainWindow.get_path('fonts/OpenSans.ttf'))
 
         fontSize = 12 if sys.platform == 'darwin' else 10
-        appFont = QFont('Helvetica Neue', fontSize, 300)
+        appFont = QFont('Open Sans', fontSize, 300)
         qApp.setFont(appFont)
 
         self.clipTimes = []
@@ -93,8 +93,8 @@ class VidCutter(QWidget):
         self.toolbar.setStyleSheet('''QToolBar { spacing:10px; }
             QToolBar QToolButton { border:1px solid transparent; min-width:95px; font-size:11pt; font-weight:400;
                 border-radius:5px; padding:1px 2px; color:#444; }
-            QToolBar QToolButton:hover { border:1px inset #6A4572; color:#6A4572; background-color:rgba(255, 255, 255, 0.65); }
-            QToolBar QToolButton:pressed { border:1px inset #FAFAFA; color:#6A4572; background-color:rgba(106, 69, 114, 0.4); }
+            QToolBar QToolButton:hover { border:1px inset #6A4572; color:#6A4572; background-color:rgba(255, 255, 255, 0.85); }
+            QToolBar QToolButton:pressed { border:1px inset #6A4572; color:#6A4572; background-color:rgba(255, 255, 255, 0.25); }
             QToolBar QToolButton:disabled { color:#999; }''')
         self.initToolbar()
 
@@ -387,7 +387,7 @@ class VidCutter(QWidget):
     a:hover { text-decoration:underline; }
 </style>
 <div style="min-width:650px;">
-<p style="font-size:26pt; font-weight:bold;">%s</p>
+<p style="font-size:26pt; font-weight:bold; color:#6A4572;">%s</p>
 <p>
     <span style="font-size:13pt;"><b>Version: %s</b></span>
     <span style="font-size:10pt;position:relative;left:5px;">( %s )</span>
