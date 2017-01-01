@@ -88,10 +88,10 @@ QSlider::handle:hover {
             for i in range(self.minimum(), self.width(), x):
                 if i % 5 == 0:
                     h = 13
-                    z = 7
+                    z = 8
                 else:
                     h = 7
-                    z = 13
+                    z = 14
                 painter.setPen(QColor('#888'))
                 if self.tickPosition() in (QSlider.TicksBothSides, QSlider.TicksAbove):
                     y = self.rect().top() + z
