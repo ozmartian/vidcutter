@@ -541,8 +541,8 @@ class VidCutter(QWidget):
             if type(item[2]) is QPixmap:
                 listitem.setIcon(QIcon(item[2]))
             self.cliplist.addItem(listitem)
-            marker = QLabel('''<style>b { font-size:8pt; } p { margin:5px; }</style>
-                            <p><b>START</b><br/>%s</p><p><b>END</b><br/>%s</p>'''
+            marker = QLabel('''<style>b { font-size:7pt; } p { margin:2px 5px; }</style>
+                            <p><b>START</b><br/>%s<br/><b>END</b><br/>%s</p>'''
                             % (item[0].toString(self.timeformat), endItem))
             marker.setStyleSheet('border:none;')
             self.cliplist.setItemWidget(listitem, marker)
