@@ -61,8 +61,8 @@ setup(
     package_data={'vidcutter': get_package_data()},
 
     data_files=[
-        ('/usr/share/applications', ['data/desktop/vidcutter.desktop']),
-        ('/usr/share/pixmaps', ['data/pixmaps/vidcutter.png'])
+        ('/usr/share/pixmaps', ['data/pixmaps/vidcutter.png']),
+        ('/usr/share/applications', ['data/desktop/vidcutter.desktop'])
     ],
 
     entry_points={'gui_scripts': ['vidcutter = vidcutter.vidcutter:main']},
