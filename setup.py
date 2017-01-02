@@ -10,22 +10,31 @@ from re import match
 
 from setuptools import setup
 
-here = path.abspath(path.dirname(__file__))
 
-def get_version(filename='__init__.py'):
+def get_value(varname, filename='__init__.py'):
     with open(path.join(here, filename), encoding='utf-8') as initfile:
         for line in initfile.readlines():
-            m = match('__version__ *= *[\'](.*)[\']', line)
+            m = match('__%s__ *= *[\'](.*)[\']' % varname, line)
             if m:
                 return m.group(1)
+
 
 def get_description(filename='README.md'):
     with open(path.join(here, filename), encoding='utf-8') as f:
         return f.read()
 
+
 def get_architecture():
     bits = struct.calcsize('P') * 8
     return 'win-amd64' if bits == 64 else 'win32'
+
+
+def get_install_requires():
+    if packager == 'pypi':
+        return ['PyQt5 >= 5.5', 'qtawesome >= 0.3.3']
+    else:
+        return []
+
 
 def get_package_data():
     if sys.platform == 'win32':
@@ -40,9 +49,24 @@ def get_package_data():
     else:
         return ['LICENSE', 'README.md']
 
+
+def get_data_files():
+    if sys.platform.startswith('linux'):
+        return [
+            ('/usr/share/pixmaps', ['data/pixmaps/vidcutter.png']),
+            ('/usr/share/applications', ['data/desktop/vidcutter.desktop'])
+        ]
+    else:
+        return []
+
+
+here = path.abspath(path.dirname(__file__))
+
+packager = get_value('packager')
+
 setup(
     name='vidcutter',
-    version=get_version(),
+    version=get_value('version'),
     author='Pete Alexandrou',
     author_email='pete@ozmartians.com',
     description='FFmpeg based video cutter & joiner with a modern PyQt5 GUI',
@@ -56,14 +80,11 @@ setup(
 
     setup_requires=['setuptools >= 26.1.1'],
 
-    install_requires=['PyQt5 >= 5.5', 'qtawesome >= 0.3.3'],
+    install_requires=get_install_requires(),
 
     package_data={'vidcutter': get_package_data()},
 
-    data_files=[
-        ('/usr/share/pixmaps', ['data/pixmaps/vidcutter.png']),
-        ('/usr/share/applications', ['data/desktop/vidcutter.desktop'])
-    ],
+    data_files=get_data_files(),
 
     entry_points={'gui_scripts': ['vidcutter = vidcutter.vidcutter:main']},
 
