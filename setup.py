@@ -54,11 +54,16 @@ setup(
 
     package_dir={'vidcutter': '.'},
 
-    setup_requires=['setuptools >= 28.1.0'],
+    setup_requires=['setuptools >= 26.1.1'],
 
     install_requires=['PyQt5 >= 5.5', 'qtawesome >= 0.3.3'],
 
     package_data={'vidcutter': get_package_data()},
+
+    data_files=[
+        ('/usr/share/applications', ['data/desktop/vidcutter.desktop']),
+        ('/usr/share/pixmaps', ['data/pixmaps/vidcutter.png'])
+    ],
 
     entry_points={'gui_scripts': ['vidcutter = vidcutter.vidcutter:main']},
 
