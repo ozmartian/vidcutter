@@ -10,7 +10,7 @@ source=(https://github.com/ozmartian/${pkgname}/archive/${pkgver}.tar.gz)
 depends=('python-pyqt5' 'qt5-multimedia' 'ffmpeg' 'python-qtawesome-git')
 makedepends=('git' 'sed' 'python-setuptools')
 provides=()
-conflicts=('vidcutter')
+conflicts=('vidcutter-git')
 md5sums=('SKIP')
 
 prepare() {
