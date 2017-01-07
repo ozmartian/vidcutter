@@ -39,4 +39,4 @@ exe = EXE(pyz,
           debug=False,
           strip=False,
           upx=False,
-          console=False , icon='..\\..\\images\\vidcutter.ico')
+          console=False , icon='..\\..\\data\\icons\\vidcutter.ico')

@@ -36,7 +36,7 @@ exe = EXE(pyz,
           debug=False,
           strip=True,
           upx=True,
-          console=False , icon='../../images/vidcutter.icns')
+          console=False , icon='../../data/icons/vidcutter.icns')
 coll = COLLECT(exe,
                a.binaries,
                a.zipfiles,
@@ -46,5 +46,5 @@ coll = COLLECT(exe,
                name='VidCutter')
 app = BUNDLE(coll,
              name='VidCutter.app',
-             icon='../../images/vidcutter.icns',
+             icon='../../data/icons/vidcutter.icns',
              bundle_identifier='com.ozmartians.vidcutter')
