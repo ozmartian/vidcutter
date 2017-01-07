@@ -1,0 +1,65 @@
+QToolBar { spacing: 10px; }
+
+QToolBar QToolButton {
+    border: 1px solid transparent;
+    min-width: 95px;
+    font-size: 11pt;
+    font-weight: 400;
+    border-radius: 5px;
+    padding: 1px 2px;
+    color: #444;
+}
+
+QToolBar QToolButton:hover {
+    border: 1px inset #6A4572;
+    color: #6A4572;
+    font-weight: 500;
+    background-color: rgba(255, 255, 255, 0.85);
+}
+
+QToolBar QToolButton:pressed {
+    border: 1px inset #6A4572;
+    color: #6A4572;
+    background-color: rgba(255, 255, 255, 0.25);
+}
+
+QToolBar QToolButton:disabled { color: #999; }
+
+QListView {
+    border-radius: 0;
+    border: none;
+    border-left: 1px solid #B9B9B9;
+    border-right: 1px solid #B9B9B9;
+}
+
+QListView::item { padding: 10px 0; }
+
+QLabel#listHeader {
+    padding: 8px 5px 5px;
+    border: 1px solid #B9B9B9;
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+        stop: 0 #FFF, stop: 0.5 #EAEAEA, stop: 0.6 #EAEAEA, stop: 1 #FFF);
+}
+
+QLabel#runtimeLabel {
+    font-family: "Droid Sans Mono", monospace;
+    font-size: 10pt;
+    color: #FFF;
+    background: rgb(106, 69, 114) url(:images/runtime.png) no-repeat left center;
+    padding: 2px 8px 2px 2px;
+    border: 1px solid #B9B9B9;
+}
+
+QLabel#timeCounter {
+    color: #FFF;
+    background: #000;
+    font-family: "Droid Sans Mono", monospace;
+    font-size: 10.5pt;
+    padding: 4px;
+}
+
+QGroupBox#toolbarGroup {
+    background-color: rgba(0, 0, 0, 0.1);
+    border: 1px inset #888;
+    border-radius: 5px;
+}

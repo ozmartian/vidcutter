@@ -27,5 +27,6 @@
     <file>images/icons/icon-start-active.png</file>
     <file>images/icons/icon-start.png</file>
     <file>images/icons/icon-update.png</file>
+    <file>styles/vidcutter.qss</file>
   </qresource>
 </RCC>

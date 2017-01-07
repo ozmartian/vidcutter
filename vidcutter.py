@@ -10,14 +10,14 @@ import time
 import warnings
 from zipfile import ZipFile
 
-from PyQt5.QtCore import QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTime, QUrl, pyqtSlot
+from PyQt5.QtCore import QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTextStream, QTime, QUrl, pyqtSlot
 from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QDragEnterEvent, QDropEvent, QFont, QFontDatabase, QIcon,
-                         QKeyEvent, QMouseEvent, QMovie, QPalette, QPainter, QPixmap, QWheelEvent)
+                         QKeyEvent, QMouseEvent, QMovie, QPalette, QPixmap, QWheelEvent)
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDialog, QGroupBox, QHBoxLayout, QLabel,
                              QListWidget, QListWidgetItem, QMainWindow, QMenu, QMessageBox, QProgressDialog,
-                             QPushButton, QSizePolicy, QStyleFactory, QSlider, QToolBar, QVBoxLayout, QWidget,
+                             QPushButton, QSizePolicy, QSlider, QToolBar, QVBoxLayout, QWidget,
                              qApp)
 from qtawesome import icon
 
@@ -25,7 +25,7 @@ try:
     from vidcutter.updater import Updater
     from vidcutter.videoservice import VideoService
     from vidcutter.videoslider import VideoSlider
-    import vidcutter.resources
+    import vidcutter.resources as resources
 except ImportError:
     from updater import Updater
     from videoservice import VideoService
@@ -73,9 +73,10 @@ class VidCutter(QWidget):
         QFontDatabase.addApplicationFont(MainWindow.get_path('fonts/DroidSansMono.ttf'))
         QFontDatabase.addApplicationFont(MainWindow.get_path('fonts/OpenSans.ttf'))
 
+        MainWindow.load_stylesheet(MainWindow.get_path('styles/vidcutter.qss'))
+
         fontSize = 12 if sys.platform == 'darwin' else 10
-        appFont = QFont('Open Sans', fontSize, 300)
-        qApp.setFont(appFont)
+        qApp.setFont(QFont('Open Sans', fontSize, 300))
 
         self.clipTimes = []
         self.inCut = False
@@ -90,14 +91,6 @@ class VidCutter(QWidget):
 
         self.toolbar = QToolBar(floatable=False, movable=False, iconSize=QSize(40, 36))
         self.toolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        self.toolbar.setStyleSheet('''QToolBar { spacing:10px; }
-            QToolBar QToolButton { border:1px solid transparent; min-width:95px; font-size:11pt; font-weight:400;
-                border-radius:5px; padding:1px 2px; color:#444; }
-            QToolBar QToolButton:hover { border:1px inset #6A4572; color:#6A4572;
-                                    background-color:rgba(255, 255, 255, 0.85); }
-            QToolBar QToolButton:pressed { border:1px inset #6A4572; color:#6A4572;
-                                    background-color:rgba(255, 255, 255, 0.25); }
-            QToolBar QToolButton:disabled { color:#999; }''')
         self.initToolbar()
 
         self.appMenu, self.cliplistMenu = QMenu(), QMenu()
@@ -112,22 +105,15 @@ class VidCutter(QWidget):
                                     iconSize=QSize(100, 700), dragDropMode=QAbstractItemView.InternalMove,
                                     alternatingRowColors=True, customContextMenuRequested=self.itemMenu,
                                     dragEnabled=True)
-        self.cliplist.setStyleSheet('QListView { border-radius:0; border:none; border-left:1px solid #B9B9B9; ' +
-                                    'border-right:1px solid #B9B9B9; } QListView::item { padding:10px 0; }')
         self.cliplist.setFixedWidth(185)
         self.cliplist.model().rowsMoved.connect(self.syncClipList)
 
         listHeader = QLabel(pixmap=QPixmap(MainWindow.get_path('images/clipindex.png'), 'PNG'),
                             alignment=Qt.AlignCenter)
-        listHeader.setStyleSheet('''padding:5px; padding-top:8px; border:1px solid #b9b9b9;
-                                    background-color:qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFF,
-                                    stop: 0.5 #EAEAEA, stop: 0.6 #EAEAEA stop:1 #FFF);''')
+        listHeader.setObjectName('listHeader')
 
         self.runtimeLabel = QLabel('<div align="right">00:00:00</div>', textFormat=Qt.RichText)
-        self.runtimeLabel.setStyleSheet('''font-family:Droid Sans Mono; font-size:10pt; color:#FFF;
-                                           background:rgb(106, 69, 114) url(:images/runtime.png)
-                                           no-repeat left center; padding:2px; padding-right:8px;
-                                           border:1px solid #B9B9B9;''')
+        self.runtimeLabel.setObjectName('runtimeLabel')
 
         self.clipindexLayout = QVBoxLayout(spacing=0)
         self.clipindexLayout.setContentsMargins(0, 0, 0, 0)
@@ -142,8 +128,7 @@ class VidCutter(QWidget):
 
         self.timeCounter = QLabel('00:00:00 / 00:00:00', autoFillBackground=True, alignment=Qt.AlignCenter,
                                   sizePolicy=QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed))
-        self.timeCounter.setStyleSheet(
-            'color:#FFF; background:#000; font-family:Droid Sans Mono; font-size:10.5pt; padding:4px;')
+        self.timeCounter.setObjectName('timeCounter')
 
         videoplayerLayout = QVBoxLayout(spacing=0)
         videoplayerLayout.setContentsMargins(0, 0, 0, 0)
@@ -174,9 +159,7 @@ class VidCutter(QWidget):
         toolbarGroup.setFlat(False)
         toolbarGroup.setCursor(Qt.PointingHandCursor)
         toolbarGroup.setLayout(toolbarLayout)
-
-        toolbarGroup.setStyleSheet('''QGroupBox { background-color:rgba(0, 0, 0, 0.1);
-            border:1px inset #888; border-radius:5px; }''')
+        toolbarGroup.setObjectName('toolbarGroup')
 
         controlsLayout = QHBoxLayout(spacing=0)
         controlsLayout.addStretch(1)
@@ -224,12 +207,12 @@ class VidCutter(QWidget):
 
     def initIcons(self) -> None:
         self.appIcon = QIcon(MainWindow.get_path('images/vidcutter.png'))
-        self.openIcon = QIcon(MainWindow.get_path('images/icons/icon-open-active.png'))
-        self.playIcon = QIcon(MainWindow.get_path('images/icons/icon-play-active.png'))
-        self.pauseIcon = QIcon(MainWindow.get_path('images/icons/icon-pause-active.png'))
-        self.cutStartIcon = QIcon(MainWindow.get_path('images/icons/icon-start-active.png'))
-        self.cutEndIcon = QIcon(MainWindow.get_path('images/icons/icon-end-active.png'))
-        self.saveIcon = QIcon(MainWindow.get_path('images/icons/icon-save-active.png'))
+        self.openIcon = QIcon(MainWindow.get_path('images/icons/icon-open.png'))
+        self.playIcon = QIcon(MainWindow.get_path('images/icons/icon-play.png'))
+        self.pauseIcon = QIcon(MainWindow.get_path('images/icons/icon-pause.png'))
+        self.cutStartIcon = QIcon(MainWindow.get_path('images/icons/icon-start-2.png'))
+        self.cutEndIcon = QIcon(MainWindow.get_path('images/icons/icon-end-2.png'))
+        self.saveIcon = QIcon(MainWindow.get_path('images/icons/icon-save.png'))
         self.muteIcon = QIcon(MainWindow.get_path('images/muted.png'))
         self.unmuteIcon = QIcon(MainWindow.get_path('images/unmuted.png'))
         self.upIcon = icon('ei.caret-up', color='#444')
@@ -237,13 +220,13 @@ class VidCutter(QWidget):
         self.removeIcon = icon('ei.remove', color='#B41D1D')
         self.removeAllIcon = icon('ei.trash', color='#B41D1D')
         self.successIcon = QIcon(MainWindow.get_path('images/success.png'))
-        self.menuIcon = icon('fa.cog', color='#444', scale_factor=1.15)
+        self.menuIcon = QIcon(MainWindow.get_path('images/icons/icon-menu.png'))
         self.completePlayIcon = icon('fa.play', color='#444')
         self.completeOpenIcon = icon('fa.folder-open', color='#444')
         self.completeRestartIcon = icon('fa.retweet', color='#444')
         self.completeExitIcon = icon('fa.sign-out', color='#444')
-        self.mediaInfoIcon = icon('fa.info-circle', color='#444')
-        self.updateCheckIcon = icon('fa.cloud-download', color='#444')
+        self.mediaInfoIcon = QIcon(MainWindow.get_path('images/icons/icon-info.png'))
+        self.updateCheckIcon = QIcon(MainWindow.get_path('images/icons/icon-update.png'))
 
     def initActions(self) -> None:
         self.openAction = QAction(self.openIcon, 'Open', self, statusTip='Open media file',
@@ -383,13 +366,13 @@ class VidCutter(QWidget):
     a:hover { text-decoration:underline; }
 </style>
 <div style="min-width:650px;">
-<p style="font-size:26pt; font-weight:bold; color:#6A4572;">%s</p>
+<p style="font-size:26pt; font-weight:600; color:#6A4572;">%s</p>
 <p>
     <span style="font-size:13pt;"><b>Version: %s</b></span>
     <span style="font-size:10pt;position:relative;left:5px;">( %s )</span>
 </p>
 <p style="font-size:13px;">
-    Copyright &copy; 2016 <a href="mailto:pete@ozmartians.com">Pete Alexandrou</a>
+    Copyright &copy; 2017 <a href="mailto:pete@ozmartians.com">Pete Alexandrou</a>
     <br/>
     Website: <a href="%s">%s</a>
 </p>
@@ -830,17 +813,11 @@ class MainWindow(QMainWindow):
         return ':%s' % path
 
     @staticmethod
-    def get_style(label: bool = False) -> str:
-        style = 'Fusion'
-        if sys.platform.startswith('linux'):
-            installed_styles = QStyleFactory.keys()
-            for stl in ('Breeze', 'GTK+'):
-                if stl.lower() in map(str.lower, installed_styles):
-                    style = stl
-                    break
-        elif sys.platform == 'darwin':
-            style = 'Macintosh'
-        return style
+    def load_stylesheet(qssfile: str) -> None:
+        if QFileInfo(qssfile).exists():
+            qss = QFile(qssfile)
+            qss.open(QFile.ReadOnly | QFile.Text)
+            qApp.setStyleSheet(QTextStream(qss).readAll())
 
     @staticmethod
     def get_version(filename: str = '__init__.py') -> str:
