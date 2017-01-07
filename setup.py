@@ -21,7 +21,11 @@ def get_value(varname, filename='__init__.py'):
 
 def get_description(filename='README.md'):
     with open(path.join(here, filename), encoding='utf-8') as f:
-        return f.read()
+        file = list(f)
+    desc = ''
+    for item in file[6: len(file)]:
+        desc += item
+    return desc
 
 
 def get_architecture():
