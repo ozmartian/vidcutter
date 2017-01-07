@@ -31,7 +31,7 @@ def get_architecture():
 
 def get_install_requires():
     if packager == 'pypi':
-        return ['PyQt5 >= 5.5', 'qtawesome >= 0.3.3']
+        return ['PyQt5 >= 5.5']
     else:
         return []
 
@@ -53,7 +53,7 @@ def get_package_data():
 def get_data_files():
     if sys.platform.startswith('linux'):
         return [
-            ('/usr/share/pixmaps', ['data/pixmaps/vidcutter.png']),
+            ('/usr/share/pixmaps', ['data/icons/vidcutter.png']),
             ('/usr/share/applications', ['data/desktop/vidcutter.desktop'])
         ]
     else:
@@ -78,7 +78,7 @@ setup(
 
     package_dir={'vidcutter': '.'},
 
-    setup_requires=['setuptools >= 26.1.1'],
+    setup_requires=['setuptools'],
 
     install_requires=get_install_requires(),
 

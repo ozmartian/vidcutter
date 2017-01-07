@@ -11,12 +11,10 @@ from urllib.request import urlopen
 
 from PyQt5.QtCore import QFileInfo, QProcess, Qt, QThread, pyqtSignal, pyqtSlot
 from PyQt5.QtWidgets import qApp, QMessageBox, QWidget
-from qtawesome import icon
 
 
 class Updater(QThread):
     updateAvailable = pyqtSignal(bool, str)
-    # updateInstalled = pyqtSignal(bool)
 
     pypi_api_endpoint = 'https://pypi.python.org/pypi/vidcutter/json'
     github_api_endpoint = 'https://api.github.com/repos/ozmartian/vidcutter/releases/latest'
@@ -98,9 +96,7 @@ class Updater(QThread):
         mbox.setInformativeText(
             'A new version of %s has been detected. Would you like to update now?' % qApp.applicationName())
         install_btn = mbox.addButton('Install Update', QMessageBox.AcceptRole)
-        install_btn.setIcon(icon('fa.check', color='#444'))
         reject_btn = mbox.addButton('Not Now', QMessageBox.RejectRole)
-        reject_btn.setIcon(icon('fa.times', color='#444'))
         mbox.setDefaultButton(install_btn)
         return mbox.exec_()
 
@@ -111,7 +107,8 @@ class Updater(QThread):
         mbox.setWindowTitle('%s UPDATER' % qApp.applicationName())
         mbox.setText('<h3 style="color:#6A4572;">%s %s</h3>'
                      % (qApp.applicationName(), qApp.applicationVersion()))
-        mbox.setInformativeText('You are already running the latest version.<table width="350"><tr><td></td></tr></table>')
+        mbox.setInformativeText('You are already running the latest version.' +
+                                '<table width="350"><tr><td></td></tr></table>')
         mbox.setStandardButtons(QMessageBox.Close)
         mbox.setDefaultButton(QMessageBox.Close)
         return mbox.exec_()

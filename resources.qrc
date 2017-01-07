@@ -1,17 +1,31 @@
 <RCC>
   <qresource>
     <file>fonts/DroidSansMono.ttf</file>
-    <file>fonts/HelveticaNeue.ttf</file>
     <file>fonts/OpenSans.ttf</file>
     <file>images/clipindex.png</file>
     <file>images/filmstrip.png</file>
     <file>images/handle.png</file>
-    <file>images/knob.png</file>
     <file>images/muted.png</file>
     <file>images/novideo.png</file>
     <file>images/novideotext.gif</file>
     <file>images/runtime.png</file>
     <file>images/unmuted.png</file>
     <file>images/vidcutter.png</file>
+    <file>images/icons/icon-end-active.png</file>
+    <file>images/icons/icon-end.png</file>
+    <file>images/icons/icon-info.png</file>
+    <file>images/icons/icon-menu-active.png</file>
+    <file>images/icons/icon-menu.png</file>
+    <file>images/icons/icon-open-active.png</file>
+    <file>images/icons/icon-open.png</file>
+    <file>images/icons/icon-pause-active.png</file>
+    <file>images/icons/icon-pause.png</file>
+    <file>images/icons/icon-play-active.png</file>
+    <file>images/icons/icon-play.png</file>
+    <file>images/icons/icon-save-active.png</file>
+    <file>images/icons/icon-save.png</file>
+    <file>images/icons/icon-start-active.png</file>
+    <file>images/icons/icon-start.png</file>
+    <file>images/icons/icon-update.png</file>
   </qresource>
 </RCC>

@@ -12,7 +12,7 @@ from zipfile import ZipFile
 
 from PyQt5.QtCore import QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTime, QUrl, pyqtSlot
 from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QDragEnterEvent, QDropEvent, QFont, QFontDatabase, QIcon,
-                         QKeyEvent, QMouseEvent, QMovie, QPalette, QPixmap, QWheelEvent)
+                         QKeyEvent, QMouseEvent, QMovie, QPalette, QPainter, QPixmap, QWheelEvent)
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDialog, QGroupBox, QHBoxLayout, QLabel,
@@ -25,7 +25,7 @@ try:
     from vidcutter.updater import Updater
     from vidcutter.videoservice import VideoService
     from vidcutter.videoslider import VideoSlider
-    import vidcutter.resources as resources
+    import vidcutter.resources
 except ImportError:
     from updater import Updater
     from videoservice import VideoService
@@ -93,8 +93,10 @@ class VidCutter(QWidget):
         self.toolbar.setStyleSheet('''QToolBar { spacing:10px; }
             QToolBar QToolButton { border:1px solid transparent; min-width:95px; font-size:11pt; font-weight:400;
                 border-radius:5px; padding:1px 2px; color:#444; }
-            QToolBar QToolButton:hover { border:1px inset #6A4572; color:#6A4572; background-color:rgba(255, 255, 255, 0.85); }
-            QToolBar QToolButton:pressed { border:1px inset #6A4572; color:#6A4572; background-color:rgba(255, 255, 255, 0.25); }
+            QToolBar QToolButton:hover { border:1px inset #6A4572; color:#6A4572;
+                                    background-color:rgba(255, 255, 255, 0.85); }
+            QToolBar QToolButton:pressed { border:1px inset #6A4572; color:#6A4572;
+                                    background-color:rgba(255, 255, 255, 0.25); }
             QToolBar QToolButton:disabled { color:#999; }''')
         self.initToolbar()
 
@@ -222,18 +224,12 @@ class VidCutter(QWidget):
 
     def initIcons(self) -> None:
         self.appIcon = QIcon(MainWindow.get_path('images/vidcutter.png'))
-        self.openIcon = icon('fa.film', color='#444', color_active='#6A4572', scale_factor=0.9)
-        self.playIcon = icon('fa.play-circle-o', color='#444', color_active='#6A4572', scale_factor=1.1)
-        self.pauseIcon = icon('fa.pause-circle-o', color='#444', color_active='#6A4572', scale_factor=1.1)
-        self.cutStartIcon = icon('fa.scissors', scale_factor=1.15, color='#444', color_active='#6A4572')
-        endicon_normal = icon('fa.scissors', scale_factor=1.15, color='#444').pixmap(QSize(36, 36)).toImage()
-        endicon_active = icon('fa.scissors', scale_factor=1.15, color='#6A4572').pixmap(QSize(36, 36)).toImage()
-        self.cutEndIcon = QIcon()
-        self.cutEndIcon.addPixmap(QPixmap.fromImage(endicon_normal.mirrored(horizontal=True, vertical=False)),
-                                  QIcon.Normal, QIcon.Off)
-        self.cutEndIcon.addPixmap(QPixmap.fromImage(endicon_active.mirrored(horizontal=True, vertical=False)),
-                                  QIcon.Active, QIcon.Off)
-        self.saveIcon = icon('fa.video-camera', color='#6A4572', color_active='#6A4572')
+        self.openIcon = QIcon(MainWindow.get_path('images/icons/icon-open-active.png'))
+        self.playIcon = QIcon(MainWindow.get_path('images/icons/icon-play-active.png'))
+        self.pauseIcon = QIcon(MainWindow.get_path('images/icons/icon-pause-active.png'))
+        self.cutStartIcon = QIcon(MainWindow.get_path('images/icons/icon-start-active.png'))
+        self.cutEndIcon = QIcon(MainWindow.get_path('images/icons/icon-end-active.png'))
+        self.saveIcon = QIcon(MainWindow.get_path('images/icons/icon-save-active.png'))
         self.muteIcon = QIcon(MainWindow.get_path('images/muted.png'))
         self.unmuteIcon = QIcon(MainWindow.get_path('images/unmuted.png'))
         self.upIcon = icon('ei.caret-up', color='#444')
@@ -756,7 +752,8 @@ class VidCutter(QWidget):
         qApp.restoreOverrideCursor()
         self.startNew()
         if error == QMediaPlayer.ResourceError:
-            QMessageBox.critical(self.parent, 'INVALID MEDIA', 'Invalid media file detected at:<br/><br/><b>%s</b><br/><br/>%s'
+            QMessageBox.critical(self.parent, 'INVALID MEDIA',
+                                 'Invalid media file detected at:<br/><br/><b>%s</b><br/><br/>%s'
                                  % (self.movieFilename, self.mediaPlayer.errorString()))
         else:
             QMessageBox.critical(self.parent, 'ERROR NOTIFICATION', self.mediaPlayer.errorString())

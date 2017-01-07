@@ -1,8 +1,9 @@
 pkgbase = vidcutter-git
 	pkgdesc = FFmpeg based video cutter & joiner with a modern PyQt5 GUI
-	pkgver = 2.0.1.r1.gf298f66
+	pkgver = 2.0.1.r4.g9dc652c
 	pkgrel = 1
 	url = http://vidcutter.ozmartians.com
+	install = vidcutter-git.install
 	arch = any
 	license = GPL3
 	makedepends = git

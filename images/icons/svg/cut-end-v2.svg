@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   id="svg5"
+   viewBox="0 0 1024 1024"
+   height="1024"
+   width="1024"
+   version="1.1">
+  <metadata
+     id="metadata11">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs9">
+    <filter
+       id="filter4773"
+       style="color-interpolation-filters:sRGB;">
+      <feGaussianBlur
+         id="feGaussianBlur4747"
+         result="result0"
+         in="SourceAlpha"
+         stdDeviation="2.3" />
+      <feMorphology
+         id="feMorphology4749"
+         result="result1"
+         radius="6.6"
+         in="SourceAlpha" />
+      <feGaussianBlur
+         id="feGaussianBlur4751"
+         in="result1"
+         stdDeviation="8.9" />
+      <feColorMatrix
+         id="feColorMatrix4753"
+         result="result91"
+         values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0.3 0" />
+      <feComposite
+         id="feComposite4755"
+         in2="result91"
+         result="result2"
+         operator="out"
+         in="result0" />
+      <feGaussianBlur
+         id="feGaussianBlur4757"
+         result="result4"
+         stdDeviation="1.7" />
+      <feDiffuseLighting
+         id="feDiffuseLighting4761"
+         surfaceScale="10">
+        <feDistantLight
+           id="feDistantLight4759"
+           elevation="45"
+           azimuth="225" />
+      </feDiffuseLighting>
+      <feBlend
+         id="feBlend4763"
+         mode="multiply"
+         in2="SourceGraphic" />
+      <feComposite
+         id="feComposite4765"
+         result="result3"
+         operator="in"
+         in2="SourceAlpha" />
+      <feSpecularLighting
+         id="feSpecularLighting4769"
+         specularExponent="17.9"
+         surfaceScale="5"
+         in="result4">
+        <feDistantLight
+           id="feDistantLight4767"
+           elevation="45"
+           azimuth="225" />
+      </feSpecularLighting>
+      <feComposite
+         id="feComposite4771"
+         operator="atop"
+         in2="result3" />
+    </filter>
+  </defs>
+  <g
+     style="filter:url(#filter4773)"
+     transform="matrix(-1,0,0,1,1041.7898,0)"
+     id="g4745">
+    <path
+       d="M 678.8,512 371.6,256 V 409.6 H 52.250847 V 614.4 H 371.6 V 768 Z"
+       id="path3685"
+       style="fill:#444444;fill-opacity:1" />
+    <path
+       d="M 831.6,195.78456 H 989.53898 V 105.43729 H 831.6 c -56.32,0 -102.4,40.65627 -102.4,90.34727 v 632.43088 c 0,49.691 46.08,90.34727 102.4,90.34727 H 989.53898 V 828.21544 H 831.6 Z"
+       id="path3"
+       style="fill:#444444;fill-opacity:1;stroke-width:0.99999994" />
+  </g>
+</svg>

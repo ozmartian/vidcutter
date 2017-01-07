@@ -1,6 +1,6 @@
 # Maintainer: Pete Alexandrou (ozmartian) <pete@ozmartians.com>
 pkgname=vidcutter-git
-pkgver=2.0.1.r1.gf298f66
+pkgver=2.0.1.r4.g9dc652c
 pkgrel=1
 pkgdesc="FFmpeg based video cutter & joiner with a modern PyQt5 GUI"
 arch=('any')
@@ -9,6 +9,7 @@ url="http://vidcutter.ozmartians.com"
 source=('vidcutter-git::git+https://github.com/ozmartian/vidcutter.git')
 depends=('python-pyqt5' 'qt5-multimedia' 'ffmpeg' 'python-qtawesome-git')
 makedepends=('git' 'sed' 'python-setuptools')
+install=${pkgname}.install
 provides=()
 conflicts=('vidcutter')
 md5sums=('SKIP')
