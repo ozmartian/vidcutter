@@ -1,3 +1,11 @@
+QGroupBox#toolbarGroup {
+    background-color: rgba(0, 0, 0, 0.1);
+    border: 1px inset #888;
+    border-radius: 5px;
+}
+
+/* -------------------------------------------------------------------------- */
+
 QToolBar { spacing: 10px; }
 
 QToolBar QToolButton {
@@ -25,6 +33,8 @@ QToolBar QToolButton:pressed {
 
 QToolBar QToolButton:disabled { color: #999; }
 
+/* -------------------------------------------------------------------------- */
+
 QListView {
     border-radius: 0;
     border: none;
@@ -33,6 +43,8 @@ QListView {
 }
 
 QListView::item { padding: 10px 0; }
+
+/* -------------------------------------------------------------------------- */
 
 QLabel#listHeader {
     padding: 8px 5px 5px;
@@ -56,10 +68,4 @@ QLabel#timeCounter {
     font-family: "Droid Sans Mono", monospace;
     font-size: 10.5pt;
     padding: 4px;
-}
-
-QGroupBox#toolbarGroup {
-    background-color: rgba(0, 0, 0, 0.1);
-    border: 1px inset #888;
-    border-radius: 5px;
 }
