@@ -1,0 +1,6 @@
+{
+  "name": "VidCutter",
+  "tagline": "Cross-platform Qt5 based app for quick and easy video trimming/splitting and merging/joining for simple quick edits. FFmpeg based backend, which is supplied for Windows, and written in Python3 & the excellent PyQt5 GUI framework. Nearing first phase of completion.",
+  "body": "<img align=\"left\" src=\"https://raw.githubusercontent.com/ozmartian/vidcutter/master/icons/vidcutter.png\" />\r\n\r\n<h2>VidCutter</h2>\r\n\r\nCross-platform Qt5 based app for quick and easy video trimming/splitting and merging/joining for simple quick edits. FFmpeg based backend, which is supplied for Windows, and written in Python3 with the excellent PyQt5 GUI framework.\r\n\r\nNearing first phase of completion.\r\n",
+  "note": "Don't delete this file! It's used internally to help with page regeneration."
+}
