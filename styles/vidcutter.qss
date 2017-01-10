@@ -35,6 +35,14 @@ QToolBar QToolButton:disabled { color: #999; }
 
 /* -------------------------------------------------------------------------- */
 
+QPushButton::menu-indicator  {
+    subcontrol-origin: padding;
+    subcontrol-position: bottom right;
+    left: 8px;
+}
+
+/* -------------------------------------------------------------------------- */
+
 QListView {
     border-radius: 0;
     border: none;
