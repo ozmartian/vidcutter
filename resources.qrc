@@ -4,39 +4,39 @@
         <file>fonts/OpenSans.ttf</file>
         <file>fonts/RobotoCondensed.ttf</file>
         <file>images/clipindex.png</file>
+        <file>images/complete-exit.png</file>
+        <file>images/complete-open.png</file>
+        <file>images/complete-play.png</file>
+        <file>images/complete-restart.png</file>
+        <file>images/down.png</file>
         <file>images/filmstrip.png</file>
         <file>images/handle.png</file>
+        <file>images/info.png</file>
+        <file>images/menu.png</file>
+        <file>images/menu-active.png</file>
         <file>images/muted.png</file>
         <file>images/novideo.png</file>
         <file>images/novideotext.gif</file>
+        <file>images/remove.png</file>
+        <file>images/remove-all.png</file>
         <file>images/runtime.png</file>
+        <file>images/thumbsup.png</file>
+        <file>images/toolbar-end.png</file>
+        <file>images/toolbar-end-active.png</file>
+        <file>images/toolbar-open.png</file>
+        <file>images/toolbar-open-active.png</file>
+        <file>images/toolbar-pause.png</file>
+        <file>images/toolbar-pause-active.png</file>
+        <file>images/toolbar-play.png</file>
+        <file>images/toolbar-play-active.png</file>
+        <file>images/toolbar-save.png</file>
+        <file>images/toolbar-save-active.png</file>
+        <file>images/toolbar-start.png</file>
+        <file>images/toolbar-start-active.png</file>
         <file>images/unmuted.png</file>
+        <file>images/up.png</file>
+        <file>images/update.png</file>
         <file>images/vidcutter.png</file>
-        <file>images/icons/icon-complete-exit.png</file>
-        <file>images/icons/icon-complete-open.png</file>
-        <file>images/icons/icon-complete-play.png</file>
-        <file>images/icons/icon-complete-restart.png</file>
-        <file>images/icons/icon-down.png</file>
-        <file>images/icons/icon-end-active.png</file>
-        <file>images/icons/icon-end.png</file>
-        <file>images/icons/icon-info.png</file>
-        <file>images/icons/icon-menu-active.png</file>
-        <file>images/icons/icon-menu.png</file>
-        <file>images/icons/icon-remove.png</file>
-        <file>images/icons/icon-remove-all.png</file>
-        <file>images/icons/icon-save-active.png</file>
-        <file>images/icons/icon-save.png</file>
-        <file>images/icons/icon-start-active.png</file>
-        <file>images/icons/icon-start.png</file>
-        <file>images/icons/icon-thumbsup.png</file>
-        <file>images/icons/icon-toolbar-open.png</file>
-        <file>images/icons/icon-toolbar-open-active.png</file>
-        <file>images/icons/icon-toolbar-pause.png</file>
-        <file>images/icons/icon-toolbar-pause-active.png</file>
-        <file>images/icons/icon-toolbar-play.png</file>
-        <file>images/icons/icon-toolbar-play-active.png</file>
-        <file>images/icons/icon-up.png</file>
-        <file>images/icons/icon-update.png</file>
         <file>styles/vidcutter.qss</file>
     </qresource>
 </RCC>
