@@ -5,7 +5,7 @@
 ; NOTE: The value of AppId uniquely identifies this application.
 ; Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-AppId={B1051F28-3EE1-49A9-8730-9E42FF5D0864}
+AppId={{B1051F28-3EE1-49A9-8730-9E42FF5D0864}
 AppName=VidCutter
 AppVersion=2.0.1
 ;AppVerName=VidCutter 2.0.1
