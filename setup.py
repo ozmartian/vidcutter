@@ -35,7 +35,7 @@ def get_architecture():
 
 def get_install_requires():
     if packager == 'pypi':
-        return ['PyQt5 >= 5.5', 'qtawesome']
+        return ['PyQt5 >= 5.5']
     else:
         return ['qtawesome']
 
@@ -102,6 +102,7 @@ setup(
         'Natural Language :: English',
         'Operating System :: OS Independent',
         'Topic :: Communications :: File Sharing',
-        'Programming Language :: Python :: 3.5'
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6'
     ]
 )
