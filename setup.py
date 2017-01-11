@@ -37,7 +37,7 @@ def get_install_requires():
     if packager == 'pypi':
         return ['PyQt5 >= 5.5']
     else:
-        return ['qtawesome']
+        return []
 
 
 def get_package_data():
