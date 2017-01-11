@@ -9,7 +9,7 @@ from distutils.version import LooseVersion
 from urllib.error import HTTPError
 from urllib.request import urlopen
 
-from PyQt5.QtCore import QFileInfo, QProcess, Qt, QThread, pyqtSignal, pyqtSlot
+from PyQt5.QtCore import QFileInfo, QProcess, QThread, pyqtSignal, pyqtSlot
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import qApp, QMessageBox, QWidget
 
@@ -92,8 +92,9 @@ class Updater(QThread):
         mbox = QMessageBox(parent)
         mbox.setIconPixmap(qApp.windowIcon().pixmap(64, 64))
         mbox.setWindowTitle('%s UPDATER' % qApp.applicationName())
-        mbox.setText('<table border="0" width="350"><tr><td><h4 align="center">Your Version: %s <br/> Available Version: %s'
-                     % (qApp.applicationVersion(), version) + '</h4></td></tr></table><br/>')
+        mbox.setText(
+            '<table border="0" width="350"><tr><td><h4 align="center">Your Version: %s <br/> Available Version: %s'
+            % (qApp.applicationVersion(), version) + '</h4></td></tr></table><br/>')
         mbox.setInformativeText(
             'A new version of %s has been detected. Would you like to update now?' % qApp.applicationName())
         install_btn = mbox.addButton('Install Update', QMessageBox.AcceptRole)

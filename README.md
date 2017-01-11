@@ -8,7 +8,7 @@ Cross-platform Qt5 based app for quick and easy video trimming/splitting and mer
 FFmpeg dives the backend with a stylishly hand edited Qt5 UI. FFmpeg static binary is supplied for Windows installations.
 For non-windows, use your o/s package manager if on Linux and homebrew for Mac OS X to manage FFmpeg. It is most likely already installed on your Linux or macOS machine.
 
-----[Linux]----
+----[ Linux Users ]----
 
 Install via PyPi as a last resort only if you are using a Linux distribution that is NOT related to ArchLinux or Ubuntu/Debian.
 
@@ -25,10 +25,10 @@ If you are new to PPAs then just issue the following commans in a terminal:
     sudo add-apt-repository ppa:ozmartian/apps
     sudo apt-get update
 
-You should now be able to search for the vidcutter software package via your chosen package management software (synaptic, Ubuntu software centre, apt-get etc.)
+You should now be able to search for vidcutter in your chosen package management software (synaptic, Ubuntu software centre, apt-get etc.)
 
 
-----[Windows + macOS]----
+----[ Windows + macOS Users ]----
 
 It is highly recommended that you install using the native installers for Windows and macOS made available at the app's homepage:
 

@@ -146,9 +146,8 @@ class VidCutter(QWidget):
 
         self.menuButton = QPushButton(icon=self.menuIcon, flat=True, toolTip='Menu',
                                       statusTip='Media + application information',
-                                      iconSize=QSize(32, 32), cursor=Qt.PointingHandCursor)
+                                      iconSize=QSize(28, 28), cursor=Qt.PointingHandCursor)
         self.menuButton.setMenu(self.appMenu)
-        self.appMenu
 
         toolbarLayout = QHBoxLayout()
         toolbarLayout.addWidget(self.toolbar)
