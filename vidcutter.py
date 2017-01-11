@@ -69,12 +69,12 @@ class VidCutter(QWidget):
         self.videoService = VideoService(self)
 
         QFontDatabase.addApplicationFont(':/fonts/DroidSansMono.ttf')
-        QFontDatabase.addApplicationFont(':/fonts/RobotoCondensed.ttf')
+        QFontDatabase.addApplicationFont(':/fonts/OpenSans.ttf')
 
         MainWindow.load_stylesheet(':/styles/vidcutter.qss')
 
         fontSize = 12 if sys.platform == 'darwin' else 10
-        qApp.setFont(QFont('Roboto Condensed', fontSize, 300))
+        qApp.setFont(QFont('Open Sans', fontSize, 300))
 
         self.clipTimes = []
         self.inCut = False
