@@ -37,7 +37,7 @@ QToolBar QToolButton:disabled { color: #999; }
 QPushButton::menu-indicator  {
     subcontrol-origin: padding;
     subcontrol-position: right;
-    left: 6px;
+    left: 4px;
 }
 
 /* -------------------------------------------------------------------------- */
