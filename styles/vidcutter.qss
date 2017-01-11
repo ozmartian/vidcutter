@@ -6,31 +6,31 @@ QGroupBox#toolbarGroup {
 
 /* -------------------------------------------------------------------------- */
 
-QToolBar { spacing: 10px; }
+QToolBar#appcontrols { spacing: 5px; }
 
-QToolBar QToolButton {
+QToolBar#appcontrols QToolButton {
     border: 1px solid transparent;
-    min-width: 95px;
+    min-width: 100px;
     font-size: 11pt;
     font-weight: 400;
     border-radius: 5px;
     padding: 1px 2px;
-    color: #444;
+    color: #6A4572;
 }
 
-QToolBar QToolButton:hover {
+QToolBar#appcontrols QToolButton:hover {
     border: 1px inset #6A4572;
     color: #6A4572;
     background-color: rgba(255, 255, 255, 0.85);
 }
 
-QToolBar QToolButton:pressed {
+QToolBar#appcontrols QToolButton:pressed {
     border: 1px inset #6A4572;
     color: #6A4572;
     background-color: rgba(255, 255, 255, 0.25);
 }
 
-QToolBar QToolButton:disabled { color: #999; }
+QToolBar#appcontrols QToolButton:disabled { color: #999; }
 
 /* -------------------------------------------------------------------------- */
 

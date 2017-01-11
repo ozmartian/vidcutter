@@ -88,6 +88,7 @@ class VidCutter(QWidget):
         self.initActions()
 
         self.toolbar = QToolBar(floatable=False, movable=False, iconSize=QSize(40, 36))
+        self.toolbar.setObjectName('appcontrols')
         self.toolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         self.initToolbar()
 
@@ -205,12 +206,12 @@ class VidCutter(QWidget):
 
     def initIcons(self) -> None:
         self.appIcon = QIcon(':/images/vidcutter.png')
-        self.openIcon = QIcon(':/images/toolbar-open.png')
-        self.playIcon = QIcon(':/images/toolbar-play.png')
-        self.pauseIcon = QIcon(':/images/toolbar-pause.png')
-        self.cutStartIcon = QIcon(':/images/toolbar-start.png')
-        self.cutEndIcon = QIcon(':/images/toolbar-end.png')
-        self.saveIcon = QIcon(':/images/toolbar-save.png')
+        self.openIcon = QIcon(':/images/toolbar-open-active.png')
+        self.playIcon = QIcon(':/images/toolbar-play-active.png')
+        self.pauseIcon = QIcon(':/images/toolbar-pause-active.png')
+        self.cutStartIcon = QIcon(':/images/toolbar-start-active.png')
+        self.cutEndIcon = QIcon(':/images/toolbar-end-active.png')
+        self.saveIcon = QIcon(':/images/toolbar-save-active.png')
         self.muteIcon = QIcon(':/images/muted.png')
         self.unmuteIcon = QIcon(':/images/unmuted.png')
         self.upIcon = QIcon(':/images/up.png')

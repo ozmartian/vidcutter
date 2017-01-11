@@ -12,7 +12,6 @@
         <file>images/handle.png</file>
         <file>images/info.png</file>
         <file>images/menu.png</file>
-        <file>images/menu-active.png</file>
         <file>images/muted.png</file>
         <file>images/novideo.png</file>
         <file>images/novideotext.gif</file>
@@ -20,17 +19,11 @@
         <file>images/remove-all.png</file>
         <file>images/runtime.png</file>
         <file>images/thumbsup.png</file>
-        <file>images/toolbar-end.png</file>
         <file>images/toolbar-end-active.png</file>
-        <file>images/toolbar-open.png</file>
         <file>images/toolbar-open-active.png</file>
-        <file>images/toolbar-pause.png</file>
         <file>images/toolbar-pause-active.png</file>
-        <file>images/toolbar-play.png</file>
         <file>images/toolbar-play-active.png</file>
-        <file>images/toolbar-save.png</file>
         <file>images/toolbar-save-active.png</file>
-        <file>images/toolbar-start.png</file>
         <file>images/toolbar-start-active.png</file>
         <file>images/unmuted.png</file>
         <file>images/up.png</file>

@@ -10,7 +10,7 @@ class VideoSlider(QSlider):
     def __init__(self, *arg, **kwargs):
         super(VideoSlider, self).__init__(*arg, **kwargs)
         self.setOrientation(Qt.Horizontal)
-        self.setObjectName('VideoSlider')
+        self.setObjectName('videoslider')
         self.setAttribute(Qt.WA_Hover, True)
         self.setStatusTip('Set clip start and end points')
         self.setFocusPolicy(Qt.StrongFocus)
@@ -28,7 +28,7 @@ class VideoSlider(QSlider):
     def initStyle(self, selected: bool = False, margin: str = '0') -> None:
         bground = 'transparent'
         if selected:
-            bground = 'rgba(255, 255, 255, 0.75)'
+            bground = 'rgba(200, 213, 236, 0.85)'
         self.setStyleSheet(self.getStyleSheet(bground, margin))
 
     def setRestrictValue(self, value: int, force: bool = False) -> None:
@@ -54,14 +54,14 @@ class VideoSlider(QSlider):
             x = 4
             for i in range(self.minimum(), self.width(), x):
                 if i % 5 == 0:
-                    h = 13
-                    w = 1.5
+                    h = 18
+                    w = 1
                     z = 8
                 else:
                     h = 7
-                    w = 1.2
+                    w = 0.8
                     z = 14
-                pen = QPen(QColor('#888'))
+                pen = QPen(QColor('#444'))
                 pen.setWidthF(w)
                 painter.setPen(pen)
                 if self.tickPosition() in (QSlider.TicksBothSides, QSlider.TicksAbove):
@@ -70,7 +70,7 @@ class VideoSlider(QSlider):
                 if self.tickPosition() in (QSlider.TicksBothSides, QSlider.TicksBelow):
                     y = self.rect().bottom() - z
                     painter.drawLine(x, y, x, y - h)
-                x += 20
+                x += 10
         opt.subControls = QStyle.SC_SliderGroove
         painter.drawComplexControl(QStyle.CC_Slider, opt)
         opt.subControls = QStyle.SC_SliderHandle
@@ -102,7 +102,7 @@ class VideoSlider(QSlider):
     def getStyleSheet(self, bground: str, margin: str) -> str:
         return '''QSlider:horizontal { margin: 25px 0 18px; }
 QSlider::groove:horizontal {
-    border: 1px inset #999;
+    border: none;
     height: 32px;
     background: #444 url(:images/filmstrip.png) repeat-x;
     position: absolute;
@@ -111,7 +111,7 @@ QSlider::groove:horizontal {
     margin: 0;
 }
 QSlider::sub-page:horizontal {  
-    border: 1px inset #999;
+    border: none;
     background: %s;
     height: 20px;
     position: absolute;
@@ -121,7 +121,7 @@ QSlider::sub-page:horizontal {
     margin-left: %s;
 }
 QSlider::add-page:horizontal{
-    border: 1px inset #999;
+    border: none;
     background: transparent;
 }
 QSlider::handle:horizontal {
@@ -130,7 +130,4 @@ QSlider::handle:horizontal {
     width: 20px;
     height: 58px;
     margin: -16px -10px;
-}
-QSlider::handle:hover {
-    background: purple;
 }''' % (bground, margin)
