@@ -46,9 +46,9 @@ pyinstaller --clean vidcutter.win%ARCH%.spec
 
 REM ......................add metadata to built Windows binary......................
 
-verpatch dist\vidcutter.exe /va %VERSION%.0 /pv %VERSION%.0 /s desc "VidCutter" /s name "VidCutter" /s copyright "2017 Pete Alexandrou" /s product "VidCutter %BINARCH%"
+verpatch dist\vidcutter.exe /va %VERSION%.0 /pv %VERSION%.0 /s desc "VidCutter" /s name "VidCutter" /s copyright "© 2017 Pete Alexandrou" /s product "VidCutter x64" /s company "ozmartians.com"
 
 REM ......................call Inno Setup installer build script......................
 
 cd ..\InnoSetup
-CALL build.installer.bat
+"C:\Program Files (x86)\Inno Setup 5\iscc.exe" installer.iss
