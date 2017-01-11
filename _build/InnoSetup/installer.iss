@@ -5,7 +5,7 @@
 ; NOTE: The value of AppId uniquely identifies this application.
 ; Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-AppId={{F378A0B5-0A94-49E4-9174-09557BD0464F}
+AppId={B1051F28-3EE1-49A9-8730-9E42FF5D0864}
 AppName=VidCutter
 AppVersion=2.0.1
 ;AppVerName=VidCutter 2.0.1
@@ -15,8 +15,8 @@ AppSupportURL=http://vidcutter.ozmartians.com
 AppUpdatesURL=http://vidcutter.ozmartians.com
 DefaultDirName={pf}\VidCutter
 DefaultGroupName=VidCutter
-OutputBaseFilename=VidCutter_2.0.1
-SetupIconFile=C:\DEV\vidcutter\images\vidcutter.ico
+OutputBaseFilename=VidCutter-2.0.1-setup-x64
+SetupIconFile=C:\DEV\vidcutter\data\icons\vidcutter.ico
 Compression=lzma
 SolidCompression=yes
 ArchitecturesInstallIn64BitMode=x64
