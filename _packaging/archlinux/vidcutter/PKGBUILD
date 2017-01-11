@@ -28,5 +28,5 @@ package() {
     cd "${srcdir}/${pkgname}-${pkgver}"
     python3 setup.py install --root="${pkgdir}" --optimize=1 --skip-build
     # install -Dm644 "data/desktop/vidcutter.desktop" "${pkgdir}/usr/share/applications/vidcutter.desktop"
-    # install -Dm644 "data/pixmaps/vidcutter.png" "${pkgdir}/usr/share/pixmaps/vidcutter.png"
+    # install -Dm644 "data/icons/vidcutter.png" "${pkgdir}/usr/share/pixmaps/vidcutter.png"
 }

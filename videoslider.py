@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from PyQt5.QtCore import QEvent, QObject, Qt, pyqtSlot
-from PyQt5.QtGui import QColor, QKeyEvent, QMouseEvent, QPaintEvent, QWheelEvent
+from PyQt5.QtGui import QColor, QKeyEvent, QMouseEvent, QPaintEvent, QPen, QWheelEvent
 from PyQt5.QtWidgets import QSlider, QStyle, QStyleOptionSlider, QStylePainter, QWidget, qApp
 
 
@@ -29,40 +29,7 @@ class VideoSlider(QSlider):
         bground = 'transparent'
         if selected:
             bground = 'rgba(255, 255, 255, 0.75)'
-        self.setStyleSheet('''QSlider:horizontal { margin: 25px 0 18px; }
-QSlider::groove:horizontal {
-    border: 1px inset #999;
-    height: 32px;
-    background: #444 url(:images/filmstrip.png) repeat-x;
-    position: absolute;
-    left: 4px;
-    right: 4px;
-    margin: 0;
-}
-QSlider::sub-page:horizontal {  
-    border: 1px inset #999;
-    background: %s;
-    height: 20px;
-    position: absolute;
-    left: 0;
-    right: 0;
-    margin: 0;
-    margin-left: %s;
-}
-QSlider::add-page:horizontal{
-    border: 1px inset #999;
-    background: transparent;
-}
-QSlider::handle:horizontal {
-    border: none;
-    background: url(:images/handle.png) no-repeat top center;
-    width: 20px;
-    height: 58px;
-    margin: -16px -8px;
-}
-QSlider::handle:hover {
-    background: purple;
-}''' % (bground, margin))
+        self.setStyleSheet(self.getStyleSheet(bground, margin))
 
     def setRestrictValue(self, value: int, force: bool = False) -> None:
         self.restrictValue = value
@@ -88,11 +55,15 @@ QSlider::handle:hover {
             for i in range(self.minimum(), self.width(), x):
                 if i % 5 == 0:
                     h = 13
+                    w = 1.5
                     z = 8
                 else:
                     h = 7
+                    w = 1.2
                     z = 14
-                painter.setPen(QColor('#888'))
+                pen = QPen(QColor('#888'))
+                pen.setWidthF(w)
+                painter.setPen(pen)
                 if self.tickPosition() in (QSlider.TicksBothSides, QSlider.TicksAbove):
                     y = self.rect().top() + z
                     painter.drawLine(x, y, x, y + h)
@@ -121,9 +92,45 @@ QSlider::handle:hover {
             self.unsetCursor()
         super(VideoSlider, self).mouseMoveEvent(event)
 
-    def eventFilter(self, obj: QObject, event: QEvent):
+    def eventFilter(self, obj: QObject, event: QEvent) -> bool:
         if event.type() == QEvent.MouseButtonRelease:
             if self.parentWidget().mediaPlayer.isVideoAvailable() or self.parentWidget().mediaPlayer.isAudioAvailable():
                 self.setValue(QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.x(), self.width()))
                 self.parentWidget().mediaPlayer.setPosition(self.sliderPosition())
         return QWidget.eventFilter(self, obj, event)
+
+    def getStyleSheet(self, bground: str, margin: str) -> str:
+        return '''QSlider:horizontal { margin: 25px 0 18px; }
+QSlider::groove:horizontal {
+    border: 1px inset #999;
+    height: 32px;
+    background: #444 url(:images/filmstrip.png) repeat-x;
+    position: absolute;
+    left: 4px;
+    right: 4px;
+    margin: 0;
+}
+QSlider::sub-page:horizontal {  
+    border: 1px inset #999;
+    background: %s;
+    height: 20px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: 0;
+    margin-left: %s;
+}
+QSlider::add-page:horizontal{
+    border: 1px inset #999;
+    background: transparent;
+}
+QSlider::handle:horizontal {
+    border: none;
+    background: url(:images/handle.png) no-repeat top center;
+    width: 20px;
+    height: 58px;
+    margin: -16px -10px;
+}
+QSlider::handle:hover {
+    background: purple;
+}''' % (bground, margin)

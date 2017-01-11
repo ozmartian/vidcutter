@@ -10,6 +10,7 @@ from urllib.error import HTTPError
 from urllib.request import urlopen
 
 from PyQt5.QtCore import QFileInfo, QProcess, Qt, QThread, pyqtSignal, pyqtSlot
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import qApp, QMessageBox, QWidget
 
 
@@ -91,7 +92,7 @@ class Updater(QThread):
         mbox = QMessageBox(parent)
         mbox.setIconPixmap(qApp.windowIcon().pixmap(64, 64))
         mbox.setWindowTitle('%s UPDATER' % qApp.applicationName())
-        mbox.setText('<table border="0" width="350"><tr><td><h4 align="center">Current Version: %s -- New Version: %s'
+        mbox.setText('<table border="0" width="350"><tr><td><h4 align="center">Your Version: %s <br/> Available Version: %s'
                      % (qApp.applicationVersion(), version) + '</h4></td></tr></table><br/>')
         mbox.setInformativeText(
             'A new version of %s has been detected. Would you like to update now?' % qApp.applicationName())
@@ -103,7 +104,7 @@ class Updater(QThread):
     @staticmethod
     def notify_no_update(parent: QWidget) -> None:
         mbox = QMessageBox(parent)
-        mbox.setIconPixmap(icon('fa.thumbs-up', color='#6A4572').pixmap(64, 64))
+        mbox.setIconPixmap(QIcon(':/images/thumbsup.png').pixmap(64, 64))
         mbox.setWindowTitle('%s UPDATER' % qApp.applicationName())
         mbox.setText('<h3 style="color:#6A4572;">%s %s</h3>'
                      % (qApp.applicationName(), qApp.applicationVersion()))
@@ -122,10 +123,8 @@ class Updater(QThread):
                      '<table border="0" width="350"><tr><td><p>The application needs to be restarted in order to use ' +
                      'the newly installed version.</p><p>Would you like to restart now?</td></tr></table><br/>')
         restart_btn = mbox.addButton('Yes', QMessageBox.AcceptRole)
-        restart_btn.setIcon(icon('fa.check', color='#444'))
         restart_btn.clicked.connect(Updater.restart_app)
         reject_btn = mbox.addButton('No', QMessageBox.RejectRole)
-        reject_btn.setIcon(icon('fa.times', color='#444'))
         mbox.setDefaultButton(restart_btn)
         return mbox.exec_()
 

@@ -12,7 +12,6 @@ pkgbase = vidcutter-git
 	depends = python-pyqt5
 	depends = qt5-multimedia
 	depends = ffmpeg
-	depends = python-qtawesome-git
 	conflicts = vidcutter
 	source = vidcutter-git::git+https://github.com/ozmartian/vidcutter.git
 	md5sums = SKIP

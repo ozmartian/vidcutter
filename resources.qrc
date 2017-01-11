@@ -1,7 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>fonts/DroidSansMono.ttf</file>
-        <file>fonts/OpenSans.ttf</file>
         <file>fonts/RobotoCondensed.ttf</file>
         <file>images/clipindex.png</file>
         <file>images/complete-exit.png</file>

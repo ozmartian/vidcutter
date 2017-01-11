@@ -6,6 +6,7 @@ build/
 dist/
 _build/pyinstaller/build
 _build/pyinstaller/dist
+_build/pyinstaller/temp
 vidcutter.*/
 *.log
 *.dll

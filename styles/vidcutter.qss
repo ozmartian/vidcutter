@@ -21,7 +21,6 @@ QToolBar QToolButton {
 QToolBar QToolButton:hover {
     border: 1px inset #6A4572;
     color: #6A4572;
-    font-weight: 500;
     background-color: rgba(255, 255, 255, 0.85);
 }
 
@@ -37,8 +36,8 @@ QToolBar QToolButton:disabled { color: #999; }
 
 QPushButton::menu-indicator  {
     subcontrol-origin: padding;
-    subcontrol-position: bottom right;
-    left: 8px;
+    subcontrol-position: right;
+    left: 6px;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -77,3 +76,7 @@ QLabel#timeCounter {
     font-size: 10.5pt;
     padding: 4px;
 }
+
+/* -------------------------------------------------------------------------- */
+
+QStatusBar::item { border: none; }

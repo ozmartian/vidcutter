@@ -3,9 +3,7 @@
 
 import os
 import sys
-
 import PyQt5
-import qtawesome
 
 block_cipher = None
 
@@ -18,7 +16,6 @@ a = Analysis(['..\\..\\vidcutter.py'],
              binaries=[],
              datas=[
                  ('..\\..\\__init__.py', '.'),
-                 (os.path.join(sys.modules['qtawesome'].__path__[0], 'fonts', '*'), '.\\qtawesome\\fonts'),
                  ('..\\..\\bin\\ffmpeg.exe', '.\\bin')
              ],
              hiddenimports=[],
