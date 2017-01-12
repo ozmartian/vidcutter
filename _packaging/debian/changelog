@@ -1,3 +1,13 @@
+vidcutter (2.2.0-1) stable; urgency=medium
+
+  * UI improvements + fixes for Windows and macOS
+  
+  * removed qtawesome dependency so icons are now PNG based; this cuts
+    out annoying dependencies allowing for much smaller builds and
+    simplified distribution packages in Linux and Pypi
+
+ -- Pete Alexandrou <pete@ozmartians.com>  Mon, 12 Jan 2017 18:31:15 +0800
+
 vidcutter (2.0.0-1) unstable; urgency=low
 
   * source package automatically created by stdeb 0.8.5
