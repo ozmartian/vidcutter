@@ -18,15 +18,48 @@
         .left, .right { display: inline-block; }
         @media screen and (min-width: 64em) .main-content { padding: 0.5rem 6rem; }
         h2 { margin-top: 0 !important; }
+        .release-label {
+            display: inline-block;
+            padding: 5px 10px;
+            margin: 20px;
+            font-size: 18px;
+            color: #FFF;
+            font-weight: bold;
+            background-color: #6cc644;
+            border-radius: 3px;
+        }
+        .release-label2 {
+            display: inline-block;
+            padding: 5px 10px;
+            margin: 20px;
+            font-size: 18px;
+            width: 100%;
+            color: #FFF;
+            font-weight: bold;
+            background-color: #6cc644;
+            border-radius: 3px;
+        }
+        .release-label > a, .release-label2 a { color: #FFF; }
+        code { margin-left:35px; padding:10px 15px!important; }
+        .screenshot-container img {
+            box-shadow: 1px 2px 10px #666;
+        }
+        @media screen and (min-width: 64em) {
+            .page-header {
+                padding: 0;
+            }
+        }
     </style>
 </head>
 
 <body>
     <section class="page-header">
+        <span class="release-label">
+            <a href="https://github.com/ozmartian/vidcutter/releases/latest">Download latest release</a>
+        </span>
         <h1 class="project-name">VidCutter</h1>
         <h2 class="project-tagline">
-            Cross-platform Qt5 based app for quick and easy video trimming/splitting and merging/joining for simple quick edits. FFmpeg based backend, which is supplied for Windows, and written in Python3 &amp; the excellent PyQt5 GUI framework. Nearing first phase
-            of completion.
+            Cross-platform Qt5 based app for quick and easy video trimming/splitting and merging/joining for simple quick edits. FFmpeg based backend, which is supplied for Windows, and written in Python3 &amp; the excellent PyQt5 GUI framework.
         </h2>
         <a class="btn" href="https://github.com/ozmartian/vidcutter">
         View on GitHub
@@ -39,38 +72,49 @@
     </a>
     </section>
     <section class="main-content">
-        <h2>
-            <a aria-hidden="true" class="anchor" href="#vidcutter" id="vidcutter">
-                <span aria-hidden="true" class="octicon octicon-link">
-                    </span>
-            </a>
-            VidCutter
-        </h2>
-        <p>
-            Cross-platform Qt5 based app for quick and easy video trimming/splitting and merging/joining for simple quick edits. FFmpeg based backend, which is supplied for Windows, and written in Python3 with the excellent PyQt5 GUI framework.
-        </p>
         <div class="screenshot-container">
             <div class="left">
                 <img src="images/screenshot-01.png" />
             </div>
+            &nbsp;&nbsp;&nbsp;&nbsp;
             <div class="right">
                 <img src="images/screenshot-02.png" />
             </div>
         </div>
+
+        <div align="center" class="release-label2" style="text-align:center !important;">
+            <a href="https://github.com/ozmartian/vidcutter/releases/latest">Download latest release</a>
+        </div>
+
+        <h2>----[ Windows + macOS Users ]----</h2>
+
+        <p>Use the Download latest release buttons to download an installer for your operating system.</p>
+
+        <h2>----[ Linux Users ]----</h2>
+
+        <p>Install via PyPi as a last resort only if you are using a Linux distribution that is NOT related to ArchLinux or Ubuntu/Debian.</p>
+
+        <p>ArchLinux users can install directly from AUR, package is available in both stable and git-latest versions:</p>
+
         <p>
-            Nearing first phase of completion.
+            <code><b>AUR:</b> vidcutter, vidgutter-git</code>
         </p>
-        <footer class="site-footer">
-            <span class="site-footer-owner">
-                    <a href="https://github.com/ozmartian/vidcutter">
-                        VidCutter
-                    </a>
-                    is maintained by
-                    <a href="https://github.com/ozmartian">
-                        ozmartian
-                    </a>
-                    .
-                </span>
+
+        <p>Ubuntu/Mint/Debian users can install via Launchpad PPA:</p>
+
+        <p>
+            <code>ppa:ozmartian/apps</code>
+        </p>
+
+        <p>If you are new to PPAs then just issue the following commans in a terminal:
+
+        <p>
+            <code>sudo add-apt-repository ppa:ozmartian/apps</code><br/><code>sudo apt-get update</code>
+        </p>
+
+        <p>You should now be able to search for vidcutter in your chosen package management software (synaptic, Ubuntu software centre, apt-get etc.)</p>
+
+        <footer class="site-footer" style="font-size:10pt !important; text-align: right;">
             <span class="site-footer-credits">
                     This page was generated by
                     <a href="https://pages.github.com">
