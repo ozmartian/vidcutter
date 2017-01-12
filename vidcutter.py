@@ -71,7 +71,8 @@ class VidCutter(QWidget):
         QFontDatabase.addApplicationFont(':/fonts/DroidSansMono.ttf')
         QFontDatabase.addApplicationFont(':/fonts/OpenSans.ttf')
 
-        MainWindow.load_stylesheet(':/styles/vidcutter.qss')
+        stylesheet = ':/styles/vidcutter_osx.qss' if sys.platform == 'darwin' else ':/styles/vidcutter.qss'
+        MainWindow.load_stylesheet(stylesheet)
 
         fontSize = 12 if sys.platform == 'darwin' else 10
         qApp.setFont(QFont('Open Sans', fontSize, 300))
