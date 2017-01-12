@@ -7,18 +7,24 @@
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{B1051F28-3EE1-49A9-8730-9E42FF5D0864}
 AppName=VidCutter
-AppVersion=2.0.1
-;AppVerName=VidCutter 2.0.1
+AppVersion=2.2.0
+AppVerName=VidCutter 2.2.0
 AppPublisher=Pete Alexandrou
 AppPublisherURL=http://vidcutter.ozmartians.com
 AppSupportURL=http://vidcutter.ozmartians.com
 AppUpdatesURL=http://vidcutter.ozmartians.com
 DefaultDirName={pf}\VidCutter
 DefaultGroupName=VidCutter
-OutputBaseFilename=VidCutter-2.0.1-setup-x64
+OutputBaseFilename=VidCutter-2.2.0-setup-x64
 SetupIconFile=C:\DEV\vidcutter\data\icons\vidcutter.ico
 Compression=lzma
 SolidCompression=yes
+ShowLanguageDialog=no
+VersionInfoVersion=2.2.0
+VersionInfoCompany=ozmartians.com
+VersionInfoCopyright=© 2017 Pete Alexandrou
+VersionInfoProductName=VidCutter x64
+VersionInfoProductVersion=2.2.0
 ArchitecturesInstallIn64BitMode=x64
 
 [Languages]
@@ -28,7 +34,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "C:\DEV\vidcutter\_build\pyinstaller\dist\vidcutter.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\pyinstaller\dist\vidcutter.exe"; DestDir: "{app}"; Flags: ignoreversion; Tasks: desktopicon; Languages: english
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
