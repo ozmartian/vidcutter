@@ -11,8 +11,8 @@ QToolBar#appcontrols { spacing: 5px; }
 QToolBar#appcontrols QToolButton {
     border: 1px solid transparent;
     min-width: 100px;
-    font-size: 13pt;
-    font-weight: 400;
+    font-size: 15pt;
+    font-weight: 300;
     border-radius: 5px;
     padding: 1px 2px;
     color: #6A4572;
@@ -37,7 +37,7 @@ QToolBar#appcontrols QToolButton:disabled { color: #999; }
 QPushButton::menu-indicator  {
     subcontrol-origin: padding;
     subcontrol-position: right;
-    left: 4px;
+    left: -4px;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -47,6 +47,11 @@ QListView {
     border: none;
     border-left: 1px solid #B9B9B9;
     border-right: 1px solid #B9B9B9;
+    outline: none;
+}
+
+QListView:selected {
+    outline: none;
 }
 
 QListView::item { padding: 10px 0; }

@@ -18,3 +18,4 @@ bin/ffmpeg.exe
 bin/ffmpeg.zip
 docs/_tvlinker
 _build/InnoSetup/Output/*
+.DS_Store

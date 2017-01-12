@@ -17,7 +17,7 @@ from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDialog, QGroupBox, QHBoxLayout, QLabel,
                              QListWidget, QListWidgetItem, QMainWindow, QMenu, QMessageBox, QProgressDialog,
-                             QPushButton, QSizePolicy, QSlider, QToolBar, QVBoxLayout, QWidget, qApp)
+                             QPushButton, QSizePolicy, QStyleFactory, QSlider, QToolBar, QVBoxLayout, QWidget, qApp)
 
 try:
     from vidcutter.updater import Updater
@@ -88,8 +88,10 @@ class VidCutter(QWidget):
         self.initIcons()
         self.initActions()
 
-        self.toolbar = QToolBar(floatable=False, movable=False, iconSize=QSize(40, 36))
+        self.toolbar = QToolBar(floatable=False, movable=False, iconSize=QSize(38, 38))
         self.toolbar.setObjectName('appcontrols')
+        if sys.platform == 'darwin':
+            self.toolbar.setStyle(QStyleFactory.create('Fusion'))
         self.toolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         self.initToolbar()
 
@@ -148,7 +150,7 @@ class VidCutter(QWidget):
 
         self.menuButton = QPushButton(icon=self.menuIcon, flat=True, toolTip='Menu',
                                       statusTip='Media + application information',
-                                      iconSize=QSize(28, 28), cursor=Qt.PointingHandCursor)
+                                      iconSize=QSize(24, 24), cursor=Qt.PointingHandCursor)
         self.menuButton.setMenu(self.appMenu)
 
         toolbarLayout = QHBoxLayout()
