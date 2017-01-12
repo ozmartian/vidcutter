@@ -30,12 +30,12 @@ del /q ..\..\bin\ffmpeg.exe
 REM ......................download latest FFmpeg static binary......................
 
 if not exist ".\temp\" mkdir temp
-aria2c -d temp -x 6 %FFMPEG%
+aria2c --check-certificate=false -d temp -x 6 %FFMPEG%
 
 REM ......................extract ffmpeg.exe to its expected location......................
 
 cd temp
-"C:\Program Files\7-Zip\7z.exe" e ffmpeg-latest-win%ARCH%-static.7z ffmpeg-latest-win%ARCH%-static/bin/ffmpeg.exe
+7z e ffmpeg-latest-win%ARCH%-static.7z ffmpeg-latest-win%ARCH%-static/bin/ffmpeg.exe
 if not exist "..\..\..\bin\" mkdir "..\..\..\bin\"
 move ffmpeg.exe ..\..\..\bin\
 cd ..
