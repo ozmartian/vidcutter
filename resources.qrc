@@ -30,5 +30,6 @@
         <file>images/update.png</file>
         <file>images/vidcutter.png</file>
         <file>styles/vidcutter.qss</file>
+        <file>styles/vidcutter_osx.qss</file>
     </qresource>
 </RCC>
