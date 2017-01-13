@@ -5,9 +5,9 @@ import os
 import shlex
 import sys
 
-from PyQt5.QtCore import QDir, QFileInfo, QObject, QProcess, QTemporaryFile, pyqtSlot
+from PyQt5.QtCore import QDir, QFileInfo, QObject, QProcess, QProcessEnvironment, QTemporaryFile, pyqtSlot
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import qApp, QMessageBox
 
 
 class VideoService(QObject):
@@ -18,11 +18,15 @@ class VideoService(QObject):
         self.backend = 'ffmpeg'
         if sys.platform == 'win32':
             self.backend = os.path.join(self.getAppPath(), 'bin', 'ffmpeg.exe')
+            if not os.path.exists(self.backend):
+                self.backend = 'ffmpeg.exe'
         self.initProc()
 
     def initProc(self) -> None:
         self.proc = QProcess(self.parent)
         self.proc.setProcessChannelMode(QProcess.MergedChannels)
+        env = QProcessEnvironment.systemEnvironment()
+        self.proc.setProcessEnvironment(env)
         self.proc.setWorkingDirectory(self.getAppPath())
         if hasattr(self.proc, 'errorOccurred'):
             self.proc.errorOccurred.connect(self.cmdError)
@@ -60,8 +64,10 @@ class VideoService(QObject):
     @pyqtSlot(QProcess.ProcessError)
     def cmdError(self, error: QProcess.ProcessError) -> None:
         if error != QProcess.Crashed:
-            QMessageBox.critical(self.parent.parent, "Error calling an external process",
-                                 self.proc.errorString(), buttons=QMessageBox.Cancel)
+            QMessageBox.critical(self.parent.parent, '',
+                                 '<h4>FFmpeg Error:</h4>' +
+                                 '<p>%s</p>' % self.proc.errorString(), buttons=QMessageBox.Close)
+            qApp.quit()
 
     def getAppPath(self) -> str:
         if getattr(sys, 'frozen', False):

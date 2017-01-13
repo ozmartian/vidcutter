@@ -129,5 +129,5 @@ QSlider::handle:horizontal {
     background: url(:images/handle.png) no-repeat top center;
     width: 20px;
     height: 58px;
-    margin: -16px -8px;
+    margin: -15px -8px;
 }''' % (bground, margin)
