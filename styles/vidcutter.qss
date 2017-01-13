@@ -26,14 +26,6 @@ QToolBar#appcontrols QToolButton:disabled { color: #999; }
 
 /* -------------------------------------------------------------------------- */
 
-QPushButton::menu-indicator  {
-    subcontrol-origin: padding;
-    subcontrol-position: right;
-    left: 4px;
-}
-
-/* -------------------------------------------------------------------------- */
-
 QListView {
     border-radius: 0;
     border: none;
@@ -67,4 +59,25 @@ QLabel#timeCounter {
     font-family: "Droid Sans Mono", monospace;
     font-size: 10.5pt;
     padding: 4px;
+}
+
+/* -------------------------------------------------------------------------- */
+
+QPushButton#menuButton {
+    border-image: url(:/images/menu.png);
+    width: 24px;
+    height: 24px;
+}
+
+QPushButton:hover#menuButton, QPushButton:pressed#menuButton {
+    border-image: url(:/images/menu-active.png);
+    
+}
+
+QPushButton:pressed {
+    background: transparent;
+}
+
+QPushButton::menu-indicator  {
+    left: 10000;
 }

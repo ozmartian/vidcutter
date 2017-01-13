@@ -71,7 +71,7 @@ class VidCutter(QWidget):
         QFontDatabase.addApplicationFont(':/fonts/DroidSansMono.ttf')
         QFontDatabase.addApplicationFont(':/fonts/OpenSans.ttf')
 
-        stylesheet = ':/styles/vidcutter_osx.qss' if sys.platform == 'darwin' else ':/styles/vidcutter.qss'
+        stylesheet = ':/styles/vidcutter_osx.qss' if sys.platform == 'darwin' else 'styles/vidcutter.qss'
         MainWindow.load_stylesheet(stylesheet)
 
         fontSize = 12 if sys.platform == 'darwin' else 10
@@ -148,9 +148,10 @@ class VidCutter(QWidget):
                                     cursor=Qt.PointingHandCursor, value=50, minimum=0, maximum=100,
                                     sliderMoved=self.setVolume)
 
-        self.menuButton = QPushButton(icon=self.menuIcon, flat=True, toolTip='Menu',
+        self.menuButton = QPushButton(objectName='menuButton', flat=True, toolTip='Menu',
                                       statusTip='Media + application information',
                                       iconSize=QSize(24, 24), cursor=Qt.PointingHandCursor)
+        self.menuButton.setFixedSize(QSize(24, 24))
         self.menuButton.setMenu(self.appMenu)
 
         toolbarLayout = QHBoxLayout()
@@ -170,8 +171,9 @@ class VidCutter(QWidget):
         controlsLayout.addStretch(1)
         controlsLayout.addWidget(self.muteButton)
         controlsLayout.addWidget(self.volumeSlider)
+        controlsLayout.addSpacing(10)
         controlsLayout.addWidget(self.menuButton)
-        controlsLayout.addSpacing(1)
+        controlsLayout.addSpacing(10)
 
         layout = QVBoxLayout()
         layout.setContentsMargins(10, 10, 10, 4)
