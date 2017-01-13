@@ -1,11 +1,3 @@
-QGroupBox#toolbarGroup {
-    background-color: rgba(0, 0, 0, 0.1);
-    border: 1px inset #888;
-    border-radius: 5px;
-}
-
-/* -------------------------------------------------------------------------- */
-
 QToolBar#appcontrols { spacing: 5px; }
 
 QToolBar#appcontrols QToolButton {
@@ -76,7 +68,3 @@ QLabel#timeCounter {
     font-size: 10.5pt;
     padding: 4px;
 }
-
-/* -------------------------------------------------------------------------- */
-
-QStatusBar::item { border: none; }

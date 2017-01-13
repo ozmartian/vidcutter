@@ -60,7 +60,7 @@ class VideoSlider(QSlider):
                 else:
                     h = 7
                     w = 0.8
-                    z = 14
+                    z = 15
                 pen = QPen(QColor('#444'))
                 pen.setWidthF(w)
                 painter.setPen(pen)

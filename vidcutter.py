@@ -161,7 +161,8 @@ class VidCutter(QWidget):
         toolbarGroup.setFlat(False)
         toolbarGroup.setCursor(Qt.PointingHandCursor)
         toolbarGroup.setLayout(toolbarLayout)
-        toolbarGroup.setObjectName('toolbarGroup')
+        toolbarGroup.setStyleSheet('QGroupBox { background-color: rgba(0, 0, 0, 0.1); ' +
+                                       'border: 1px inset #888; border-radius: 5px; }')
 
         controlsLayout = QHBoxLayout(spacing=0)
         controlsLayout.addStretch(1)
