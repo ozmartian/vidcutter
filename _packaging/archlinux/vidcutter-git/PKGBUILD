@@ -1,6 +1,6 @@
 # Maintainer: Pete Alexandrou (ozmartian) <pete@ozmartians.com>
 pkgname=vidcutter-git
-pkgver=2.2.0.r0.g8ddf930
+pkgver=2.2.5.r0.g772b688
 pkgrel=1
 pkgdesc="FFmpeg based video cutter & joiner with a modern PyQt5 GUI"
 arch=('any')
