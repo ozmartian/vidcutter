@@ -1,3 +1,12 @@
+vidcutter (2.2.5-0) stable; urgency=medium
+
+  * added dependency libqt5multimedia5-plugins to fix missing service
+    issue or new Ubuntu installations
+
+  * UI tweaks and other minor fixes
+
+ -- Pete Alexandrou <pete@ozmartians.com>  Mon, 14 Jan 2017 20:12:43 +0800
+
 vidcutter (2.2.0-1) stable; urgency=medium
 
   * UI improvements + fixes for Windows and macOS
