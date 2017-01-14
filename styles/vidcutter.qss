@@ -65,8 +65,9 @@ QLabel#timeCounter {
 
 QPushButton#menuButton {
     border-image: url(:/images/menu.png);
-    width: 24px;
+    width: 24px;    
     height: 24px;
+    outline: none;
 }
 
 QPushButton:hover#menuButton, QPushButton:pressed#menuButton {
@@ -74,10 +75,12 @@ QPushButton:hover#menuButton, QPushButton:pressed#menuButton {
     
 }
 
-QPushButton:pressed {
-    background: transparent;
+QPushButton {
+    background-color: transparent;
+    border: none;
+    outline: none;
 }
 
-QPushButton::menu-indicator  {
-    left: 10000;
+QPushButton::menu-indicator {
+    left: -1000px;
 }
