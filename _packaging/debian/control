@@ -10,6 +10,7 @@ Package: vidcutter
 Architecture: all
 Depends: ${misc:Depends}, ${python3:Depends}, python3-pyqt5, python3-pyqt5.qtmultimedia,
  libqt5multimedia5-plugins, ffmpeg
+Recommends: ubuntu-restricted-extras
 Description: FFmpeg based video cutter & joiner with a modern PyQt5 GUI
  Cross-platform Qt5 based app for quick and easy video trimming/splitting and merging/joining for simple quick edits.
  FFmpeg dives the backend with a stylishly hand edited Qt5 UI. FFmpg static binary is pre-installed for Windows builds.
