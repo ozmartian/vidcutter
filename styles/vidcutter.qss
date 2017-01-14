@@ -75,12 +75,12 @@ QPushButton:hover#menuButton, QPushButton:pressed#menuButton {
     
 }
 
-QPushButton {
+QPushButton::menu-indicator#menuButton {
+    left: -1000px;
+}
+
+QPushButton#muteButton, QPushButton#menuButton {
     background-color: transparent;
     border: none;
     outline: none;
-}
-
-QPushButton::menu-indicator {
-    left: -1000px;
 }

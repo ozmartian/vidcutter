@@ -140,7 +140,8 @@ class VidCutter(QWidget):
         self.videoplayerWidget = QWidget(self, visible=False)
         self.videoplayerWidget.setLayout(videoplayerLayout)
 
-        self.muteButton = QPushButton(icon=self.unmuteIcon, flat=True, toolTip='Mute',
+        self.muteButton = QPushButton(objectName='muteButton', icon=self.unmuteIcon,
+                                      flat=True, toolTip='Mute',
                                       statusTip='Toggle audio mute', iconSize=QSize(16, 16),
                                       cursor=Qt.PointingHandCursor, clicked=self.muteAudio)
 
