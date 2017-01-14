@@ -67,12 +67,10 @@ QPushButton#menuButton {
     border-image: url(:/images/menu.png);
     width: 24px;    
     height: 24px;
-    outline: none;
 }
 
 QPushButton:hover#menuButton, QPushButton:pressed#menuButton {
     border-image: url(:/images/menu-active.png);
-    
 }
 
 QPushButton::menu-indicator#menuButton {
