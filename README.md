@@ -20,7 +20,7 @@ Ubuntu/Mint/Debian users can install via Launchpad PPA.
 
     ppa:ozmartian/apps
 
-If you are new to PPAs then just issue the following commans in a terminal:
+If you are new to PPAs then just issue the following commands in a terminal:
 
     sudo add-apt-repository ppa:ozmartian/apps
     sudo apt-get update
