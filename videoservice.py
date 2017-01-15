@@ -4,6 +4,7 @@
 import os
 import shlex
 import sys
+from distutils.spawn import find_executable
 
 from PyQt5.QtCore import QDir, QFileInfo, QObject, QProcess, QProcessEnvironment, QTemporaryFile, pyqtSlot
 from PyQt5.QtGui import QPixmap
@@ -15,11 +16,18 @@ class VideoService(QObject):
         super(VideoService, self).__init__(parent)
         self.parent = parent
         self.consoleOutput = ''
-        self.backend = 'ffmpeg'
         if sys.platform == 'win32':
             self.backend = os.path.join(self.getAppPath(), 'bin', 'ffmpeg.exe')
             if not os.path.exists(self.backend):
-                self.backend = 'ffmpeg.exe'
+                self.backend = find_executable('ffmpeg.exe')
+        elif sys.platform == 'darwin':
+            self.backend = os.path.join(self.getAppPath(), 'bin', 'ffmpeg')
+        else:
+            for exe in ('ffmpeg', 'avconv'):
+                exe_path = find_executable(exe)
+                if exe_path is not None:
+                    self.backend = exe_path
+                    break
         self.initProc()
 
     def initProc(self) -> None:
@@ -54,6 +62,8 @@ class VideoService(QObject):
         return self.cmdExec(self.backend, args)
 
     def cmdExec(self, cmd: str, args: str = None) -> bool:
+        if os.getenv('DEBUG', False):
+            print('VideoService CMD: %s %s' % (cmd, args))
         if self.proc.state() == QProcess.NotRunning:
             self.proc.start(cmd, shlex.split(args))
             self.proc.waitForFinished(-1)
@@ -65,7 +75,7 @@ class VideoService(QObject):
     def cmdError(self, error: QProcess.ProcessError) -> None:
         if error != QProcess.Crashed:
             QMessageBox.critical(self.parent.parent, '',
-                                 '<h4>FFmpeg Error:</h4>' +
+                                 '<h4>%s Error:</h4>' % self.backend +
                                  '<p>%s</p>' % self.proc.errorString(), buttons=QMessageBox.Close)
             qApp.quit()
 
