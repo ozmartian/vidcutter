@@ -527,7 +527,7 @@ class VidCutter(QWidget):
             if type(item[2]) is QPixmap:
                 listitem.setIcon(QIcon(item[2]))
             self.cliplist.addItem(listitem)
-            marker = QLabel('''<style>b { font-size:7pt; } p { margin:2px 5px; }</style>
+            marker = QLabel('''<style>b { font-size:8pt; } p { margin:2px 5px; }</style>
                             <p><b>START</b><br/>%s<br/><b>END</b><br/>%s</p>'''
                             % (item[0].toString(self.timeformat), endItem))
             marker.setStyleSheet('border:none;')
@@ -561,10 +561,13 @@ class VidCutter(QWidget):
                                                                 'Video files (*%s)' % sourceext)
             if self.finalFilename == '':
                 return False
+            file, ext = os.path.splitext(self.finalFilename)
+            if len(ext) == 0:
+                ext = sourceext
+                self.finalFilename += ext
             qApp.setOverrideCursor(Qt.BusyCursor)
             self.saveAction.setDisabled(True)
             self.showProgress(clips)
-            file, ext = os.path.splitext(self.finalFilename)
             index = 1
             self.progress.setLabelText('Cutting media files...')
             qApp.processEvents()
@@ -771,7 +774,7 @@ class MainWindow(QMainWindow):
         try:
             if len(sys.argv) >= 2:
                 self.cutter.loadFile(sys.argv[1])
-        except (FileNotFoundError, PermissionError) as e:
+        except (FileNotFoundError, PermissionError):
             QMessageBox.critical(self, 'Error loading file', sys.exc_info()[0])
             qApp.restoreOverrideCursor()
             self.cutter.startNew()
