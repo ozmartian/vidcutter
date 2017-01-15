@@ -212,7 +212,8 @@ class VidCutter(QWidget):
         self.novideoWidget.setLayout(novideoLayout)
 
     def initIcons(self) -> None:
-        self.appIcon = QIcon(':/images/vidcutter.png')
+        # self.appIcon = QIcon(':/images/vidcutter.png')
+        self.appIcon = QIcon(':/images/vidcutter-papirus.png')
         self.openIcon = QIcon(':/images/toolbar-open-active.png')
         self.playIcon = QIcon(':/images/toolbar-play-active.png')
         self.pauseIcon = QIcon(':/images/toolbar-pause-active.png')
