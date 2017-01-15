@@ -106,7 +106,7 @@ class VidCutter(QWidget):
                                     contextMenuPolicy=Qt.CustomContextMenu, uniformItemSizes=True,
                                     iconSize=QSize(100, 700), dragDropMode=QAbstractItemView.InternalMove,
                                     alternatingRowColors=True, customContextMenuRequested=self.itemMenu,
-                                    dragEnabled=True)
+                                    objectName='cliplist', dragEnabled=True)
         self.cliplist.setFixedWidth(185)
         self.cliplist.model().rowsMoved.connect(self.syncClipList)
 
@@ -212,8 +212,7 @@ class VidCutter(QWidget):
         self.novideoWidget.setLayout(novideoLayout)
 
     def initIcons(self) -> None:
-        # self.appIcon = QIcon(':/images/vidcutter.png')
-        self.appIcon = QIcon(':/images/vidcutter-papirus.png')
+        self.appIcon = QIcon(':/images/vidcutter.png')
         self.openIcon = QIcon(':/images/toolbar-open-active.png')
         self.playIcon = QIcon(':/images/toolbar-play-active.png')
         self.pauseIcon = QIcon(':/images/toolbar-pause-active.png')
