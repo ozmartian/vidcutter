@@ -5,19 +5,18 @@
 ; NOTE: The value of AppId uniquely identifies this application.
 ; Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-AppId={{B1051F28-3EE1-49A9-8730-9E42FF5D0864}
+AppId={{76D4D864-E70F-4923-8289-C2504A2A9E67}
 AppName=VidCutter
 AppVersion=2.2.5
-AppVerName=VidCutter 2.2.5
+AppVerName=VidCutter
 AppPublisher=Pete Alexandrou
 AppPublisherURL=http://vidcutter.ozmartians.com
-AppSupportURL=http://vidcutter.ozmartians.com
-AppUpdatesURL=http://vidcutter.ozmartians.com
 DefaultDirName={pf}\VidCutter
 DefaultGroupName=VidCutter
 OutputBaseFilename=VidCutter-2.2.5-setup-x86
 SetupIconFile=C:\DEV\vidcutter\data\icons\vidcutter.ico
-Compression=lzma
+UninstallDisplayIcon={app}\vidcutter.exe
+Compression=lzma2
 SolidCompression=yes
 ShowLanguageDialog=no
 VersionInfoVersion=2.2.5
@@ -30,16 +29,16 @@ VersionInfoProductVersion=2.2.5
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Tasks]
-Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
 
 [Files]
-Source: "C:\Users\pete\Downloads\vidcutter.exe"; DestDir: "{app}"; Flags: ignoreversion; Tasks: desktopicon; Languages: english
-; NOTE: Don't use "Flags: ignoreversion" on any shared system files
+Source: "C:\DEV\vidcutter\_build\pyinstaller\dist\vidcutter.exe"; DestDir: "{app}"
+Source: "C:\DEV\vidcutter\data\icons\uninstall.ico"; DestDir: "{app}"
 
 [Icons]
 Name: "{group}\VidCutter"; Filename: "{app}\vidcutter.exe"
-Name: "{group}\{cm:UninstallProgram,VidCutter}"; Filename: "{uninstallexe}"
 Name: "{commondesktop}\VidCutter"; Filename: "{app}\vidcutter.exe"; Tasks: desktopicon
+Name: "{group}\{cm:UninstallProgram, VidCutter}"; Filename: "{uninstallexe}"; IconFilename: "{app}\uninstall.ico"
 
 [Run]
-Filename: "{app}\vidcutter.exe"; Description: "{cm:LaunchProgram,VidCutter}"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\vidcutter.exe"; Flags: nowait postinstall skipifsilent 32bit; Description: "{cm:LaunchProgram,VidCutter}"
