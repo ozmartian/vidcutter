@@ -40,20 +40,6 @@ def get_install_requires():
         return []
 
 
-def get_package_data():
-    if sys.platform == 'win32':
-        if path.exists('bin/ffmpeg.zip'):
-            remove('bin/ffmpeg.zip')
-        arch = sys.argv[3] if sys.argv[1] == 'bdist_wheel' else sysconfig.get_platform()
-        if arch == 'win32':
-            shutil.copy(path.join(here, 'bin', 'x86', 'ffmpeg.zip'), path.join(here, 'bin'))
-        elif arch == 'win-amd64':
-            shutil.copy(path.join(here, 'bin', 'x64', 'ffmpeg.zip'), path.join(here, 'bin'))
-        return ['bin/ffmpeg.zip', 'LICENSE', 'README.md']
-    else:
-        return ['LICENSE', 'README.md']
-
-
 def get_data_files():
     if sys.platform.startswith('linux'):
         return [
@@ -86,7 +72,7 @@ setup(
 
     install_requires=get_install_requires(),
 
-    package_data={'vidcutter': get_package_data()},
+    package_data={'vidcutter': ['LICENSE', 'README.md']},
 
     data_files=get_data_files(),
 
