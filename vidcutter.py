@@ -233,6 +233,7 @@ class VidCutter(QWidget):
         self.completeExitIcon = QIcon(':/images/complete-exit.png')
         self.mediaInfoIcon = QIcon(':/images/info.png')
         self.updateCheckIcon = QIcon(':/images/update.png')
+        self.thumbsupIcon = QIcon(':/images/thumbsup.png')
 
     def initActions(self) -> None:
         self.openAction = QAction(self.openIcon, 'Open', self, statusTip='Open media file',
@@ -626,7 +627,7 @@ class VidCutter(QWidget):
 
     def complete(self) -> None:
         info = QFileInfo(self.finalFilename)
-        mbox = QMessageBox(windowTitle='VIDCUTTING COMPLETE', minimumWidth=500, textFormat=Qt.RichText)
+        mbox = QMessageBox(icon=self.thumbsupIcon, windowTitle='VIDCUTTING COMPLETE', minimumWidth=500, textFormat=Qt.RichText)
         mbox.setText('''
     <style>
         table.info { margin:6px; padding:4px 15px; }

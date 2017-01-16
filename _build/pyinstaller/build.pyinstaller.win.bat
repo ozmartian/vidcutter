@@ -1,4 +1,4 @@
-@echo off
+:q@echo off
 
 REM ......................setup variables......................
 
@@ -30,7 +30,7 @@ del /q ..\..\bin\ffmpeg.exe
 REM ......................download latest FFmpeg static binary......................
 
 if not exist ".\temp\" mkdir temp
-aria2c --check-certificate=false -d temp -x 6 %FFMPEG%
+aria2c --ca-certificate=%USERPROFILE%\Documents\ca-certificate.crt -d temp -x 6 %FFMPEG%
 
 REM ......................extract ffmpeg.exe to its expected location......................
 
@@ -46,9 +46,9 @@ pyinstaller --clean vidcutter.win%ARCH%.spec
 
 REM ......................add metadata to built Windows binary......................
 
-verpatch dist\vidcutter.exe /va %VERSION%.0 /pv %VERSION%.0 /s desc "VidCutter" /s name "VidCutter" /s copyright "© 2017 Pete Alexandrou" /s product "VidCutter x64" /s company "ozmartians.com"
+verpatch dist\vidcutter.exe /va %VERSION%.0 /pv %VERSION%.0 /s desc "VidCutter" /s name "VidCutter" /s copyright "© 2017 Pete Alexandrou" /s product "VidCutter %BINARCH%" /s company "ozmartians.com"
 
 REM ......................call Inno Setup installer build script......................
 
 cd ..\InnoSetup
-"C:\Program Files (x86)\Inno Setup 5\iscc.exe" installer.iss
+"C:\Program Files (x86)\Inno Setup 5\iscc.exe" installer_%BINARCH%.iss
