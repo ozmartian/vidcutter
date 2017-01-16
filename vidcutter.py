@@ -108,6 +108,7 @@ class VidCutter(QWidget):
                                     alternatingRowColors=True, customContextMenuRequested=self.itemMenu,
                                     objectName='cliplist', dragEnabled=True)
         self.cliplist.setFixedWidth(185)
+        self.cliplist.setAttribute(Qt.WA_MacShowFocusRect, False)
         self.cliplist.model().rowsMoved.connect(self.syncClipList)
 
         listHeader = QLabel(pixmap=QPixmap(':/images/clipindex.png', 'PNG'),
@@ -197,11 +198,11 @@ class VidCutter(QWidget):
                               pixmap=QPixmap(':/images/novideo.png', 'PNG'),
                               sizePolicy=QSizePolicy(QSizePolicy.Expanding, QSizePolicy.MinimumExpanding))
         novideoImage.setBackgroundRole(QPalette.Dark)
-        novideoImage.setContentsMargins(0, 20, 0, 20)
+        novideoImage.setContentsMargins(0, 20, 0, 15)
         self.novideoLabel = QLabel(alignment=Qt.AlignCenter, autoFillBackground=True,
                                    sizePolicy=QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum))
         self.novideoLabel.setBackgroundRole(QPalette.Dark)
-        self.novideoLabel.setContentsMargins(0, 20, 15, 60)
+        self.novideoLabel.setContentsMargins(0, 20, 15, 40)
         novideoLayout = QVBoxLayout(spacing=0)
         novideoLayout.addWidget(novideoImage)
         novideoLayout.addWidget(self.novideoLabel, alignment=Qt.AlignTop)
