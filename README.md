@@ -5,7 +5,7 @@
 <p><b>Homepage:</b> <a href="http://vidcutter.ozmartians.com" target=_blank">http://vidcutter.ozmartians.com</a></p>
 
 Cross-platform Qt5 based app for quick and easy video trimming/splitting and merging/joining for simple quick edits.
-FFmpeg dives the backend with a stylishly hand edited Qt5 UI. FFmpeg static binary is supplied for Windows installations.
+FFmpeg drives the backend with a stylishly hand edited Qt5 UI. FFmpeg static binary is supplied for Windows installations.
 For non-windows, use your o/s package manager if on Linux and homebrew for Mac OS X to manage FFmpeg. It is most likely already installed on your Linux or macOS machine.
 
 ----[ Linux Users ]----
