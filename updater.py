@@ -119,7 +119,7 @@ class Updater(QThread):
     def notify_restart(parent: QWidget) -> bool:
         mbox = QMessageBox(parent)
         mbox.setIconPixmap(qApp.windowIcon().pixmap(64, 64))
-        mbox.setWindowTitle('%s UPDmboxATER' % qApp.applicationName())
+        mbox.setWindowTitle('%s UPDATER' % qApp.applicationName())
         mbox.setText('<h3 style="color:#6A4572;">INSTALLATION COMPLETE</h3>' +
                      '<table border="0" width="350"><tr><td><p>The application needs to be restarted in order to use ' +
                      'the newly installed version.</p><p>Would you like to restart now?</td></tr></table><br/>')
