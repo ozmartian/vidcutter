@@ -88,7 +88,7 @@ class VidCutter(QWidget):
         self.initIcons()
         self.initActions()
 
-        self.toolbar = QToolBar(floatable=False, movable=False, iconSize=QSize(38, 38))
+        self.toolbar = QToolBar(floatable=False, movable=False, iconSize=QSize(44, 44))
         self.toolbar.setObjectName('appcontrols')
         if sys.platform == 'darwin':
             self.toolbar.setStyle(QStyleFactory.create('Fusion'))
@@ -165,7 +165,8 @@ class VidCutter(QWidget):
         toolbarGroup.setCursor(Qt.PointingHandCursor)
         toolbarGroup.setLayout(toolbarLayout)
         toolbarGroup.setStyleSheet('QGroupBox { background-color: rgba(0, 0, 0, 0.1); ' +
-                                       'border: 1px inset #888; border-radius: 5px; }')
+                                       'border: 1px inset #888; box-shadow: 1px 1px 10px #666; ' +
+                                       'margin: 0; padding: 0; border-radius: 5px; }')
 
         controlsLayout = QHBoxLayout(spacing=0)
         controlsLayout.addStretch(1)
