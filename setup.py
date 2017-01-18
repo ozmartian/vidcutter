@@ -72,7 +72,12 @@ setup(
 
     install_requires=get_install_requires(),
 
-    package_data={'vidcutter': ['LICENSE', 'README.md', 'data/*']},
+    package_data={'vidcutter': [
+        'LICENSE',
+        'README.md',
+        'data/desktop/*.*',
+        'data/icons/*.*'
+    ]},
 
     data_files=get_data_files(),
 
