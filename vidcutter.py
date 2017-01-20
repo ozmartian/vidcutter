@@ -20,12 +20,10 @@ from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDial
                              QPushButton, QSizePolicy, QStyleFactory, QSlider, QToolBar, QVBoxLayout, QWidget, qApp)
 
 try:
-    from vidcutter.updater import Updater
     from vidcutter.videoservice import VideoService
     from vidcutter.videoslider import VideoSlider
     import vidcutter.resources as resources
 except ImportError:
-    from updater import Updater
     from videoservice import VideoService
     from videoslider import VideoSlider
     import resources
@@ -67,6 +65,8 @@ class VidCutter(QWidget):
         self.mediaPlayer = QMediaPlayer(None, QMediaPlayer.VideoSurface)
         self.videoWidget = VideoWidget(self)
         self.videoService = VideoService(self)
+
+        self.latest_release_url = 'https://github.com/ozmartian/vidcutter/releases/latest'
 
         QFontDatabase.addApplicationFont(':/fonts/DroidSansMono.ttf')
         QFontDatabase.addApplicationFont(':/fonts/OpenSans.ttf')
@@ -151,7 +151,6 @@ class VidCutter(QWidget):
                                     sliderMoved=self.setVolume)
 
         self.menuButton = QPushButton(objectName='menuButton', flat=True, toolTip='Menu',
-                                      statusTip='Media + application information',
                                       iconSize=QSize(24, 24), cursor=Qt.PointingHandCursor)
         self.menuButton.setFixedSize(QSize(24, 24))
         self.menuButton.setMenu(self.appMenu)
@@ -162,11 +161,11 @@ class VidCutter(QWidget):
 
         toolbarGroup = QGroupBox()
         toolbarGroup.setFlat(False)
-        toolbarGroup.setCursor(Qt.PointingHandCursor)
         toolbarGroup.setLayout(toolbarLayout)
+        toolbarGroup.setCursor(Qt.PointingHandCursor)
         toolbarGroup.setStyleSheet('QGroupBox { background-color: rgba(0, 0, 0, 0.1); ' +
-                                       'border: 1px inset #888; box-shadow: 1px 1px 10px #666; ' +
-                                       'margin: 0; padding: 0; border-radius: 5px; }')
+                                   'border: 1px inset #888; margin: 0; padding: 0;' +
+                                   'border-radius: 5px; }')
 
         controlsLayout = QHBoxLayout(spacing=0)
         controlsLayout.addStretch(1)
@@ -174,7 +173,7 @@ class VidCutter(QWidget):
         controlsLayout.addStretch(1)
         controlsLayout.addWidget(self.muteButton)
         controlsLayout.addWidget(self.volumeSlider)
-        controlsLayout.addSpacing(10)
+        controlsLayout.addSpacing(20)
         controlsLayout.addWidget(self.menuButton)
         controlsLayout.addSpacing(10)
 
@@ -215,12 +214,12 @@ class VidCutter(QWidget):
 
     def initIcons(self) -> None:
         self.appIcon = QIcon(':/images/vidcutter.png')
-        self.openIcon = QIcon(':/images/toolbar-open-active.png')
-        self.playIcon = QIcon(':/images/toolbar-play-active.png')
-        self.pauseIcon = QIcon(':/images/toolbar-pause-active.png')
-        self.cutStartIcon = QIcon(':/images/toolbar-start-active.png')
-        self.cutEndIcon = QIcon(':/images/toolbar-end-active.png')
-        self.saveIcon = QIcon(':/images/toolbar-save-active.png')
+        self.openIcon = QIcon(':/images/toolbar-open.png')
+        self.playIcon = QIcon(':/images/toolbar-play.png')
+        self.pauseIcon = QIcon(':/images/toolbar-pause.png')
+        self.cutStartIcon = QIcon(':/images/toolbar-start.png')
+        self.cutEndIcon = QIcon(':/images/toolbar-end.png')
+        self.saveIcon = QIcon(':/images/toolbar-save.png')
         self.muteIcon = QIcon(':/images/muted.png')
         self.unmuteIcon = QIcon(':/images/unmuted.png')
         self.upIcon = QIcon(':/images/up.png')
@@ -233,13 +232,14 @@ class VidCutter(QWidget):
         self.completeOpenIcon = QIcon(':/images/complete-open.png')
         self.completeRestartIcon = QIcon(':/images/complete-restart.png')
         self.completeExitIcon = QIcon(':/images/complete-exit.png')
+        self.EDLIcon = QIcon(':/images/edl.png')
         self.mediaInfoIcon = QIcon(':/images/info.png')
         self.updateCheckIcon = QIcon(':/images/update.png')
         self.thumbsupIcon = QIcon(':/images/thumbsup.png')
 
     def initActions(self) -> None:
         self.openAction = QAction(self.openIcon, 'Open', self, statusTip='Open media file',
-                                  triggered=self.openMedia)
+                                      triggered=self.openMedia)
         self.playAction = QAction(self.playIcon, 'Play', self, statusTip='Play media file',
                                   triggered=self.playMedia, enabled=False)
         self.cutStartAction = QAction(self.cutStartIcon, ' Start', self, toolTip='Start',
@@ -261,11 +261,15 @@ class VidCutter(QWidget):
         self.mediaInfoAction = QAction(self.mediaInfoIcon, 'Media information', self,
                                        statusTip='View current media file information', triggered=self.mediaInfo,
                                        enabled=False)
+        self.openEDLAction = QAction(self.EDLIcon, 'Open EDL file', self, statusTip='Open an EDL file for current media',
+                                      triggered=self.openEDL, enabled=False)
+        self.saveEDLAction = QAction(self.EDLIcon, 'Save EDL file', self, statusTip='Save clip index to an EDL file',
+                                      triggered=self.saveEDL, enabled=False)
         self.updateCheckAction = QAction(self.updateCheckIcon, 'Check for updates...', self,
                                          statusTip='Check for application updates', triggered=self.updateCheck)
         self.aboutQtAction = QAction('About Qt', self, statusTip='About Qt', triggered=qApp.aboutQt)
-        self.aboutAction = QAction('About %s' % qApp.applicationName(), self, statusTip='Credits and licensing',
-                                   triggered=self.aboutInfo)
+        self.aboutAction = QAction('About %s' % qApp.applicationName(), self, triggered=self.aboutInfo,
+                                   statusTip='About %s' % qApp.applicationName())
 
     def initToolbar(self) -> None:
         self.toolbar.addAction(self.openAction)
@@ -275,18 +279,15 @@ class VidCutter(QWidget):
         self.toolbar.addAction(self.saveAction)
 
     def initMenus(self) -> None:
+        self.appMenu.addAction(self.openEDLAction)
+        self.appMenu.addAction(self.saveEDLAction)
+        self.appMenu.addSeparator()
         self.appMenu.addAction(self.mediaInfoAction)
-        # self.appMenu.addAction(self.updateCheckAction)
+        self.appMenu.addAction(self.updateCheckAction)
         self.appMenu.addSeparator()
         self.appMenu.addAction(self.aboutQtAction)
         self.appMenu.addAction(self.aboutAction)
-
-        self.cliplistMenu.addAction(self.moveItemUpAction)
-        self.cliplistMenu.addAction(self.moveItemDownAction)
-        self.cliplistMenu.addSeparator()
-        self.cliplistMenu.addAction(self.removeItemAction)
-        self.cliplistMenu.addAction(self.removeAllAction)
-
+     
     @staticmethod
     def getSpacer() -> QWidget:
         spacer = QWidget()
@@ -405,9 +406,20 @@ class VidCutter(QWidget):
     def openMedia(self) -> None:
         filename, _ = QFileDialog.getOpenFileName(self.parent, caption='Select video', directory=QDir.homePath())
         if filename != '':
-            self.loadFile(filename)
+            self.loadMedia(filename)
 
-    def loadFile(self, filename: str) -> None:
+    def openEDL(self) -> None:
+        edlfile, _ = QFileDialog.getOpenFileName(self.parent, caption='Select EDL', directory=QDir.homePath())
+        if edlfile != '':
+            self.parseEDL(edlfile)
+
+    def parseEDL(self, filepath: str) -> None:
+        pass
+
+    def saveEDL(self, filepath: str) -> None:
+        pass
+
+    def loadMedia(self, filename: str) -> None:
         self.movieFilename = filename
         if not os.path.exists(filename):
             return
@@ -607,16 +619,7 @@ class VidCutter(QWidget):
                 QFile.remove(file)
 
     def updateCheck(self) -> None:
-        self.updater = Updater()
-        self.updater.updateAvailable.connect(self.updateHandler)
-        self.updater.start()
-
-    def updateHandler(self, updateExists: bool, version: str = None):
-        if updateExists:
-            if Updater.notify_update(self, version) == QMessageBox.AcceptRole:
-                self.updater.install_update(self)
-        else:
-            Updater.notify_no_update(self)
+        QDesktopServices.openUrl(QUrl(self.latest_release_url))
 
     def showProgress(self, steps: int, label: str = 'Analyzing media...') -> None:
         self.progress = QProgressDialog(label, None, 0, steps, self.parent, windowModality=Qt.ApplicationModal,
@@ -629,7 +632,8 @@ class VidCutter(QWidget):
 
     def complete(self) -> None:
         info = QFileInfo(self.finalFilename)
-        mbox = QMessageBox(icon=self.thumbsupIcon, windowTitle='VIDCUTTING COMPLETE', minimumWidth=500, textFormat=Qt.RichText)
+        mbox = QMessageBox(icon=self.thumbsupIcon, windowTitle='VIDCUTTING COMPLETE', minimumWidth=500,
+                           textFormat=Qt.RichText)
         mbox.setText('''
     <style>
         table.info { margin:6px; padding:4px 15px; }
@@ -765,6 +769,7 @@ class MainWindow(QMainWindow):
         self.setContentsMargins(0, 0, 0, 0)
         self.statusBar().showMessage('Ready')
         self.statusBar().setStyleSheet('border:none;')
+        self.statusBar().addPermanentWidget(self.get_branding_logo())
         self.setAcceptDrops(True)
         self.setMinimumSize(900, 650)
         self.resize(900, 650)
@@ -775,7 +780,7 @@ class MainWindow(QMainWindow):
                 # TODO: handle error on Windows with no ffmpeg.zip
         try:
             if len(sys.argv) >= 2:
-                self.cutter.loadFile(sys.argv[1])
+                self.cutter.loadMedia(sys.argv[1])
         except (FileNotFoundError, PermissionError):
             QMessageBox.critical(self, 'Error loading file', sys.exc_info()[0])
             qApp.restoreOverrideCursor()
@@ -808,13 +813,17 @@ class MainWindow(QMainWindow):
 
     def dropEvent(self, event: QDropEvent) -> None:
         filename = event.mimeData().urls()[0].toLocalFile()
-        self.cutter.loadFile(filename)
+        self.cutter.loadMedia(filename)
         event.accept()
 
     def closeEvent(self, event: QCloseEvent) -> None:
         self.cutter.deleteLater()
         self.deleteLater()
         qApp.quit()
+
+    def get_branding_logo(self) -> QWidget:
+        branded_logo = QLabel(pixmap=QPixmap(':/images/'))
+        return branded_logo
 
     @staticmethod
     def get_path(path: str = None, override: bool = False) -> str:
