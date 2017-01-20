@@ -8,6 +8,7 @@
         <file>images/complete-play.png</file>
         <file>images/complete-restart.png</file>
         <file>images/down.png</file>
+        <file>images/edl.png</file>
         <file>images/filmstrip.png</file>
         <file>images/handle.png</file>
         <file>images/info.png</file>
@@ -19,9 +20,9 @@
         <file>images/remove.png</file>
         <file>images/remove-all.png</file>
         <file>images/runtime.png</file>
-        <file>images/thumbsup.png</file>
-        <file>images/edl.png</file>
+        <file>images/save.png</file>
         <file>images/slider-cursor.png</file>
+        <file>images/thumbsup.png</file>
         <file>images/toolbar-end.png</file>
         <file>images/toolbar-open.png</file>
         <file>images/toolbar-pause.png</file>

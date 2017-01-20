@@ -232,7 +232,8 @@ class VidCutter(QWidget):
         self.completeOpenIcon = QIcon(':/images/complete-open.png')
         self.completeRestartIcon = QIcon(':/images/complete-restart.png')
         self.completeExitIcon = QIcon(':/images/complete-exit.png')
-        self.EDLIcon = QIcon(':/images/edl.png')
+        self.openEDLIcon = QIcon(':/images/edl.png')
+        self.saveEDLIcon = QIcon(':/images/save.png')
         self.mediaInfoIcon = QIcon(':/images/info.png')
         self.updateCheckIcon = QIcon(':/images/update.png')
         self.thumbsupIcon = QIcon(':/images/thumbsup.png')
@@ -261,9 +262,9 @@ class VidCutter(QWidget):
         self.mediaInfoAction = QAction(self.mediaInfoIcon, 'Media information', self,
                                        statusTip='View current media file information', triggered=self.mediaInfo,
                                        enabled=False)
-        self.openEDLAction = QAction(self.EDLIcon, 'Open EDL file', self, statusTip='Open an EDL file for current media',
+        self.openEDLAction = QAction(self.openEDLIcon, 'Open EDL file', self, statusTip='Open an EDL file for current media',
                                       triggered=self.openEDL, enabled=False)
-        self.saveEDLAction = QAction(self.EDLIcon, 'Save EDL file', self, statusTip='Save clip index to an EDL file',
+        self.saveEDLAction = QAction(self.saveEDLIcon, 'Save EDL file', self, statusTip='Save clip index to an EDL file',
                                       triggered=self.saveEDL, enabled=False)
         self.updateCheckAction = QAction(self.updateCheckIcon, 'Check for updates...', self,
                                          statusTip='Check for application updates', triggered=self.updateCheck)
@@ -404,17 +405,14 @@ class VidCutter(QWidget):
         QMessageBox.about(self.parent, 'About %s' % qApp.applicationName(), about_html)
 
     def openMedia(self) -> None:
-        filename, _ = QFileDialog.getOpenFileName(self.parent, caption='Select video', directory=QDir.homePath())
+        filename, _ = QFileDialog.getOpenFileName(self.parent, caption='Select media file', directory=QDir.homePath())
         if filename != '':
             self.loadMedia(filename)
 
     def openEDL(self) -> None:
-        edlfile, _ = QFileDialog.getOpenFileName(self.parent, caption='Select EDL', directory=QDir.homePath())
+        edlfile, _ = QFileDialog.getOpenFileName(self.parent, caption='Select EDL file', directory=QDir.homePath())
         if edlfile != '':
-            self.parseEDL(edlfile)
-
-    def parseEDL(self, filepath: str) -> None:
-        pass
+            pass
 
     def saveEDL(self, filepath: str) -> None:
         pass
@@ -457,6 +455,8 @@ class VidCutter(QWidget):
         self.mediaInfoAction.setEnabled(flag)
         if flag:
             self.seekSlider.setRestrictValue(0)
+        self.openEDLAction.setEnabled(flag)
+        self.saveEDLAction.setEnabled(False)
 
     def setPosition(self, position: int) -> None:
         self.mediaPlayer.setPosition(position)
@@ -549,8 +549,10 @@ class VidCutter(QWidget):
             listitem.setFlags(Qt.ItemIsSelectable | Qt.ItemIsDragEnabled | Qt.ItemIsEnabled)
         if len(self.clipTimes) and not self.inCut:
             self.saveAction.setEnabled(True)
+            self.saveEDLAction.setEnabled(True)
         if self.inCut or len(self.clipTimes) == 0 or not type(self.clipTimes[0][1]) is QTime:
             self.saveAction.setEnabled(False)
+            self.saveEDLAction.setEnabled(False)
         self.setRunningTime(self.deltaToQTime(self.totalRuntime).toString(self.timeformat))
 
     @staticmethod
