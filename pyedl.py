@@ -15,7 +15,7 @@ ACTION_MUTE = 1
 
 _ = lambda s: s
 
-_block_re = re.compile(r"(\d+(?:\.?\d+)?)\s(\d+(?:\.?\d+)?)\s([01])")
+block_re = re.compile(r"(\d+(?:\.?\d+)?)\s(\d+(?:\.?\d+)?)\s([01])")
 
 
 def _td2str(td):
@@ -166,7 +166,7 @@ def load(fp):
         line = line.strip()
         if not line:
             pass
-        mo = _block_re.match(line)
+        mo = block_re.match(line)
         if not mo:
             raise RuntimeError(_("Invalid EDL line: '%s'") % (line,))
         start, stop, action = mo.groups()

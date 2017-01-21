@@ -425,7 +425,39 @@ class VidCutter(QWidget):
                                                       directory='%s.edl' % source_file,
                                                       options=QFileDialog.DontUseCustomDirectoryIcons)
         if self.edlfile.strip():
-            self.edl = pyedl.load(open(self.edlfile, 'r'))
+            file = QFile(self.edlfile)
+            if not file.open(QFile.ReadOnly | QFile.Text):
+                QMessageBox.critical(self.parent, 'Open EDL file',
+                                     'Cannot read EDL file %s:\n\n%s' % (self.edlfile, file.errorString()))
+                return
+            qApp.setOverrideCursor(Qt.WaitCursor)
+            self.clipTimes.clear()
+            linenum = 1
+            while not file.atEnd():
+                line = file.readLine().trimmed()
+                if line.length() != 0:
+                    try:
+                        line = str(line, encoding='ascii')
+                    except TypeError:
+                        line = str(line)
+                    mo = pyedl.block_re.match(line)
+                    if mo:
+                        start, stop, action = mo.groups()
+                        clip_start = self.deltaToQTime(int(float(start) * 1000))
+                        clip_end = self.deltaToQTime(int(float(stop) * 1000))
+                        clip_image = self.captureImage(frametime=int(float(start) * 1000))
+                        self.clipTimes.append([clip_start, clip_end, clip_image])
+                    else:
+                        QMessageBox.critical(self.parent, 'Invalid EDL file',
+                                             'Invalid entry at line %s:\n\n%s' % (linenum, line))
+                linenum += 1
+            self.cutStartAction.setEnabled(True)
+            self.cutEndAction.setDisabled(True)
+            self.seekSlider.setRestrictValue(0, False)
+            self.inCut = False
+            self.renderTimes()
+            qApp.restoreOverrideCursor()
+            self.parent.statusBar().showMessage('EDL file was successfully read...', 2000)
 
     def saveEDL(self, filepath: str) -> None:
         source_file, _ = os.path.splitext(self.mediaPlayer.currentMedia().canonicalUrl().toLocalFile())
@@ -437,7 +469,7 @@ class VidCutter(QWidget):
             file = QFile(edlsave)
             if not file.open(QFile.WriteOnly | QFile.Text):
                 QMessageBox.critical(self.parent, 'Save EDL file',
-                                     'Cannot write file %s:\n\n%s' % (edlsave, file.errorString()))
+                                     'Cannot write EDL file %s:\n\n%s' % (edlsave, file.errorString()))
                 return
             qApp.setOverrideCursor(Qt.WaitCursor)
             for clip in self.clipTimes:
@@ -448,7 +480,7 @@ class VidCutter(QWidget):
                 block = pyedl.EDLBlock(start_time, stop_time)
                 QTextStream(file) << '%s\n' % str(block)
             qApp.restoreOverrideCursor()
-            self.parent.statusBar().showMessage('EDL file was saved', 2000)
+            self.parent.statusBar().showMessage('EDL file was successfully saved...', 2000)
 
     def loadMedia(self, filename: str) -> None:
         self.movieFilename = filename
@@ -457,7 +489,7 @@ class VidCutter(QWidget):
         self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(filename)))
         self.initMediaControls(True)
         self.cliplist.clear()
-        self.clipTimes = []
+        self.clipTimes.clear()
         self.parent.setWindowTitle('%s - %s' % (qApp.applicationName(), os.path.basename(filename)))
         if not self.movieLoaded:
             self.videoLayout.replaceWidget(self.novideoWidget, self.videoplayerWidget)
@@ -593,10 +625,13 @@ class VidCutter(QWidget):
         secs = millisecs / 1000
         return QTime((secs / 3600) % 60, (secs / 60) % 60, secs % 60, (secs * 1000) % 1000)
 
-    def captureImage(self) -> QPixmap:
-        frametime = self.deltaToQTime(self.mediaPlayer.position()).toString(self.timeformat)
+    def captureImage(self, frametime=None) -> QPixmap:
+        if frametime is None:
+            frametime = self.deltaToQTime(self.mediaPlayer.position())
+        else:
+            frametime = self.deltaToQTime(frametime)
         inputfile = self.mediaPlayer.currentMedia().canonicalUrl().toLocalFile()
-        imagecap = self.videoService.capture(inputfile, frametime)
+        imagecap = self.videoService.capture(inputfile, frametime.toString(self.timeformat))
         if type(imagecap) is QPixmap:
             return imagecap
 
