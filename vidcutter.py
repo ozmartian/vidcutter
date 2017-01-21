@@ -3,14 +3,17 @@
 
 import os
 import platform
+import pyedl
 import re
 import signal
 import sys
 import time
 import warnings
+from datetime import timedelta
 from zipfile import ZipFile
 
-from PyQt5.QtCore import QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTextStream, QTime, QUrl, pyqtSlot
+from PyQt5.QtCore import (QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTextStream, QTime, QUrl,
+                          pyqtSlot)
 from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QDragEnterEvent, QDropEvent, QFont, QFontDatabase, QIcon,
                          QKeyEvent, QMouseEvent, QMovie, QPalette, QPixmap, QWheelEvent)
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
@@ -84,6 +87,9 @@ class VidCutter(QWidget):
         self.timeformat = 'hh:mm:ss'
         self.finalFilename = ''
         self.totalRuntime = 0
+
+        self.edlfile = ''
+        self.edl = []
 
         self.initIcons()
         self.initActions()
@@ -167,6 +173,7 @@ class VidCutter(QWidget):
                                    'border: 1px inset #888; margin: 0; padding: 0;' +
                                    'border-radius: 5px; }')
 
+
         controlsLayout = QHBoxLayout(spacing=0)
         controlsLayout.addStretch(1)
         controlsLayout.addWidget(toolbarGroup)
@@ -240,7 +247,7 @@ class VidCutter(QWidget):
 
     def initActions(self) -> None:
         self.openAction = QAction(self.openIcon, 'Open', self, statusTip='Open media file',
-                                      triggered=self.openMedia)
+                                  triggered=self.openMedia)
         self.playAction = QAction(self.playIcon, 'Play', self, statusTip='Play media file',
                                   triggered=self.playMedia, enabled=False)
         self.cutStartAction = QAction(self.cutStartIcon, ' Start', self, toolTip='Start',
@@ -262,10 +269,12 @@ class VidCutter(QWidget):
         self.mediaInfoAction = QAction(self.mediaInfoIcon, 'Media information', self,
                                        statusTip='View current media file information', triggered=self.mediaInfo,
                                        enabled=False)
-        self.openEDLAction = QAction(self.openEDLIcon, 'Open EDL file', self, statusTip='Open an EDL file for current media',
-                                      triggered=self.openEDL, enabled=False)
-        self.saveEDLAction = QAction(self.saveEDLIcon, 'Save EDL file', self, statusTip='Save clip index to an EDL file',
-                                      triggered=self.saveEDL, enabled=False)
+        self.openEDLAction = QAction(self.openEDLIcon, 'Open EDL file', self,
+                                     statusTip='Open an EDL file for current media',
+                                     triggered=self.openEDL, enabled=False)
+        self.saveEDLAction = QAction(self.saveEDLIcon, 'Save EDL file', self,
+                                     statusTip='Save clip index to an EDL file',
+                                     triggered=self.saveEDL, enabled=False)
         self.updateCheckAction = QAction(self.updateCheckIcon, 'Check for updates...', self,
                                          statusTip='Check for application updates', triggered=self.updateCheck)
         self.aboutQtAction = QAction('About Qt', self, statusTip='About Qt', triggered=qApp.aboutQt)
@@ -288,7 +297,7 @@ class VidCutter(QWidget):
         self.appMenu.addSeparator()
         self.appMenu.addAction(self.aboutQtAction)
         self.appMenu.addAction(self.aboutAction)
-     
+
     @staticmethod
     def getSpacer() -> QWidget:
         spacer = QWidget()
@@ -405,17 +414,41 @@ class VidCutter(QWidget):
         QMessageBox.about(self.parent, 'About %s' % qApp.applicationName(), about_html)
 
     def openMedia(self) -> None:
-        filename, _ = QFileDialog.getOpenFileName(self.parent, caption='Select media file', directory=QDir.homePath())
+        filename, _ = QFileDialog.getOpenFileName(self.parent, caption='Select media file', directory=QDir.currentPath(),
+                                                  options=QFileDialog.DontUseCustomDirectoryIcons)
         if filename != '':
             self.loadMedia(filename)
 
     def openEDL(self) -> None:
-        edlfile, _ = QFileDialog.getOpenFileName(self.parent, caption='Select EDL file', directory=QDir.homePath())
-        if edlfile != '':
-            pass
+        source_file, _ = os.path.splitext(self.mediaPlayer.currentMedia().canonicalUrl().toLocalFile())
+        self.edlfile, _ = QFileDialog.getOpenFileName(self.parent, caption='Select EDL file',
+                                                      directory='%s.edl' % source_file,
+                                                      options=QFileDialog.DontUseCustomDirectoryIcons)
+        if self.edlfile.strip():
+            self.edl = pyedl.load(open(self.edlfile, 'r'))
 
     def saveEDL(self, filepath: str) -> None:
-        pass
+        source_file, _ = os.path.splitext(self.mediaPlayer.currentMedia().canonicalUrl().toLocalFile())
+        edlsave = self.edlfile if self.edlfile.strip() else '%s.edl' % source_file
+        edlsave, _ = QFileDialog.getSaveFileName(parent=self.parent, caption='Save EDL file',
+                                                 directory=edlsave,
+                                                 options=QFileDialog.DontUseCustomDirectoryIcons)
+        if edlsave.strip():
+            file = QFile(edlsave)
+            if not file.open(QFile.WriteOnly | QFile.Text):
+                QMessageBox.critical(self.parent, 'Save EDL file',
+                                     'Cannot write file %s:\n\n%s' % (edlsave, file.errorString()))
+                return
+            qApp.setOverrideCursor(Qt.WaitCursor)
+            for clip in self.clipTimes:
+                start_time = timedelta(hours=clip[0].hour(), minutes=clip[0].minute(), seconds=clip[0].second(),
+                                       milliseconds=clip[0].msec())
+                stop_time = timedelta(hours=clip[1].hour(), minutes=clip[1].minute(), seconds=clip[1].second(),
+                                      milliseconds=clip[1].msec())
+                block = pyedl.EDLBlock(start_time, stop_time)
+                QTextStream(file) << '%s\n' % str(block)
+            qApp.restoreOverrideCursor()
+            self.parent.statusBar().showMessage('EDL file was saved', 2000)
 
     def loadMedia(self, filename: str) -> None:
         self.movieFilename = filename
@@ -531,19 +564,19 @@ class VidCutter(QWidget):
         else:
             self.cliplist.setFixedWidth(185)
         self.totalRuntime = 0
-        for item in self.clipTimes:
+        for clip in self.clipTimes:
             endItem = ''
-            if type(item[1]) is QTime:
-                endItem = item[1].toString(self.timeformat)
-                self.totalRuntime += item[0].msecsTo(item[1])
+            if type(clip[1]) is QTime:
+                endItem = clip[1].toString(self.timeformat)
+                self.totalRuntime += clip[0].msecsTo(clip[1])
             listitem = QListWidgetItem()
             listitem.setTextAlignment(Qt.AlignVCenter)
-            if type(item[2]) is QPixmap:
-                listitem.setIcon(QIcon(item[2]))
+            if type(clip[2]) is QPixmap:
+                listitem.setIcon(QIcon(clip[2]))
             self.cliplist.addItem(listitem)
             marker = QLabel('''<style>b { font-size:8pt; } p { margin:2px 5px; }</style>
                             <p><b>START</b><br/>%s<br/><b>END</b><br/>%s</p>'''
-                            % (item[0].toString(self.timeformat), endItem))
+                            % (clip[0].toString(self.timeformat), endItem))
             marker.setStyleSheet('border:none;')
             self.cliplist.setItemWidget(listitem, marker)
             listitem.setFlags(Qt.ItemIsSelectable | Qt.ItemIsDragEnabled | Qt.ItemIsEnabled)
@@ -570,18 +603,19 @@ class VidCutter(QWidget):
     def cutVideo(self) -> bool:
         clips = len(self.clipTimes)
         filename, filelist = '', []
-        source = self.mediaPlayer.currentMedia().canonicalUrl().toLocalFile()
-        _, sourceext = os.path.splitext(source)
+        source_file, source_ext = os.path.splitext(self.mediaPlayer.currentMedia().canonicalUrl().toLocalFile())
         if clips > 0:
-            self.finalFilename, _ = QFileDialog.getSaveFileName(self.parent, 'Save video', source,
-                                                                'Video files (*%s)' % sourceext)
+            self.finalFilename, _ = QFileDialog.getSaveFileName(parent=self.parent, caption='Save video',
+                                                                directory='%s_EDIT%s' % (source_file, source_ext),
+                                                                filter='Video files (*%s)' % source_ext,
+                                                                options=QFileDialog.DontUseCustomDirectoryIcons)
             if self.finalFilename == '':
                 return False
             file, ext = os.path.splitext(self.finalFilename)
             if len(ext) == 0:
-                ext = sourceext
+                ext = source_ext
                 self.finalFilename += ext
-            qApp.setOverrideCursor(Qt.BusyCursor)
+            qApp.setOverrideCursor(Qt.WaitCursor)
             self.saveAction.setDisabled(True)
             self.showProgress(clips)
             index = 1
@@ -591,7 +625,8 @@ class VidCutter(QWidget):
                 duration = self.deltaToQTime(clip[0].msecsTo(clip[1])).toString(self.timeformat)
                 filename = '%s_%s%s' % (file, '{0:0>2}'.format(index), ext)
                 filelist.append(filename)
-                self.videoService.cut(source, filename, clip[0].toString(self.timeformat), duration)
+                self.videoService.cut('%s%s' % (source_file, source_ext), filename, clip[0].toString(self.timeformat),
+                                      duration)
                 index += 1
             if len(filelist) > 1:
                 self.joinVideos(filelist, self.finalFilename)
@@ -634,13 +669,14 @@ class VidCutter(QWidget):
 
     def complete(self) -> None:
         info = QFileInfo(self.finalFilename)
-        mbox = QMessageBox(icon=self.thumbsupIcon, windowTitle='VIDCUTTING COMPLETE', minimumWidth=500,
+        mbox = QMessageBox(icon=self.thumbsupIcon, windowTitle='Your video is ready', minimumWidth=500,
                            textFormat=Qt.RichText)
+        mbox.setIconPixmap(self.thumbsupIcon.pixmap(64, 64))
         mbox.setText('''
     <style>
         table.info { margin:6px; padding:4px 15px; }
-        td.label { font-weight:bold; font-size:10.5pt; text-align:right; }
-        td.value { font-size:10.5pt; }
+        td.label { font-weight:bold; font-size:10pt; text-align:right; }
+        td.value { font-size:10pt; }
     </style>
     <table class="info" cellpadding="4" cellspacing="0">
         <tr>
@@ -753,11 +789,11 @@ class VidCutter(QWidget):
         qApp.restoreOverrideCursor()
         self.startNew()
         if error == QMediaPlayer.ResourceError:
-            QMessageBox.critical(self.parent, 'INVALID MEDIA',
+            QMessageBox.critical(self.parent, 'Invalid Media',
                                  'Invalid media file detected at:<br/><br/><b>%s</b><br/><br/>%s'
                                  % (self.movieFilename, self.mediaPlayer.errorString()))
         else:
-            QMessageBox.critical(self.parent, 'ERROR NOTIFICATION', self.mediaPlayer.errorString())
+            QMessageBox.critical(self.parent, 'An error has occurred', self.mediaPlayer.errorString())
 
     def closeEvent(self, event: QCloseEvent) -> None:
         self.parent.closeEvent(event)
