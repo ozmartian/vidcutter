@@ -298,6 +298,12 @@ class VidCutter(QWidget):
         self.appMenu.addAction(self.aboutQtAction)
         self.appMenu.addAction(self.aboutAction)
 
+        self.cliplistMenu.addAction(self.moveItemUpAction)
+        self.cliplistMenu.addAction(self.moveItemDownAction)
+        self.cliplistMenu.addSeparator()
+        self.cliplistMenu.addAction(self.removeItemAction)
+        self.cliplistMenu.addAction(self.removeAllAction)
+
     @staticmethod
     def getSpacer() -> QWidget:
         spacer = QWidget()
@@ -440,6 +446,13 @@ class VidCutter(QWidget):
                         line = str(line, encoding='ascii')
                     except TypeError:
                         line = str(line)
+                    except UnicodeDecodeError:
+                        qApp.restoreOverrideCursor()
+                        QMessageBox.critical(self.parent, 'Invalid EDL file',
+                                             'Could not make any sense of the EDL file supplied. Try viewing it in a ' +
+                                             'text editor to ensure it is valid and not corrupted.\n\nAborting EDL ' +
+                                             'processing now...')
+                        return
                     mo = pyedl.block_re.match(line)
                     if mo:
                         start, stop, action = mo.groups()
@@ -448,6 +461,7 @@ class VidCutter(QWidget):
                         clip_image = self.captureImage(frametime=int(float(start) * 1000))
                         self.clipTimes.append([clip_start, clip_end, clip_image])
                     else:
+                        qApp.restoreOverrideCursor()
                         QMessageBox.critical(self.parent, 'Invalid EDL file',
                                              'Invalid entry at line %s:\n\n%s' % (linenum, line))
                 linenum += 1
