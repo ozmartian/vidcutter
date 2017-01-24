@@ -1,23 +1,23 @@
-QToolBar#appcontrols { spacing: 5px; }
-
 QToolBar#appcontrols QToolButton {
     border: 1px solid transparent;
     min-width: 100px;
-    font-size: 11pt;
-    font-weight: 400;
     border-radius: 5px;
     padding: 1px 2px;
+    margin: 0;
     color: #6A4572;
+    font-size: 11pt;
+    font-weight: 400;
+    line-height: 80%;
 }
 
 QToolBar#appcontrols QToolButton:hover {
-    border: 1px inset #6A4572;
+    border: 1px inset #888;
     color: #6A4572;
     background-color: rgba(255, 255, 255, 0.85);
 }
 
 QToolBar#appcontrols QToolButton:pressed {
-    border: 1px inset #6A4572;
+    border: 1px inset #444;
     color: #6A4572;
     background-color: rgba(255, 255, 255, 0.25);
 }
@@ -29,7 +29,7 @@ QToolBar#appcontrols QToolButton:disabled { color: #999; }
 QListView {
     border-radius: 0;
     border: none;
-    border-left: 1px solid #B9B9B9;
+    border-left: 1px solid #B9B9B9; 
     border-right: 1px solid #B9B9B9;
 }
 

@@ -1,0 +1,28 @@
+# FIXME:
+# When using trusty ingredients (gstreamer 0.10), then it fails on xubutnu 16.05 (gstreamer 1.0) with
+# (python3:18545): GStreamer-CRITICAL **: gst_object_ref: assertion 'object != NULL' failed
+# (python3:18545): GLib-GObject-CRITICAL **: g_object_set: assertion 'G_IS_OBJECT (object)' failed
+# (python3:18545): GStreamer-CRITICAL **: gst_object_ref: assertion 'object != NULL' failed
+# (python3:18545): GStreamer-CRITICAL **: gst_element_link_pads_full: assertion 'GST_IS_ELEMENT (dest)' failed
+# Segmentation fault
+
+app: VidCutter
+union: true
+
+ingredients:
+  dist: xenial
+  sources: 
+    - deb http://archive.ubuntu.com/ubuntu/ xenial main universe
+  ppas:
+    - ozmartian/apps
+
+script:
+  - cat > usr/bin/vidcutter <<\EOF
+  - #!/usr/bin/python3
+  - import sys
+  - print(sys.path)
+  - sys.path.insert(0, "/usr/lib/python3/dist-packages/")
+  - from vidcutter.vidcutter import main
+  - main()
+  - EOF
+  - mv usr/lib/x86_64-linux-gnu/caca/*.so* usr/lib/x86_64-linux-gnu/

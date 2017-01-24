@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import re
 import shlex
 import sys
 from distutils.spawn import find_executable
@@ -61,12 +62,21 @@ class VideoService(QObject):
         args = '-f concat -safe 0 -i "%s" -c copy -y "%s"' % (filelist, QDir.fromNativeSeparators(output))
         return self.cmdExec(self.backend, args)
 
-    def cmdExec(self, cmd: str, args: str = None) -> bool:
+    def framerate(self, source: str) -> float:
+        args = '-i "%s"' % source
+        result = self.cmdExec(self.backend, args, True)
+        if result:
+            result = re.search(r'[\d.]+(?= tbr)', result).group(0)
+        return float(result)
+
+    def cmdExec(self, cmd: str, args: str = None, output: bool = False):
         if os.getenv('DEBUG', False):
             print('VideoService CMD: %s %s' % (cmd, args))
         if self.proc.state() == QProcess.NotRunning:
             self.proc.start(cmd, shlex.split(args))
             self.proc.waitForFinished(-1)
+            if output:
+                return str(self.proc.readAllStandardOutput())
             if self.proc.exitStatus() == QProcess.NormalExit and self.proc.exitCode() == 0:
                 return True
         return False

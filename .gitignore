@@ -14,8 +14,9 @@ vidcutter.*/
 ./vidcutter
 ./vidcutter.exe
 .openshift
-bin/ffmpeg.exe
-bin/ffmpeg.zip
+bin/*
 docs/_tvlinker
 _build/InnoSetup/Output/*
 .DS_Store
+_packaging/appimage/out
+_packaging/appimage/VidCutter

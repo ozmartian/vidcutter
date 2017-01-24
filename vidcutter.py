@@ -3,7 +3,6 @@
 
 import os
 import platform
-import pyedl
 import re
 import signal
 import sys
@@ -12,7 +11,7 @@ import warnings
 from datetime import timedelta
 from zipfile import ZipFile
 
-from PyQt5.QtCore import (QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTextStream, QTime, QUrl,
+from PyQt5.QtCore import (QDir, QEvent, QFile, QFileInfo, QModelIndex, QObject, QPoint, QSize, Qt, QTextStream, QTime, QUrl,
                           pyqtSlot)
 from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QDragEnterEvent, QDropEvent, QFont, QFontDatabase, QIcon,
                          QKeyEvent, QMouseEvent, QMovie, QPalette, QPixmap, QWheelEvent)
@@ -34,6 +33,13 @@ except ImportError:
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 signal.signal(signal.SIGTERM, signal.SIG_DFL)
 warnings.filterwarnings('ignore')
+
+
+class EDLFormat:
+    MPLAYER = 0,
+    COMSKIP = 1,
+    VIDEOREDO = 2,
+    CMX3600 = 3
 
 
 class VideoWidget(QVideoWidget):
@@ -88,13 +94,13 @@ class VidCutter(QWidget):
         self.finalFilename = ''
         self.totalRuntime = 0
 
-        self.edlfile = ''
-        self.edl = []
+        self.edl = ''
+        self.edlblock_re = re.compile(r"(\d+(?:\.?\d+)?)\s(\d+(?:\.?\d+)?)\s([01])")
 
         self.initIcons()
         self.initActions()
 
-        self.toolbar = QToolBar(floatable=False, movable=False, iconSize=QSize(44, 44))
+        self.toolbar = QToolBar(floatable=False, movable=False, iconSize=QSize(36, 36))
         self.toolbar.setObjectName('appcontrols')
         if sys.platform == 'darwin':
             self.toolbar.setStyle(QStyleFactory.create('Fusion'))
@@ -163,7 +169,7 @@ class VidCutter(QWidget):
 
         toolbarLayout = QHBoxLayout()
         toolbarLayout.addWidget(self.toolbar)
-        toolbarLayout.setContentsMargins(2, 2, 2, 2)
+        toolbarLayout.setContentsMargins(0, 0, 0, 0)
 
         toolbarGroup = QGroupBox()
         toolbarGroup.setFlat(False)
@@ -246,17 +252,17 @@ class VidCutter(QWidget):
         self.thumbsupIcon = QIcon(':/images/thumbsup.png')
 
     def initActions(self) -> None:
-        self.openAction = QAction(self.openIcon, 'Open', self, statusTip='Open media file',
+        self.openAction = QAction(self.openIcon, 'Open\nMedia', self, toolTip='Open Media',
                                   triggered=self.openMedia)
-        self.playAction = QAction(self.playIcon, 'Play', self, statusTip='Play media file',
+        self.playAction = QAction(self.playIcon, 'Play\nMedia', self, toolTip='Play Media',
                                   triggered=self.playMedia, enabled=False)
-        self.cutStartAction = QAction(self.cutStartIcon, ' Start', self, toolTip='Start',
+        self.cutStartAction = QAction(self.cutStartIcon, 'Clip\nStart', self, toolTip='Clip Start',
                                       statusTip='Set clip start marker',
                                       triggered=self.setCutStart, enabled=False)
-        self.cutEndAction = QAction(self.cutEndIcon, ' End', self, toolTip='End', statusTip='Set clip end marker',
+        self.cutEndAction = QAction(self.cutEndIcon, 'Clip\nEnd', self, toolTip='Clip End', statusTip='Set clip end marker',
                                     triggered=self.setCutEnd, enabled=False)
-        self.saveAction = QAction(self.saveIcon, 'Save', self, statusTip='Save clips to a new video file',
-                                  triggered=self.cutVideo, enabled=False)
+        self.saveAction = QAction(self.saveIcon, 'Save\nVideo', self, toolTip='Save Video',
+                                  statusTip='Save clips to a new video file', triggered=self.cutVideo, enabled=False)
         self.moveItemUpAction = QAction(self.upIcon, 'Move up', self, statusTip='Move clip position up in list',
                                         triggered=self.moveItemUp, enabled=False)
         self.moveItemDownAction = QAction(self.downIcon, 'Move down', self, statusTip='Move clip position down in list',
@@ -380,7 +386,7 @@ class VidCutter(QWidget):
             mbox.setInformativeText(content)
             mbox.exec_()
         else:
-            QMessageBox.critical(self.parent, 'MEDIA ERROR',
+            QMessageBox.critical(self.parent, 'Media file error',
                                  '<h3>Could not probe media file.</h3>' +
                                  '<p>An error occurred while analyzing the media file for its metadata details.' +
                                  '<br/><br/><b>This DOES NOT mean there is a problem with the file and you should ' +
@@ -427,14 +433,20 @@ class VidCutter(QWidget):
 
     def openEDL(self) -> None:
         source_file, _ = os.path.splitext(self.mediaPlayer.currentMedia().canonicalUrl().toLocalFile())
-        self.edlfile, _ = QFileDialog.getOpenFileName(self.parent, caption='Select EDL file',
-                                                      directory='%s.edl' % source_file,
-                                                      options=QFileDialog.DontUseCustomDirectoryIcons)
-        if self.edlfile.strip():
-            file = QFile(self.edlfile)
+        self.edl, _ = QFileDialog.getOpenFileName(self.parent, caption='Select EDL file',
+                                                  filter='MPlayer EDL (*.edl);;' +
+                                                         # 'VideoReDo EDL (*.Vprj);;' +
+                                                         'Comskip EDL (*.txt);;' +
+                                                         # 'CMX 3600 EDL (*.edl);;' +
+                                                         'All files (*.*)',
+                                                  initialFilter='MPlayer EDL (*.edl)',
+                                                  directory='%s.edl' % source_file,
+                                                  options=QFileDialog.DontUseCustomDirectoryIcons)
+        if self.edl.strip():
+            file = QFile(self.edl)
             if not file.open(QFile.ReadOnly | QFile.Text):
                 QMessageBox.critical(self.parent, 'Open EDL file',
-                                     'Cannot read EDL file %s:\n\n%s' % (self.edlfile, file.errorString()))
+                                     'Cannot read EDL file %s:\n\n%s' % (self.edl, file.errorString()))
                 return
             qApp.setOverrideCursor(Qt.WaitCursor)
             self.clipTimes.clear()
@@ -443,7 +455,7 @@ class VidCutter(QWidget):
                 line = file.readLine().trimmed()
                 if line.length() != 0:
                     try:
-                        line = str(line, encoding='ascii')
+                        line = str(line, encoding='utf-8')
                     except TypeError:
                         line = str(line)
                     except UnicodeDecodeError:
@@ -453,7 +465,7 @@ class VidCutter(QWidget):
                                              'text editor to ensure it is valid and not corrupted.\n\nAborting EDL ' +
                                              'processing now...')
                         return
-                    mo = pyedl.block_re.match(line)
+                    mo = self.edlblock_re.match(line)
                     if mo:
                         start, stop, action = mo.groups()
                         clip_start = self.deltaToQTime(int(float(start) * 1000))
@@ -473,9 +485,15 @@ class VidCutter(QWidget):
             qApp.restoreOverrideCursor()
             self.parent.statusBar().showMessage('EDL file was successfully read...', 2000)
 
+    def _td2str(self, td: timedelta) -> str:
+        if td is None or td == timedelta.max:
+            return ''
+        else:
+            return '%f' % (td.days * 86400 + td.seconds + td.microseconds / 1000000.)
+
     def saveEDL(self, filepath: str) -> None:
         source_file, _ = os.path.splitext(self.mediaPlayer.currentMedia().canonicalUrl().toLocalFile())
-        edlsave = self.edlfile if self.edlfile.strip() else '%s.edl' % source_file
+        edlsave = self.edl if self.edl.strip() else '%s.edl' % source_file
         edlsave, _ = QFileDialog.getSaveFileName(parent=self.parent, caption='Save EDL file',
                                                  directory=edlsave,
                                                  options=QFileDialog.DontUseCustomDirectoryIcons)
@@ -491,8 +509,7 @@ class VidCutter(QWidget):
                                        milliseconds=clip[0].msec())
                 stop_time = timedelta(hours=clip[1].hour(), minutes=clip[1].minute(), seconds=clip[1].second(),
                                       milliseconds=clip[1].msec())
-                block = pyedl.EDLBlock(start_time, stop_time)
-                QTextStream(file) << '%s\n' % str(block)
+                QTextStream(file) << '%s\t%s\t%d\n' % (self._td2str(start_time), self._td2str(stop_time), 0)
             qApp.restoreOverrideCursor()
             self.parent.statusBar().showMessage('EDL file was successfully saved...', 2000)
 
@@ -856,7 +873,6 @@ class MainWindow(QMainWindow):
         self.setContentsMargins(0, 0, 0, 0)
         self.statusBar().showMessage('Ready')
         self.statusBar().setStyleSheet('border:none;')
-        self.statusBar().addPermanentWidget(self.get_branding_logo())
         self.setAcceptDrops(True)
         self.setMinimumSize(900, 650)
         self.resize(900, 650)
@@ -907,10 +923,6 @@ class MainWindow(QMainWindow):
         self.cutter.deleteLater()
         self.deleteLater()
         qApp.quit()
-
-    def get_branding_logo(self) -> QWidget:
-        branded_logo = QLabel(pixmap=QPixmap(':/images/'))
-        return branded_logo
 
     @staticmethod
     def get_path(path: str = None, override: bool = False) -> str:

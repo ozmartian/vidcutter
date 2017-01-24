@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import shutil
 import sys
-import sysconfig
 from codecs import open
-from os import path, remove
+from os import path
 from re import match
 
 from setuptools import setup
