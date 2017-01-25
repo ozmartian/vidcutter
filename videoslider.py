@@ -4,10 +4,8 @@
 import sys
 
 from PyQt5.QtCore import QEvent, QObject, Qt, pyqtSlot
-from PyQt5.QtGui import (QColor, QCursor, QKeyEvent, QMouseEvent, QPaintEvent, QPen,
-                          QPixmap, QWheelEvent)
-from PyQt5.QtWidgets import (QSlider, QStyle, QStyleOptionSlider, QStylePainter, QWidget,
-                          qApp)
+from PyQt5.QtGui import QColor, QCursor, QKeyEvent, QMouseEvent, QPaintEvent, QPen, QPixmap, QWheelEvent
+from PyQt5.QtWidgets import QSlider, QStyle, QStyleOptionSlider, QStylePainter, QWidget, qApp
 
 
 class VideoSlider(QSlider):
@@ -23,7 +21,8 @@ class VideoSlider(QSlider):
         self.setMouseTracking(True)
         self.setTracking(True)
         self.setTickPosition(QSlider.TicksAbove)
-        self.slider_cursor = QCursor(QPixmap(':/images/slider-cursor.png', 'PNG')) if sys.platform.startswith('linux') else Qt.SplitHCursor
+        self.slider_cursor = QCursor(QPixmap(':/images/slider-cursor.png', 'PNG')) if sys.platform.startswith(
+            'linux') else Qt.SplitHCursor
         self.setFocus()
         self.initStyle()
         self.restrictValue = 0

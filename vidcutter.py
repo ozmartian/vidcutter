@@ -11,8 +11,8 @@ import warnings
 from datetime import timedelta
 from zipfile import ZipFile
 
-from PyQt5.QtCore import (QDir, QEvent, QFile, QFileInfo, QModelIndex, QObject, QPoint, QSize, Qt, QTextStream, QTime, QUrl,
-                          pyqtSlot)
+from PyQt5.QtCore import (QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTextStream, QTime, QUrl,
+                          pyqtSlot, qRound)
 from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QDragEnterEvent, QDropEvent, QFont, QFontDatabase, QIcon,
                          QKeyEvent, QMouseEvent, QMovie, QPalette, QPixmap, QWheelEvent)
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
@@ -93,6 +93,8 @@ class VidCutter(QWidget):
         self.timeformat = 'hh:mm:ss'
         self.finalFilename = ''
         self.totalRuntime = 0
+        self.frameRate = 0
+        self.notifyInterval = 0
 
         self.edl = ''
         self.edlblock_re = re.compile(r"(\d+(?:\.?\d+)?)\s(\d+(?:\.?\d+)?)\s([01])")
@@ -179,7 +181,6 @@ class VidCutter(QWidget):
                                    'border: 1px inset #888; margin: 0; padding: 0;' +
                                    'border-radius: 5px; }')
 
-
         controlsLayout = QHBoxLayout(spacing=0)
         controlsLayout.addStretch(1)
         controlsLayout.addWidget(toolbarGroup)
@@ -259,7 +260,8 @@ class VidCutter(QWidget):
         self.cutStartAction = QAction(self.cutStartIcon, 'Clip\nStart', self, toolTip='Clip Start',
                                       statusTip='Set clip start marker',
                                       triggered=self.setCutStart, enabled=False)
-        self.cutEndAction = QAction(self.cutEndIcon, 'Clip\nEnd', self, toolTip='Clip End', statusTip='Set clip end marker',
+        self.cutEndAction = QAction(self.cutEndIcon, 'Clip\nEnd', self, toolTip='Clip End',
+                                    statusTip='Set clip end marker',
                                     triggered=self.setCutEnd, enabled=False)
         self.saveAction = QAction(self.saveIcon, 'Save\nVideo', self, toolTip='Save Video',
                                   statusTip='Save clips to a new video file', triggered=self.cutVideo, enabled=False)
@@ -426,7 +428,8 @@ class VidCutter(QWidget):
         QMessageBox.about(self.parent, 'About %s' % qApp.applicationName(), about_html)
 
     def openMedia(self) -> None:
-        filename, _ = QFileDialog.getOpenFileName(self.parent, caption='Select media file', directory=QDir.currentPath(),
+        filename, _ = QFileDialog.getOpenFileName(self.parent, caption='Select media file',
+                                                  directory=QDir.currentPath(),
                                                   options=QFileDialog.DontUseCustomDirectoryIcons)
         if filename != '':
             self.loadMedia(filename)
@@ -518,6 +521,9 @@ class VidCutter(QWidget):
         if not os.path.exists(filename):
             return
         self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(filename)))
+        self.frameRate = self.videoService.framerate(filename)
+        self.notifyInterval = qRound(1000 / self.frameRate)
+        self.mediaPlayer.setNotifyInterval(self.notifyInterval)
         self.initMediaControls(True)
         self.cliplist.clear()
         self.clipTimes.clear()
@@ -810,9 +816,9 @@ class VidCutter(QWidget):
     def wheelEvent(self, event: QWheelEvent) -> None:
         if self.mediaPlayer.isVideoAvailable() or self.mediaPlayer.isAudioAvailable():
             if event.angleDelta().y() > 0:
-                newval = self.seekSlider.value() - 1000
+                newval = self.seekSlider.value() - self.notifyInterval
             else:
-                newval = self.seekSlider.value() + 1000
+                newval = self.seekSlider.value() + self.notifyInterval
             self.seekSlider.setValue(newval)
             self.seekSlider.setSliderPosition(newval)
             self.mediaPlayer.setPosition(newval)
@@ -822,13 +828,13 @@ class VidCutter(QWidget):
         if self.mediaPlayer.isVideoAvailable() or self.mediaPlayer.isAudioAvailable():
             addtime = 0
             if event.key() == Qt.Key_Left:
-                addtime = -1000
+                addtime = -self.notifyInterval
             elif event.key() == Qt.Key_PageUp or event.key() == Qt.Key_Up:
-                addtime = -10000
+                addtime = -(self.notifyInterval * 10)
             elif event.key() == Qt.Key_Right:
-                addtime = 1000
+                addtime = self.notifyInterval
             elif event.key() == Qt.Key_PageDown or event.key() == Qt.Key_Down:
-                addtime = 10000
+                addtime = self.notifyInterval * 10
             elif event.key() == Qt.Key_Enter:
                 self.toggleFullscreen()
             elif event.key() == Qt.Key_Escape and self.videoWidget.isFullScreen():
@@ -877,52 +883,73 @@ class MainWindow(QMainWindow):
         self.setMinimumSize(900, 650)
         self.resize(900, 650)
         self.show()
-        if sys.platform == 'win32' and not self.ffmpeg_check():
-            if not self.ffmpeg_install():
-                pass
-                # TODO: handle error on Windows with no ffmpeg.zip
-        try:
-            if len(sys.argv) >= 2:
-                self.cutter.loadMedia(sys.argv[1])
-        except (FileNotFoundError, PermissionError):
-            QMessageBox.critical(self, 'Error loading file', sys.exc_info()[0])
-            qApp.restoreOverrideCursor()
-            self.cutter.startNew()
+        self.ffmpeg_installer = {
+            'win32': {
+                64: 'https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-latest-win64-static.7z',
+                32: 'https://ffmpeg.zeranoe.com/builds/win32/static/ffmpeg-latest-win32-static.7z'
+            },
+            'darwin': {
+                64: 'http://evermeet.cx/pub/ffmpeg/snapshots',
+                32: 'http://evermeet.cx/pub/ffmpeg/snapshots'
+            },
+            'linux': {
+                64: 'https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-64bit-static.tar.xz',
+                32: 'https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-32bit-static.tar.xz'
+            }
+        }
+        if self.ffmpeg_check():
+            try:
+                if len(sys.argv) >= 2:
+                    self.cutter.loadMedia(sys.argv[1])
+            except (FileNotFoundError, PermissionError):
+                QMessageBox.critical(self, 'Error loading file', sys.exc_info()[0])
+                qApp.restoreOverrideCursor()
+                self.cutter.startNew()
+        else:
+            self.close()
 
     def init_cutter(self) -> None:
         self.cutter = VidCutter(self)
         qApp.setWindowIcon(self.cutter.appIcon)
         self.setCentralWidget(self.cutter)
 
-    def ffmpeg_install(self) -> bool:
-        ffmpeg_zip = MainWindow.get_path('bin/ffmpeg.zip', override=True)
-        if os.path.exists(ffmpeg_zip):
-            with ZipFile(ffmpeg_zip) as archive:
-                archive.extract('ffmpeg.exe', path=os.path.dirname(ffmpeg_zip))
-            os.remove(ffmpeg_zip)
-            return True
-        return False
+    @staticmethod
+    def get_bitness() -> int:
+        from struct import calcsize
+        return calcsize('P') * 8
 
     def ffmpeg_check(self) -> bool:
-        return os.path.exists(MainWindow.get_path('bin/ffmpeg.exe', override=True))
+        valid = False
+        if sys.platform == 'win32':
+            valid = os.path.exists(MainWindow.get_path('bin/ffmpeg.exe', override=True))
+            exe = 'bin\\ffmpeg.exe'
+        else:
+            valid = os.path.exists(MainWindow.get_path('bin/ffmpeg', override=True))
+            exe = 'bin/ffmpeg'
+        if not valid:
+            if sys.platform.startswith('linux'):
+                link = self.ffmpeg_installer['linux'][MainWindow.get_bitness()]
+            else:
+                link = self.ffmpeg_installer[sys.platform][MainWindow.get_bitness()]
+            QMessageBox.critical(self, 'Missing FFMpeg executable', '<style>li { margin: 1em 0; }</style>' +
+                                 '<h3 style="color:#6A687D;">MISSING FFMPEG EXECUTABLE</h3>' +
+                                 '<p>The FFMpeg utility is missing in your ' +
+                                 'installation. It should have been installed when you first setup VidCutter.</p>' +
+                                 '<p>You can easily fix this by manually downloading and installing it yourself by' +
+                                 'following the steps provided below:</p><ol>' +
+                                 '<li>Download the <b>static</b> version of FFMpeg from ' +
+                                 '<a href="%s" target="_blank">this clickable link</a>.</li>' % link +
+                                 '<li>Extract this file accordingly and locate the ffmpeg executable within.</li>' +
+                                 '<li>Move or Cut &amp; Paste the executable to the following path on your system: ' +
+                                 '<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;%s</li></ol>'
+                                 % QDir.toNativeSeparators(MainWindow.get_path(exe, override=True)) +
+                                 '<p><b>NOTE:</b> You will most likely need Administrator rights (Windows) or ' +
+                                 'root access (Linux/Mac) in order to do this.</p>')
+        return valid
 
     def restart(self):
         self.cutter.deleteLater()
         self.init_cutter()
-
-    def dragEnterEvent(self, event: QDragEnterEvent) -> None:
-        if event.mimeData().hasUrls():
-            event.accept()
-
-    def dropEvent(self, event: QDropEvent) -> None:
-        filename = event.mimeData().urls()[0].toLocalFile()
-        self.cutter.loadMedia(filename)
-        event.accept()
-
-    def closeEvent(self, event: QCloseEvent) -> None:
-        self.cutter.deleteLater()
-        self.deleteLater()
-        qApp.quit()
 
     @staticmethod
     def get_path(path: str = None, override: bool = False) -> str:
@@ -946,6 +973,20 @@ class MainWindow(QMainWindow):
                 m = re.match('__version__ *= *[\'](.*)[\']', line)
                 if m:
                     return m.group(1)
+
+    def dragEnterEvent(self, event: QDragEnterEvent) -> None:
+        if event.mimeData().hasUrls():
+            event.accept()
+
+    def dropEvent(self, event: QDropEvent) -> None:
+        filename = event.mimeData().urls()[0].toLocalFile()
+        self.cutter.loadMedia(filename)
+        event.accept()
+
+    def closeEvent(self, event: QCloseEvent) -> None:
+        self.cutter.deleteLater()
+        self.deleteLater()
+        qApp.quit()
 
 
 def main():
