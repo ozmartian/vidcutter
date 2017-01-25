@@ -823,21 +823,17 @@ class VidCutter(QWidget):
         self.parent.setWindowTitle('%s' % qApp.applicationName())
 
     def ffmpeg_check(self) -> bool:
-        valid = False
-        if sys.platform == 'win32':
-            valid = os.path.exists(MainWindow.get_path('bin/ffmpeg.exe', override=True))
-            exe = 'bin\\ffmpeg.exe'
-        else:
-            valid = os.path.exists(self.videoService.backend)
-            if not valid:
-                valid = os.path.exists(MainWindow.get_path('bin/ffmpeg', override=True))
-            exe = 'bin/ffmpeg'
+        valid = os.path.exists(self.videoService.backend) if self.videoService.backend is not None else False
         if not valid:
+            if sys.platform == 'win32':
+                exe = 'bin\\ffmpeg.exe'
+            else:
+                valid = os.path.exists(MainWindow.get_path('bin/ffmpeg', override=True))
+                exe = 'bin/ffmpeg'
             if sys.platform.startswith('linux'):
                 link = self.ffmpeg_installer['linux'][MainWindow.get_bitness()]
             else:
                 link = self.ffmpeg_installer[sys.platform][MainWindow.get_bitness()]
-            qApp.processEvents()
             QMessageBox.critical(None, 'Missing FFMpeg executable', '<style>li { margin: 1em 0; }</style>' +
                                  '<h3 style="color:#6A687D;">MISSING FFMPEG EXECUTABLE</h3>' +
                                  '<p>The FFMpeg utility is missing in your ' +
