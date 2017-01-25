@@ -1,3 +1,33 @@
+vidcutter (2.5.0-1) stable; urgency=medium
+
+  * video seeking is now by frame rather than one second intervals
+  * shortcut keys for seeking video updated for frame stepping changes
+     (i.e. left-right / mous wheel = 1 frame; up-down = 10 frames)
+
+  * early & basic support for EDLs. Only the very simple MPlayer EDL standard 
+     is currently supported but this now allows you to save your clip index for 
+     a particular video and reload it again in future for recutting etc. If users
+     are using VidCutter and would like interchangeable file format support with
+     other tools, like ComSkip for example, then submit a feature request at the
+     app's GitHub page (more likely to get noticed there rather than launchpad.net)
+
+  * custom mouse cursor when mouse is over the slider handle (Linux only). this 
+     always worked for Windows and macOS but the cursor is missing in X11
+     standard themes. i think it gives the app more character so gave Linux the
+     needed love it deserves.
+
+  * various UI improvements incl. new app icon care of the papirus crew
+     at https://github.com/PapirusDevelopmentTeam (thx!)
+
+  * bug fixes; the filename set by default in the save video file dialog is now
+     the original video's filename with '_EDIT' appended to help avoid accidental
+     writing over original source material.
+
+  * i've probably forgotten a number of other important changes and additions
+    but its too late to bother sifting through git logs ;-)
+
+ -- Pete Alexandrou <pete@ozmartians.com>  Thu, 26 Jan 2017 01:32:09 +0800
+
 vidcutter (2.2.5-0) stable; urgency=medium
 
   * added dependency libqt5multimedia5-plugins to fix missing service
