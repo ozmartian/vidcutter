@@ -1,3 +1,9 @@
+QWidget#novideoWidget { border: 1px solid #666; }
+
+/* -------------------------------------------------------------------------- */
+
+QToolBar#appcontrols { spacing: 6px; }
+
 QToolBar#appcontrols QToolButton {
     border: 1px solid transparent;
     min-width: 100px;
@@ -5,19 +11,19 @@ QToolBar#appcontrols QToolButton {
     padding: 1px 2px;
     margin: 0;
     color: #6A4572;
-    font-size: 11pt;
+    font-size: 10pt;
     font-weight: 400;
     line-height: 80%;
 }
 
 QToolBar#appcontrols QToolButton:hover {
-    border: 1px inset #888;
+    border: 1px solid #888;
     color: #6A4572;
     background-color: rgba(255, 255, 255, 0.85);
 }
 
 QToolBar#appcontrols QToolButton:pressed {
-    border: 1px inset #444;
+    border: 1px solid #444;
     color: #6A4572;
     background-color: rgba(255, 255, 255, 0.25);
 }
@@ -69,13 +75,9 @@ QPushButton#menuButton {
     height: 24px;
 }
 
-QPushButton:hover#menuButton, QPushButton:pressed#menuButton {
-    border-image: url(:/images/menu-active.png);
-}
+QPushButton:hover#menuButton, QPushButton:pressed#menuButton { border-image: url(:/images/menu-active.png); }
 
-QPushButton::menu-indicator#menuButton {
-    left: -1000px;
-}
+QPushButton::menu-indicator#menuButton { left: -1000px; }
 
 QPushButton#muteButton, QPushButton#menuButton {
     background-color: transparent;

@@ -9,7 +9,6 @@ import sys
 import time
 import warnings
 from datetime import timedelta
-from zipfile import ZipFile
 
 from PyQt5.QtCore import (QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTextStream, QTime, QUrl,
                           pyqtSlot, qRound)
@@ -69,13 +68,28 @@ class VideoWidget(QVideoWidget):
 class VidCutter(QWidget):
     def __init__(self, parent):
         super(VidCutter, self).__init__(parent)
-        self.novideoWidget = QWidget(self, autoFillBackground=True)
+        self.novideoWidget = QWidget(self, objectName='novideoWidget', autoFillBackground=True)
         self.parent = parent
         self.mediaPlayer = QMediaPlayer(None, QMediaPlayer.VideoSurface)
         self.videoWidget = VideoWidget(self)
         self.videoService = VideoService(self)
 
         self.latest_release_url = 'https://github.com/ozmartian/vidcutter/releases/latest'
+
+        self.ffmpeg_installer = {
+            'win32': {
+                64: 'https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-latest-win64-static.7z',
+                32: 'https://ffmpeg.zeranoe.com/builds/win32/static/ffmpeg-latest-win32-static.7z'
+            },
+            'darwin': {
+                64: 'http://evermeet.cx/pub/ffmpeg/snapshots',
+                32: 'http://evermeet.cx/pub/ffmpeg/snapshots'
+            },
+            'linux': {
+                64: 'https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-64bit-static.tar.xz',
+                32: 'https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-32bit-static.tar.xz'
+            }
+        }
 
         QFontDatabase.addApplicationFont(':/fonts/DroidSansMono.ttf')
         QFontDatabase.addApplicationFont(':/fonts/OpenSans.ttf')
@@ -254,14 +268,16 @@ class VidCutter(QWidget):
 
     def initActions(self) -> None:
         self.openAction = QAction(self.openIcon, 'Open\nMedia', self, toolTip='Open Media',
-                                  triggered=self.openMedia)
+                                  statusTip='Open a valid media file', triggered=self.openMedia)
         self.playAction = QAction(self.playIcon, 'Play\nMedia', self, toolTip='Play Media',
-                                  triggered=self.playMedia, enabled=False)
+                                  statusTip='Play the loaded media file', triggered=self.playMedia, enabled=False)
+        self.pauseAction = QAction(self.pauseIcon, 'Pause\nMedia', self, toolTip='Pause Media', visible=False,
+                                   statusTip='Pause the currently playing media file', triggered=self.playMedia)
         self.cutStartAction = QAction(self.cutStartIcon, 'Clip\nStart', self, toolTip='Clip Start',
-                                      statusTip='Set clip start marker',
+                                      statusTip='Set the start position of a new clip',
                                       triggered=self.setCutStart, enabled=False)
         self.cutEndAction = QAction(self.cutEndIcon, 'Clip\nEnd', self, toolTip='Clip End',
-                                    statusTip='Set clip end marker',
+                                    statusTip='Set the end position of a new clip',
                                     triggered=self.setCutEnd, enabled=False)
         self.saveAction = QAction(self.saveIcon, 'Save\nVideo', self, toolTip='Save Video',
                                   statusTip='Save clips to a new video file', triggered=self.cutVideo, enabled=False)
@@ -278,10 +294,10 @@ class VidCutter(QWidget):
                                        statusTip='View current media file information', triggered=self.mediaInfo,
                                        enabled=False)
         self.openEDLAction = QAction(self.openEDLIcon, 'Open EDL file', self,
-                                     statusTip='Open an EDL file for current media',
+                                     statusTip='Open a previously saved EDL file',
                                      triggered=self.openEDL, enabled=False)
         self.saveEDLAction = QAction(self.saveEDLIcon, 'Save EDL file', self,
-                                     statusTip='Save clip index to an EDL file',
+                                     statusTip='Save clip list data to an EDL file',
                                      triggered=self.saveEDL, enabled=False)
         self.updateCheckAction = QAction(self.updateCheckIcon, 'Check for updates...', self,
                                          statusTip='Check for application updates', triggered=self.updateCheck)
@@ -292,6 +308,7 @@ class VidCutter(QWidget):
     def initToolbar(self) -> None:
         self.toolbar.addAction(self.openAction)
         self.toolbar.addAction(self.playAction)
+        self.toolbar.addAction(self.pauseAction)
         self.toolbar.addAction(self.cutStartAction)
         self.toolbar.addAction(self.cutEndAction)
         self.toolbar.addAction(self.saveAction)
@@ -439,7 +456,7 @@ class VidCutter(QWidget):
         self.edl, _ = QFileDialog.getOpenFileName(self.parent, caption='Select EDL file',
                                                   filter='MPlayer EDL (*.edl);;' +
                                                          # 'VideoReDo EDL (*.Vprj);;' +
-                                                         'Comskip EDL (*.txt);;' +
+                                                         # 'Comskip EDL (*.txt);;' +
                                                          # 'CMX 3600 EDL (*.edl);;' +
                                                          'All files (*.*)',
                                                   initialFilter='MPlayer EDL (*.edl)',
@@ -544,10 +561,11 @@ class VidCutter(QWidget):
     def playMedia(self) -> None:
         if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
             self.mediaPlayer.pause()
-            self.playAction.setText('Play')
+
         else:
             self.mediaPlayer.play()
-            self.playAction.setText('Pause')
+            self.playAction.setVisible(False)
+            self.pauseAction.setVisible(True)
 
     def initMediaControls(self, flag: bool = True) -> None:
         self.playAction.setEnabled(flag)
@@ -570,12 +588,14 @@ class VidCutter(QWidget):
         self.timeCounter.setText(
             '%s / %s' % (currentTime.toString(self.timeformat), totalTime.toString(self.timeformat)))
 
-    @pyqtSlot()
-    def mediaStateChanged(self) -> None:
-        if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
-            self.playAction.setIcon(self.pauseIcon)
+    @pyqtSlot(QMediaPlayer.State)
+    def mediaStateChanged(self, state: QMediaPlayer.State) -> None:
+        if state == QMediaPlayer.PlayingState:
+            self.playAction.setVisible(False)
+            self.pauseAction.setVisible(True)
         else:
-            self.playAction.setIcon(self.playIcon)
+            self.playAction.setVisible(True)
+            self.pauseAction.setVisible(False)
 
     def durationChanged(self, duration: int) -> None:
         self.seekSlider.setRange(0, duration)
@@ -813,6 +833,49 @@ class VidCutter(QWidget):
         self.initMediaControls(False)
         self.parent.setWindowTitle('%s' % qApp.applicationName())
 
+    def ffmpeg_check(self) -> bool:
+        valid = False
+        if sys.platform == 'win32':
+            valid = os.path.exists(MainWindow.get_path('bin/ffmpeg.exe', override=True))
+            exe = 'bin\\ffmpeg.exe'
+        else:
+            valid = os.path.exists(self.videoService.backend)
+            if not valid:
+                valid = os.path.exists(MainWindow.get_path('bin/ffmpeg', override=True))
+            exe = 'bin/ffmpeg'
+        if not valid:
+            if sys.platform.startswith('linux'):
+                link = self.ffmpeg_installer['linux'][MainWindow.get_bitness()]
+            else:
+                link = self.ffmpeg_installer[sys.platform][MainWindow.get_bitness()]
+            qApp.processEvents()
+            QMessageBox.critical(None, 'Missing FFMpeg executable', '<style>li { margin: 1em 0; }</style>' +
+                                 '<h3 style="color:#6A687D;">MISSING FFMPEG EXECUTABLE</h3>' +
+                                 '<p>The FFMpeg utility is missing in your ' +
+                                 'installation. It should have been installed when you first setup VidCutter.</p>' +
+                                 '<p>You can easily fix this by manually downloading and installing it yourself by' +
+                                 'following the steps provided below:</p><ol>' +
+                                 '<li>Download the <b>static</b> version of FFMpeg from<br/>' +
+                                 '<a href="%s" target="_blank"><b>this clickable link</b></a>.</li>' % link +
+                                 '<li>Extract this file accordingly and locate the ffmpeg executable within.</li>' +
+                                 '<li>Move or Cut &amp; Paste the executable to the following path on your system: ' +
+                                 '<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;%s</li></ol>'
+                                 % QDir.toNativeSeparators(MainWindow.get_path(exe, override=True)) +
+                                 '<p><b>NOTE:</b> You will most likely need Administrator rights (Windows) or ' +
+                                 'root access (Linux/Mac) in order to do this.</p>')
+        return valid
+
+    @pyqtSlot(QMediaPlayer.Error)
+    def handleError(self, error: QMediaPlayer.Error) -> None:
+        qApp.restoreOverrideCursor()
+        self.startNew()
+        if error == QMediaPlayer.ResourceError:
+            QMessageBox.critical(self.parent, 'Invalid Media',
+                                 'Invalid media file detected at:<br/><br/><b>%s</b><br/><br/>%s'
+                                 % (self.movieFilename, self.mediaPlayer.errorString()))
+        else:
+            QMessageBox.critical(self.parent, 'An error has occurred', self.mediaPlayer.errorString())
+
     def wheelEvent(self, event: QWheelEvent) -> None:
         if self.mediaPlayer.isVideoAvailable() or self.mediaPlayer.isAudioAvailable():
             if event.angleDelta().y() > 0:
@@ -856,17 +919,6 @@ class VidCutter(QWidget):
         else:
             super(VidCutter, self).mousePressEvent(event)
 
-    @pyqtSlot(QMediaPlayer.Error)
-    def handleError(self, error: QMediaPlayer.Error) -> None:
-        qApp.restoreOverrideCursor()
-        self.startNew()
-        if error == QMediaPlayer.ResourceError:
-            QMessageBox.critical(self.parent, 'Invalid Media',
-                                 'Invalid media file detected at:<br/><br/><b>%s</b><br/><br/>%s'
-                                 % (self.movieFilename, self.mediaPlayer.errorString()))
-        else:
-            QMessageBox.critical(self.parent, 'An error has occurred', self.mediaPlayer.errorString())
-
     def closeEvent(self, event: QCloseEvent) -> None:
         self.parent.closeEvent(event)
 
@@ -883,30 +935,16 @@ class MainWindow(QMainWindow):
         self.setMinimumSize(900, 650)
         self.resize(900, 650)
         self.show()
-        self.ffmpeg_installer = {
-            'win32': {
-                64: 'https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-latest-win64-static.7z',
-                32: 'https://ffmpeg.zeranoe.com/builds/win32/static/ffmpeg-latest-win32-static.7z'
-            },
-            'darwin': {
-                64: 'http://evermeet.cx/pub/ffmpeg/snapshots',
-                32: 'http://evermeet.cx/pub/ffmpeg/snapshots'
-            },
-            'linux': {
-                64: 'https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-64bit-static.tar.xz',
-                32: 'https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-32bit-static.tar.xz'
-            }
-        }
-        if self.ffmpeg_check():
-            try:
-                if len(sys.argv) >= 2:
-                    self.cutter.loadMedia(sys.argv[1])
-            except (FileNotFoundError, PermissionError):
-                QMessageBox.critical(self, 'Error loading file', sys.exc_info()[0])
-                qApp.restoreOverrideCursor()
-                self.cutter.startNew()
-        else:
+        try:
+            if len(sys.argv) >= 2:
+                self.cutter.loadMedia(sys.argv[1])
+        except (FileNotFoundError, PermissionError):
+            QMessageBox.critical(self, 'Error loading file', sys.exc_info()[0])
+            qApp.restoreOverrideCursor()
+            self.cutter.startNew()
+        if not self.cutter.ffmpeg_check():
             self.close()
+            sys.exit(1)
 
     def init_cutter(self) -> None:
         self.cutter = VidCutter(self)
@@ -917,35 +955,6 @@ class MainWindow(QMainWindow):
     def get_bitness() -> int:
         from struct import calcsize
         return calcsize('P') * 8
-
-    def ffmpeg_check(self) -> bool:
-        valid = False
-        if sys.platform == 'win32':
-            valid = os.path.exists(MainWindow.get_path('bin/ffmpeg.exe', override=True))
-            exe = 'bin\\ffmpeg.exe'
-        else:
-            valid = os.path.exists(MainWindow.get_path('bin/ffmpeg', override=True))
-            exe = 'bin/ffmpeg'
-        if not valid:
-            if sys.platform.startswith('linux'):
-                link = self.ffmpeg_installer['linux'][MainWindow.get_bitness()]
-            else:
-                link = self.ffmpeg_installer[sys.platform][MainWindow.get_bitness()]
-            QMessageBox.critical(self, 'Missing FFMpeg executable', '<style>li { margin: 1em 0; }</style>' +
-                                 '<h3 style="color:#6A687D;">MISSING FFMPEG EXECUTABLE</h3>' +
-                                 '<p>The FFMpeg utility is missing in your ' +
-                                 'installation. It should have been installed when you first setup VidCutter.</p>' +
-                                 '<p>You can easily fix this by manually downloading and installing it yourself by' +
-                                 'following the steps provided below:</p><ol>' +
-                                 '<li>Download the <b>static</b> version of FFMpeg from ' +
-                                 '<a href="%s" target="_blank">this clickable link</a>.</li>' % link +
-                                 '<li>Extract this file accordingly and locate the ffmpeg executable within.</li>' +
-                                 '<li>Move or Cut &amp; Paste the executable to the following path on your system: ' +
-                                 '<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;%s</li></ol>'
-                                 % QDir.toNativeSeparators(MainWindow.get_path(exe, override=True)) +
-                                 '<p><b>NOTE:</b> You will most likely need Administrator rights (Windows) or ' +
-                                 'root access (Linux/Mac) in order to do this.</p>')
-        return valid
 
     def restart(self):
         self.cutter.deleteLater()
