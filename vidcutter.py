@@ -216,11 +216,9 @@ class VidCutter(QWidget):
         novideoImage = QLabel(alignment=Qt.AlignCenter, autoFillBackground=False,
                               pixmap=QPixmap(':/images/novideo.png', 'PNG'),
                               sizePolicy=QSizePolicy(QSizePolicy.Expanding, QSizePolicy.MinimumExpanding))
-        novideoImage.setBackgroundRole(QPalette.Dark)
         novideoImage.setContentsMargins(0, 20, 0, 15)
-        self.novideoLabel = QLabel(alignment=Qt.AlignCenter, autoFillBackground=True,
+        self.novideoLabel = QLabel(alignment=Qt.AlignCenter, autoFillBackground=False,
                                    sizePolicy=QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum))
-        self.novideoLabel.setBackgroundRole(QPalette.Dark)
         self.novideoLabel.setContentsMargins(0, 20, 15, 40)
         novideoLayout = QVBoxLayout(spacing=0)
         novideoLayout.addWidget(novideoImage)
