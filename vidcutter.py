@@ -44,21 +44,12 @@ class EDLFormat:
 class VideoWidget(QVideoWidget):
     def __init__(self, parent=None):
         super(VideoWidget, self).__init__(parent)
+        self.parent = parent
         self.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
         p = self.palette()
         p.setColor(QPalette.Window, Qt.black)
         self.setPalette(p)
         self.setAttribute(Qt.WA_OpaquePaintEvent)
-
-    def keyPressEvent(self, event: QKeyEvent) -> None:
-        if event.key() == Qt.Key_Escape and self.isFullScreen():
-            self.setFullScreen(False)
-            event.accept()
-        elif event.key() == Qt.Key_Enter:
-            self.setFullScreen(not self.isFullScreen())
-            event.accept()
-        else:
-            super(VideoWidget, self).keyPressEvent(event)
 
     def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
         self.setFullScreen(not self.isFullScreen())
@@ -71,7 +62,7 @@ class VidCutter(QWidget):
         self.novideoWidget = QWidget(self, objectName='novideoWidget', autoFillBackground=True)
         self.parent = parent
         self.mediaPlayer = QMediaPlayer(None, QMediaPlayer.VideoSurface)
-        self.videoWidget = VideoWidget(self)
+        self.videoWidget = VideoWidget(self.parent)
         self.videoService = VideoService(self)
 
         self.latest_release_url = 'https://github.com/ozmartian/vidcutter/releases/latest'
@@ -898,10 +889,6 @@ class VidCutter(QWidget):
                 addtime = self.notifyInterval
             elif event.key() == Qt.Key_PageDown or event.key() == Qt.Key_Down:
                 addtime = self.notifyInterval * 10
-            elif event.key() == Qt.Key_Enter:
-                self.toggleFullscreen()
-            elif event.key() == Qt.Key_Escape and self.videoWidget.isFullScreen():
-                self.videoWidget.setFullScreen(False)
             if addtime != 0:
                 newval = self.seekSlider.value() + addtime
                 self.seekSlider.setValue(newval)
