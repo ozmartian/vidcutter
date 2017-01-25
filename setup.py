@@ -90,9 +90,8 @@ setup(
         'Intended Audience :: End Users/Desktop',
         'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
         'Natural Language :: English',
-        'Operating System :: OS Independent',
-        'Topic :: Communications :: File Sharing',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6'
+        'Operating System :: POSIX',
+        'Topic :: Multimedia :: Video :: Non-Linear Editor',
+        'Programming Language :: Python :: 3 :: Only'
     ]
 )
