@@ -1,4 +1,4 @@
-@echo off
+﻿@echo off
 
 REM ......................setup variables......................
 
@@ -30,7 +30,7 @@ del /q ..\..\bin\ffmpeg.exe
 REM ......................download latest FFmpeg static binary......................
 
 if not exist ".\temp\" mkdir temp
-aria2c --ca-certificate=%USERPROFILE%\Documents\ca-certificate.crt -d temp -x 6 %FFMPEG%
+aria2c -d temp -x 6 %FFMPEG%
 
 REM ......................extract ffmpeg.exe to its expected location......................
 
