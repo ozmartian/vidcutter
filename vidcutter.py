@@ -10,8 +10,8 @@ import time
 import warnings
 from datetime import timedelta
 
-from PyQt5.QtCore import (QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTextStream, QTime, QUrl,
-                          pyqtSlot, qRound)
+from PyQt5.QtCore import (QCommandLineOption, QCommandLineParser, QDir, QFile, QFileInfo, QModelIndex, QPoint,
+                           QSize, Qt, QTextStream, QTime, QUrl, pyqtSlot, qRound)
 from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QDragEnterEvent, QDropEvent, QFont, QFontDatabase, QIcon,
                          QKeyEvent, QMouseEvent, QMovie, QPalette, QPixmap, QWheelEvent)
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
@@ -31,14 +31,6 @@ except ImportError:
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 signal.signal(signal.SIGTERM, signal.SIG_DFL)
-warnings.filterwarnings('ignore')
-
-
-class EDLFormat:
-    MPLAYER = 0,
-    COMSKIP = 1,
-    VIDEOREDO = 2,
-    CMX3600 = 3
 
 
 class VideoWidget(QVideoWidget):
@@ -875,7 +867,12 @@ class VidCutter(QWidget):
     def keyPressEvent(self, event: QKeyEvent) -> None:
         if self.mediaPlayer.isVideoAvailable() or self.mediaPlayer.isAudioAvailable():
             addtime = 0
-            if event.key() == Qt.Key_Left:
+            if event.key() == Qt.Key_Space:
+                if self.cutStartAction.isEnabled():
+                    self.setCutStart()
+                elif self.cutEndAction.isEnabled():
+                    self.setCutEnd()
+            elif event.key() == Qt.Key_Left:
                 addtime = -self.notifyInterval
             elif event.key() == Qt.Key_PageUp or event.key() == Qt.Key_Up:
                 addtime = -(self.notifyInterval * 10)
