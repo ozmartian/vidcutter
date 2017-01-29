@@ -40,13 +40,20 @@ def get_install_requires():
 
 
 def get_data_files():
+    files = []
     if sys.platform.startswith('linux'):
-        return [
-            ('/usr/share/pixmaps', ['data/icons/vidcutter.png']),
+        files = [
+            ('/usr/share/icons/hicolor/22x22/apps', ['data/icons/hicolor/22x22/apps/vidcutter.png']),
+            ('/usr/share/icons/hicolor/24x24/apps', ['data/icons/hicolor/24x24/apps/vidcutter.png']),
+            ('/usr/share/icons/hicolor/32x32/apps', ['data/icons/hicolor/32x32/apps/vidcutter.png']),
+            ('/usr/share/icons/hicolor/48x48/apps', ['data/icons/hicolor/48x48/apps/vidcutter.png']),
+            ('/usr/share/icons/hicolor/64x64/apps', ['data/icons/hicolor/64x64/apps/vidcutter.png']),
+            ('/usr/share/icons/hicolor/128x128/apps', ['data/icons/hicolor/128x128/apps/vidcutter.png']),
+            ('/usr/share/icons/hicolor/256x256/apps', ['data/icons/hicolor/256x256/apps/vidcutter.png']),
+            ('/usr/share/icons/hicolor/512x512/apps', ['data/icons/hicolor/512x512/apps/vidcutter.png']),
             ('/usr/share/applications', ['data/desktop/vidcutter.desktop'])
         ]
-    else:
-        return []
+    return files
 
 
 here = path.abspath(path.dirname(__file__))

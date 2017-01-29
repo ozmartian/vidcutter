@@ -7,7 +7,6 @@ import re
 import signal
 import sys
 import time
-import warnings
 from datetime import timedelta
 
 from PyQt5.QtCore import (QCommandLineOption, QCommandLineParser, QDir, QFile, QFileInfo, QModelIndex, QPoint,
@@ -427,22 +426,22 @@ class VidCutter(QWidget):
 
     def openMedia(self) -> None:
         filename, _ = QFileDialog.getOpenFileName(self.parent, caption='Select media file',
-                                                  directory=QDir.currentPath(),
-                                                  options=QFileDialog.DontUseCustomDirectoryIcons)
+                                                  directory=QDir.currentPath())
         if filename != '':
             self.loadMedia(filename)
 
-    def openEDL(self) -> None:
+    def openEDL(self, edlfile: str = '') -> None:
         source_file, _ = os.path.splitext(self.mediaPlayer.currentMedia().canonicalUrl().toLocalFile())
-        self.edl, _ = QFileDialog.getOpenFileName(self.parent, caption='Select EDL file',
-                                                  filter='MPlayer EDL (*.edl);;' +
-                                                         # 'VideoReDo EDL (*.Vprj);;' +
-                                                         # 'Comskip EDL (*.txt);;' +
-                                                         # 'CMX 3600 EDL (*.edl);;' +
-                                                         'All files (*.*)',
-                                                  initialFilter='MPlayer EDL (*.edl)',
-                                                  directory='%s.edl' % source_file,
-                                                  options=QFileDialog.DontUseCustomDirectoryIcons)
+        self.edl = edlfile
+        if not self.edl.strip():
+            self.edl, _ = QFileDialog.getOpenFileName(self.parent, caption='Select EDL file',
+                                                      filter='MPlayer EDL (*.edl);;' +
+                                                             # 'VideoReDo EDL (*.Vprj);;' +
+                                                             # 'Comskip EDL (*.txt);;' +
+                                                             # 'CMX 3600 EDL (*.edl);;' +
+                                                             'All files (*.*)',
+                                                      initialFilter='MPlayer EDL (*.edl)',
+                                                      directory='%s.edl' % source_file)
         if self.edl.strip():
             file = QFile(self.edl)
             if not file.open(QFile.ReadOnly | QFile.Text):
@@ -496,8 +495,7 @@ class VidCutter(QWidget):
         source_file, _ = os.path.splitext(self.mediaPlayer.currentMedia().canonicalUrl().toLocalFile())
         edlsave = self.edl if self.edl.strip() else '%s.edl' % source_file
         edlsave, _ = QFileDialog.getSaveFileName(parent=self.parent, caption='Save EDL file',
-                                                 directory=edlsave,
-                                                 options=QFileDialog.DontUseCustomDirectoryIcons)
+                                                 directory=edlsave)
         if edlsave.strip():
             file = QFile(edlsave)
             if not file.open(QFile.WriteOnly | QFile.Text):
@@ -680,8 +678,7 @@ class VidCutter(QWidget):
         if clips > 0:
             self.finalFilename, _ = QFileDialog.getSaveFileName(parent=self.parent, caption='Save video',
                                                                 directory='%s_EDIT%s' % (source_file, source_ext),
-                                                                filter='Video files (*%s)' % source_ext,
-                                                                options=QFileDialog.DontUseCustomDirectoryIcons)
+                                                                filter='Video files (*%s)' % source_ext)
             if self.finalFilename == '':
                 return False
             file, ext = os.path.splitext(self.finalFilename)
@@ -904,6 +901,8 @@ class VidCutter(QWidget):
 class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
+        self.edl, self.video = '', ''
+        self.parse_cmdline()
         self.init_cutter()
         self.setWindowTitle('%s' % qApp.applicationName())
         self.setContentsMargins(0, 0, 0, 0)
@@ -914,8 +913,10 @@ class MainWindow(QMainWindow):
         self.resize(900, 650)
         self.show()
         try:
-            if len(sys.argv) >= 2:
-                self.cutter.loadMedia(sys.argv[1])
+            if self.video:
+                self.cutter.loadMedia(self.video)
+            if self.edl:
+                self.cutter.openEDL(self.edl)
         except (FileNotFoundError, PermissionError):
             QMessageBox.critical(self, 'Error loading file', sys.exc_info()[0])
             qApp.restoreOverrideCursor()
@@ -923,6 +924,35 @@ class MainWindow(QMainWindow):
         if not self.cutter.ffmpeg_check():
             self.close()
             sys.exit(1)
+
+    def parse_cmdline(self):
+        self.parser = QCommandLineParser()
+        self.parser.setApplicationDescription('A simple video cutter & joiner')
+        self.parser.addPositionalArgument('video', 'Preloads the video file in app.', '[video]')
+        self.edl_option = QCommandLineOption('edl', 'Preloads clip index from a previously saved EDL file.\n' +
+                                             'NOTE: You must also set the video argument for this to work.', 'edl file')
+        self.parser.addOption(self.edl_option)
+        self.parser.addVersionOption()
+        self.parser.addHelpOption()
+        self.parser.process(qApp)
+        self.args = self.parser.positionalArguments()
+        if self.parser.value('edl').strip() and not os.path.exists(self.parser.value('edl')):
+            print('\n    ERROR: EDL file not found.\n', file=sys.stderr)
+            self.close()
+            sys.exit(1)
+        if self.parser.value('edl').strip() and len(self.args) == 0:
+            print('\n    ERROR: Video file argument is missing.\n    You must provide a video file argument if ' +
+                  'preloading an EDL file.\n', file=sys.stderr)
+            self.close()
+            sys.exit(1)
+        if self.parser.value('edl').strip():
+            self.edl = self.parser.value('edl')
+        if len(self.args) > 0 and not os.path.exists(self.args[0]):
+            print('\n    ERROR: Video file not found.\n', file=sys.stderr)
+            self.close()
+            sys.exit(1)
+        if len(self.args) > 0:
+            self.video = self.args[0]
 
     def init_cutter(self) -> None:
         self.cutter = VidCutter(self)
@@ -971,7 +1001,8 @@ class MainWindow(QMainWindow):
         event.accept()
 
     def closeEvent(self, event: QCloseEvent) -> None:
-        self.cutter.deleteLater()
+        if hasattr(self, 'cutter'):
+            self.cutter.deleteLater()
         self.deleteLater()
         qApp.quit()
 
