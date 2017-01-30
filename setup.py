@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import struct
 import sys
 from codecs import open
 from os import path
@@ -10,7 +9,7 @@ from re import match
 from setuptools import setup
 
 
-def get_value(varname, filename='__init__.py'):
+def get_value(varname, filename='vidcutter/__init__.py'):
     with open(path.join(here, filename), encoding='utf-8') as initfile:
         for line in initfile.readlines():
             m = match('__%s__ *= *[\'](.*)[\']' % varname, line)
@@ -25,11 +24,6 @@ def get_description(filename='README.md'):
     for item in file[6: len(file)]:
         desc += item
     return desc
-
-
-def get_architecture():
-    bits = struct.calcsize('P') * 8
-    return 'win-amd64' if bits == 64 else 'win32'
 
 
 def get_install_requires():
@@ -72,7 +66,7 @@ setup(
 
     packages=['vidcutter'],
 
-    package_dir={'vidcutter': '.'},
+    package_dir={'vidcutter': 'vidcutter'},
 
     setup_requires=['setuptools'],
 
@@ -87,7 +81,7 @@ setup(
 
     data_files=get_data_files(),
 
-    entry_points={'gui_scripts': ['vidcutter = vidcutter.vidcutter:main']},
+    entry_points={'gui_scripts': ['vidcutter = vidcutter.__main__:main']},
 
     keywords='vidcutter audiovideoediting audiovideo videoeditor video videoedit pyqt Qt5 multimedia',
 

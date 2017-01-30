@@ -4,52 +4,28 @@
 import os
 import platform
 import re
-import signal
 import sys
 import time
 from datetime import timedelta
 
-from PyQt5.QtCore import (QCommandLineOption, QCommandLineParser, QDir, QFile, QFileInfo, QModelIndex, QPoint,
-                           QSize, Qt, QTextStream, QTime, QUrl, pyqtSlot, qRound)
-from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QDragEnterEvent, QDropEvent, QFont, QFontDatabase, QIcon,
+from PyQt5.QtCore import (QDir, QFile, QFileInfo, QModelIndex, QPoint,
+                          QSize, Qt, QTextStream, QTime, QUrl, pyqtSlot, qRound)
+from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QFont, QFontDatabase, QIcon,
                          QKeyEvent, QMouseEvent, QMovie, QPalette, QPixmap, QWheelEvent)
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
-from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication, QFileDialog, QGroupBox, QHBoxLayout, QLabel,
-                             QListWidget, QListWidgetItem, QMainWindow, QMenu, QMessageBox, QProgressDialog,
+from PyQt5.QtWidgets import (QAbstractItemView, QAction, QFileDialog, QGroupBox, QHBoxLayout, QLabel,
+                             QListWidget, QListWidgetItem, QMenu, QMessageBox, QProgressDialog,
                              QPushButton, QSizePolicy, QStyleFactory, QSlider, QToolBar, QVBoxLayout, QWidget, qApp)
 
-try:
-    from vidcutter.videoservice import VideoService
-    from vidcutter.videoslider import VideoSlider
-    import vidcutter.resources as resources
-except ImportError:
-    from videoservice import VideoService
-    from videoslider import VideoSlider
-    import resources
-
-signal.signal(signal.SIGINT, signal.SIG_DFL)
-signal.signal(signal.SIGTERM, signal.SIG_DFL)
+from vidcutter.videoservice import VideoService
+from vidcutter.videoslider import VideoSlider
+import vidcutter.resources
 
 
-class VideoWidget(QVideoWidget):
-    def __init__(self, parent=None):
-        super(VideoWidget, self).__init__(parent)
-        self.parent = parent
-        self.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
-        p = self.palette()
-        p.setColor(QPalette.Window, Qt.black)
-        self.setPalette(p)
-        self.setAttribute(Qt.WA_OpaquePaintEvent)
-
-    def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
-        self.setFullScreen(not self.isFullScreen())
-        event.accept()
-
-
-class VidCutter(QWidget):
+class VideoCutter(QWidget):
     def __init__(self, parent):
-        super(VidCutter, self).__init__(parent)
+        super(VideoCutter, self).__init__(parent)
         self.novideoWidget = QWidget(self, objectName='novideoWidget', autoFillBackground=True)
         self.parent = parent
         self.mediaPlayer = QMediaPlayer(None, QMediaPlayer.VideoSurface)
@@ -77,7 +53,7 @@ class VidCutter(QWidget):
         QFontDatabase.addApplicationFont(':/fonts/OpenSans.ttf')
 
         stylesheet = ':/styles/vidcutter_osx.qss' if sys.platform == 'darwin' else ':/styles/vidcutter.qss'
-        MainWindow.load_stylesheet(stylesheet)
+        self.parent.load_stylesheet(stylesheet)
 
         fontSize = 12 if sys.platform == 'darwin' else 10
         qApp.setFont(QFont('Open Sans', fontSize, 300))
@@ -86,7 +62,7 @@ class VidCutter(QWidget):
         self.inCut = False
         self.movieFilename = ''
         self.movieLoaded = False
-        self.timeformat = 'hh:mm:ss'
+        self.timeformat = 'hh:mm:ss.zzz'
         self.finalFilename = ''
         self.totalRuntime = 0
         self.frameRate = 0
@@ -117,7 +93,7 @@ class VidCutter(QWidget):
                                     iconSize=QSize(100, 700), dragDropMode=QAbstractItemView.InternalMove,
                                     alternatingRowColors=True, customContextMenuRequested=self.itemMenu,
                                     objectName='cliplist', dragEnabled=True)
-        self.cliplist.setFixedWidth(185)
+        self.cliplist.setFixedWidth(190)
         self.cliplist.setAttribute(Qt.WA_MacShowFocusRect, False)
         self.cliplist.model().rowsMoved.connect(self.syncClipList)
 
@@ -161,8 +137,8 @@ class VidCutter(QWidget):
                                     sliderMoved=self.setVolume)
 
         self.menuButton = QPushButton(objectName='menuButton', flat=True, toolTip='Menu',
-                                      iconSize=QSize(24, 24), cursor=Qt.PointingHandCursor)
-        self.menuButton.setFixedSize(QSize(24, 24))
+                                      iconSize=QSize(24, 20), cursor=Qt.PointingHandCursor)
+        self.menuButton.setFixedSize(QSize(24, 20))
         self.menuButton.setMenu(self.appMenu)
 
         toolbarLayout = QHBoxLayout()
@@ -430,10 +406,10 @@ class VidCutter(QWidget):
         if filename != '':
             self.loadMedia(filename)
 
-    def openEDL(self, edlfile: str = '') -> None:
+    def openEDL(self, checked: bool = False, edlfile: str = '') -> None:
         source_file, _ = os.path.splitext(self.mediaPlayer.currentMedia().canonicalUrl().toLocalFile())
         self.edl = edlfile
-        if not self.edl.strip():
+        if not len(self.edl.strip()):
             self.edl, _ = QFileDialog.getOpenFileName(self.parent, caption='Select EDL file',
                                                       filter='MPlayer EDL (*.edl);;' +
                                                              # 'VideoReDo EDL (*.Vprj);;' +
@@ -628,9 +604,9 @@ class VidCutter(QWidget):
     def renderTimes(self) -> None:
         self.cliplist.clear()
         if len(self.clipTimes) > 4:
-            self.cliplist.setFixedWidth(200)
+            self.cliplist.setFixedWidth(205)
         else:
-            self.cliplist.setFixedWidth(185)
+            self.cliplist.setFixedWidth(190)
         self.totalRuntime = 0
         for clip in self.clipTimes:
             endItem = ''
@@ -642,7 +618,7 @@ class VidCutter(QWidget):
             if type(clip[2]) is QPixmap:
                 listitem.setIcon(QIcon(clip[2]))
             self.cliplist.addItem(listitem)
-            marker = QLabel('''<style>b { font-size:8pt; } p { margin:2px 5px; }</style>
+            marker = QLabel('''<style>b { font-size:8pt; } p { margin:2px 3px; }</style>
                             <p><b>START</b><br/>%s<br/><b>END</b><br/>%s</p>'''
                             % (clip[0].toString(self.timeformat), endItem))
             marker.setStyleSheet('border:none;')
@@ -817,12 +793,12 @@ class VidCutter(QWidget):
             if sys.platform == 'win32':
                 exe = 'bin\\ffmpeg.exe'
             else:
-                valid = os.path.exists(MainWindow.get_path('bin/ffmpeg', override=True))
+                valid = os.path.exists(self.parent.get_path('bin/ffmpeg', override=True))
                 exe = 'bin/ffmpeg'
             if sys.platform.startswith('linux'):
-                link = self.ffmpeg_installer['linux'][MainWindow.get_bitness()]
+                link = self.ffmpeg_installer['linux'][self.parent.get_bitness()]
             else:
-                link = self.ffmpeg_installer[sys.platform][MainWindow.get_bitness()]
+                link = self.ffmpeg_installer[sys.platform][self.parent.get_bitness()]
             QMessageBox.critical(None, 'Missing FFMpeg executable', '<style>li { margin: 1em 0; }</style>' +
                                  '<h3 style="color:#6A687D;">MISSING FFMPEG EXECUTABLE</h3>' +
                                  '<p>The FFMpeg utility is missing in your ' +
@@ -834,7 +810,7 @@ class VidCutter(QWidget):
                                  '<li>Extract this file accordingly and locate the ffmpeg executable within.</li>' +
                                  '<li>Move or Cut &amp; Paste the executable to the following path on your system: ' +
                                  '<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;%s</li></ol>'
-                                 % QDir.toNativeSeparators(MainWindow.get_path(exe, override=True)) +
+                                 % QDir.toNativeSeparators(self.parent.get_path(exe, override=True)) +
                                  '<p><b>NOTE:</b> You will most likely need Administrator rights (Windows) or ' +
                                  'root access (Linux/Mac) in order to do this.</p>')
         return valid
@@ -892,130 +868,22 @@ class VidCutter(QWidget):
             self.setCutEnd()
             event.accept()
         else:
-            super(VidCutter, self).mousePressEvent(event)
+            super(VideoCutter, self).mousePressEvent(event)
 
     def closeEvent(self, event: QCloseEvent) -> None:
         self.parent.closeEvent(event)
 
 
-class MainWindow(QMainWindow):
-    def __init__(self):
-        super(MainWindow, self).__init__()
-        self.edl, self.video = '', ''
-        self.parse_cmdline()
-        self.init_cutter()
-        self.setWindowTitle('%s' % qApp.applicationName())
-        self.setContentsMargins(0, 0, 0, 0)
-        self.statusBar().showMessage('Ready')
-        self.statusBar().setStyleSheet('border:none;')
-        self.setAcceptDrops(True)
-        self.setMinimumSize(900, 650)
-        self.resize(900, 650)
-        self.show()
-        try:
-            if self.video:
-                self.cutter.loadMedia(self.video)
-            if self.edl:
-                self.cutter.openEDL(self.edl)
-        except (FileNotFoundError, PermissionError):
-            QMessageBox.critical(self, 'Error loading file', sys.exc_info()[0])
-            qApp.restoreOverrideCursor()
-            self.cutter.startNew()
-        if not self.cutter.ffmpeg_check():
-            self.close()
-            sys.exit(1)
+class VideoWidget(QVideoWidget):
+    def __init__(self, parent=None):
+        super(VideoWidget, self).__init__(parent)
+        self.parent = parent
+        self.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
+        p = self.palette()
+        p.setColor(QPalette.Window, Qt.black)
+        self.setPalette(p)
+        self.setAttribute(Qt.WA_OpaquePaintEvent)
 
-    def parse_cmdline(self):
-        self.parser = QCommandLineParser()
-        self.parser.setApplicationDescription('A simple video cutter & joiner')
-        self.parser.addPositionalArgument('video', 'Preloads the video file in app.', '[video]')
-        self.edl_option = QCommandLineOption('edl', 'Preloads clip index from a previously saved EDL file.\n' +
-                                             'NOTE: You must also set the video argument for this to work.', 'edl file')
-        self.parser.addOption(self.edl_option)
-        self.parser.addVersionOption()
-        self.parser.addHelpOption()
-        self.parser.process(qApp)
-        self.args = self.parser.positionalArguments()
-        if self.parser.value('edl').strip() and not os.path.exists(self.parser.value('edl')):
-            print('\n    ERROR: EDL file not found.\n', file=sys.stderr)
-            self.close()
-            sys.exit(1)
-        if self.parser.value('edl').strip() and len(self.args) == 0:
-            print('\n    ERROR: Video file argument is missing.\n    You must provide a video file argument if ' +
-                  'preloading an EDL file.\n', file=sys.stderr)
-            self.close()
-            sys.exit(1)
-        if self.parser.value('edl').strip():
-            self.edl = self.parser.value('edl')
-        if len(self.args) > 0 and not os.path.exists(self.args[0]):
-            print('\n    ERROR: Video file not found.\n', file=sys.stderr)
-            self.close()
-            sys.exit(1)
-        if len(self.args) > 0:
-            self.video = self.args[0]
-
-    def init_cutter(self) -> None:
-        self.cutter = VidCutter(self)
-        qApp.setWindowIcon(self.cutter.appIcon)
-        self.setCentralWidget(self.cutter)
-
-    @staticmethod
-    def get_bitness() -> int:
-        from struct import calcsize
-        return calcsize('P') * 8
-
-    def restart(self):
-        self.cutter.deleteLater()
-        self.init_cutter()
-
-    @staticmethod
-    def get_path(path: str = None, override: bool = False) -> str:
-        if override:
-            if getattr(sys, 'frozen', False):
-                return os.path.join(sys._MEIPASS, path)
-            return os.path.join(QFileInfo(__file__).absolutePath(), path)
-        return ':%s' % path
-
-    @staticmethod
-    def load_stylesheet(qssfile: str) -> None:
-        if QFileInfo(qssfile).exists():
-            qss = QFile(qssfile)
-            qss.open(QFile.ReadOnly | QFile.Text)
-            qApp.setStyleSheet(QTextStream(qss).readAll())
-
-    @staticmethod
-    def get_version(filename: str = '__init__.py') -> str:
-        with open(MainWindow.get_path(filename, override=True), 'r') as initfile:
-            for line in initfile.readlines():
-                m = re.match('__version__ *= *[\'](.*)[\']', line)
-                if m:
-                    return m.group(1)
-
-    def dragEnterEvent(self, event: QDragEnterEvent) -> None:
-        if event.mimeData().hasUrls():
-            event.accept()
-
-    def dropEvent(self, event: QDropEvent) -> None:
-        filename = event.mimeData().urls()[0].toLocalFile()
-        self.cutter.loadMedia(filename)
+    def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
+        self.setFullScreen(not self.isFullScreen())
         event.accept()
-
-    def closeEvent(self, event: QCloseEvent) -> None:
-        if hasattr(self, 'cutter'):
-            self.cutter.deleteLater()
-        self.deleteLater()
-        qApp.quit()
-
-
-def main():
-    app = QApplication(sys.argv)
-    app.setApplicationName('VidCutter')
-    app.setApplicationVersion(MainWindow.get_version())
-    app.setOrganizationDomain('http://vidcutter.ozmartians.com')
-    app.setQuitOnLastWindowClosed(True)
-    vidcutter = MainWindow()
-    sys.exit(app.exec_())
-
-
-if __name__ == '__main__':
-    main()
