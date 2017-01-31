@@ -1,6 +1,6 @@
 <div align="right"><img src="https://travis-ci.org/ozmartian/vidcutter.svg?branch=master" /></div>
 
-![VidCutter](https://raw.githubusercontent.com/ozmartian/vidcutter/master/images/vidcutter.png)
+![VidCutter](https://raw.githubusercontent.com/ozmartian/vidcutter/master/vidcutter/images/vidcutter.png)
 
 <p><b>Homepage:</b> <a href="http://vidcutter.ozmartians.com" target=_blank">http://vidcutter.ozmartians.com</a></p>
 
