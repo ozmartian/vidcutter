@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import logging
 import os
 import re
 import signal
 import sys
 
-from PyQt5.QtCore import QCommandLineParser, QCommandLineOption, QFileInfo, QTextStream, QFile
+from PyQt5.QtCore import QCommandLineParser, QCommandLineOption, QFileInfo, QTextStream, QFile, QStandardPaths
 from PyQt5.QtGui import QCloseEvent, QDropEvent, QDragEnterEvent
 from PyQt5.QtWidgets import QMainWindow, qApp, QMessageBox, QApplication
 
@@ -14,6 +15,11 @@ from vidcutter.videocutter import VideoCutter
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 signal.signal(signal.SIGTERM, signal.SIG_DFL)
+
+logging.basicConfig(filename=QStandardPaths.writableLocation(QStandardPaths.AppConfigLocation).lower(),
+
+                    level=logging.DEBUG)
+logging.captureWarnings(capture=True)
 
 
 class MainWindow(QMainWindow):

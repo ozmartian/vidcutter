@@ -20,3 +20,4 @@ vidcutter/bin/
 .DS_Store
 _packaging/appimage/out/*
 _packaging/appimage/VidCutter/*
+testing
