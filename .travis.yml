@@ -8,6 +8,11 @@ notifications:
 install:
 - python3 setup.py bdist_wheel
 script: echo "Less is more.."
+
+addons:
+  ssh_known_hosts:
+    - aur.archlinux.org
+
 # deploy:
 #  provider: pypi
 #  distributions: sdist bdist_wheel
