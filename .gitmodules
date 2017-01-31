@@ -1,6 +1,0 @@
-[submodule "vidcutter"]
-    path = _packaging/archlinux/vidcutter
-    url = ssh://aur@aur.archlinux.org/vidcutter.git
-[submodule "vidcutter-git"]
-    path = _packaging/archlinux/vidcutter-git
-    url = ssh://aur@aur.archlinux.org/vidcutter-git.git
