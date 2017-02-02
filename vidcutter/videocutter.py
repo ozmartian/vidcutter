@@ -63,6 +63,7 @@ class VideoCutter(QWidget):
         self.movieFilename = ''
         self.movieLoaded = False
         self.timeformat = 'hh:mm:ss.zzz'
+        self.runtimeformat = 'hh:mm:ss'
         self.finalFilename = ''
         self.totalRuntime = 0
         self.frameRate = 0
@@ -630,7 +631,7 @@ class VideoCutter(QWidget):
         if self.inCut or len(self.clipTimes) == 0 or not type(self.clipTimes[0][1]) is QTime:
             self.saveAction.setEnabled(False)
             self.saveEDLAction.setEnabled(False)
-        self.setRunningTime(self.deltaToQTime(self.totalRuntime).toString(self.timeformat))
+        self.setRunningTime(self.deltaToQTime(self.totalRuntime).toString(self.runtimeformat))
 
     @staticmethod
     def deltaToQTime(millisecs: int) -> QTime:

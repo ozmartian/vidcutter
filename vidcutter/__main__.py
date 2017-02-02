@@ -16,15 +16,11 @@ from vidcutter.videocutter import VideoCutter
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 signal.signal(signal.SIGTERM, signal.SIG_DFL)
 
-logging.basicConfig(filename=QStandardPaths.writableLocation(QStandardPaths.AppConfigLocation).lower(),
-
-                    level=logging.DEBUG)
-logging.captureWarnings(capture=True)
-
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
+        self.init_logging()
         self.edl, self.video = '', ''
         self.parse_cmdline()
         self.init_cutter()
@@ -49,7 +45,15 @@ class MainWindow(QMainWindow):
             self.close()
             sys.exit(1)
 
-    def parse_cmdline(self):
+    def init_logging(self) -> None:
+        log_path = QStandardPaths.writableLocation(QStandardPaths.AppConfigLocation).lower()
+        os.makedirs(log_path, exist_ok=True)
+        logging.basicConfig(
+            filename=os.path.join(log_path, '%s.log' % qApp.applicationName().lower()),
+            level=logging.ERROR)
+        logging.captureWarnings(capture=True)
+
+    def parse_cmdline(self) -> None:
         self.parser = QCommandLineParser()
         self.parser.setApplicationDescription('A simple video cutter & joiner')
         self.parser.addPositionalArgument('video', 'Preloads the video file in app.', '[video]')
@@ -88,7 +92,7 @@ class MainWindow(QMainWindow):
         from struct import calcsize
         return calcsize('P') * 8
 
-    def restart(self):
+    def restart(self) -> None:
         self.cutter.deleteLater()
         self.init_cutter()
 
