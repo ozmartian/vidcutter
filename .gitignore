@@ -17,6 +17,7 @@ vidcutter/vidcutter
 vidcutter/vidcutter.exe
 .openshift
 vidcutter/bin/
+bin/
 .DS_Store
 _packaging/appimage/out/*
 _packaging/appimage/VidCutter/*

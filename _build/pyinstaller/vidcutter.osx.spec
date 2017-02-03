@@ -8,14 +8,14 @@ import PyQt5
 block_cipher = None
 
 
-a = Analysis(['../../vidcutter.py'],
+a = Analysis(['../../vidcutter/vidcutter.py'],
              pathex=[
                  os.path.join(sys.modules['PyQt5'].__path__[0], 'Qt', 'bin'),
                  '../..'
              ],
              binaries=[],
              datas=[
-                 ('../../__init__.py', '.'),
+                 ('../../vidcutter/__init__.py', '.'),
                  ('../../bin/ffmpeg', 'bin/')
              ],
              hiddenimports=[],

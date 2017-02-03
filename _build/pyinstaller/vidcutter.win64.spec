@@ -7,7 +7,7 @@ import PyQt5
 
 block_cipher = None
 
-a = Analysis(['..\\..\\vidcutter.py'],
+a = Analysis(['..\\..\\vidcutter\\__main__.py'],
              pathex=[
                  os.path.join(sys.modules['PyQt5'].__path__[0], 'Qt', 'bin'),
                  'C:\\Program Files (x86)\\Windows Kits\\10\Redist\\ucrt\\DLLs\\x64',
@@ -15,7 +15,7 @@ a = Analysis(['..\\..\\vidcutter.py'],
              ],
              binaries=[],
              datas=[
-                 ('..\\..\\__init__.py', '.'),
+                 ('..\\..\\vidcutter\\__init__.py', '.'),
                  ('..\\..\\bin\\ffmpeg.exe', '.\\bin')
              ],
              hiddenimports=[],
