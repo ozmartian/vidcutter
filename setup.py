@@ -47,7 +47,8 @@ def get_data_files():
             ('/usr/share/icons/hicolor/512x512/apps', ['data/icons/hicolor/512x512/apps/vidcutter.png']),
             ('/usr/share/applications', ['data/desktop/vidcutter.desktop'])
         ]
-    return files.append(('.', ['README.md', 'LICENSE']))
+    files.append(('.', ['README.md', 'LICENSE']))
+    return files
 
 
 here = path.abspath(path.dirname(__file__))
