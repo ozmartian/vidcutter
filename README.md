@@ -1,14 +1,19 @@
-<div>
-    <div style="float:left;">
+<div style="width:100%; height:120px; position:relative;">
+    <div style="float:left; position:absolute; left:10px;">
         <img src="https://travis-ci.org/ozmartian/vidcutter.svg?branch=master" />
         <br/><br/>
         <b>Homepage:</b> <a href="http://vidcutter.ozmartians.com" target="_blank">http://vidcutter.ozmartians.com</a>
     </div>
-    <div style="float:right; margin-left:10px;">
+    <div style="float:right; right:10px; position:absolute;">
         <img src="https://raw.githubusercontent.com/ozmartian/vidcutter/master/data/icons/vidcutter.png" style="width:120px;" />
     </div>
-    <div class="clear"></div>
 </div>
+
+<hr noshade size="1" />
+
+Cross-platform Qt5 based app for quick and easy video trimming/splitting and merging/joining for simple quick edits.
+FFmpeg drives the backend with a stylishly hand edited Qt5 UI. FFmpeg static binary is supplied for Windows installations.
+For non-windows, use your o/s package manager if on Linux and homebrew for Mac OS X to manage FFmpeg. It is most likely already installed on your Linux or macOS machine.
 
 ----[ Linux Users ]----
 
