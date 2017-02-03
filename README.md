@@ -5,7 +5,7 @@
         <b>Homepage:</b> <a href="http://vidcutter.ozmartians.com" target="_blank">http://vidcutter.ozmartians.com</a>
     </div>
     <div style="float:right; right:10px; position:absolute;">
-        <img src="https://raw.githubusercontent.com/ozmartian/vidcutter/master/data/icons/vidcutter.png" style="width:120px;" />
+        <img src="https://raw.githubusercontent.com/ozmartian/vidcutter/master/data/icons/vidcutter.png" width="120" height="120" />
     </div>
 </div>
 
