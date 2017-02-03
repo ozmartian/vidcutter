@@ -13,7 +13,7 @@ from PyQt5.QtWidgets import qApp, QMessageBox
 
 
 class VideoService(QObject):
-    def __init__(self, parent):
+    def __init__(self, parent=None):
         super(VideoService, self).__init__(parent)
         self.parent = parent
         self.consoleOutput = ''
