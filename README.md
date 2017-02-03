@@ -1,8 +1,14 @@
-<div align="right"><img src="https://travis-ci.org/ozmartian/vidcutter.svg?branch=master" /></div>
-
-<p><b>Homepage:</b> <a href="http://vidcutter.ozmartians.com" target=_blank">http://vidcutter.ozmartians.com</a></p>
-
-<img src="https://raw.githubusercontent.com/ozmartian/vidcutter/master/vidcutter/images/vidcutter.png" align="left" />
+<div>
+    <div style="float:left;">
+        <img src="https://travis-ci.org/ozmartian/vidcutter.svg?branch=master" />
+        <br/><br/>
+        <b>Homepage:</b> <a href="http://vidcutter.ozmartians.com" target="_blank">http://vidcutter.ozmartians.com</a>
+    </div>
+    <div style="float:right; margin-left:10px;">
+        <img src="https://raw.githubusercontent.com/ozmartian/vidcutter/master/data/icons/vidcutter.png" style="width:120px;" />
+    </div>
+    <div class="clear"></div>
+</div>
 
 ----[ Linux Users ]----
 
