@@ -21,14 +21,14 @@ def get_description(filename='README.md'):
     with open(path.join(here, filename), encoding='utf-8') as f:
         file = list(f)
     desc = ''
-    for item in file[6: len(file)]:
+    for item in file[11: len(file)]:
         desc += item
     return desc
 
 
 def get_install_requires():
     if packager == 'pypi':
-        return ['PyQt5 >= 5.5']
+        return ['PyQt5']
     else:
         return []
 
