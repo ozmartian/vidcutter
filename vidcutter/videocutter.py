@@ -10,13 +10,14 @@ from datetime import timedelta
 
 from PyQt5.QtCore import (QDir, QFile, QFileInfo, QModelIndex, QPoint,
                           QSize, Qt, QTextStream, QTime, QUrl, pyqtSlot, qRound)
-from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QFont, QFontDatabase, QIcon,
-                         QKeyEvent, QMouseEvent, QMovie, QPalette, QPixmap, QWheelEvent)
+from PyQt5.QtGui import (QCloseEvent, QColor, QDesktopServices, QFont, QFontDatabase, QIcon,
+                         QKeyEvent, QMouseEvent, QMovie, QPainter, QPalette, QPen, QPixmap, QWheelEvent)
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
-from PyQt5.QtWidgets import (QAbstractItemView, QAction, QFileDialog, QGroupBox, QHBoxLayout, QLabel,
-                             QListWidget, QListWidgetItem, QMenu, QMessageBox, QProgressDialog,
-                             QPushButton, QSizePolicy, QStyleFactory, QSlider, QToolBar, QVBoxLayout, QWidget, qApp)
+from PyQt5.QtWidgets import (QAbstractItemView, QAbstractItemDelegate, QAction, QFileDialog, QGroupBox, QHBoxLayout,
+                             QLabel, QListWidget, QListWidgetItem, QMenu, QMessageBox, QProgressDialog, QPushButton,
+                             QSizePolicy, QSlider, QStyleFactory, QStyleOptionViewItem, QToolBar, QVBoxLayout, QWidget,
+                             qApp)
 
 from vidcutter.videoservice import VideoService
 from vidcutter.videoslider import VideoSlider
@@ -70,7 +71,7 @@ class VideoCutter(QWidget):
         self.notifyInterval = 0
 
         self.edl = ''
-        self.edlblock_re = re.compile(r"(\d+(?:\.?\d+)?)\s(\d+(?:\.?\d+)?)\s([01])")
+        self.edlblock_re = re.compile(r'(\d+(?:\.?\d+)?)\s(\d+(?:\.?\d+)?)\s([01])')
 
         self.initIcons()
         self.initActions()
@@ -89,14 +90,18 @@ class VideoCutter(QWidget):
 
         self.initNoVideo()
 
-        self.cliplist = QListWidget(sizePolicy=QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding),
-                                    contextMenuPolicy=Qt.CustomContextMenu, uniformItemSizes=True,
-                                    iconSize=QSize(100, 700), dragDropMode=QAbstractItemView.InternalMove,
-                                    alternatingRowColors=True, customContextMenuRequested=self.itemMenu,
-                                    objectName='cliplist', dragEnabled=True)
+        self.cliplist = VideoList(sizePolicy=QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding),
+                                  contextMenuPolicy=Qt.CustomContextMenu, uniformItemSizes=True,
+                                  dragEnabled=True, dragDropMode=QAbstractItemView.InternalMove,
+                                  alternatingRowColors=True, customContextMenuRequested=self.itemMenu,
+                                  objectName='cliplist')
+        self.cliplist.setItemDelegate(VideoItem(self.cliplist))
+        self.cliplist.setContentsMargins(0, 0, 0, 0)
         self.cliplist.setFixedWidth(190)
         self.cliplist.setAttribute(Qt.WA_MacShowFocusRect, False)
         self.cliplist.model().rowsMoved.connect(self.syncClipList)
+
+        self.cliplist.setStyleSheet('QListView::item { border: none; }')
 
         listHeader = QLabel(pixmap=QPixmap(':/images/clipindex.png', 'PNG'),
                             alignment=Qt.AlignCenter)
@@ -616,15 +621,11 @@ class VideoCutter(QWidget):
                 self.totalRuntime += clip[0].msecsTo(clip[1])
             listitem = QListWidgetItem()
             listitem.setTextAlignment(Qt.AlignVCenter)
-            if type(clip[2]) is QPixmap:
-                listitem.setIcon(QIcon(clip[2]))
-            self.cliplist.addItem(listitem)
-            marker = QLabel('''<style>b { font-size:8pt; } p { margin:2px 3px; }</style>
-                            <p><b>START</b><br/>%s<br/><b>END</b><br/>%s</p>'''
-                            % (clip[0].toString(self.timeformat), endItem))
-            marker.setStyleSheet('border:none;')
-            self.cliplist.setItemWidget(listitem, marker)
+            listitem.setData(Qt.DecorationRole, clip[2])
+            listitem.setData(Qt.DisplayRole, clip[0].toString(self.timeformat))
+            listitem.setData(Qt.UserRole + 1, endItem)
             listitem.setFlags(Qt.ItemIsSelectable | Qt.ItemIsDragEnabled | Qt.ItemIsEnabled)
+            self.cliplist.addItem(listitem)
         if len(self.clipTimes) and not self.inCut:
             self.saveAction.setEnabled(True)
             self.saveEDLAction.setEnabled(True)
@@ -878,7 +879,6 @@ class VideoCutter(QWidget):
 class VideoWidget(QVideoWidget):
     def __init__(self, parent=None):
         super(VideoWidget, self).__init__(parent)
-        self.parent = parent
         self.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
         p = self.palette()
         p.setColor(QPalette.Window, Qt.black)
@@ -888,3 +888,50 @@ class VideoWidget(QVideoWidget):
     def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
         self.setFullScreen(not self.isFullScreen())
         event.accept()
+
+
+class VideoList(QListWidget):
+    def __init__(self,  *arg, **kwargs):
+        super(VideoList, self).__init__(*arg, **kwargs)
+        self.setMouseTracking(True)
+
+    def mouseMoveEvent(self, event: QMouseEvent) -> None:
+        if self.count() > 0:
+            if self.indexAt(event.pos()).isValid():
+                self.setCursor(Qt.SizeAllCursor)
+            else:
+                self.setCursor(Qt.ArrowCursor)
+        super(VideoList, self).mouseMoveEvent(event)
+
+
+class VideoItem(QAbstractItemDelegate):
+    def __init__(self, parent=None):
+        super(VideoItem, self).__init__(parent)
+
+    def paint(self, painter: QPainter, option: QStyleOptionViewItem, index: QModelIndex) -> None:
+        r = option.rect
+        painter.setBrush(Qt.transparent if index.row() % 2 == 0 else QColor('#EFF0F1'))
+        painter.setPen(Qt.NoPen)
+        painter.drawRect(r)
+        thumb = QIcon(index.data(Qt.DecorationRole))
+        starttime = index.data(Qt.DisplayRole)
+        endtime = index.data(Qt.UserRole + 1)
+        r = option.rect.adjusted(5, 5, 0, 0)
+        thumb.paint(painter, r, Qt.AlignVCenter | Qt.AlignLeft)
+        painter.setPen(QPen(Qt.black, 1, Qt.SolidLine))
+        r = option.rect.adjusted(110, 8, 0, 0)
+        painter.setFont(QFont('Open Sans', pointSize=8, weight=QFont.Bold))
+        painter.drawText(r, Qt.AlignLeft, 'START')
+        r = option.rect.adjusted(110, 25, 0, 0)
+        painter.setFont(QFont('Open Sans', pointSize=9, weight=QFont.Normal))
+        painter.drawText(r, Qt.AlignLeft, starttime)
+        if len(endtime) > 0:
+            r = option.rect.adjusted(110, 45, 0, 0)
+            painter.setFont(QFont('Open Sans', pointSize=8, weight=QFont.Bold))
+            painter.drawText(r, Qt.AlignLeft, 'END')
+            r = option.rect.adjusted(110, 60, 0, 0)
+            painter.setFont(QFont('Open Sans', pointSize=9, weight=QFont.Normal))
+            painter.drawText(r, Qt.AlignLeft, endtime)
+
+    def sizeHint(self, option: QStyleOptionViewItem, index: QModelIndex) -> QSize:
+        return QSize(185, 85)
