@@ -609,8 +609,8 @@ class VideoCutter(QWidget):
 
     def renderTimes(self) -> None:
         self.cliplist.clear()
-        if len(self.clipTimes) > 4:
-            self.cliplist.setFixedWidth(205)
+        if len(self.clipTimes) > 5:
+            self.cliplist.setFixedWidth(210)
         else:
             self.cliplist.setFixedWidth(190)
         self.totalRuntime = 0
