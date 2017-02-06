@@ -42,8 +42,6 @@ QListView {
     border-right: 1px solid #B9B9B9;
 }
 
-QListView::item { padding: 10px 0; }
-
 /* -------------------------------------------------------------------------- */
 
 QLabel#listHeader {
