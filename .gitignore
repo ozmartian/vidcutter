@@ -10,8 +10,6 @@ _build/pyinstaller/dist
 _build/pyinstaller/temp
 _build/InnoSetup/Output/
 vidcutter/vidcutter.*/
-*.log
-*.dll
 *.BAK
 vidcutter/vidcutter
 vidcutter/vidcutter.exe
