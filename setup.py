@@ -45,6 +45,7 @@ def get_data_files():
             ('/usr/share/icons/hicolor/128x128/apps', ['data/icons/hicolor/128x128/apps/vidcutter.png']),
             ('/usr/share/icons/hicolor/256x256/apps', ['data/icons/hicolor/256x256/apps/vidcutter.png']),
             ('/usr/share/icons/hicolor/512x512/apps', ['data/icons/hicolor/512x512/apps/vidcutter.png']),
+            ('/usr/share/icons/hicolor/scalable/apps', ['data/icons/vidcutter.svg']),
             ('/usr/share/applications', ['data/desktop/vidcutter.desktop'])
         ]
     files.append(('.', ['README.md', 'LICENSE']))
@@ -73,10 +74,10 @@ setup(
 
     install_requires=get_install_requires(),
 
-    package_data={'vidcutter': [
-        'data/desktop/*.*',
-        'data/icons/*.*'
-    ]},
+    # package_data={'vidcutter': [
+    #     'data/desktop/*.*',
+    #     'data/icons/*.*'
+    # ]},
 
     data_files=get_data_files(),
 

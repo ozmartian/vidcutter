@@ -98,9 +98,9 @@ class VideoSlider(QSlider):
 
     def eventFilter(self, obj: QObject, event: QEvent) -> bool:
         if event.type() == QEvent.MouseButtonRelease:
-            if self.parentWidget().mediaPlayer.isVideoAvailable() or self.parentWidget().mediaPlayer.isAudioAvailable():
+            if self.parentWidget().mediaAvailable:
                 self.setValue(QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.x(), self.width()))
-                self.parentWidget().mediaPlayer.setPosition(self.sliderPosition())
+                self.parentWidget().setPosition(self.sliderPosition())
         return QWidget.eventFilter(self, obj, event)
 
     def getStyleSheet(self, bground: str, margin: str) -> str:
