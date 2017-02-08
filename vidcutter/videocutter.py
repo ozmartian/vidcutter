@@ -206,7 +206,8 @@ class VideoCutter(QWidget):
                                    keepaspect=True,
                                    hwdec='auto')
         self.mediaPlayer.pause = True
-        self.mediaPlayer.observe_property('playback-time', lambda ptime: self.positionChanged(ptime * 1000))
+        # self.mediaPlayer.observe_property('time-pos', lambda ptime: self.positionChanged(ptime * 1000))
+        self.mediaPlayer.observe_property('time-pos', lambda ptime: self.positionChanged(ptime * 1000))
         self.mediaPlayer.observe_property('duration', lambda runtime: self.durationChanged(runtime * 1000))
 
     def initNoVideo(self) -> None:
@@ -562,7 +563,8 @@ class VideoCutter(QWidget):
         self.saveEDLAction.setEnabled(False)
 
     def setPosition(self, position: int) -> None:
-        self.mediaPlayer.playback_time = position / 1000
+        # self.mediaPlayer.playback_time = position / 1000
+        self.mediaPlayer.time_pos = position / 1000
 
     def positionChanged(self, progress: int) -> None:
         self.seekSlider.setValue(progress)
@@ -901,10 +903,7 @@ class VideoWidget(QWidget):
         self.parent = parent
         self.setAttribute(Qt.WA_DontCreateNativeAncestors)
         self.setAttribute(Qt.WA_NativeWindow)
-        reg = QRegion(self.frameGeometry())
-        reg -= QRegion(self.geometry())
-        reg += self.childrenRegion()
-        self.setMask(reg)
+        self.setFocusPolicy(Qt.NoFocus)
 
     # def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
     #     self.parent.toggleFullscreen()
