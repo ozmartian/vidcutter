@@ -1,18 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import locale
 import os
 import platform
 import re
 import sys
 import time
 from datetime import timedelta
+from locale import setlocale, LC_NUMERIC
 
-from PyQt5.QtCore import (QDir, QFile, QFileInfo, QModelIndex, QPoint,
-                          QSize, Qt, QTextStream, QTime, QUrl, pyqtSlot)
-from PyQt5.QtGui import (QCloseEvent, QColor, QDesktopServices, QFont, QFontDatabase, QIcon,
-                         QKeyEvent, QMouseEvent, QMovie, QPainter, QPalette, QPen, QPixmap, QRegion, QWheelEvent)
+from PyQt5.QtCore import QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTextStream, QTime, QUrl, pyqtSlot
+from PyQt5.QtGui import (QCloseEvent, QColor, QCursor, QDesktopServices, QFont, QFontDatabase, QIcon,
+                         QKeyEvent, QMouseEvent, QMovie, QPainter, QPalette, QPen, QPixmap, QWheelEvent)
 from PyQt5.QtWidgets import (QAbstractItemView, QAbstractItemDelegate, QAction, QFileDialog, QGroupBox, QHBoxLayout,
                              QLabel, QListWidget, QListWidgetItem, QMenu, QMessageBox, QProgressDialog, QPushButton,
                              QSizePolicy, QSlider, QStyleFactory, QStyleOptionViewItem, QToolBar, QVBoxLayout, QWidget,
@@ -190,7 +189,7 @@ class VideoCutter(QWidget):
         print('[{}] {}: {}'.format(loglevel, component, message))
 
     def init_mpv(self) -> None:
-        locale.setlocale(locale.LC_NUMERIC, 'C')
+        setlocale(LC_NUMERIC, 'C')
         self.mpvContainer = VideoWidget(self)
         self.mediaPlayer = mpv.MPV(wid=int(self.mpvContainer.winId()),
                                    log_handler=self.mpv_log,
@@ -206,7 +205,6 @@ class VideoCutter(QWidget):
                                    keepaspect=True,
                                    hwdec='auto')
         self.mediaPlayer.pause = True
-        # self.mediaPlayer.observe_property('time-pos', lambda ptime: self.positionChanged(ptime * 1000))
         self.mediaPlayer.observe_property('time-pos', lambda ptime: self.positionChanged(ptime * 1000))
         self.mediaPlayer.observe_property('duration', lambda runtime: self.durationChanged(runtime * 1000))
 
@@ -903,7 +901,7 @@ class VideoWidget(QWidget):
         self.parent = parent
         self.setAttribute(Qt.WA_DontCreateNativeAncestors)
         self.setAttribute(Qt.WA_NativeWindow)
-        self.setFocusPolicy(Qt.NoFocus)
+        # self.setFocusPolicy(Qt.NoFocus)
 
     # def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
     #     self.parent.toggleFullscreen()
@@ -923,7 +921,7 @@ class VideoList(QListWidget):
     def mouseMoveEvent(self, event: QMouseEvent) -> None:
         if self.count() > 0:
             if self.indexAt(event.pos()).isValid():
-                self.setCursor(Qt.SizeAllCursor)
+                self.setCursor(QCursor(QPixmap(':/images/move-cursor.png')))
             else:
                 self.setCursor(Qt.ArrowCursor)
         super(VideoList, self).mouseMoveEvent(event)
@@ -945,17 +943,17 @@ class VideoItem(QAbstractItemDelegate):
         thumb.paint(painter, r, Qt.AlignVCenter | Qt.AlignLeft)
         painter.setPen(QPen(Qt.black, 1, Qt.SolidLine))
         r = option.rect.adjusted(110, 10, 0, 0)
-        painter.setFont(QFont('Open Sans', pointSize=8, weight=QFont.Bold))
+        painter.setFont(QFont('Open Sans', 8, QFont.Bold))
         painter.drawText(r, Qt.AlignLeft, 'START')
         r = option.rect.adjusted(110, 25, 0, 0)
-        painter.setFont(QFont('Open Sans', pointSize=9, weight=QFont.Normal))
+        painter.setFont(QFont('Open Sans', 9, QFont.Normal))
         painter.drawText(r, Qt.AlignLeft, starttime)
         if len(endtime) > 0:
             r = option.rect.adjusted(110, 45, 0, 0)
-            painter.setFont(QFont('Open Sans', pointSize=8, weight=QFont.Bold))
+            painter.setFont(QFont('Open Sans', 8, QFont.Bold))
             painter.drawText(r, Qt.AlignLeft, 'END')
             r = option.rect.adjusted(110, 60, 0, 0)
-            painter.setFont(QFont('Open Sans', pointSize=9, weight=QFont.Normal))
+            painter.setFont(QFont('Open Sans', 9, QFont.Normal))
             painter.drawText(r, Qt.AlignLeft, endtime)
 
     def sizeHint(self, option: QStyleOptionViewItem, index: QModelIndex) -> QSize:
