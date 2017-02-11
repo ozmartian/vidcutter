@@ -29,8 +29,8 @@ del /q ..\..\bin\ffmpeg.exe
 
 REM ......................download latest FFmpeg static binary......................
 
-if not exist ".\temp\" mkdir temp
-aria2c -d temp -x 6 %FFMPEG%
+rem if not exist ".\temp\" mkdir temp
+rem aria2c -d temp -x 6 %FFMPEG%
 
 REM ......................extract ffmpeg.exe to its expected location......................
 

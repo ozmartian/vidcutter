@@ -199,6 +199,7 @@ class VideoCutter(QWidget):
                                        osd_level=0,
                                        keep_open=True,
                                        framedrop=False,
+                                       hr_seek='absolute',
                                        rebase_start_time=False,
                                        keepaspect=True,
                                        hwdec='auto')
@@ -840,36 +841,42 @@ class VideoCutter(QWidget):
     def wheelEvent(self, event: QWheelEvent) -> None:
         if self.mediaAvailable:
             if event.angleDelta().y() > 0:
-                newval = self.seekSlider.value() - self.notifyInterval
+                # newval = self.seekSlider.value() - self.notifyInterval
+                self.mediaPlayer.frame_back_step()
             else:
-                newval = self.seekSlider.value() + self.notifyInterval
-            self.seekSlider.setSliderPosition(newval)
-            self.setPosition(newval)
+                # newval = self.seekSlider.value() + self.notifyInterval
+                self.mediaPlayer.frame_step()
+            # self.seekSlider.setSliderPosition(newval)
+            # self.setPosition(newval)
             event.accept()
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
         if self.mediaAvailable:
-            addtime = 0
-            if event.key() in (Qt.Key_Return, Qt.Key_Enter):
-                self.toggleFullscreen()
-            elif event.key() == Qt.Key_Space:
-                if self.cutStartAction.isEnabled():
-                    self.setCutStart()
-                elif self.cutEndAction.isEnabled():
-                    self.setCutEnd()
-            elif event.key() == Qt.Key_Left:
-                addtime = -self.notifyInterval
-            elif event.key() == Qt.Key_PageUp or event.key() == Qt.Key_Up:
-                addtime = -(self.notifyInterval * 10)
-            elif event.key() == Qt.Key_Right:
-                addtime = self.notifyInterval
-            elif event.key() == Qt.Key_PageDown or event.key() == Qt.Key_Down:
-                addtime = self.notifyInterval * 10
-            if addtime != 0:
-                newval = self.seekSlider.value() + addtime
-                self.seekSlider.setValue(newval)
-                self.seekSlider.setSliderPosition(newval)
-                self.setPosition(newval)
+            if event.key() == Qt.Key_Left:
+                self.mediaPlayer.frame_back_step()
+            if event.key() == Qt.Key_Right:
+                self.mediaPlayer.frame_step()
+            # addtime = 0
+            # if event.key() in (Qt.Key_Return, Qt.Key_Enter):
+            #     self.toggleFullscreen()
+            # elif event.key() == Qt.Key_Space:
+            #     if self.cutStartAction.isEnabled():
+            #         self.setCutStart()
+            #     elif self.cutEndAction.isEnabled():
+            #         self.setCutEnd()
+            # elif event.key() == Qt.Key_Left:
+            #     addtime = -self.notifyInterval
+            # elif event.key() == Qt.Key_PageUp or event.key() == Qt.Key_Up:
+            #     addtime = -(self.notifyInterval * 10)
+            # elif event.key() == Qt.Key_Right:
+            #     addtime = self.notifyInterval
+            # elif event.key() == Qt.Key_PageDown or event.key() == Qt.Key_Down:
+            #     addtime = self.notifyInterval * 10
+            # if addtime != 0:
+            #     newval = self.seekSlider.value() + addtime
+            #     self.seekSlider.setValue(newval)
+            #     self.seekSlider.setSliderPosition(newval)
+            #     self.setPosition(newval)
             event.accept()
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
