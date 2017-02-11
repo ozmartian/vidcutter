@@ -20,3 +20,5 @@ bin/
 _packaging/appimage/out/*
 _packaging/appimage/VidCutter/*
 testing
+_build/pyinstaller/libmpv/*
+mpv-1.dll
