@@ -119,15 +119,34 @@ class VideoCutter(QWidget):
         self.videoLayout.addLayout(self.clipindexLayout)
 
         self.timeCounter = QLabel('00:00:00 / 00:00:00', autoFillBackground=True, alignment=Qt.AlignCenter,
-                                  sizePolicy=QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed))
+                                  sizePolicy=QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred))
         self.timeCounter.setObjectName('timeCounter')
+
+        self.frameCounter = QLabel('000 / 000', autoFillBackground=True, alignment=Qt.AlignCenter,
+                                   sizePolicy=QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred))
+        self.frameCounter.setObjectName('frameCounter')
+
+        countersLayout = QHBoxLayout()
+        countersLayout.setContentsMargins(0, 0, 0, 0)
+        countersLayout.addStretch(1)
+        countersLayout.addWidget(QLabel('<b>TIME:</b> ', styleSheet='color:#FFF;'))
+        countersLayout.addWidget(self.timeCounter)
+        countersLayout.addStretch(1)
+        countersLayout.addWidget(QLabel('<b>FRAME:</b> ', styleSheet='color:#FFF;'))
+        countersLayout.addWidget(self.frameCounter)
+        countersLayout.addStretch(1)
+
+        countersGroup = QGroupBox()
+        countersGroup.setLayout(countersLayout)
+        countersGroup.setFixedHeight(22)
+        countersGroup.setStyleSheet('border: 0; background-color: #000;')
 
         self.init_mpv()
 
         videoplayerLayout = QVBoxLayout(spacing=0)
         videoplayerLayout.setContentsMargins(0, 0, 0, 0)
         videoplayerLayout.addWidget(self.mpvContainer)
-        videoplayerLayout.addWidget(self.timeCounter)
+        videoplayerLayout.addWidget(countersGroup)
 
         self.videoplayerWidget = QWidget(self, visible=False)
         self.videoplayerWidget.setLayout(videoplayerLayout)
@@ -218,12 +237,24 @@ class VideoCutter(QWidget):
 
     def initIcons(self) -> None:
         self.appIcon = QIcon(':/images/vidcutter.png')
-        self.openIcon = QIcon(':/images/toolbar-open.png')
-        self.playIcon = QIcon(':/images/toolbar-play.png')
-        self.pauseIcon = QIcon(':/images/toolbar-pause.png')
-        self.cutStartIcon = QIcon(':/images/toolbar-start.png')
-        self.cutEndIcon = QIcon(':/images/toolbar-end.png')
-        self.saveIcon = QIcon(':/images/toolbar-save.png')
+        self.openIcon = QIcon()
+        self.openIcon.addFile(':/images/toolbar-open.png', QSize(50, 52), QIcon.Normal)
+        self.openIcon.addFile(':/images/toolbar-open-on.png', QSize(50, 52), QIcon.Active)
+        self.playIcon = QIcon()
+        self.playIcon.addFile(':/images/toolbar-play.png', QSize(50, 52), QIcon.Normal)
+        self.playIcon.addFile(':/images/toolbar-play-on.png', QSize(50, 52), QIcon.Active)
+        self.pauseIcon = QIcon()
+        self.pauseIcon.addFile(':/images/toolbar-pause.png', QSize(50, 52), QIcon.Normal)
+        self.pauseIcon.addFile(':/images/toolbar-pause-on.png', QSize(50, 52), QIcon.Active)
+        self.cutStartIcon = QIcon()
+        self.cutStartIcon.addFile(':/images/toolbar-start.png', QSize(50, 52), QIcon.Normal)
+        self.cutStartIcon.addFile(':/images/toolbar-start-on.png', QSize(50, 52), QIcon.Active)
+        self.cutEndIcon = QIcon()
+        self.cutEndIcon.addFile(':/images/toolbar-end.png', QSize(50, 52), QIcon.Normal)
+        self.cutEndIcon.addFile(':/images/toolbar-end-on.png', QSize(50, 52), QIcon.Active)
+        self.saveIcon = QIcon()
+        self.saveIcon.addFile(':/images/toolbar-save.png', QSize(50, 52), QIcon.Normal)
+        self.saveIcon.addFile(':/images/toolbar-save-on.png', QSize(50, 52), QIcon.Active)
         self.muteIcon = QIcon(':/images/muted.png')
         self.unmuteIcon = QIcon(':/images/unmuted.png')
         self.upIcon = QIcon(':/images/up.png')
@@ -304,12 +335,6 @@ class VideoCutter(QWidget):
         self.cliplistMenu.addSeparator()
         self.cliplistMenu.addAction(self.removeItemAction)
         self.cliplistMenu.addAction(self.removeAllAction)
-
-    @staticmethod
-    def getSpacer() -> QWidget:
-        spacer = QWidget()
-        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
-        return spacer
 
     def setRunningTime(self, runtime: str) -> None:
         self.runtimeLabel.setText('<div align="right">%s</div>' % runtime)
@@ -404,8 +429,12 @@ class VideoCutter(QWidget):
     Website: <a href="%s">%s</a>
 </p>
 <p style="font-size:13px;">
-    Thanks to the folks behind the <b>Qt</b>, <b>PyQt</b> and <b>FFmpeg</b>
+    Thanks to the folks behind the <b>Qt</b>, <b>PyQt</b>, <b>mpv</b> and <b>FFmpeg</b>
     projects for all their hard and much appreciated work.
+</p>
+<p style="font-size:13px;">
+    The application's icon was designed and created by the folks at Papirus Development Team.
+    You can view more of their fine work <a href="https://github.com/PapirusDevelopmentTeam">here</a>.
 </p>
 <p style="font-size:11px;">
     This program is free software; you can redistribute it and/or
@@ -414,7 +443,8 @@ class VideoCutter(QWidget):
     of the License, or (at your option) any later version.
 </p>
 <p style="font-size:11px;">
-    This software uses libraries from the <a href="https://www.ffmpeg.org">FFmpeg</a> project under the
+    This software uses libraries from the <a href="https://mpv.io">mpv</a> and
+    <a href="https://www.ffmpeg.org">FFmpeg</a> projects under the
     <a href="https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html">LGPLv2.1</a>
 </p></div>''' % (qApp.applicationName(), qApp.applicationVersion(), platform.architecture()[0],
                  qApp.organizationDomain(), qApp.organizationDomain())
@@ -512,9 +542,6 @@ class VideoCutter(QWidget):
         if not os.path.exists(filename):
             return
         self.currentMedia = filename
-        # self.frameRate = self.videoService.framerate(self.currentMedia)
-        # self.notifyInterval = qRound(1000 / self.frameRate)
-        # self.mediaPlayer.setNotifyInterval(self.notifyInterval)
         self.initMediaControls(True)
         self.cliplist.clear()
         self.clipTimes.clear()
@@ -526,9 +553,6 @@ class VideoCutter(QWidget):
             self.novideoWidget.deleteLater()
             self.videoplayerWidget.show()
             self.mediaAvailable = True
-        # if self.mediaPlayer.isVideoAvailable():
-        #     self.mediaPlayer.setPosition(1)
-        # self.mediaPlayer.play()
         self.mediaPlayer.play(self.currentMedia)
 
     def playMedia(self) -> None:
@@ -561,6 +585,8 @@ class VideoCutter(QWidget):
         totalTime = self.deltaToQTime(self.mediaPlayer.duration * 1000)
         self.timeCounter.setText(
             '%s / %s' % (currentTime.toString(self.timeformat), totalTime.toString(self.timeformat)))
+        self.frameCounter.setText(
+            '%s / %s' % (self.mediaPlayer.estimated_frame_number, self.mediaPlayer.estimated_frame_count))
 
     def durationChanged(self, duration: int) -> None:
         self.seekSlider.setRange(0, duration)
@@ -833,13 +859,9 @@ class VideoCutter(QWidget):
     def wheelEvent(self, event: QWheelEvent) -> None:
         if self.mediaAvailable:
             if event.angleDelta().y() > 0:
-                # newval = self.seekSlider.value() - self.notifyInterval
                 self.mediaPlayer.frame_back_step()
             else:
-                # newval = self.seekSlider.value() + self.notifyInterval
                 self.mediaPlayer.frame_step()
-            # self.seekSlider.setSliderPosition(newval)
-            # self.setPosition(newval)
             event.accept()
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
@@ -895,7 +917,7 @@ class VideoList(QListWidget):
     def mouseMoveEvent(self, event: QMouseEvent) -> None:
         if self.count() > 0:
             if self.indexAt(event.pos()).isValid():
-                self.setCursor(QCursor(QPixmap(':/images/move-cursor.png')))
+                self.setCursor(Qt.PointingHandCursor)
             else:
                 self.setCursor(Qt.ArrowCursor)
         super(VideoList, self).mouseMoveEvent(event)

@@ -70,9 +70,8 @@ QLabel#runtimeLabel {
     border: 1px solid #B9B9B9;
 }
 
-QLabel#timeCounter {
+QLabel#timeCounter, QLabel#frameCounter {
     color: #FFF;
-    background: #000;
     font-family: "Droid Sans Mono", monospace;
     font-size: 12.5pt;
     padding: 4px;
