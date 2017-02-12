@@ -554,7 +554,6 @@ class VideoCutter(QWidget):
     def setPosition(self, position: int) -> None:
         # self.mediaPlayer.playback_time = position / 1000
         self.mediaPlayer.time_pos = position / 1000
-        print('FRAMES: %s / %s' % (self.mediaPlayer.estimated_frame_number, self.mediaPlayer.estimated_frame_count))
 
     def positionChanged(self, progress: int) -> None:
         self.seekSlider.setValue(progress)
@@ -848,32 +847,18 @@ class VideoCutter(QWidget):
             if event.key() == Qt.Key_Left:
                 self.mediaPlayer.frame_back_step()
             elif event.key() == Qt.Key_Down:
-                self.mediaPlayer.estimated_frame_number = self.mediaPlayer.estimated_frame_number - 10
+                self.mediaPlayer.seek(-10, 'relative+exact')
             elif event.key() == Qt.Key_Right:
                 self.mediaPlayer.frame_step()
             elif event.key() == Qt.Key_Up:
-                self.mediaPlayer.estimated_frame_number = self.mediaPlayer.estimated_frame_number + 10
-            # addtime = 0
-            # if event.key() in (Qt.Key_Return, Qt.Key_Enter):
-            #     self.toggleFullscreen()
-            # elif event.key() == Qt.Key_Space:
-            #     if self.cutStartAction.isEnabled():
-            #         self.setCutStart()
-            #     elif self.cutEndAction.isEnabled():
-            #         self.setCutEnd()
-            # elif event.key() == Qt.Key_Left:
-            #     addtime = -self.notifyInterval
-            # elif event.key() == Qt.Key_PageUp or event.key() == Qt.Key_Up:
-            #     addtime = -(self.notifyInterval * 10)
-            # elif event.key() == Qt.Key_Right:
-            #     addtime = self.notifyInterval
-            # elif event.key() == Qt.Key_PageDown or event.key() == Qt.Key_Down:
-            #     addtime = self.notifyInterval * 10
-            # if addtime != 0:
-            #     newval = self.seekSlider.value() + addtime
-            #     self.seekSlider.setValue(newval)
-            #     self.seekSlider.setSliderPosition(newval)
-            #     self.setPosition(newval)
+                self.mediaPlayer.seek(10, 'relative+exact')
+            elif event.key() in (Qt.Key_Return, Qt.Key_Enter):
+                self.toggleFullscreen()
+            elif event.key() == Qt.Key_Space:
+                if self.cutStartAction.isEnabled():
+                    self.setCutStart()
+                elif self.cutEndAction.isEnabled():
+                    self.setCutEnd()
             event.accept()
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
