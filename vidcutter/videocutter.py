@@ -9,7 +9,7 @@ import time
 from datetime import timedelta
 from locale import setlocale, LC_NUMERIC
 
-from PyQt5.QtCore import QDir, QEvent,QFile, QFileInfo, QModelIndex, QObject, QPoint, QSize, Qt, QTextStream, QTime, QUrl, pyqtSlot
+from PyQt5.QtCore import QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTextStream, QTime, QUrl, pyqtSlot
 from PyQt5.QtGui import (QCloseEvent, QColor, QCursor, QDesktopServices, QFont, QFontDatabase, QIcon,
                          QKeyEvent, QMouseEvent, QMovie, QPainter, QPalette, QPen, QPixmap, QWheelEvent)
 from PyQt5.QtWidgets import (QAbstractItemView, QAbstractItemDelegate, QAction, QFileDialog, QGroupBox, QHBoxLayout,
@@ -17,10 +17,10 @@ from PyQt5.QtWidgets import (QAbstractItemView, QAbstractItemDelegate, QAction, 
                              QSizePolicy, QSlider, QStyleFactory, QStyleOptionViewItem, QToolBar, QVBoxLayout, QWidget,
                              qApp)
 
-from vidcutter.videoservice import VideoService
-from vidcutter.videoslider import VideoSlider
 import vidcutter.mpv as mpv
 import vidcutter.resources
+from vidcutter.videoservice import VideoService
+from vidcutter.videoslider import VideoSlider
 
 
 class VideoCutter(QWidget):
@@ -74,7 +74,7 @@ class VideoCutter(QWidget):
         self.initIcons()
         self.initActions()
 
-        self.toolbar = QToolBar(floatable=False, movable=False, iconSize=QSize(36, 36))
+        self.toolbar = QToolBar(floatable=False, movable=False, iconSize=QSize(50, 52))
         self.toolbar.setObjectName('appcontrols')
         if sys.platform == 'darwin':
             self.toolbar.setStyle(QStyleFactory.create('Fusion'))
@@ -154,9 +154,7 @@ class VideoCutter(QWidget):
         toolbarGroup.setFlat(False)
         toolbarGroup.setLayout(toolbarLayout)
         toolbarGroup.setCursor(Qt.PointingHandCursor)
-        toolbarGroup.setStyleSheet('QGroupBox { background-color: rgba(0, 0, 0, 0.1); ' +
-                                   'border: 1px inset #888; margin: 0; padding: 0;' +
-                                   'border-radius: 5px; }')
+        toolbarGroup.setStyleSheet('border: 0;')
 
         controlsLayout = QHBoxLayout(spacing=0)
         controlsLayout.addStretch(1)
@@ -177,12 +175,6 @@ class VideoCutter(QWidget):
         layout.addSpacing(2)
 
         self.setLayout(layout)
-
-        # self.mediaPlayer.setVideoOutput(self.videoWidget)
-        # self.mediaPlayer.stateChanged.connect(self.mediaStateChanged)
-        # self.mediaPlayer.positionChanged.connect(self.positionChanged)
-        # self.mediaPlayer.durationChanged.connect(self.durationChanged)
-        # self.mediaPlayer.error.connect(self.handleError)
 
     def mpv_log(self, loglevel: str, component: str, message: str) -> None:
         # logging.log(self.get_loglevel(loglevel), msg='MPV log: {}: {}'.format(component, message))
@@ -562,6 +554,7 @@ class VideoCutter(QWidget):
     def setPosition(self, position: int) -> None:
         # self.mediaPlayer.playback_time = position / 1000
         self.mediaPlayer.time_pos = position / 1000
+        print('FRAMES: %s / %s' % (self.mediaPlayer.estimated_frame_number, self.mediaPlayer.estimated_frame_count))
 
     def positionChanged(self, progress: int) -> None:
         self.seekSlider.setValue(progress)
@@ -854,8 +847,12 @@ class VideoCutter(QWidget):
         if self.mediaAvailable:
             if event.key() == Qt.Key_Left:
                 self.mediaPlayer.frame_back_step()
-            if event.key() == Qt.Key_Right:
+            elif event.key() == Qt.Key_Down:
+                self.mediaPlayer.estimated_frame_number = self.mediaPlayer.estimated_frame_number - 10
+            elif event.key() == Qt.Key_Right:
                 self.mediaPlayer.frame_step()
+            elif event.key() == Qt.Key_Up:
+                self.mediaPlayer.estimated_frame_number = self.mediaPlayer.estimated_frame_number + 10
             # addtime = 0
             # if event.key() in (Qt.Key_Return, Qt.Key_Enter):
             #     self.toggleFullscreen()

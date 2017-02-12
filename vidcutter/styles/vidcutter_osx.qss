@@ -5,12 +5,14 @@ QWidget#novideoWidget {
 
 /* -------------------------------------------------------------------------- */
 
-QToolBar#appcontrols { spacing: 6px; }
+QToolBar#appcontrols { spacing: 15px; }
 
 QToolBar#appcontrols QToolButton {
+    /*
     border: 1px solid transparent;
     min-width: 100px;
     border-radius: 5px;
+    */
     padding: 1px 2px;
     margin: 0;
     color: #6A4572;
@@ -21,25 +23,33 @@ QToolBar#appcontrols QToolButton {
 
 QToolBar#appcontrols QToolButton:hover {
     border: 1px solid #888;
-    color: #6A4572;
-    background-color: rgba(255, 255, 255, 0.85);
+    color: #444;
+    /* background-color: rgba(255, 255, 255, 0.85); */
 }
 
 QToolBar#appcontrols QToolButton:pressed {
     border: 1px solid #444;
     color: #6A4572;
-    background-color: rgba(255, 255, 255, 0.25);
+    /* background-color: rgba(255, 255, 255, 0.25); */
 }
 
 QToolBar#appcontrols QToolButton:disabled { color: #999; }
 
 /* -------------------------------------------------------------------------- */
 
-QListView {
+QListView#cliplist {
     border-radius: 0;
     border: none;
     border-left: 1px solid #B9B9B9;
     border-right: 1px solid #B9B9B9;
+}
+
+QListView#clipist::item:hover {
+
+}
+
+QListView#clipist::item:selected {
+
 }
 
 /* -------------------------------------------------------------------------- */
