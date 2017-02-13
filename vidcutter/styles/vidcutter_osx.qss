@@ -71,10 +71,11 @@ QLabel#timeCounter, QLabel#frameCounter {
 
 /* -------------------------------------------------------------------------- */
 
+
 QPushButton#menuButton {
     border-image: url(:/images/menu.png);
-    width: 24px;    
-    height: 24px;
+    width: 40px;
+    height: 42px;
 }
 
 QPushButton:hover#menuButton, QPushButton:pressed#menuButton { border-image: url(:/images/menu-active.png); }

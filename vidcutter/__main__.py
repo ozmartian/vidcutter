@@ -24,6 +24,7 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__()
         self.init_logger()
         self.edl, self.video = '', ''
+        self.show_metadata = False
         self.parse_cmdline()
         self.init_cutter()
         self.setWindowTitle('%s' % qApp.applicationName())
@@ -39,6 +40,8 @@ class MainWindow(QMainWindow):
                 self.cutter.loadMedia(self.video)
             if len(self.edl):
                 self.cutter.openEDL(edlfile=self.edl)
+            if self.show_metadata:
+                self.cutter.mediaInfo()
         except (FileNotFoundError, PermissionError) as e:
             QMessageBox.critical(self, 'Error loading file', sys.exc_info()[0])
             logging.exception('Error loading file')
@@ -67,11 +70,15 @@ class MainWindow(QMainWindow):
 
     def parse_cmdline(self) -> None:
         self.parser = QCommandLineParser()
-        self.parser.setApplicationDescription('A simple video cutter & joiner')
+        self.parser.setApplicationDescription('The simply FAST & ACCURATE video cutter & joiner')
         self.parser.addPositionalArgument('video', 'Preloads the video file in app.', '[video]')
         self.edl_option = QCommandLineOption('edl', 'Preloads clip index from a previously saved EDL file.\n' +
                                              'NOTE: You must also set the video argument for this to work.', 'edl file')
+        self.info_option = QCommandLineOption('info', 'Display a table of media file metadata information in ' +
+                                              'key/value pairs.\n' +
+                                              'NOTE: You must also set the video argument for this to work.')
         self.parser.addOption(self.edl_option)
+        self.parser.addOption(self.info_option)
         self.parser.addVersionOption()
         self.parser.addHelpOption()
         self.parser.process(qApp)
@@ -80,13 +87,14 @@ class MainWindow(QMainWindow):
             print('\n    ERROR: EDL file not found.\n', file=sys.stderr)
             self.close()
             sys.exit(1)
-        if self.parser.value('edl').strip() and len(self.args) == 0:
-            print('\n    ERROR: Video file argument is missing.\n    You must provide a video file argument if ' +
-                  'preloading an EDL file.\n', file=sys.stderr)
+        if (self.parser.value('edl').strip() or self.parser.isSet(self.info_option)) and len(self.args) == 0:
+            print('\n    ERROR: Video file argument is missing.\n', file=sys.stderr)
             self.close()
             sys.exit(1)
         if self.parser.value('edl').strip():
             self.edl = self.parser.value('edl')
+        if self.parser.isSet(self.info_option):
+            self.show_metadata = True
         if len(self.args) > 0 and not os.path.exists(self.args[0]):
             print('\n    ERROR: Video file not found.\n', file=sys.stderr)
             self.close()

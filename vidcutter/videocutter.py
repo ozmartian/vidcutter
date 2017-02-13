@@ -11,15 +11,16 @@ from datetime import timedelta
 from locale import setlocale, LC_NUMERIC
 
 from PyQt5.QtCore import QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTextStream, QTime, QUrl, pyqtSlot
-from PyQt5.QtGui import (QCloseEvent, QColor, QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMouseEvent,
-                         QMovie, QPainter, QPalette, QPen, QPixmap, QWheelEvent)
-from PyQt5.QtWidgets import (QAbstractItemView, QAbstractItemDelegate, QAction, QFileDialog, QGroupBox, QHBoxLayout,
-                             QLabel, QListWidget, QListWidgetItem, QMenu, QMessageBox, QProgressDialog, QPushButton,
-                             QSizePolicy, QSlider, QStyle, QStyleFactory, QStyleOptionViewItem, QToolBar, QVBoxLayout,
-                             QWidget, qApp)
+from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMouseEvent,
+                         QMovie, QPalette, QPixmap, QWheelEvent)
+from PyQt5.QtWidgets import (QAbstractItemView, QAction, QFileDialog, QGroupBox, QHBoxLayout, QLabel,
+                             QListWidgetItem, QMenu, QMessageBox, QProgressDialog, QPushButton,
+                             QSizePolicy, QSlider, QStyleFactory, QToolBar, QVBoxLayout, QWidget, qApp)
 
 import vidcutter.mpv as mpv
 import vidcutter.resources
+from vidcutter.videoframe import VideoFrame
+from vidcutter.videolist import VideoList, VideoItem
 from vidcutter.videoservice import VideoService
 from vidcutter.videoslider import VideoSlider
 
@@ -147,7 +148,7 @@ class VideoCutter(QWidget):
 
         videoplayerLayout = QVBoxLayout(spacing=0)
         videoplayerLayout.setContentsMargins(0, 0, 0, 0)
-        videoplayerLayout.addWidget(self.mpvContainer)
+        videoplayerLayout.addWidget(self.mpvFrame)
         videoplayerLayout.addWidget(countersGroup)
 
         self.videoplayerWidget = QWidget(self, visible=False)
@@ -162,9 +163,8 @@ class VideoCutter(QWidget):
                                     cursor=Qt.PointingHandCursor, value=100, minimum=0, maximum=130,
                                     sliderMoved=self.setVolume)
 
-        self.menuButton = QPushButton(objectName='menuButton', flat=True, toolTip='Menu',
-                                      iconSize=QSize(24, 20), cursor=Qt.PointingHandCursor)
-        self.menuButton.setFixedSize(QSize(24, 20))
+        self.menuButton = QPushButton(toolTip='Menu', cursor=Qt.PointingHandCursor, flat=True, objectName='menuButton')
+        self.menuButton.setFixedSize(QSize(40, 42))
         self.menuButton.setMenu(self.appMenu)
 
         toolbarLayout = QHBoxLayout()
@@ -206,8 +206,8 @@ class VideoCutter(QWidget):
 
     def initMPV(self) -> None:
         setlocale(LC_NUMERIC, 'C')
-        self.mpvContainer = VideoWidget(self)
-        self.mediaPlayer = mpv.MPV(wid=int(self.mpvContainer.winId()),
+        self.mpvFrame = VideoFrame(self)
+        self.mediaPlayer = mpv.MPV(wid=int(self.mpvFrame.winId()),
                                    log_handler=self.logMPV,
                                    ytdl=False,
                                    input_cursor=False,
@@ -267,7 +267,6 @@ class VideoCutter(QWidget):
         self.removeIcon = QIcon(':/images/remove.png')
         self.removeAllIcon = QIcon(':/images/remove-all.png')
         self.successIcon = QIcon(':/images/thumbsup.png')
-        self.menuIcon = QIcon(':/images/menu.png')
         self.completePlayIcon = QIcon(':/images/complete-play.png')
         self.completeOpenIcon = QIcon(':/images/complete-open.png')
         self.completeRestartIcon = QIcon(':/images/complete-restart.png')
@@ -607,18 +606,6 @@ class VideoCutter(QWidget):
     def setVolume(self, volume: int) -> None:
         self.mediaPlayer.volume = volume
 
-    def toggleFullscreen(self) -> None:
-        if self.mpvContainer.isFullScreen():
-            self.mediaPlayer.fullscreen = False
-            self.mpvContainer.setWindowState(Qt.WindowNoState)
-            self.mpvContainer.setWindowFlags(Qt.Widget)
-            self.mpvContainer.showNormal()
-        else:
-            self.mediaPlayer.fullscreen = True
-            self.mpvContainer.setWindowFlags(Qt.Window)
-            self.mpvContainer.setWindowState(Qt.WindowFullScreen)
-            self.mpvContainer.showFullScreen()
-
     def setCutStart(self) -> None:
         self.clipTimes.append([self.deltaToQTime(self.mediaPlayer.playback_time * 1000), '', self.captureImage()])
         self.cutStartAction.setDisabled(True)
@@ -626,6 +613,7 @@ class VideoCutter(QWidget):
         self.seekSlider.setRestrictValue(self.seekSlider.value(), True)
         self.inCut = True
         self.renderTimes()
+        self.mediaPlayer.show_text('clip start marker set', 3000, 0)
 
     def setCutEnd(self) -> None:
         item = self.clipTimes[len(self.clipTimes) - 1]
@@ -640,6 +628,7 @@ class VideoCutter(QWidget):
         self.seekSlider.setRestrictValue(0, False)
         self.inCut = False
         self.renderTimes()
+        self.mediaPlayer.show_text('clip end marker set', 3000, 0)
 
     @pyqtSlot(QModelIndex, int, int, QModelIndex, int)
     def syncClipList(self, parent: QModelIndex, start: int, end: int, destination: QModelIndex, row: int) -> None:
@@ -825,10 +814,10 @@ class VideoCutter(QWidget):
         self.clearList()
         self.seekSlider.setValue(0)
         self.seekSlider.setRange(0, 0)
-        self.mpvContainer.hide()
+        self.mpvFrame.hide()
         self.initNoVideo()
         self.videoLayout.replaceWidget(self.videoplayerWidget, self.novideoWidget)
-        self.mpvContainer.deleteLater()
+        self.mpvFrame.deleteLater()
         del self.mediaPlayer
         self.initMPV()
         self.initMediaControls(False)
@@ -880,8 +869,8 @@ class VideoCutter(QWidget):
                 self.mediaPlayer.frame_step()
             elif event.key() == Qt.Key_Up:
                 self.mediaPlayer.seek(10, 'relative+exact')
-            # elif event.key() in (Qt.Key_Return, Qt.Key_Enter):
-            #     self.toggleFullscreen()
+            elif event.key() in (Qt.Key_Return, Qt.Key_Enter):
+                self.mpvFrame.toggleFullscreen()
             elif event.key() == Qt.Key_Space:
                 if self.cutStartAction.isEnabled():
                     self.setCutStart()
@@ -889,76 +878,5 @@ class VideoCutter(QWidget):
                     self.setCutEnd()
             event.accept()
 
-    # def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
-    #     self.toggleFullscreen()
-    #     event.accept()
-
     def closeEvent(self, event: QCloseEvent) -> None:
         self.parent.closeEvent(event)
-
-
-class VideoWidget(QWidget):
-    def __init__(self, parent=None, *arg, **kwargs):
-        super(VideoWidget, self).__init__(parent, *arg, **kwargs)
-        self.parent = parent
-        self.setAttribute(Qt.WA_DontCreateNativeAncestors)
-        self.setAttribute(Qt.WA_NativeWindow)
-
-    # def keyPressEvent(self, event: QKeyEvent):
-    #     if event.key() in (Qt.Key_Return, Qt.Key_Enter):
-    #         self.parent.toggleFullscreen()
-    #         event.accept()
-    #
-    # def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
-    #     self.parent.toggleFullscreen()
-    #     event.accept()
-
-
-class VideoList(QListWidget):
-    def __init__(self,  *arg, **kwargs):
-        super(VideoList, self).__init__(*arg, **kwargs)
-        self.setMouseTracking(True)
-
-    def mouseMoveEvent(self, event: QMouseEvent) -> None:
-        if self.count() > 0:
-            if self.indexAt(event.pos()).isValid():
-                self.setCursor(Qt.OpenHandCursor)
-            else:
-                self.setCursor(Qt.ArrowCursor)
-        super(VideoList, self).mouseMoveEvent(event)
-
-
-class VideoItem(QAbstractItemDelegate):
-    def __init__(self, parent=None):
-        super(VideoItem, self).__init__(parent)
-
-    def paint(self, painter: QPainter, option: QStyleOptionViewItem, index: QModelIndex) -> None:
-        r = option.rect
-        if option.state & QStyle.State_MouseOver:
-            painter.setBrush(QColor('#E3D4E8'))
-        else:
-            painter.setBrush(Qt.transparent if index.row() % 2 == 0 else QColor('#EFF0F1'))
-        painter.setPen(Qt.NoPen)
-        painter.drawRect(r)
-        thumb = QIcon(index.data(Qt.DecorationRole))
-        starttime = index.data(Qt.DisplayRole)
-        endtime = index.data(Qt.UserRole + 1)
-        r = option.rect.adjusted(5, 5, 0, 0)
-        thumb.paint(painter, r, Qt.AlignVCenter | Qt.AlignLeft)
-        painter.setPen(QPen(Qt.black, 1, Qt.SolidLine))
-        r = option.rect.adjusted(110, 10, 0, 0)
-        painter.setFont(QFont('Open Sans', 8, QFont.Bold))
-        painter.drawText(r, Qt.AlignLeft, 'START')
-        r = option.rect.adjusted(110, 25, 0, 0)
-        painter.setFont(QFont('Open Sans', 9, QFont.Normal))
-        painter.drawText(r, Qt.AlignLeft, starttime)
-        if len(endtime) > 0:
-            r = option.rect.adjusted(110, 45, 0, 0)
-            painter.setFont(QFont('Open Sans', 8, QFont.Bold))
-            painter.drawText(r, Qt.AlignLeft, 'END')
-            r = option.rect.adjusted(110, 60, 0, 0)
-            painter.setFont(QFont('Open Sans', 9, QFont.Normal))
-            painter.drawText(r, Qt.AlignLeft, endtime)
-
-    def sizeHint(self, option: QStyleOptionViewItem, index: QModelIndex) -> QSize:
-        return QSize(185, 85)

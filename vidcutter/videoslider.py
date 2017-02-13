@@ -108,7 +108,7 @@ class VideoSlider(QSlider):
 QSlider::groove:horizontal {
     border: none;
     height: 32px;
-    background: #444 url(:images/filmstrip.png) repeat-x;
+    background: #333 url(:images/filmstrip.png) repeat-x;
     position: absolute;
     left: 4px;
     right: 4px;
