@@ -114,7 +114,7 @@ QSlider::groove:horizontal {
     right: 4px;
     margin: 0;
 }
-QSlider::sub-page:horizontal {  
+QSlider::sub-page:horizontal {
     border: none;
     background: %s;
     height: 20px;

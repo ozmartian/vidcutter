@@ -42,14 +42,7 @@ QListView#cliplist {
     border: none;
     border-left: 1px solid #B9B9B9; 
     border-right: 1px solid #B9B9B9;
-}
-
-QListView#clipist::item:hover {
-
-}
-
-QListView#clipist::item:selected {
-
+    show-decoration-selected: 1;
 }
 
 /* -------------------------------------------------------------------------- */

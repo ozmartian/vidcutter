@@ -2,12 +2,14 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import logging.handlers
 import os
 import re
 import signal
 import sys
+import traceback
 
-from PyQt5.QtCore import QCommandLineParser, QCommandLineOption, QFileInfo, QTextStream, QFile, QStandardPaths
+from PyQt5.QtCore import QCommandLineParser, QCommandLineOption, QFileInfo, QStandardPaths, QTextStream, QFile
 from PyQt5.QtGui import QCloseEvent, QDropEvent, QDragEnterEvent
 from PyQt5.QtWidgets import QMainWindow, qApp, QMessageBox, QApplication
 
@@ -20,7 +22,7 @@ signal.signal(signal.SIGTERM, signal.SIG_DFL)
 class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
-        self.init_logging()
+        self.init_logger()
         self.edl, self.video = '', ''
         self.parse_cmdline()
         self.init_cutter()
@@ -37,21 +39,31 @@ class MainWindow(QMainWindow):
                 self.cutter.loadMedia(self.video)
             if len(self.edl):
                 self.cutter.openEDL(edlfile=self.edl)
-        except (FileNotFoundError, PermissionError):
+        except (FileNotFoundError, PermissionError) as e:
             QMessageBox.critical(self, 'Error loading file', sys.exc_info()[0])
+            logging.exception('Error loading file')
             qApp.restoreOverrideCursor()
             self.cutter.startNew()
         if not self.cutter.ffmpeg_check():
             self.close()
             sys.exit(1)
 
-    def init_logging(self) -> None:
+    def init_logger(self) -> None:
         log_path = QStandardPaths.writableLocation(QStandardPaths.AppConfigLocation).lower()
         os.makedirs(log_path, exist_ok=True)
-        logging.basicConfig(
-            filename=os.path.join(log_path, '%s.log' % qApp.applicationName().lower()),
-            level=logging.ERROR)
+        log_handler = logging.handlers.RotatingFileHandler(os.path.join(log_path, '%s.log'
+                                                                        % qApp.applicationName().lower()),
+                                                           maxBytes=1000000, backupCount=1)
+        logging.basicConfig(handlers=[log_handler],
+                            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+                            datefmt='%Y-%m-%d %H:%M',
+                            level=logging.INFO)
         logging.captureWarnings(capture=True)
+        sys.excepthook = self.log_uncaught_exceptions
+
+    def log_uncaught_exceptions(self, cls, exc, tb) -> None:
+        logging.critical(''.join(traceback.format_tb(tb)))
+        logging.critical('{0}: {1}'.format(cls, exc))
 
     def parse_cmdline(self) -> None:
         self.parser = QCommandLineParser()
@@ -142,7 +154,6 @@ def main():
     app.setQuitOnLastWindowClosed(True)
     win = MainWindow()
     sys.exit(app.exec_())
-
 
 if __name__ == '__main__':
     main()
