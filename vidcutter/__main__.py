@@ -54,10 +54,13 @@ class MainWindow(QMainWindow):
     def init_logger(self) -> None:
         log_path = QStandardPaths.writableLocation(QStandardPaths.AppConfigLocation).lower()
         os.makedirs(log_path, exist_ok=True)
-        log_handler = logging.handlers.RotatingFileHandler(os.path.join(log_path, '%s.log'
+        handlers = []
+        handlers.append(logging.handlers.RotatingFileHandler(os.path.join(log_path, '%s.log'
                                                                         % qApp.applicationName().lower()),
-                                                           maxBytes=1000000, backupCount=1)
-        logging.basicConfig(handlers=[log_handler],
+                                                           maxBytes=1000000, backupCount=1))
+        if os.getenv('DEBUG'):
+            handlers.append(logging.StreamHandler())
+        logging.basicConfig(handlers=handlers,
                             format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                             datefmt='%Y-%m-%d %H:%M',
                             level=logging.INFO)
