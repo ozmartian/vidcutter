@@ -8,7 +8,7 @@ vidcutter.egg*
 _build/pyinstaller/build
 _build/pyinstaller/dist
 _build/pyinstaller/temp
-_build/InnoSetup/Output/
+_build/InnoSetup/Output
 vidcutter/vidcutter.*/
 *.BAK
 vidcutter/vidcutter
@@ -17,8 +17,7 @@ vidcutter/vidcutter.exe
 vidcutter/bin/
 bin/
 .DS_Store
-_packaging/appimage/out
-_packaging/appimage/VidCutter
+_packaging
 testing
 _build/pyinstaller/libmpv
 mpv-1.dll
