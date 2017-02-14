@@ -211,6 +211,7 @@ class VideoCutter(QWidget):
                                    log_handler=self.logMPV,
                                    ytdl=False,
                                    input_cursor=False,
+                                   sub_auto=False,
                                    osc=False,
                                    osd_level=0,
                                    keep_open=True,
