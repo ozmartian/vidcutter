@@ -26,6 +26,11 @@ VersionInfoProductName=VidCutter x64
 VersionInfoProductVersion=3.0.0
 ArchitecturesAllowed=x64
 ArchitecturesInstallIn64BitMode=x64
+WizardImageFile=C:\DEV\vidcutter\_build\InnoSetup\assets\WizModernImage.bmp
+WizardSmallImageFile=C:\DEV\vidcutter\_build\InnoSetup\assets\SmallWizardImage.bmp
+WindowVisible=True
+BackColor=clPurple
+BackSolid=True
 
 [InstallDelete]
 Type: filesandordirs; Name: "{app}"
