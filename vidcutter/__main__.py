@@ -22,10 +22,11 @@ signal.signal(signal.SIGTERM, signal.SIG_DFL)
 class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
-        self.init_logger()
         self.edl, self.video = '', ''
         self.show_metadata = False
+        self.debug_mode = False
         self.parse_cmdline()
+        self.init_logger()
         self.init_cutter()
         self.setWindowTitle('%s' % qApp.applicationName())
         self.setContentsMargins(0, 0, 0, 0)
@@ -56,9 +57,9 @@ class MainWindow(QMainWindow):
         os.makedirs(log_path, exist_ok=True)
         handlers = []
         handlers.append(logging.handlers.RotatingFileHandler(os.path.join(log_path, '%s.log'
-                                                                        % qApp.applicationName().lower()),
-                                                           maxBytes=1000000, backupCount=1))
-        if os.getenv('DEBUG'):
+                                                                          % qApp.applicationName().lower()),
+                                                             maxBytes=1000000, backupCount=1))
+        if self.debug_mode or os.getenv('DEBUG'):
             handlers.append(logging.StreamHandler())
         logging.basicConfig(handlers=handlers,
                             format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -80,8 +81,13 @@ class MainWindow(QMainWindow):
         self.info_option = QCommandLineOption('info', 'Display a table of media file metadata information in ' +
                                               'key/value pairs.\n' +
                                               'NOTE: You must also set the video argument for this to work.')
+        self.debug_option = QCommandLineOption(['d', 'debug'], 'Output all info, warnings and errors to the console. ' +
+                                               'This will basically output what is being logged to file to the ' +
+                                               'console stdout. Mainly useful for debugging problems with your ' +
+                                               'system video and/or audio stack and codec configuration.')
         self.parser.addOption(self.edl_option)
         self.parser.addOption(self.info_option)
+        self.parser.addOption(self.debug_option)
         self.parser.addVersionOption()
         self.parser.addHelpOption()
         self.parser.process(qApp)
@@ -98,6 +104,8 @@ class MainWindow(QMainWindow):
             self.edl = self.parser.value('edl')
         if self.parser.isSet(self.info_option):
             self.show_metadata = True
+        if self.parser.isSet(self.debug_option):
+            self.debug_mode = True
         if len(self.args) > 0 and not os.path.exists(self.args[0]):
             print('\n    ERROR: Video file not found.\n', file=sys.stderr)
             self.close()

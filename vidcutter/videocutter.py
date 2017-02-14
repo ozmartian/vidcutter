@@ -11,11 +11,11 @@ from datetime import timedelta
 from locale import setlocale, LC_NUMERIC
 
 from PyQt5.QtCore import QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTextStream, QTime, QUrl, pyqtSlot
-from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMouseEvent,
-                         QMovie, QPalette, QPixmap, QWheelEvent)
-from PyQt5.QtWidgets import (QAbstractItemView, QAction, QFileDialog, QGroupBox, QHBoxLayout, QLabel,
-                             QListWidgetItem, QMenu, QMessageBox, QProgressDialog, QPushButton,
-                             QSizePolicy, QSlider, QStyleFactory, QToolBar, QVBoxLayout, QWidget, qApp)
+from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMovie, QPalette,
+                         QPixmap, QWheelEvent)
+from PyQt5.QtWidgets import (QAbstractItemView, QAction, qApp, QFileDialog, QGroupBox, QHBoxLayout, QLabel,
+                             QListWidgetItem, QMenu, QMessageBox, QProgressDialog, QPushButton, QSizePolicy,
+                             QSlider, QStyleFactory, QToolBar, QVBoxLayout, QWidget)
 
 import vidcutter.mpv as mpv
 import vidcutter.resources
@@ -77,7 +77,7 @@ class VideoCutter(QWidget):
         self.initIcons()
         self.initActions()
 
-        self.toolbar = QToolBar(floatable=False, movable=False, iconSize=QSize(50, 52))
+        self.toolbar = QToolBar(floatable=False, movable=False, iconSize=QSize(50, 53))
         self.toolbar.setObjectName('appcontrols')
         if sys.platform == 'darwin':
             self.toolbar.setStyle(QStyleFactory.create('Fusion'))
@@ -243,23 +243,23 @@ class VideoCutter(QWidget):
     def initIcons(self) -> None:
         self.appIcon = QIcon(':/images/vidcutter.png')
         self.openIcon = QIcon()
-        self.openIcon.addFile(':/images/toolbar-open.png', QSize(50, 52), QIcon.Normal)
-        self.openIcon.addFile(':/images/toolbar-open-on.png', QSize(50, 52), QIcon.Active)
+        self.openIcon.addFile(':/images/toolbar-open.png', QSize(50, 53), QIcon.Normal)
+        self.openIcon.addFile(':/images/toolbar-open-on.png', QSize(50, 53), QIcon.Active)
         self.playIcon = QIcon()
-        self.playIcon.addFile(':/images/toolbar-play.png', QSize(50, 52), QIcon.Normal)
-        self.playIcon.addFile(':/images/toolbar-play-on.png', QSize(50, 52), QIcon.Active)
+        self.playIcon.addFile(':/images/toolbar-play.png', QSize(50, 53), QIcon.Normal)
+        self.playIcon.addFile(':/images/toolbar-play-on.png', QSize(50, 53), QIcon.Active)
         self.pauseIcon = QIcon()
-        self.pauseIcon.addFile(':/images/toolbar-pause.png', QSize(50, 52), QIcon.Normal)
-        self.pauseIcon.addFile(':/images/toolbar-pause-on.png', QSize(50, 52), QIcon.Active)
+        self.pauseIcon.addFile(':/images/toolbar-pause.png', QSize(50, 53), QIcon.Normal)
+        self.pauseIcon.addFile(':/images/toolbar-pause-on.png', QSize(50, 53), QIcon.Active)
         self.cutStartIcon = QIcon()
-        self.cutStartIcon.addFile(':/images/toolbar-start.png', QSize(50, 52), QIcon.Normal)
-        self.cutStartIcon.addFile(':/images/toolbar-start-on.png', QSize(50, 52), QIcon.Active)
+        self.cutStartIcon.addFile(':/images/toolbar-start.png', QSize(50, 53), QIcon.Normal)
+        self.cutStartIcon.addFile(':/images/toolbar-start-on.png', QSize(50, 53), QIcon.Active)
         self.cutEndIcon = QIcon()
-        self.cutEndIcon.addFile(':/images/toolbar-end.png', QSize(50, 52), QIcon.Normal)
-        self.cutEndIcon.addFile(':/images/toolbar-end-on.png', QSize(50, 52), QIcon.Active)
+        self.cutEndIcon.addFile(':/images/toolbar-end.png', QSize(50, 53), QIcon.Normal)
+        self.cutEndIcon.addFile(':/images/toolbar-end-on.png', QSize(50, 53), QIcon.Active)
         self.saveIcon = QIcon()
-        self.saveIcon.addFile(':/images/toolbar-save.png', QSize(50, 52), QIcon.Normal)
-        self.saveIcon.addFile(':/images/toolbar-save-on.png', QSize(50, 52), QIcon.Active)
+        self.saveIcon.addFile(':/images/toolbar-save.png', QSize(50, 53), QIcon.Normal)
+        self.saveIcon.addFile(':/images/toolbar-save-on.png', QSize(50, 53), QIcon.Active)
         self.muteIcon = QIcon(':/images/muted.png')
         self.unmuteIcon = QIcon(':/images/unmuted.png')
         self.upIcon = QIcon(':/images/up.png')
@@ -395,26 +395,47 @@ class VideoCutter(QWidget):
         self.renderTimes()
         self.initMediaControls()
 
-    def mediaInfo(self) -> None:
-        if self.mediaPlayer.isMetaDataAvailable():
-            content = '<table cellpadding="4">'
-            for key in self.mediaPlayer.availableMetaData():
-                val = self.mediaPlayer.metaData(key)
-                if type(val) is QSize:
-                    val = '%s x %s' % (val.width(), val.height())
-                content += '<tr><td align="right"><b>%s:</b></td><td>%s</td></tr>\n' % (key, val)
-            content += '</table>'
-            mbox = QMessageBox(windowTitle='Media Information', windowIcon=self.parent.windowIcon(),
-                               textFormat=Qt.RichText)
-            mbox.setText('<b>%s</b>' % os.path.basename(self.currentMedia))
-            mbox.setInformativeText(content)
-            mbox.exec_()
-        else:
-            QMessageBox.critical(self.parent, 'Media file error',
-                                 '<h3>Could not probe media file.</h3>' +
-                                 '<p>An error occurred while analyzing the media file for its metadata details.' +
-                                 '<br/><br/><b>This DOES NOT mean there is a problem with the file and you should ' +
-                                 'be able to continue using it.</b></p>')
+    def mediaInfo(self):
+        if self.mediaAvailable:
+            for key in [
+                'decoder_list',
+                'encoder_list',
+                'filtered_metadata',
+                'metadata',
+                'property_list',
+                'vf',
+                'video_out_params',
+                'video_params',
+                'vf_metadata'
+            ]:
+                try:
+                    print('trying key: %s\n' % key)
+                    self.logger.debug(getattr(self.mediaPlayer, key))
+                except:
+                    pass
+                # if hasattr(self.mediaPlayer, key):
+                #     print('[ %s ]\n\n' % key)
+                #     print('%s\n\n' % self.mediaPlayer[key])
+                
+        # if self.mediaPlayer.isMetaDataAvailable():
+        #     content = '<table cellpadding="4">'
+        #     for key in self.mediaPlayer.availableMetaData():
+        #         val = self.mediaPlayer.metaData(key)
+        #         if type(val) is QSize:
+        #             val = '%s x %s' % (val.width(), val.height())
+        #         content += '<tr><td align="right"><b>%s:</b></td><td>%s</td></tr>\n' % (key, val)
+        #     content += '</table>'
+        #     mbox = QMessageBox(windowTitle='Media Information', windowIcon=self.parent.windowIcon(),
+        #                        textFormat=Qt.RichText)
+        #     mbox.setText('<b>%s</b>' % os.path.basename(self.currentMedia))
+        #     mbox.setInformativeText(content)
+        #     mbox.exec_()
+        # else:
+        #     QMessageBox.critical(self.parent, 'Media file error',
+        #                          '<h3>Could not probe media file.</h3>' +
+        #                          '<p>An error occurred while analyzing the media file for its metadata details.' +
+        #                          '<br/><br/><b>This DOES NOT mean there is a problem with the file and you should ' +
+        #                          'be able to continue using it.</b></p>')
 
     def aboutInfo(self) -> None:
         about_html = '''<style>

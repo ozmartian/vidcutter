@@ -17,7 +17,8 @@ a = Analysis(['..\\..\\vidcutter\\__main__.py'],
              datas=[
                  ('..\\..\\vidcutter\\__init__.py', '.'),
                  ('..\\..\\bin\\ffmpeg.exe', '.\\bin'),
-                 ('libmpv\\32\\mpv-1.dll', '.')
+                 ('libmpv\\32\\mpv-1.dll', '.'),
+                 ('libmpv\\32\\D3DCompiler_43.dll', '.')
              ],
              hiddenimports=[],
              hookspath=[],
