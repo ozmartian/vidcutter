@@ -208,7 +208,7 @@ class VideoCutter(QWidget):
     def initMPV(self) -> None:
         setlocale(LC_NUMERIC, 'C')
         if sys.platform == 'darwin':
-            importlib.import_module('QMacCocoaViewContainer', 'PyQt5.QtWidgets')
+            importlib.import_module('PyQt5.QtWidgets', 'QMacCocoaViewContainer')
             importlib.invalidate_caches()
             self.mpvFrame = QMacCocoaViewContainer(0)
         else:
