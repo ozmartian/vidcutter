@@ -161,7 +161,8 @@ class MainWindow(QMainWindow):
 
     def closeEvent(self, event: QCloseEvent) -> None:
         if hasattr(self, 'cutter'):
-            self.cutter.mediaPlayer.quit()
+            if hasattr(self.cutter, 'mediaPlayer'):
+                self.cutter.mediaPlayer.terminate()
         qApp.quit()
 
 
