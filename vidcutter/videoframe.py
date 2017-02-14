@@ -1,24 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import sys
-
 from PyQt5.QtCore import Qt, QObject, QEvent
 from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtWidgets import QFrame, QMessageBox
 
 
-parent_frame = QFrame
-if sys.platform == 'darwin':
-    from PyQt5.QtWidgets import QMacCocoaViewContainer
-    parent_frame = QMacCocoaViewContainer
-
-
-class VideoFrame(parent_frame):
+class VideoFrame(QFrame):
     def __init__(self, parent=None, *arg, **kwargs):
         super(VideoFrame, self).__init__(parent, *arg, **kwargs)
-        if sys.platform == 'darwin':
-            self.setCocoaView(0)
         self.parent = parent
         self.setAttribute(Qt.WA_DontCreateNativeAncestors)
         self.setAttribute(Qt.WA_NativeWindow)

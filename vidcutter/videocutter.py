@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import importlib
 import logging
 import os
 import platform
@@ -206,7 +207,12 @@ class VideoCutter(QWidget):
 
     def initMPV(self) -> None:
         setlocale(LC_NUMERIC, 'C')
-        self.mpvFrame = VideoFrame(self)
+        if sys.platform == 'darwin':
+            importlib.import_module('QMacCocoaViewContainer', 'PyQt5.QtWidgets')
+            importlib.invalidate_caches()
+            self.mpvFrame = QMacCocoaViewContainer(0)
+        else:
+            self.mpvFrame = VideoFrame(self)
         self.mediaPlayer = mpv.MPV(wid=int(self.mpvFrame.winId()),
                                    log_handler=self.logMPV,
                                    ytdl=False,
