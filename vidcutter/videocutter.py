@@ -172,7 +172,6 @@ class VideoCutter(QWidget):
         toolbarLayout.setContentsMargins(0, 0, 0, 0)
 
         toolbarGroup = QGroupBox()
-        toolbarGroup.setFlat(False)
         toolbarGroup.setLayout(toolbarLayout)
         toolbarGroup.setCursor(Qt.PointingHandCursor)
         toolbarGroup.setStyleSheet('border: 0;')
@@ -286,6 +285,7 @@ class VideoCutter(QWidget):
         self.openEDLIcon = QIcon(':/images/edl.png')
         self.saveEDLIcon = QIcon(':/images/save.png')
         self.mediaInfoIcon = QIcon(':/images/info.png')
+        self.viewLogsIcon = QIcon(':/images/viewlogs.png')
         self.updateCheckIcon = QIcon(':/images/update.png')
         self.thumbsupIcon = QIcon(':/images/thumbsup.png')
 
@@ -322,6 +322,8 @@ class VideoCutter(QWidget):
         self.saveEDLAction = QAction(self.saveEDLIcon, 'Save EDL file', self,
                                      statusTip='Save clip list data to an EDL file',
                                      triggered=self.saveEDL, enabled=False)
+        self.viewLogsAction = QAction(self.viewLogsIcon, 'View app logs', self, statusTip='View the application\'s log file',
+                                      triggered=self.viewLogs)
         self.updateCheckAction = QAction(self.updateCheckIcon, 'Check for updates...', self,
                                          statusTip='Check for application updates', triggered=self.updateCheck)
         self.aboutQtAction = QAction('About Qt', self, statusTip='About Qt', triggered=qApp.aboutQt)
@@ -341,6 +343,7 @@ class VideoCutter(QWidget):
         self.appMenu.addAction(self.saveEDLAction)
         self.appMenu.addSeparator()
         self.appMenu.addAction(self.mediaInfoAction)
+        self.appMenu.addAction(self.viewLogsAction)
         self.appMenu.addAction(self.updateCheckAction)
         self.appMenu.addSeparator()
         self.appMenu.addAction(self.aboutQtAction)
@@ -807,6 +810,10 @@ class VideoCutter(QWidget):
         if len(self.finalFilename) and os.path.exists(self.finalFilename):
             target = self.finalFilename if not pathonly else os.path.dirname(self.finalFilename)
             QDesktopServices.openUrl(QUrl.fromLocalFile(target))
+
+    @pyqtSlot()
+    def viewLogs(self) -> None:
+        QDesktopServices.openUrl(QUrl.fromLocalFile(logging.getLoggerClass().root.handlers[0].baseFilename))
 
     @pyqtSlot()
     def startNew(self) -> None:

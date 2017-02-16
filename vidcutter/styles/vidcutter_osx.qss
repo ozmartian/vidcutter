@@ -9,10 +9,7 @@ QWidget#novideoWidget {
 
 /* -------------------------------------------------------------------------- */
 
-QToolBar#appcontrols {
-    spacing: 15px;
-    background-color: #EFF0F1;
-}
+QToolBar#appcontrols { spacing: 15px; }
 
 QToolBar#appcontrols QToolButton {
     padding: 1px 2px;
