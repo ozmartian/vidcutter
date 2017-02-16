@@ -18,6 +18,8 @@ QToolBar#appcontrols QToolButton {
     font-size: 10pt;
     font-weight: 400;
     line-height: 80%;
+    background: transparent;
+    border: none;
 }
 
 QToolBar#appcontrols QToolButton:hover { color: #6A4572; }

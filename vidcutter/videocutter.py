@@ -167,18 +167,18 @@ class VideoCutter(QWidget):
         self.menuButton.setFixedSize(QSize(40, 42))
         self.menuButton.setMenu(self.appMenu)
 
-        toolbarLayout = QHBoxLayout()
-        toolbarLayout.addWidget(self.toolbar)
-        toolbarLayout.setContentsMargins(0, 0, 0, 0)
+        # toolbarLayout = QHBoxLayout()
+        # toolbarLayout.addWidget(self.toolbar)
+        # toolbarLayout.setContentsMargins(0, 0, 0, 0)
 
-        toolbarGroup = QGroupBox()
-        toolbarGroup.setLayout(toolbarLayout)
-        toolbarGroup.setCursor(Qt.PointingHandCursor)
-        toolbarGroup.setStyleSheet('border: 0;')
+        # toolbarGroup = QGroupBox()
+        # toolbarGroup.setLayout(toolbarLayout)
+        # toolbarGroup.setCursor(Qt.PointingHandCursor)
+        # toolbarGroup.setStyleSheet('border: 0;')
 
         controlsLayout = QHBoxLayout(spacing=0)
         controlsLayout.addStretch(1)
-        controlsLayout.addWidget(toolbarGroup)
+        controlsLayout.addWidget(self.toolbar)
         controlsLayout.addStretch(1)
         controlsLayout.addWidget(self.muteButton)
         controlsLayout.addSpacing(5)
@@ -218,7 +218,7 @@ class VideoCutter(QWidget):
                                    osc=False,
                                    osd_level=0,
                                    keep_open=True,
-                                   framedrop=False,
+                                   sid=False,
                                    hr_seek='absolute',
                                    hr_seek_framedrop=True,
                                    rebase_start_time=False,
