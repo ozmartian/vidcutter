@@ -1,12 +1,12 @@
-app: VidCutter
+app: VidCutter-unstable
 union: true
 
 ingredients:
-  dist: trusty
+  dist: xenial
   sources: 
-    - deb http://archive.ubuntu.com/ubuntu/ trusty main universe
+    - deb http://archive.ubuntu.com/ubuntu/ xenial main universe
   ppas:
-    - ozmartian/apps
+    - ozmartian/unstable
 
 script:
   - cat > usr/bin/vidcutter <<\EOF
