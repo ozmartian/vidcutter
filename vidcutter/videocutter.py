@@ -161,7 +161,7 @@ class VideoCutter(QWidget):
 
         self.volumeSlider = QSlider(Qt.Horizontal, toolTip='Volume', statusTip='Adjust volume level',
                                     cursor=Qt.PointingHandCursor, value=100, minimum=0, maximum=130,
-                                    sliderMoved=self.setVolume)
+                                    sliderMoved=self.setVolume, objectName='volumeSlider')
 
         self.menuButton = QPushButton(toolTip='Menu', cursor=Qt.PointingHandCursor, flat=True, objectName='menuButton')
         self.menuButton.setFixedSize(QSize(40, 42))
@@ -221,6 +221,7 @@ class VideoCutter(QWidget):
                                    keep_open=True,
                                    framedrop=False,
                                    hr_seek='absolute',
+                                   hr_seek_framedrop=True,
                                    rebase_start_time=False,
                                    keepaspect=True,
                                    hwdec='auto')
@@ -250,21 +251,27 @@ class VideoCutter(QWidget):
         self.openIcon = QIcon()
         self.openIcon.addFile(':/images/toolbar-open.png', QSize(50, 53), QIcon.Normal)
         self.openIcon.addFile(':/images/toolbar-open-on.png', QSize(50, 53), QIcon.Active)
+        self.openIcon.addFile(':/images/toolbar-open-disabled.png', QSize(50, 53), QIcon.Disabled)
         self.playIcon = QIcon()
         self.playIcon.addFile(':/images/toolbar-play.png', QSize(50, 53), QIcon.Normal)
         self.playIcon.addFile(':/images/toolbar-play-on.png', QSize(50, 53), QIcon.Active)
+        self.playIcon.addFile(':/images/toolbar-play-disabled.png', QSize(50, 53), QIcon.Disabled)
         self.pauseIcon = QIcon()
         self.pauseIcon.addFile(':/images/toolbar-pause.png', QSize(50, 53), QIcon.Normal)
         self.pauseIcon.addFile(':/images/toolbar-pause-on.png', QSize(50, 53), QIcon.Active)
+        self.pauseIcon.addFile(':/images/toolbar-pause-disabled.png', QSize(50, 53), QIcon.Disabled)
         self.cutStartIcon = QIcon()
         self.cutStartIcon.addFile(':/images/toolbar-start.png', QSize(50, 53), QIcon.Normal)
         self.cutStartIcon.addFile(':/images/toolbar-start-on.png', QSize(50, 53), QIcon.Active)
+        self.cutStartIcon.addFile(':/images/toolbar-start-disabled.png', QSize(50, 53), QIcon.Disabled)
         self.cutEndIcon = QIcon()
         self.cutEndIcon.addFile(':/images/toolbar-end.png', QSize(50, 53), QIcon.Normal)
         self.cutEndIcon.addFile(':/images/toolbar-end-on.png', QSize(50, 53), QIcon.Active)
+        self.cutEndIcon.addFile(':/images/toolbar-end-disabled.png', QSize(50, 53), QIcon.Disabled)
         self.saveIcon = QIcon()
         self.saveIcon.addFile(':/images/toolbar-save.png', QSize(50, 53), QIcon.Normal)
         self.saveIcon.addFile(':/images/toolbar-save-on.png', QSize(50, 53), QIcon.Active)
+        self.saveIcon.addFile(':/images/toolbar-save-disabled.png', QSize(50, 53), QIcon.Disabled)
         self.muteIcon = QIcon(':/images/muted.png')
         self.unmuteIcon = QIcon(':/images/unmuted.png')
         self.upIcon = QIcon(':/images/up.png')
@@ -402,26 +409,11 @@ class VideoCutter(QWidget):
 
     def mediaInfo(self):
         if self.mediaAvailable:
-            for key in [
-                'decoder_list',
-                'encoder_list',
-                'filtered_metadata',
-                'metadata',
-                'property_list',
-                'vf',
-                'video_out_params',
-                'video_params',
-                'vf_metadata'
-            ]:
-                try:
-                    print('trying key: %s\n' % key)
-                    self.logger.debug(getattr(self.mediaPlayer, key))
-                except:
-                    pass
-                # if hasattr(self.mediaPlayer, key):
-                #     print('[ %s ]\n\n' % key)
-                #     print('%s\n\n' % self.mediaPlayer[key])
-                
+            mbox = QMessageBox(windowTitle='Media Information', windowIcon=self.parent.windowIcon(),
+                               textFormat=Qt.RichText)
+            mbox.setText('<b>%s</b>' % os.path.basename(self.currentMedia))
+            mbox.setInformativeText(self.videoService.metadata(self.currentMedia))
+            mbox.exec_()
         # if self.mediaPlayer.isMetaDataAvailable():
         #     content = '<table cellpadding="4">'
         #     for key in self.mediaPlayer.availableMetaData():
@@ -482,7 +474,7 @@ class VideoCutter(QWidget):
 
     def openMedia(self) -> None:
         filename, _ = QFileDialog.getOpenFileName(self.parent, caption='Select media file',
-                                                  directory=QDir.currentPath())
+                                                  directory=QDir.homePath())
         if filename != '':
             self.loadMedia(filename)
 
@@ -497,7 +489,7 @@ class VideoCutter(QWidget):
                                                              # 'CMX 3600 EDL (*.edl);;' +
                                                              'All files (*.*)',
                                                       initialFilter='MPlayer EDL (*.edl)',
-                                                      directory='%s.edl' % source_file)
+                                                      directory=os.path.join(QDir.homePath(), '%s.edl' % source_file))
         if self.edl.strip():
             file = QFile(self.edl)
             if not file.open(QFile.ReadOnly | QFile.Text):
@@ -890,11 +882,11 @@ class VideoCutter(QWidget):
             if event.key() == Qt.Key_Left:
                 self.mediaPlayer.frame_back_step()
             elif event.key() == Qt.Key_Down:
-                self.mediaPlayer.seek(-10, 'relative+exact')
+                self.mediaPlayer.seek(-5, 'relative+exact')
             elif event.key() == Qt.Key_Right:
                 self.mediaPlayer.frame_step()
             elif event.key() == Qt.Key_Up:
-                self.mediaPlayer.seek(10, 'relative+exact')
+                self.mediaPlayer.seek(5, 'relative+exact')
             elif event.key() in (Qt.Key_Return, Qt.Key_Enter):
                 self.mpvFrame.toggleFullscreen()
             elif event.key() == Qt.Key_Space:

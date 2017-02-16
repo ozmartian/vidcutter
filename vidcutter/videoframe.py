@@ -17,14 +17,15 @@ class VideoFrame(QFrame):
     def toggleFullscreen(self) -> None:
         if self.isFullScreen():
             self.parent.mediaPlayer.fullscreen = False
-            self.parent.setWindowState(self.parent.windowState() & ~Qt.WindowFullScreen)
+            self.setWindowState(self.windowState() & ~Qt.WindowFullScreen)
             # self.setWindowFlags(Qt.Widget)
             # self.showNormal()
         else:
             self.parent.mediaPlayer.fullscreen = True
-            self.parent.setWindowState(self.parent.windowState() | Qt.WindowFullScreen)
-            # self.setWindowFlags(Qt.Window)
-            # self.showFullScreen()
+            self.setWindowState(self.windowState() | Qt.WindowFullScreen)
+            self.setWindowFlags(Qt.Window)
+            self.showFullScreen()
+            self.parent.parent.hide()
 
     def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
         self.toggleFullscreen()

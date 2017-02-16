@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import colorama
 import os
 import re
 import shlex
@@ -68,6 +69,32 @@ class VideoService(QObject):
         if result:
             result = re.search(r'[\d.]+(?= tbr)', result).group(0)
         return float(result)
+
+    def metadata(self, source: str) -> str:
+        metadata = ''
+        no = True
+        args = '-i "%s"' % source
+        result = self.cmdExec(self.backend, args, True)
+        print(result)
+        for line in result.splitlines():
+            if line.startswith('Input'):
+                no = False
+            if no:
+                continue
+            if ': Video:' in line:
+                metadata += '--VIDEO---------------------------'
+                color = colorama.Fore.CYAN
+                style = colorama.Style.BRIGHT
+                reset = colorama.Style.RESET_ALL
+                line = re.sub(r'\b\d+\s+\w+/s\b', color + style + r'\g<0>' + reset, line)
+                metadata += line
+            elif line.startswith('At least'):
+                continue
+            else:
+                if ': Audio:' in line:
+                    metadata += '--AUDIO---------------------------'
+                    metadata += line
+        return metadata
 
     def cmdExec(self, cmd: str, args: str = None, output: bool = False):
         if os.getenv('DEBUG', False):

@@ -10,7 +10,7 @@ import sys
 import traceback
 
 from PyQt5.QtCore import QCommandLineParser, QCommandLineOption, QFileInfo, QStandardPaths, QTextStream, QFile
-from PyQt5.QtGui import QCloseEvent, QDropEvent, QDragEnterEvent
+from PyQt5.QtGui import QCloseEvent, QDropEvent, QDragEnterEvent, QPalette
 from PyQt5.QtWidgets import QMainWindow, qApp, QMessageBox, QApplication
 
 from vidcutter.videocutter import VideoCutter
