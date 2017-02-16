@@ -24,7 +24,6 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__()
         self.edl, self.video = '', ''
         self.show_metadata = False
-        self.debug_mode = False
         self.parse_cmdline()
         self.init_logger()
         self.init_cutter()
@@ -55,11 +54,10 @@ class MainWindow(QMainWindow):
     def init_logger(self) -> None:
         log_path = QStandardPaths.writableLocation(QStandardPaths.AppConfigLocation).lower()
         os.makedirs(log_path, exist_ok=True)
-        handlers = []
-        handlers.append(logging.handlers.RotatingFileHandler(os.path.join(log_path, '%s.log'
-                                                                          % qApp.applicationName().lower()),
-                                                             maxBytes=1000000, backupCount=1))
-        if self.debug_mode or os.getenv('DEBUG'):
+        handlers = [logging.handlers.RotatingFileHandler(os.path.join(log_path, '%s.log'
+                                                                      % qApp.applicationName().lower()),
+                                                         maxBytes=1000000, backupCount=1)]
+        if os.getenv('DEBUG', False):
             handlers.append(logging.StreamHandler())
         logging.basicConfig(handlers=handlers,
                             format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -79,7 +77,7 @@ class MainWindow(QMainWindow):
         self.edl_option = QCommandLineOption('edl', 'Preloads clip index from a previously saved EDL file.\n' +
                                              'NOTE: You must also set the video argument for this to work.', 'edl file')
         self.info_option = QCommandLineOption('info', 'Display a table of media file metadata information in ' +
-                                              'key/value pairs.\n' +
+                                              'kssey/value pairs.\n' +
                                               'NOTE: You must also set the video argument for this to work.')
         self.debug_option = QCommandLineOption(['d', 'debug'], 'Output all info, warnings and errors to the console. ' +
                                                'This will basically output what is being logged to file to the ' +
@@ -105,7 +103,7 @@ class MainWindow(QMainWindow):
         if self.parser.isSet(self.info_option):
             self.show_metadata = True
         if self.parser.isSet(self.debug_option):
-            self.debug_mode = True
+            os.environ['DEBUG'] = '1'
         if len(self.args) > 0 and not os.path.exists(self.args[0]):
             print('\n    ERROR: Video file not found.\n', file=sys.stderr)
             self.close()

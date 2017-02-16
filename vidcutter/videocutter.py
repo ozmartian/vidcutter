@@ -413,26 +413,8 @@ class VideoCutter(QWidget):
                                textFormat=Qt.RichText)
             mbox.setText('<b>%s</b>' % os.path.basename(self.currentMedia))
             mbox.setInformativeText(self.videoService.metadata(self.currentMedia))
+            mbox.setMinimumWidth(650)
             mbox.exec_()
-        # if self.mediaPlayer.isMetaDataAvailable():
-        #     content = '<table cellpadding="4">'
-        #     for key in self.mediaPlayer.availableMetaData():
-        #         val = self.mediaPlayer.metaData(key)
-        #         if type(val) is QSize:
-        #             val = '%s x %s' % (val.width(), val.height())
-        #         content += '<tr><td align="right"><b>%s:</b></td><td>%s</td></tr>\n' % (key, val)
-        #     content += '</table>'
-        #     mbox = QMessageBox(windowTitle='Media Information', windowIcon=self.parent.windowIcon(),
-        #                        textFormat=Qt.RichText)
-        #     mbox.setText('<b>%s</b>' % os.path.basename(self.currentMedia))
-        #     mbox.setInformativeText(content)
-        #     mbox.exec_()
-        # else:
-        #     QMessageBox.critical(self.parent, 'Media file error',
-        #                          '<h3>Could not probe media file.</h3>' +
-        #                          '<p>An error occurred while analyzing the media file for its metadata details.' +
-        #                          '<br/><br/><b>This DOES NOT mean there is a problem with the file and you should ' +
-        #                          'be able to continue using it.</b></p>')
 
     def aboutInfo(self) -> None:
         about_html = '''<style>

@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import colorama
 import os
 import re
 import shlex
@@ -71,30 +70,11 @@ class VideoService(QObject):
         return float(result)
 
     def metadata(self, source: str) -> str:
-        metadata = ''
-        no = True
         args = '-i "%s"' % source
         result = self.cmdExec(self.backend, args, True)
-        print(result)
-        for line in result.splitlines():
-            if line.startswith('Input'):
-                no = False
-            if no:
-                continue
-            if ': Video:' in line:
-                metadata += '--VIDEO---------------------------'
-                color = colorama.Fore.CYAN
-                style = colorama.Style.BRIGHT
-                reset = colorama.Style.RESET_ALL
-                line = re.sub(r'\b\d+\s+\w+/s\b', color + style + r'\g<0>' + reset, line)
-                metadata += line
-            elif line.startswith('At least'):
-                continue
-            else:
-                if ': Audio:' in line:
-                    metadata += '--AUDIO---------------------------'
-                    metadata += line
-        return metadata
+        start = result.find('Input #')
+        end = result.find('At least one')
+        return result[start:end].strip()
 
     def cmdExec(self, cmd: str, args: str = None, output: bool = False):
         if os.getenv('DEBUG', False):
@@ -103,7 +83,7 @@ class VideoService(QObject):
             self.proc.start(cmd, shlex.split(args))
             self.proc.waitForFinished(-1)
             if output:
-                return str(self.proc.readAllStandardOutput())
+                return str(self.proc.readAllStandardOutput(), 'utf-8')
             if self.proc.exitStatus() == QProcess.NormalExit and self.proc.exitCode() == 0:
                 return True
         return False
