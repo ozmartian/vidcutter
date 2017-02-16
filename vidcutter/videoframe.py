@@ -18,8 +18,9 @@ class VideoFrame(QFrame):
         if self.isFullScreen():
             self.parent.mediaPlayer.fullscreen = False
             self.setWindowState(self.windowState() & ~Qt.WindowFullScreen)
-            # self.setWindowFlags(Qt.Widget)
-            # self.showNormal()
+            self.setWindowFlags(Qt.Widget)
+            self.parent.parent.show()
+            self.showNormal()
         else:
             self.parent.mediaPlayer.fullscreen = True
             self.setWindowState(self.windowState() | Qt.WindowFullScreen)
