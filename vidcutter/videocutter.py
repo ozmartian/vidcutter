@@ -167,18 +167,18 @@ class VideoCutter(QWidget):
         self.menuButton.setFixedSize(QSize(40, 42))
         self.menuButton.setMenu(self.appMenu)
 
-        # toolbarLayout = QHBoxLayout()
-        # toolbarLayout.addWidget(self.toolbar)
-        # toolbarLayout.setContentsMargins(0, 0, 0, 0)
+        toolbarLayout = QHBoxLayout()
+        toolbarLayout.addWidget(self.toolbar)
+        toolbarLayout.setContentsMargins(0, 0, 0, 0)
 
-        # toolbarGroup = QGroupBox()
-        # toolbarGroup.setLayout(toolbarLayout)
-        # toolbarGroup.setCursor(Qt.PointingHandCursor)
-        # toolbarGroup.setStyleSheet('border: 0;')
+        toolbarGroup = QGroupBox()
+        toolbarGroup.setLayout(toolbarLayout)
+        toolbarGroup.setCursor(Qt.PointingHandCursor)
+        toolbarGroup.setStyleSheet('border: 0;')
 
         controlsLayout = QHBoxLayout(spacing=0)
         controlsLayout.addStretch(1)
-        controlsLayout.addWidget(self.toolbar)
+        controlsLayout.addWidget(toolbarGroup)
         controlsLayout.addStretch(1)
         controlsLayout.addWidget(self.muteButton)
         controlsLayout.addSpacing(5)
@@ -223,7 +223,7 @@ class VideoCutter(QWidget):
                                    hr_seek_framedrop=True,
                                    rebase_start_time=False,
                                    keepaspect=True,
-                                   hwdec='auto')
+                                   hwdec=False)
         self.mediaPlayer.pause = True
         self.mediaPlayer.observe_property('time-pos', lambda ptime: self.positionChanged(ptime * 1000))
         self.mediaPlayer.observe_property('duration', lambda runtime: self.durationChanged(runtime * 1000))
@@ -253,7 +253,7 @@ class VideoCutter(QWidget):
         self.openIcon.addFile(':/images/toolbar-open-disabled.png', QSize(50, 53), QIcon.Disabled)
         self.playIcon = QIcon()
         self.playIcon.addFile(':/images/toolbar-play.png', QSize(50, 53), QIcon.Normal)
-        self.playIcon.addFile(':/images/toolbar-play-on.png', QSize(50, 53), QIcon.Active)
+        self.playIcon.addFile(':/images/toolbr-play-on.png', QSize(50, 53), QIcon.Active)
         self.playIcon.addFile(':/images/toolbar-play-disabled.png', QSize(50, 53), QIcon.Disabled)
         self.pauseIcon = QIcon()
         self.pauseIcon.addFile(':/images/toolbar-pause.png', QSize(50, 53), QIcon.Normal)
@@ -876,8 +876,8 @@ class VideoCutter(QWidget):
                 self.mediaPlayer.frame_step()
             elif event.key() == Qt.Key_Up:
                 self.mediaPlayer.seek(5, 'relative+exact')
-            elif event.key() in (Qt.Key_Return, Qt.Key_Enter):
-                self.mpvFrame.toggleFullscreen()
+            # elif event.key() in (Qt.Key_Return, Qt.Key_Enter):
+            #     self.mpvFrame.toggleFullscreen()
             elif event.key() == Qt.Key_Space:
                 if self.cutStartAction.isEnabled():
                     self.setCutStart()

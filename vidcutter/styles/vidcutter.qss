@@ -1,6 +1,4 @@
-QMainWindow {
-    background-color: #EFF0F1;
-}
+QMainWindow { background-color: #EFF0F1; }
 
 QWidget#novideoWidget {
     border: 1px solid #666;

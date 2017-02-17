@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from PyQt5.QtCore import Qt, QObject, QEvent
-from PyQt5.QtGui import QMouseEvent
+from PyQt5.QtGui import QMouseEvent, QKeyEvent
 from PyQt5.QtWidgets import QFrame, QMessageBox
 
 
@@ -27,6 +27,10 @@ class VideoFrame(QFrame):
             self.setWindowFlags(Qt.Window)
             self.showFullScreen()
             self.parent.parent.hide()
+
+    def keyPressEvent(self, event: QKeyEvent) -> None:
+        if event.key() in (Qt.Key_Return, Qt.Key_Enter):
+            self.mpvFrame.toggleFullscreen()
 
     def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
         self.toggleFullscreen()
