@@ -34,7 +34,7 @@ QToolBar#appcontrols QToolButton:disabled { color: #999; }
 QListView#cliplist {
     border-radius: 0;
     border: none;
-    border-left: 1px solid #B9B9B9; 
+    border-left: 1px solid #B9B9B9;
     border-right: 1px solid #B9B9B9;
     show-decoration-selected: 1;
     background-color: #FFF;
