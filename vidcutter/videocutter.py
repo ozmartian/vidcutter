@@ -20,6 +20,7 @@ from PyQt5.QtWidgets import (QAbstractItemView, QAction, qApp, QFileDialog, QGro
 import vidcutter.mpv as mpv
 import vidcutter.resources
 from vidcutter.videoframe import VideoFrame
+from vidcutter.videoinfo import VideoInfo
 from vidcutter.videolist import VideoList, VideoItem
 from vidcutter.videoservice import VideoService
 from vidcutter.videoslider import VideoSlider
@@ -415,12 +416,7 @@ class VideoCutter(QWidget):
 
     def mediaInfo(self):
         if self.mediaAvailable:
-            mbox = QMessageBox(windowTitle='Media Information', windowIcon=self.parent.windowIcon(),
-                               textFormat=Qt.RichText)
-            mbox.setText('<b>%s</b>' % os.path.basename(self.currentMedia))
-            mbox.setInformativeText(self.videoService.metadata(self.currentMedia))
-            mbox.setMinimumWidth(650)
-            mbox.exec_()
+            mediainfo = VideoInfo(parent=self, mpv=self.mediaPlayer)
 
     def aboutInfo(self) -> None:
         about_html = '''<style>
@@ -879,8 +875,8 @@ class VideoCutter(QWidget):
                 self.mediaPlayer.frame_step()
             elif event.key() == Qt.Key_Up:
                 self.mediaPlayer.seek(5, 'relative+exact')
-            # elif event.key() in (Qt.Key_Return, Qt.Key_Enter):
-            #     self.mpvFrame.toggleFullscreen()
+            elif event.key() in (Qt.Key_Return, Qt.Key_Enter):
+                self.mpvFrame.toggleFullscreen()
             elif event.key() == Qt.Key_Space:
                 if self.cutStartAction.isEnabled():
                     self.setCutStart()

@@ -10,8 +10,13 @@ class VideoToolBar(QToolBar):
         super(VideoToolBar, self).__init__(*arg, **kwargs)
 
     def disableTooltips(self):
+        c = 1
+        total = len(self.findChildren(QToolButton))
         for button in self.findChildren(QToolButton):
             button.installEventFilter(self)
+            if c == total:
+                button.setStyleSheet('QToolButton { color:#642C68; } QToolButton:disabled { color:#999; }')
+            c += 1
 
     def eventFilter(self, obj: QObject, event: QEvent) -> bool:
         if event.type() == QEvent.ToolTip:

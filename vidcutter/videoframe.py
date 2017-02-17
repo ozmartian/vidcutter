@@ -23,14 +23,11 @@ class VideoFrame(QFrame):
             self.showNormal()
         else:
             self.parent.mediaPlayer.fullscreen = True
+            self.parent.parent.hide()
+            self.parent.id = None
             self.setWindowState(self.windowState() | Qt.WindowFullScreen)
             self.setWindowFlags(Qt.Window)
             self.showFullScreen()
-            self.parent.parent.hide()
-
-    def keyPressEvent(self, event: QKeyEvent) -> None:
-        if event.key() in (Qt.Key_Return, Qt.Key_Enter):
-            self.mpvFrame.toggleFullscreen()
 
     def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
         self.toggleFullscreen()
