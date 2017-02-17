@@ -24,6 +24,7 @@ from vidcutter.videoframe import VideoFrame
 from vidcutter.videolist import VideoList, VideoItem
 from vidcutter.videoservice import VideoService
 from vidcutter.videoslider import VideoSlider
+from vidcutter.videotoolbar import VideoToolBar
 
 
 class VideoCutter(QWidget):
@@ -78,7 +79,7 @@ class VideoCutter(QWidget):
         self.initIcons()
         self.initActions()
 
-        self.toolbar = ToolBar(floatable=False, movable=False, iconSize=QSize(50, 53))
+        self.toolbar = VideoToolBar(floatable=False, movable=False, iconSize=QSize(50, 53))
         self.toolbar.setObjectName('appcontrols')
         if sys.platform == 'darwin':
             self.toolbar.setStyle(QStyleFactory.create('Fusion'))
@@ -889,17 +890,3 @@ class VideoCutter(QWidget):
 
     def closeEvent(self, event: QCloseEvent) -> None:
         self.parent.closeEvent(event)
-
-
-class ToolBar(QToolBar):
-    def __init__(self, *arg, **kwargs):
-        super(ToolBar, self).__init__(*arg, **kwargs)
-
-    def disableTooltips(self):
-        for button in self.findChildren(QToolButton):
-            button.installEventFilter(self)
-
-    def eventFilter(self, obj: QObject, event: QEvent) -> bool:
-        if event.type() == QEvent.ToolTip:
-            return True
-        return QToolBar.eventFilter(self, obj, event)
