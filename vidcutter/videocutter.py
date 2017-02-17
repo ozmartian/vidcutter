@@ -10,12 +10,13 @@ import time
 from datetime import timedelta
 from locale import setlocale, LC_NUMERIC
 
-from PyQt5.QtCore import QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTextStream, QTime, QUrl, pyqtSlot
+from PyQt5.QtCore import (QDir, QEvent, QFile, QFileInfo, QModelIndex, QObject, QPoint, QSize, Qt, QTextStream, QTime,
+                          QUrl, pyqtSlot)
 from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMovie, QPalette,
                          QPixmap, QWheelEvent)
 from PyQt5.QtWidgets import (QAbstractItemView, QAction, qApp, QFileDialog, QGroupBox, QHBoxLayout, QLabel,
                              QListWidgetItem, QMenu, QMessageBox, QProgressDialog, QPushButton, QSizePolicy,
-                             QSlider, QStyleFactory, QToolBar, QVBoxLayout, QWidget)
+                             QSlider, QStyleFactory, QToolBar, QToolButton, QVBoxLayout, QWidget)
 
 import vidcutter.mpv as mpv
 import vidcutter.resources
@@ -77,7 +78,7 @@ class VideoCutter(QWidget):
         self.initIcons()
         self.initActions()
 
-        self.toolbar = QToolBar(floatable=False, movable=False, iconSize=QSize(50, 53))
+        self.toolbar = ToolBar(floatable=False, movable=False, iconSize=QSize(50, 53))
         self.toolbar.setObjectName('appcontrols')
         if sys.platform == 'darwin':
             self.toolbar.setStyle(QStyleFactory.create('Fusion'))
@@ -290,19 +291,19 @@ class VideoCutter(QWidget):
         self.thumbsupIcon = QIcon(':/images/thumbsup.png')
 
     def initActions(self) -> None:
-        self.openAction = QAction(self.openIcon, 'Open\nMedia', self, toolTip='Open Media',
+        self.openAction = QAction(self.openIcon, 'Open\nMedia', self, toolTip='',
                                   statusTip='Open a valid media file', triggered=self.openMedia)
-        self.playAction = QAction(self.playIcon, 'Play\nMedia', self, toolTip='Play Media',
+        self.playAction = QAction(self.playIcon, 'Play\nMedia', self, toolTip='',
                                   statusTip='Play the loaded media file', triggered=self.playMedia, enabled=False)
-        self.pauseAction = QAction(self.pauseIcon, 'Pause\nMedia', self, toolTip='Pause Media', visible=False,
+        self.pauseAction = QAction(self.pauseIcon, 'Pause\nMedia', self, visible=False, toolTip='',
                                    statusTip='Pause the currently playing media file', triggered=self.playMedia)
-        self.cutStartAction = QAction(self.cutStartIcon, 'Clip\nStart', self, toolTip='Clip Start',
+        self.cutStartAction = QAction(self.cutStartIcon, 'Clip\nStart', self, toolTip='',
                                       statusTip='Set the start position of a new clip',
                                       triggered=self.setCutStart, enabled=False)
-        self.cutEndAction = QAction(self.cutEndIcon, 'Clip\nEnd', self, toolTip='Clip End',
+        self.cutEndAction = QAction(self.cutEndIcon, 'Clip\nEnd', self, toolTip='',
                                     statusTip='Set the end position of a new clip',
                                     triggered=self.setCutEnd, enabled=False)
-        self.saveAction = QAction(self.saveIcon, 'Save\nVideo', self, toolTip='Save Video',
+        self.saveAction = QAction(self.saveIcon, 'Save\nVideo', self, toolTip='',
                                   statusTip='Save clips to a new video file', triggered=self.cutVideo, enabled=False)
         self.moveItemUpAction = QAction(self.upIcon, 'Move up', self, statusTip='Move clip position up in list',
                                         triggered=self.moveItemUp, enabled=False)
@@ -337,6 +338,7 @@ class VideoCutter(QWidget):
         self.toolbar.addAction(self.cutStartAction)
         self.toolbar.addAction(self.cutEndAction)
         self.toolbar.addAction(self.saveAction)
+        self.toolbar.disableTooltips()
 
     def initMenus(self) -> None:
         self.appMenu.addAction(self.openEDLAction)
@@ -887,3 +889,17 @@ class VideoCutter(QWidget):
 
     def closeEvent(self, event: QCloseEvent) -> None:
         self.parent.closeEvent(event)
+
+
+class ToolBar(QToolBar):
+    def __init__(self, *arg, **kwargs):
+        super(ToolBar, self).__init__(*arg, **kwargs)
+
+    def disableTooltips(self):
+        for button in self.findChildren(QToolButton):
+            button.installEventFilter(self)
+
+    def eventFilter(self, obj: QObject, event: QEvent) -> bool:
+        if event.type() == QEvent.ToolTip:
+            return True
+        return QToolBar.eventFilter(self, obj, event)
