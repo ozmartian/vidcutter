@@ -10,13 +10,12 @@ import time
 from datetime import timedelta
 from locale import setlocale, LC_NUMERIC
 
-from PyQt5.QtCore import (QDir, QEvent, QFile, QFileInfo, QModelIndex, QObject, QPoint, QSize, Qt, QTextStream, QTime,
-                          QUrl, pyqtSlot)
+from PyQt5.QtCore import QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTextStream, QTime, QUrl, pyqtSlot
 from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMovie, QPalette,
                          QPixmap, QWheelEvent)
 from PyQt5.QtWidgets import (QAbstractItemView, QAction, qApp, QFileDialog, QGroupBox, QHBoxLayout, QLabel,
                              QListWidgetItem, QMenu, QMessageBox, QProgressDialog, QPushButton, QSizePolicy,
-                             QSlider, QStyleFactory, QToolBar, QToolButton, QVBoxLayout, QWidget)
+                             QSlider, QStyleFactory, QVBoxLayout, QWidget)
 
 import vidcutter.mpv as mpv
 import vidcutter.resources
@@ -255,7 +254,7 @@ class VideoCutter(QWidget):
         self.openIcon.addFile(':/images/toolbar-open-disabled.png', QSize(50, 53), QIcon.Disabled)
         self.playIcon = QIcon()
         self.playIcon.addFile(':/images/toolbar-play.png', QSize(50, 53), QIcon.Normal)
-        self.playIcon.addFile(':/images/toolbr-play-on.png', QSize(50, 53), QIcon.Active)
+        self.playIcon.addFile(':/images/toolbar-play-on.png', QSize(50, 53), QIcon.Active)
         self.playIcon.addFile(':/images/toolbar-play-disabled.png', QSize(50, 53), QIcon.Disabled)
         self.pauseIcon = QIcon()
         self.pauseIcon.addFile(':/images/toolbar-pause.png', QSize(50, 53), QIcon.Normal)
@@ -324,7 +323,8 @@ class VideoCutter(QWidget):
         self.saveEDLAction = QAction(self.saveEDLIcon, 'Save EDL file', self,
                                      statusTip='Save clip list data to an EDL file',
                                      triggered=self.saveEDL, enabled=False)
-        self.viewLogsAction = QAction(self.viewLogsIcon, 'View app logs', self, statusTip='View the application\'s log file',
+        self.viewLogsAction = QAction(self.viewLogsIcon, 'View app logs', self,
+                                      statusTip='View the application\'s log file',
                                       triggered=self.viewLogs)
         self.updateCheckAction = QAction(self.updateCheckIcon, 'Check for updates...', self,
                                          statusTip='Check for application updates', triggered=self.updateCheck)

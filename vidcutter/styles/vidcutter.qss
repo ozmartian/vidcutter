@@ -20,9 +20,12 @@ QToolBar#appcontrols QToolButton {
     border: none;
 }
 
-QToolBar#appcontrols QToolButton:hover { color: #6A4572; }
+QToolBar#appcontrols QToolButton:hover { color: #444; }
 
-QToolBar#appcontrols QToolButton:pressed { color: #6A4572; }
+QToolBar#appcontrols QToolButton:pressed {
+    font-weight: 500;
+    color: #444;
+}
 
 QToolBar#appcontrols QToolButton:disabled { color: #999; }
 

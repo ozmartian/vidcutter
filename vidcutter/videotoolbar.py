@@ -18,4 +18,4 @@ class VideoToolBar(QToolBar):
             return True
         elif event.type() == QEvent.StatusTip and not obj.isEnabled():
             return True
-        return QToolBar.eventFilter(self, obj, event)
+        return super(VideoToolBar, self).eventFilter(obj, event)
