@@ -13,7 +13,7 @@ class AboutVC(QDialog):
         super(AboutVC, self).__init__(parent, f)
         self.parent = parent
         self.setWindowModality(Qt.ApplicationModal)
-        self.tab_about = AboutTab()
+        self.tab_about = AboutTab(self)
         self.tab_credits = CreditsTab()
         self.tab_license = LicenseTab()
         tabs = QTabWidget()
@@ -28,7 +28,8 @@ class AboutVC(QDialog):
         self.setLayout(layout)
         self.setWindowTitle('About %s' % qApp.applicationName())
         self.setWindowIcon(self.parent.windowIcon())
-        self.resize(700, 450)
+        self.setMinimumSize(685, 445)
+        self.resize(685, 445)
 
     def closeEvent(self, event: QCloseEvent):
         self.tab_about.deleteLater()
@@ -39,13 +40,15 @@ class AboutVC(QDialog):
 
 
 class AboutTab(QTextBrowser):
-    def __init__(self):
-        super(AboutTab, self).__init__()
+    def __init__(self, parent=None):
+        super(AboutTab, self).__init__(parent)
+        self.parent = parent
         self.setObjectName('aboutapp')
         self.setHtml('''<style>
     a { color:#441d4e; text-decoration:none; font-weight:bold; }
     a:hover { text-decoration:underline; }
     table { width: 100%%; }
+    ul { list-style-type: none; }
 </style>
 <table border="0" cellpadding="6" cellspacing="10">
     <tr>
@@ -59,13 +62,14 @@ class AboutTab(QTextBrowser):
                 <span style="font-size:10pt;position:relative;left:5px;">( %s )</span>
             </p>
             <p style="font-size:13px;">
+                + <b>libmpv:</b> v%s
+                <br/>
+                + <b>FFmpeg:</b> v%s
+            </p>
+            <p style="font-size:13px;">
                 Copyright &copy; 2017 <a href="mailto:pete@ozmartians.com">Pete Alexandrou</a>
                 <br/>
                 Website: <a href="%s">%s</a>
-            </p>
-            <p style="font-size:13px;">
-                Thanks to the folks behind the <b>Qt</b>, <b>PyQt</b>, <b>mpv</b> and <b>FFmpeg</b>
-                projects for all their hard and much appreciated work.
             </p>
             <p style="font-size:13px;">
                 The icon is designed by the fine folks at <a href="https://github.com/PapirusDevelopmentTeam">Papirus
@@ -74,17 +78,18 @@ class AboutTab(QTextBrowser):
             <p style="font-size:11px;">
                 This program is free software; you can redistribute it and/or
                 modify it under the terms of the GNU General Public License
-                as published by the Free Software Foundation; either version 2
-                of the License, or (at your option) any later version.
+                version 3, or (at your option) any later version.
             </p>
             <p style="font-size:11px;">
                 This software uses libraries from the <a href="https://mpv.io">mpv</a> and
                 <a href="https://www.ffmpeg.org">FFmpeg</a> projects under the
-                <a href="https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html">LGPLv2.1</a>
+                <a href="https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html">LGPLv2.1</a> license.
             </p>
         </td>
     </tr>
 </table>''' % (qApp.applicationName(), qApp.applicationVersion(), platform.architecture()[0],
+               self.parent.parent.mediaPlayer.mpv_version.replace('mpv ', ''),
+               self.parent.parent.mediaPlayer.ffmpeg_version,
                qApp.organizationDomain(), qApp.organizationDomain()))
 
 
@@ -95,7 +100,7 @@ class CreditsTab(QTextBrowser):
         self.setHtml('''<style>ul { margin-left:-10px; text-align: center; list-style-type: none; }
         li { margin-bottom: 10px; }</style>
     <div>
-        <h3 style="text-align:center;">CREDITS &amp; ACKNOWEDGEMENTS</h3>
+        <h3 style="text-align:center;">CREDITS</h3>
         <p>
             This application either uses code and tools from the following projects in part or in their entirety as
             deemed permissable by each project's open-source license.
