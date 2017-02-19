@@ -540,13 +540,14 @@ class VideoCutter(QWidget):
         self.mediaPlayer.time_pos = position / 1000
 
     def positionChanged(self, progress: int) -> None:
-        self.seekSlider.setValue(progress)
-        currentTime = self.deltaToQTime(progress)
-        totalTime = self.deltaToQTime(self.mediaPlayer.duration * 1000)
-        self.timeCounter.setText(
-            '%s / %s' % (currentTime.toString(self.timeformat), totalTime.toString(self.timeformat)))
-        self.frameCounter.setText(
-            '%s / %s' % (self.mediaPlayer.estimated_frame_number, self.mediaPlayer.estimated_frame_count))
+        if self.seekSlider.restrictValue <= progress:
+            self.seekSlider.setValue(progress)
+            currentTime = self.deltaToQTime(progress)
+            totalTime = self.deltaToQTime(self.mediaPlayer.duration * 1000)
+            self.timeCounter.setText(
+                '%s / %s' % (currentTime.toString(self.timeformat), totalTime.toString(self.timeformat)))
+            self.frameCounter.setText(
+                '%s / %s' % (self.mediaPlayer.estimated_frame_number, self.mediaPlayer.estimated_frame_count))
 
     def durationChanged(self, duration: int) -> None:
         self.seekSlider.setRange(0, duration)
