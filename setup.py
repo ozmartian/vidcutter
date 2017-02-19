@@ -48,7 +48,7 @@ def get_data_files():
             ('/usr/share/icons/hicolor/scalable/apps', ['data/icons/vidcutter.svg']),
             ('/usr/share/applications', ['data/desktop/vidcutter.desktop'])
         ]
-    files.append(('.', ['README.md', 'LICENSE']))
+    files.append(('.', ['README.md', 'vidcutter/LICENSE.html']))
     return files
 
 
@@ -61,7 +61,7 @@ setup(
     version=get_value('version'),
     author='Pete Alexandrou',
     author_email='pete@ozmartians.com',
-    description='FFmpeg based video cutter & joiner with a modern PyQt5 GUI',
+    description='A simple modern video cutter & joiner backed by libmpv and FFmpeg',
     long_description=get_description(),
     url='http://vidcutter.ozmartians.com',
     license='GPLv3+',
@@ -83,7 +83,7 @@ setup(
 
     entry_points={'gui_scripts': ['vidcutter = vidcutter.__main__:main']},
 
-    keywords='vidcutter audiovideoediting audiovideo videoeditor video videoedit pyqt Qt5 multimedia',
+    keywords='vidcutter audiovideoediting audiovideo mpv libmpv videoeditor video videoedit pyqt Qt5 multimedia',
 
     classifiers=[
         'Development Status :: 5 - Production/Stable',

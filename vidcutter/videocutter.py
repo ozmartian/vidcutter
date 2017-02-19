@@ -3,7 +3,6 @@
 
 import logging
 import os
-import platform
 import re
 import sys
 import time
@@ -19,6 +18,7 @@ from PyQt5.QtWidgets import (QAbstractItemView, QAction, qApp, QFileDialog, QGro
 
 import vidcutter.mpv as mpv
 import vidcutter.resources
+from vidcutter.aboutdialog import AboutVC
 from vidcutter.videoframe import VideoFrame
 from vidcutter.videoinfo import VideoInfo
 from vidcutter.videolist import VideoList, VideoItem
@@ -292,45 +292,38 @@ class VideoCutter(QWidget):
         self.thumbsupIcon = QIcon(':/images/thumbsup.png')
 
     def initActions(self) -> None:
-        self.openAction = QAction(self.openIcon, 'Open\nMedia', self, toolTip='',
-                                  statusTip='Open a valid media file', triggered=self.openMedia)
-        self.playAction = QAction(self.playIcon, 'Play\nMedia', self, toolTip='',
-                                  statusTip='Play the loaded media file', triggered=self.playMedia, enabled=False)
-        self.pauseAction = QAction(self.pauseIcon, 'Pause\nMedia', self, visible=False, toolTip='',
-                                   statusTip='Pause the currently playing media file', triggered=self.playMedia)
-        self.cutStartAction = QAction(self.cutStartIcon, 'Clip\nStart', self, toolTip='',
-                                      statusTip='Set the start position of a new clip',
-                                      triggered=self.setCutStart, enabled=False)
-        self.cutEndAction = QAction(self.cutEndIcon, 'Clip\nEnd', self, toolTip='',
-                                    statusTip='Set the end position of a new clip',
-                                    triggered=self.setCutEnd, enabled=False)
-        self.saveAction = QAction(self.saveIcon, 'Save\nVideo', self, toolTip='',
+        self.openAction = QAction(self.openIcon, 'Open\nMedia', self, statusTip='Open a valid media file',
+                                  triggered=self.openMedia)
+        self.playAction = QAction(self.playIcon, 'Play\nMedia', self, triggered=self.playMedia,
+                                  statusTip='Play the loaded media file', enabled=False)
+        self.pauseAction = QAction(self.pauseIcon, 'Pause\nMedia', self, visible=False, triggered=self.playMedia,
+                                   statusTip='Pause the currently playing media file')
+        self.cutStartAction = QAction(self.cutStartIcon, 'Clip\nStart', self, triggered=self.setCutStart, enabled=False,
+                                      statusTip='Set the start position of a new clip')
+        self.cutEndAction = QAction(self.cutEndIcon, 'Clip\nEnd', self, triggered=self.setCutEnd,
+                                    enabled=False, statusTip='Set the end position of a new clip')
+        self.saveAction = QAction(self.saveIcon, 'Save\nVideo', self, 
                                   statusTip='Save clips to a new video file', triggered=self.cutVideo, enabled=False)
         self.moveItemUpAction = QAction(self.upIcon, 'Move up', self, statusTip='Move clip position up in list',
                                         triggered=self.moveItemUp, enabled=False)
         self.moveItemDownAction = QAction(self.downIcon, 'Move down', self, statusTip='Move clip position down in list',
                                           triggered=self.moveItemDown, enabled=False)
-        self.removeItemAction = QAction(self.removeIcon, 'Remove clip', self,
-                                        statusTip='Remove selected clip from list', triggered=self.removeItem,
-                                        enabled=False)
+        self.removeItemAction = QAction(self.removeIcon, 'Remove clip', self, triggered=self.removeItem,
+                                        statusTip='Remove selected clip from list', enabled=False)
         self.removeAllAction = QAction(self.removeAllIcon, 'Clear list', self, statusTip='Clear all clips from list',
                                        triggered=self.clearList, enabled=False)
-        self.mediaInfoAction = QAction(self.mediaInfoIcon, 'Media information', self,
-                                       statusTip='View current media file information', triggered=self.mediaInfo,
-                                       enabled=False)
-        self.openEDLAction = QAction(self.openEDLIcon, 'Open EDL file', self,
-                                     statusTip='Open a previously saved EDL file',
-                                     triggered=self.openEDL, enabled=False)
-        self.saveEDLAction = QAction(self.saveEDLIcon, 'Save EDL file', self,
-                                     statusTip='Save clip list data to an EDL file',
-                                     triggered=self.saveEDL, enabled=False)
-        self.viewLogsAction = QAction(self.viewLogsIcon, 'View app logs', self,
-                                      statusTip='View the application\'s log file',
-                                      triggered=self.viewLogs)
+        self.mediaInfoAction = QAction(self.mediaInfoIcon, 'Media information', self, triggered=self.mediaInfo,
+                                       statusTip='View current media file information', enabled=False)
+        self.openEDLAction = QAction(self.openEDLIcon, 'Open EDL file', self, triggered=self.openEDL, enabled=False,
+                                     statusTip='Open a previously saved EDL file')
+        self.saveEDLAction = QAction(self.saveEDLIcon, 'Save EDL file', self, triggered=self.saveEDL, enabled=False,
+                                     statusTip='Save clip list data to an EDL file')
+        self.viewLogsAction = QAction(self.viewLogsIcon, 'View app logs', self, triggered=self.viewLogs,
+                                      statusTip='View the application\'s log file')
         self.updateCheckAction = QAction(self.updateCheckIcon, 'Check for updates...', self,
                                          statusTip='Check for application updates', triggered=self.updateCheck)
         self.aboutQtAction = QAction('About Qt', self, statusTip='About Qt', triggered=qApp.aboutQt)
-        self.aboutAction = QAction('About %s' % qApp.applicationName(), self, triggered=self.aboutInfo,
+        self.aboutAction = QAction('About %s' % qApp.applicationName(), self, triggered=self.aboutApp,
                                    statusTip='About %s' % qApp.applicationName())
 
     def initToolbar(self) -> None:
@@ -417,44 +410,6 @@ class VideoCutter(QWidget):
     def mediaInfo(self):
         if self.mediaAvailable:
             mediainfo = VideoInfo(parent=self, mpv=self.mediaPlayer)
-
-    def aboutInfo(self) -> None:
-        about_html = '''<style>
-    a { color:#441d4e; text-decoration:none; font-weight:bold; }
-    a:hover { text-decoration:underline; }
-</style>
-<div style="min-width:650px;">
-<p style="font-size:26pt; font-weight:600; color:#6A4572;">%s</p>
-<p>
-    <span style="font-size:13pt;"><b>Version: %s</b></span>
-    <span style="font-size:10pt;position:relative;left:5px;">( %s )</span>
-</p>
-<p style="font-size:13px;">
-    Copyright &copy; 2017 <a href="mailto:pete@ozmartians.com">Pete Alexandrou</a>
-    <br/>
-    Website: <a href="%s">%s</a>
-</p>
-<p style="font-size:13px;">
-    Thanks to the folks behind the <b>Qt</b>, <b>PyQt</b>, <b>mpv</b> and <b>FFmpeg</b>
-    projects for all their hard and much appreciated work.
-</p>
-<p style="font-size:13px;">
-    The application's icon was designed and created by the folks at Papirus Development Team.
-    You can view more of their fine work <a href="https://github.com/PapirusDevelopmentTeam">here</a>.
-</p>
-<p style="font-size:11px;">
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-</p>
-<p style="font-size:11px;">
-    This software uses libraries from the <a href="https://mpv.io">mpv</a> and
-    <a href="https://www.ffmpeg.org">FFmpeg</a> projects under the
-    <a href="https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html">LGPLv2.1</a>
-</p></div>''' % (qApp.applicationName(), qApp.applicationVersion(), platform.architecture()[0],
-                 qApp.organizationDomain(), qApp.organizationDomain())
-        QMessageBox.about(self.parent, 'About %s' % qApp.applicationName(), about_html)
 
     def openMedia(self) -> None:
         filename, _ = QFileDialog.getOpenFileName(self.parent, caption='Select media file',
@@ -735,6 +690,11 @@ class VideoCutter(QWidget):
         for file in joinlist:
             if os.path.isfile(file):
                 QFile.remove(file)
+
+    @pyqtSlot()
+    def aboutApp(self) -> None:
+        aboutVC = AboutVC(self)
+        aboutVC.exec_()
 
     def updateCheck(self) -> None:
         QDesktopServices.openUrl(QUrl(self.latest_release_url))

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from PyQt5.QtCore import Qt, QObject, QEvent
-from PyQt5.QtGui import QMouseEvent, QKeyEvent
+from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtWidgets import QFrame, QMessageBox
 
 
@@ -17,6 +17,7 @@ class VideoFrame(QFrame):
     def toggleFullscreen(self) -> None:
         if self.isFullScreen():
             self.parent.mediaPlayer.fullscreen = False
+            self.parent.mediaPlayer.wid = self.parent.parent.winId()
             self.setWindowState(self.windowState() & ~Qt.WindowFullScreen)
             self.setWindowFlags(Qt.Widget)
             self.parent.parent.show()
@@ -35,8 +36,6 @@ class VideoFrame(QFrame):
 
     def eventFilter(self, obj: QObject, event: QEvent) -> bool:
         if self.parent.mediaAvailable and event.type() == QEvent.WinIdChange:
-            QMessageBox.warning(self, 'winId CHANGE', 'winId change has been detected.\n\n' +
-                                'winId: %s\neffective winId: %s' % (self.winId().asstring(),
-                                                                    self.effectiveWinId().asstring()))
+            self.parent.mediaPlayer.wid = self.winId()
         return super(VideoFrame, self).eventFilter(obj, event)
 

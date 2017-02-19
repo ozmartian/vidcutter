@@ -48,5 +48,6 @@
         <file>images/viewlogs.png</file>
         <file>styles/vidcutter.qss</file>
         <file>styles/vidcutter_osx.qss</file>
+        <file>LICENSE.html</file>
     </qresource>
 </RCC>

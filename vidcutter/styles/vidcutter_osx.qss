@@ -85,6 +85,25 @@ QPushButton#muteButton, QPushButton#menuButton {
 
 /* -------------------------------------------------------------------------- */
 
-QTreeView#mediainfo {
-    alternate-background-color: rgba(0, 0, 0, 0.05);
+QTreeView {
+  alternate-background-color: rgba(0, 0, 0, 0.05);
+  show-decoration-selected: 0;
+}
+
+QTreeView::branch {
+    background-color: #FFF;
+    width: 0;
+    padding: 0;
+    margin: 0;
+    position: relative;
+    left: 0;
+    display: none;
+    visibility: hidden;
+}
+
+/* -------------------------------------------------------------------------- */
+
+QTextBrowser#aboutapp {
+    background-color: transparent;
+    border: none;
 }

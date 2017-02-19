@@ -1,4 +1,4 @@
-include LICENSE
+include vidcutter/LICENSE.html
 include README.md
 include data/desktop/vidcutter.desktop
 include data/icons/vidcutter.svg

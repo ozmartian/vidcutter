@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import logging
 import sys
 
-from PyQt5.QtCore import QEvent, QObject, Qt, pyqtSlot
+from PyQt5.QtCore import QEvent, QObject, Qt, pyqtSlot, QRect, QTime
 from PyQt5.QtGui import QColor, QCursor, QKeyEvent, QMouseEvent, QPaintEvent, QPen, QPixmap, QWheelEvent
 from PyQt5.QtWidgets import QSlider, QStyle, QStyleOptionSlider, QStylePainter, QWidget, qApp
 
@@ -11,6 +12,7 @@ from PyQt5.QtWidgets import QSlider, QStyle, QStyleOptionSlider, QStylePainter, 
 class VideoSlider(QSlider):
     def __init__(self, *arg, **kwargs):
         super(VideoSlider, self).__init__(*arg, **kwargs)
+        self.logger = logging.getLogger(__name__)
         self.setOrientation(Qt.Horizontal)
         self.setObjectName('videoslider')
         self.setAttribute(Qt.WA_Hover, True)
@@ -21,8 +23,8 @@ class VideoSlider(QSlider):
         self.setMouseTracking(True)
         self.setTracking(True)
         self.setTickPosition(QSlider.TicksAbove)
-        self.slider_cursor = QCursor(QPixmap(':/images/slider-cursor.png', 'PNG')) if sys.platform.startswith(
-            'linux') else Qt.SplitHCursor
+        self.slider_cursor = QCursor(QPixmap(':/images/slider-cursor.png', 'PNG'))\
+            if sys.platform.startswith('linux') else Qt.SplitHCursor
         self.setFocus()
         self.initStyle()
         self.restrictValue = 0
@@ -80,6 +82,10 @@ class VideoSlider(QSlider):
         opt.subControls = QStyle.SC_SliderHandle
         painter.drawComplexControl(QStyle.CC_Slider, opt)
 
+    def addClipRegion(self, start: QTime, end: QTime):
+        opt = QStyleOptionSlider()
+        self.initStyleOption(opt)
+
     def wheelEvent(self, event: QWheelEvent) -> None:
         qApp.sendEvent(self.parentWidget(), event)
 
@@ -101,7 +107,7 @@ class VideoSlider(QSlider):
             if self.parentWidget().mediaAvailable:
                 self.setValue(QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.x(), self.width()))
                 self.parentWidget().setPosition(self.sliderPosition())
-        return QWidget.eventFilter(self, obj, event)
+        return super(VideoSlider, self).eventFilter(obj, event)
 
     def getStyleSheet(self, bground: str, margin: str) -> str:
         return '''QSlider:horizontal { margin: 25px 0 18px; }

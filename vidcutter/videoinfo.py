@@ -5,12 +5,12 @@ import logging
 import os
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import QStyleFactory, QTreeWidget, QTreeWidgetItem, QWidget, QVBoxLayout
+from PyQt5.QtGui import QFont, QBrush, QColor
+from PyQt5.QtWidgets import QTreeWidget, QTreeWidgetItem, QWidget, QVBoxLayout, QAbstractItemView, QHeaderView
 
 
 class VideoInfo(QWidget):
-    __metadata = dict(video=dict(), audio=dict())
+    metadata = dict(video=dict(), audio=dict())
 
     def __init__(self, parent, mpv: object):
         super(VideoInfo, self).__init__(parent)
@@ -27,39 +27,55 @@ class VideoInfo(QWidget):
         self.show()
 
     def parse(self) -> None:
+        self.metadata = dict(video=dict(), audio=dict())
         for prop in VideoInfo.video_props():
             if hasattr(self.mpv, prop):
-                self.__metadata['video'][prop] = getattr(self.mpv, prop)
+                self.metadata['video'][prop] = getattr(self.mpv, prop)
         for prop in VideoInfo.audio_props():
             if hasattr(self.mpv, prop):
-                self.__metadata['audio'][prop] = getattr(self.mpv, prop)
+                self.metadata['audio'][prop] = getattr(self.mpv, prop)
 
     def build_tree(self) -> None:
         self.parse()
         if os.getenv('DEBUG', False):
-            self.logger.info(self.__metadata)
+            self.logger.info(self.metadata)
 
-        def populate_tree(item: QTreeWidgetItem, value):
+        def populate_tree(item: QTreeWidgetItem, data):
             item.setExpanded(True)
-            if type(value) is dict:
-                for key, val, in value.items():
+            if type(data) is dict:
+                for key, val in data.items():
                     child = QTreeWidgetItem()
-                    child.setFont(0, QFont('Open Sans Bold'))
                     child.setText(0, str(key))
                     if type(val) is dict:
-                        child.setFirstColumnSpanned(True)
+                        if key in ('audio', 'video'):
+                            child.setForeground(0, QBrush(Qt.white))
+                            child.setForeground(1, QBrush(Qt.white))
+                            child.setBackground(0, QBrush(QColor('#999')))
+                            child.setBackground(1, QBrush(QColor('#999')))
                     else:
                         child.setText(1, str(val) if val is not None else 'Unknown')
                     item.addChild(child)
                     populate_tree(child, val)
+            else:
+                print(data)
 
         self.infowidget = QTreeWidget(self)
-        self.infowidget.setStyle(QStyleFactory.create('Fusion'))
         self.infowidget.setObjectName('mediainfo')
         self.infowidget.setHeaderLabels(['Property', 'Value'])
+
+        populate_tree(self.infowidget.invisibleRootItem(), self.metadata)
+
+        self.infowidget.resizeColumnToContents(0)
+        self.infowidget.resizeColumnToContents(1)
+        self.infowidget.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.infowidget.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.infowidget.header().setSectionResizeMode(1, QHeaderView.Stretch)
+        self.infowidget.header().setSectionsMovable(False)
+        self.infowidget.setIndentation(0)
+        self.infowidget.setAlternatingRowColors(True)
         self.infowidget.setSortingEnabled(True)
+        self.infowidget.sortByColumn(0, Qt.AscendingOrder)
         self.infowidget.setAnimated(True)
-        populate_tree(self.infowidget.invisibleRootItem(), self.__metadata)
 
     @staticmethod
     def video_props() -> list():
@@ -69,7 +85,6 @@ class VideoInfo(QWidget):
             'video_codec',
             'video_format',
             'video_frame_info',
-            'video_out_params',
             'video_output_levels',
             'video_pan_x',
             'video_pan_y',
@@ -90,7 +105,6 @@ class VideoInfo(QWidget):
             'audio_device',
             'audio_device_list',
             'audio_out_detected_device',
-            'audio_out_params',
             'audio_params',
             'audio_samplerate',
             'audio_speed_correction'
