@@ -456,8 +456,8 @@ class VideoCutter(QWidget):
                     mo = self.edlblock_re.match(line)
                     if mo:
                         start, stop, action = mo.groups()
-                        clip_start = self.deltaToQTime(int(float(start) * 1000))
-                        clip_end = self.deltaToQTime(int(float(stop) * 1000))
+                        clip_start = self.delta2QTime(int(float(start) * 1000))
+                        clip_end = self.delta2QTime(int(float(stop) * 1000))
                         clip_image = self.captureImage(frametime=int(float(start) * 1000))
                         self.clipTimes.append([clip_start, clip_end, clip_image])
                     else:
@@ -472,12 +472,6 @@ class VideoCutter(QWidget):
             self.renderTimes()
             qApp.restoreOverrideCursor()
             self.parent.statusBar().showMessage('EDL file was successfully read...', 2000)
-
-    def _td2str(self, td: timedelta) -> str:
-        if td is None or td == timedelta.max:
-            return ''
-        else:
-            return '%f' % (td.days * 86400 + td.seconds + td.microseconds / 1000000.)
 
     def saveEDL(self, filepath: str) -> None:
         source_file, _ = os.path.splitext(self.currentMedia)
@@ -495,7 +489,7 @@ class VideoCutter(QWidget):
                                        milliseconds=clip[0].msec())
                 stop_time = timedelta(hours=clip[1].hour(), minutes=clip[1].minute(), seconds=clip[1].second(),
                                       milliseconds=clip[1].msec())
-                QTextStream(file) << '%s\t%s\t%d\n' % (self._td2str(start_time), self._td2str(stop_time), 0)
+                QTextStream(file) << '%s\t%s\t%d\n' % (self.delta2String(start_time), self.delta2String(stop_time), 0)
             qApp.restoreOverrideCursor()
             self.parent.statusBar().showMessage('EDL file was successfully saved...', 2000)
 
@@ -542,8 +536,8 @@ class VideoCutter(QWidget):
     def positionChanged(self, progress: int) -> None:
         if self.seekSlider.restrictValue <= progress:
             self.seekSlider.setValue(progress)
-            currentTime = self.deltaToQTime(progress)
-            totalTime = self.deltaToQTime(self.mediaPlayer.duration * 1000)
+            currentTime = self.delta2QTime(progress)
+            totalTime = self.delta2QTime(self.mediaPlayer.duration * 1000)
             self.timeCounter.setText(
                 '%s / %s' % (currentTime.toString(self.timeformat), totalTime.toString(self.timeformat)))
             self.frameCounter.setText(
@@ -565,7 +559,7 @@ class VideoCutter(QWidget):
         self.mediaPlayer.volume = volume
 
     def setCutStart(self) -> None:
-        self.clipTimes.append([self.deltaToQTime(self.mediaPlayer.playback_time * 1000), '', self.captureImage()])
+        self.clipTimes.append([self.delta2QTime(self.mediaPlayer.playback_time * 1000), '', self.captureImage()])
         self.cutStartAction.setDisabled(True)
         self.cutEndAction.setEnabled(True)
         self.seekSlider.setRestrictValue(self.seekSlider.value(), True)
@@ -575,7 +569,7 @@ class VideoCutter(QWidget):
 
     def setCutEnd(self) -> None:
         item = self.clipTimes[len(self.clipTimes) - 1]
-        selected = self.deltaToQTime(self.mediaPlayer.playback_time * 1000)
+        selected = self.delta2QTime(self.mediaPlayer.playback_time * 1000)
         if selected.__lt__(item[0]):
             QMessageBox.critical(self.parent, 'Invalid END Time',
                                  'The clip end time must come AFTER it\'s start time. Please try again.')
@@ -617,25 +611,36 @@ class VideoCutter(QWidget):
             listitem.setFlags(Qt.ItemIsSelectable | Qt.ItemIsDragEnabled | Qt.ItemIsEnabled)
             self.cliplist.addItem(listitem)
             if type(clip[1]) is QTime:
-                self.seekSlider.addClipRegion(clip[0], clip[1])
+                startdelta = timedelta(hours=clip[0].hour(), minutes=clip[0].minute(), seconds=clip[0].second(),
+                                       milliseconds=clip[0].msec())
+                enddelta = timedelta(hours=clip[1].hour(), minutes=clip[1].minute(), seconds=clip[1].second(),
+                                     milliseconds=clip[1].msec())
+                self.seekSlider.addClipRegion(int(self.delta2String(startdelta)), int(self.delta2String(enddelta)))
         if len(self.clipTimes) and not self.inCut:
             self.saveAction.setEnabled(True)
             self.saveEDLAction.setEnabled(True)
         if self.inCut or len(self.clipTimes) == 0 or not type(self.clipTimes[0][1]) is QTime:
             self.saveAction.setEnabled(False)
             self.saveEDLAction.setEnabled(False)
-        self.setRunningTime(self.deltaToQTime(self.totalRuntime).toString(self.runtimeformat))
+        self.setRunningTime(self.delta2QTime(self.totalRuntime).toString(self.runtimeformat))
 
     @staticmethod
-    def deltaToQTime(millisecs: int) -> QTime:
+    def delta2QTime(millisecs: int) -> QTime:
         secs = millisecs / 1000
         return QTime((secs / 3600) % 60, (secs / 60) % 60, secs % 60, (secs * 1000) % 1000)
 
+    @staticmethod
+    def delta2String(td: timedelta) -> str:
+        if td is None or td == timedelta.max:
+            return ''
+        else:
+            return '%f' % (td.days * 86400 + td.seconds + td.microseconds / 1000000.)
+
     def captureImage(self, frametime=None) -> QPixmap:
         if frametime is None:
-            frametime = self.deltaToQTime(self.mediaPlayer.playback_time * 1000)
+            frametime = self.delta2QTime(self.mediaPlayer.playback_time * 1000)
         else:
-            frametime = self.deltaToQTime(frametime)
+            frametime = self.delta2QTime(frametime)
         imagecap = self.videoService.capture(self.currentMedia, frametime.toString(self.timeformat))
         if type(imagecap) is QPixmap:
             return imagecap
@@ -661,7 +666,7 @@ class VideoCutter(QWidget):
             self.progress.setLabelText('Cutting media files...')
             qApp.processEvents()
             for clip in self.clipTimes:
-                duration = self.deltaToQTime(clip[0].msecsTo(clip[1])).toString(self.timeformat)
+                duration = self.delta2QTime(clip[0].msecsTo(clip[1])).toString(self.timeformat)
                 filename = '%s_%s%s' % (file, '{0:0>2}'.format(index), ext)
                 filelist.append(filename)
                 self.videoService.cut('%s%s' % (source_file, source_ext), filename, clip[0].toString(self.timeformat),
@@ -737,7 +742,7 @@ class VideoCutter(QWidget):
         </tr>
     </table><br/>''' % (
             QDir.toNativeSeparators(self.finalFilename), self.sizeof_fmt(int(info.size())),
-            self.deltaToQTime(self.totalRuntime).toString(self.timeformat)))
+            self.delta2QTime(self.totalRuntime).toString(self.timeformat)))
         play = mbox.addButton('Play', QMessageBox.AcceptRole)
         play.setIcon(self.completePlayIcon)
         play.clicked.connect(self.openResult)

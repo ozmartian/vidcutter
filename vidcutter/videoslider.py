@@ -82,12 +82,13 @@ class VideoSlider(QSlider):
         opt.subControls = QStyle.SC_SliderHandle
         painter.drawComplexControl(QStyle.CC_Slider, opt)
 
-    def addClipRegion(self, start: QTime, end: QTime):
-        print('adding clip region for %s - %s' % (start.toString(self.parentWidget().timeformat),
-                                                  end.toString(self.parentWidget().timeformat)))
+    def addClipRegion(self, start: int, end: int):
+        # painter = QStylePainter(self)
         opt = QStyleOptionSlider()
         self.initStyleOption(opt)
-        startpos = QStyle.sliderPositionFromValue(self.minimum(), self.maximum(), )
+        startpos = QStyle.sliderPositionFromValue(self.minimum(), self.maximum(), start, self.width())
+        endpos = QStyle.sliderPositionFromValue(self.minimum(), self.maximum(), end, self.width())
+        print('startpos: %s     endpos: %s' % (startpos, endpos))
 
     def wheelEvent(self, event: QWheelEvent) -> None:
         qApp.sendEvent(self.parentWidget(), event)
