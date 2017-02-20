@@ -103,7 +103,7 @@ QTreeView::branch {
 
 /* -------------------------------------------------------------------------- */
 
-QTextBrowser#aboutapp {
-    background-color: transparent;
+QTextBrowser {
+    background-color: #FFF;
     border: none;
 }

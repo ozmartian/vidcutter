@@ -43,7 +43,6 @@ class AboutTab(QTextBrowser):
     def __init__(self, parent=None):
         super(AboutTab, self).__init__(parent)
         self.parent = parent
-        self.setObjectName('aboutapp')
         self.setHtml('''<style>
     a { color:#441d4e; text-decoration:none; font-weight:bold; }
     a:hover { text-decoration:underline; }
