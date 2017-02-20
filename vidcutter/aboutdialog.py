@@ -12,6 +12,7 @@ class AboutVC(QDialog):
     def __init__(self, parent=None, f=Qt.WindowCloseButtonHint):
         super(AboutVC, self).__init__(parent, f)
         self.parent = parent
+        self.setObjectName('aboutwidget')
         self.setWindowModality(Qt.ApplicationModal)
         self.tab_about = AboutTab(self)
         self.tab_credits = CreditsTab()

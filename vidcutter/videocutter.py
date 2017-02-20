@@ -616,6 +616,8 @@ class VideoCutter(QWidget):
             listitem.setData(Qt.UserRole + 1, endItem)
             listitem.setFlags(Qt.ItemIsSelectable | Qt.ItemIsDragEnabled | Qt.ItemIsEnabled)
             self.cliplist.addItem(listitem)
+            if type(clip[1]) is QTime:
+                self.seekSlider.addClipRegion(clip[0], clip[1])
         if len(self.clipTimes) and not self.inCut:
             self.saveAction.setEnabled(True)
             self.saveEDLAction.setEnabled(True)
