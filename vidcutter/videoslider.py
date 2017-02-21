@@ -104,8 +104,6 @@ class VideoSlider(QSlider):
                 x += 10
         opt.subControls = QStyle.SC_SliderGroove
         painter.drawComplexControl(QStyle.CC_Slider, opt)
-        opt.subControls = QStyle.SC_SliderHandle
-        painter.drawComplexControl(QStyle.CC_Slider, opt)
         for path in self._regions:
             gradient = QLinearGradient(QPointF(100, 100), QPointF(200, 200))
             gradient.setColorAt(0, QColor(225, 192, 228, 100))
@@ -114,6 +112,8 @@ class VideoSlider(QSlider):
             painter.setBrush(gradient)
             painter.setPen(QPen(Qt.white, 1, Qt.SolidLine))
             painter.drawPath(path)
+        opt.subControls = QStyle.SC_SliderHandle
+        painter.drawComplexControl(QStyle.CC_Slider, opt)
 
     def addRegion(self, start: int, end: int):
         x = QStyle.sliderPositionFromValue(self.minimum(), self.maximum(), start, self.width())
