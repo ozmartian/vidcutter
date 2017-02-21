@@ -1,6 +1,27 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+#######################################################################
+#
+# VidCutter - a simple yet fast & accurate video cutter & joiner
+#
+# copyright © 2017 Pete Alexandrou
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+#######################################################################
+
 import platform
 
 from PyQt5.QtCore import Qt, QUrl
@@ -47,7 +68,7 @@ class AboutTab(QTextBrowser):
         self.setHtml('''<style>
     a { color:#441d4e; text-decoration:none; font-weight:bold; }
     a:hover { text-decoration:underline; }
-    table { width: 100%%; }
+    table { width: 100%%; font-family: "Open Sans", sans-serif; }
     ul { list-style-type: none; }
 </style>
 <table border="0" cellpadding="6" cellspacing="10">
@@ -58,7 +79,7 @@ class AboutTab(QTextBrowser):
         <td>
             <p style="font-size:32pt; font-weight:600; color:#6A4572;">%s</p>
             <p>
-                <span style="font-size:13pt;"><b>Version: %s</b></span>
+                <span style="font-size:13pt;"><b>Version: %s</span>
                 <span style="font-size:10pt;position:relative;left:5px;">( %s )</span>
             </p>
             <p style="font-size:13px;">

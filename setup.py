@@ -1,6 +1,27 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+#######################################################################
+#
+# VidCutter - a simple yet fast & accurate video cutter & joiner
+#
+# copyright © 2017 Pete Alexandrou
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+#######################################################################
+
 import sys
 from codecs import open
 from os import path
@@ -61,7 +82,7 @@ setup(
     version=get_value('version'),
     author='Pete Alexandrou',
     author_email='pete@ozmartians.com',
-    description='A simple modern video cutter & joiner backed by libmpv and FFmpeg',
+    description='a simple yet fast & accurate video cutter & joiner powered by mpv + FFmpeg',
     long_description=get_description(),
     url='http://vidcutter.ozmartians.com',
     license='GPLv3+',

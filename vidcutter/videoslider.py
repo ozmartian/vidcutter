@@ -1,17 +1,41 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+#######################################################################
+#
+# VidCutter - a simple yet fast & accurate video cutter & joiner
+#
+# copyright © 2017 Pete Alexandrou
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+#######################################################################
+
 import logging
 import sys
 
-from PyQt5.QtCore import QEvent, QObject, Qt, pyqtSlot, QRect, QTime
-from PyQt5.QtGui import QColor, QCursor, QKeyEvent, QMouseEvent, QPaintEvent, QPen, QPixmap, QWheelEvent
-from PyQt5.QtWidgets import QSlider, QStyle, QStyleOptionSlider, QStylePainter, QWidget, qApp
+from PyQt5.QtCore import QEvent, QObject, QPointF, Qt, pyqtSlot
+from PyQt5.QtGui import (QBrush, QColor, QCursor, QGradient, QKeyEvent, QLinearGradient, QMouseEvent, QPaintEvent,
+                         QPainterPath, QPen, QPixmap, QWheelEvent)
+from PyQt5.QtWidgets import QSlider, QStyle, QStyleOptionSlider, QStylePainter, qApp
 
 
 class VideoSlider(QSlider):
     def __init__(self, *arg, **kwargs):
         super(VideoSlider, self).__init__(*arg, **kwargs)
+        self._regions = list()
+        self._regionHeight = 12
         self.logger = logging.getLogger(__name__)
         self.setOrientation(Qt.Horizontal)
         self.setObjectName('videoslider')
@@ -54,6 +78,7 @@ class VideoSlider(QSlider):
 
     def paintEvent(self, event: QPaintEvent) -> None:
         painter = QStylePainter(self)
+        # painter.setRenderHint(QStylePainter.Antialiasing)
         opt = QStyleOptionSlider()
         self.initStyleOption(opt)
         if self.tickPosition() != QSlider.NoTicks:
@@ -81,14 +106,28 @@ class VideoSlider(QSlider):
         painter.drawComplexControl(QStyle.CC_Slider, opt)
         opt.subControls = QStyle.SC_SliderHandle
         painter.drawComplexControl(QStyle.CC_Slider, opt)
+        for path in self._regions:
+            gradient = QLinearGradient(QPointF(100, 100), QPointF(200, 200))
+            gradient.setColorAt(0, QColor(225, 192, 228, 100))
+            gradient.setColorAt(1, QColor(225, 192, 228, 200))
+            gradient.setSpread(QGradient.PadSpread)
+            painter.setBrush(gradient)
+            painter.setPen(QPen(Qt.white, 1, Qt.SolidLine))
+            painter.drawPath(path)
 
-    def addClipRegion(self, start: int, end: int):
-        # painter = QStylePainter(self)
-        opt = QStyleOptionSlider()
-        self.initStyleOption(opt)
-        startpos = QStyle.sliderPositionFromValue(self.minimum(), self.maximum(), start, self.width())
-        endpos = QStyle.sliderPositionFromValue(self.minimum(), self.maximum(), end, self.width())
-        print('startpos: %s     endpos: %s' % (startpos, endpos))
+    def addRegion(self, start: int, end: int):
+        x = QStyle.sliderPositionFromValue(self.minimum(), self.maximum(), start, self.width())
+        y = (self.height() - self._regionHeight) / 2
+        width = QStyle.sliderPositionFromValue(self.minimum(), self.maximum(), end, self.width()) - x
+        height = self._regionHeight
+        path = QPainterPath()
+        path.addRect(x, y + 3, width, height)
+        self._regions.append(path)
+        self.update()
+
+    def clearRegions(self):
+        self._regions.clear()
+        self.update()
 
     def wheelEvent(self, event: QWheelEvent) -> None:
         qApp.sendEvent(self.parentWidget(), event)

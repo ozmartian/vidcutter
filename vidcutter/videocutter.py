@@ -1,6 +1,27 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+#######################################################################
+#
+# VidCutter - a simple yet fast & accurate video cutter & joiner
+#
+# copyright © 2017 Pete Alexandrou
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+#######################################################################
+
 import logging
 import os
 import re
@@ -403,6 +424,7 @@ class VideoCutter(QWidget):
     def clearList(self) -> None:
         self.clipTimes.clear()
         self.cliplist.clear()
+        self.seekSlider.clearRegions()
         self.inCut = False
         self.renderTimes()
         self.initMediaControls()
@@ -500,6 +522,7 @@ class VideoCutter(QWidget):
         self.initMediaControls(True)
         self.cliplist.clear()
         self.clipTimes.clear()
+        self.seekSlider.clearRegions()
         self.parent.setWindowTitle('%s - %s' % (qApp.applicationName(), os.path.basename(self.currentMedia)))
         if not self.mediaAvailable:
             self.videoLayout.replaceWidget(self.novideoWidget, self.videoplayerWidget)
@@ -559,15 +582,17 @@ class VideoCutter(QWidget):
         self.mediaPlayer.volume = volume
 
     def setCutStart(self) -> None:
+        print('cut start position: %s' % self.seekSlider.value())
         self.clipTimes.append([self.delta2QTime(self.mediaPlayer.playback_time * 1000), '', self.captureImage()])
         self.cutStartAction.setDisabled(True)
         self.cutEndAction.setEnabled(True)
         self.seekSlider.setRestrictValue(self.seekSlider.value(), True)
         self.inCut = True
-        self.renderTimes()
         self.mediaPlayer.show_text('clip start marker set', 3000, 0)
+        self.renderTimes()
 
     def setCutEnd(self) -> None:
+        print('cut end position: %s' % self.seekSlider.value())
         item = self.clipTimes[len(self.clipTimes) - 1]
         selected = self.delta2QTime(self.mediaPlayer.playback_time * 1000)
         if selected.__lt__(item[0]):
@@ -579,8 +604,8 @@ class VideoCutter(QWidget):
         self.cutEndAction.setDisabled(True)
         self.seekSlider.setRestrictValue(0, False)
         self.inCut = False
-        self.renderTimes()
         self.mediaPlayer.show_text('clip end marker set', 3000, 0)
+        self.renderTimes()
 
     @pyqtSlot(QModelIndex, int, int, QModelIndex, int)
     def syncClipList(self, parent: QModelIndex, start: int, end: int, destination: QModelIndex, row: int) -> None:
@@ -611,11 +636,7 @@ class VideoCutter(QWidget):
             listitem.setFlags(Qt.ItemIsSelectable | Qt.ItemIsDragEnabled | Qt.ItemIsEnabled)
             self.cliplist.addItem(listitem)
             if type(clip[1]) is QTime:
-                startdelta = timedelta(hours=clip[0].hour(), minutes=clip[0].minute(), seconds=clip[0].second(),
-                                       milliseconds=clip[0].msec())
-                enddelta = timedelta(hours=clip[1].hour(), minutes=clip[1].minute(), seconds=clip[1].second(),
-                                     milliseconds=clip[1].msec())
-                self.seekSlider.addClipRegion(int(self.delta2String(startdelta)), int(self.delta2String(enddelta)))
+                self.seekSlider.addRegion(clip[0].msecsSinceStartOfDay(), clip[1].msecsSinceStartOfDay())
         if len(self.clipTimes) and not self.inCut:
             self.saveAction.setEnabled(True)
             self.saveEDLAction.setEnabled(True)
@@ -788,6 +809,7 @@ class VideoCutter(QWidget):
         self.clearList()
         self.seekSlider.setValue(0)
         self.seekSlider.setRange(0, 0)
+        self.seekSlider.clearRegions()
         self.mpvFrame.hide()
         self.initNoVideo()
         self.videoLayout.replaceWidget(self.videoplayerWidget, self.novideoWidget)
