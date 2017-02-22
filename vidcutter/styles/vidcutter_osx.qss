@@ -141,4 +141,4 @@ QTextBrowser {
 
 /* -------------------------------------------------------------------------- */
 
-QStatusBar { color: #444; }
+QStatusBar { color: #444; margin: 0; padding: 0; }

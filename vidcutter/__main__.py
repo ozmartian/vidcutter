@@ -44,7 +44,6 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         self.edl, self.video = '', ''
-        self.show_metadata = False
         self.parse_cmdline()
         self.init_logger()
         self.init_cutter()
@@ -61,8 +60,6 @@ class MainWindow(QMainWindow):
                 self.cutter.loadMedia(self.video)
             if len(self.edl):
                 self.cutter.openEDL(edlfile=self.edl)
-            if self.show_metadata:
-                self.cutter.mediaInfo()
         except (FileNotFoundError, PermissionError) as e:
             QMessageBox.critical(self, 'Error loading file', sys.exc_info()[0])
             logging.exception('Error loading file')
@@ -97,20 +94,12 @@ class MainWindow(QMainWindow):
         self.parser.addPositionalArgument('video', 'Preloads the video file in app.', '[video]')
         self.edl_option = QCommandLineOption('edl', 'Preloads clip index from a previously saved EDL file.\n' +
                                              'NOTE: You must also set the video argument for this to work.', 'edl file')
-        self.info_option = QCommandLineOption('info', 'Display a table of media file metadata information in ' +
-                                              'kssey/value pairs.\n' +
-                                              'NOTE: You must also set the video argument for this to work.')
         self.debug_option = QCommandLineOption(['d', 'debug'], 'Output all info, warnings and errors to the console. ' +
                                                'This will basically output what is being logged to file to the ' +
                                                'console stdout. Mainly useful for debugging problems with your ' +
                                                'system video and/or audio stack and codec configuration.')
 
-        # <program>  Copyright (C) <year>  <name of author>
-        # This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
-        # This is free software, and you are welcome to redistribute it.
-
         self.parser.addOption(self.edl_option)
-        self.parser.addOption(self.info_option)
         self.parser.addOption(self.debug_option)
         self.parser.addVersionOption()
         self.parser.addHelpOption()
@@ -120,14 +109,12 @@ class MainWindow(QMainWindow):
             print('\n    ERROR: EDL file not found.\n', file=sys.stderr)
             self.close()
             sys.exit(1)
-        if (self.parser.value('edl').strip() or self.parser.isSet(self.info_option)) and len(self.args) == 0:
+        if self.parser.value('edl').strip() and len(self.args) == 0:
             print('\n    ERROR: Video file argument is missing.\n', file=sys.stderr)
             self.close()
             sys.exit(1)
         if self.parser.value('edl').strip():
             self.edl = self.parser.value('edl')
-        if self.parser.isSet(self.info_option):
-            self.show_metadata = True
         if self.parser.isSet(self.debug_option):
             os.environ['DEBUG'] = '1'
         if len(self.args) > 0 and not os.path.exists(self.args[0]):

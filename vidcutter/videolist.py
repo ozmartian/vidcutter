@@ -30,11 +30,13 @@ from PyQt5.QtWidgets import QAbstractItemDelegate, QStyleOptionViewItem, QStyle,
 class VideoList(QListWidget):
     def __init__(self, *arg, **kwargs):
         super(VideoList, self).__init__(*arg, **kwargs)
+        self.itemPressed.connect(lambda item: self.parentWidget().seekSlider.highlightRegion(self.row(item)))
         self.setMouseTracking(True)
 
     def mouseMoveEvent(self, event: QMouseEvent) -> None:
         if self.count() > 0:
-            if self.indexAt(event.pos()).isValid():
+            modelindex = self.indexAt(event.pos())
+            if modelindex.isValid():
                 self.setCursor(Qt.OpenHandCursor)
             else:
                 self.setCursor(Qt.ArrowCursor)
@@ -47,7 +49,9 @@ class VideoItem(QAbstractItemDelegate):
 
     def paint(self, painter: QPainter, option: QStyleOptionViewItem, index: QModelIndex) -> None:
         r = option.rect
-        if option.state & QStyle.State_MouseOver:
+        if option.state & QStyle.State_Selected:
+            painter.setBrush(QColor('#96BE4E'))
+        elif option.state & QStyle.State_MouseOver:
             painter.setBrush(QColor('#E3D4E8'))
         else:
             painter.setBrush(Qt.transparent if index.row() % 2 == 0 else QColor('#EFF0F1'))

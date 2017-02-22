@@ -25,9 +25,9 @@
 import logging
 import sys
 
-from PyQt5.QtCore import QEvent, QObject, QPointF, Qt, pyqtSlot
-from PyQt5.QtGui import (QBrush, QColor, QCursor, QGradient, QKeyEvent, QLinearGradient, QMouseEvent, QPaintEvent,
-                         QPainterPath, QPen, QPixmap, QWheelEvent)
+from PyQt5.QtCore import QEvent, QObject, Qt, pyqtSlot
+from PyQt5.QtGui import (QBrush, QColor, QCursor, QKeyEvent, QMouseEvent, QPaintEvent, QPainterPath, QPen, QPixmap,
+                         QWheelEvent)
 from PyQt5.QtWidgets import QSlider, QStyle, QStyleOptionSlider, QStylePainter, qApp
 
 
@@ -36,6 +36,7 @@ class VideoSlider(QSlider):
         super(VideoSlider, self).__init__(*arg, **kwargs)
         self._regions = list()
         self._regionHeight = 12
+        self._regionSelected = -1
         self.logger = logging.getLogger(__name__)
         self.setOrientation(Qt.Horizontal)
         self.setObjectName('videoslider')
@@ -78,7 +79,6 @@ class VideoSlider(QSlider):
 
     def paintEvent(self, event: QPaintEvent) -> None:
         painter = QStylePainter(self)
-        # painter.setRenderHint(QStylePainter.Antialiasing)
         opt = QStyleOptionSlider()
         self.initStyleOption(opt)
         if self.tickPosition() != QSlider.NoTicks:
@@ -105,12 +105,10 @@ class VideoSlider(QSlider):
         opt.subControls = QStyle.SC_SliderGroove
         painter.drawComplexControl(QStyle.CC_Slider, opt)
         for path in self._regions:
-            gradient = QLinearGradient(QPointF(100, 100), QPointF(200, 200))
-            gradient.setColorAt(0, QColor(225, 192, 228, 100))
-            gradient.setColorAt(1, QColor(225, 192, 228, 200))
-            gradient.setSpread(QGradient.PadSpread)
-            painter.setBrush(gradient)
-            painter.setPen(QPen(Qt.white, 1, Qt.SolidLine))
+            brushcolor = QColor(150, 190, 78, 185) if self._regions.index(path) == self._regionSelected \
+                else QColor(237, 242, 255, 185)
+            painter.setBrush(brushcolor)
+            painter.setPen(Qt.NoPen)
             painter.drawPath(path)
         opt.subControls = QStyle.SC_SliderHandle
         painter.drawComplexControl(QStyle.CC_Slider, opt)
@@ -125,8 +123,13 @@ class VideoSlider(QSlider):
         self._regions.append(path)
         self.update()
 
+    def highlightRegion(self, clipindex: int):
+        self._regionSelected = clipindex
+        self.update()
+
     def clearRegions(self):
         self._regions.clear()
+        self._regionSelected = -1
         self.update()
 
     def wheelEvent(self, event: QWheelEvent) -> None:

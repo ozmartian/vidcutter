@@ -582,7 +582,8 @@ class VideoCutter(QWidget):
         self.mediaPlayer.volume = volume
 
     def setCutStart(self) -> None:
-        print('cut start position: %s' % self.seekSlider.value())
+        if os.getenv('DEBUG', False):
+            print('cut start position: %s' % self.seekSlider.value())
         self.clipTimes.append([self.delta2QTime(self.mediaPlayer.playback_time * 1000), '', self.captureImage()])
         self.cutStartAction.setDisabled(True)
         self.cutEndAction.setEnabled(True)
@@ -592,7 +593,8 @@ class VideoCutter(QWidget):
         self.renderTimes()
 
     def setCutEnd(self) -> None:
-        print('cut end position: %s' % self.seekSlider.value())
+        if os.getenv('DEBUG', False):
+            print('cut end position: %s' % self.seekSlider.value())
         item = self.clipTimes[len(self.clipTimes) - 1]
         selected = self.delta2QTime(self.mediaPlayer.playback_time * 1000)
         if selected.__lt__(item[0]):
@@ -618,7 +620,8 @@ class VideoCutter(QWidget):
 
     def renderTimes(self) -> None:
         self.cliplist.clear()
-        if len(self.clipTimes) > 5:
+        self.seekSlider.clearRegions()
+        if len(self.clipTimes) > 4:
             self.cliplist.setFixedWidth(210)
         else:
             self.cliplist.setFixedWidth(190)
@@ -781,7 +784,8 @@ class VideoCutter(QWidget):
         mbox.adjustSize()
         mbox.exec_()
 
-    def sizeof_fmt(self, num: float, suffix: chr = 'B') -> str:
+    @staticmethod
+    def sizeof_fmt(num: float, suffix: chr = 'B') -> str:
         for unit in ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z']:
             if abs(num) < 1024.0:
                 return "%3.1f%s%s" % (num, unit, suffix)
