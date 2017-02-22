@@ -617,6 +617,7 @@ class VideoCutter(QWidget):
             index = row
         clip = self.clipTimes.pop(start)
         self.clipTimes.insert(index, clip)
+        self.seekSlider.switchRegions(start, index)
 
     def renderTimes(self) -> None:
         self.cliplist.clear()

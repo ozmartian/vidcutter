@@ -113,7 +113,7 @@ class VideoSlider(QSlider):
         opt.subControls = QStyle.SC_SliderHandle
         painter.drawComplexControl(QStyle.CC_Slider, opt)
 
-    def addRegion(self, start: int, end: int):
+    def addRegion(self, start: int, end: int) -> None:
         x = QStyle.sliderPositionFromValue(self.minimum(), self.maximum(), start, self.width())
         y = (self.height() - self._regionHeight) / 2
         width = QStyle.sliderPositionFromValue(self.minimum(), self.maximum(), end, self.width()) - x
@@ -123,11 +123,15 @@ class VideoSlider(QSlider):
         self._regions.append(path)
         self.update()
 
+    def switchRegions(self, index1: int, index2: int) -> None:
+        reg = self._regions.pop(index1)
+        self._regions.insert(index2, reg)
+
     def highlightRegion(self, clipindex: int):
         self._regionSelected = clipindex
         self.update()
 
-    def clearRegions(self):
+    def clearRegions(self) -> None:
         self._regions.clear()
         self._regionSelected = -1
         self.update()
