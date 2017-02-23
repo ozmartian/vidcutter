@@ -1,5 +1,0 @@
-include LICENSE
-include README.md
-include data/desktop/vidcutter.desktop
-include data/icons/vidcutter.svg
-include data/icons/vidcutter.png
