@@ -30,9 +30,9 @@ import signal
 import sys
 import traceback
 
-from PyQt5.QtCore import QCommandLineParser, QCommandLineOption, QFileInfo, QStandardPaths, QTextStream, QFile
+from PyQt5.QtCore import QCommandLineOption, QCommandLineParser, QFile, QFileInfo, QStandardPaths, QTextStream
 from PyQt5.QtGui import QCloseEvent, QDropEvent, QDragEnterEvent
-from PyQt5.QtWidgets import QMainWindow, qApp, QMessageBox, QApplication
+from PyQt5.QtWidgets import qApp, QApplication, QMainWindow, QMessageBox
 
 from vidcutter.videocutter import VideoCutter
 
@@ -84,7 +84,8 @@ class MainWindow(QMainWindow):
         logging.captureWarnings(capture=True)
         sys.excepthook = self.log_uncaught_exceptions
 
-    def log_uncaught_exceptions(self, cls, exc, tb) -> None:
+    @staticmethod
+    def log_uncaught_exceptions(cls, exc, tb) -> None:
         logging.critical(''.join(traceback.format_tb(tb)))
         logging.critical('{0}: {1}'.format(cls, exc))
 
@@ -185,6 +186,7 @@ def main():
     app.setQuitOnLastWindowClosed(True)
     win = MainWindow()
     sys.exit(app.exec_())
+
 
 if __name__ == '__main__':
     main()

@@ -871,12 +871,12 @@ class VideoCutter(QWidget):
             elif event.key() == Qt.Key_Up:
                 self.mediaPlayer.seek(5, 'relative+exact')
             elif event.key() in (Qt.Key_Return, Qt.Key_Enter):
-                self.mpvFrame.toggleFullscreen()
-            elif event.key() == Qt.Key_Space:
                 if self.cutStartAction.isEnabled():
                     self.setCutStart()
                 elif self.cutEndAction.isEnabled():
                     self.setCutEnd()
+            elif event.key() == Qt.Key_Space:
+                self.playMedia()
             event.accept()
 
     def closeEvent(self, event: QCloseEvent) -> None:

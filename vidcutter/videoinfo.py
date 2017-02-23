@@ -26,8 +26,8 @@ import logging
 import os
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont, QBrush, QColor
-from PyQt5.QtWidgets import QTreeWidget, QTreeWidgetItem, QWidget, QVBoxLayout, QAbstractItemView, QHeaderView
+from PyQt5.QtGui import QBrush, QColor, QFont
+from PyQt5.QtWidgets import QAbstractItemView, QHeaderView, QTreeWidget, QTreeWidgetItem, QVBoxLayout, QWidget
 
 
 class VideoInfo(QWidget):
@@ -44,7 +44,7 @@ class VideoInfo(QWidget):
         self.setLayout(layout)
         self.setMinimumSize(650, 400)
         self.setWindowFlags(Qt.Dialog | Qt.WindowCloseButtonHint)
-        self.setWindowTitle('Media Information  ')
+        self.setWindowTitle('Media Information')
         self.show()
 
     def parse(self) -> None:
@@ -67,6 +67,8 @@ class VideoInfo(QWidget):
                 for key, val in data.items():
                     child = QTreeWidgetItem()
                     child.setText(0, str(key))
+                    child.setTextAlignment(0, Qt.AlignRight)
+                    child.setFont(0, QFont('Open Sans', weight=QFont.Bold))
                     if type(val) is dict:
                         if key in ('audio', 'video'):
                             child.setForeground(0, QBrush(Qt.white))
@@ -74,11 +76,13 @@ class VideoInfo(QWidget):
                             child.setBackground(0, QBrush(QColor('#999')))
                             child.setBackground(1, QBrush(QColor('#999')))
                     else:
-                        child.setText(1, str(val) if val is not None else 'Unknown')
+                        if val is None:
+                            val = 'Unknown'
+                        else:
+                            val = str(val, 'utf-8') if isinstance(val, (bytes, bytearray)) else str(val)
+                        child.setText(1, val)
                     item.addChild(child)
                     populate_tree(child, val)
-            else:
-                print(data)
 
         self.infowidget = QTreeWidget(self)
         self.infowidget.setObjectName('mediainfo')
@@ -88,19 +92,19 @@ class VideoInfo(QWidget):
 
         self.infowidget.resizeColumnToContents(0)
         self.infowidget.resizeColumnToContents(1)
-        self.infowidget.setSelectionBehavior(QAbstractItemView.SelectRows)
-        self.infowidget.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.infowidget.setSelectionMode(QAbstractItemView.NoSelection)
         self.infowidget.header().setSectionResizeMode(1, QHeaderView.Stretch)
         self.infowidget.header().setSectionsMovable(False)
         self.infowidget.setIndentation(0)
         self.infowidget.setAlternatingRowColors(True)
         self.infowidget.setSortingEnabled(True)
         self.infowidget.sortByColumn(0, Qt.AscendingOrder)
-        self.infowidget.setAnimated(True)
 
     @staticmethod
     def video_props() -> list():
         return [
+            'media_title',
+            'duration',
             'video_aspect',
             'video_bitrate',
             'video_codec',
@@ -124,7 +128,7 @@ class VideoInfo(QWidget):
             'audio_codec_name',
             'audio_delay',
             'audio_device',
-            'audio_device_list',
+            # 'audio_device_list',
             'audio_out_detected_device',
             'audio_params',
             'audio_samplerate',
