@@ -69,7 +69,6 @@ def get_data_files():
             ('/usr/share/icons/hicolor/scalable/apps', ['data/icons/vidcutter.svg']),
             ('/usr/share/applications', ['data/desktop/vidcutter.desktop'])
         ]
-    files.append(('.', ['README.md', 'vidcutter/LICENSE.html']))
     return files
 
 
@@ -89,22 +88,15 @@ setup(
 
     packages=['vidcutter'],
 
-    package_dir={'vidcutter': 'vidcutter'},
-
     setup_requires=['setuptools'],
 
     install_requires=get_install_requires(),
-
-    # package_data={'vidcutter': [
-    #     'data/desktop/*.*',
-    #     'data/icons/*.*'
-    # ]},
 
     data_files=get_data_files(),
 
     entry_points={'gui_scripts': ['vidcutter = vidcutter.__main__:main']},
 
-    keywords='vidcutter audiovideoediting audiovideo mpv libmpv videoeditor video videoedit pyqt Qt5 multimedia',
+    keywords='vidcutter ffmpeg audiovideo mpv libmpv videoeditor video videoedit pyqt Qt5 multimedia',
 
     classifiers=[
         'Development Status :: 5 - Production/Stable',
