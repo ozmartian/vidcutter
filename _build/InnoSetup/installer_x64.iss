@@ -28,9 +28,8 @@ ArchitecturesAllowed=x64
 ArchitecturesInstallIn64BitMode=x64
 WizardImageFile=C:\DEV\vidcutter\_build\InnoSetup\assets\WizModernImage.bmp
 WizardSmallImageFile=C:\DEV\vidcutter\_build\InnoSetup\assets\SmallWizardImage.bmp
-WindowVisible=True
-BackColor=clPurple
-BackSolid=True
+WizardImageBackColor=clPurple
+WizardImageStretch=False
 
 [InstallDelete]
 Type: filesandordirs; Name: "{app}"
@@ -38,7 +37,7 @@ Type: filesandordirs; Name: "{app}"
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
-[Tasks]
+[Tasks] 
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
 
 [Files]

@@ -23,10 +23,13 @@
 #######################################################################
 
 import platform
+import sys
 
+from PyQt5.Qt import PYQT_VERSION_STR
 from PyQt5.QtCore import Qt, QUrl
 from PyQt5.QtGui import QCloseEvent, QTextDocument
-from PyQt5.QtWidgets import QDialog, QTabWidget, QDialogButtonBox, QVBoxLayout, qApp, QTextBrowser
+from PyQt5.QtWidgets import QDialog, QDialogButtonBox, QTabWidget, QTextBrowser, QVBoxLayout, qApp
+from sip import SIP_VERSION_STR
 
 
 class AboutVC(QDialog):
@@ -51,7 +54,6 @@ class AboutVC(QDialog):
         self.setWindowTitle('About %s' % qApp.applicationName())
         self.setWindowIcon(self.parent.windowIcon())
         self.setMinimumSize(685, 445)
-        self.resize(685, 445)
 
     def closeEvent(self, event: QCloseEvent):
         self.tab_about.deleteLater()
@@ -65,27 +67,39 @@ class AboutTab(QTextBrowser):
     def __init__(self, parent=None):
         super(AboutTab, self).__init__(parent)
         self.parent = parent
+        weight = 500 if sys.platform == 'win32' else 600
         self.setHtml('''<style>
     a { color:#441d4e; text-decoration:none; font-weight:bold; }
     a:hover { text-decoration:underline; }
     table { width: 100%%; font-family: "Open Sans", sans-serif; }
     ul { list-style-type: none; }
 </style>
-<table border="0" cellpadding="6" cellspacing="10">
+<table border="0" cellpadding="6" cellspacing="4">
     <tr>
         <td>
             <img src=":/images/vidcutter.png" />
         </td>
         <td>
-            <p style="font-size:32pt; font-weight:600; color:#6A4572;">%s</p>
             <p>
-                <span style="font-size:13pt;"><b>Version: %s</span>
+                <span style="font-size:38pt; font-weight:%i; color:#6A4572;">%s</span>
+            </p>
+            <p>
+                &nbsp;&nbsp;
+                <span style="font-size:13pt;font-weight:600;">Version:</span>
+                <span style="font-size:13pt;font-weight:%i;">%s</span>
                 <span style="font-size:10pt;position:relative;left:5px;">( %s )</span>
             </p>
             <p style="font-size:13px;">
-                + <b>libmpv:</b> v%s
+                + <b>libmpv:</b> %s
                 <br/>
-                + <b>FFmpeg:</b> v%s
+                + <b>FFmpeg:</b> %s
+            </p>
+            <p style="font-size:13px;">
+                + <b>Python:</b> %s
+                &nbsp;&nbsp;&nbsp;
+                + <b>PyQt5:</b> %s
+                &nbsp;&nbsp;&nbsp;
+                + <b>SIP:</b> %s
             </p>
             <p style="font-size:13px;">
                 Copyright &copy; 2017 <a href="mailto:pete@ozmartians.com">Pete Alexandrou</a>
@@ -100,17 +114,17 @@ class AboutTab(QTextBrowser):
                 This program is free software; you can redistribute it and/or
                 modify it under the terms of the GNU General Public License
                 version 3, or (at your option) any later version.
-            </p>
-            <p style="font-size:11px;">
                 This software uses libraries from the <a href="https://mpv.io">mpv</a> and
                 <a href="https://www.ffmpeg.org">FFmpeg</a> projects under the
                 <a href="https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html">LGPLv2.1</a> license.
             </p>
         </td>
     </tr>
-</table>''' % (qApp.applicationName(), qApp.applicationVersion(), platform.architecture()[0],
+</table>''' % (weight, qApp.applicationName(), weight,
+               qApp.applicationVersion(), platform.architecture()[0],
                self.parent.parent.mediaPlayer.mpv_version.replace('mpv ', ''),
                self.parent.parent.mediaPlayer.ffmpeg_version,
+               sys.version.split(' ')[0], PYQT_VERSION_STR, SIP_VERSION_STR,
                qApp.organizationDomain(), qApp.organizationDomain()))
 
 

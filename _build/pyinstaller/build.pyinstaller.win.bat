@@ -19,7 +19,7 @@ if ["%ARCH%"]==["32"] (
 
 REM ......................get latest version number......................
 
-for /f "delims=" %%a in ('python3 version.py') do @set VERSION=%%a
+for /f "delims=" %%a in ('python version.py') do @set VERSION=%%a
 
 REM ......................cleanup previous build scraps......................
 

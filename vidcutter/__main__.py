@@ -52,8 +52,7 @@ class MainWindow(QMainWindow):
         self.statusBar().showMessage('Ready')
         self.statusBar().setStyleSheet('border:none;')
         self.setAcceptDrops(True)
-        self.setMinimumSize(900, 650)
-        self.resize(900, 650)
+        self.setMinimumSize(900, 640)
         self.show()
         try:
             if len(self.video):
