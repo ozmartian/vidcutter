@@ -31,7 +31,7 @@ import sys
 import traceback
 
 from PyQt5.QtCore import QCommandLineOption, QCommandLineParser, QFile, QFileInfo, QStandardPaths, QTextStream
-from PyQt5.QtGui import QCloseEvent, QDropEvent, QDragEnterEvent
+from PyQt5.QtGui import QCloseEvent, QContextMenuEvent, QDropEvent, QDragEnterEvent
 from PyQt5.QtWidgets import qApp, QApplication, QMainWindow, QMessageBox
 
 from vidcutter.videocutter import VideoCutter
@@ -160,6 +160,12 @@ class MainWindow(QMainWindow):
                 m = re.match('__version__ *= *[\'](.*)[\']', line)
                 if m:
                     return m.group(1)
+
+    def contextMenuEvent(self, event: QContextMenuEvent) -> None:
+        if event.reason() == QContextMenuEvent.Mouse:
+            self.cutter.appMenu.exec_(event.globalPos())
+            event.accept()
+        super(MainWindow, self).contextMenuEvent(event)
 
     def dragEnterEvent(self, event: QDragEnterEvent) -> None:
         if event.mimeData().hasUrls():

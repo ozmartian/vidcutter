@@ -28,6 +28,9 @@ from os import path
 from re import match
 
 from setuptools import setup
+from setuptools_scm import get_version
+from setuptools_git import utils
+from setuptools_markdown import long_description_markdown_filename
 
 
 def get_value(varname, filename='vidcutter/__init__.py'):
@@ -39,12 +42,14 @@ def get_value(varname, filename='vidcutter/__init__.py'):
 
 
 def get_description(filename='README.md'):
-    with open(path.join(here, filename), encoding='utf-8') as f:
-        file = list(f)
-    desc = ''
-    for item in file[11: len(file)]:
-        desc += item
-    return desc
+    utils.
+    return long_description_markdown_filename(filename)
+    # with open(path.join(here, filename), encoding='utf-8') as f:
+    #     file = list(f)
+    # desc = ''
+    # for item in file[11: len(file)]:
+    #     desc += item
+    # return desc
 
 
 def get_install_requires():
@@ -85,10 +90,11 @@ setup(
     long_description=get_description(),
     url='http://vidcutter.ozmartians.com',
     license='GPLv3+',
+    use_scm_version=True,
 
     packages=['vidcutter'],
 
-    setup_requires=['setuptools'],
+    setup_requires=['setuptools', 'setuptools_scm', 'setuptools_scm_git_archive'],
 
     install_requires=get_install_requires(),
 

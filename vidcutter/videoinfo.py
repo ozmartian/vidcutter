@@ -48,7 +48,10 @@ class VideoInfo(QWidget):
         self.show()
 
     def parse(self) -> None:
-        self.metadata = dict(video=dict(), audio=dict())
+        self.metadata = dict(general=dict(), video=dict(), audio=dict())
+        for prop in VideoInfo.general_props():
+            if hasattr(self.mpv, prop):
+                self.metadata['general'][prop] = getattr(self.mpv, prop)
         for prop in VideoInfo.video_props():
             if hasattr(self.mpv, prop):
                 self.metadata['video'][prop] = getattr(self.mpv, prop)
@@ -68,9 +71,9 @@ class VideoInfo(QWidget):
                     child = QTreeWidgetItem()
                     child.setText(0, str(key))
                     child.setTextAlignment(0, Qt.AlignRight)
-                    child.setFont(0, QFont('Open Sans', weight=QFont.Bold))
+                    child.setFont(0, QFont('Open Sans', weight=QFont.DemiBold))
                     if type(val) is dict:
-                        if key in ('audio', 'video'):
+                        if key in ('general', 'audio', 'video'):
                             child.setForeground(0, QBrush(Qt.white))
                             child.setForeground(1, QBrush(Qt.white))
                             child.setBackground(0, QBrush(QColor('#999')))
@@ -101,10 +104,22 @@ class VideoInfo(QWidget):
         self.infowidget.sortByColumn(0, Qt.AscendingOrder)
 
     @staticmethod
-    def video_props() -> list():
+    def general_props() -> list:
+        return [
+            'filename',
+            'file_format',
+            'icc_profile',
+            'icc_profile_auto',
+            'vd_lavc_check_hw_profile',
+            'file_size',
+            'duration',
+            'encoder_list'
+        ]
+
+    @staticmethod
+    def video_props() -> list:
         return [
             'media_title',
-            'duration',
             'video_aspect',
             'video_bitrate',
             'video_codec',
@@ -120,7 +135,7 @@ class VideoInfo(QWidget):
         ]
 
     @staticmethod
-    def audio_props() -> list():
+    def audio_props() -> list:
         return [
             'audio_bitrate',
             'audio_channels',

@@ -36,7 +36,7 @@ class VideoToolBar(QToolBar):
         for button in self.findChildren(QToolButton):
             button.installEventFilter(self)
             if c == total:
-                button.setStyleSheet('QToolButton { color:#642C68; } QToolButton:disabled { color:#999; }')
+                button.setObjectName('saveButton')
             c += 1
 
     def eventFilter(self, obj: QObject, event: QEvent) -> bool:

@@ -46,7 +46,7 @@ QToolBar#appcontrols QToolButton:pressed {
     color: #444;
 }
 
-QToolBar#appcontrols QToolButton:disabled { color: #999; }
+QToolBar#appcontrols QToolButton:disabled { color: #CCC; }
 
 /* -------------------------------------------------------------------------- */
 

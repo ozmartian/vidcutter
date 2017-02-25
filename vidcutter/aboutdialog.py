@@ -53,7 +53,7 @@ class AboutVC(QDialog):
         self.setLayout(layout)
         self.setWindowTitle('About %s' % qApp.applicationName())
         self.setWindowIcon(self.parent.windowIcon())
-        self.setMinimumSize(685, 445)
+        self.setMinimumSize(585, 400)
 
     def closeEvent(self, event: QCloseEvent):
         self.tab_about.deleteLater()
@@ -107,8 +107,8 @@ class AboutTab(QTextBrowser):
                 Website: <a href="%s">%s</a>
             </p>
             <p style="font-size:13px;">
-                The icon is designed by the fine folks at <a href="https://github.com/PapirusDevelopmentTeam">Papirus
-                Development Team</a>.
+                Icon design by <a href="https://github.com/PapirusDevelopmentTeam">Papirus
+                Development Team</a>
             </p>
             <p style="font-size:11px;">
                 This program is free software; you can redistribute it and/or

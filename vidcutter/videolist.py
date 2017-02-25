@@ -32,12 +32,13 @@ class VideoList(QListWidget):
         super(VideoList, self).__init__(*arg, **kwargs)
         self.itemPressed.connect(lambda item: self.parentWidget().seekSlider.highlightRegion(self.row(item)))
         self.setMouseTracking(True)
+        self.setDropIndicatorShown(True)
 
     def mouseMoveEvent(self, event: QMouseEvent) -> None:
         if self.count() > 0:
             modelindex = self.indexAt(event.pos())
             if modelindex.isValid():
-                self.setCursor(Qt.OpenHandCursor)
+                self.setCursor(Qt.PointingHandCursor)
             else:
                 self.setCursor(Qt.ArrowCursor)
         super(VideoList, self).mouseMoveEvent(event)

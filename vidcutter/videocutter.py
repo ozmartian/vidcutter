@@ -233,21 +233,29 @@ class VideoCutter(QWidget):
             self.mpvFrame = QMacCocoaViewContainer(0)
         else:
             self.mpvFrame = VideoFrame(self)
+
         self.mediaPlayer = mpv.MPV(wid=int(self.mpvFrame.winId()),
                                    log_handler=self.logMPV,
                                    ytdl=False,
-                                   input_cursor=False,
-                                   sub_auto=False,
-                                   osc=False,
-                                   osd_level=0,
+                                   pause=True,
                                    keep_open=True,
+                                   idle=True,
+                                   osc=True,
+                                   cursor_autohide=False,
+                                   input_cursor=False,
+                                   input_default_bindings=False,
+                                   stop_playback_on_init_failure=False,
+                                   force_window='immediate',
+                                   input_vo_keyboard=False,
+                                   sub_auto=False,
+                                   osd_level=0,
                                    sid=False,
                                    hr_seek='absolute',
                                    hr_seek_framedrop=True,
                                    rebase_start_time=False,
                                    keepaspect=True,
-                                   hwdec=False)
-        self.mediaPlayer.pause = True
+                                   hwdec='auto')
+
         self.mediaPlayer.observe_property('time-pos', lambda ptime: self.positionChanged(ptime * 1000))
         self.mediaPlayer.observe_property('duration', lambda runtime: self.durationChanged(runtime * 1000))
 
@@ -877,6 +885,9 @@ class VideoCutter(QWidget):
                     self.setCutEnd()
             elif event.key() == Qt.Key_Space:
                 self.playMedia()
+            elif event.key() == Qt.Key_P:
+                from var_dump import var_dump
+                var_dump(self.mediaPlayer.property_list)
             event.accept()
 
     def closeEvent(self, event: QCloseEvent) -> None:
