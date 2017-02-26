@@ -31,8 +31,8 @@ import sys
 import traceback
 
 from PyQt5.QtCore import QCommandLineOption, QCommandLineParser, QFile, QFileInfo, QStandardPaths, QTextStream
-from PyQt5.QtGui import QCloseEvent, QContextMenuEvent, QDropEvent, QDragEnterEvent
-from PyQt5.QtWidgets import qApp, QApplication, QMainWindow, QMessageBox
+from PyQt5.QtGui import QCloseEvent, QContextMenuEvent, QDropEvent, QDragEnterEvent, QPixmap
+from PyQt5.QtWidgets import qApp, QApplication, QLabel, QMainWindow, QMessageBox
 
 from vidcutter.videocutter import VideoCutter
 
@@ -51,6 +51,8 @@ class MainWindow(QMainWindow):
         self.setContentsMargins(0, 0, 0, 0)
         self.statusBar().showMessage('Ready')
         self.statusBar().setStyleSheet('border:none;')
+        self.statusBar().addPermanentWidget(QLabel(pixmap=QPixmap(':/images/vidcutter-emboss.png'),
+                                                   objectName='logowidget'))
         self.setAcceptDrops(True)
         self.setMinimumSize(900, 640)
         self.show()
@@ -155,7 +157,7 @@ class MainWindow(QMainWindow):
 
     @staticmethod
     def get_version(filename: str = '__init__.py') -> str:
-        with open(MainWindow.get_path(filename, override=True), 'r') as initfile:
+        with open(MainWindow.get_path(filename, override=True), 'r', encoding='utf-8') as initfile:
             for line in initfile.readlines():
                 m = re.match('__version__ *= *[\'](.*)[\']', line)
                 if m:

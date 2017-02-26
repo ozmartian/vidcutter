@@ -33,13 +33,13 @@ from locale import setlocale, LC_NUMERIC
 from PyQt5.QtCore import QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTextStream, QTime, QUrl, pyqtSlot
 from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMovie, QPalette,
                          QPixmap, QWheelEvent)
-from PyQt5.QtWidgets import (QAbstractItemView, QAction, qApp, QFileDialog, QGroupBox, QHBoxLayout, QLabel,
-                             QListWidgetItem, QMenu, QMessageBox, QProgressDialog, QPushButton, QSizePolicy,
-                             QSlider, QStyleFactory, QVBoxLayout, QWidget)
+from PyQt5.QtWidgets import (QAbstractItemView, QAction, qApp, QDialog, QDialogButtonBox, QFileDialog, QGroupBox,
+                             QHBoxLayout, QLabel, QListWidgetItem, QMenu, QMessageBox, QProgressDialog, QPushButton,
+                             QSizePolicy, QSlider, QStyleFactory, QVBoxLayout, QWidget)
 
 import vidcutter.mpv as mpv
 import vidcutter.resources
-from vidcutter.aboutdialog import AboutVC
+from vidcutter.appinfo import AppInfo
 from vidcutter.videoframe import VideoFrame
 from vidcutter.videoinfo import VideoInfo
 from vidcutter.videolist import VideoList, VideoItem
@@ -319,6 +319,7 @@ class VideoCutter(QWidget):
         self.viewLogsIcon = QIcon(':/images/viewlogs.png')
         self.updateCheckIcon = QIcon(':/images/update.png')
         self.thumbsupIcon = QIcon(':/images/thumbsup.png')
+        self.keyRefIcon = QIcon(':/images/keymap.png')
 
     def initActions(self) -> None:
         self.openAction = QAction(self.openIcon, 'Open\nMedia', self, statusTip='Open a valid media file',
@@ -347,13 +348,15 @@ class VideoCutter(QWidget):
                                      statusTip='Open a previously saved EDL file')
         self.saveEDLAction = QAction(self.saveEDLIcon, 'Save EDL file', self, triggered=self.saveEDL, enabled=False,
                                      statusTip='Save clip list data to an EDL file')
-        self.viewLogsAction = QAction(self.viewLogsIcon, 'View app logs', self, triggered=self.viewLogs,
+        self.viewLogsAction = QAction(self.viewLogsIcon, 'View log file', self, triggered=self.viewLogs,
                                       statusTip='View the application\'s log file')
         self.updateCheckAction = QAction(self.updateCheckIcon, 'Check for updates...', self,
                                          statusTip='Check for application updates', triggered=self.updateCheck)
         self.aboutQtAction = QAction('About Qt', self, statusTip='About Qt', triggered=qApp.aboutQt)
         self.aboutAction = QAction('About %s' % qApp.applicationName(), self, triggered=self.aboutApp,
                                    statusTip='About %s' % qApp.applicationName())
+        self.keyRefAction = QAction(self.keyRefIcon, 'Keyboard shortcuts', self, triggered=self.showKeyRef,
+                                    statusTip='View shortcut key bindings')
 
     def initToolbar(self) -> None:
         self.toolbar.addAction(self.openAction)
@@ -365,10 +368,12 @@ class VideoCutter(QWidget):
         self.toolbar.disableTooltips()
 
     def initMenus(self) -> None:
+        self.appMenu.addAction(self.mediaInfoAction)
+        self.appMenu.addAction(self.keyRefAction)
+        self.appMenu.addSeparator()
         self.appMenu.addAction(self.openEDLAction)
         self.appMenu.addAction(self.saveEDLAction)
         self.appMenu.addSeparator()
-        self.appMenu.addAction(self.mediaInfoAction)
         self.appMenu.addAction(self.viewLogsAction)
         self.appMenu.addAction(self.updateCheckAction)
         self.appMenu.addSeparator()
@@ -733,9 +738,25 @@ class VideoCutter(QWidget):
                 QFile.remove(file)
 
     @pyqtSlot()
+    def showKeyRef(self):
+        shortcuts = QDialog(self, flags=Qt.WindowCloseButtonHint)
+        shortcuts.setObjectName('shortcuts')
+        buttons = QDialogButtonBox(QDialogButtonBox.Ok, parent=self)
+        buttons.accepted.connect(self.close)
+        layout = QVBoxLayout(spacing=0)
+        layout.addWidget(QLabel(pixmap=QPixmap(':/images/shortcuts.png')))
+        layout.addWidget(buttons)
+        shortcuts.setLayout(layout)
+        shortcuts.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        shortcuts.setContentsMargins(0, 0, 0, 0)
+        shortcuts.setWindowIcon(self.parent.windowIcon())
+        shortcuts.setWindowTitle('Keyboard Shortcuts')
+        shortcuts.exec_()
+
+    @pyqtSlot()
     def aboutApp(self) -> None:
-        aboutVC = AboutVC(self)
-        aboutVC.exec_()
+        appInfo = AppInfo(self)
+        appInfo.exec_()
 
     def updateCheck(self) -> None:
         QDesktopServices.openUrl(QUrl(self.latest_release_url))
@@ -885,10 +906,7 @@ class VideoCutter(QWidget):
                     self.setCutEnd()
             elif event.key() == Qt.Key_Space:
                 self.playMedia()
-            elif event.key() == Qt.Key_P:
-                from var_dump import var_dump
-                var_dump(self.mediaPlayer.property_list)
             event.accept()
 
     def closeEvent(self, event: QCloseEvent) -> None:
-        self.parent.closeEvent(event)
+        self.parentWidget().closeEvent(event)

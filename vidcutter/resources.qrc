@@ -12,6 +12,7 @@
         <file>images/filmstrip.png</file>
         <file>images/handle.png</file>
         <file>images/info.png</file>
+        <file>images/keymap.png</file>
         <file>images/menu.png</file>
         <file>images/menu-active.png</file>
         <file>images/muted.png</file>
@@ -22,6 +23,7 @@
         <file>images/runtime.png</file>
         <file>images/save.png</file>
         <file>images/slider-cursor.png</file>
+        <file>images/shortcuts.png</file>
         <file>images/thumbsup.png</file>
         <file>images/toolbar-end.png</file>
         <file>images/toolbar-end-disabled.png</file>
@@ -45,6 +47,7 @@
         <file>images/up.png</file>
         <file>images/update.png</file>
         <file>images/vidcutter.png</file>
+        <file>images/vidcutter-emboss.png</file>
         <file>images/viewlogs.png</file>
         <file>styles/vidcutter.qss</file>
         <file>styles/vidcutter_osx.qss</file>

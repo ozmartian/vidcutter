@@ -27,14 +27,14 @@ import sys
 
 from PyQt5.Qt import PYQT_VERSION_STR
 from PyQt5.QtCore import Qt, QUrl
-from PyQt5.QtGui import QCloseEvent, QTextDocument
+from PyQt5.QtGui import QCloseEvent
 from PyQt5.QtWidgets import QDialog, QDialogButtonBox, QTabWidget, QTextBrowser, QVBoxLayout, qApp
 from sip import SIP_VERSION_STR
 
 
-class AboutVC(QDialog):
+class AppInfo(QDialog):
     def __init__(self, parent=None, f=Qt.WindowCloseButtonHint):
-        super(AboutVC, self).__init__(parent, f)
+        super(AppInfo, self).__init__(parent, f)
         self.parent = parent
         self.setObjectName('aboutwidget')
         self.setWindowModality(Qt.ApplicationModal)
@@ -53,7 +53,7 @@ class AboutVC(QDialog):
         self.setLayout(layout)
         self.setWindowTitle('About %s' % qApp.applicationName())
         self.setWindowIcon(self.parent.windowIcon())
-        self.setMinimumSize(585, 400)
+        self.setMinimumSize(585, 420)
 
     def closeEvent(self, event: QCloseEvent):
         self.tab_about.deleteLater()
@@ -81,20 +81,18 @@ class AboutTab(QTextBrowser):
         </td>
         <td>
             <p>
-                <span style="font-size:38pt; font-weight:%i; color:#6A4572;">%s</span>
-            </p>
-            <p>
+                <span style="font-size:36pt; font-weight:%i; color:#6A4572;">%s</span>
+                <br/>
                 &nbsp;&nbsp;
                 <span style="font-size:13pt;font-weight:600;">Version:</span>
                 <span style="font-size:13pt;font-weight:%i;">%s</span>
-                <span style="font-size:10pt;position:relative;left:5px;">( %s )</span>
+                <span style="font-size:10pt;position:relative;left:5px;">- %s</span>
             </p>
             <p style="font-size:13px;">
                 + <b>libmpv:</b> %s
-                <br/>
+                &nbsp;&nbsp;&nbsp;
                 + <b>FFmpeg:</b> %s
-            </p>
-            <p style="font-size:13px;">
+                <br/>
                 + <b>Python:</b> %s
                 &nbsp;&nbsp;&nbsp;
                 + <b>PyQt5:</b> %s
@@ -140,6 +138,7 @@ class CreditsTab(QTextBrowser):
             This application either uses code and tools from the following projects in part or in their entirety as
             deemed permissable by each project's open-source license.
         </p>
+        <br/>
         <ul>
             <li>&nbsp;
                 <a href="http://ffmpeg.org">FFmpeg</a>
@@ -155,8 +154,6 @@ class CreditsTab(QTextBrowser):
                 <a href="https://mpv.srsfckn.biz">libmpv</a>
                 -
                 GPLv3+
-                <br/>
-                (Windows builds)
             </li>
             <li>&nbsp;
                 <a href="https://github.com/jaseg/python-mpv">python-mpv</a>
