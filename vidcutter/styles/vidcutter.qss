@@ -19,6 +19,8 @@
 
 QMainWindow, QDialog#aboutwidget { background-color: #EFF0F1; }
 
+QWidget#shortcuts { background:url(':/images/watermark.png') no-repeat; }
+
 QWidget#novideoWidget {
     border: 1px solid #666;
     background-color: #888E93;

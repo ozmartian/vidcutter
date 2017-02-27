@@ -739,19 +739,21 @@ class VideoCutter(QWidget):
 
     @pyqtSlot()
     def showKeyRef(self):
-        shortcuts = QDialog(self, flags=Qt.WindowCloseButtonHint)
+        shortcuts = QWidget(self.parentWidget(), flags=Qt.Dialog | Qt.WindowCloseButtonHint)
         shortcuts.setObjectName('shortcuts')
-        buttons = QDialogButtonBox(QDialogButtonBox.Ok, parent=self)
-        buttons.accepted.connect(self.close)
+        buttons = QDialogButtonBox(QDialogButtonBox.Ok, parent=self.parentWidget())
+        buttons.accepted.connect(shortcuts.hide)
         layout = QVBoxLayout(spacing=0)
         layout.addWidget(QLabel(pixmap=QPixmap(':/images/shortcuts.png')))
         layout.addWidget(buttons)
         shortcuts.setLayout(layout)
         shortcuts.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         shortcuts.setContentsMargins(0, 0, 0, 0)
+        shortcuts.setWindowModality(Qt.NonModal)
         shortcuts.setWindowIcon(self.parent.windowIcon())
         shortcuts.setWindowTitle('Keyboard Shortcuts')
-        shortcuts.exec_()
+        shortcuts.setMinimumWidth(800)
+        shortcuts.show()
 
     @pyqtSlot()
     def aboutApp(self) -> None:
