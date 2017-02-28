@@ -19,7 +19,7 @@
 
 QMainWindow, QDialog#aboutwidget { background-color: #EFF0F1; }
 
-QWidget#shortcuts { background: #FFF url(':/images/watermark.png') no-repeat; }
+QWidget#shortcuts, MediaInfo { background: #FFF url(':/images/watermark.png') no-repeat center top; }
 
 QWidget#novideoWidget {
     border: 1px solid #666;

@@ -33,15 +33,15 @@ from locale import setlocale, LC_NUMERIC
 from PyQt5.QtCore import QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTextStream, QTime, QUrl, pyqtSlot
 from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMovie, QPalette,
                          QPixmap, QWheelEvent)
-from PyQt5.QtWidgets import (QAbstractItemView, QAction, qApp, QDialog, QDialogButtonBox, QFileDialog, QGroupBox,
+from PyQt5.QtWidgets import (QAbstractItemView, QAction, qApp, QDialogButtonBox, QFileDialog, QGroupBox,
                              QHBoxLayout, QLabel, QListWidgetItem, QMenu, QMessageBox, QProgressDialog, QPushButton,
                              QSizePolicy, QSlider, QStyleFactory, QVBoxLayout, QWidget)
 
 import vidcutter.mpv as mpv
 import vidcutter.resources
 from vidcutter.appinfo import AppInfo
+from vidcutter.mediainfo import MediaInfo
 from vidcutter.videoframe import VideoFrame
-from vidcutter.videoinfo import VideoInfo
 from vidcutter.videolist import VideoList, VideoItem
 from vidcutter.videoservice import VideoService
 from vidcutter.videoslider import VideoSlider
@@ -256,6 +256,11 @@ class VideoCutter(QWidget):
                                    keepaspect=True,
                                    hwdec='auto')
 
+        # propsfile = QSaveFile(self.parent.get_path(path='mpv_props_list.txt', override=True))
+        # if propsfile.open(QSaveFile.WriteOnly | QSaveFile.Text):
+        #     QTextStream(propsfile) << '\n'.join(self.mediaPlayer.property_list)
+        # propsfile.commit()
+
         self.mediaPlayer.observe_property('time-pos', lambda ptime: self.positionChanged(ptime * 1000))
         self.mediaPlayer.observe_property('duration', lambda runtime: self.durationChanged(runtime * 1000))
 
@@ -444,7 +449,8 @@ class VideoCutter(QWidget):
 
     def mediaInfo(self):
         if self.mediaAvailable:
-            mediainfo = VideoInfo(parent=self, mpv=self.mediaPlayer)
+            mediainfo = MediaInfo(parent=self, mpv=self.mediaPlayer)
+            mediainfo.show()
 
     def openMedia(self) -> None:
         filename, _ = QFileDialog.getOpenFileName(self.parent, caption='Select media file',
@@ -739,9 +745,9 @@ class VideoCutter(QWidget):
 
     @pyqtSlot()
     def showKeyRef(self):
-        shortcuts = QWidget(self.parentWidget(), flags=Qt.Dialog | Qt.WindowCloseButtonHint)
+        shortcuts = QWidget(self.parent, flags=Qt.Dialog | Qt.WindowCloseButtonHint)
         shortcuts.setObjectName('shortcuts')
-        buttons = QDialogButtonBox(QDialogButtonBox.Ok, parent=self.parentWidget())
+        buttons = QDialogButtonBox(QDialogButtonBox.Ok, parent=shortcuts)
         buttons.accepted.connect(shortcuts.hide)
         layout = QVBoxLayout(spacing=0)
         layout.addWidget(QLabel(pixmap=QPixmap(':/images/shortcuts.png')))
@@ -754,6 +760,7 @@ class VideoCutter(QWidget):
         shortcuts.setWindowTitle('Keyboard Shortcuts')
         shortcuts.setMinimumWidth(800)
         shortcuts.show()
+        shortcuts.updateGeometry()
 
     @pyqtSlot()
     def aboutApp(self) -> None:
