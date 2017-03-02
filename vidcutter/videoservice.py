@@ -24,7 +24,6 @@
 
 import logging
 import os
-import re
 import shlex
 import sys
 from distutils.spawn import find_executable
@@ -60,7 +59,8 @@ class VideoService(QObject):
                 self.mediainfo = find_executable('mediainfo')
         if os.getenv('DEBUG', False):
             try:
-                self.logger.info('VideoService.backend = %s\nVideoService.mediainfo = %s' % (self.backend, self.mediainfo))
+                self.logger.info('\nVideoService.backend = %s\nVideoService.mediainfo = %s'
+                                 % (self.backend, self.mediainfo))
             except:
                 pass
         self.initProc()
