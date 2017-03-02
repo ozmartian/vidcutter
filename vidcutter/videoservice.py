@@ -83,19 +83,11 @@ class VideoService(QObject):
         args = '-f concat -safe 0 -i "%s" -c copy -y "%s"' % (filelist, QDir.fromNativeSeparators(output))
         return self.cmdExec(self.backend, args)
 
-    def framerate(self, source: str) -> float:
-        args = '-i "%s"' % source
-        result = self.cmdExec(self.backend, args, True)
-        if result:
-            result = re.search(r'[\d.]+(?= tbr)', result).group(0)
-        return float(result)
-
     def metadata(self, source: str) -> str:
-        args = '-i "%s"' % source
-        result = self.cmdExec(self.backend, args, True)
-        start = result.find('Input #')
-        end = result.find('At least one')
-        return result[start:end].strip()
+        cmd = 'mediainfo'
+        args = '--output=HTML "%s"' % source
+        result = self.cmdExec(cmd, args, True)
+        return result.strip()
 
     def cmdExec(self, cmd: str, args: str = None, output: bool = False):
         if os.getenv('DEBUG', False):

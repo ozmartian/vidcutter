@@ -35,12 +35,11 @@ from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QFont, QFontDatabase, QI
                          QPixmap, QWheelEvent)
 from PyQt5.QtWidgets import (QAbstractItemView, QAction, qApp, QDialogButtonBox, QFileDialog, QGroupBox,
                              QHBoxLayout, QLabel, QListWidgetItem, QMenu, QMessageBox, QProgressDialog, QPushButton,
-                             QSizePolicy, QSlider, QStyleFactory, QVBoxLayout, QWidget)
+                             QSizePolicy, QSlider, QStyleFactory, QTextBrowser, QVBoxLayout, QWidget)
 
 import vidcutter.mpv as mpv
 import vidcutter.resources
 from vidcutter.appinfo import AppInfo
-from vidcutter.mediainfo import MediaInfo
 from vidcutter.videoframe import VideoFrame
 from vidcutter.videolist import VideoList, VideoItem
 from vidcutter.videoservice import VideoService
@@ -256,11 +255,6 @@ class VideoCutter(QWidget):
                                    keepaspect=True,
                                    hwdec='auto')
 
-        # propsfile = QSaveFile(self.parent.get_path(path='mpv_props_list.txt', override=True))
-        # if propsfile.open(QSaveFile.WriteOnly | QSaveFile.Text):
-        #     QTextStream(propsfile) << '\n'.join(self.mediaPlayer.property_list)
-        # propsfile.commit()
-
         self.mediaPlayer.observe_property('time-pos', lambda ptime: self.positionChanged(ptime * 1000))
         self.mediaPlayer.observe_property('duration', lambda runtime: self.durationChanged(runtime * 1000))
 
@@ -446,11 +440,6 @@ class VideoCutter(QWidget):
         self.inCut = False
         self.renderTimes()
         self.initMediaControls()
-
-    def mediaInfo(self):
-        if self.mediaAvailable:
-            mediainfo = MediaInfo(parent=self, mpv=self.mediaPlayer)
-            mediainfo.show()
 
     def openMedia(self) -> None:
         filename, _ = QFileDialog.getOpenFileName(self.parent, caption='Select media file',
@@ -743,9 +732,32 @@ class VideoCutter(QWidget):
             if os.path.isfile(file):
                 QFile.remove(file)
 
+    def mediaInfo(self):
+        if self.mediaAvailable:
+            mediainfo = QWidget(self, flags=Qt.Dialog | Qt.WindowCloseButtonHint)
+            mediainfo.setObjectName('mediainfo')
+            buttons = QDialogButtonBox(QDialogButtonBox.Ok, parent=mediainfo)
+            buttons.accepted.connect(mediainfo.hide)
+            metadata = '<div align="center" style="margin:15px;">%s</div>'\
+                       % self.videoService.metadata(source=self.currentMedia)
+            browser = QTextBrowser(self)
+            browser.setObjectName('metadata')
+            browser.setHtml(metadata)
+            layout = QVBoxLayout()
+            layout.addWidget(browser)
+            layout.addWidget(buttons)
+            mediainfo.setLayout(layout)
+            mediainfo.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+            mediainfo.setContentsMargins(0, 0, 0, 0)
+            mediainfo.setWindowModality(Qt.NonModal)
+            mediainfo.setWindowIcon(self.parent.windowIcon())
+            mediainfo.setWindowTitle('Media information')
+            mediainfo.setMinimumSize(750, 450)
+            mediainfo.show()
+
     @pyqtSlot()
     def showKeyRef(self):
-        shortcuts = QWidget(self.parent, flags=Qt.Dialog | Qt.WindowCloseButtonHint)
+        shortcuts = QWidget(self, flags=Qt.Window | Qt.WindowCloseButtonHint)
         shortcuts.setObjectName('shortcuts')
         buttons = QDialogButtonBox(QDialogButtonBox.Ok, parent=shortcuts)
         buttons.accepted.connect(shortcuts.hide)
@@ -760,7 +772,6 @@ class VideoCutter(QWidget):
         shortcuts.setWindowTitle('Keyboard Shortcuts')
         shortcuts.setMinimumWidth(800)
         shortcuts.show()
-        shortcuts.updateGeometry()
 
     @pyqtSlot()
     def aboutApp(self) -> None:
@@ -827,9 +838,9 @@ class VideoCutter(QWidget):
     def sizeof_fmt(num: float, suffix: chr = 'B') -> str:
         for unit in ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z']:
             if abs(num) < 1024.0:
-                return "%3.1f%s%s" % (num, unit, suffix)
+                return "%3.1f %s%s" % (num, unit, suffix)
             num /= 1024.0
-        return "%.1f%s%s" % (num, 'Y', suffix)
+        return "%.1f %s%s" % (num, 'Y', suffix)
 
     @pyqtSlot()
     def openFolder(self) -> None:

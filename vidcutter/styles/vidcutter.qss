@@ -19,14 +19,15 @@
 
 QMainWindow, QDialog#aboutwidget { background-color: #EFF0F1; }
 
-QWidget#shortcuts, MediaInfo { background: #FFF url(':/images/watermark.png') no-repeat center top; }
+QWidget#shortcuts {
+    margin-top: 15px;
+    background: #FFF url(':/images/watermark.png') no-repeat center top;
+}
 
 QWidget#novideoWidget {
     border: 1px solid #666;
     background-color: #888E93;
 }
-
-QDialog#shortcuts { background-color: #FFF; }
 
 /* -------------------------------------------------------------------------- */
 
@@ -65,6 +66,8 @@ QListView#cliplist {
     show-decoration-selected: 1;
     background-color: #FFF;
 }
+
+QListView::item#cliplist { padding: 10px; }
 
 /* -------------------------------------------------------------------------- */
 
@@ -137,16 +140,14 @@ QTreeView::branch {
 
 QTabWidget::pane { border: 1px solid #999; }
 
-QTabBar::tab {
-    color: #444;
-}
+QTabBar::tab { color: #444; }
 
 QTabBar::tab:selected, QTabBar::tab:hover {
     background: #642C68;
     color: #FFF;
 }
 
-QTextBrowser {
+QDialog#aboutwidget QTextBrowser {
     background-color: #FFF;
     border: none;
     color: #444;

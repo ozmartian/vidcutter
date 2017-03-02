@@ -48,10 +48,10 @@ def get_value(varname, filename='vidcutter/__init__.py'):
 
 
 def get_install_requires():
+    deps = ['pymediainfo']
     if packager == 'pypi':
-        return ['PyQt5']
-    else:
-        return []
+        deps.append('PyQt5')
+    return deps
 
 
 def get_data_files():
@@ -61,11 +61,11 @@ def get_data_files():
             ('/usr/share/icons/hicolor/22x22/apps', ['data/icons/hicolor/22x22/apps/vidcutter.png']),
             ('/usr/share/icons/hicolor/24x24/apps', ['data/icons/hicolor/24x24/apps/vidcutter.png']),
             ('/usr/share/icons/hicolor/32x32/apps', ['data/icons/hicolor/32x32/apps/vidcutter.png']),
-            ('/usr/share/icons/hicolor/48x48/apps', ['data/icons/hicolor/48x48/apps/vidcutter.png']),
+            ('/usr/share/icons/hicolor/48x48/apps', ['data/icons/hicolor/48x48/apps/vidcutter.png']),w
             ('/usr/share/icons/hicolor/64x64/apps', ['data/icons/hicolor/64x64/apps/vidcutter.png']),
             ('/usr/share/icons/hicolor/128x128/apps', ['data/icons/hicolor/128x128/apps/vidcutter.png']),
             ('/usr/share/icons/hicolor/256x256/apps', ['data/icons/hicolor/256x256/apps/vidcutter.png']),
-            ('/usr/share/icons/hicolor/512x512/apps', ['data/icons/hicolor/512x512/apps/vidcutter.png']),
+            ('/usr/share/icons/hicolor/512x512/apps', ['data/icons/hicolor/512x512/apps/vidcutter.png'])w,
             ('/usr/share/icons/hicolor/scalable/apps', ['data/icons/vidcutter.svg']),
             ('/usr/share/applications', ['data/desktop/vidcutter.desktop'])
         ]
