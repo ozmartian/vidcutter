@@ -734,26 +734,30 @@ class VideoCutter(QWidget):
 
     def mediaInfo(self):
         if self.mediaAvailable:
-            mediainfo = QWidget(self, flags=Qt.Dialog | Qt.WindowCloseButtonHint)
-            mediainfo.setObjectName('mediainfo')
-            buttons = QDialogButtonBox(QDialogButtonBox.Ok, parent=mediainfo)
-            buttons.accepted.connect(mediainfo.hide)
-            metadata = '<div align="center" style="margin:15px;">%s</div>'\
-                       % self.videoService.metadata(source=self.currentMedia)
-            browser = QTextBrowser(self)
-            browser.setObjectName('metadata')
-            browser.setHtml(metadata)
-            layout = QVBoxLayout()
-            layout.addWidget(browser)
-            layout.addWidget(buttons)
-            mediainfo.setLayout(layout)
-            mediainfo.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-            mediainfo.setContentsMargins(0, 0, 0, 0)
-            mediainfo.setWindowModality(Qt.NonModal)
-            mediainfo.setWindowIcon(self.parent.windowIcon())
-            mediainfo.setWindowTitle('Media information')
-            mediainfo.setMinimumSize(750, 450)
-            mediainfo.show()
+            try:
+                mediainfo = QWidget(self, flags=Qt.Dialog | Qt.WindowCloseButtonHint)
+                mediainfo.setObjectName('mediainfo')
+                buttons = QDialogButtonBox(QDialogButtonBox.Ok, parent=mediainfo)
+                buttons.accepted.connect(mediainfo.hide)
+                metadata = '<div align="center" style="margin:15px;">%s</div>'\
+                           % self.videoService.metadata(source=self.currentMedia)
+                browser = QTextBrowser(self)
+                browser.setObjectName('metadata')
+                browser.setHtml(metadata)
+                layout = QVBoxLayout()
+                layout.addWidget(browser)
+                layout.addWidget(buttons)
+                mediainfo.setLayout(layout)
+                mediainfo.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+                mediainfo.setContentsMargins(0, 0, 0, 0)
+                mediainfo.setWindowModality(Qt.NonModal)
+                mediainfo.setWindowIcon(self.parent.windowIcon())
+                mediainfo.setWindowTitle('Media Information')
+                mediainfo.setMinimumSize(750, 450)
+                mediainfo.show()
+            except:
+                self.logger.exception('Exception occurred attempting to run mediainfo')
+                pass
 
     @pyqtSlot()
     def showKeyRef(self):

@@ -22,6 +22,7 @@
 #
 #######################################################################
 
+import logging
 import os
 import re
 import shlex
@@ -37,19 +38,31 @@ class VideoService(QObject):
     def __init__(self, parent=None):
         super(VideoService, self).__init__(parent)
         self.parent = parent
+        self.logger = logging.getLogger(__name__)
         self.consoleOutput = ''
         if sys.platform == 'win32':
             self.backend = os.path.join(self.getAppPath(), 'bin', 'ffmpeg.exe')
+            self.mediainfo = os.path.join(self.getAppPath(), 'bin', 'MediaInfo.exe')
             if not os.path.exists(self.backend):
                 self.backend = find_executable('ffmpeg.exe')
+            if not os.path.exists(self.mediainfo):
+                self.mediainfo = find_executable('MediaInfo.exe')
         else:
             self.backend = os.path.join(self.getAppPath(), 'bin', 'ffmpeg')
+            self.mediainfo = os.path.join(self.getAppPath(), 'bin', 'mediainfo')
             if not os.path.exists(self.backend):
                 for exe in ('ffmpeg', 'avconv'):
                     exe_path = find_executable(exe)
                     if exe_path is not None:
                         self.backend = exe_path
                         break
+            if not os.path.exists(self.mediainfo):
+                self.mediainfo = find_executable('mediainfo')
+        if os.getenv('DEBUG', False):
+            try:
+                self.logger.info('VideoService.backend = %s\nVideoService.mediainfo = %s' % (self.backend, self.mediainfo))
+            except:
+                pass
         self.initProc()
 
     def initProc(self) -> None:
@@ -84,9 +97,8 @@ class VideoService(QObject):
         return self.cmdExec(self.backend, args)
 
     def metadata(self, source: str) -> str:
-        cmd = 'mediainfo'
         args = '--output=HTML "%s"' % source
-        result = self.cmdExec(cmd, args, True)
+        result = self.cmdExec(self.mediainfo, args, True)
         return result.strip()
 
     def cmdExec(self, cmd: str, args: str = None, output: bool = False):
