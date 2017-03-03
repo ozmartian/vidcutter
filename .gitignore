@@ -17,7 +17,7 @@ vidcutter/vidcutter.exe
 vidcutter/bin/
 bin/
 .DS_Store
-_packaging/
+_packaging/appimage/*/
 testing
 _build/pyinstaller/libmpv
 mpv-1.dll
