@@ -641,6 +641,8 @@ class VideoCutter(QWidget):
                 endItem = clip[1].toString(self.timeformat)
                 self.totalRuntime += clip[0].msecsTo(clip[1])
             listitem = QListWidgetItem()
+            listitem.setToolTip('Drag clip to reorder')
+            listitem.setStatusTip('Reorder clips with drag and drop or right-click menu')
             listitem.setTextAlignment(Qt.AlignVCenter)
             listitem.setData(Qt.DecorationRole, clip[2])
             listitem.setData(Qt.DisplayRole, clip[0].toString(self.timeformat))

@@ -30,8 +30,8 @@ import signal
 import sys
 import traceback
 
-from PyQt5.QtCore import QCommandLineOption, QCommandLineParser, QFile, QFileInfo, QStandardPaths, QTextStream
-from PyQt5.QtGui import QCloseEvent, QContextMenuEvent, QDropEvent, QDragEnterEvent, QPixmap
+from PyQt5.QtCore import QCommandLineOption, QCommandLineParser, QFile, QFileInfo, QStandardPaths, Qt, QTextStream
+from PyQt5.QtGui import QCloseEvent, QContextMenuEvent, QDragEnterEvent, QDropEvent, QMouseEvent, QPixmap
 from PyQt5.QtWidgets import qApp, QApplication, QLabel, QMainWindow, QMessageBox
 
 from vidcutter.videocutter import VideoCutter
@@ -168,6 +168,10 @@ class MainWindow(QMainWindow):
             self.cutter.appMenu.exec_(event.globalPos())
             event.accept()
         super(MainWindow, self).contextMenuEvent(event)
+
+    def mousePressEvent(self, event: QMouseEvent):
+        if event.button() == Qt.LeftButton:
+            self.cutter.cliplist.clearSelection()
 
     def dragEnterEvent(self, event: QDragEnterEvent) -> None:
         if event.mimeData().hasUrls():
