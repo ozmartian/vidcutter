@@ -162,6 +162,11 @@ class CreditsTab(QTextBrowser):
                 AGPLv3
             </li>
             <li>&nbsp;
+                <a href="http://mediaarea.net/mediainfo">MediaInfo</a>
+                -
+                BSD-style
+            </li>
+            <li>&nbsp;
                 <a href="https://www.riverbankcomputing.com/software/pyqt">PyQt5</a>
                 -
                 GPLv3
