@@ -38,17 +38,17 @@ def get_value(varname, filename='vidcutter/__init__.py'):
                 return m.group(1)
 
 
-# def get_description(filename='README.md'):
-#     with open(path.join(here, filename), encoding='utf-8') as f:
-#         file = list(f)
-#     desc = ''
-#     for item in file[11: len(file)]:
-#         desc += item
-#     return desc
+def get_description(filename='README.md'):
+    with open(path.join(here, filename), encoding='utf-8') as f:
+        file = list(f)
+    desc = ''
+    for item in file[11: len(file)]:
+        desc += item
+    return desc
 
 
 def get_install_requires():
-    deps = ['pymediainfo']
+    deps = []
     if packager == 'pypi':
         deps.append('PyQt5')
     return deps
@@ -80,15 +80,14 @@ setup(
     version=get_value('version'),
     author='Pete Alexandrou',
     author_email='pete@ozmartians.com',
-    description='the simple & fast video cutter & joiner with help from mpv + FFmpeg',
-    # long_description=get_description(),
+    description='the simple & fast video cutter & joiner with the help of mpv + FFmpeg',
+    long_description=get_description(),
     url='http://vidcutter.ozmartians.com',
     license='GPLv3+',
-    long_description_markdown_filename='README.md',
 
     packages=['vidcutter'],
 
-    setup_requires=['setuptools', 'setuptools-markdown'],
+    setup_requires=['setuptools'],
 
     install_requires=get_install_requires(),
 
