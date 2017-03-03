@@ -6,17 +6,18 @@ from PyQt5.QtCore import QLibraryInfo
 
 block_cipher = None
 
-a = Analysis(['../../vidcutter.py'],
+a = Analysis(['../../vidcutter/__main__.py'],
              pathex=[
                  QLibraryInfo.location(QLibraryInfo.LibrariesPath),
                  QLibraryInfo.location(QLibraryInfo.PluginsPath),
                  '../..'
              ],
-             binaries=[
-                ('/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1', '.')
-             ],
+             # binaries=[
+             #    ('/usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0', '.')
+             # ],
+             binaries=[],
              datas=[
-               ('../../__init__.py', '.'),
+               ('../../vidcutter/__init__.py', '.'),
                ('../../bin/ffmpeg', './bin'),
                ('../../LICENSE', '.'),
                ('../../README.md', '.')
@@ -24,7 +25,7 @@ a = Analysis(['../../vidcutter.py'],
              hiddenimports=[],
              hookspath=[],
              runtime_hooks=[],
-             excludes=[],
+             excludes=['*.dll'],
              win_no_prefer_redirects=False,
              win_private_assemblies=False,
              cipher=block_cipher)

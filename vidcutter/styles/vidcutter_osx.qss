@@ -1,3 +1,29 @@
+/*************************************************************************
+ *  VidCutter - a simple yet fast & accurate video cutter & joiner
+ *
+ *  copyright © 2017 Pete Alexandrou
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *************************************************************************/
+
+QMainWindow, QDialog#aboutwidget { background-color: #EFF0F1; }
+
+QWidget#shortcuts {
+    margin-top: 15px;
+    background: #FFF url(':/images/watermark.png') no-repeat center top;
+}
+
 QWidget#novideoWidget {
     border: 1px solid #666;
     background-color: #888E93;
@@ -5,41 +31,37 @@ QWidget#novideoWidget {
 
 /* -------------------------------------------------------------------------- */
 
-QToolBar#appcontrols { spacing: 6px; }
+QToolBar#appcontrols { spacing: 15px; }
 
 QToolBar#appcontrols QToolButton {
-    border: 1px solid transparent;
-    min-width: 100px;
-    border-radius: 5px;
     padding: 1px 2px;
     margin: 0;
-    color: #6A4572;
+    color: #444;
     font-size: 15pt;
     font-weight: 400;
     line-height: 80%;
+    background: transparent;
+    border: none;
 }
 
-QToolBar#appcontrols QToolButton:hover {
-    border: 1px solid #888;
-    color: #6A4572;
-    background-color: rgba(255, 255, 255, 0.85);
-}
+QToolBar#appcontrols QToolButton:hover { color: #444; }
 
 QToolBar#appcontrols QToolButton:pressed {
-    border: 1px solid #444;
-    color: #6A4572;
-    background-color: rgba(255, 255, 255, 0.25);
+    font-weight: 500;
+    color: #444;
 }
 
-QToolBar#appcontrols QToolButton:disabled { color: #999; }
+QToolBar#appcontrols QToolButton:disabled { color: #CCC; }
 
 /* -------------------------------------------------------------------------- */
 
-QListView {
+QListView#cliplist {
     border-radius: 0;
     border: none;
     border-left: 1px solid #B9B9B9;
     border-right: 1px solid #B9B9B9;
+    show-decoration-selected: 1;
+    background-color: #FFF;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -60,20 +82,25 @@ QLabel#runtimeLabel {
     border: 1px solid #B9B9B9;
 }
 
-QLabel#timeCounter {
+QLabel#timeCounter, QLabel#frameCounter {
     color: #FFF;
-    background: #000;
     font-family: "Droid Sans Mono", monospace;
     font-size: 12.5pt;
     padding: 4px;
+}
+
+QLabel#logowidget {
+    margin: -3px 5px 5px 0;
+    border: none;
+    outline: none;
 }
 
 /* -------------------------------------------------------------------------- */
 
 QPushButton#menuButton {
     border-image: url(:/images/menu.png);
-    width: 24px;    
-    height: 24px;
+    width: 40px;
+    height: 42px;
 }
 
 QPushButton:hover#menuButton, QPushButton:pressed#menuButton { border-image: url(:/images/menu-active.png); }
@@ -85,3 +112,42 @@ QPushButton#muteButton, QPushButton#menuButton {
     border: none;
     outline: none;
 }
+
+/* -------------------------------------------------------------------------- */
+
+QTreeView {
+  alternate-background-color: rgba(0, 0, 0, 0.05);
+  show-decoration-selected: 0;
+}
+
+QTreeView::branch {
+    background-color: #FFF;
+    width: 0;
+    padding: 0;
+    margin: 0;
+    position: relative;
+    left: 0;
+    display: none;
+    visibility: hidden;
+}
+
+/* -------------------------------------------------------------------------- */
+
+QTabWidget::pane { border: 1px solid #999; }
+
+QTabBar::tab { color: #444; }
+
+QTabBar::tab:selected, QTabBar::tab:hover {
+    background: #642C68;
+    color: #FFF;
+}
+
+QDialog#aboutwidget QTextBrowser {
+    background-color: #FFF;
+    border: none;
+    color: #444;
+}
+
+/* -------------------------------------------------------------------------- */
+
+QStatusBar { color: #444; margin: 0; padding: 0; }

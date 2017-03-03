@@ -22,6 +22,26 @@
 #
 #######################################################################
 
-__version__ = '3.0.0'
+from PyQt5.QtCore import QObject, QEvent
+from PyQt5.QtWidgets import QToolBar, QToolButton
 
-__packager__ = 'pypi'  # [ pypi | arch | deb ]
+
+class VideoToolBar(QToolBar):
+    def __init__(self, *arg, **kwargs):
+        super(VideoToolBar, self).__init__(*arg, **kwargs)
+
+    def disableTooltips(self):
+        c = 1
+        total = len(self.findChildren(QToolButton))
+        for button in self.findChildren(QToolButton):
+            button.installEventFilter(self)
+            if c == total:
+                button.setObjectName('saveButton')
+            c += 1
+
+    def eventFilter(self, obj: QObject, event: QEvent) -> bool:
+        if event.type() == QEvent.ToolTip:
+            return True
+        elif event.type() == QEvent.StatusTip and not obj.isEnabled():
+            return True
+        return super(VideoToolBar, self).eventFilter(obj, event)

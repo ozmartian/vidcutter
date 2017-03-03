@@ -1,15 +1,38 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+#######################################################################
+#
+# VidCutter - a simple yet fast & accurate video cutter & joiner
+#
+# copyright © 2017 Pete Alexandrou
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+#######################################################################
+
 import logging
+import logging.handlers
 import os
 import re
 import signal
 import sys
+import traceback
 
-from PyQt5.QtCore import QCommandLineParser, QCommandLineOption, QFileInfo, QTextStream, QFile, QStandardPaths
-from PyQt5.QtGui import QCloseEvent, QDropEvent, QDragEnterEvent
-from PyQt5.QtWidgets import QMainWindow, qApp, QMessageBox, QApplication
+from PyQt5.QtCore import QCommandLineOption, QCommandLineParser, QFile, QFileInfo, QStandardPaths, Qt, QTextStream
+from PyQt5.QtGui import QCloseEvent, QContextMenuEvent, QDragEnterEvent, QDropEvent, QMouseEvent, QPixmap
+from PyQt5.QtWidgets import qApp, QApplication, QLabel, QMainWindow, QMessageBox
 
 from vidcutter.videocutter import VideoCutter
 
@@ -20,46 +43,66 @@ signal.signal(signal.SIGTERM, signal.SIG_DFL)
 class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
-        self.init_logging()
         self.edl, self.video = '', ''
         self.parse_cmdline()
+        self.init_logger()
         self.init_cutter()
         self.setWindowTitle('%s' % qApp.applicationName())
         self.setContentsMargins(0, 0, 0, 0)
         self.statusBar().showMessage('Ready')
         self.statusBar().setStyleSheet('border:none;')
+        self.statusBar().addPermanentWidget(QLabel(pixmap=QPixmap(':/images/vidcutter-emboss.png'),
+                                                   objectName='logowidget'))
         self.setAcceptDrops(True)
-        self.setMinimumSize(900, 650)
-        self.resize(900, 650)
+        self.setMinimumSize(900, 640)
         self.show()
         try:
             if len(self.video):
                 self.cutter.loadMedia(self.video)
             if len(self.edl):
                 self.cutter.openEDL(edlfile=self.edl)
-        except (FileNotFoundError, PermissionError):
+        except (FileNotFoundError, PermissionError) as e:
             QMessageBox.critical(self, 'Error loading file', sys.exc_info()[0])
+            logging.exception('Error loading file')
             qApp.restoreOverrideCursor()
             self.cutter.startNew()
         if not self.cutter.ffmpeg_check():
             self.close()
             sys.exit(1)
 
-    def init_logging(self) -> None:
+    def init_logger(self) -> None:
         log_path = QStandardPaths.writableLocation(QStandardPaths.AppConfigLocation).lower()
         os.makedirs(log_path, exist_ok=True)
-        logging.basicConfig(
-            filename=os.path.join(log_path, '%s.log' % qApp.applicationName().lower()),
-            level=logging.ERROR)
+        handlers = [logging.handlers.RotatingFileHandler(os.path.join(log_path, '%s.log'
+                                                                      % qApp.applicationName().lower()),
+                                                         maxBytes=1000000, backupCount=1)]
+        if os.getenv('DEBUG', False):
+            handlers.append(logging.StreamHandler())
+        logging.basicConfig(handlers=handlers,
+                            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+                            datefmt='%Y-%m-%d %H:%M',
+                            level=logging.INFO)
         logging.captureWarnings(capture=True)
+        sys.excepthook = self.log_uncaught_exceptions
+
+    @staticmethod
+    def log_uncaught_exceptions(cls, exc, tb) -> None:
+        logging.critical(''.join(traceback.format_tb(tb)))
+        logging.critical('{0}: {1}'.format(cls, exc))
 
     def parse_cmdline(self) -> None:
         self.parser = QCommandLineParser()
-        self.parser.setApplicationDescription('A simple video cutter & joiner')
+        self.parser.setApplicationDescription('The simply FAST & ACCURATE video cutter & joiner')
         self.parser.addPositionalArgument('video', 'Preloads the video file in app.', '[video]')
         self.edl_option = QCommandLineOption('edl', 'Preloads clip index from a previously saved EDL file.\n' +
                                              'NOTE: You must also set the video argument for this to work.', 'edl file')
+        self.debug_option = QCommandLineOption(['d', 'debug'], 'Output all info, warnings and errors to the console. ' +
+                                               'This will basically output what is being logged to file to the ' +
+                                               'console stdout. Mainly useful for debugging problems with your ' +
+                                               'system video and/or audio stack and codec configuration.')
+
         self.parser.addOption(self.edl_option)
+        self.parser.addOption(self.debug_option)
         self.parser.addVersionOption()
         self.parser.addHelpOption()
         self.parser.process(qApp)
@@ -69,12 +112,13 @@ class MainWindow(QMainWindow):
             self.close()
             sys.exit(1)
         if self.parser.value('edl').strip() and len(self.args) == 0:
-            print('\n    ERROR: Video file argument is missing.\n    You must provide a video file argument if ' +
-                  'preloading an EDL file.\n', file=sys.stderr)
+            print('\n    ERROR: Video file argument is missing.\n', file=sys.stderr)
             self.close()
             sys.exit(1)
         if self.parser.value('edl').strip():
             self.edl = self.parser.value('edl')
+        if self.parser.isSet(self.debug_option):
+            os.environ['DEBUG'] = '1'
         if len(self.args) > 0 and not os.path.exists(self.args[0]):
             print('\n    ERROR: Video file not found.\n', file=sys.stderr)
             self.close()
@@ -113,11 +157,21 @@ class MainWindow(QMainWindow):
 
     @staticmethod
     def get_version(filename: str = '__init__.py') -> str:
-        with open(MainWindow.get_path(filename, override=True), 'r') as initfile:
+        with open(MainWindow.get_path(filename, override=True), 'r', encoding='utf-8') as initfile:
             for line in initfile.readlines():
                 m = re.match('__version__ *= *[\'](.*)[\']', line)
                 if m:
                     return m.group(1)
+
+    def contextMenuEvent(self, event: QContextMenuEvent) -> None:
+        if event.reason() == QContextMenuEvent.Mouse:
+            self.cutter.appMenu.exec_(event.globalPos())
+            event.accept()
+        super(MainWindow, self).contextMenuEvent(event)
+
+    def mousePressEvent(self, event: QMouseEvent):
+        if event.button() == Qt.LeftButton:
+            self.cutter.cliplist.clearSelection()
 
     def dragEnterEvent(self, event: QDragEnterEvent) -> None:
         if event.mimeData().hasUrls():
@@ -130,8 +184,8 @@ class MainWindow(QMainWindow):
 
     def closeEvent(self, event: QCloseEvent) -> None:
         if hasattr(self, 'cutter'):
-            self.cutter.deleteLater()
-        self.deleteLater()
+            if hasattr(self.cutter, 'mediaPlayer'):
+                self.cutter.mediaPlayer.terminate()
         qApp.quit()
 
 

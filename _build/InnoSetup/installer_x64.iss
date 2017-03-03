@@ -7,25 +7,29 @@
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{CCDC440A-CC57-4BED-8CDE-1DA285976A64}
 AppName=VidCutter
-AppVersion=2.6.5
+AppVersion=3.0.0
 AppVerName=VidCutter
 AppPublisher=Pete Alexandrou
 AppPublisherURL=http://vidcutter.ozmartians.com
 DefaultDirName={pf}\VidCutter
 DefaultGroupName=VidCutter
-OutputBaseFilename=VidCutter-2.6.5-setup-x64
+OutputBaseFilename=VidCutter-3.0.0-setup-x64
 SetupIconFile=C:\DEV\vidcutter\data\icons\vidcutter.ico
 UninstallDisplayIcon={app}\vidcutter.exe
 Compression=lzma2
 SolidCompression=yes
 ShowLanguageDialog=no
-VersionInfoVersion=2.6.5
+VersionInfoVersion=3.0.0
 VersionInfoCompany=ozmartians.com
-VersionInfoCopyright=© 2017 Pete Alexandrou
+VersionInfoCopyright=Â© 2017 Pete Alexandrou
 VersionInfoProductName=VidCutter x64
-VersionInfoProductVersion=2.6.5
+VersionInfoProductVersion=3.0.0
 ArchitecturesAllowed=x64
 ArchitecturesInstallIn64BitMode=x64
+WizardImageFile=C:\DEV\vidcutter\_build\InnoSetup\assets\WizModernImage.bmp
+WizardSmallImageFile=C:\DEV\vidcutter\_build\InnoSetup\assets\SmallWizardImage.bmp
+WizardImageBackColor=clPurple
+WizardImageStretch=False
 
 [InstallDelete]
 Type: filesandordirs; Name: "{app}"
@@ -33,7 +37,7 @@ Type: filesandordirs; Name: "{app}"
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
-[Tasks]
+[Tasks] 
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
 
 [Files]

@@ -1,8 +1,63 @@
+vidcutter (3.0.0-1) stable; urgency=medium
+
+  * complete rewrite of multimedia backend which now uses libmpv to drive
+     video viewing and enables frame stepping for greater accuracy in cutting.
+     this has greatly shortened to the list of dependcies to enable this app to
+     work and should allow for quicker and easier installation for all users.
+
+  * frame level accuracy when stepping through video via cursor keys or mouse
+     wheel. see the new Keyboard Shortcuts menu option for more details.
+
+  * improved UI in many areas including main toolbar redesign.
+
+  * keyboard shortcuts now advertised to user view new menu option
+
+  * exception handing improved with all errors, even those not surfaced to user,
+     are logged. application log file can be viewed by the user via new menu
+     option.
+
+  * mediainfo library now used to generate metadata for media information which
+    works a million times better than what the previous gstreamer codecs had to
+    offer.
+
+  * hardware accelerated video via vdpau or vaapi depending on what user has
+    installaed. this is all dependant on libpmpv which is the by far the best
+    multimedia library in the opensource world. fallback options also exist if
+    user has no power codecs installed so things should all still work on a
+    minimual workstation setup.
+
+  * many UI fixes and improvements that I cannot be bothered to list but 
+    should overall make the app feel much more professional than ever before :-)
+
+ -- Pete Alexandrou <pete@ozmartians.com>  Fri, 03 Mar 2017 20:15:03 +0800
+
+vidcutter (2.6.5-1) stable; urgency=medium
+
+  * major fixes to ensure frame accuracy between player and backend. once loaded
+    a video framerate is estimated and seeking/stepping by a single step, using 
+    arrow keys or mouse wheel should be closest to a single frame in either
+    direction. when marking cut points the point in time to the millisecond is also
+    communicated to the backend. this will all improve even further with the next
+    major release which will encompass a move away from Qt's QMediaPlayer
+    widgets which utilise GStreamer (Linux/Mac) and DirectShow (Windows) to a
+    libmpv (MPV player) based client.
+
+  * command line argument support added. run the app from the command line
+     with --help or -h for the details.
+
+  * major code restructure for a more pluggable/adaptable architecture ie.
+    in future, w/ libmpv if for some reason system cannot support it then
+    fallback to existing backend (what we have now w/ GStreamer etc.)
+
+ -- Pete Alexandrou <pete@ozmartians.com>  Thu, 03 Feb 2017 12:15:12 +0800
+
 vidcutter (2.5.0-1) stable; urgency=medium
 
-  * video seeking is now by frame rather than one second intervals
+  * video seeking is now closer to a frame rather and no longer a one second
+     interval
+
   * shortcut keys for seeking video updated for frame stepping changes
-     (i.e. left-right / mous wheel = 1 frame; up-down = 10 frames)
+     (i.e. left-right / mouse wheel = 1 step; up-down = 10 steps)
 
   * early & basic support for EDLs. Only the very simple MPlayer EDL standard 
      is currently supported but this now allows you to save your clip index for 

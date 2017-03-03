@@ -1,8 +1,29 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+#######################################################################
+#
+# VidCutter - a simple yet fast & accurate video cutter & joiner
+#
+# copyright © 2017 Pete Alexandrou
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+#######################################################################
+
+import logging
 import os
-import re
 import shlex
 import sys
 from distutils.spawn import find_executable
@@ -16,19 +37,32 @@ class VideoService(QObject):
     def __init__(self, parent=None):
         super(VideoService, self).__init__(parent)
         self.parent = parent
+        self.logger = logging.getLogger(__name__)
         self.consoleOutput = ''
         if sys.platform == 'win32':
             self.backend = os.path.join(self.getAppPath(), 'bin', 'ffmpeg.exe')
+            self.mediainfo = os.path.join(self.getAppPath(), 'bin', 'MediaInfo.exe')
             if not os.path.exists(self.backend):
                 self.backend = find_executable('ffmpeg.exe')
+            if not os.path.exists(self.mediainfo):
+                self.mediainfo = find_executable('MediaInfo.exe')
         else:
             self.backend = os.path.join(self.getAppPath(), 'bin', 'ffmpeg')
+            self.mediainfo = os.path.join(self.getAppPath(), 'bin', 'mediainfo')
             if not os.path.exists(self.backend):
                 for exe in ('ffmpeg', 'avconv'):
                     exe_path = find_executable(exe)
                     if exe_path is not None:
                         self.backend = exe_path
                         break
+            if not os.path.exists(self.mediainfo):
+                self.mediainfo = find_executable('mediainfo')
+        if os.getenv('DEBUG', False):
+            try:
+                self.logger.info('\nVideoService.backend = %s\nVideoService.mediainfo = %s'
+                                 % (self.backend, self.mediainfo))
+            except:
+                pass
         self.initProc()
 
     def initProc(self) -> None:
@@ -62,12 +96,10 @@ class VideoService(QObject):
         args = '-f concat -safe 0 -i "%s" -c copy -y "%s"' % (filelist, QDir.fromNativeSeparators(output))
         return self.cmdExec(self.backend, args)
 
-    def framerate(self, source: str) -> float:
-        args = '-i "%s"' % source
-        result = self.cmdExec(self.backend, args, True)
-        if result:
-            result = re.search(r'[\d.]+(?= tbr)', result).group(0)
-        return float(result)
+    def metadata(self, source: str) -> str:
+        args = '--output=HTML "%s"' % source
+        result = self.cmdExec(self.mediainfo, args, True)
+        return result.strip()
 
     def cmdExec(self, cmd: str, args: str = None, output: bool = False):
         if os.getenv('DEBUG', False):
@@ -76,7 +108,7 @@ class VideoService(QObject):
             self.proc.start(cmd, shlex.split(args))
             self.proc.waitForFinished(-1)
             if output:
-                return str(self.proc.readAllStandardOutput())
+                return str(self.proc.readAllStandardOutput(), 'utf-8')
             if self.proc.exitStatus() == QProcess.NormalExit and self.proc.exitCode() == 0:
                 return True
         return False

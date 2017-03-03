@@ -1,16 +1,43 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+#######################################################################
+#
+# VidCutter - a simple yet fast & accurate video cutter & joiner
+#
+# copyright © 2017 Pete Alexandrou
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+#######################################################################
+
+import logging
 import sys
 
 from PyQt5.QtCore import QEvent, QObject, Qt, pyqtSlot
-from PyQt5.QtGui import QColor, QCursor, QKeyEvent, QMouseEvent, QPaintEvent, QPen, QPixmap, QWheelEvent
-from PyQt5.QtWidgets import QSlider, QStyle, QStyleOptionSlider, QStylePainter, QWidget, qApp
+from PyQt5.QtGui import (QBrush, QColor, QCursor, QKeyEvent, QMouseEvent, QPaintEvent, QPainterPath, QPen, QPixmap,
+                         QWheelEvent)
+from PyQt5.QtWidgets import QSlider, QStyle, QStyleOptionSlider, QStylePainter, qApp
 
 
 class VideoSlider(QSlider):
     def __init__(self, *arg, **kwargs):
         super(VideoSlider, self).__init__(*arg, **kwargs)
+        self._regions = list()
+        self._regionHeight = 12
+        self._regionSelected = -1
+        self.logger = logging.getLogger(__name__)
         self.setOrientation(Qt.Horizontal)
         self.setObjectName('videoslider')
         self.setAttribute(Qt.WA_Hover, True)
@@ -21,8 +48,8 @@ class VideoSlider(QSlider):
         self.setMouseTracking(True)
         self.setTracking(True)
         self.setTickPosition(QSlider.TicksAbove)
-        self.slider_cursor = QCursor(QPixmap(':/images/slider-cursor.png', 'PNG')) if sys.platform.startswith(
-            'linux') else Qt.SplitHCursor
+        self.slider_cursor = QCursor(QPixmap(':/images/slider-cursor.png', 'PNG'))\
+            if sys.platform.startswith('linux') else Qt.SplitHCursor
         self.setFocus()
         self.initStyle()
         self.restrictValue = 0
@@ -77,8 +104,38 @@ class VideoSlider(QSlider):
                 x += 10
         opt.subControls = QStyle.SC_SliderGroove
         painter.drawComplexControl(QStyle.CC_Slider, opt)
+        for path in self._regions:
+            brushcolor = QColor(150, 190, 78, 185) if self._regions.index(path) == self._regionSelected \
+                else QColor(237, 242, 255, 185)
+            painter.setBrush(brushcolor)
+            painter.setPen(Qt.NoPen)
+            painter.drawPath(path)
         opt.subControls = QStyle.SC_SliderHandle
         painter.drawComplexControl(QStyle.CC_Slider, opt)
+
+    def addRegion(self, start: int, end: int) -> None:
+        x = QStyle.sliderPositionFromValue(self.minimum(), self.maximum(), start, self.width())
+        y = (self.height() - self._regionHeight) / 2
+        width = QStyle.sliderPositionFromValue(self.minimum(), self.maximum(), end, self.width()) - x
+        height = self._regionHeight
+        path = QPainterPath()
+        path.addRect(x, y + 3, width, height)
+        self._regions.append(path)
+        self.update()
+
+    def switchRegions(self, index1: int, index2: int) -> None:
+        reg = self._regions.pop(index1)
+        self._regions.insert(index2, reg)
+        self.update()
+
+    def highlightRegion(self, clipindex: int):
+        self._regionSelected = clipindex
+        self.update()
+
+    def clearRegions(self) -> None:
+        self._regions.clear()
+        self._regionSelected = -1
+        self.update()
 
     def wheelEvent(self, event: QWheelEvent) -> None:
         qApp.sendEvent(self.parentWidget(), event)
@@ -98,23 +155,23 @@ class VideoSlider(QSlider):
 
     def eventFilter(self, obj: QObject, event: QEvent) -> bool:
         if event.type() == QEvent.MouseButtonRelease:
-            if self.parentWidget().mediaPlayer.isVideoAvailable() or self.parentWidget().mediaPlayer.isAudioAvailable():
+            if self.parentWidget().mediaAvailable:
                 self.setValue(QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.x(), self.width()))
-                self.parentWidget().mediaPlayer.setPosition(self.sliderPosition())
-        return QWidget.eventFilter(self, obj, event)
+                self.parentWidget().setPosition(self.sliderPosition())
+        return super(VideoSlider, self).eventFilter(obj, event)
 
     def getStyleSheet(self, bground: str, margin: str) -> str:
         return '''QSlider:horizontal { margin: 25px 0 18px; }
 QSlider::groove:horizontal {
     border: none;
     height: 32px;
-    background: #444 url(:images/filmstrip.png) repeat-x;
+    background: #333 url(:images/filmstrip.png) repeat-x;
     position: absolute;
     left: 4px;
     right: 4px;
     margin: 0;
 }
-QSlider::sub-page:horizontal {  
+QSlider::sub-page:horizontal {
     border: none;
     background: %s;
     height: 20px;

@@ -23,23 +23,23 @@ BUILD_VERSION=$(python3 version.py)
 # --------[ cleanup scraps from previous builds
 
 rm -rf build dist
-rm ../../bin/*
+# rm ../../bin/*
 
 
 # --------[ download latest FFmpeg static binary
 
-mkdir ./temp &> /dev/null
-aria2c -d ./temp -x 6 ${FFMPEG}
+# mkdir ./temp &> /dev/null
+# aria2c -d ./temp -x 6 ${FFMPEG}
 
 
 # --------[ extract FFmpeg to designated bin folder under app root
 
-cd temp
-tar -Jxf ffmpeg-git-${ARCH}bit-static.tar.xz --strip-components=1 --wildcards ffmpeg-git-*-64bit-static/ffmpeg
-mkdir ../../../bin &> /dev/null
-mv ./ffmpeg ../../../bin/
-chmod +x ../../../bin/ffmpeg
-cd ..
+# cd temp
+# tar -Jxf ffmpeg-git-${ARCH}bit-static.tar.xz --strip-components=1 --wildcards ffmpeg-git-*-64bit-static/ffmpeg
+# mkdir ../../../bin &> /dev/null
+# mv ./ffmpeg ../../../bin/
+# chmod +x ../../../bin/ffmpeg
+# cd ..
 
 
 # --------[ run PyInstaller

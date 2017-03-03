@@ -16,7 +16,10 @@ a = Analysis(['..\\..\\vidcutter\\__main__.py'],
              binaries=[],
              datas=[
                  ('..\\..\\vidcutter\\__init__.py', '.'),
-                 ('..\\..\\bin\\ffmpeg.exe', '.\\bin')
+                 ('..\\..\\bin\\ffmpeg.exe', '.\\bin'),
+                 ('..\\..\\bin\\MediaInfo.exe', '.\\bin'),
+                 ('libmpv\\64\\mpv-1.dll', '.'),
+                 ('libmpv\\64\\D3DCompiler_43.dll', '.')
              ],
              hiddenimports=[],
              hookspath=[],
@@ -34,6 +37,6 @@ exe = EXE(pyz,
           a.datas,
           name='vidcutter',
           debug=False,
-          strip=False,
+          strip=True,
           upx=False,
           console=False , icon='..\\..\\data\\icons\\vidcutter.ico')

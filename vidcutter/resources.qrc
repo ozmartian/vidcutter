@@ -12,6 +12,7 @@
         <file>images/filmstrip.png</file>
         <file>images/handle.png</file>
         <file>images/info.png</file>
+        <file>images/keymap.png</file>
         <file>images/menu.png</file>
         <file>images/menu-active.png</file>
         <file>images/muted.png</file>
@@ -22,18 +23,35 @@
         <file>images/runtime.png</file>
         <file>images/save.png</file>
         <file>images/slider-cursor.png</file>
+        <file>images/shortcuts.png</file>
         <file>images/thumbsup.png</file>
         <file>images/toolbar-end.png</file>
+        <file>images/toolbar-end-disabled.png</file>
+        <file>images/toolbar-end-on.png</file>
         <file>images/toolbar-open.png</file>
+        <file>images/toolbar-open-disabled.png</file>
+        <file>images/toolbar-open-on.png</file>
         <file>images/toolbar-pause.png</file>
+        <file>images/toolbar-pause-disabled.png</file>
+        <file>images/toolbar-pause-on.png</file>
         <file>images/toolbar-play.png</file>
+        <file>images/toolbar-play-disabled.png</file>
+        <file>images/toolbar-play-on.png</file>
         <file>images/toolbar-save.png</file>
+        <file>images/toolbar-save-disabled.png</file>
+        <file>images/toolbar-save-on.png</file>
         <file>images/toolbar-start.png</file>
+        <file>images/toolbar-start-disabled.png</file>
+        <file>images/toolbar-start-on.png</file>
         <file>images/unmuted.png</file>
         <file>images/up.png</file>
         <file>images/update.png</file>
         <file>images/vidcutter.png</file>
+        <file>images/vidcutter-emboss.png</file>
+        <file>images/viewlogs.png</file>
+        <file>images/watermark.png</file>
         <file>styles/vidcutter.qss</file>
         <file>styles/vidcutter_osx.qss</file>
+        <file>LICENSE.html</file>
     </qresource>
 </RCC>

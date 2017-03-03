@@ -1,36 +1,59 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+#######################################################################
+#
+# VidCutter - a simple yet fast & accurate video cutter & joiner
+#
+# copyright © 2017 Pete Alexandrou
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+#######################################################################
+
+import logging
 import os
-import platform
 import re
 import sys
 import time
 from datetime import timedelta
+from locale import setlocale, LC_NUMERIC
 
-from PyQt5.QtCore import (QDir, QFile, QFileInfo, QModelIndex, QPoint,
-                          QSize, Qt, QTextStream, QTime, QUrl, pyqtSlot, qRound)
-from PyQt5.QtGui import (QCloseEvent, QColor, QDesktopServices, QFont, QFontDatabase, QIcon,
-                         QKeyEvent, QMouseEvent, QMovie, QPainter, QPalette, QPen, QPixmap, QWheelEvent)
-from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
-from PyQt5.QtMultimediaWidgets import QVideoWidget
-from PyQt5.QtWidgets import (QAbstractItemView, QAbstractItemDelegate, QAction, QFileDialog, QGroupBox, QHBoxLayout,
-                             QLabel, QListWidget, QListWidgetItem, QMenu, QMessageBox, QProgressDialog, QPushButton,
-                             QSizePolicy, QSlider, QStyleFactory, QStyleOptionViewItem, QToolBar, QVBoxLayout, QWidget,
-                             qApp)
+from PyQt5.QtCore import QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTextStream, QTime, QUrl, pyqtSlot
+from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMovie, QPalette,
+                         QPixmap, QWheelEvent)
+from PyQt5.QtWidgets import (QAbstractItemView, QAction, qApp, QDialogButtonBox, QFileDialog, QGroupBox,
+                             QHBoxLayout, QLabel, QListWidgetItem, QMenu, QMessageBox, QProgressDialog, QPushButton,
+                             QSizePolicy, QSlider, QStyleFactory, QTextBrowser, QVBoxLayout, QWidget)
 
+import vidcutter.mpv as mpv
+import vidcutter.resources
+from vidcutter.appinfo import AppInfo
+from vidcutter.videoframe import VideoFrame
+from vidcutter.videolist import VideoList, VideoItem
 from vidcutter.videoservice import VideoService
 from vidcutter.videoslider import VideoSlider
-import vidcutter.resources
+from vidcutter.videotoolbar import VideoToolBar
 
 
 class VideoCutter(QWidget):
     def __init__(self, parent):
         super(VideoCutter, self).__init__(parent)
+        self.logger = logging.getLogger(__name__)
         self.novideoWidget = QWidget(self, objectName='novideoWidget', autoFillBackground=True)
         self.parent = parent
-        self.mediaPlayer = QMediaPlayer(None, QMediaPlayer.VideoSurface)
-        self.videoWidget = VideoWidget(self.parent)
+
         self.videoService = VideoService(self)
 
         self.latest_release_url = 'https://github.com/ozmartian/vidcutter/releases/latest'
@@ -61,14 +84,14 @@ class VideoCutter(QWidget):
 
         self.clipTimes = []
         self.inCut = False
-        self.movieFilename = ''
-        self.movieLoaded = False
         self.timeformat = 'hh:mm:ss.zzz'
         self.runtimeformat = 'hh:mm:ss'
         self.finalFilename = ''
         self.totalRuntime = 0
         self.frameRate = 0
-        self.notifyInterval = 0
+        self.notifyInterval = 1000
+        self.currentMedia = ''
+        self.mediaAvailable = False
 
         self.edl = ''
         self.edlblock_re = re.compile(r'(\d+(?:\.?\d+)?)\s(\d+(?:\.?\d+)?)\s([01])')
@@ -76,7 +99,7 @@ class VideoCutter(QWidget):
         self.initIcons()
         self.initActions()
 
-        self.toolbar = QToolBar(floatable=False, movable=False, iconSize=QSize(36, 36))
+        self.toolbar = VideoToolBar(floatable=False, movable=False, iconSize=QSize(50, 53))
         self.toolbar.setObjectName('appcontrols')
         if sys.platform == 'darwin':
             self.toolbar.setStyle(QStyleFactory.create('Fusion'))
@@ -103,8 +126,7 @@ class VideoCutter(QWidget):
 
         self.cliplist.setStyleSheet('QListView::item { border: none; }')
 
-        listHeader = QLabel(pixmap=QPixmap(':/images/clipindex.png', 'PNG'),
-                            alignment=Qt.AlignCenter)
+        listHeader = QLabel(pixmap=QPixmap(':/images/clipindex.png', 'PNG'), alignment=Qt.AlignCenter)
         listHeader.setObjectName('listHeader')
 
         self.runtimeLabel = QLabel('<div align="right">00:00:00</div>', textFormat=Qt.RichText)
@@ -122,13 +144,34 @@ class VideoCutter(QWidget):
         self.videoLayout.addLayout(self.clipindexLayout)
 
         self.timeCounter = QLabel('00:00:00 / 00:00:00', autoFillBackground=True, alignment=Qt.AlignCenter,
-                                  sizePolicy=QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed))
+                                  sizePolicy=QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred))
         self.timeCounter.setObjectName('timeCounter')
+
+        self.frameCounter = QLabel('000 / 000', autoFillBackground=True, alignment=Qt.AlignCenter,
+                                   sizePolicy=QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred))
+        self.frameCounter.setObjectName('frameCounter')
+
+        countersLayout = QHBoxLayout()
+        countersLayout.setContentsMargins(0, 0, 0, 0)
+        countersLayout.addStretch(1)
+        countersLayout.addWidget(QLabel('<b>TIME:</b> ', styleSheet='color:#FFF;'))
+        countersLayout.addWidget(self.timeCounter)
+        countersLayout.addStretch(1)
+        countersLayout.addWidget(QLabel('<b>FRAME:</b> ', styleSheet='color:#FFF;'))
+        countersLayout.addWidget(self.frameCounter)
+        countersLayout.addStretch(1)
+
+        countersGroup = QGroupBox()
+        countersGroup.setLayout(countersLayout)
+        countersGroup.setFixedHeight(22)
+        countersGroup.setStyleSheet('border: 0; background-color: #000;')
+
+        self.initMPV()
 
         videoplayerLayout = QVBoxLayout(spacing=0)
         videoplayerLayout.setContentsMargins(0, 0, 0, 0)
-        videoplayerLayout.addWidget(self.videoWidget)
-        videoplayerLayout.addWidget(self.timeCounter)
+        videoplayerLayout.addWidget(self.mpvFrame)
+        videoplayerLayout.addWidget(countersGroup)
 
         self.videoplayerWidget = QWidget(self, visible=False)
         self.videoplayerWidget.setLayout(videoplayerLayout)
@@ -139,12 +182,11 @@ class VideoCutter(QWidget):
                                       cursor=Qt.PointingHandCursor, clicked=self.muteAudio)
 
         self.volumeSlider = QSlider(Qt.Horizontal, toolTip='Volume', statusTip='Adjust volume level',
-                                    cursor=Qt.PointingHandCursor, value=50, minimum=0, maximum=100,
-                                    sliderMoved=self.setVolume)
+                                    cursor=Qt.PointingHandCursor, value=100, minimum=0, maximum=130,
+                                    sliderMoved=self.setVolume, objectName='volumeSlider')
 
-        self.menuButton = QPushButton(objectName='menuButton', flat=True, toolTip='Menu',
-                                      iconSize=QSize(24, 20), cursor=Qt.PointingHandCursor)
-        self.menuButton.setFixedSize(QSize(24, 20))
+        self.menuButton = QPushButton(toolTip='Menu', cursor=Qt.PointingHandCursor, flat=True, objectName='menuButton')
+        self.menuButton.setFixedSize(QSize(40, 42))
         self.menuButton.setMenu(self.appMenu)
 
         toolbarLayout = QHBoxLayout()
@@ -152,18 +194,16 @@ class VideoCutter(QWidget):
         toolbarLayout.setContentsMargins(0, 0, 0, 0)
 
         toolbarGroup = QGroupBox()
-        toolbarGroup.setFlat(False)
         toolbarGroup.setLayout(toolbarLayout)
         toolbarGroup.setCursor(Qt.PointingHandCursor)
-        toolbarGroup.setStyleSheet('QGroupBox { background-color: rgba(0, 0, 0, 0.1); ' +
-                                   'border: 1px inset #888; margin: 0; padding: 0;' +
-                                   'border-radius: 5px; }')
+        toolbarGroup.setStyleSheet('border: 0;')
 
         controlsLayout = QHBoxLayout(spacing=0)
         controlsLayout.addStretch(1)
         controlsLayout.addWidget(toolbarGroup)
         controlsLayout.addStretch(1)
         controlsLayout.addWidget(self.muteButton)
+        controlsLayout.addSpacing(5)
         controlsLayout.addWidget(self.volumeSlider)
         controlsLayout.addSpacing(20)
         controlsLayout.addWidget(self.menuButton)
@@ -173,17 +213,50 @@ class VideoCutter(QWidget):
         layout.setContentsMargins(10, 10, 10, 4)
         layout.addLayout(self.videoLayout)
         layout.addWidget(self.seekSlider)
-        layout.addSpacing(5)
-        layout.addLayout(controlsLayout)
         layout.addSpacing(2)
+        layout.addLayout(controlsLayout)
 
         self.setLayout(layout)
 
-        self.mediaPlayer.setVideoOutput(self.videoWidget)
-        self.mediaPlayer.stateChanged.connect(self.mediaStateChanged)
-        self.mediaPlayer.positionChanged.connect(self.positionChanged)
-        self.mediaPlayer.durationChanged.connect(self.durationChanged)
-        self.mediaPlayer.error.connect(self.handleError)
+    def logMPV(self, loglevel, component, message):
+        log_msg = 'MPV {} - {}: {}'.format(loglevel, component, message)
+        if loglevel in ('fatal', 'error'):
+            self.logger.critical(log_msg)
+        else:
+            self.logger.info(log_msg)
+
+    def initMPV(self) -> None:
+        setlocale(LC_NUMERIC, 'C')
+        if sys.platform == 'darwin':
+            from PyQt5.QtWidgets import QMacCocoaViewContainer
+            self.mpvFrame = QMacCocoaViewContainer(0)
+        else:
+            self.mpvFrame = VideoFrame(self)
+
+        self.mediaPlayer = mpv.MPV(wid=int(self.mpvFrame.winId()),
+                                   log_handler=self.logMPV,
+                                   ytdl=False,
+                                   pause=True,
+                                   keep_open=True,
+                                   idle=True,
+                                   osc=True,
+                                   cursor_autohide=False,
+                                   input_cursor=False,
+                                   input_default_bindings=False,
+                                   stop_playback_on_init_failure=False,
+                                   force_window='immediate',
+                                   input_vo_keyboard=False,
+                                   sub_auto=False,
+                                   osd_level=0,
+                                   sid=False,
+                                   hr_seek='absolute',
+                                   hr_seek_framedrop=True,
+                                   rebase_start_time=False,
+                                   keepaspect=True,
+                                   hwdec='auto')
+
+        self.mediaPlayer.observe_property('time-pos', lambda ptime: self.positionChanged(ptime * 1000))
+        self.mediaPlayer.observe_property('duration', lambda runtime: self.durationChanged(runtime * 1000))
 
     def initNoVideo(self) -> None:
         novideoImage = QLabel(alignment=Qt.AlignCenter, autoFillBackground=False,
@@ -204,12 +277,30 @@ class VideoCutter(QWidget):
 
     def initIcons(self) -> None:
         self.appIcon = QIcon(':/images/vidcutter.png')
-        self.openIcon = QIcon(':/images/toolbar-open.png')
-        self.playIcon = QIcon(':/images/toolbar-play.png')
-        self.pauseIcon = QIcon(':/images/toolbar-pause.png')
-        self.cutStartIcon = QIcon(':/images/toolbar-start.png')
-        self.cutEndIcon = QIcon(':/images/toolbar-end.png')
-        self.saveIcon = QIcon(':/images/toolbar-save.png')
+        self.openIcon = QIcon()
+        self.openIcon.addFile(':/images/toolbar-open.png', QSize(50, 53), QIcon.Normal)
+        self.openIcon.addFile(':/images/toolbar-open-on.png', QSize(50, 53), QIcon.Active)
+        self.openIcon.addFile(':/images/toolbar-open-disabled.png', QSize(50, 53), QIcon.Disabled)
+        self.playIcon = QIcon()
+        self.playIcon.addFile(':/images/toolbar-play.png', QSize(50, 53), QIcon.Normal)
+        self.playIcon.addFile(':/images/toolbar-play-on.png', QSize(50, 53), QIcon.Active)
+        self.playIcon.addFile(':/images/toolbar-play-disabled.png', QSize(50, 53), QIcon.Disabled)
+        self.pauseIcon = QIcon()
+        self.pauseIcon.addFile(':/images/toolbar-pause.png', QSize(50, 53), QIcon.Normal)
+        self.pauseIcon.addFile(':/images/toolbar-pause-on.png', QSize(50, 53), QIcon.Active)
+        self.pauseIcon.addFile(':/images/toolbar-pause-disabled.png', QSize(50, 53), QIcon.Disabled)
+        self.cutStartIcon = QIcon()
+        self.cutStartIcon.addFile(':/images/toolbar-start.png', QSize(50, 53), QIcon.Normal)
+        self.cutStartIcon.addFile(':/images/toolbar-start-on.png', QSize(50, 53), QIcon.Active)
+        self.cutStartIcon.addFile(':/images/toolbar-start-disabled.png', QSize(50, 53), QIcon.Disabled)
+        self.cutEndIcon = QIcon()
+        self.cutEndIcon.addFile(':/images/toolbar-end.png', QSize(50, 53), QIcon.Normal)
+        self.cutEndIcon.addFile(':/images/toolbar-end-on.png', QSize(50, 53), QIcon.Active)
+        self.cutEndIcon.addFile(':/images/toolbar-end-disabled.png', QSize(50, 53), QIcon.Disabled)
+        self.saveIcon = QIcon()
+        self.saveIcon.addFile(':/images/toolbar-save.png', QSize(50, 53), QIcon.Normal)
+        self.saveIcon.addFile(':/images/toolbar-save-on.png', QSize(50, 53), QIcon.Active)
+        self.saveIcon.addFile(':/images/toolbar-save-disabled.png', QSize(50, 53), QIcon.Disabled)
         self.muteIcon = QIcon(':/images/muted.png')
         self.unmuteIcon = QIcon(':/images/unmuted.png')
         self.upIcon = QIcon(':/images/up.png')
@@ -217,7 +308,6 @@ class VideoCutter(QWidget):
         self.removeIcon = QIcon(':/images/remove.png')
         self.removeAllIcon = QIcon(':/images/remove-all.png')
         self.successIcon = QIcon(':/images/thumbsup.png')
-        self.menuIcon = QIcon(':/images/menu.png')
         self.completePlayIcon = QIcon(':/images/complete-play.png')
         self.completeOpenIcon = QIcon(':/images/complete-open.png')
         self.completeRestartIcon = QIcon(':/images/complete-restart.png')
@@ -225,47 +315,47 @@ class VideoCutter(QWidget):
         self.openEDLIcon = QIcon(':/images/edl.png')
         self.saveEDLIcon = QIcon(':/images/save.png')
         self.mediaInfoIcon = QIcon(':/images/info.png')
+        self.viewLogsIcon = QIcon(':/images/viewlogs.png')
         self.updateCheckIcon = QIcon(':/images/update.png')
         self.thumbsupIcon = QIcon(':/images/thumbsup.png')
+        self.keyRefIcon = QIcon(':/images/keymap.png')
 
     def initActions(self) -> None:
-        self.openAction = QAction(self.openIcon, 'Open\nMedia', self, toolTip='Open Media',
-                                  statusTip='Open a valid media file', triggered=self.openMedia)
-        self.playAction = QAction(self.playIcon, 'Play\nMedia', self, toolTip='Play Media',
-                                  statusTip='Play the loaded media file', triggered=self.playMedia, enabled=False)
-        self.pauseAction = QAction(self.pauseIcon, 'Pause\nMedia', self, toolTip='Pause Media', visible=False,
-                                   statusTip='Pause the currently playing media file', triggered=self.playMedia)
-        self.cutStartAction = QAction(self.cutStartIcon, 'Clip\nStart', self, toolTip='Clip Start',
-                                      statusTip='Set the start position of a new clip',
-                                      triggered=self.setCutStart, enabled=False)
-        self.cutEndAction = QAction(self.cutEndIcon, 'Clip\nEnd', self, toolTip='Clip End',
-                                    statusTip='Set the end position of a new clip',
-                                    triggered=self.setCutEnd, enabled=False)
-        self.saveAction = QAction(self.saveIcon, 'Save\nVideo', self, toolTip='Save Video',
+        self.openAction = QAction(self.openIcon, 'Open\nMedia', self, statusTip='Open a valid media file',
+                                  triggered=self.openMedia)
+        self.playAction = QAction(self.playIcon, 'Play\nMedia', self, triggered=self.playMedia,
+                                  statusTip='Play the loaded media file', enabled=False)
+        self.pauseAction = QAction(self.pauseIcon, 'Pause\nMedia', self, visible=False, triggered=self.playMedia,
+                                   statusTip='Pause the currently playing media file')
+        self.cutStartAction = QAction(self.cutStartIcon, 'Clip\nStart', self, triggered=self.setCutStart, enabled=False,
+                                      statusTip='Set the start position of a new clip')
+        self.cutEndAction = QAction(self.cutEndIcon, 'Clip\nEnd', self, triggered=self.setCutEnd,
+                                    enabled=False, statusTip='Set the end position of a new clip')
+        self.saveAction = QAction(self.saveIcon, 'Save\nVideo', self, 
                                   statusTip='Save clips to a new video file', triggered=self.cutVideo, enabled=False)
         self.moveItemUpAction = QAction(self.upIcon, 'Move up', self, statusTip='Move clip position up in list',
                                         triggered=self.moveItemUp, enabled=False)
         self.moveItemDownAction = QAction(self.downIcon, 'Move down', self, statusTip='Move clip position down in list',
                                           triggered=self.moveItemDown, enabled=False)
-        self.removeItemAction = QAction(self.removeIcon, 'Remove clip', self,
-                                        statusTip='Remove selected clip from list', triggered=self.removeItem,
-                                        enabled=False)
+        self.removeItemAction = QAction(self.removeIcon, 'Remove clip', self, triggered=self.removeItem,
+                                        statusTip='Remove selected clip from list', enabled=False)
         self.removeAllAction = QAction(self.removeAllIcon, 'Clear list', self, statusTip='Clear all clips from list',
                                        triggered=self.clearList, enabled=False)
-        self.mediaInfoAction = QAction(self.mediaInfoIcon, 'Media information', self,
-                                       statusTip='View current media file information', triggered=self.mediaInfo,
-                                       enabled=False)
-        self.openEDLAction = QAction(self.openEDLIcon, 'Open EDL file', self,
-                                     statusTip='Open a previously saved EDL file',
-                                     triggered=self.openEDL, enabled=False)
-        self.saveEDLAction = QAction(self.saveEDLIcon, 'Save EDL file', self,
-                                     statusTip='Save clip list data to an EDL file',
-                                     triggered=self.saveEDL, enabled=False)
+        self.mediaInfoAction = QAction(self.mediaInfoIcon, 'Media information', self, triggered=self.mediaInfo,
+                                       statusTip='View current media file information', enabled=False)
+        self.openEDLAction = QAction(self.openEDLIcon, 'Open EDL file', self, triggered=self.openEDL, enabled=False,
+                                     statusTip='Open a previously saved EDL file')
+        self.saveEDLAction = QAction(self.saveEDLIcon, 'Save EDL file', self, triggered=self.saveEDL, enabled=False,
+                                     statusTip='Save clip list data to an EDL file')
+        self.viewLogsAction = QAction(self.viewLogsIcon, 'View log file', self, triggered=self.viewLogs,
+                                      statusTip='View the application\'s log file')
         self.updateCheckAction = QAction(self.updateCheckIcon, 'Check for updates...', self,
                                          statusTip='Check for application updates', triggered=self.updateCheck)
         self.aboutQtAction = QAction('About Qt', self, statusTip='About Qt', triggered=qApp.aboutQt)
-        self.aboutAction = QAction('About %s' % qApp.applicationName(), self, triggered=self.aboutInfo,
+        self.aboutAction = QAction('About %s' % qApp.applicationName(), self, triggered=self.aboutApp,
                                    statusTip='About %s' % qApp.applicationName())
+        self.keyRefAction = QAction(self.keyRefIcon, 'Keyboard shortcuts', self, triggered=self.showKeyRef,
+                                    statusTip='View shortcut key bindings')
 
     def initToolbar(self) -> None:
         self.toolbar.addAction(self.openAction)
@@ -274,12 +364,16 @@ class VideoCutter(QWidget):
         self.toolbar.addAction(self.cutStartAction)
         self.toolbar.addAction(self.cutEndAction)
         self.toolbar.addAction(self.saveAction)
+        self.toolbar.disableTooltips()
 
     def initMenus(self) -> None:
+        self.appMenu.addAction(self.mediaInfoAction)
+        self.appMenu.addAction(self.keyRefAction)
+        self.appMenu.addSeparator()
         self.appMenu.addAction(self.openEDLAction)
         self.appMenu.addAction(self.saveEDLAction)
         self.appMenu.addSeparator()
-        self.appMenu.addAction(self.mediaInfoAction)
+        self.appMenu.addAction(self.viewLogsAction)
         self.appMenu.addAction(self.updateCheckAction)
         self.appMenu.addSeparator()
         self.appMenu.addAction(self.aboutQtAction)
@@ -290,12 +384,6 @@ class VideoCutter(QWidget):
         self.cliplistMenu.addSeparator()
         self.cliplistMenu.addAction(self.removeItemAction)
         self.cliplistMenu.addAction(self.removeAllAction)
-
-    @staticmethod
-    def getSpacer() -> QWidget:
-        spacer = QWidget()
-        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
-        return spacer
 
     def setRunningTime(self, runtime: str) -> None:
         self.runtimeLabel.setText('<div align="right">%s</div>' % runtime)
@@ -348,72 +436,19 @@ class VideoCutter(QWidget):
     def clearList(self) -> None:
         self.clipTimes.clear()
         self.cliplist.clear()
+        self.seekSlider.clearRegions()
         self.inCut = False
         self.renderTimes()
         self.initMediaControls()
 
-    def mediaInfo(self) -> None:
-        if self.mediaPlayer.isMetaDataAvailable():
-            content = '<table cellpadding="4">'
-            for key in self.mediaPlayer.availableMetaData():
-                val = self.mediaPlayer.metaData(key)
-                if type(val) is QSize:
-                    val = '%s x %s' % (val.width(), val.height())
-                content += '<tr><td align="right"><b>%s:</b></td><td>%s</td></tr>\n' % (key, val)
-            content += '</table>'
-            mbox = QMessageBox(windowTitle='Media Information', windowIcon=self.parent.windowIcon(),
-                               textFormat=Qt.RichText)
-            mbox.setText('<b>%s</b>' % os.path.basename(self.mediaPlayer.currentMedia().canonicalUrl().toLocalFile()))
-            mbox.setInformativeText(content)
-            mbox.exec_()
-        else:
-            QMessageBox.critical(self.parent, 'Media file error',
-                                 '<h3>Could not probe media file.</h3>' +
-                                 '<p>An error occurred while analyzing the media file for its metadata details.' +
-                                 '<br/><br/><b>This DOES NOT mean there is a problem with the file and you should ' +
-                                 'be able to continue using it.</b></p>')
-
-    def aboutInfo(self) -> None:
-        about_html = '''<style>
-    a { color:#441d4e; text-decoration:none; font-weight:bold; }
-    a:hover { text-decoration:underline; }
-</style>
-<div style="min-width:650px;">
-<p style="font-size:26pt; font-weight:600; color:#6A4572;">%s</p>
-<p>
-    <span style="font-size:13pt;"><b>Version: %s</b></span>
-    <span style="font-size:10pt;position:relative;left:5px;">( %s )</span>
-</p>
-<p style="font-size:13px;">
-    Copyright &copy; 2017 <a href="mailto:pete@ozmartians.com">Pete Alexandrou</a>
-    <br/>
-    Website: <a href="%s">%s</a>
-</p>
-<p style="font-size:13px;">
-    Thanks to the folks behind the <b>Qt</b>, <b>PyQt</b> and <b>FFmpeg</b>
-    projects for all their hard and much appreciated work.
-</p>
-<p style="font-size:11px;">
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-</p>
-<p style="font-size:11px;">
-    This software uses libraries from the <a href="https://www.ffmpeg.org">FFmpeg</a> project under the
-    <a href="https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html">LGPLv2.1</a>
-</p></div>''' % (qApp.applicationName(), qApp.applicationVersion(), platform.architecture()[0],
-                 qApp.organizationDomain(), qApp.organizationDomain())
-        QMessageBox.about(self.parent, 'About %s' % qApp.applicationName(), about_html)
-
     def openMedia(self) -> None:
         filename, _ = QFileDialog.getOpenFileName(self.parent, caption='Select media file',
-                                                  directory=QDir.currentPath())
+                                                  directory=QDir.homePath())
         if filename != '':
             self.loadMedia(filename)
 
     def openEDL(self, checked: bool = False, edlfile: str = '') -> None:
-        source_file, _ = os.path.splitext(self.mediaPlayer.currentMedia().canonicalUrl().toLocalFile())
+        source_file, _ = os.path.splitext(self.currentMedia)
         self.edl = edlfile
         if not len(self.edl.strip()):
             self.edl, _ = QFileDialog.getOpenFileName(self.parent, caption='Select EDL file',
@@ -423,7 +458,7 @@ class VideoCutter(QWidget):
                                                              # 'CMX 3600 EDL (*.edl);;' +
                                                              'All files (*.*)',
                                                       initialFilter='MPlayer EDL (*.edl)',
-                                                      directory='%s.edl' % source_file)
+                                                      directory=os.path.join(QDir.homePath(), '%s.edl' % source_file))
         if self.edl.strip():
             file = QFile(self.edl)
             if not file.open(QFile.ReadOnly | QFile.Text):
@@ -442,6 +477,7 @@ class VideoCutter(QWidget):
                         line = str(line)
                     except UnicodeDecodeError:
                         qApp.restoreOverrideCursor()
+                        self.logger.error('Invalid EDL formatted file was selected', exc_info=True)
                         QMessageBox.critical(self.parent, 'Invalid EDL file',
                                              'Could not make any sense of the EDL file supplied. Try viewing it in a ' +
                                              'text editor to ensure it is valid and not corrupted.\n\nAborting EDL ' +
@@ -450,8 +486,8 @@ class VideoCutter(QWidget):
                     mo = self.edlblock_re.match(line)
                     if mo:
                         start, stop, action = mo.groups()
-                        clip_start = self.deltaToQTime(int(float(start) * 1000))
-                        clip_end = self.deltaToQTime(int(float(stop) * 1000))
+                        clip_start = self.delta2QTime(int(float(start) * 1000))
+                        clip_end = self.delta2QTime(int(float(stop) * 1000))
                         clip_image = self.captureImage(frametime=int(float(start) * 1000))
                         self.clipTimes.append([clip_start, clip_end, clip_image])
                     else:
@@ -467,17 +503,10 @@ class VideoCutter(QWidget):
             qApp.restoreOverrideCursor()
             self.parent.statusBar().showMessage('EDL file was successfully read...', 2000)
 
-    def _td2str(self, td: timedelta) -> str:
-        if td is None or td == timedelta.max:
-            return ''
-        else:
-            return '%f' % (td.days * 86400 + td.seconds + td.microseconds / 1000000.)
-
     def saveEDL(self, filepath: str) -> None:
-        source_file, _ = os.path.splitext(self.mediaPlayer.currentMedia().canonicalUrl().toLocalFile())
+        source_file, _ = os.path.splitext(self.currentMedia)
         edlsave = self.edl if self.edl.strip() else '%s.edl' % source_file
-        edlsave, _ = QFileDialog.getSaveFileName(parent=self.parent, caption='Save EDL file',
-                                                 directory=edlsave)
+        edlsave, _ = QFileDialog.getSaveFileName(parent=self.parent, caption='Save EDL file', directory=edlsave)
         if edlsave.strip():
             file = QFile(edlsave)
             if not file.open(QFile.WriteOnly | QFile.Text):
@@ -490,43 +519,36 @@ class VideoCutter(QWidget):
                                        milliseconds=clip[0].msec())
                 stop_time = timedelta(hours=clip[1].hour(), minutes=clip[1].minute(), seconds=clip[1].second(),
                                       milliseconds=clip[1].msec())
-                QTextStream(file) << '%s\t%s\t%d\n' % (self._td2str(start_time), self._td2str(stop_time), 0)
+                QTextStream(file) << '%s\t%s\t%d\n' % (self.delta2String(start_time), self.delta2String(stop_time), 0)
             qApp.restoreOverrideCursor()
             self.parent.statusBar().showMessage('EDL file was successfully saved...', 2000)
 
     def loadMedia(self, filename: str) -> None:
-        self.movieFilename = filename
         if not os.path.exists(filename):
             return
-        self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(filename)))
-        self.frameRate = self.videoService.framerate(filename)
-        self.notifyInterval = qRound(1000 / self.frameRate)
-        self.mediaPlayer.setNotifyInterval(self.notifyInterval)
+        self.currentMedia = filename
         self.initMediaControls(True)
         self.cliplist.clear()
         self.clipTimes.clear()
-        self.parent.setWindowTitle('%s - %s' % (qApp.applicationName(), os.path.basename(filename)))
-        if not self.movieLoaded:
+        self.seekSlider.clearRegions()
+        self.parent.setWindowTitle('%s - %s' % (qApp.applicationName(), os.path.basename(self.currentMedia)))
+        if not self.mediaAvailable:
             self.videoLayout.replaceWidget(self.novideoWidget, self.videoplayerWidget)
             self.novideoMovie.stop()
             self.novideoMovie.deleteLater()
             self.novideoWidget.deleteLater()
             self.videoplayerWidget.show()
-            self.videoWidget.show()
-            self.movieLoaded = True
-        if self.mediaPlayer.isVideoAvailable():
-            self.mediaPlayer.setPosition(1)
-        self.mediaPlayer.play()
-        self.mediaPlayer.pause()
+            self.mediaAvailable = True
+        self.mediaPlayer.play(self.currentMedia)
 
     def playMedia(self) -> None:
-        if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
-            self.mediaPlayer.pause()
-
-        else:
-            self.mediaPlayer.play()
+        if self.mediaPlayer.pause:
             self.playAction.setVisible(False)
             self.pauseAction.setVisible(True)
+        else:
+            self.playAction.setVisible(True)
+            self.pauseAction.setVisible(False)
+        self.mediaPlayer.pause = not self.mediaPlayer.pause
 
     def initMediaControls(self, flag: bool = True) -> None:
         self.playAction.setEnabled(flag)
@@ -540,53 +562,49 @@ class VideoCutter(QWidget):
         self.saveEDLAction.setEnabled(False)
 
     def setPosition(self, position: int) -> None:
-        self.mediaPlayer.setPosition(position)
+        self.mediaPlayer.time_pos = position / 1000
 
     def positionChanged(self, progress: int) -> None:
-        self.seekSlider.setValue(progress)
-        currentTime = self.deltaToQTime(progress)
-        totalTime = self.deltaToQTime(self.mediaPlayer.duration())
-        self.timeCounter.setText(
-            '%s / %s' % (currentTime.toString(self.timeformat), totalTime.toString(self.timeformat)))
-
-    @pyqtSlot(QMediaPlayer.State)
-    def mediaStateChanged(self, state: QMediaPlayer.State) -> None:
-        if state == QMediaPlayer.PlayingState:
-            self.playAction.setVisible(False)
-            self.pauseAction.setVisible(True)
-        else:
-            self.playAction.setVisible(True)
-            self.pauseAction.setVisible(False)
+        if self.seekSlider.restrictValue <= progress:
+            self.seekSlider.setValue(progress)
+            currentTime = self.delta2QTime(progress)
+            totalTime = self.delta2QTime(self.mediaPlayer.duration * 1000)
+            self.timeCounter.setText(
+                '%s / %s' % (currentTime.toString(self.timeformat), totalTime.toString(self.timeformat)))
+            self.frameCounter.setText(
+                '%s / %s' % (self.mediaPlayer.estimated_frame_number, self.mediaPlayer.estimated_frame_count))
 
     def durationChanged(self, duration: int) -> None:
         self.seekSlider.setRange(0, duration)
 
     def muteAudio(self) -> None:
-        if self.mediaPlayer.isMuted():
+        if self.mediaPlayer.mute:
             self.muteButton.setIcon(self.unmuteIcon)
             self.muteButton.setToolTip('Mute')
         else:
             self.muteButton.setIcon(self.muteIcon)
             self.muteButton.setToolTip('Unmute')
-        self.mediaPlayer.setMuted(not self.mediaPlayer.isMuted())
+        self.mediaPlayer.mute = not self.mediaPlayer.mute
 
     def setVolume(self, volume: int) -> None:
-        self.mediaPlayer.setVolume(volume)
-
-    def toggleFullscreen(self) -> None:
-        self.videoWidget.setFullScreen(not self.videoWidget.isFullScreen())
+        self.mediaPlayer.volume = volume
 
     def setCutStart(self) -> None:
-        self.clipTimes.append([self.deltaToQTime(self.mediaPlayer.position()), '', self.captureImage()])
+        if os.getenv('DEBUG', False):
+            print('cut start position: %s' % self.seekSlider.value())
+        self.clipTimes.append([self.delta2QTime(self.mediaPlayer.playback_time * 1000), '', self.captureImage()])
         self.cutStartAction.setDisabled(True)
         self.cutEndAction.setEnabled(True)
         self.seekSlider.setRestrictValue(self.seekSlider.value(), True)
         self.inCut = True
+        self.mediaPlayer.show_text('clip start marker set', 3000, 0)
         self.renderTimes()
 
     def setCutEnd(self) -> None:
+        if os.getenv('DEBUG', False):
+            print('cut end position: %s' % self.seekSlider.value())
         item = self.clipTimes[len(self.clipTimes) - 1]
-        selected = self.deltaToQTime(self.mediaPlayer.position())
+        selected = self.delta2QTime(self.mediaPlayer.playback_time * 1000)
         if selected.__lt__(item[0]):
             QMessageBox.critical(self.parent, 'Invalid END Time',
                                  'The clip end time must come AFTER it\'s start time. Please try again.')
@@ -596,6 +614,7 @@ class VideoCutter(QWidget):
         self.cutEndAction.setDisabled(True)
         self.seekSlider.setRestrictValue(0, False)
         self.inCut = False
+        self.mediaPlayer.show_text('clip end marker set', 3000, 0)
         self.renderTimes()
 
     @pyqtSlot(QModelIndex, int, int, QModelIndex, int)
@@ -606,10 +625,12 @@ class VideoCutter(QWidget):
             index = row
         clip = self.clipTimes.pop(start)
         self.clipTimes.insert(index, clip)
+        self.seekSlider.switchRegions(start, index)
 
     def renderTimes(self) -> None:
         self.cliplist.clear()
-        if len(self.clipTimes) > 5:
+        self.seekSlider.clearRegions()
+        if len(self.clipTimes) > 4:
             self.cliplist.setFixedWidth(210)
         else:
             self.cliplist.setFixedWidth(190)
@@ -620,39 +641,49 @@ class VideoCutter(QWidget):
                 endItem = clip[1].toString(self.timeformat)
                 self.totalRuntime += clip[0].msecsTo(clip[1])
             listitem = QListWidgetItem()
+            listitem.setToolTip('Drag clip to reorder')
+            listitem.setStatusTip('Reorder clips with drag and drop or right-click menu')
             listitem.setTextAlignment(Qt.AlignVCenter)
             listitem.setData(Qt.DecorationRole, clip[2])
             listitem.setData(Qt.DisplayRole, clip[0].toString(self.timeformat))
             listitem.setData(Qt.UserRole + 1, endItem)
             listitem.setFlags(Qt.ItemIsSelectable | Qt.ItemIsDragEnabled | Qt.ItemIsEnabled)
             self.cliplist.addItem(listitem)
+            if type(clip[1]) is QTime:
+                self.seekSlider.addRegion(clip[0].msecsSinceStartOfDay(), clip[1].msecsSinceStartOfDay())
         if len(self.clipTimes) and not self.inCut:
             self.saveAction.setEnabled(True)
             self.saveEDLAction.setEnabled(True)
         if self.inCut or len(self.clipTimes) == 0 or not type(self.clipTimes[0][1]) is QTime:
             self.saveAction.setEnabled(False)
             self.saveEDLAction.setEnabled(False)
-        self.setRunningTime(self.deltaToQTime(self.totalRuntime).toString(self.runtimeformat))
+        self.setRunningTime(self.delta2QTime(self.totalRuntime).toString(self.runtimeformat))
 
     @staticmethod
-    def deltaToQTime(millisecs: int) -> QTime:
+    def delta2QTime(millisecs: int) -> QTime:
         secs = millisecs / 1000
         return QTime((secs / 3600) % 60, (secs / 60) % 60, secs % 60, (secs * 1000) % 1000)
 
+    @staticmethod
+    def delta2String(td: timedelta) -> str:
+        if td is None or td == timedelta.max:
+            return ''
+        else:
+            return '%f' % (td.days * 86400 + td.seconds + td.microseconds / 1000000.)
+
     def captureImage(self, frametime=None) -> QPixmap:
         if frametime is None:
-            frametime = self.deltaToQTime(self.mediaPlayer.position())
+            frametime = self.delta2QTime(self.mediaPlayer.playback_time * 1000)
         else:
-            frametime = self.deltaToQTime(frametime)
-        inputfile = self.mediaPlayer.currentMedia().canonicalUrl().toLocalFile()
-        imagecap = self.videoService.capture(inputfile, frametime.toString(self.timeformat))
+            frametime = self.delta2QTime(frametime)
+        imagecap = self.videoService.capture(self.currentMedia, frametime.toString(self.timeformat))
         if type(imagecap) is QPixmap:
             return imagecap
 
     def cutVideo(self) -> bool:
         clips = len(self.clipTimes)
         filename, filelist = '', []
-        source_file, source_ext = os.path.splitext(self.mediaPlayer.currentMedia().canonicalUrl().toLocalFile())
+        source_file, source_ext = os.path.splitext(self.currentMedia)
         if clips > 0:
             self.finalFilename, _ = QFileDialog.getSaveFileName(parent=self.parent, caption='Save video',
                                                                 directory='%s_EDIT%s' % (source_file, source_ext),
@@ -670,7 +701,7 @@ class VideoCutter(QWidget):
             self.progress.setLabelText('Cutting media files...')
             qApp.processEvents()
             for clip in self.clipTimes:
-                duration = self.deltaToQTime(clip[0].msecsTo(clip[1])).toString(self.timeformat)
+                duration = self.delta2QTime(clip[0].msecsTo(clip[1])).toString(self.timeformat)
                 filename = '%s_%s%s' % (file, '{0:0>2}'.format(index), ext)
                 filelist.append(filename)
                 self.videoService.cut('%s%s' % (source_file, source_ext), filename, clip[0].toString(self.timeformat),
@@ -702,6 +733,56 @@ class VideoCutter(QWidget):
         for file in joinlist:
             if os.path.isfile(file):
                 QFile.remove(file)
+
+    def mediaInfo(self):
+        if self.mediaAvailable:
+            try:
+                mediainfo = QWidget(self, flags=Qt.Dialog | Qt.WindowCloseButtonHint)
+                mediainfo.setObjectName('mediainfo')
+                buttons = QDialogButtonBox(QDialogButtonBox.Ok, parent=mediainfo)
+                buttons.accepted.connect(mediainfo.hide)
+                metadata = '<div align="center" style="margin:15px;">%s</div>'\
+                           % self.videoService.metadata(source=self.currentMedia)
+                browser = QTextBrowser(self)
+                browser.setObjectName('metadata')
+                browser.setHtml(metadata)
+                layout = QVBoxLayout()
+                layout.addWidget(browser)
+                layout.addWidget(buttons)
+                mediainfo.setLayout(layout)
+                mediainfo.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+                mediainfo.setContentsMargins(0, 0, 0, 0)
+                mediainfo.setWindowModality(Qt.NonModal)
+                mediainfo.setWindowIcon(self.parent.windowIcon())
+                mediainfo.setWindowTitle('Media Information')
+                mediainfo.setMinimumSize(750, 450)
+                mediainfo.show()
+            except:
+                self.logger.exception('Exception occurred attempting to run mediainfo')
+                pass
+
+    @pyqtSlot()
+    def showKeyRef(self):
+        shortcuts = QWidget(self, flags=Qt.Window | Qt.WindowCloseButtonHint)
+        shortcuts.setObjectName('shortcuts')
+        buttons = QDialogButtonBox(QDialogButtonBox.Ok, parent=shortcuts)
+        buttons.accepted.connect(shortcuts.hide)
+        layout = QVBoxLayout(spacing=0)
+        layout.addWidget(QLabel(pixmap=QPixmap(':/images/shortcuts.png')))
+        layout.addWidget(buttons)
+        shortcuts.setLayout(layout)
+        shortcuts.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        shortcuts.setContentsMargins(0, 0, 0, 0)
+        shortcuts.setWindowModality(Qt.NonModal)
+        shortcuts.setWindowIcon(self.parent.windowIcon())
+        shortcuts.setWindowTitle('Keyboard Shortcuts')
+        shortcuts.setMinimumWidth(800)
+        shortcuts.show()
+
+    @pyqtSlot()
+    def aboutApp(self) -> None:
+        appInfo = AppInfo(self)
+        appInfo.exec_()
 
     def updateCheck(self) -> None:
         QDesktopServices.openUrl(QUrl(self.latest_release_url))
@@ -741,7 +822,7 @@ class VideoCutter(QWidget):
         </tr>
     </table><br/>''' % (
             QDir.toNativeSeparators(self.finalFilename), self.sizeof_fmt(int(info.size())),
-            self.deltaToQTime(self.totalRuntime).toString(self.timeformat)))
+            self.delta2QTime(self.totalRuntime).toString(self.timeformat)))
         play = mbox.addButton('Play', QMessageBox.AcceptRole)
         play.setIcon(self.completePlayIcon)
         play.clicked.connect(self.openResult)
@@ -759,12 +840,13 @@ class VideoCutter(QWidget):
         mbox.adjustSize()
         mbox.exec_()
 
-    def sizeof_fmt(self, num: float, suffix: chr = 'B') -> str:
+    @staticmethod
+    def sizeof_fmt(num: float, suffix: chr = 'B') -> str:
         for unit in ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z']:
             if abs(num) < 1024.0:
-                return "%3.1f%s%s" % (num, unit, suffix)
+                return "%3.1f %s%s" % (num, unit, suffix)
             num /= 1024.0
-        return "%.1f%s%s" % (num, 'Y', suffix)
+        return "%.1f %s%s" % (num, 'Y', suffix)
 
     @pyqtSlot()
     def openFolder(self) -> None:
@@ -778,14 +860,22 @@ class VideoCutter(QWidget):
             QDesktopServices.openUrl(QUrl.fromLocalFile(target))
 
     @pyqtSlot()
+    def viewLogs(self) -> None:
+        QDesktopServices.openUrl(QUrl.fromLocalFile(logging.getLoggerClass().root.handlers[0].baseFilename))
+
+    @pyqtSlot()
     def startNew(self) -> None:
         qApp.restoreOverrideCursor()
         self.clearList()
         self.seekSlider.setValue(0)
         self.seekSlider.setRange(0, 0)
-        self.mediaPlayer.setMedia(QMediaContent())
+        self.seekSlider.clearRegions()
+        self.mpvFrame.hide()
         self.initNoVideo()
         self.videoLayout.replaceWidget(self.videoplayerWidget, self.novideoWidget)
+        self.mpvFrame.deleteLater()
+        del self.mediaPlayer
+        self.initMPV()
         self.initMediaControls(False)
         self.parent.setWindowTitle('%s' % qApp.applicationName())
 
@@ -817,121 +907,32 @@ class VideoCutter(QWidget):
                                  'root access (Linux/Mac) in order to do this.</p>')
         return valid
 
-    @pyqtSlot(QMediaPlayer.Error)
-    def handleError(self, error: QMediaPlayer.Error) -> None:
-        qApp.restoreOverrideCursor()
-        self.startNew()
-        if error == QMediaPlayer.ResourceError:
-            QMessageBox.critical(self.parent, 'Invalid Media',
-                                 'Invalid media file detected at:<br/><br/><b>%s</b><br/><br/>%s'
-                                 % (self.movieFilename, self.mediaPlayer.errorString()))
-        else:
-            QMessageBox.critical(self.parent, 'An error has occurred', self.mediaPlayer.errorString())
-
     def wheelEvent(self, event: QWheelEvent) -> None:
-        if self.mediaPlayer.isVideoAvailable() or self.mediaPlayer.isAudioAvailable():
+        if self.mediaAvailable:
             if event.angleDelta().y() > 0:
-                newval = self.seekSlider.value() - self.notifyInterval
+                self.mediaPlayer.frame_back_step()
             else:
-                newval = self.seekSlider.value() + self.notifyInterval
-            self.seekSlider.setValue(newval)
-            self.seekSlider.setSliderPosition(newval)
-            self.mediaPlayer.setPosition(newval)
-        event.accept()
+                self.mediaPlayer.frame_step()
+            event.accept()
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
-        if self.mediaPlayer.isVideoAvailable() or self.mediaPlayer.isAudioAvailable():
-            addtime = 0
-            if event.key() == Qt.Key_Space:
+        if self.mediaAvailable:
+            if event.key() == Qt.Key_Left:
+                self.mediaPlayer.frame_back_step()
+            elif event.key() == Qt.Key_Down:
+                self.mediaPlayer.seek(-5, 'relative+exact')
+            elif event.key() == Qt.Key_Right:
+                self.mediaPlayer.frame_step()
+            elif event.key() == Qt.Key_Up:
+                self.mediaPlayer.seek(5, 'relative+exact')
+            elif event.key() in (Qt.Key_Return, Qt.Key_Enter):
                 if self.cutStartAction.isEnabled():
                     self.setCutStart()
                 elif self.cutEndAction.isEnabled():
                     self.setCutEnd()
-            elif event.key() == Qt.Key_Left:
-                addtime = -self.notifyInterval
-            elif event.key() == Qt.Key_PageUp or event.key() == Qt.Key_Up:
-                addtime = -(self.notifyInterval * 10)
-            elif event.key() == Qt.Key_Right:
-                addtime = self.notifyInterval
-            elif event.key() == Qt.Key_PageDown or event.key() == Qt.Key_Down:
-                addtime = self.notifyInterval * 10
-            if addtime != 0:
-                newval = self.seekSlider.value() + addtime
-                self.seekSlider.setValue(newval)
-                self.seekSlider.setSliderPosition(newval)
-                self.mediaPlayer.setPosition(newval)
-        event.accept()
-
-    def mousePressEvent(self, event: QMouseEvent) -> None:
-        if event.button() == Qt.BackButton and self.cutStartAction.isEnabled():
-            self.setCutStart()
+            elif event.key() == Qt.Key_Space:
+                self.playMedia()
             event.accept()
-        elif event.button() == Qt.ForwardButton and self.cutEndAction.isEnabled():
-            self.setCutEnd()
-            event.accept()
-        else:
-            super(VideoCutter, self).mousePressEvent(event)
 
     def closeEvent(self, event: QCloseEvent) -> None:
-        self.parent.closeEvent(event)
-
-
-class VideoWidget(QVideoWidget):
-    def __init__(self, parent=None):
-        super(VideoWidget, self).__init__(parent)
-        self.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
-        p = self.palette()
-        p.setColor(QPalette.Window, Qt.black)
-        self.setPalette(p)
-        self.setAttribute(Qt.WA_OpaquePaintEvent)
-
-    def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
-        self.setFullScreen(not self.isFullScreen())
-        event.accept()
-
-
-class VideoList(QListWidget):
-    def __init__(self,  *arg, **kwargs):
-        super(VideoList, self).__init__(*arg, **kwargs)
-        self.setMouseTracking(True)
-
-    def mouseMoveEvent(self, event: QMouseEvent) -> None:
-        if self.count() > 0:
-            if self.indexAt(event.pos()).isValid():
-                self.setCursor(Qt.SizeAllCursor)
-            else:
-                self.setCursor(Qt.ArrowCursor)
-        super(VideoList, self).mouseMoveEvent(event)
-
-
-class VideoItem(QAbstractItemDelegate):
-    def __init__(self, parent=None):
-        super(VideoItem, self).__init__(parent)
-
-    def paint(self, painter: QPainter, option: QStyleOptionViewItem, index: QModelIndex) -> None:
-        r = option.rect
-        painter.setBrush(Qt.transparent if index.row() % 2 == 0 else QColor('#EFF0F1'))
-        painter.setPen(Qt.NoPen)
-        painter.drawRect(r)
-        thumb = QIcon(index.data(Qt.DecorationRole))
-        starttime = index.data(Qt.DisplayRole)
-        endtime = index.data(Qt.UserRole + 1)
-        r = option.rect.adjusted(5, 5, 0, 0)
-        thumb.paint(painter, r, Qt.AlignVCenter | Qt.AlignLeft)
-        painter.setPen(QPen(Qt.black, 1, Qt.SolidLine))
-        r = option.rect.adjusted(110, 8, 0, 0)
-        painter.setFont(QFont('Open Sans', pointSize=8, weight=QFont.Bold))
-        painter.drawText(r, Qt.AlignLeft, 'START')
-        r = option.rect.adjusted(110, 25, 0, 0)
-        painter.setFont(QFont('Open Sans', pointSize=9, weight=QFont.Normal))
-        painter.drawText(r, Qt.AlignLeft, starttime)
-        if len(endtime) > 0:
-            r = option.rect.adjusted(110, 45, 0, 0)
-            painter.setFont(QFont('Open Sans', pointSize=8, weight=QFont.Bold))
-            painter.drawText(r, Qt.AlignLeft, 'END')
-            r = option.rect.adjusted(110, 60, 0, 0)
-            painter.setFont(QFont('Open Sans', pointSize=9, weight=QFont.Normal))
-            painter.drawText(r, Qt.AlignLeft, endtime)
-
-    def sizeHint(self, option: QStyleOptionViewItem, index: QModelIndex) -> QSize:
-        return QSize(185, 85)
+        self.parentWidget().closeEvent(event)
