@@ -138,6 +138,12 @@ QTreeView::branch {
 
 /* -------------------------------------------------------------------------- */
 
+QStatusBar { color: #444; margin: 0; padding: 0; }
+
+QStatusBar::item { border:none; outline:none; }
+
+/* -------------------------------------------------------------------------- */
+
 QTabWidget::pane { border: 1px solid #999; }
 
 QTabBar::tab { color: #444; }
@@ -145,6 +151,15 @@ QTabBar::tab { color: #444; }
 QTabBar::tab:selected, QTabBar::tab:hover {
     background: #642C68;
     color: #FFF;
+    border: none;
+    outline: none;
+    padding: 0 4px;
+}
+
+QTabBar::tab:focus {
+    border: none;
+    outline: none;
+    padding: 0 4px;
 }
 
 QDialog#aboutwidget QTextBrowser {
@@ -152,7 +167,3 @@ QDialog#aboutwidget QTextBrowser {
     border: none;
     color: #444;
 }
-
-/* -------------------------------------------------------------------------- */
-
-QStatusBar { color: #444; margin: 0; padding: 0; }

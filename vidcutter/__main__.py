@@ -50,9 +50,9 @@ class MainWindow(QMainWindow):
         self.setWindowTitle('%s' % qApp.applicationName())
         self.setContentsMargins(0, 0, 0, 0)
         self.statusBar().showMessage('Ready')
+        statuslogo = QLabel(pixmap=QPixmap(':/images/vidcutter-emboss.png'), objectName='logowidget')
+        self.statusBar().addPermanentWidget(statuslogo)
         self.statusBar().setStyleSheet('border:none;')
-        self.statusBar().addPermanentWidget(QLabel(pixmap=QPixmap(':/images/vidcutter-emboss.png'),
-                                                   objectName='logowidget'))
         self.setAcceptDrops(True)
         self.setMinimumSize(900, 640)
         self.show()
