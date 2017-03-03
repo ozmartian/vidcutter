@@ -69,6 +69,10 @@ class AboutTab(QTextBrowser):
         self.parent = parent
         weight = 500 if sys.platform == 'win32' else 600
         linebreak = '<br/>' if sys.platform == 'win32' else '&nbsp;&nbsp;&nbsp;'
+        try:
+            ffmpeg_version = self.parent.parent.mediaPlayer.ffmpeg_version
+        except AttributeError:
+            ffmpeg_version = '2.8.10'
         self.setHtml('''<style>
     a { color:#441d4e; text-decoration:none; font-weight:bold; }
     a:hover { text-decoration:underline; }
@@ -122,8 +126,8 @@ class AboutTab(QTextBrowser):
 </table>''' % (weight, qApp.applicationName(), weight,
                qApp.applicationVersion(), platform.architecture()[0],
                self.parent.parent.mediaPlayer.mpv_version.replace('mpv ', ''),
-               linebreak, self.parent.parent.mediaPlayer.ffmpeg_version,
-               sys.version.split(' ')[0], PYQT_VERSION_STR, SIP_VERSION_STR,
+               linebreak, ffmpeg_version, sys.version.split(' ')[0],
+               PYQT_VERSION_STR, SIP_VERSION_STR,
                qApp.organizationDomain(), qApp.organizationDomain()))
 
 
