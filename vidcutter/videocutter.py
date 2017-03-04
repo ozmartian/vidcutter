@@ -33,7 +33,7 @@ from locale import setlocale, LC_NUMERIC
 from PyQt5.QtCore import QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTextStream, QTime, QUrl, pyqtSlot
 from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMovie, QPalette,
                          QPixmap, QWheelEvent)
-from PyQt5.QtWidgets import (QAbstractItemView, QAction, qApp, QDialogButtonBox, QFileDialog, QGroupBox,
+from PyQt5.QtWidgets import (QAbstractItemView, QAction, qApp, QDialogButtonBox, QFileDialog, QFrame, QGroupBox,
                              QHBoxLayout, QLabel, QListWidgetItem, QMenu, QMessageBox, QProgressDialog, QPushButton,
                              QSizePolicy, QSlider, QStyleFactory, QTextBrowser, QVBoxLayout, QWidget)
 
@@ -235,12 +235,11 @@ class VideoCutter(QWidget):
                                    pause=True,
                                    keep_open=True,
                                    idle=True,
-                                   osc=True,
+                                   osc=False,
                                    cursor_autohide=False,
                                    input_cursor=False,
                                    input_default_bindings=False,
                                    stop_playback_on_init_failure=False,
-                                   force_window='immediate',
                                    input_vo_keyboard=False,
                                    sub_auto=False,
                                    osd_level=0,
@@ -250,6 +249,9 @@ class VideoCutter(QWidget):
                                    rebase_start_time=False,
                                    keepaspect=True,
                                    hwdec='auto')
+
+        if sys.platform != 'darwin':
+            self.mediaPlayer.force_window = 'immediate'
 
         self.mediaPlayer.observe_property('time-pos', lambda ptime: self.positionChanged(ptime * 1000))
         self.mediaPlayer.observe_property('duration', lambda runtime: self.durationChanged(runtime * 1000))

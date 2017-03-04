@@ -8,7 +8,7 @@ import PyQt5
 block_cipher = None
 
 
-a = Analysis(['../../vidcutter/vidcutter.py'],
+a = Analysis(['../../vidcutter/__main__.py'],
              pathex=[
                  os.path.join(sys.modules['PyQt5'].__path__[0], 'Qt', 'bin'),
                  '../..'
@@ -16,8 +16,8 @@ a = Analysis(['../../vidcutter/vidcutter.py'],
              binaries=[],
              datas=[
                  ('../../vidcutter/__init__.py', '.'),
-                 ('../../bin/ffmpeg', 'bin/'),
-                 ('../../bin/mediainfo', 'bin/')
+                 ('../../bin/ffmpeg', 'bin'),
+                 ('../../bin/mediainfo', 'bin')
              ],
              hiddenimports=[],
              hookspath=[],
@@ -34,14 +34,14 @@ exe = EXE(pyz,
           name='VidCutter',
           debug=False,
           strip=True,
-          upx=True,
+          upx=False,
           console=False , icon='../../data/icons/vidcutter.icns')
 coll = COLLECT(exe,
                a.binaries,
                a.zipfiles,
                a.datas,
                strip=True,
-               upx=True,
+               upx=False,
                name='VidCutter')
 app = BUNDLE(coll,
              name='VidCutter.app',
