@@ -42,4 +42,8 @@ If installing via PyPi, be aware to also ensure you have the following tools als
     - FFmpeg (ffmpeg in all places, if on older Linux then you may have libav-tools instead which will also work)
     - mediainfo (mediainfo in all/most places. mainly needs to be the CLI version)
 
-I've not had the time to get 
+Fedora and RedHat users need to enable the RPMFusion repository in order to access mpv packages and just about anything multimedia-wise. Chances are you know what I'm talking about here but if not here are some simple steps to get VidCutter working in Fedora 25, the same should apply for any other RPM based distro... until I get off my lazy butt and try to learn RPM packaging (oh how horrible it looks though).... if anyone wants to help in this area by all means do!
+
+## Fedora 25 Installation Walkthrough
+
+ 
