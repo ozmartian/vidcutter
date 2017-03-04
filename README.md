@@ -10,9 +10,9 @@
 
 <hr noshade size="1" />
 
-### Windows Users
+### Windows + macOS Users
 
-Native installers for Windows are available on the releases page with every new version, or just click the button below. 
+Native installers for Windows and macOS are available on the releases page with every new version, or just click the button below. 
 
 <p style="text-align:center;"><a href="https://github.com/ozmartian/vidcutter/releases/latest"><img alt="Latest Release" src="http://tvlinker.ozmartians.com/images/button-latest-release.png" style="max-width:100%;"></a></p>
 
