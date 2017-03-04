@@ -10,21 +10,19 @@
 
 <hr noshade size="1" />
 
-### Windows + macOS Users
+### Windows Users
 
-Native installers for Windows and macOS are available on the releases page with every new version, or just click the button below. 
+Native installers for Windows are available on the releases page with every new version, or just click the button below. 
 
 <p style="text-align:center;"><a href="https://github.com/ozmartian/vidcutter/releases/latest"><img alt="Latest Release" src="http://tvlinker.ozmartians.com/images/button-latest-release.png" style="max-width:100%;"></a></p>
 
 ### Linux Users
 
-Install via PyPi as a last resort only if you are using a Linux distribution that is NOT related to ArchLinux or Ubuntu/Debian.
-
-ArchLinux users can install directly from AUR, package is available in both stable and git-latest versions:
+Arch Linux users can install directly from AUR, package is available in both stable and git-latest versions:
 
     AUR: vidcutter, vidcutter-git
 
-Ubuntu/Mint/Debian users can install via Launchpad PPA.
+Ubuntu/Mint and all other Ubuntu derivatives (basically any distributtion supporting Ubuntu PPAs) can install the latest release via:
 
     ppa:ozmartian/apps
 
@@ -32,5 +30,16 @@ If you are new to PPAs then just issue the following commands in a terminal:
 
     sudo add-apt-repository ppa:ozmartian/apps
     sudo apt-get update
+    sudo apt-get install vidcutter
+    
+An AppImage version is also available on the releases page to help all other Linux users.
 
-You should now be able to search for vidcutter in your chosen package management software (synaptic, Ubuntu software centre, apt-get etc.)
+If you're familiar with Python and PyPi then you can always try that option too but avoid installing PyQt5 from through pip and instead run with your distributions own PyQt5 offering. PyQt5 is known as some of the following names under various distros: python-pyqt5, python3-pyqt5, python3-qt5 etc. Using your distro's version ensures a more seamless look & feel with the app integrating with your distro's look & feel + widget sets. Installing all via PyPi will still work, but won't look as nice..
+
+If installing via PyPi, be aware to also ensure you have the following tools also installed via your package manager or any other means it doesn't matter so long as they are installed:
+
+    - libmpv (Arch: mpv, Ubuntu: libmpv1, Fedora: mpv-libs via RPMFusion, openSUSE: libmpv1)
+    - FFmpeg (ffmpeg in all places, if on older Linux then you may have libav-tools instead which will also work)
+    - mediainfo (mediainfo in all/most places. mainly needs to be the CLI version)
+
+I've not had the time to get 
