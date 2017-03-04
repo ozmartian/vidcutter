@@ -12,8 +12,7 @@ URL:            http://vidcutter.ozmartians.com
 Source0:        https://github.com/ozmartian/%{srcname}/archive/%{version}.tar.gz
 BuildArch:      noarch
  
-BuildRequires:  python3-devel
-BuildRequires:  python3-setuptools
+BuildRequires:  python3-devel, python3-setuptools
 
 %description
  the simple & fast video cutter & joiner with the help of mpv + FFmpeg
@@ -22,11 +21,7 @@ BuildRequires:  python3-setuptools
 Summary:        %{summary}
 %{?python_provide:%python_provide %{srcname}}
  
-Requires:       python3-PyQt5
-Requires:       mpv-libs
-Requires:       mediainfo
-Requires:       ffmpeg
-Requires:       python3-setuptools
+Requires:       python3-PyQt5, mpv-libs, mediainfo, ffmpeg, python3-setuptools
 %description -n %{srcname}
  the simple & fast video cutter & joiner with the help of mpv + FFmpeg
 
