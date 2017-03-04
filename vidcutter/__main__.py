@@ -30,7 +30,8 @@ import signal
 import sys
 import traceback
 
-from PyQt5.QtCore import QCommandLineOption, QCommandLineParser, QFile, QFileInfo, QStandardPaths, Qt, QTextStream
+from PyQt5.QtCore import (QCommandLineOption, QCommandLineParser, QDir, QFile, QFileInfo, QStandardPaths, Qt,
+                          QTextStream)
 from PyQt5.QtGui import QCloseEvent, QContextMenuEvent, QDragEnterEvent, QDropEvent, QMouseEvent, QPixmap
 from PyQt5.QtWidgets import qApp, QApplication, QLabel, QMainWindow, QMessageBox
 
@@ -71,7 +72,16 @@ class MainWindow(QMainWindow):
             sys.exit(1)
 
     def init_logger(self) -> None:
-        log_path = QStandardPaths.writableLocation(QStandardPaths.AppConfigLocation).lower()
+        try:
+            log_path = QStandardPaths.writableLocation(QStandardPaths.AppConfigLocation).lower()
+        except AttributeError:
+            if sys.platform == 'win32':
+                log_path = os.path.join(QDir.homePath(), 'AppData', 'Local', qApp.applicationName().lower())
+            elif sys.platform == 'darwin':
+                log_path = os.path.join(QDir.homePath(), 'Library', 'Preferences', qApp.applicationName()).lower()
+            else:
+                log_path = os.path.join(QDir.homePath(), '.config', qApp.applicationName()).lower()
+
         os.makedirs(log_path, exist_ok=True)
         handlers = [logging.handlers.RotatingFileHandler(os.path.join(log_path, '%s.log'
                                                                       % qApp.applicationName().lower()),
