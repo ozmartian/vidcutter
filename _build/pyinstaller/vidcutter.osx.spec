@@ -16,7 +16,8 @@ a = Analysis(['../../vidcutter/vidcutter.py'],
              binaries=[],
              datas=[
                  ('../../vidcutter/__init__.py', '.'),
-                 ('../../bin/ffmpeg', 'bin/')
+                 ('../../bin/ffmpeg', 'bin/'),
+                 ('../../bin/mediainfo', 'bin/')
              ],
              hiddenimports=[],
              hookspath=[],
