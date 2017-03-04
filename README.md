@@ -44,6 +44,31 @@ If installing via PyPi, be aware to also ensure you have the following tools als
 
 Fedora and RedHat users need to enable the RPMFusion repository in order to access mpv packages and just about anything multimedia-wise. Chances are you know what I'm talking about here but if not here are some simple steps to get VidCutter working in Fedora 25, the same should apply for any other RPM based distro... until I get off my lazy butt and try to learn RPM packaging (oh how horrible it looks though).... if anyone wants to help in this area by all means do!
 
-## Fedora 25 Installation Walkthrough
+## Fedora Installation Walkthrough
 
- 
+1. Enable RPMFusion Free repository on your system if not already added. Follow the instructions here for your distro/version
+
+    https://rpmfusion.org/Configuration
+    
+2. Run 'dnf update' to ensure your system is all up to date.  
+
+3. Install the following packages, PyQt5 is from Fedora base repo and the rest should all come from RPMFusion (Fedora doesn't allow mpv/ffmpeg in their repos due to the free as in beer philosophy. if you dont know what i am talking about, head to www.fsf.org to read up on this stuff if interested)
+
+4. Package list is:
+
+    - python3-qt5
+    - mpv-libs
+    - ffmpeg
+    - mediainfo
+    - python3-setuptools
+
+5. Download VidCutter3 source code to temp folder location and install via python setuptools as follows:
+
+    $ wget https://github.com/ozmartian/vidcutter/archive/master.tar.gz
+    $ tar zxf master.tar.gz
+    $ rm master.tar.gz
+    $ cd vidcutter-master
+    $ sed -i "s/pypi/rpm/" "vidcutter/__init__.py"
+    $ sudo python3 setup.py install
+    
+6. That's all folks!
