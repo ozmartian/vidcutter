@@ -5,27 +5,30 @@
 Name:           %{srcname}
 Version:        3.0.0
 Release:        1%{?dist}
-Summary:        FFmpeg based video cutter & joiner with a modern PyQt5 GUI
+Summary:       the simple & fast video cutter & joiner with the help of mpv + FFmpeg
 
 License:        GPLv3+
 URL:            http://vidcutter.ozmartians.com
-Source0:        
+Source0:        https://github.com/ozmartian/%{srcname}/archive/%{version}.tar.gz
 BuildArch:      noarch
  
 BuildRequires:  python3-devel
 BuildRequires:  python3-setuptools
 
 %description
- FFmpeg based video cutter & joiner with a modern PyQt5 GUI
+ the simple & fast video cutter & joiner with the help of mpv + FFmpeg
 
 %package -n     %{srcname}
 Summary:        %{summary}
 %{?python_provide:%python_provide %{srcname}}
  
 Requires:       python3-PyQt5
+Requires:       mpv-libs
+Requires:       mediainfo
+Requires:       ffmpeg
 Requires:       python3-setuptools
 %description -n %{srcname}
- FFmpeg based video cutter & joiner with a modern PyQt5 GUI
+ the simple & fast video cutter & joiner with the help of mpv + FFmpeg
 
 %prep
 %autosetup -n %{pypi_name}-%{version}
@@ -46,5 +49,5 @@ rm -rf %{pypi_name}.egg-info
 %{python3_sitelib}/%{pypi_name}-%{version}-py?.?.egg-info
 
 %changelog
-* Fri Feb 10 2017 Pete Alexandrou <pete@ozmartians.com> - 3.0.0-1
+* Sat Mar 04 2017 Pete Alexandrou <pete@ozmartians.com> - 3.0.0-1
 - Initial package.
