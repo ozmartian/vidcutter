@@ -63,12 +63,12 @@ Fedora and RedHat users need to enable the RPMFusion repository in order to acce
     - python3-setuptools
 
 5. Download VidCutter3 source code to temp folder location and install via python setuptools as follows:
-
+    ```
     $ wget https://github.com/ozmartian/vidcutter/archive/master.tar.gz
     $ tar zxf master.tar.gz
     $ rm master.tar.gz
     $ cd vidcutter-master
     $ sed -i "s/pypi/rpm/" "vidcutter/__init__.py"
     $ sudo python3 setup.py install
-    
+    ```
 6. That's all folks!
