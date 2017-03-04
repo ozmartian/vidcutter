@@ -1,4 +1,4 @@
-app: VidCutter-unstable
+app: VidCutter
 union: true
 
 ingredients:
@@ -6,15 +6,11 @@ ingredients:
   sources: 
     - deb http://archive.ubuntu.com/ubuntu/ xenial main universe
   ppas:
-    - ozmartian/unstable
+    - ozmartian/apps
 
 script:
   - cat > usr/bin/vidcutter <<\EOF
-  - #!/usr/bin/python3
-  - import sys
-  - print(sys.path)
-  - sys.path.insert(0, "/usr/lib/python3/dist-packages/")
-  - from vidcutter.__main__ import main
-  - main()
+  - #!/bin/bash
+  - python3 -m vidcutter $*
   - EOF
   - mv usr/lib/x86_64-linux-gnu/caca/*.so* usr/lib/x86_64-linux-gnu/
