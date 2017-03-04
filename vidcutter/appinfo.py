@@ -42,6 +42,7 @@ class AppInfo(QDialog):
         self.tab_credits = CreditsTab()
         self.tab_license = LicenseTab()
         tabs = QTabWidget()
+        tabs.setFocusPolicy(Qt.NoFocus)
         tabs.addTab(self.tab_about, 'About')
         tabs.addTab(self.tab_credits, 'Credits')
         tabs.addTab(self.tab_license, 'License')
@@ -77,7 +78,6 @@ class AboutTab(QTextBrowser):
     a { color:#441d4e; text-decoration:none; font-weight:bold; }
     a:hover { text-decoration:underline; }
     table { width: 100%%; font-family: "Open Sans", sans-serif; }
-    ul { list-style-type: none; }
 </style>
 <table border="0" cellpadding="6" cellspacing="4">
     <tr>
@@ -135,53 +135,51 @@ class CreditsTab(QTextBrowser):
     def __init__(self):
         super(CreditsTab, self).__init__()
         self.setObjectName('credits')
-        self.setHtml('''<style>ul { margin-left:-10px; text-align: center; list-style-type: none; }
-        li { margin-bottom: 10px; }</style>
-    <div>
+        self.setHtml('''<style>a { color:#441d4e; text-decoration:none; font-weight:bold; }
+        a:hover { text-decoration:underline; }</style>
         <h3 style="text-align:center;">CREDITS</h3>
         <p>
             This application either uses code and tools from the following projects in part or in their entirety as
             deemed permissable by each project's open-source license.
         </p>
         <br/>
-        <ul>
-            <li>&nbsp;
+        <div align="center">
+            <p>
                 <a href="http://ffmpeg.org">FFmpeg</a>
                 -
                 GPLv2+
-            </li>
-            <li>&nbsp;
+            </p>
+            <p>
                 <a href="http://mpv.io">mpv</a>
                 -
                 GPLv2+
-            </li>
-            <li>&nbsp;
+            </p>
+            <p>
                 <a href="https://mpv.srsfckn.biz">libmpv</a>
                 -
                 GPLv3+
-            </li>
-            <li>&nbsp;
+            </p>
+            <p>
                 <a href="https://github.com/jaseg/python-mpv">python-mpv</a>
                 -
                 AGPLv3
-            </li>
-            <li>&nbsp;
+            </p>
+            <p>
                 <a href="http://mediaarea.net/mediainfo">MediaInfo</a>
                 -
                 BSD-style
-            </li>
-            <li>&nbsp;
+            </p>
+            <p>
                 <a href="https://www.riverbankcomputing.com/software/pyqt">PyQt5</a>
                 -
-                GPLv3
-            </li>
-            <li>&nbsp;
+                GPLv3+
+            </p>
+            <p>
                 <a href="https://www.qt.io">Qt5</a>
                 -
                 LGPLv3
-            </li>
-        </ul>
-    </div>''')
+            </p>
+        </div>''')
 
 
 class LicenseTab(QTextBrowser):

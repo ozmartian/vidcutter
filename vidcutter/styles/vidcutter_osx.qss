@@ -139,24 +139,52 @@ QStatusBar::item { border:none; outline:none; }
 
 /* -------------------------------------------------------------------------- */
 
-QTabWidget::pane { border: 1px solid #999; }
-
-QTabBar::tab { color: #444; }
-
-QTabBar::tab:selected, QTabBar::tab:hover {
-    background: #642C68;
-    color: #FFF;
-    border: none;
-    outline: none;
-}
-
-QTabBar::tab:focus {
-    border: none;
-    outline: none;
-}
-
 QDialog#aboutwidget QTextBrowser {
     background-color: #FFF;
     border: none;
     color: #444;
+}
+
+QTabWidget::pane {
+    border: 1px solid #999;   
+}
+
+QTabWidget::tab-bar:top {
+    top: 1px;
+}
+
+QTabBar::tab {
+    border: 1px solid #999;
+}
+
+QTabBar::tab:selected {
+    background: #642C68;
+    color: #FFF;
+}
+
+QTabBar::tab:!selected {
+    background: silver;
+}
+
+QTabBar::tab:!selected:hover {
+    background: #642C68;
+    color: #FFF;
+}
+
+QTabBar::tab:top:!selected {
+    margin-top: 3px;
+}
+
+QTabBar::tab:top {
+    min-width: 8ex;
+    margin-right: -1px;
+    padding: 5px 10px 5px 10px;
+}
+
+QTabBar::tab:top:selected {
+    border-bottom-color: #642C68;
+}
+
+QTabBar::tab:top:last, QTabBar::tab:top:only-one {
+    margin-right: 0;
 }
