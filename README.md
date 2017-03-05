@@ -12,11 +12,15 @@ Native installers for Windows and macOS are available on the releases page with 
 
 ### Linux Users
 
-Arch Linux users can install directly from AUR, package is available in both stable and git-latest versions:
+####Arch Linux
+
+Users can install directly from AUR, package is available in both stable and git-latest versions:
 
     AUR: vidcutter, vidcutter-git
 
-Ubuntu/Mint and all other Ubuntu derivatives (basically any distributtion supporting Ubuntu PPAs) can install the latest release via:
+####Ubuntu/Mint/Debian and all other Ubuntu derivatives 
+
+Users can install the latest release via:
 
     ppa:ozmartian/apps
 
@@ -25,7 +29,20 @@ If you are new to PPAs then just issue the following commands in a terminal:
     sudo add-apt-repository ppa:ozmartian/apps
     sudo apt-get update
     sudo apt-get install vidcutter
+
+####Fedora
+
+Users can install via the RPM available on the releases page or via my custom copr repository:
+
+    suspiria/VidCutter
     
+The commands for a Fedora install via this method are:
+
+    dnf copr enable suspiria/VidCutter
+    dnf install vidcutter
+
+####AppImage
+
 An AppImage version is also available on the releases page to help all other Linux users.
 
 If you're familiar with Python and PyPi then you can always try that option too but avoid installing PyQt5 from through pip and instead run with your distributions own PyQt5 offering. PyQt5 is known as some of the following names under various distros: python-pyqt5, python3-pyqt5, python3-qt5 etc. Using your distro's version ensures a more seamless look & feel with the app integrating with your distro's look & feel + widget sets. Installing all via PyPi will still work, but won't look as nice..
