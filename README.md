@@ -1,14 +1,8 @@
-<div style="width:100%; height:120px; position:relative;">
-    <div style="float:left; position:absolute; left:10px;">
-        <p><img src="https://travis-ci.org/ozmartian/vidcutter.svg?branch=master" /></p>
-        <p><b>Homepage:</b> <a href="http://vidcutter.ozmartians.com" target="_blank">http://vidcutter.ozmartians.com</a></p>
-    </div>
-    <div style="float:right; right:10px; position:absolute;">
-        <img src="https://raw.githubusercontent.com/ozmartian/vidcutter/master/data/icons/vidcutter.png" width="120" height="120" />
-    </div>
-</div>
+![Build Status](https://travis-ci.org/ozmartian/vidcutter.svg?branch=master)
 
-<hr noshade size="1" />
+# VidCutter
+
+<img src="https://raw.githubusercontent.com/ozmartian/vidcutter/master/data/icons/vidcutter.png" width="120" height="120" />
 
 ### Windows + macOS Users
 
