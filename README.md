@@ -46,6 +46,8 @@ Fedora and RedHat users need to enable the RPMFusion repository in order to acce
 
 ## Fedora Installation Walkthrough
 
+NOTE: a Fedora25 RPM package is now included in release builds so use that. The following remains for reference or troubleshooting.
+
 1. Enable RPMFusion Free repository on your system if not already added. Follow the instructions here for your distro/version
 
     https://rpmfusion.org/Configuration
