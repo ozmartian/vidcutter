@@ -11,34 +11,27 @@ URL:            http://vidcutter.ozmartians.com
 Source0:       https://github.com/ozmartian/%{pkg_name}/archive/master.tar.gz
 BuildArch:      noarch
  
-BuildRequires:  python3-devel
-BuildRequires:  python3-setuptools
+BuildRequires:  python3-devel, python3-setuptools
+Requires:          python3-qt5, mpv-libs, mediainfo, ffmpeg
 
 %description
- Qt5 based GUI for simple cutting and joining of your videos without the need for
- reencoding. VidCutter focuses on getting the job done using the best settings using
- tried and true tech in its arsenal via mpv and FFmpeg.
+ The simplest & sexiest tool for cutting and joining your videos without the need for
+ re-encoding or a diploma in multimedia. VidCutter focuses on getting the job done
+ using tried and true tech in its arsenal via mpv and FFmpeg.
 
  NOTE:
  You will need to enable RPMFusion's free repository before installing this package.
 
+ Dependency list:
 
-%package -n     %{pkg_name}
-Summary:        %{summary}
-%{?python_provide:%python_provide %{pkg_name}}
- 
-Requires:       python3-qt5, mpv-libs, mediainfo, ffmpeg, python3-setuptools
-%description -n %{pkg_name}
- Qt5 based GUI for simple cutting and joining of your videos without the need for
- reencoding. VidCutter focuses on getting the job done using the best settings using
- tried and true tech in its arsenal via mpv and FFmpeg.
-
- NOTE:
- You will need to enable RPMFusion's free repository before installing this package.
-
+    - python3-qt5  (Fedora)
+    - python3-setuptools (Fedora)
+    - mpv-libs (RPMFusion)
+    - ffmpeg (RPMFusion)
+    - mediainfo (RPMFusion)
 
 %prep
-%autosetup -n %{pkg_name}-%{version}
+%autosetup -n %{pkg_name}-master
 
 # Remove bundled egg-info
 rm -rf %{pkg_name}.egg-info
@@ -59,7 +52,19 @@ sed -i "s/pypi/rpm/" vidcutter/__init__.py
 %doc README.md
 %{python3_sitelib}/%{pkg_name}
 %{python3_sitelib}/%{pkg_name}-%{version}-py?.?.egg-info
+%{_bindir}/vidcutter
+%{_datadir}/applications/vidcutter.desktop
+%{_datadir}/icons/hicolor/128x128/apps/vidcutter.png
+%{_datadir}/icons/hicolor/22x22/apps/vidcutter.png
+%{_datadir}/icons/hicolor/24x24/apps/vidcutter.png
+%{_datadir}/icons/hicolor/256x256/apps/vidcutter.png
+%{_datadir}/icons/hicolor/32x32/apps/vidcutter.png
+%{_datadir}/icons/hicolor/48x48/apps/vidcutter.png
+%{_datadir}/icons/hicolor/512x512/apps/vidcutter.png
+%{_datadir}/icons/hicolor/64x64/apps/vidcutter.png
+%{_datadir}/icons/hicolor/scalable/apps/vidcutter.svg
+
 
 %changelog
 * Sun Mar 05 2017 Pete Alexandrou <pete@ozmartians.com> - 3.0.0-1
-- Initial package.
+- Initial packaging.
