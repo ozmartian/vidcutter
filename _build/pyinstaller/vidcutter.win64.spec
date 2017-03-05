@@ -37,6 +37,6 @@ exe = EXE(pyz,
           a.datas,
           name='vidcutter',
           debug=False,
-          strip=True,
+          strip=False,
           upx=False,
           console=False , icon='..\\..\\data\\icons\\vidcutter.ico')
