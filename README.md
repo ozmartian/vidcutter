@@ -77,3 +77,25 @@ Fedora and RedHat users need to enable the RPMFusion repository in order to acce
     $ sudo python3 setup.py install
     ```
 6. That's all folks!
+
+## Command-line for debugging (Linux/macOS only)
+  ```
+  $ vidcutter --help
+
+  Usage: vidcutter [options] [video]
+    The simply FAST & ACCURATE video cutter & joiner
+
+  Options:
+    --edl <edl file>  Preloads clip index from a previously saved EDL file.
+                      NOTE: You must also set the video argument for this to work.
+    -d, --debug       Output all info, warnings and errors to the console. This
+                      will basically output what is being logged to file to the
+                      console stdout. Mainly useful for debugging problems with
+                      your system video and/or audio stack and codec
+                      configuration.
+    -v, --version     Displays version information.
+    -h, --help        Displays this help.
+
+  Arguments:
+    video             Preloads the video file in app.
+  ```
