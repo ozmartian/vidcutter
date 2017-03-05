@@ -67,6 +67,7 @@ def get_data_files():
             ('/usr/share/icons/hicolor/256x256/apps', ['data/icons/hicolor/256x256/apps/vidcutter.png']),
             ('/usr/share/icons/hicolor/512x512/apps', ['data/icons/hicolor/512x512/apps/vidcutter.png']),
             ('/usr/share/icons/hicolor/scalable/apps', ['data/icons/vidcutter.svg']),
+            ('/usr/share/pixmaps', ['data/icons/vidcutter.svg']),
             ('/usr/share/applications', ['data/desktop/vidcutter.desktop'])
         ]
     return files

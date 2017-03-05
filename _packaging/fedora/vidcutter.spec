@@ -63,6 +63,7 @@ sed -i "s/pypi/rpm/" vidcutter/__init__.py
 %{_datadir}/icons/hicolor/512x512/apps/vidcutter.png
 %{_datadir}/icons/hicolor/64x64/apps/vidcutter.png
 %{_datadir}/icons/hicolor/scalable/apps/vidcutter.svg
+%{_datadir}/pixmaps/vidcutter.svg
 
 
 %changelog
