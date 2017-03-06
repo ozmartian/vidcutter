@@ -24,6 +24,7 @@
 
 import logging
 import os
+import re
 import shlex
 import sys
 from distutils.spawn import find_executable
@@ -88,16 +89,20 @@ class VideoService(QObject):
         return capres
 
     def cut(self, source: str, output: str, frametime: str, duration: str) -> bool:
-        args = '-i "%s" -ss %s -t %s -vcodec copy -acodec copy -y "%s"' \
+        args = '-i "%s" -ss %s -t %s -vcodec copy -acodec copy -map 0 -y "%s"' \
                % (source, frametime, duration, QDir.fromNativeSeparators(output))
         return self.cmdExec(self.backend, args)
 
     def join(self, filelist: list, output: str) -> bool:
-        args = '-f concat -safe 0 -i "%s" -c copy -y "%s"' % (filelist, QDir.fromNativeSeparators(output))
+        args = '-f concat -safe 0 -i "%s" -c copy -map 0 -y "%s"' % (filelist, QDir.fromNativeSeparators(output))
         return self.cmdExec(self.backend, args)
 
-    def metadata(self, source: str) -> str:
-        args = '--output=HTML "%s"' % source
+    def streamcount(self, source: str, type: str='audio') -> int:
+        m = re.findall('\n^%s' % type.title(), self.metadata(source, type), re.MULTILINE)
+        return len(m)
+
+    def metadata(self, source: str, output: str='HTML') -> str:
+        args = '--output=%s "%s"' % (output, source)
         result = self.cmdExec(self.mediainfo, args, True)
         return result.strip()
 
