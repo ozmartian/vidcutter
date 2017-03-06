@@ -47,7 +47,7 @@ The commands for a Fedora install via this method are:
 
 VidCutter is available via the Packman third-party repository. Instructions to enable it can be found here:
 
-    https://en.opensuse.org/Additional_package_repositories#Packman
+   https://en.opensuse.org/Additional_package_repositories#Packman
 
 ####AppImage
 
