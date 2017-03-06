@@ -34,6 +34,7 @@ del /q ..\..\bin\*.*
 REM ......................download latest FFmpeg static binary......................
 
 if not exist ".\temp\" mkdir temp
+del /q temp\*.*
 aria2c -d temp -x 6 %FFMPEG%
 aria2c -d temp -x 6 %MEDIAINFO_URL%
 
