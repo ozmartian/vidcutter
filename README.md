@@ -10,6 +10,8 @@ Native installers for Windows and macOS are available on the releases page with 
 
 <p style="text-align:center;"><a href="https://github.com/ozmartian/vidcutter/releases/latest"><img alt="Latest Release" src="http://tvlinker.ozmartians.com/images/button-latest-release.png" style="max-width:100%;"></a></p>
 
+***
+
 ### Linux Users
 
 ####Arch Linux
@@ -51,6 +53,7 @@ VidCutter is available via the Packman third-party repository. Instructions to e
 
 An AppImage version is also available on the releases page to help all other Linux users.
 
+***
 
 ###PyPi
 
@@ -63,6 +66,8 @@ If installing via PyPi, be aware to also ensure you have the following tools als
     - mediainfo (mediainfo in all/most places. mainly needs to be the CLI version)
 
 Fedora and RedHat users need to enable the RPMFusion repository in order to access mpv packages and just about anything multimedia-wise. Chances are you know what I'm talking about here but if not here are some simple steps to get VidCutter working in Fedora 25, the same should apply for any other RPM based distro... until I get off my lazy butt and try to learn RPM packaging (oh how horrible it looks though).... if anyone wants to help in this area by all means do!
+
+***
 
 ## Fedora Installation Walkthrough
 
@@ -99,6 +104,8 @@ NOTE: a Fedora25 RPM package is now included in release builds so use that. The 
     $ sudo python3 setup.py install
     ```
 6. That's all folks!
+
+***
 
 ## Command-line for debugging (Linux/macOS only)
   ```
