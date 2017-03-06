@@ -26,8 +26,13 @@ else:
 
     sofile = ctypes.util.find_library('mpv')
     if sofile is None:
+        sofile = 'libmpv.so.1'
+
+    try:
+        backend = CDLL(sofile)
+    except OSError:
         raise OSError("Cannot find libmpv in the usual places.")
-    backend = CDLL(sofile)
+
     fs_enc = sys.getfilesystemencoding()
 
 
