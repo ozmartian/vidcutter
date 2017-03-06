@@ -41,6 +41,12 @@ The commands for a Fedora install via this method are:
     dnf copr enable suspiria/VidCutter
     dnf install vidcutter
 
+####openSUSE
+
+VidCutter is available via the Packman third-party repository. Instructions to enable it can be found here:
+
+    https://en.opensuse.org/Additional_package_repositories#Packman
+
 ####AppImage
 
 An AppImage version is also available on the releases page to help all other Linux users.
