@@ -734,30 +734,40 @@ class VideoCutter(QWidget):
 
     def mediaInfo(self):
         if self.mediaAvailable:
-            try:
-                mediainfo = QWidget(self, flags=Qt.Dialog | Qt.WindowCloseButtonHint)
-                mediainfo.setObjectName('mediainfo')
-                buttons = QDialogButtonBox(QDialogButtonBox.Ok, parent=mediainfo)
-                buttons.accepted.connect(mediainfo.hide)
-                metadata = '<div align="center" style="margin:15px;">%s</div>'\
-                           % self.videoService.metadata(source=self.currentMedia)
-                browser = QTextBrowser(self)
-                browser.setObjectName('metadata')
-                browser.setHtml(metadata)
-                layout = QVBoxLayout()
-                layout.addWidget(browser)
-                layout.addWidget(buttons)
-                mediainfo.setLayout(layout)
-                mediainfo.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-                mediainfo.setContentsMargins(0, 0, 0, 0)
-                mediainfo.setWindowModality(Qt.NonModal)
-                mediainfo.setWindowIcon(self.parent.windowIcon())
-                mediainfo.setWindowTitle('Media Information')
-                mediainfo.setMinimumSize(750, 450)
-                mediainfo.show()
-            except:
-                self.logger.exception('Exception occurred attempting to run mediainfo')
-                pass
+            # try:
+            if self.videoService.mediainfo is None:
+                self.logger.error('Missing dependency: mediainfo. Failing media ' +
+                                  'info page gracefully.')
+                QMessageBox.critical(self, 'Missing application dependency',
+                                     'Could not find <b>mediainfo</b> on your system. ' +
+                                     'This is required for the Media Information option ' +
+                                     'to work.<br/><br/>If you are on Linux, you can solve ' +
+                                     'this by installing the <b>mediainfo</b> package on your ' +
+                                     'distro via your package manager.')
+                return
+            mediainfo = QWidget(self, flags=Qt.Dialog | Qt.WindowCloseButtonHint)
+            mediainfo.setObjectName('mediainfo')
+            buttons = QDialogButtonBox(QDialogButtonBox.Ok, parent=mediainfo)
+            buttons.accepted.connect(mediainfo.hide)
+            metadata = '<div align="center" style="margin:15px;">%s</div>'\
+                       % self.videoService.metadata(source=self.currentMedia)
+            browser = QTextBrowser(self)
+            browser.setObjectName('metadata')
+            browser.setHtml(metadata)
+            layout = QVBoxLayout()
+            layout.addWidget(browser)
+            layout.addWidget(buttons)
+            mediainfo.setLayout(layout)
+            mediainfo.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+            mediainfo.setContentsMargins(0, 0, 0, 0)
+            mediainfo.setWindowModality(Qt.NonModal)
+            mediainfo.setWindowIcon(self.parent.windowIcon())
+            mediainfo.setWindowTitle('Media Information')
+            mediainfo.setMinimumSize(750, 450)
+            mediainfo.show()
+            # except:
+            #     self.logger.exception('Exception occurred attempting to run mediainfo')
+            #     pass
 
     @pyqtSlot()
     def showKeyRef(self):
