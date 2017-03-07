@@ -1,4 +1,0 @@
-#!/bin/bash
-
-cd ..
-python3 setup.py bdist_rpm --python python3 --group "Desktops/General Purpose Desktop" --vendor "Pete Alexandrou <pete@ozmartians.com>" --icon data/icons/vidcutter.svg --build-requires "python3, setuptools" --requires "gstreamer-plugins-ugly, gstreamer-ffmpeg, ffmpeg, qt5-qtmultimedia"
