@@ -22,6 +22,7 @@ QMainWindow, QDialog#aboutwidget { background-color: #EFF0F1; }
 QWidget#shortcuts {
     margin-top: 15px;
     background: #FFF url(':/images/watermark.png') no-repeat center top;
+    background-attachment: fixed;
 }
 
 QWidget#novideoWidget {
@@ -145,9 +146,13 @@ QStatusBar::item { border:none; outline:none; }
 /* -------------------------------------------------------------------------- */
 
 QDialog#aboutwidget QTextBrowser {
+    background-image: url(':/images/watermark.png');
+    background-repeat: no-repeat;
+    background-position: center top;
     background-color: #FFF;
+    background-attachment: fixed;
     border: none;
-    color: #444;
+    color: #000;
 }
 
 QTabWidget::pane {
