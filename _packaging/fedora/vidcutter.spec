@@ -3,7 +3,7 @@
 
 Name:           %{pkg_name}
 Version:        3.0.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:       the simple & fast video cutter & joiner with the help of mpv + FFmpeg
 
 License:        GPLv3+
@@ -67,6 +67,8 @@ sed -i "s/pypi/rpm/" vidcutter/__init__.py
 
 
 %changelog
+* Sun Mar 05 2017 Pete Alexandrou <pete@ozmartians.com> - 3.0.1-2
+- mageia + epel repos included
 * Sun Mar 05 2017 Pete Alexandrou <pete@ozmartians.com> - 3.0.1-1
 - version bump
 * Sun Mar 05 2017 Pete Alexandrou <pete@ozmartians.com> - 3.0.0-1
