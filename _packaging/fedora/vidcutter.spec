@@ -2,17 +2,17 @@
 %global pkg_name vidcutter
 
 Name:           %{pkg_name}
-Version:        3.0.0
+Version:        3.0.1
 Release:        1%{?dist}
 Summary:       the simple & fast video cutter & joiner with the help of mpv + FFmpeg
 
 License:        GPLv3+
 URL:            http://vidcutter.ozmartians.com
-Source0:       https://github.com/ozmartian/%{pkg_name}/archive/master.tar.gz
+Source0:        https://github.com/ozmartian/%{pkg_name}/archive/%{version}.tar.gz
 BuildArch:      noarch
  
 BuildRequires:  python3-devel, python3-setuptools
-Requires:          python3-qt5, mpv-libs, mediainfo, ffmpeg
+Requires:       python3-qt5, mpv-libs, mediainfo, ffmpeg
 
 %description
  The simplest & sexiest tool for cutting and joining your videos without the need for
@@ -31,7 +31,7 @@ Requires:          python3-qt5, mpv-libs, mediainfo, ffmpeg
     - mediainfo (RPMFusion)
 
 %prep
-%autosetup -n %{pkg_name}-master
+%autosetup -n %{pkg_name}-%{version}
 
 # Remove bundled egg-info
 rm -rf %{pkg_name}.egg-info
@@ -67,5 +67,7 @@ sed -i "s/pypi/rpm/" vidcutter/__init__.py
 
 
 %changelog
+* Sun Mar 05 2017 Pete Alexandrou <pete@ozmartians.com> - 3.0.1-1
+- version bump
 * Sun Mar 05 2017 Pete Alexandrou <pete@ozmartians.com> - 3.0.0-1
 - Initial packaging.

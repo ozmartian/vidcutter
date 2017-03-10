@@ -1,0 +1,36 @@
+-------------------------------------------------------------------
+Tue Mar  7 09:57:33 UTC 2017 - aloisio@gmx.com
+
+- Update to version 3.0.1
+  * added check mediainfo before running Media Information
+    widget code, advise user it is missing if not installed
+    and what to do next.... gracefully exit..
+- Added mediainfo as runtime dependency
+
+-------------------------------------------------------------------
+Fri Mar  3 12:46:56 UTC 2017 - aloisio@gmx.com
+
+- Update to version 3.0.0
+- Refreshed vidcutter-setup.patch
+
+-------------------------------------------------------------------
+Tue Feb 28 17:46:40 UTC 2017 - aloisio@gmx.com
+
+- Replaced python3-QtPy requirement with python3-qt5
+
+-------------------------------------------------------------------
+Wed Feb 22 19:16:51 UTC 2017 - aloisio@gmx.com
+
+- Added vidcutter-setup.patch (removes PyQt5 requirement
+  and sets the proper doc path)
+
+-------------------------------------------------------------------
+Tue Feb 14 16:05:27 UTC 2017 - aloisio@gmx.com
+
+- Added name to Source0 tarball
+- Corrected license
+
+-------------------------------------------------------------------
+Sun Feb  5 19:34:48 UTC 2017 - mailaender@opensuse.org
+
+- initial packaging of version 2.6.5
