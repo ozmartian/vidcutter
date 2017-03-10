@@ -128,7 +128,7 @@ class VideoSlider(QSlider):
         self._regions.insert(index2, reg)
         self.update()
 
-    def highlightRegion(self, clipindex: int):
+    def selectRegion(self, clipindex: int):
         self._regionSelected = clipindex
         self.update()
 
