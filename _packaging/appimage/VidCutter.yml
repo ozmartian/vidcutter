@@ -2,15 +2,21 @@ app: VidCutter
 union: true
 
 ingredients:
-  dist: xenial
+  dist: trusty
   sources: 
-    - deb http://archive.ubuntu.com/ubuntu/ xenial main universe
+    - deb http://archive.ubuntu.com/ubuntu/ trusty main universe
   ppas:
     - ozmartian/apps
 
 script:
   - cat > usr/bin/vidcutter <<\EOF
-  - #!/bin/bash
-  - python3 -m vidcutter $*
+  - #!/usr/bin/python3
+  - import sys
+  - from signal import SIGINT, SIG_DFL, SIGTERM, signal
+  - from vidcutter.__main__ import main
+  - signal(SIGINT, SIG_DFL)
+  - signal(SIGTERM, SIG_DFL)
+  - sys.path.insert(0, "/usr/lib/python3/dist-packages/")
+  - main()
   - EOF
   - mv usr/lib/x86_64-linux-gnu/caca/*.so* usr/lib/x86_64-linux-gnu/
