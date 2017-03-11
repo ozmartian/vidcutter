@@ -54,7 +54,7 @@ class AppInfo(QDialog):
         self.setLayout(layout)
         self.setWindowTitle('About %s' % qApp.applicationName())
         self.setWindowIcon(self.parent.windowIcon())
-        self.setMinimumSize(585, 430)
+        self.setMinimumSize(500, 300)
 
     def closeEvent(self, event: QCloseEvent):
         self.tab_about.deleteLater()
