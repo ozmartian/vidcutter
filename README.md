@@ -1,8 +1,6 @@
 ![Build Status](https://travis-ci.org/ozmartian/vidcutter.svg?branch=master)
 
-# VidCutter
-
-<img src="https://raw.githubusercontent.com/ozmartian/vidcutter/master/data/icons/vidcutter.png" width="120" height="120" />
+![VidCutter](https://raw.githubusercontent.com/ozmartian/vidcutter/gh-pages/images/vidcutter-banner.png)
 
 ### Windows + macOS Users
 
