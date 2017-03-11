@@ -55,7 +55,7 @@ class MainWindow(QMainWindow):
         self.statusBar().addPermanentWidget(statuslogo)
         self.statusBar().setStyleSheet('border:none;')
         self.setAcceptDrops(True)
-        self.setMinimumSize(900, 640)
+        self.setMinimumSize(720, 405)
         self.show()
         try:
             if len(self.video):
