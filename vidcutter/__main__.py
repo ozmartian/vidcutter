@@ -30,7 +30,7 @@ import signal
 import sys
 import traceback
 
-from PyQt5.QtCore import (QCommandLineOption, QCommandLineParser, QDir, QFile, QFileInfo, QStandardPaths, Qt,
+from PyQt5.QtCore import (QCommandLineOption, QCommandLineParser, QDir, QFile, QFileInfo, QSize, QStandardPaths, Qt,
                           QTextStream)
 from PyQt5.QtGui import QCloseEvent, QContextMenuEvent, QDragEnterEvent, QDropEvent, QMouseEvent, QPixmap
 from PyQt5.QtWidgets import qApp, QApplication, QLabel, QMainWindow, QMessageBox
@@ -55,7 +55,7 @@ class MainWindow(QMainWindow):
         self.statusBar().addPermanentWidget(statuslogo)
         self.statusBar().setStyleSheet('border:none;')
         self.setAcceptDrops(True)
-        self.setMinimumSize(900, 640)
+        self.init_scale()
         self.show()
         try:
             if len(self.video):
@@ -70,6 +70,21 @@ class MainWindow(QMainWindow):
         if not self.cutter.ffmpeg_check():
             self.close()
             sys.exit(1)
+
+    def init_scale(self) -> None:
+        screen_size = qApp.desktop().availableGeometry(-1)
+        if screen_size.width() <= 1024:
+            self.setMinimumSize(self.get_size('LOW'))
+        else:
+            self.setMinimumSize(self.get_size('NORMAL'))
+
+    def get_size(self, mode: str='NORMAL') -> QSize:
+        modes = {
+            'LOW'       : QSize(720, 405),
+            'NORMAL'    : QSize(900, 640),
+            'HIGH'      : QSize(1800, 1280)
+        }
+        return modes[mode]
 
     def init_logger(self) -> None:
         try:
@@ -102,7 +117,7 @@ class MainWindow(QMainWindow):
 
     def parse_cmdline(self) -> None:
         self.parser = QCommandLineParser()
-        self.parser.setApplicationDescription('The simply FAST & ACCURATE video cutter & joiner')
+        self.parser.setApplicationDescription('...the fast & accurate cross-platform video cutter & joiner...')
         self.parser.addPositionalArgument('video', 'Preloads the video file in app.', '[video]')
         self.edl_option = QCommandLineOption('edl', 'Preloads clip index from a previously saved EDL file.\n' +
                                              'NOTE: You must also set the video argument for this to work.', 'edl file')
