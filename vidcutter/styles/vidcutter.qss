@@ -93,6 +93,17 @@ QLabel#timeCounter, QLabel#frameCounter {
     font-family: "Droid Sans Mono", monospace;
     font-size: 10.5pt;
     padding: 4px;
+    position: relative;
+    top: 0;
+    left: 0;
+}
+
+QLineEdit#timeInput {
+    color: #FFF;
+    font-family: "Droid Sans Mono", monospace;
+    font-size: 9;
+    padding: 0;
+    margin: 0;
 }
 
 QLabel#logowidget {

@@ -40,6 +40,7 @@ from PyQt5.QtWidgets import (QAbstractItemView, QAction, qApp, QDialogButtonBox,
 import vidcutter.mpv as mpv
 import vidcutter.resources
 from vidcutter.appinfo import AppInfo
+from vidcutter.timecounter import TimeCounter
 from vidcutter.videoframe import VideoFrame
 from vidcutter.videolist import VideoList, VideoItem
 from vidcutter.videoservice import VideoService
@@ -143,9 +144,7 @@ class VideoCutter(QWidget):
         self.videoLayout.addWidget(self.novideoWidget)
         self.videoLayout.addLayout(self.clipindexLayout)
 
-        self.timeCounter = QLabel('00:00:00 / 00:00:00', autoFillBackground=True, alignment=Qt.AlignCenter,
-                                  sizePolicy=QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred))
-        self.timeCounter.setObjectName('timeCounter')
+        self.timeCounter = TimeCounter()
 
         self.frameCounter = QLabel('000 / 000', autoFillBackground=True, alignment=Qt.AlignCenter,
                                    sizePolicy=QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred))
@@ -681,6 +680,7 @@ class VideoCutter(QWidget):
     def cutVideo(self) -> bool:
         clips = len(self.clipTimes)
         filename, filelist = '', []
+        allstreams = True
         source_file, source_ext = os.path.splitext(self.currentMedia)
         if clips > 0:
             self.finalFilename, _ = QFileDialog.getSaveFileName(parent=self.parent, caption='Save video',
@@ -702,8 +702,19 @@ class VideoCutter(QWidget):
                 duration = self.delta2QTime(clip[0].msecsTo(clip[1])).toString(self.timeformat)
                 filename = '%s_%s%s' % (file, '{0:0>2}'.format(index), ext)
                 filelist.append(filename)
-                self.videoService.cut('%s%s' % (source_file, source_ext), filename, clip[0].toString(self.timeformat),
-                                      duration)
+                self.videoService.cut(source='%s%s' % (source_file, source_ext),
+                                      output=filename,
+                                      frametime=clip[0].toString(self.timeformat),
+                                      duration=duration,
+                                      allstreams=allstreams)
+                if not QFile(filename).size():
+                    self.logger.info('cut resulted in 0 length file, trying again without stream mapping')
+                    allstreams = False
+                    self.videoService.cut(source='%s%s' % (source_file, source_ext),
+                                          output=filename,
+                                          frametime=clip[0].toString(self.timeformat),
+                                          duration=duration,
+                                          allstreams=allstreams)
                 index += 1
             if len(filelist) > 1:
                 self.joinVideos(filelist, self.finalFilename)
@@ -765,9 +776,6 @@ class VideoCutter(QWidget):
             mediainfo.setWindowTitle('Media Information')
             mediainfo.setMinimumSize(750, 450)
             mediainfo.show()
-            # except:
-            #     self.logger.exception('Exception occurred attempting to run mediainfo')
-            #     pass
 
     @pyqtSlot()
     def showKeyRef(self):
@@ -933,7 +941,7 @@ class VideoCutter(QWidget):
                 self.mediaPlayer.frame_step()
             elif event.key() == Qt.Key_Up:
                 self.mediaPlayer.seek(5, 'relative+exact')
-            elif event.key() in (Qt.Key_Return, Qt.Key_Enter):
+            elif event.key() in (Qt.Key_Return, Qt.Key_Enter) and not self.timeCounter.tc_input.hasFocus():
                 if self.cutStartAction.isEnabled():
                     self.setCutStart()
                 elif self.cutEndAction.isEnabled():

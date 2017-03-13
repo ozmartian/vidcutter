@@ -197,6 +197,8 @@ class MainWindow(QMainWindow):
     def mousePressEvent(self, event: QMouseEvent):
         if event.button() == Qt.LeftButton:
             self.cutter.cliplist.clearSelection()
+            if self.cutter.timeCounter.layout.currentIndex() == 1:
+                self.cutter.timeCounter.toggleField()
 
     def dragEnterEvent(self, event: QDragEnterEvent) -> None:
         if event.mimeData().hasUrls():

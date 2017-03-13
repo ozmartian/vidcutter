@@ -88,13 +88,20 @@ class VideoService(QObject):
             del img
         return capres
 
-    def cut(self, source: str, output: str, frametime: str, duration: str) -> bool:
-        args = '-i "%s" -ss %s -t %s -vcodec copy -acodec copy -map 0 -y "%s"' \
-               % (source, frametime, duration, QDir.fromNativeSeparators(output))
+    def cut(self, source: str, output: str, frametime: str, duration: str, allstreams: bool=True) -> bool:
+        if allstreams:
+            args = '-i "%s" -ss %s -t %s -vcodec copy -acodec copy -map 0 -y "%s"' \
+                   % (source, frametime, duration, QDir.fromNativeSeparators(output))
+        else:
+            args = '-i "%s" -ss %s -t %s -vcodec copy -acodec copy -y "%s"' \
+                   % (source, frametime, duration, QDir.fromNativeSeparators(output))
         return self.cmdExec(self.backend, args)
 
-    def join(self, filelist: list, output: str) -> bool:
-        args = '-f concat -safe 0 -i "%s" -c copy -map 0 -y "%s"' % (filelist, QDir.fromNativeSeparators(output))
+    def join(self, filelist: list, output: str, allstreams: bool=True) -> bool:
+        if allstreams:
+            args = '-f concat -safe 0 -i "%s" -c copy -map 0 -y "%s"' % (filelist, QDir.fromNativeSeparators(output))
+        else:
+            args = '-f concat -safe 0 -i "%s" -c copy -y "%s"' % (filelist, QDir.fromNativeSeparators(output))
         return self.cmdExec(self.backend, args)
 
     def streamcount(self, source: str, type: str='audio') -> int:
