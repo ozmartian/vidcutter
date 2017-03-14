@@ -17,7 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
-QMainWindow, QDialog#aboutwidget { background-color: #EFF0F1; }
+QMainWindow, QDialog#aboutwidget { background-color: #EFF0F1; border-radius:6px; }
 
 QWidget#shortcuts {
     margin-top: 15px;
@@ -101,13 +101,14 @@ QLabel#timeCounter, QLabel#frameCounter {
 QLineEdit#timeInput {
     color: #FFF;
     font-family: "Droid Sans Mono", monospace;
-    font-size: 9;
+    font-size: 9pt;
     padding: 0;
     margin: 0;
 }
 
 QLabel#logowidget {
-    margin: -3px 5px 5px 0;
+    margin: 0;
+    margin-top: -5px;
     border: none;
     outline: none;
 }

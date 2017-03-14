@@ -22,9 +22,9 @@
 #
 #######################################################################
 
-from PyQt5.QtCore import pyqtSignal, Qt
+from PyQt5.QtCore import pyqtSignal, Qt, QTime
 from PyQt5.QtGui import QMouseEvent
-from PyQt5.QtWidgets import QLabel, QLineEdit, QSizePolicy, QStackedLayout, QWidget
+from PyQt5.QtWidgets import QLabel, QTimeEdit, QSizePolicy, QStackedLayout, QWidget
 
 
 class TimeCounter(QWidget):
@@ -33,11 +33,9 @@ class TimeCounter(QWidget):
         self.tc_label = ClickableLabel('00:00:00 / 00:00:00', autoFillBackground=True, alignment=Qt.AlignCenter,
                                        sizePolicy=QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred))
         self.tc_label.setObjectName('timeCounter')
-        self.tc_input = QLineEdit(self)
+        self.tc_input = QTimeEdit(QTime.fromString(self.tc_label.text()), self)
         self.tc_input.setObjectName('timeInput')
         self.tc_input.setFrame(False)
-        self.tc_input.setTextMargins(0, 0, 0, 0)
-        self.tc_input.setInputMask('00:00:09.999')
         self.layout = QStackedLayout(self)
         self.layout.addWidget(self.tc_label)
         self.layout.addWidget(self.tc_input)
@@ -53,7 +51,7 @@ class TimeCounter(QWidget):
             self.layout.setCurrentIndex(0)
         else:
             self.layout.setCurrentIndex(1)
-            self.tc_input.setText(self.tc_label.text())
+            self.tc_input.setTime(QTime.fromString(self.tc_label.text()))
             self.tc_input.setFocus()
 
 
