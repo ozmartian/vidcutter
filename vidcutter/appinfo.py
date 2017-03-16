@@ -22,15 +22,13 @@
 #
 #######################################################################
 
-import os
 import platform
 import sys
 
 from PyQt5.Qt import PYQT_VERSION_STR
 from PyQt5.QtCore import QSize, Qt, QUrl
-from PyQt5.QtGui import QCloseEvent, QPixmap
-from PyQt5.QtWidgets import (QDialog, QDialogButtonBox, QGroupBox, QHBoxLayout,
-                             QLabel, QTabWidget, QTextBrowser, QVBoxLayout, qApp)
+from PyQt5.QtGui import QCloseEvent
+from PyQt5.QtWidgets import (QDialog, QDialogButtonBox, QLabel, QTabWidget, QTextBrowser, QVBoxLayout, qApp)
 from sip import SIP_VERSION_STR
 
 
@@ -84,20 +82,13 @@ class AppInfo(QDialog):
         self.setLayout(layout)
         self.setWindowTitle('About %s' % qApp.applicationName())
         self.setWindowIcon(self.parent.windowIcon())
-        self.init_scale()
+        self.setMinimumSize(self.get_size(self.parent.parent.scale))
 
-    def init_scale(self) -> None:
-        screen_size = qApp.desktop().availableGeometry(-1)
-        if screen_size.width() <= 1024:
-            self.setMinimumSize(self.get_size('LOW'))
-        else:
-            self.setMinimumSize(self.get_size('NORMAL'))
-
-    def get_size(self, mode: str='NORMAL') -> QSize:
+    def get_size(self, mode: str = 'NORMAL') -> QSize:
         modes = {
-            'LOW'       : QSize(450, 250),
-            'NORMAL'    : QSize(540, 430),
-            'HIGH'      : QSize(1080, 840)
+            'LOW': QSize(450, 250),
+            'NORMAL': QSize(540, 430),
+            'HIGH': QSize(1080, 840)
         }
         return modes[mode]
 

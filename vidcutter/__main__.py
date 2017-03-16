@@ -75,16 +75,14 @@ class MainWindow(QMainWindow):
 
     def init_scale(self) -> None:
         screen_size = qApp.desktop().availableGeometry(-1)
-        if screen_size.width() <= 1024:
-            self.setMinimumSize(self.get_size('LOW'))
-        else:
-            self.setMinimumSize(self.get_size('NORMAL'))
+        self.scale = 'LOW' if screen_size.width() <= 1024 else 'NORMAL'
+        self.setMinimumSize(self.get_size(self.scale))
 
-    def get_size(self, mode: str='NORMAL') -> QSize:
+    def get_size(self, mode: str = 'NORMAL') -> QSize:
         modes = {
-            'LOW'       : QSize(720, 405),
-            'NORMAL'    : QSize(900, 640),
-            'HIGH'      : QSize(1800, 1280)
+            'LOW': QSize(720, 405),
+            'NORMAL': QSize(900, 640),
+            'HIGH': QSize(1800, 1280)
         }
         return modes[mode]
 

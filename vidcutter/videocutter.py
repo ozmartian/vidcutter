@@ -32,7 +32,7 @@ from locale import setlocale, LC_NUMERIC
 
 from PyQt5.QtCore import QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTextStream, QTime, QUrl, pyqtSlot
 from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMovie, QPalette,
-                         QPixmap, QWheelEvent)
+                         QPixmap)
 from PyQt5.QtWidgets import (QAbstractItemView, QAction, qApp, QDialogButtonBox, QFileDialog, QGroupBox,
                              QHBoxLayout, QLabel, QListWidgetItem, QMenu, QMessageBox, QProgressDialog, QPushButton,
                              QSizePolicy, QSlider, QStyleFactory, QTextBrowser, QVBoxLayout, QWidget)
@@ -779,7 +779,10 @@ class VideoCutter(QWidget):
             mediainfo.setWindowModality(Qt.NonModal)
             mediainfo.setWindowIcon(self.parent.windowIcon())
             mediainfo.setWindowTitle('Media Information')
-            mediainfo.setMinimumSize(750, 450)
+            if self.parent.scale == 'LOW':
+                mediainfo.setMinimumSize(600, 300)
+            else:
+                mediainfo.setMinimumSize(750, 450)
             mediainfo.show()
 
     @pyqtSlot()
@@ -797,7 +800,7 @@ class VideoCutter(QWidget):
         shortcuts.setWindowModality(Qt.NonModal)
         shortcuts.setWindowIcon(self.parent.windowIcon())
         shortcuts.setWindowTitle('Keyboard Shortcuts')
-        shortcuts.setMinimumWidth(800)
+        shortcuts.setMinimumWidth(500 if self.parent.scale == 'LOW' else 800)
         shortcuts.show()
 
     @pyqtSlot()
