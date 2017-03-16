@@ -17,8 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
-QMainWindow,
-QDialog#aboutwidget {
+QMainWindow, QDialog#aboutwidget {
     background-color: #EFF0F1;
 }
 
@@ -92,7 +91,8 @@ QListView::item#cliplist {
 QLabel#listHeader {
     padding: 8px 5px 5px;
     border: 1px solid #B9B9B9;
-    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #FFF, stop: 0.5 #EAEAEA, stop: 0.6 #EAEAEA, stop: 1 #FFF);
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+        stop: 0 #FFF, stop: 0.5 #EAEAEA, stop: 0.6 #EAEAEA, stop: 1 #FFF);
 }
 
 QLabel#runtimeLabel {
@@ -130,8 +130,7 @@ QPushButton#menuButton {
     height: 42px;
 }
 
-QPushButton:hover#menuButton,
-QPushButton:pressed#menuButton {
+QPushButton:hover#menuButton, QPushButton:pressed#menuButton {
     border-image: url(:/images/menu-active.png);
 }
 
@@ -139,8 +138,7 @@ QPushButton::menu-indicator#menuButton {
     left: -1000px;
 }
 
-QPushButton#muteButton,
-QPushButton#menuButton {
+QPushButton#muteButton, QPushButton#menuButton {
     background-color: transparent;
     border: none;
     outline: none;
