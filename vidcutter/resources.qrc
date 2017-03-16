@@ -18,6 +18,8 @@
         <file>images/muted.png</file>
         <file>images/novideo.png</file>
         <file>images/novideotext.gif</file>
+        <file>images/python.png</file>
+        <file>images/qt.png</file>
         <file>images/remove.png</file>
         <file>images/remove-all.png</file>
         <file>images/runtime.png</file>
@@ -48,6 +50,7 @@
         <file>images/update.png</file>
         <file>images/vidcutter.png</file>
         <file>images/vidcutter-emboss.png</file>
+        <file>images/vidcutter-small.png</file>
         <file>images/viewlogs.png</file>
         <file>images/watermark.png</file>
         <file>styles/vidcutter.qss</file>

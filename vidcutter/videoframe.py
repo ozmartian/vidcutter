@@ -23,7 +23,7 @@
 #######################################################################
 
 from PyQt5.QtCore import Qt, QObject, QEvent
-from PyQt5.QtGui import QMouseEvent
+# from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtWidgets import QFrame
 
 

@@ -17,7 +17,10 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
-QMainWindow, QDialog#aboutwidget { background-color: #EFF0F1; border-radius:6px; }
+QMainWindow,
+QDialog#aboutwidget {
+    background-color: #EFF0F1;
+}
 
 QWidget#shortcuts {
     margin-top: 15px;
@@ -32,7 +35,9 @@ QWidget#novideoWidget {
 
 /* -------------------------------------------------------------------------- */
 
-QToolBar#appcontrols { spacing: 15px; }
+QToolBar#appcontrols {
+    spacing: 15px;
+}
 
 QToolBar#appcontrols QToolButton {
     padding: 1px 2px;
@@ -45,17 +50,27 @@ QToolBar#appcontrols QToolButton {
     border: none;
 }
 
-QToolBar#appcontrols QToolButton:hover { color: #444; }
+QToolBar#appcontrols QToolButton:hover {
+    color: #444;
+}
 
 QToolBar#appcontrols QToolButton:pressed {
     font-weight: 500;
     color: #444;
 }
 
-QToolBar#appcontrols QToolButton:disabled, QToolBar#appcontrols QToolButton:disabled#saveButton { color: #AAA; }
+QToolBar#appcontrols QToolButton:disabled,
+QToolBar#appcontrols QToolButton:disabled#saveButton {
+    color: #AAA;
+}
 
-QToolBar#appcontrols QToolButton#saveButton { color:#642C68; }
-QToolBar#appcontrols QToolButton:disabled#saveButton { color:#AAA; }
+QToolBar#appcontrols QToolButton#saveButton {
+    color: #642C68;
+}
+
+QToolBar#appcontrols QToolButton:disabled#saveButton {
+    color: #AAA;
+}
 
 /* -------------------------------------------------------------------------- */
 
@@ -68,15 +83,16 @@ QListView#cliplist {
     background-color: #FFF;
 }
 
-QListView::item#cliplist { padding: 10px; }
+QListView::item#cliplist {
+    padding: 10px;
+}
 
 /* -------------------------------------------------------------------------- */
 
 QLabel#listHeader {
     padding: 8px 5px 5px;
     border: 1px solid #B9B9B9;
-    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-        stop: 0 #FFF, stop: 0.5 #EAEAEA, stop: 0.6 #EAEAEA, stop: 1 #FFF);
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #FFF, stop: 0.5 #EAEAEA, stop: 0.6 #EAEAEA, stop: 1 #FFF);
 }
 
 QLabel#runtimeLabel {
@@ -88,27 +104,20 @@ QLabel#runtimeLabel {
     border: 1px solid #B9B9B9;
 }
 
-QLabel#timeCounter, QLabel#frameCounter {
+QTimeEdit#timeCounter, QLabel#separator, QLabel#timeDuration, QLabel#frameCounter {
     color: #FFF;
     font-family: "Droid Sans Mono", monospace;
     font-size: 10.5pt;
-    padding: 4px;
-    position: relative;
-    top: 0;
-    left: 0;
-}
-
-QLineEdit#timeInput {
-    color: #FFF;
-    font-family: "Droid Sans Mono", monospace;
-    font-size: 9pt;
     padding: 0;
     margin: 0;
 }
 
+QLabel#separator {
+    margin-left: -10px;
+}
+
 QLabel#logowidget {
     margin: 0;
-    margin-top: -5px;
     border: none;
     outline: none;
 }
@@ -121,11 +130,17 @@ QPushButton#menuButton {
     height: 42px;
 }
 
-QPushButton:hover#menuButton, QPushButton:pressed#menuButton { border-image: url(:/images/menu-active.png); }
+QPushButton:hover#menuButton,
+QPushButton:pressed#menuButton {
+    border-image: url(:/images/menu-active.png);
+}
 
-QPushButton::menu-indicator#menuButton { left: -1000px; }
+QPushButton::menu-indicator#menuButton {
+    left: -1000px;
+}
 
-QPushButton#muteButton, QPushButton#menuButton {
+QPushButton#muteButton,
+QPushButton#menuButton {
     background-color: transparent;
     border: none;
     outline: none;
@@ -134,8 +149,8 @@ QPushButton#muteButton, QPushButton#menuButton {
 /* -------------------------------------------------------------------------- */
 
 QTreeView {
-  alternate-background-color: rgba(0, 0, 0, 0.03);
-  show-decoration-selected: 0;
+    alternate-background-color: rgba(0, 0, 0, 0.03);
+    show-decoration-selected: 0;
 }
 
 QTreeView::branch {
@@ -151,9 +166,16 @@ QTreeView::branch {
 
 /* -------------------------------------------------------------------------- */
 
-QStatusBar { color: #444; margin: 0; padding: 0; }
+QStatusBar {
+    color: #444;
+    margin: 0;
+    padding: 0;
+}
 
-QStatusBar::item { border:none; outline:none; }
+QStatusBar::item {
+    border: none;
+    outline: none;
+}
 
 /* -------------------------------------------------------------------------- */
 
@@ -168,7 +190,7 @@ QDialog#aboutwidget QTextBrowser {
 }
 
 QTabWidget::pane {
-    border: 1px solid #999;   
+    border: 1px solid #999;
 }
 
 QTabWidget::tab-bar:top {
@@ -207,6 +229,7 @@ QTabBar::tab:top:selected {
     border-bottom-color: #642C68;
 }
 
-QTabBar::tab:top:last, QTabBar::tab:top:only-one {
+QTabBar::tab:top:last,
+QTabBar::tab:top:only-one {
     margin-right: 0;
 }

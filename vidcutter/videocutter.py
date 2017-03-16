@@ -76,6 +76,8 @@ class VideoCutter(QWidget):
 
         QFontDatabase.addApplicationFont(':/fonts/DroidSansMono.ttf')
         QFontDatabase.addApplicationFont(':/fonts/OpenSans.ttf')
+        QFontDatabase.addApplicationFont(':/fonts/Questrial.ttf')
+        QFontDatabase.addApplicationFont(':/fonts/Antic.ttf')
 
         stylesheet = ':/styles/vidcutter_osx.qss' if sys.platform == 'darwin' else ':/styles/vidcutter.qss'
         self.parent.load_stylesheet(stylesheet)
@@ -144,10 +146,13 @@ class VideoCutter(QWidget):
         self.videoLayout.addWidget(self.novideoWidget)
         self.videoLayout.addLayout(self.clipindexLayout)
 
-        self.timeCounter = TimeCounter()
+        self.timeCounter = TimeCounter(self)
+        self.timeCounter.setMinimumWidth(255)
+        self.timeCounter.timeChanged.connect(lambda newtime: self.setPosition(newtime.msecsSinceStartOfDay()))
 
         self.frameCounter = QLabel('000 / 000', autoFillBackground=True, alignment=Qt.AlignCenter,
                                    sizePolicy=QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred))
+        self.frameCounter.setMinimumWidth(90)
         self.frameCounter.setObjectName('frameCounter')
 
         countersLayout = QHBoxLayout()
@@ -161,9 +166,10 @@ class VideoCutter(QWidget):
         countersLayout.addStretch(1)
 
         countersGroup = QGroupBox()
+        countersGroup.setContentsMargins(0, 0, 0, 0)
         countersGroup.setLayout(countersLayout)
-        countersGroup.setFixedHeight(22)
-        countersGroup.setStyleSheet('border: 0; background-color: #000;')
+        countersGroup.setFixedHeight(28)
+        countersGroup.setStyleSheet('border: 0; background-color: #000; margin: 0; padding: 0;')
 
         self.initMPV()
 
@@ -227,7 +233,6 @@ class VideoCutter(QWidget):
     def initMPV(self) -> None:
         setlocale(LC_NUMERIC, 'C')
         self.mpvFrame = VideoFrame(self)
-
         self.mediaPlayer = mpv.MPV(wid=int(self.mpvFrame.winId()),
                                    log_handler=self.logMPV,
                                    ytdl=False,
@@ -248,10 +253,8 @@ class VideoCutter(QWidget):
                                    rebase_start_time=False,
                                    keepaspect=True,
                                    hwdec='auto')
-
         if sys.platform != 'darwin':
             self.mediaPlayer.force_window = 'immediate'
-
         self.mediaPlayer.observe_property('time-pos', lambda ptime: self.positionChanged(ptime * 1000))
         self.mediaPlayer.observe_property('duration', lambda runtime: self.durationChanged(runtime * 1000))
 
@@ -545,6 +548,7 @@ class VideoCutter(QWidget):
         else:
             self.playAction.setVisible(True)
             self.pauseAction.setVisible(False)
+        self.timeCounter.clearFocus()
         self.mediaPlayer.pause = not self.mediaPlayer.pause
 
     def initMediaControls(self, flag: bool = True) -> None:
@@ -562,17 +566,15 @@ class VideoCutter(QWidget):
         self.mediaPlayer.time_pos = position / 1000
 
     def positionChanged(self, progress: int) -> None:
-        if self.seekSlider.restrictValue <= progress:
+        if self.seekSlider.restrictValue < progress:
             self.seekSlider.setValue(progress)
-            currentTime = self.delta2QTime(progress)
-            totalTime = self.delta2QTime(self.mediaPlayer.duration * 1000)
-            self.timeCounter.setText(
-                '%s / %s' % (currentTime.toString(self.timeformat), totalTime.toString(self.timeformat)))
+            self.timeCounter.setTime(self.delta2QTime(progress).toString(self.timeformat))
             self.frameCounter.setText(
                 '%s / %s' % (self.mediaPlayer.estimated_frame_number, self.mediaPlayer.estimated_frame_count))
 
     def durationChanged(self, duration: int) -> None:
         self.seekSlider.setRange(0, duration)
+        self.timeCounter.setDuration(self.delta2QTime(duration).toString(self.timeformat))
 
     def muteAudio(self) -> None:
         if self.mediaPlayer.mute:
@@ -589,7 +591,9 @@ class VideoCutter(QWidget):
     def setCutStart(self) -> None:
         if os.getenv('DEBUG', False):
             print('cut start position: %s' % self.seekSlider.value())
-        self.clipTimes.append([self.delta2QTime(self.mediaPlayer.playback_time * 1000), '', self.captureImage()])
+        starttime = self.delta2QTime(self.mediaPlayer.playback_time * 1000)
+        self.clipTimes.append([starttime, '', self.captureImage()])
+        self.timeCounter.setMinimum(starttime.toString(self.timeformat))
         self.cutStartAction.setDisabled(True)
         self.cutEndAction.setEnabled(True)
         self.seekSlider.setRestrictValue(self.seekSlider.value(), True)
@@ -609,6 +613,7 @@ class VideoCutter(QWidget):
         item[1] = selected
         self.cutStartAction.setEnabled(True)
         self.cutEndAction.setDisabled(True)
+        self.timeCounter.setMinimum()
         self.seekSlider.setRestrictValue(0, False)
         self.inCut = False
         self.mediaPlayer.show_text('clip end marker set', 3000, 0)
@@ -923,14 +928,6 @@ class VideoCutter(QWidget):
                                  'root access (Linux/Mac) in order to do this.</p>')
         return valid
 
-    def wheelEvent(self, event: QWheelEvent) -> None:
-        if self.mediaAvailable:
-            if event.angleDelta().y() > 0:
-                self.mediaPlayer.frame_back_step()
-            else:
-                self.mediaPlayer.frame_step()
-            event.accept()
-
     def keyPressEvent(self, event: QKeyEvent) -> None:
         if self.mediaAvailable:
             if event.key() == Qt.Key_Left:
@@ -941,7 +938,7 @@ class VideoCutter(QWidget):
                 self.mediaPlayer.frame_step()
             elif event.key() == Qt.Key_Up:
                 self.mediaPlayer.seek(5, 'relative+exact')
-            elif event.key() in (Qt.Key_Return, Qt.Key_Enter) and not self.timeCounter.tc_input.hasFocus():
+            elif event.key() in (Qt.Key_Return, Qt.Key_Enter) and not self.timeCounter.hasFocus():
                 if self.cutStartAction.isEnabled():
                     self.setCutStart()
                 elif self.cutEndAction.isEnabled():

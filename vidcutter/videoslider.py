@@ -138,7 +138,12 @@ class VideoSlider(QSlider):
         self.update()
 
     def wheelEvent(self, event: QWheelEvent) -> None:
-        qApp.sendEvent(self.parentWidget(), event)
+        if self.parentWidget().mediaAvailable:
+            if event.angleDelta().y() > 0:
+                self.parentWidget().mediaPlayer.frame_back_step()
+            else:
+                self.parentWidget().mediaPlayer.frame_step()
+            event.accept()
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
         qApp.sendEvent(self.parentWidget(), event)

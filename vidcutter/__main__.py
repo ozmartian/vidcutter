@@ -52,6 +52,8 @@ class MainWindow(QMainWindow):
         self.setContentsMargins(0, 0, 0, 0)
         self.statusBar().showMessage('Ready')
         statuslogo = QLabel(pixmap=QPixmap(':/images/vidcutter-emboss.png'), objectName='logowidget')
+        if sys.platform == 'win32':
+            statuslogo.setStyleSheet('margin-top: -5px;')
         self.statusBar().addPermanentWidget(statuslogo)
         self.statusBar().setStyleSheet('border:none;')
         self.setAcceptDrops(True)
@@ -195,10 +197,9 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).contextMenuEvent(event)
 
     def mousePressEvent(self, event: QMouseEvent):
-        if event.button() == Qt.LeftButton:
+        if event.button() == Qt.LeftButton and self.cutter.mediaAvailable:
             self.cutter.cliplist.clearSelection()
-            if self.cutter.timeCounter.layout.currentIndex() == 1:
-                self.cutter.timeCounter.toggleField()
+            self.cutter.timeCounter.clearFocus()
 
     def dragEnterEvent(self, event: QDragEnterEvent) -> None:
         if event.mimeData().hasUrls():

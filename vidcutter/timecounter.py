@@ -22,44 +22,65 @@
 #
 #######################################################################
 
-from PyQt5.QtCore import pyqtSignal, Qt, QTime
-from PyQt5.QtGui import QMouseEvent
-from PyQt5.QtWidgets import QLabel, QTimeEdit, QSizePolicy, QStackedLayout, QWidget
+from PyQt5.QtCore import pyqtSignal, pyqtSlot, QTime
+from PyQt5.QtWidgets import QAbstractSpinBox, QLabel, QHBoxLayout, QTimeEdit, QSizePolicy, QWidget
 
 
 class TimeCounter(QWidget):
+    timeChanged = pyqtSignal(QTime)
+
     def __init__(self, parent=None):
         super(TimeCounter, self).__init__(parent)
-        self.tc_label = ClickableLabel('00:00:00 / 00:00:00', autoFillBackground=True, alignment=Qt.AlignCenter,
-                                       sizePolicy=QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred))
-        self.tc_label.setObjectName('timeCounter')
-        self.tc_input = QTimeEdit(QTime.fromString(self.tc_label.text()), self)
-        self.tc_input.setObjectName('timeInput')
-        self.tc_input.setFrame(False)
-        self.layout = QStackedLayout(self)
-        self.layout.addWidget(self.tc_label)
-        self.layout.addWidget(self.tc_input)
-        self.setLayout(self.layout)
-        self.setContentsMargins(0, 0, 0, 0)
-        # self.tc_label.clicked.connect(self.toggleField)
+        self.parent = parent
+        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        self.runtime = QTimeEdit(QTime(0, 0), self)
+        self.runtime.setObjectName('timeCounter')
+        self.runtime.setFrame(False)
+        self.runtime.setDisplayFormat('hh:mm:ss.zzz')
+        self.runtime.timeChanged.connect(self.timeChangeHandler)
+        separator = QLabel('/', objectName='separator')
+        self.duration = QLabel('00:00:00.000', objectName='timeDuration')
+        layout = QHBoxLayout(self)
+        layout.addWidget(self.runtime)
+        layout.addWidget(separator)
+        layout.addWidget(self.duration)
+        self.setLayout(layout)
 
-    def setText(self, text: str):
-        self.tc_label.setText(text)
+    def setRange(self, mintime: str, maxtime: str) -> None:
+        self.runtime.setTimeRange(QTime.fromString(mintime, 'hh:mm:ss.zzz'), QTime.fromString(maxtime, 'hh:mm:ss.zzz'))
 
-    def toggleField(self):
-        if self.layout.currentIndex() == 1:
-            self.layout.setCurrentIndex(0)
+    def setMinimum(self, mintime: str=None) -> None:
+        if mintime is None:
+            self.runtime.setMinimumTime(QTime(0, 0))
         else:
-            self.layout.setCurrentIndex(1)
-            self.tc_input.setTime(QTime.fromString(self.tc_label.text()))
-            self.tc_input.setFocus()
+            self.runtime.setMinimumTime(QTime.fromString(mintime, 'hh:mm:ss.zzz'))
 
+    def setMaximum(self, maxtime: str) -> None:
+        self.runtime.setMaximumTime(QTime.fromString(maxtime, 'hh:mm:ss.zzz'))
 
-class ClickableLabel(QLabel):
-    clicked = pyqtSignal()
+    def setTime(self, time: str) -> None:
+        self.runtime.setTime(QTime.fromString(time, 'hh:mm:ss.zzz'))
 
-    def __init__(self, parent=None, *arg, **kwargs):
-        super(ClickableLabel, self).__init__(parent, *arg, **kwargs)
+    def setDuration(self, time: str) -> None:
+        self.duration.setText(time)
+        self.setMaximum(time)
 
-    def mousePressEvent(self, event: QMouseEvent) -> None:
-        self.clicked.emit()
+    def clearFocus(self) -> None:
+        self.runtime.clearFocus()
+
+    def hasFocus(self) -> bool:
+        if self.runtime.hasFocus():
+            return True
+        return super(TimeCounter, self).hasFocus()
+
+    def setReadOnly(self, readonly: bool) -> None:
+        self.runtime.setReadOnly(readonly)
+        if readonly:
+            self.runtime.setButtonSymbols(QAbstractSpinBox.NoButtons)
+        else:
+            self.runtime.setButtonSymbols(QAbstractSpinBox.UpDownArrows)
+
+    @pyqtSlot(QTime)
+    def timeChangeHandler(self, newtime: QTime) -> None:
+        if self.runtime.hasFocus():
+            self.timeChanged.emit(newtime)

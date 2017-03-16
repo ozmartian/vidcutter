@@ -22,13 +22,15 @@
 #
 #######################################################################
 
+import os
 import platform
 import sys
 
 from PyQt5.Qt import PYQT_VERSION_STR
 from PyQt5.QtCore import QSize, Qt, QUrl
-from PyQt5.QtGui import QCloseEvent
-from PyQt5.QtWidgets import QDialog, QDialogButtonBox, QTabWidget, QTextBrowser, QVBoxLayout, qApp
+from PyQt5.QtGui import QCloseEvent, QPixmap
+from PyQt5.QtWidgets import (QDialog, QDialogButtonBox, QGroupBox, QHBoxLayout,
+                             QLabel, QTabWidget, QTextBrowser, QVBoxLayout, qApp)
 from sip import SIP_VERSION_STR
 
 
@@ -38,6 +40,33 @@ class AppInfo(QDialog):
         self.parent = parent
         self.setObjectName('aboutwidget')
         self.setWindowModality(Qt.ApplicationModal)
+        header = QLabel('''
+            <style>
+                * { font-family: "Open Sans", sans-serif; }
+                table { background: #FFF; color: #444; }
+            </style>
+            <table border="0" cellpadding="5" cellspacing="1" width="100%%">
+                <tr>
+                    <td width="82">
+                        <img src=":/images/vidcutter-small.png" width="82" />
+                    </td>
+                    <td style="padding:4px;">
+                        <span style="font-size:40px;font-weight:500;color:#642C68;">%s</span>
+                        <br/>&nbsp;&nbsp;
+                        <span style="font-size:18px;">version %s</span>
+                        <span style="font-size:10pt;position:relative;left:5px;">- %s</span>
+                    </td>
+                    <td align="right" style="padding:15px;">
+                        <div style="padding:20px 0 10px 0;">
+                            <img src=":/images/python.png"/>
+                        </div>
+                        <div style="margin-top:10px;">
+                            <img src=":/images/qt.png" />
+                        </div>
+                    </td>
+                </tr>
+            </table>''' % (qApp.applicationName(), qApp.applicationVersion(), platform.architecture()[0]), self)
+        header.setStyleSheet('border:1px solid #999; background:#FFF;')
         self.tab_about = AboutTab(self)
         self.tab_credits = CreditsTab()
         self.tab_license = LicenseTab()
@@ -49,6 +78,7 @@ class AppInfo(QDialog):
         buttons = QDialogButtonBox(QDialogButtonBox.Ok)
         buttons.accepted.connect(self.close)
         layout = QVBoxLayout()
+        layout.addWidget(header)
         layout.addWidget(tabs)
         layout.addWidget(buttons)
         self.setLayout(layout)
@@ -65,9 +95,9 @@ class AppInfo(QDialog):
 
     def get_size(self, mode: str='NORMAL') -> QSize:
         modes = {
-            'LOW'       : QSize(500, 300),
-            'NORMAL'    : QSize(585, 430),
-            'HIGH'      : QSize(1170, 860)
+            'LOW'       : QSize(450, 250),
+            'NORMAL'    : QSize(540, 430),
+            'HIGH'      : QSize(1080, 840)
         }
         return modes[mode]
 
@@ -89,36 +119,31 @@ class AboutTab(QTextBrowser):
             ffmpeg_version = self.parent.parent.mediaPlayer.ffmpeg_version
         except AttributeError:
             ffmpeg_version = '2.8.10'
-        self.setHtml('''<style>
+        html = '''
+<style>
     a { color:#441d4e; text-decoration:none; font-weight:bold; }
     a:hover { text-decoration:underline; }
     table { width: 100%%; font-family: "Open Sans", sans-serif; }
 </style>
-<table border="0" cellpadding="6" cellspacing="4">
+<table border="0" cellpadding="15" cellspacing="4">
     <tr>
-        <td>
-            <img src=":/images/vidcutter.png" />
-        </td>
-        <td>
-            <p>
-                <span style="font-size:36pt; font-weight:%i; color:#6A4572;">%s</span>
-                <br/>
-                &nbsp;&nbsp;
-                <span style="font-size:13pt;font-weight:600;">Version:</span>
-                <span style="font-size:13pt;font-weight:%i;">%s</span>
-                <span style="font-size:10pt;position:relative;left:5px;">- %s</span>
-            </p>
-            <p style="font-size:13px;">
-                + <b>libmpv:</b> %s
-                %s
-                + <b>FFmpeg:</b> %s
-                <br/>
-                + <b>Python:</b> %s
-                &nbsp;&nbsp;&nbsp;
-                + <b>PyQt5:</b> %s
-                &nbsp;&nbsp;&nbsp;
-                + <b>SIP:</b> %s
-            </p>
+        <td>'''
+        # if os.getenv('DEBUG', False):
+        html += '''
+        <p style="font-size:13px;">
+            <b>libmpv:</b> %s
+            %s
+            <b>FFmpeg:</b> %s
+            <br/>
+            <b>Python:</b> %s
+            &nbsp;&nbsp;&nbsp;
+            <b>PyQt5:</b> %s
+            &nbsp;&nbsp;&nbsp;
+            <b>SIP:</b> %s
+        </p>''' % (self.parent.parent.mediaPlayer.mpv_version.replace('mpv ', ''),
+                   linebreak, ffmpeg_version, sys.version.split(' ')[0],
+                   PYQT_VERSION_STR, SIP_VERSION_STR)
+        html += '''
             <p style="font-size:13px;">
                 Copyright &copy; 2017 <a href="mailto:pete@ozmartians.com">Pete Alexandrou</a>
                 <br/>
@@ -138,12 +163,8 @@ class AboutTab(QTextBrowser):
             </p>
         </td>
     </tr>
-</table>''' % (weight, qApp.applicationName(), weight,
-               qApp.applicationVersion(), platform.architecture()[0],
-               self.parent.parent.mediaPlayer.mpv_version.replace('mpv ', ''),
-               linebreak, ffmpeg_version, sys.version.split(' ')[0],
-               PYQT_VERSION_STR, SIP_VERSION_STR,
-               qApp.organizationDomain(), qApp.organizationDomain()))
+</table>''' % (qApp.organizationDomain(), qApp.organizationDomain())
+        self.setHtml(html)
 
 
 class CreditsTab(QTextBrowser):
@@ -157,44 +178,49 @@ class CreditsTab(QTextBrowser):
             This application either uses code and tools from the following projects in part or in their entirety as
             deemed permissable by each project's open-source license.
         </p>
-        <br/>
-        <div align="center">
-            <p>
-                <a href="http://ffmpeg.org">FFmpeg</a>
-                -
-                GPLv2+
-            </p>
-            <p>
-                <a href="http://mpv.io">mpv</a>
-                -
-                GPLv2+
-            </p>
-            <p>
-                <a href="https://mpv.srsfckn.biz">libmpv</a>
-                -
-                GPLv3+
-            </p>
-            <p>
-                <a href="https://github.com/jaseg/python-mpv">python-mpv</a>
-                -
-                AGPLv3
-            </p>
-            <p>
-                <a href="http://mediaarea.net/mediainfo">MediaInfo</a>
-                -
-                BSD-style
-            </p>
-            <p>
-                <a href="https://www.riverbankcomputing.com/software/pyqt">PyQt5</a>
-                -
-                GPLv3+
-            </p>
-            <p>
-                <a href="https://www.qt.io">Qt5</a>
-                -
-                LGPLv3
-            </p>
-        </div>''')
+        <table border="0" cellpadding="10" cellspacing="0" width="400" align="center" style="margin-top:10px;">
+            <tr>
+                <td width="200">
+                    <p>
+                        <a href="http://ffmpeg.org">FFmpeg</a>
+                        -
+                        GPLv2+
+                    </p>
+                    <p>
+                        <a href="http://mpv.io">mpv</a>
+                        -
+                        GPLv2+
+                    </p>
+                    <p>
+                        <a href="https://mpv.srsfckn.biz">libmpv</a>
+                        -
+                        GPLv3+
+                    </p>
+                    <p>
+                        <a href="https://github.com/jaseg/python-mpv">python-mpv</a>
+                        -
+                        AGPLv3
+                    </p>
+                </td>
+                <td width="200">
+                    <p>
+                        <a href="http://mediaarea.net/mediainfo">MediaInfo</a>
+                        -
+                        BSD-style
+                    </p>
+                    <p>
+                        <a href="https://www.riverbankcomputing.com/software/pyqt">PyQt5</a>
+                        -
+                        GPLv3+
+                    </p>
+                    <p>
+                        <a href="https://www.qt.io">Qt5</a>
+                        -
+                        LGPLv3
+                    </p>
+                </td>
+            </tr>
+        </table>''')
 
 
 class LicenseTab(QTextBrowser):
