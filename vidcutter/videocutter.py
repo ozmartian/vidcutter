@@ -40,7 +40,7 @@ from PyQt5.QtWidgets import (QAbstractItemView, QAction, qApp, QDialogButtonBox,
 import vidcutter.mpv as mpv
 import vidcutter.resources
 from vidcutter.appinfo import AppInfo
-from vidcutter.timecounter import TimeCounter
+from vidcutter.customwidgets import FrameCounter, TimeCounter
 from vidcutter.videoframe import VideoFrame
 from vidcutter.videolist import VideoList, VideoItem
 from vidcutter.videoservice import VideoService
@@ -76,8 +76,6 @@ class VideoCutter(QWidget):
 
         QFontDatabase.addApplicationFont(':/fonts/DroidSansMono.ttf')
         QFontDatabase.addApplicationFont(':/fonts/OpenSans.ttf')
-        QFontDatabase.addApplicationFont(':/fonts/Questrial.ttf')
-        QFontDatabase.addApplicationFont(':/fonts/Antic.ttf')
 
         stylesheet = ':/styles/vidcutter_osx.qss' if sys.platform == 'darwin' else ':/styles/vidcutter.qss'
         self.parent.load_stylesheet(stylesheet)
@@ -100,16 +98,13 @@ class VideoCutter(QWidget):
         self.edlblock_re = re.compile(r'(\d+(?:\.?\d+)?)\s(\d+(?:\.?\d+)?)\s([01])')
 
         self.initIcons()
-        self.initActions()
 
-        self.toolbar = VideoToolBar(floatable=False, movable=False, iconSize=QSize(50, 53))
-        self.toolbar.setObjectName('appcontrols')
-        if sys.platform == 'darwin':
-            self.toolbar.setStyle(QStyleFactory.create('Fusion'))
-        self.toolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.toolbar = VideoToolBar(self, floatable=False, movable=False, iconSize=QSize(50, 53))
+
+        self.initActions()
         self.initToolbar()
 
-        self.appMenu, self.cliplistMenu = QMenu(), QMenu()
+        self.appMenu, self.cliplistMenu = QMenu(self), QMenu(self)
         self.initMenus()
 
         self.seekSlider = VideoSlider(parent=self, sliderMoved=self.setPosition)
@@ -147,29 +142,23 @@ class VideoCutter(QWidget):
         self.videoLayout.addLayout(self.clipindexLayout)
 
         self.timeCounter = TimeCounter(self)
-        self.timeCounter.setMinimumWidth(255)
         self.timeCounter.timeChanged.connect(lambda newtime: self.setPosition(newtime.msecsSinceStartOfDay()))
-
-        self.frameCounter = QLabel('000 / 000', autoFillBackground=True, alignment=Qt.AlignCenter,
-                                   sizePolicy=QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred))
-        self.frameCounter.setMinimumWidth(90)
-        self.frameCounter.setObjectName('frameCounter')
+        self.frameCounter = FrameCounter(self)
+        self.frameCounter.frameChanged.connect(lambda frame: self.seekToFrame(frame))
 
         countersLayout = QHBoxLayout()
         countersLayout.setContentsMargins(0, 0, 0, 0)
         countersLayout.addStretch(1)
-        countersLayout.addWidget(QLabel('<b>TIME:</b> ', styleSheet='color:#FFF;'))
         countersLayout.addWidget(self.timeCounter)
         countersLayout.addStretch(1)
-        countersLayout.addWidget(QLabel('<b>FRAME:</b> ', styleSheet='color:#FFF;'))
         countersLayout.addWidget(self.frameCounter)
         countersLayout.addStretch(1)
 
         countersGroup = QGroupBox()
+        countersGroup.setObjectName('counterwidgets')
         countersGroup.setContentsMargins(0, 0, 0, 0)
         countersGroup.setLayout(countersLayout)
         countersGroup.setFixedHeight(28)
-        countersGroup.setStyleSheet('border: 0; background-color: #000; margin: 0; padding: 0;')
 
         self.initMPV()
 
@@ -256,7 +245,7 @@ class VideoCutter(QWidget):
         if sys.platform != 'darwin':
             self.mediaPlayer.force_window = 'immediate'
         self.mediaPlayer.observe_property('time-pos', lambda ptime: self.positionChanged(ptime * 1000))
-        self.mediaPlayer.observe_property('duration', lambda runtime: self.durationChanged(runtime * 1000))
+        self.mediaPlayer.observe_property('duration', lambda dtime: self.durationChanged(dtime * 1000))
 
     def initNoVideo(self) -> None:
         novideoImage = QLabel(alignment=Qt.AlignCenter, autoFillBackground=False,
@@ -331,7 +320,7 @@ class VideoCutter(QWidget):
                                       statusTip='Set the start position of a new clip')
         self.cutEndAction = QAction(self.cutEndIcon, 'Clip\nEnd', self, triggered=self.setCutEnd,
                                     enabled=False, statusTip='Set the end position of a new clip')
-        self.saveAction = QAction(self.saveIcon, 'Save\nVideo', self, 
+        self.saveAction = QAction(self.saveIcon, 'Save\nVideo', self,
                                   statusTip='Save clips to a new video file', triggered=self.cutVideo, enabled=False)
         self.moveItemUpAction = QAction(self.upIcon, 'Move up', self, statusTip='Move clip position up in list',
                                         triggered=self.moveItemUp, enabled=False)
@@ -343,10 +332,10 @@ class VideoCutter(QWidget):
                                        triggered=self.clearList, enabled=False)
         self.mediaInfoAction = QAction(self.mediaInfoIcon, 'Media information', self, triggered=self.mediaInfo,
                                        statusTip='View current media file information', enabled=False)
-        self.openEDLAction = QAction(self.openEDLIcon, 'Open EDL file', self, triggered=self.openEDL, enabled=False,
-                                     statusTip='Open a previously saved EDL file')
-        self.saveEDLAction = QAction(self.saveEDLIcon, 'Save EDL file', self, triggered=self.saveEDL, enabled=False,
-                                     statusTip='Save clip list data to an EDL file')
+        self.openEDLAction = QAction(self.openEDLIcon, 'Open project file', self, triggered=self.openEDL, enabled=False,
+                                     statusTip='Open a previously saved project file (EDL)')
+        self.saveEDLAction = QAction(self.saveEDLIcon, 'Save project file', self, triggered=self.saveEDL, enabled=False,
+                                     statusTip='Save current clip index to a project file (EDL)')
         self.viewLogsAction = QAction(self.viewLogsIcon, 'View log file', self, triggered=self.viewLogs,
                                       statusTip='View the application\'s log file')
         self.updateCheckAction = QAction(self.updateCheckIcon, 'Check for updates...', self,
@@ -356,6 +345,10 @@ class VideoCutter(QWidget):
                                    statusTip='About %s' % qApp.applicationName())
         self.keyRefAction = QAction(self.keyRefIcon, 'Keyboard shortcuts', self, triggered=self.showKeyRef,
                                     statusTip='View shortcut key bindings')
+        self.toggleLabelsAction = QAction('Show toolbar labels', self, statusTip='Show text labels on toolbar',
+                                          checkable=True, checked=True, triggered=self.toolbar.toggleLabels)
+        self.labelPositionAction = QAction('Show text beside button', self, statusTip='Show text beside toolbar button',
+                                           checkable=True, checked=True, triggered=self.toolbar.setLabelPosition)
 
     def initToolbar(self) -> None:
         self.toolbar.addAction(self.openAction)
@@ -367,11 +360,16 @@ class VideoCutter(QWidget):
         self.toolbar.disableTooltips()
 
     def initMenus(self) -> None:
-        self.appMenu.addAction(self.mediaInfoAction)
-        self.appMenu.addAction(self.keyRefAction)
-        self.appMenu.addSeparator()
+        self.optionsMenu = QMenu('Interface settings...', self.appMenu)
+        self.optionsMenu.addAction(self.toggleLabelsAction)
+        self.optionsMenu.addAction(self.labelPositionAction)
+
         self.appMenu.addAction(self.openEDLAction)
         self.appMenu.addAction(self.saveEDLAction)
+        self.appMenu.addSeparator()
+        self.appMenu.addAction(self.mediaInfoAction)
+        self.appMenu.addAction(self.keyRefAction)
+        self.appMenu.addMenu(self.optionsMenu)
         self.appMenu.addSeparator()
         self.appMenu.addAction(self.viewLogsAction)
         self.appMenu.addAction(self.updateCheckAction)
@@ -391,6 +389,15 @@ class VideoCutter(QWidget):
     @pyqtSlot(int)
     def setNoVideoText(self) -> None:
         self.novideoLabel.setPixmap(self.novideoMovie.currentPixmap())
+
+    @pyqtSlot(bool)
+    def toggleToolbarLabels(self, checked: bool = True):
+        if not checked:
+            self.toolbar.setToolButtonStyle(Qt.ToolButtonIconOnly)
+        if not self.labelPositionAction.isChecked():
+            self.toolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        else:
+            self.toolbar.setToolButtonStyle(Qt.ToolButtonIconOnly)
 
     def itemMenu(self, pos: QPoint) -> None:
         globalPos = self.cliplist.mapToGlobal(pos)
@@ -549,6 +556,7 @@ class VideoCutter(QWidget):
             self.playAction.setVisible(True)
             self.pauseAction.setVisible(False)
         self.timeCounter.clearFocus()
+        self.frameCounter.clearFocus()
         self.mediaPlayer.pause = not self.mediaPlayer.pause
 
     def initMediaControls(self, flag: bool = True) -> None:
@@ -557,8 +565,13 @@ class VideoCutter(QWidget):
         self.cutStartAction.setEnabled(flag)
         self.cutEndAction.setEnabled(False)
         self.mediaInfoAction.setEnabled(flag)
+        self.seekSlider.setValue(0)
+        self.seekSlider.setRange(0, 0)
+        self.seekSlider.clearRegions()
         if flag:
             self.seekSlider.setRestrictValue(0)
+        self.timeCounter.reset()
+        self.frameCounter.reset()
         self.openEDLAction.setEnabled(flag)
         self.saveEDLAction.setEnabled(False)
 
@@ -566,15 +579,15 @@ class VideoCutter(QWidget):
         self.mediaPlayer.time_pos = position / 1000
 
     def positionChanged(self, progress: int) -> None:
-        if self.seekSlider.restrictValue < progress:
+        if self.mediaPlayer.seeking and (self.seekSlider.restrictValue < progress or progress == 0):
             self.seekSlider.setValue(progress)
             self.timeCounter.setTime(self.delta2QTime(progress).toString(self.timeformat))
-            self.frameCounter.setText(
-                '%s / %s' % (self.mediaPlayer.estimated_frame_number, self.mediaPlayer.estimated_frame_count))
+            self.frameCounter.setFrame(self.mediaPlayer.estimated_frame_number)
 
     def durationChanged(self, duration: int) -> None:
         self.seekSlider.setRange(0, duration)
         self.timeCounter.setDuration(self.delta2QTime(duration).toString(self.timeformat))
+        self.frameCounter.setFrameCount(self.mediaPlayer.estimated_frame_count)
 
     def muteAudio(self) -> None:
         if self.mediaPlayer.mute:
@@ -588,12 +601,16 @@ class VideoCutter(QWidget):
     def setVolume(self, volume: int) -> None:
         self.mediaPlayer.volume = volume
 
+    def seekToFrame(self, frame: int) -> None:
+        self.mediaPlayer.seek(frame, 'absolute+keyframes')
+
     def setCutStart(self) -> None:
         if os.getenv('DEBUG', False):
             print('cut start position: %s' % self.seekSlider.value())
         starttime = self.delta2QTime(self.mediaPlayer.playback_time * 1000)
         self.clipTimes.append([starttime, '', self.captureImage()])
         self.timeCounter.setMinimum(starttime.toString(self.timeformat))
+        self.frameCounter.lockMinimum()
         self.cutStartAction.setDisabled(True)
         self.cutEndAction.setEnabled(True)
         self.seekSlider.setRestrictValue(self.seekSlider.value(), True)
@@ -765,7 +782,7 @@ class VideoCutter(QWidget):
             mediainfo.setObjectName('mediainfo')
             buttons = QDialogButtonBox(QDialogButtonBox.Ok, parent=mediainfo)
             buttons.accepted.connect(mediainfo.hide)
-            metadata = '<div align="center" style="margin:15px;">%s</div>'\
+            metadata = '<div align="center" style="margin:15px;">%s</div>' \
                        % self.videoService.metadata(source=self.currentMedia)
             browser = QTextBrowser(self)
             browser.setObjectName('metadata')
@@ -891,9 +908,6 @@ class VideoCutter(QWidget):
     def startNew(self) -> None:
         qApp.restoreOverrideCursor()
         self.clearList()
-        self.seekSlider.setValue(0)
-        self.seekSlider.setRange(0, 0)
-        self.seekSlider.clearRegions()
         self.mpvFrame.hide()
         self.initNoVideo()
         self.videoLayout.replaceWidget(self.videoplayerWidget, self.novideoWidget)
@@ -941,7 +955,12 @@ class VideoCutter(QWidget):
                 self.mediaPlayer.frame_step()
             elif event.key() == Qt.Key_Up:
                 self.mediaPlayer.seek(5, 'relative+exact')
-            elif event.key() in (Qt.Key_Return, Qt.Key_Enter) and not self.timeCounter.hasFocus():
+            elif event.key() == Qt.Key_Home:
+                self.mediaPlayer.time_pos = 0
+            elif event.key() == Qt.Key_End:
+                self.setPosition(self.seekSlider.maximum() - 1)
+            elif event.key() in (Qt.Key_Return, Qt.Key_Enter) and (
+                not self.timeCounter.hasFocus() and not self.frameCounter.hasFocus()):
                 if self.cutStartAction.isEnabled():
                     self.setCutStart()
                 elif self.cutEndAction.isEnabled():

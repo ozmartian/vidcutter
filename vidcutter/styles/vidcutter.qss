@@ -28,8 +28,8 @@ QWidget#shortcuts {
 }
 
 QWidget#novideoWidget {
-    border: 1px solid #666;
-    background-color: #888E93;
+    border: 1px solid #999;
+    background: #888E93;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -104,16 +104,15 @@ QLabel#runtimeLabel {
     border: 1px solid #B9B9B9;
 }
 
-QTimeEdit#timeCounter, QLabel#separator, QLabel#timeDuration, QLabel#frameCounter {
+QGroupBox#counterwidgets, QGroupBox#counterwidgets QAbstractSpinBox,
+QGroupBox#counterwidgets QLabel {
+    border: none;
+    background-color: #000;
+    margin: 0;
+    padding: 0;
     color: #FFF;
     font-family: "Droid Sans Mono", monospace;
     font-size: 10.5pt;
-    padding: 0;
-    margin: 0;
-}
-
-QLabel#separator {
-    margin-left: -10px;
 }
 
 QLabel#logowidget {
@@ -168,6 +167,8 @@ QStatusBar {
     color: #444;
     margin: 0;
     padding: 0;
+    min-height: 30px;
+    border: none;
 }
 
 QStatusBar::item {
@@ -177,12 +178,12 @@ QStatusBar::item {
 
 /* -------------------------------------------------------------------------- */
 
-QDialog#aboutwidget QTextBrowser {
-    background-image: url(':/images/watermark.png');
+QTextBrowser {
+    /* background-image: url(':/images/watermark.png');
     background-repeat: no-repeat;
     background-position: center top;
-    background-color: #FFF;
-    background-attachment: fixed;
+    1background-attachment: fixed; */
+    background-color: #F3F4F5;
     border: none;
     color: #000;
 }

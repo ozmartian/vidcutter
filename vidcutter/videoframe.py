@@ -35,6 +35,7 @@ class VideoFrame(QFrame):
         self.setAttribute(Qt.WA_DontCreateNativeAncestors)
         self.setAttribute(Qt.WA_NativeWindow)
         self.setCursor(Qt.ArrowCursor)
+        # self.setFrameStyle(QFrame.StyledPanel | QFrame.Sunken)
         self.installEventFilter(self)
 
     # def toggleFullscreen(self) -> None:

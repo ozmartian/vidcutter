@@ -40,8 +40,7 @@ class AppInfo(QDialog):
         self.setWindowModality(Qt.ApplicationModal)
         header = QLabel('''
             <style>
-                * { font-family: "Open Sans", sans-serif; }
-                table { background: #FFF; color: #444; }
+                table { font-family: "Open Sans", sans-serif; color: #444; }
             </style>
             <table border="0" cellpadding="5" cellspacing="1" width="100%%">
                 <tr>
@@ -49,10 +48,10 @@ class AppInfo(QDialog):
                         <img src=":/images/vidcutter-small.png" width="82" />
                     </td>
                     <td style="padding:4px;">
-                        <span style="font-size:40px;font-weight:500;color:#642C68;">%s</span>
+                        <span style="font-size:40px;font-weight:400;color:#642C68;">%s</span>
                         <br/>&nbsp;&nbsp;
                         <span style="font-size:18px;">version %s</span>
-                        <span style="font-size:10pt;position:relative;left:5px;">- %s</span>
+                        <span style="font-size:10pt;margin-left:5px;">- %s</span>
                     </td>
                     <td align="right" style="padding:15px;">
                         <div style="padding:20px 0 10px 0;">
@@ -100,7 +99,13 @@ class AppInfo(QDialog):
         event.accept()
 
 
-class AboutTab(QTextBrowser):
+class BaseTab(QTextBrowser):
+    def __init__(self, parent=None):
+        super(BaseTab, self).__init__(parent)
+        self.setOpenExternalLinks(True)
+
+
+class AboutTab(BaseTab):
     def __init__(self, parent=None):
         super(AboutTab, self).__init__(parent)
         self.parent = parent
@@ -116,7 +121,7 @@ class AboutTab(QTextBrowser):
     a:hover { text-decoration:underline; }
     table { width: 100%%; font-family: "Open Sans", sans-serif; }
 </style>
-<table border="0" cellpadding="15" cellspacing="4">
+<table border="0" cellpadding="8" cellspacing="4">
     <tr>
         <td>'''
         # if os.getenv('DEBUG', False):
@@ -158,7 +163,7 @@ class AboutTab(QTextBrowser):
         self.setHtml(html)
 
 
-class CreditsTab(QTextBrowser):
+class CreditsTab(BaseTab):
     def __init__(self):
         super(CreditsTab, self).__init__()
         self.setObjectName('credits')
@@ -214,7 +219,7 @@ class CreditsTab(QTextBrowser):
         </table>''')
 
 
-class LicenseTab(QTextBrowser):
+class LicenseTab(BaseTab):
     def __init__(self):
         super(LicenseTab, self).__init__()
         self.setObjectName('license')

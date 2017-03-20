@@ -33,7 +33,7 @@ import traceback
 from PyQt5.QtCore import (QCommandLineOption, QCommandLineParser, QDir, QFile, QFileInfo, QSize, QStandardPaths, Qt,
                           QTextStream)
 from PyQt5.QtGui import QCloseEvent, QContextMenuEvent, QDragEnterEvent, QDropEvent, QMouseEvent, QPixmap
-from PyQt5.QtWidgets import qApp, QApplication, QLabel, QMainWindow, QMessageBox
+from PyQt5.QtWidgets import qApp, QApplication, QLabel, QMainWindow, QMessageBox, QSizePolicy
 
 from vidcutter.videocutter import VideoCutter
 
@@ -77,6 +77,7 @@ class MainWindow(QMainWindow):
         screen_size = qApp.desktop().availableGeometry(-1)
         self.scale = 'LOW' if screen_size.width() <= 1024 else 'NORMAL'
         self.setMinimumSize(self.get_size(self.scale))
+        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
     def get_size(self, mode: str = 'NORMAL') -> QSize:
         modes = {
@@ -198,6 +199,7 @@ class MainWindow(QMainWindow):
         if event.button() == Qt.LeftButton and self.cutter.mediaAvailable:
             self.cutter.cliplist.clearSelection()
             self.cutter.timeCounter.clearFocus()
+            self.cutter.frameCounter.clearFocus()
 
     def dragEnterEvent(self, event: QDragEnterEvent) -> None:
         if event.mimeData().hasUrls():

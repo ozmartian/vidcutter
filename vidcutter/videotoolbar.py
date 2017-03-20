@@ -22,13 +22,21 @@
 #
 #######################################################################
 
-from PyQt5.QtCore import QObject, QEvent
-from PyQt5.QtWidgets import QToolBar, QToolButton
+import sys
+
+from PyQt5.QtCore import pyqtSlot, QObject, QEvent, Qt
+from PyQt5.QtWidgets import QStyleFactory, QToolBar, QToolButton
 
 
 class VideoToolBar(QToolBar):
-    def __init__(self, *arg, **kwargs):
-        super(VideoToolBar, self).__init__(*arg, **kwargs)
+    def __init__(self, parent=None, *arg, **kwargs):
+        super(VideoToolBar, self).__init__(parent, *arg, **kwargs)
+        self.parent = parent
+        self.labelPosition = Qt.ToolButtonTextBesideIcon
+        self.setObjectName('appcontrols')
+        self.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        if sys.platform == 'darwin':
+            self.setStyle(QStyleFactory.create('Fusion'))
 
     def disableTooltips(self):
         c = 1
@@ -38,6 +46,26 @@ class VideoToolBar(QToolBar):
             if c == total:
                 button.setObjectName('saveButton')
             c += 1
+
+    @pyqtSlot(bool)
+    def setLabelPosition(self, checked: bool = True):
+        if checked:
+            self.labelPosition = Qt.ToolButtonTextBesideIcon
+            for button in self.findChildren(QToolButton):
+                button.setText(button.text().replace(' ', '\n'))
+        else:
+            self.labelPosition = Qt.ToolButtonTextUnderIcon
+            for button in self.findChildren(QToolButton):
+                button.setText(button.text().replace('\n', ' '))
+        self.setToolButtonStyle(self.labelPosition)
+
+    @pyqtSlot(bool)
+    def toggleLabels(self, checked: bool = True):
+        if not checked:
+            self.setToolButtonStyle(Qt.ToolButtonIconOnly)
+        else:
+            self.setToolButtonStyle(self.labelPosition)
+        self.parent.labelPositionAction.setEnabled(checked)
 
     def eventFilter(self, obj: QObject, event: QEvent) -> bool:
         if event.type() == QEvent.ToolTip:
