@@ -579,7 +579,7 @@ class VideoCutter(QWidget):
         self.mediaPlayer.time_pos = position / 1000
 
     def positionChanged(self, progress: int) -> None:
-        if self.mediaPlayer.seeking and (self.seekSlider.restrictValue < progress or progress == 0):
+        if self.seekSlider.restrictValue < progress or progress == 0:
             self.seekSlider.setValue(progress)
             self.timeCounter.setTime(self.delta2QTime(progress).toString(self.timeformat))
             self.frameCounter.setFrame(self.mediaPlayer.estimated_frame_number)
