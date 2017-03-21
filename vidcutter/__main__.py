@@ -47,6 +47,7 @@ class MainWindow(QMainWindow):
         self.edl, self.video = '', ''
         self.parse_cmdline()
         self.init_logger()
+        self.init_scale()
         self.init_cutter()
         self.setWindowTitle('%s' % qApp.applicationName())
         self.setContentsMargins(0, 0, 0, 0)
@@ -57,7 +58,6 @@ class MainWindow(QMainWindow):
         # self.statusBar().addPermanentWidget(statuslogo)
         self.statusBar().setStyleSheet('border:none;')
         self.setAcceptDrops(True)
-        self.init_scale()
         self.show()
         try:
             if len(self.video):
@@ -77,11 +77,13 @@ class MainWindow(QMainWindow):
         screen_size = qApp.desktop().availableGeometry(-1)
         self.scale = 'LOW' if screen_size.width() <= 1024 else 'NORMAL'
         self.setMinimumSize(self.get_size(self.scale))
+        if os.getenv('DEBUG', False):
+            print('minimum size set to: %s (%s)' % (self.get_size(self.scale), self.scale))
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
     def get_size(self, mode: str = 'NORMAL') -> QSize:
         modes = {
-            'LOW': QSize(720, 405),
+            'LOW': QSize(750, 405),
             'NORMAL': QSize(900, 640),
             'HIGH': QSize(1800, 1280)
         }
@@ -218,6 +220,7 @@ class MainWindow(QMainWindow):
 
 
 def main():
+    qApp.setAttribute(Qt.AA_EnableHighDpiScaling, True)
     app = QApplication(sys.argv)
     app.setApplicationName('VidCutter')
     app.setApplicationVersion(MainWindow.get_version())

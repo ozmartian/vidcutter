@@ -258,8 +258,11 @@ class VideoCutter(QWidget):
                                    sizePolicy=QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum))
         self.novideoLabel.setContentsMargins(0, 20, 15, 40)
         novideoLayout = QVBoxLayout(spacing=0)
-        novideoLayout.addWidget(novideoImage)
-        novideoLayout.addWidget(self.novideoLabel, alignment=Qt.AlignTop)
+        if self.parent.scale == 'LOW':
+            novideoLayout.addWidget(self.novideoLabel, alignment=Qt.AlignVCenter)
+        else:
+            novideoLayout.addWidget(novideoImage)
+            novideoLayout.addWidget(self.novideoLabel, alignment=Qt.AlignTop)            
         self.novideoMovie = QMovie(':/images/novideotext.gif')
         self.novideoMovie.frameChanged.connect(self.setNoVideoText)
         self.novideoMovie.start()
