@@ -22,7 +22,7 @@
 #
 #######################################################################
 
-from PyQt5.QtCore import pyqtSignal, pyqtSlot, QTime
+from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QTime
 from PyQt5.QtWidgets import QAbstractSpinBox, QHBoxLayout, QLabel, QSpinBox, QTimeEdit, QWidget
 
 
@@ -100,6 +100,7 @@ class FrameCounter(QWidget):
         # self.setMinimumWidth(90)
         self.currentframe = QSpinBox(self, objectName='frameCounter')
         self.currentframe.setFrame(False)
+        self.currentframe.setAlignment(Qt.AlignRight)
         self.currentframe.valueChanged.connect(self.frameChangeHandler)
         separator = QLabel('/', objectName='frameSeparator')
         self.framecount = QLabel('0000', objectName='frameCount')

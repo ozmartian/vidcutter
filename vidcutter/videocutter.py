@@ -766,7 +766,6 @@ class VideoCutter(QWidget):
 
     def mediaInfo(self):
         if self.mediaAvailable:
-            # try:
             if self.videoService.mediainfo is None:
                 self.logger.error('Missing dependency: mediainfo. Failing media ' +
                                   'info page gracefully.')
@@ -774,8 +773,8 @@ class VideoCutter(QWidget):
                                      'Could not find <b>mediainfo</b> on your system. ' +
                                      'This is required for the Media Information option ' +
                                      'to work.<br/><br/>If you are on Linux, you can solve ' +
-                                     'this by installing the <b>mediainfo</b> package on your ' +
-                                     'distro via your package manager.')
+                                     'this by installing the <b>mediainfo</b> package via your ' +
+                                     'package manager.')
                 return
             mediainfo = QWidget(self, flags=Qt.Dialog | Qt.WindowCloseButtonHint)
             mediainfo.setObjectName('mediainfo')
