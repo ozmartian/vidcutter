@@ -144,13 +144,15 @@ class VideoCutter(QWidget):
         self.timeCounter = TimeCounter(self)
         self.timeCounter.timeChanged.connect(lambda newtime: self.setPosition(newtime.msecsSinceStartOfDay()))
         self.frameCounter = FrameCounter(self)
-        self.frameCounter.frameChanged.connect(lambda frame: self.seekToFrame(frame))
+        self.frameCounter.setReadOnly(True)
 
         countersLayout = QHBoxLayout()
         countersLayout.setContentsMargins(0, 0, 0, 0)
         countersLayout.addStretch(1)
+        countersLayout.addWidget(QLabel('TIME:', objectName='tcLabel'))
         countersLayout.addWidget(self.timeCounter)
         countersLayout.addStretch(1)
+        countersLayout.addWidget(QLabel('FRAME:', objectName='fcLabel'))
         countersLayout.addWidget(self.frameCounter)
         countersLayout.addStretch(1)
 
@@ -600,9 +602,6 @@ class VideoCutter(QWidget):
 
     def setVolume(self, volume: int) -> None:
         self.mediaPlayer.volume = volume
-
-    def seekToFrame(self, frame: int) -> None:
-        self.mediaPlayer.seek(frame, 'absolute+keyframes')
 
     def setCutStart(self) -> None:
         if os.getenv('DEBUG', False):

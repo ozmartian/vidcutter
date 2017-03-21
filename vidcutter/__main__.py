@@ -32,8 +32,8 @@ import traceback
 
 from PyQt5.QtCore import (QCommandLineOption, QCommandLineParser, QDir, QFile, QFileInfo, QSize, QStandardPaths, Qt,
                           QTextStream)
-from PyQt5.QtGui import QCloseEvent, QContextMenuEvent, QDragEnterEvent, QDropEvent, QMouseEvent, QPixmap
-from PyQt5.QtWidgets import qApp, QApplication, QLabel, QMainWindow, QMessageBox, QSizePolicy
+from PyQt5.QtGui import QCloseEvent, QContextMenuEvent, QDragEnterEvent, QDropEvent, QMouseEvent
+from PyQt5.QtWidgets import qApp, QApplication, QMainWindow, QMessageBox, QSizePolicy
 
 from vidcutter.videocutter import VideoCutter
 
@@ -51,10 +51,10 @@ class MainWindow(QMainWindow):
         self.setWindowTitle('%s' % qApp.applicationName())
         self.setContentsMargins(0, 0, 0, 0)
         self.statusBar().showMessage('Ready')
-        statuslogo = QLabel(pixmap=QPixmap(':/images/vidcutter-emboss.png'), objectName='logowidget')
-        if sys.platform == 'win32':
-            statuslogo.setStyleSheet('margin-top: -5px;')
-        self.statusBar().addPermanentWidget(statuslogo)
+        # statuslogo = QLabel(pixmap=QPixmap(':/images/vidcutter-emboss.png'), objectName='logowidget')
+        # if sys.platform == 'win32':
+        #     statuslogo.setStyleSheet('margin-top: -5px;')
+        # self.statusBar().addPermanentWidget(statuslogo)
         self.statusBar().setStyleSheet('border:none;')
         self.setAcceptDrops(True)
         self.init_scale()

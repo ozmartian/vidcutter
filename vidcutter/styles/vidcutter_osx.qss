@@ -96,10 +96,6 @@ QTimeEdit#timeCounter, QLabel#separator, QLabel#timeDuration, QLabel#frameCounte
     margin: 0;
 }
 
-QLabel#separator {
-    margin-left: -10px;
-}
-
 QLabel#logowidget {
     margin: 0;
     border: none;

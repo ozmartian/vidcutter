@@ -104,21 +104,31 @@ QLabel#runtimeLabel {
     border: 1px solid #B9B9B9;
 }
 
-QGroupBox#counterwidgets, QGroupBox#counterwidgets QAbstractSpinBox,
-QGroupBox#counterwidgets QLabel {
-    border: none;
+QTimeEdit#timeCounter, QLabel#timeSeparator, QLabel#timeDuration,
+QSpinBox#frameCounter, QLabel#frameSeparator, QLabel#frameCount {
     background-color: #000;
-    margin: 0;
-    padding: 0;
     color: #FFF;
-    font-family: "Droid Sans Mono", monospace;
     font-size: 10.5pt;
+}
+
+QLabel#tcLabel, QLabel#fcLabel {
+    color: #FFF;
+    font-weight: bold;
+    font-size: 10pt;
 }
 
 QLabel#logowidget {
     margin: 0;
     border: none;
     outline: none;
+}
+
+/* -------------------------------------------------------------------------- */
+
+QGroupBox#counterwidgets {
+    border: none;
+    background-color: #000;
+    color: #FFF;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -182,11 +192,13 @@ QTextBrowser {
     /* background-image: url(':/images/watermark.png');
     background-repeat: no-repeat;
     background-position: center top;
-    1background-attachment: fixed; */
+    background-attachment: fixed; */
     background-color: #F3F4F5;
     border: none;
     color: #000;
 }
+
+/* -------------------------------------------------------------------------- */
 
 QTabWidget::pane {
     border: 1px solid #999;
