@@ -31,11 +31,12 @@ class VideoFrame(QFrame):
     def __init__(self, parent=None, *arg, **kwargs):
         super(VideoFrame, self).__init__(parent, *arg, **kwargs)
         self.parent = parent
-        self.setEnabled(False)
+        # self.setEnabled(False)
         self.setAttribute(Qt.WA_DontCreateNativeAncestors)
         self.setAttribute(Qt.WA_NativeWindow)
         self.setCursor(Qt.ArrowCursor)
-        # self.setFrameStyle(QFrame.StyledPanel | QFrame.Sunken)
+        self.setFrameStyle(QFrame.StyledPanel | QFrame.Sunken)
+        self.setStyleSheet('border-bottom:1px solid white;')
         self.installEventFilter(self)
 
     # def toggleFullscreen(self) -> None:

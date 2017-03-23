@@ -35,7 +35,7 @@ from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QFont, QFontDatabase, QI
                          QPixmap)
 from PyQt5.QtWidgets import (QAbstractItemView, QAction, qApp, QDialogButtonBox, QFileDialog, QGroupBox,
                              QHBoxLayout, QLabel, QListWidgetItem, QMenu, QMessageBox, QProgressDialog, QPushButton,
-                             QSizePolicy, QSlider, QStyleFactory, QTextBrowser, QVBoxLayout, QWidget)
+                             QSizePolicy, QSlider, QTextBrowser, QVBoxLayout, QWidget)
 
 import vidcutter.mpv as mpv
 import vidcutter.resources
@@ -52,13 +52,9 @@ class VideoCutter(QWidget):
     def __init__(self, parent):
         super(VideoCutter, self).__init__(parent)
         self.logger = logging.getLogger(__name__)
-        self.novideoWidget = QWidget(self, objectName='novideoWidget', autoFillBackground=True)
         self.parent = parent
-
         self.videoService = VideoService(self)
-
         self.latest_release_url = 'https://github.com/ozmartian/vidcutter/releases/latest'
-
         self.ffmpeg_installer = {
             'win32': {
                 64: 'https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-latest-win64-static.7z',
@@ -77,11 +73,10 @@ class VideoCutter(QWidget):
         QFontDatabase.addApplicationFont(':/fonts/DroidSansMono.ttf')
         QFontDatabase.addApplicationFont(':/fonts/OpenSans.ttf')
 
-        stylesheet = ':/styles/vidcutter_osx.qss' if sys.platform == 'darwin' else ':/styles/vidcutter.qss'
+        stylesheet = ':/styles/vidcutter_osx.qss' if sys.platform == 'darwin' else self.parent.get_path('styles/vidcutter.qss', override=True)
         self.parent.load_stylesheet(stylesheet)
 
-        fontSize = 12 if sys.platform == 'darwin' else 10
-        qApp.setFont(QFont('Open Sans', fontSize, 300))
+        qApp.setFont(QFont('Open Sans', 12 if sys.platform == 'darwin' else 10, 300))
 
         self.clipTimes = []
         self.inCut = False
@@ -160,7 +155,7 @@ class VideoCutter(QWidget):
         countersGroup.setObjectName('counterwidgets')
         countersGroup.setContentsMargins(0, 0, 0, 0)
         countersGroup.setLayout(countersLayout)
-        countersGroup.setFixedHeight(28)
+        countersGroup.setFixedHeight(26)
 
         self.initMPV()
 
@@ -250,23 +245,27 @@ class VideoCutter(QWidget):
         self.mediaPlayer.observe_property('duration', lambda dtime: self.durationChanged(dtime * 1000))
 
     def initNoVideo(self) -> None:
-        novideoImage = QLabel(alignment=Qt.AlignCenter, autoFillBackground=False,
-                              pixmap=QPixmap(':/images/novideo.png', 'PNG'),
-                              sizePolicy=QSizePolicy(QSizePolicy.Expanding, QSizePolicy.MinimumExpanding))
-        novideoImage.setContentsMargins(0, 20, 0, 15)
+        self.novideoWidget = QWidget(self, objectName='novideoWidget', autoFillBackground=True)
+        self.novideoWidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.MinimumExpanding)
+        print(self.novideoWidget.size())
+        # novideoImage = QLabel(alignment=Qt.AlignCenter, autoFillBackground=False,
+        #                       pixmap=QPixmap(':/images/novideo.png', 'PNG'),
+        #                       sizePolicy=QSizePolicy(QSizePolicy.Expanding, QSizePolicy.MinimumExpanding))
+        # novideoImage.setContentsMargins(0, 20, 0, 15)
         self.novideoLabel = QLabel(alignment=Qt.AlignCenter, autoFillBackground=False,
                                    sizePolicy=QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum))
-        self.novideoLabel.setContentsMargins(0, 20, 15, 40)
         novideoLayout = QVBoxLayout(spacing=0)
-        if self.parent.scale == 'LOW':
-            novideoLayout.addWidget(self.novideoLabel, alignment=Qt.AlignVCenter)
-        else:
-            novideoLayout.addWidget(novideoImage)
-            novideoLayout.addWidget(self.novideoLabel, alignment=Qt.AlignTop)            
+        novideoLayout.addStretch(4)
+        novideoLayout.addWidget(self.novideoLabel, alignment=Qt.AlignBottom)
+        novideoLayout.addStretch(2)
+        # if self.parent.scale == 'LOW':            
+        # else:
+            # novideoLayout.addWidget(novideoImage)
+            # novideoLayout.addWidget(self.novideoLabel, alignment=Qt.A)            
         self.novideoMovie = QMovie(':/images/novideotext.gif')
         self.novideoMovie.frameChanged.connect(self.setNoVideoText)
         self.novideoMovie.start()
-        self.novideoWidget.setBackgroundRole(QPalette.Dark)
+        self.novideoWidget.setBackgroundRole(QPalette.Light)
         self.novideoWidget.setLayout(novideoLayout)
 
     def initIcons(self) -> None:
@@ -354,6 +353,9 @@ class VideoCutter(QWidget):
                                           checkable=True, checked=True, triggered=self.toolbar.toggleLabels)
         self.labelPositionAction = QAction('Show text beside button', self, statusTip='Show text beside toolbar button',
                                            checkable=True, checked=True, triggered=self.toolbar.setLabelPosition)
+        self.compactModeAction = QAction('Enable compact mode', self, statusTip='Enable compact mode for more video ' +
+                                                                                'output space', checkable=True,
+                                         checked=False, triggered=self.toolbar.setCompactMode)
 
     def initToolbar(self) -> None:
         self.toolbar.addAction(self.openAction)
@@ -368,6 +370,7 @@ class VideoCutter(QWidget):
         self.optionsMenu = QMenu('Interface settings...', self.appMenu)
         self.optionsMenu.addAction(self.toggleLabelsAction)
         self.optionsMenu.addAction(self.labelPositionAction)
+        self.optionsMenu.addAction(self.compactModeAction)
 
         self.appMenu.addAction(self.openEDLAction)
         self.appMenu.addAction(self.saveEDLAction)
@@ -447,14 +450,24 @@ class VideoCutter(QWidget):
 
     def clearList(self) -> None:
         self.clipTimes.clear()
-        self.cliplist.clear()
+        self.cliplist.clear()   
         self.seekSlider.clearRegions()
         self.inCut = False
         self.renderTimes()
         self.initMediaControls()
 
+    def videoFileFilter(self) -> str:
+        video_exts = ('3gp','asf','avi','bdm','bdmv','clpi','cpi','dat','divx','dv','fli','flv','ifo','m2t','m2ts',
+                        'm4v','mkv','mov','mp4','mpeg','mpg','mpg2','mpg4','mpl','mpls','mts','nsv','nut','nuv',
+                        'ogg','ogm','qt','rm','rmvb','trp','tp','ts','vcd','vfw','vob','webm','wmv')
+        filters = ''
+        for ext in video_exts:
+            filters += '*.%s ' % ext
+        return filters.strip()
+
     def openMedia(self) -> None:
         filename, _ = QFileDialog.getOpenFileName(self.parent, caption='Select media file',
+                                                  filter='Video files (%s);;All files (*.*)' % self.videoFileFilter(),
                                                   directory=QDir.homePath())
         if filename != '':
             self.loadMedia(filename)

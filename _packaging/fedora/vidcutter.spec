@@ -12,12 +12,12 @@ Source0:        https://github.com/ozmartian/%{pkg_name}/archive/%{version}.tar.
 BuildArch:      noarch
  
 BuildRequires:  python3-devel, python3-setuptools
-Requires:       python3-qt5, mpv-libs or libmpv1, mediainfo, ffmpeg
+Requires:       python3-qt5, mpv-libs, mediainfo, ffmpeg
 
 %description
- The simplest & sexiest tool for cutting and joining your videos without the need for
- re-encoding or a diploma in multimedia. VidCutter focuses on getting the job done
- using tried and true tech in its arsenal via mpv and FFmpeg.
+     The simplest & sexiest tool for cutting and joining your videos without the need for
+     re-encoding or a diploma in multimedia. VidCutter focuses on getting the job done
+     using tried and true tech in its arsenal via mpv and FFmpeg.
 
 %prep
 %autosetup -n %{pkg_name}-%{version}

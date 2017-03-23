@@ -48,6 +48,10 @@ class VideoToolBar(QToolBar):
             c += 1
 
     @pyqtSlot(bool)
+    def setCompactMode(self, checked: bool = False):
+        pass
+
+    @pyqtSlot(bool)
     def setLabelPosition(self, checked: bool = True):
         if checked:
             self.labelPosition = Qt.ToolButtonTextBesideIcon

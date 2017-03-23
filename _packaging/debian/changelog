@@ -1,3 +1,27 @@
+vidcutter-unstable (3.2.0-0) unstable; urgency=medium
+ 
+ * eeePC and better support for HiDPI
+
+ * better handling of multistreamed video sources including VOB files; if the
+    standard method of creation produces a 0 length file the app will now run
+    it again using various other methods to achieve th desired result. all cases
+    reported by users as bugs in this area are now working. in most cases you
+    will continue to get back exactly what you put in (pardon the pun). some VOBs
+    are problematic so until the UI is built to allow users finer control over the
+    backend settings the app will continue to make its own best judgement on
+    behalf of the user. so, in the worse case scenario you should now get back a
+    valid video file instead of 0 length video, but it may only include a single audio
+    track rather than all the tracks from the source. keep in mind that in these rare
+    cases the app will choose the best quality audio/video track when it can only 
+    work with one of each.
+
+ * time counter widget created allowing manual entry of timecode. just click on 
+    the time segment to edit and video will seek to that exact point OR use the
+    up/down arrow controls to the right of the running time code, highlight the
+    segment you wish to increase or decrease (i.e. hours, mins, secs, msecs)
+
+ -- Pete Alexandrou <pete@ozmartians.com>  Wed, 22 Mar 2017 02:33:00 +0800
+
 vidcutter (3.0.0-1) stable; urgency=medium
 
   * complete rewrite of multimedia backend which now uses libmpv to drive

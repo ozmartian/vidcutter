@@ -24,8 +24,11 @@
         <file>images/remove-all.png</file>
         <file>images/runtime.png</file>
         <file>images/save.png</file>
-        <file>images/slider-cursor.png</file>
         <file>images/shortcuts.png</file>
+        <file>images/slider-cursor.png</file>
+        <file>images/spinbox-down.png</file>
+        <file>images/spinbox-up.png</file>
+        <file>images/startup-backdrop.png</file>
         <file>images/thumbsup.png</file>
         <file>images/toolbar-end.png</file>
         <file>images/toolbar-end-disabled.png</file>

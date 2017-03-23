@@ -29,7 +29,9 @@ QWidget#shortcuts {
 
 QWidget#novideoWidget {
     border: 1px solid #999;
-    background: #888E93;
+    background: #000 url(':/images/startup-backdrop.png') no-repeat center center;
+    /* max-width: 800px;
+    max-height: 600px; */
 }
 
 /* -------------------------------------------------------------------------- */
@@ -125,10 +127,35 @@ QLabel#logowidget {
 
 /* -------------------------------------------------------------------------- */
 
+QTimeEdit::up-arrow#timeCounter {
+    image: url(':/images/spinbox-up.png');
+    width: 9px;
+    height: 5px;
+}
+
+QTimeEdit::up-arrow:disabled#timeCounter,
+QTimeEdit::up-arrow:off#timeCounter {
+    opacity: 0.5;
+}
+
+QTimeEdit::down-arrow#timeCounter {
+    image: url(':/images/spinbox-down.png');
+    width: 9px;
+    height: 5px;
+}
+
+QTimeEdit::down-arrow:disabled#timeCounter,
+QTimeEdit::down-arrow:off#timeCounter {
+    opacity: 0.5;
+}
+
+/* -------------------------------------------------------------------------- */
+
 QGroupBox#counterwidgets {
     border: none;
     background-color: #000;
     color: #FFF;
+    margin: 0;
 }
 
 /* -------------------------------------------------------------------------- */
