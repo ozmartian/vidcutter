@@ -31,8 +31,8 @@ from datetime import timedelta
 from locale import setlocale, LC_NUMERIC
 
 from PyQt5.QtCore import QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTextStream, QTime, QUrl, pyqtSlot
-from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMovie, QPalette,
-                         QPixmap)
+from PyQt5.QtGui import (QBrush, QCloseEvent, QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMovie,
+                         QPalette, QPixmap)
 from PyQt5.QtWidgets import (QAbstractItemView, QAction, qApp, QDialogButtonBox, QFileDialog, QGroupBox,
                              QHBoxLayout, QLabel, QListWidgetItem, QMenu, QMessageBox, QProgressDialog, QPushButton,
                              QSizePolicy, QSlider, QTextBrowser, QVBoxLayout, QWidget)
@@ -73,7 +73,7 @@ class VideoCutter(QWidget):
         QFontDatabase.addApplicationFont(':/fonts/DroidSansMono.ttf')
         QFontDatabase.addApplicationFont(':/fonts/OpenSans.ttf')
 
-        stylesheet = ':/styles/vidcutter_osx.qss' if sys.platform == 'darwin' else self.parent.get_path('styles/vidcutter.qss', override=True)
+        stylesheet = ':/styles/vidcutter_osx.qss' if sys.platform == 'darwin' else ':/styles/vidcutter.qss'
         self.parent.load_stylesheet(stylesheet)
 
         qApp.setFont(QFont('Open Sans', 12 if sys.platform == 'darwin' else 10, 300))
@@ -245,9 +245,14 @@ class VideoCutter(QWidget):
         self.mediaPlayer.observe_property('duration', lambda dtime: self.durationChanged(dtime * 1000))
 
     def initNoVideo(self) -> None:
-        self.novideoWidget = QWidget(self, objectName='novideoWidget', autoFillBackground=True)
+        self.novideoWidget = QWidget(self, objectName='novideoWidget')
         self.novideoWidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.MinimumExpanding)
-        print(self.novideoWidget.size())
+        # backdrop = QPixmap(':/images/startup-backdrop.png')
+        # backdrop.scaled(self.novideoWidget.size(), Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
+        # self.novideoWidget.setBrush()
+        # p = self.novideoWidget.palette()
+        # p.setBrush(QPalette.Window, QBrush(backdrop))
+        # self.novideoWidget.setPalette(p)
         # novideoImage = QLabel(alignment=Qt.AlignCenter, autoFillBackground=False,
         #                       pixmap=QPixmap(':/images/novideo.png', 'PNG'),
         #                       sizePolicy=QSizePolicy(QSizePolicy.Expanding, QSizePolicy.MinimumExpanding))
@@ -258,14 +263,14 @@ class VideoCutter(QWidget):
         novideoLayout.addStretch(4)
         novideoLayout.addWidget(self.novideoLabel, alignment=Qt.AlignBottom)
         novideoLayout.addStretch(2)
-        # if self.parent.scale == 'LOW':            
+        # if self.parent.scale == 'LOW':
         # else:
             # novideoLayout.addWidget(novideoImage)
             # novideoLayout.addWidget(self.novideoLabel, alignment=Qt.A)            
         self.novideoMovie = QMovie(':/images/novideotext.gif')
         self.novideoMovie.frameChanged.connect(self.setNoVideoText)
         self.novideoMovie.start()
-        self.novideoWidget.setBackgroundRole(QPalette.Light)
+        # self.novideoWidget.setBackgroundRole(QPalette.Light)
         self.novideoWidget.setLayout(novideoLayout)
 
     def initIcons(self) -> None:

@@ -29,9 +29,7 @@ QWidget#shortcuts {
 
 QWidget#novideoWidget {
     border: 1px solid #999;
-    background: #000 url(':/images/startup-backdrop.png') no-repeat center center;
-    /* max-width: 800px;
-    max-height: 600px; */
+    border-image: url(:/images/startup-backdrop.png) 0 0 0 0 stretch stretch;
 }
 
 /* -------------------------------------------------------------------------- */
