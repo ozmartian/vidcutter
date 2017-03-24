@@ -49,7 +49,7 @@ class VideoToolBar(QToolBar):
 
     @pyqtSlot(bool)
     def setCompactMode(self, checked: bool = False):
-        pass
+        self.parent.parent.statusBar()
 
     @pyqtSlot(bool)
     def setLabelPosition(self, checked: bool = True):

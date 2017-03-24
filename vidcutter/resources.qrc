@@ -1,8 +1,9 @@
 <RCC>
     <qresource prefix="/">
-        <file>fonts/DroidSansMono.ttf</file>
+        <file>fonts/FuturaLT.ttf</file>
         <file>fonts/OpenSans.ttf</file>
         <file>images/clipindex.png</file>
+        <file>images/cliplist-watermark.png</file>
         <file>images/complete-exit.png</file>
         <file>images/complete-open.png</file>
         <file>images/complete-play.png</file>
@@ -52,7 +53,6 @@
         <file>images/up.png</file>
         <file>images/update.png</file>
         <file>images/vidcutter.png</file>
-        <file>images/vidcutter-emboss.png</file>
         <file>images/vidcutter-small.png</file>
         <file>images/viewlogs.png</file>
         <file>images/watermark.png</file>

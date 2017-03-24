@@ -31,8 +31,7 @@ from datetime import timedelta
 from locale import setlocale, LC_NUMERIC
 
 from PyQt5.QtCore import QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTextStream, QTime, QUrl, pyqtSlot
-from PyQt5.QtGui import (QBrush, QCloseEvent, QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMovie,
-                         QPalette, QPixmap)
+from PyQt5.QtGui import QCloseEvent, QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMovie, QPixmap
 from PyQt5.QtWidgets import (QAbstractItemView, QAction, qApp, QDialogButtonBox, QFileDialog, QGroupBox,
                              QHBoxLayout, QLabel, QListWidgetItem, QMenu, QMessageBox, QProgressDialog, QPushButton,
                              QSizePolicy, QSlider, QTextBrowser, QVBoxLayout, QWidget)
@@ -70,12 +69,11 @@ class VideoCutter(QWidget):
             }
         }
 
-        QFontDatabase.addApplicationFont(':/fonts/DroidSansMono.ttf')
+        QFontDatabase.addApplicationFont(':/fonts/FuturaLT.ttf')
         QFontDatabase.addApplicationFont(':/fonts/OpenSans.ttf')
 
         stylesheet = ':/styles/vidcutter_osx.qss' if sys.platform == 'darwin' else ':/styles/vidcutter.qss'
         self.parent.load_stylesheet(stylesheet)
-
         qApp.setFont(QFont('Open Sans', 12 if sys.platform == 'darwin' else 10, 300))
 
         self.clipTimes = []
@@ -247,30 +245,14 @@ class VideoCutter(QWidget):
     def initNoVideo(self) -> None:
         self.novideoWidget = QWidget(self, objectName='novideoWidget')
         self.novideoWidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.MinimumExpanding)
-        # backdrop = QPixmap(':/images/startup-backdrop.png')
-        # backdrop.scaled(self.novideoWidget.size(), Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
-        # self.novideoWidget.setBrush()
-        # p = self.novideoWidget.palette()
-        # p.setBrush(QPalette.Window, QBrush(backdrop))
-        # self.novideoWidget.setPalette(p)
-        # novideoImage = QLabel(alignment=Qt.AlignCenter, autoFillBackground=False,
-        #                       pixmap=QPixmap(':/images/novideo.png', 'PNG'),
-        #                       sizePolicy=QSizePolicy(QSizePolicy.Expanding, QSizePolicy.MinimumExpanding))
-        # novideoImage.setContentsMargins(0, 20, 0, 15)
-        self.novideoLabel = QLabel(alignment=Qt.AlignCenter, autoFillBackground=False,
-                                   sizePolicy=QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum))
-        novideoLayout = QVBoxLayout(spacing=0)
+        self.novideoLabel = QLabel(alignment=Qt.AlignCenter)
+        self.novideoMovie = QMovie(':/images/novideotext.gif')
+        self.novideoMovie.frameChanged.connect(lambda: self.novideoLabel.setPixmap(self.novideoMovie.currentPixmap()))
+        self.novideoMovie.start()
+        novideoLayout = QVBoxLayout()
         novideoLayout.addStretch(4)
         novideoLayout.addWidget(self.novideoLabel, alignment=Qt.AlignBottom)
         novideoLayout.addStretch(2)
-        # if self.parent.scale == 'LOW':
-        # else:
-            # novideoLayout.addWidget(novideoImage)
-            # novideoLayout.addWidget(self.novideoLabel, alignment=Qt.A)            
-        self.novideoMovie = QMovie(':/images/novideotext.gif')
-        self.novideoMovie.frameChanged.connect(self.setNoVideoText)
-        self.novideoMovie.start()
-        # self.novideoWidget.setBackgroundRole(QPalette.Light)
         self.novideoWidget.setLayout(novideoLayout)
 
     def initIcons(self) -> None:
@@ -329,8 +311,8 @@ class VideoCutter(QWidget):
                                       statusTip='Set the start position of a new clip')
         self.cutEndAction = QAction(self.cutEndIcon, 'Clip\nEnd', self, triggered=self.setCutEnd,
                                     enabled=False, statusTip='Set the end position of a new clip')
-        self.saveAction = QAction(self.saveIcon, 'Save\nVideo', self,
-                                  statusTip='Save clips to a new video file', triggered=self.cutVideo, enabled=False)
+        self.saveAction = QAction(self.saveIcon, 'Save\nMedia', self, triggered=self.cutVideo, enabled=False,
+                                  statusTip='Save clips to a new media file')
         self.moveItemUpAction = QAction(self.upIcon, 'Move up', self, statusTip='Move clip position up in list',
                                         triggered=self.moveItemUp, enabled=False)
         self.moveItemDownAction = QAction(self.downIcon, 'Move down', self, statusTip='Move clip position down in list',
@@ -399,10 +381,6 @@ class VideoCutter(QWidget):
     def setRunningTime(self, runtime: str) -> None:
         self.runtimeLabel.setText('<div align="right">%s</div>' % runtime)
 
-    @pyqtSlot(int)
-    def setNoVideoText(self) -> None:
-        self.novideoLabel.setPixmap(self.novideoMovie.currentPixmap())
-
     @pyqtSlot(bool)
     def toggleToolbarLabels(self, checked: bool = True):
         if not checked:
@@ -461,10 +439,12 @@ class VideoCutter(QWidget):
         self.renderTimes()
         self.initMediaControls()
 
-    def videoFileFilter(self) -> str:
-        video_exts = ('3gp','asf','avi','bdm','bdmv','clpi','cpi','dat','divx','dv','fli','flv','ifo','m2t','m2ts',
-                        'm4v','mkv','mov','mp4','mpeg','mpg','mpg2','mpg4','mpl','mpls','mts','nsv','nut','nuv',
-                        'ogg','ogm','qt','rm','rmvb','trp','tp','ts','vcd','vfw','vob','webm','wmv')
+    @staticmethod
+    def videoFileFilter() -> str:
+        video_exts = ('3gp', 'asf', 'avi', 'bdm', 'bdmv', 'clpi', 'cpi', 'dat', 'divx', 'dv', 'fli', 'flv', 'ifo',
+                      'm2t', 'm2ts', 'm4v', 'mkv', 'mov', 'mp4', 'mpeg', 'mpg', 'mpg2', 'mpg4', 'mpl', 'mpls', 'mts',
+                      'nsv', 'nut', 'nuv', 'ogg', 'ogm', 'qt', 'rm', 'rmvb', 'trp', 'tp', 'ts', 'vcd', 'vfw', 'vob',
+                      'webm', 'wmv')
         filters = ''
         for ext in video_exts:
             filters += '*.%s ' % ext

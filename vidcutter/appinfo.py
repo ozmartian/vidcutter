@@ -39,18 +39,18 @@ class AppInfo(QDialog):
         self.setObjectName('aboutwidget')
         self.setWindowModality(Qt.ApplicationModal)
         header = QLabel('''
-            <style>
-                table { font-family: "Open Sans", sans-serif; color: #444; }
-            </style>
+            <style>table { color: #000; }</style>
             <table border="0" cellpadding="5" cellspacing="1" width="100%%">
                 <tr>
                     <td width="82">
                         <img src=":/images/vidcutter-small.png" width="82" />
                     </td>
                     <td style="padding:4px;">
-                        <span style="font-size:40px;font-weight:400;color:#642C68;">%s</span>
+                        <span style="font-family:'Futura LT', sans-serif;font-size:30px;font-weight:400;color:#642C68;">
+                            <span style="font-size:46px;">V</span>ID<span style="font-size:46px;">C</span>UTTER
+                        </span>
                         <br/>&nbsp;&nbsp;
-                        <span style="font-size:18px;">version %s</span>
+                        <span style="font-size:16px;">version %s</span>
                         <span style="font-size:10pt;margin-left:5px;">- %s</span>
                     </td>
                     <td align="right" style="padding:15px;">
@@ -62,7 +62,7 @@ class AppInfo(QDialog):
                         </div>
                     </td>
                 </tr>
-            </table>''' % (qApp.applicationName(), qApp.applicationVersion(), platform.architecture()[0]), self)
+            </table>''' % (qApp.applicationVersion(), platform.architecture()[0]), self)
         header.setStyleSheet('border:1px solid #999; background:#FFF;')
         self.tab_about = AboutTab(self)
         self.tab_credits = CreditsTab()

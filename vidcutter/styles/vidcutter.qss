@@ -35,7 +35,7 @@ QWidget#novideoWidget {
 /* -------------------------------------------------------------------------- */
 
 QToolBar#appcontrols {
-    spacing: 15px;
+    spacing: 25px;
 }
 
 QToolBar#appcontrols QToolButton {
@@ -67,10 +67,6 @@ QToolBar#appcontrols QToolButton#saveButton {
     color: #642C68;
 }
 
-QToolBar#appcontrols QToolButton:disabled#saveButton {
-    color: #AAA;
-}
-
 /* -------------------------------------------------------------------------- */
 
 QListView#cliplist {
@@ -96,7 +92,6 @@ QLabel#listHeader {
 }
 
 QLabel#runtimeLabel {
-    font-family: "Droid Sans Mono", monospace;
     font-size: 10pt;
     color: #FFF;
     background: rgb(106, 69, 114) url(:images/runtime.png) no-repeat left center;
@@ -127,23 +122,20 @@ QLabel#logowidget {
 
 QTimeEdit::up-arrow#timeCounter {
     image: url(':/images/spinbox-up.png');
-    width: 9px;
+    width: 8px;
     height: 5px;
-}
-
-QTimeEdit::up-arrow:disabled#timeCounter,
-QTimeEdit::up-arrow:off#timeCounter {
-    opacity: 0.5;
 }
 
 QTimeEdit::down-arrow#timeCounter {
     image: url(':/images/spinbox-down.png');
-    width: 9px;
+    width: 8px;
     height: 5px;
 }
 
+QTimeEdit::up-arrow:disabled#timeCounter,
+QTimeEdit::up-arrow:off#timeCounter,
 QTimeEdit::down-arrow:disabled#timeCounter,
-QTimeEdit::down-arrow:off#timeCounter {
+QTimeEdit::down-arrow:off#timeCounter{
     opacity: 0.5;
 }
 
@@ -218,8 +210,8 @@ QTextBrowser {
     background-repeat: no-repeat;
     background-position: center top;
     background-attachment: fixed; */
-    background-color: #F3F4F5;
-    border: none;
+    border-image: url(:/images/cliplist-watermark.png) 0 0 0 0 stretch stretch;
+    background-color: #FFFFFF;
     color: #000;
 }
 

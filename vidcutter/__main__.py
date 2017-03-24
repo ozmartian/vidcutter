@@ -52,11 +52,7 @@ class MainWindow(QMainWindow):
         self.setWindowTitle('%s' % qApp.applicationName())
         self.setContentsMargins(0, 0, 0, 0)
         self.statusBar().showMessage('Ready')
-        # statuslogo = QLabel(pixmap=QPixmap(':/images/vidcutter-emboss.png'), objectName='logowidget')
-        # if sys.platform == 'win32':
-        #     statuslogo.setStyleSheet('margin-top: -5px;')
-        # self.statusBar().addPermanentWidget(statuslogo)
-        self.statusBar().setStyleSheet('border:none;')
+        self.statusBar().setStyleSheet('border:none;padding:0;margin:0;')
         self.setAcceptDrops(True)
         self.show()
         try:
