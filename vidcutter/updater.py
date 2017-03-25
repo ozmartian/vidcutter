@@ -24,14 +24,40 @@
 
 import logging
 
-from PyQt5.QtCore import QObject, QUrl
-from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkRequest
+from PyQt5.QtCore import QJsonDocument, QObject, QUrl, pyqtSignal
+from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkReply, QNetworkRequest
 
 
 class Updater(QObject):
-    def __init__(self, parent=None, **kwargs):
-        super(Updater, self).__init__(parent, **kwargs)
-        self.api_github_latest = QUrl('https://api.github.com/repos/ozmartian/vidcutter/releases/latest')
-        self.netman = QNetworkAccessManager()
+    latestVersion = pyqtSignal(QJsonDocument)
 
-    def latest_release(self) -> str:
+    def __init__(self, parent=None):
+        super(Updater, self).__init__(parent)
+        self.parent = parent
+        self.logger = logging.getLogger(__name__)
+        self.api_github_latest = QUrl('https://api.github.com/repos/ozmartian/vidcutter/releases/latest')
+        self.manager = QNetworkAccessManager(self)
+        self.manager.finished.connect(self.reply_finished)
+
+    def download(self, url: QUrl) -> None:
+        if url.isValid():
+            self.manager.get(QNetworkRequest(url))
+
+    def reply_finished(self, reply: QNetworkReply) -> None:
+        if reply.error():
+            self.logger.error(reply.errorString())
+            return
+        self.log_request(reply)
+        jsondoc = QJsonDocument.fromBinaryData(reply.readAll())
+        self.latestVersion.emit(jsondoc)
+        reply.deleteLater()
+
+    def log_request(self, reply: QNetworkReply):
+        self.logger.info(reply.header(QNetworkRequest.ContentTypeHeader))
+        self.logger.info(reply.header(QNetworkRequest.LastModifiedHeader).toString('dd-mm-yyyy hh:mm:ss'))
+        # self.logger.info(reply.header(QNetworkRequest.ContentLengthHeader).toULongLong())
+        self.logger.info(reply.attribute(QNetworkRequest.HttpStatusCodeAttribute))
+        self.logger.info(reply.attribute(QNetworkRequest.HttpReasonPhraseAttribute))
+
+    def latest_release(self) -> None:
+        self.download(self.api_github_latest)

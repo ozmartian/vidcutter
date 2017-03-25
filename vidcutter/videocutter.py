@@ -30,7 +30,8 @@ import time
 from datetime import timedelta
 from locale import setlocale, LC_NUMERIC
 
-from PyQt5.QtCore import QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTextStream, QTime, QUrl, pyqtSlot
+from PyQt5.QtCore import (QDir, QFile, QFileInfo, QJsonDocument, QModelIndex, QPoint, QSize, Qt, QTextStream, QTime,
+                          QUrl, pyqtSlot)
 from PyQt5.QtGui import QCloseEvent, QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMovie, QPixmap
 from PyQt5.QtWidgets import (QAbstractItemView, QAction, qApp, QDialogButtonBox, QFileDialog, QGroupBox,
                              QHBoxLayout, QLabel, QListWidgetItem, QMenu, QMessageBox, QProgressDialog, QPushButton,
@@ -40,6 +41,7 @@ import vidcutter.mpv as mpv
 import vidcutter.resources
 from vidcutter.appinfo import AppInfo
 from vidcutter.customwidgets import FrameCounter, TimeCounter
+from vidcutter.updater import Updater
 from vidcutter.videoframe import VideoFrame
 from vidcutter.videolist import VideoList, VideoItem
 from vidcutter.videoservice import VideoService
@@ -53,6 +55,7 @@ class VideoCutter(QWidget):
         self.logger = logging.getLogger(__name__)
         self.parent = parent
         self.videoService = VideoService(self)
+        self.updater = Updater(self)
         self.latest_release_url = 'https://github.com/ozmartian/vidcutter/releases/latest'
         self.ffmpeg_installer = {
             'win32': {
@@ -824,8 +827,19 @@ class VideoCutter(QWidget):
         appInfo = AppInfo(self)
         appInfo.exec_()
 
-    def updateCheck(self) -> None:
-        QDesktopServices.openUrl(QUrl(self.latest_release_url))
+    def updateCheck(self, version=None) -> None:
+        pass
+        # if type(version) is QJsonDocument:
+        #     mbox = QMessageBox(icon=self.thumbsupIcon, windowTitle='Update check', minimumWidth=450,
+        #                        textFormat=Qt.RichText)
+        #     mbox.setIconPixmap(self.thumbsupIcon.pixmap(64, 64))
+        #     # mbox.setText('<pre>%s</pre>' % str(version.toJson(QJsonDocument.Indented), 'utf8'))
+        #     mbox.adjustSize()
+        #     mbox.exec_()
+        # else:
+        #     self.updater.latest_release()
+        #     self.updater.latestVersion.connect(lambda ver: self.updateCheck(ver))
+        #     # QDesktopServices.openUrl(QUrl(self.latest_release_url))
 
     def showProgress(self, steps: int, label: str = 'Analyzing media...') -> None:
         self.progress = QProgressDialog(label, None, 0, steps, self.parent, windowModality=Qt.ApplicationModal,
