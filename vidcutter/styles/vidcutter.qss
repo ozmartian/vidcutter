@@ -129,7 +129,7 @@ QLabel#logowidget {
     outline: none;
 }
 
-/* --------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
 
 QTimeEdit::up-arrow#timeCounter {
     image: url(':/images/spinbox-up.png') no-repeat;
@@ -144,13 +144,19 @@ QTimeEdit::down-arrow#timeCounter {
 }
 
 QTimeEdit::up-arrow:disabled#timeCounter,
-QTimeEdit::up-arrow:off#timeCounter,
+QTimeEdit::up-arrow:off#timeCounter {
+    image: url(':/images/spinbox-up-disabled.png') no-repeat;
+    width: 8px;
+    height: 5px;}
+
 QTimeEdit::down-arrow:disabled#timeCounter,
 QTimeEdit::down-arrow:off#timeCounter {
-    opacity: 0.5;
+    image: url(':/images/spinbox-down-disabled.png') no-repeat;
+    width: 8px;
+    height: 5px;
 }
 
--------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
 
 QGroupBox#counterwidgets {
     border: none;
