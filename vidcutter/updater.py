@@ -71,7 +71,7 @@ class Updater(QWidget):
             response += '''<p>Would you list to visit the <b>VidCutter releases page</b> for more details now?</p>'''
             self.update_available = True
         else:
-            response += '<h2>You are already running the latest version</h2>'
+            response += '<h1>You are already running the latest version</h1>'
             response += '<p style="font-size:15px;"><b>Latest version:</b> %s<br/><b>Installed version:</b> %s</p>'\
                         % (str(latest), str(current))
             self.update_available = False
@@ -130,7 +130,7 @@ class UpdaterMsgBox(QDialog):
 
         self.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Preferred)
         self.setWindowTitle(title)
-        self.setMinimumSize(602, 202)
+        self.setMinimumWidth(602)
 
     def releases_page(self):
         QDesktopServices.openUrl(self.releases_url)

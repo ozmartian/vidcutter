@@ -86,7 +86,7 @@ QListView#cliplist {
     border-left: 1px solid #B9B9B9;
     border-right: 1px solid #B9B9B9;
     show-decoration-selected: 1;
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: #FFF;
 }
 
 QListView::item#cliplist {
