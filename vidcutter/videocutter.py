@@ -445,50 +445,29 @@ class VideoCutter(QWidget):
         self.initMediaControls()
 
     @staticmethod
-    def videoFileFilter() -> str:
-        video_exts = ('3gp', 'asf', 'avi', 'bdm', 'bdmv', 'clpi', 'cpi', 'dat', 'divx', 'dv', 'fli', 'flv', 'ifo',
-                      'm2t', 'm2ts', 'm4v', 'mkv', 'mov', 'mp4', 'mpeg', 'mpg', 'mpg2', 'mpg4', 'mpl', 'mpls', 'mts',
-                      'nsv', 'nut', 'nuv', 'ogg', 'ogm', 'qt', 'rm', 'rmvb', 'trp', 'tp', 'ts', 'vcd', 'vfw', 'vob',
-                      'webm', 'wmv')
-        filters = ''
-        for ext in video_exts:
-            filters += '*.%s ' % ext
-        
-        video_file_types = '''
-All media files
-All video files
-All audio files
-3GPP files (*.3gp, *.3g2)
-AMV files (*.amv)
-AVI files (* .avi)
-DivX Video (*.divx, *.div)
-Flash Video (*.flv, *.f4v)
-WebM files (*.webm)
-MKV Video (*.mkv)
-MPEG Audio (*.mp3, *.mpa, *.mp1)
-MPEG Video (*.mpeg, *.mpg, *.mpe, *.m1v, *.tod)
-MPEG-2 (*.mpv, *.m2v, *.ts, *.m2t, *.m2ts)
-MPEG-4 Video (*.mp4, *.m4v, *.mpv4)
-MOD files (*.mod)
-MJPEG Video files (*.mjpg, *.mjpeg)
-QuickTime files (*.mov, *.qt) 
-RealMedia files (*.rm, *.rmvb)
-VCD DAT files (*.dat)
-VCD SVCD bin/cue images (*.bin)
-VOB Video files (*.vob)
-Wave Audio files (*.wav)
-Windows Media Audio (*.wma)
-Windows Media files (*.wmv, *.asf, *.asx)
-Xvid Video (*.xvid)
-All files (*.*)
-'''
-        
-        
-        return filters.strip()
+    def fileFilters() -> str:
+        all_types = 'All media files (*.3gp, *.3g2, *.amv, * .avi, *.divx, *.div, *.flv, *.f4v, *.webm, *.mkv, ' +\
+                     '*.mp3, *.mpa, *.mp1, *.mpeg, *.mpg, *.mpe, *.m1v, *.tod, *.mpv, *.m2v, *.ts, *.m2t, *.m2ts, ' +\
+                     '*.mp4, *.m4v, *.mpv4, *.mod, *.mjpg, *.mjpeg, *.mov, *.qt, *.rm, *.rmvb, *.dat, *.bin, *.vob, ' +\
+                     '*.wav, *.wma, *.wmv, *.asf, *.asx, *.xvid)'
+        video_types = 'All video files (*.3gp, *.3g2, *.amv, * .avi, *.divx, *.div, *.flv, *.f4v, *.webm, *.mkv, ' +\
+                      '*.mpeg, *.mpg, *.mpe, *.m1v, *.tod, *.mpv, *.m2v, *.ts, *.m2t, *.m2ts, ' +\
+                      '*.mp4, *.m4v, *.mpv4, *.mod, *.mjpg, *.mjpeg, *.mov, *.qt, *.rm, *.rmvb, *.dat, *.bin, ' +\
+                      '*.vob, *.wmv, *.asf, *.asx, *.xvid)'
+        audio_types = 'All audio files (*.mp3, *.mpa, *.mp1, *.wav, *.wma)'
+        specific_types = '3GPP files (*.3gp, *.3g2);;AMV files (*.amv);;AVI files (* .avi);;' +\
+                         'DivX files (*.divx, *.div);;Flash files (*.flv, *.f4v);;WebM files (*.webm);;' +\
+                         'MKV files (*.mkv);;MPEG Audio files (*.mp3, *.mpa, *.mp1);;' +\
+                         'MPEG files (*.mpeg, *.mpg, *.mpe, *.m1v, *.tod);;' +\
+                         'MPEG-2 files (*.mpv, *.m2v, *.ts, *.m2t, *.m2ts);;MPEG-4 files (*.mp4, *.m4v, *.mpv4);;' +\
+                         'MOD files (*.mod);;MJPEG files (*.mjpg, *.mjpeg);;QuickTime files (*.mov, *.qt) ;;' +\
+                         'RealMedia files (*.rm, *.rmvb);;VCD DAT files (*.dat);;VCD SVCD BIN/CUE images (*.bin);;' +\
+                         'VOB files (*.vob);;Wave Audio files (*.wav);;Windows Media Audio files (*.wma);;' +\
+                         'Windows Media files (*.wmv, *.asf, *.asx);;Xvid files (*.xvid)'
+        return '%s;;%s;;%s;;%s;;All files (*.*)' % (all_types, video_types, audio_types, specific_types)
 
     def openMedia(self) -> None:
-        filename, _ = QFileDialog.getOpenFileName(self.parent, caption='Select media file',
-                                                  filter='Video files (%s);;All files (*.*)' % self.videoFileFilter(),
+        filename, _ = QFileDialog.getOpenFileName(self.parent, caption='Select media file', filter=self.fileFilters(),
                                                   directory=QDir.homePath())
         if filename != '':
             self.loadMedia(filename)
@@ -498,11 +477,7 @@ All files (*.*)
         self.edl = edlfile
         if not len(self.edl.strip()):
             self.edl, _ = QFileDialog.getOpenFileName(self.parent, caption='Select EDL file',
-                                                      filter='MPlayer EDL (*.edl);;' +
-                                                             # 'VideoReDo EDL (*.Vprj);;' +
-                                                             # 'Comskip EDL (*.txt);;' +
-                                                             # 'CMX 3600 EDL (*.edl);;' +
-                                                             'All files (*.*)',
+                                                      filter='MPlayer EDL (*.edl);;All files (*.*)',
                                                       initialFilter='MPlayer EDL (*.edl)',
                                                       directory=os.path.join(QDir.homePath(), '%s.edl' % source_file))
         if self.edl.strip():
