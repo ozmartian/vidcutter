@@ -177,7 +177,7 @@ class MainWindow(QMainWindow):
         if QFileInfo(qssfile).exists():
             qss = QFile(qssfile)
             qss.open(QFile.ReadOnly | QFile.Text)
-            qApp.setStyleSheet(QTextStream(qss).readAll())
+            QApplication.instance().setStyleSheet(QTextStream(qss).readAll())
 
     @staticmethod
     def get_version(filename: str = '__init__.py') -> str:
@@ -216,7 +216,8 @@ class MainWindow(QMainWindow):
 
 
 def main():
-    qApp.setAttribute(Qt.AA_EnableHighDpiScaling, True)
+    if hasattr(Qt, 'AA_EnableHighDpiScaling'):
+        qApp.setAttribute(Qt.AA_EnableHighDpiScaling, True)
     app = QApplication(sys.argv)
     app.setApplicationName('VidCutter')
     app.setApplicationVersion(MainWindow.get_version())

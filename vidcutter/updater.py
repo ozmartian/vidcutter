@@ -58,22 +58,40 @@ class Updater(QWidget):
         jsonobj = jsondoc.object()
         latest = parse_version(jsonobj['tag_name'].toString())
         current = parse_version(qApp.applicationVersion())
-        response = '''
-            <style>
-                p { min-width: 600px; }
-                h1 { color: #642C68; font-family: 'Futura LT', sans-serif; font-weight: 400; }
-            </style>
-        '''
         if latest > current:
-            response += '<h1>A new version is available!</h1>'
-            response += '<p style="font-size:15px;"><b>Latest version:</b> %s<br/><b>Installed version:</b> %s</p>'\
-                        % (str(latest), str(current))
-            response += '''<p>Would you list to visit the <b>VidCutter releases page</b> for more details now?</p>'''
+            response = '''
+                <style>
+                    p { min-width: 600px; }
+                    h1 { color: #642C68; font-family: 'Futura LT', sans-serif; font-weight: 400; }
+                </style>
+            '''
+            response += '''<h1>A new version is available!</h1>
+                              <p style="font-size:15px;">
+                                <b>Latest version:</b> %s
+                                <br/>
+                                <b>Installed version:</b> %s
+                              </p>''' % (str(latest), str(current))
             self.update_available = True
         else:
-            response += '<h1>You are already running the latest version</h1>'
-            response += '<p style="font-size:15px;"><b>Latest version:</b> %s<br/><b>Installed version:</b> %s</p>'\
-                        % (str(latest), str(current))
+            response = '''
+                <style>
+                    h1 { color: #642C68; font-family: 'Futura LT', sans-serif; font-weight: 400; }
+                </style>
+            '''
+            response += '''
+<h1 style="text-align:right;">You are already running the latest version</h1>
+<div align="center" style="margin-left:100px;">
+    <table cellpadding="3" cellspacing="1" border="0">
+        <tr valign="middle">
+            <td style="color:#642C68; font-family: 'Futura LT', sans-serif; font-size:15px; text-align:right;">latest version:</td>
+            <td style="color:#000; font-size:15px; font-weight:400;">%s</td>
+        </tr>
+        <tr valign="middle">
+            <td style="color:#642C68; font-family: 'Futura LT', sans-serif; font-size:15px; text-align:right;">installed version:</td>
+            <td style="color:#000; font-size:15px; font-weight:400;">%s</td>
+        </tr>
+    </table>
+</div>''' % (str(latest), str(current))
             self.update_available = False
         if os.getenv('DEBUG', False):
             self.logger.info('latest version = %s VS current version = %s' % (str(latest), str(current)))
@@ -112,9 +130,10 @@ class UpdaterMsgBox(QDialog):
                 repositories There is also an AppImage package available for those unable to get things working.</p>
                 <p>More details are available at the VidCutter homepage.</p>''')
             disclaimer.setStyleSheet('font-size:12px; border:1px solid #999; padding:2px 10px;' +
-                                     'background:rgba(255, 255, 255, 0.8); margin-bottom:20px;')
+                                     'background:rgba(255, 255, 255, 0.8); margin:10px 5px;')
             disclaimer.setWordWrap(True)
             layout.addWidget(disclaimer)
+            layout.addWidget(QLabel('Would you list to visit the <b>VidCutter releases page</b> for more details now?'))
 
         if self.parent.update_available:
             buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
@@ -124,8 +143,12 @@ class UpdaterMsgBox(QDialog):
             buttons = QDialogButtonBox(QDialogButtonBox.Ok)
             buttons.accepted.connect(self.close)
 
-        layout.addWidget(buttons, Qt.AlignRight)
+        buttonLayout = QHBoxLayout()
+        buttonLayout.addStretch(1)
+        buttonLayout.addWidget(buttons)
+        buttonLayout.addStretch(1)
 
+        layout.addLayout(buttonLayout)
         self.setLayout(layout)
 
         self.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Preferred)

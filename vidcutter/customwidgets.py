@@ -22,8 +22,10 @@
 #
 #######################################################################
 
+import sys
+
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QTime
-from PyQt5.QtWidgets import QAbstractSpinBox, QHBoxLayout, QLabel, QSpinBox, QTimeEdit, QWidget
+from PyQt5.QtWidgets import QAbstractSpinBox, QHBoxLayout, QLabel, QSpinBox, QStyleFactory, QTimeEdit, QWidget
 
 
 class TimeCounter(QWidget):
@@ -32,8 +34,41 @@ class TimeCounter(QWidget):
     def __init__(self, parent=None):
         super(TimeCounter, self).__init__(parent)
         self.parent = parent
-        # self.setMinimumWidth(200)
         self.timeedit = QTimeEdit(QTime(0, 0), self, objectName='timeCounter')
+        if sys.platform == 'win32':
+            self.timeedit.setStyleSheet('''
+QTimeEdit::up-arrow#timeCounter {
+    image: url(':/images/spinbox-up.png');
+    width: 8px;
+    height: 5px;
+    padding: 0;
+    margin: 0;
+}
+QTimeEdit::down-arrow#timeCounter {
+    image: url(':/images/spinbox-down.png');
+    width: 8px;
+    height: 5px;
+    padding: 0;
+    margin: 0;
+}
+QTimeEdit::up-arrow:disabled#timeCounter,
+QTimeEdit::up-arrow:off#timeCounter {
+    image: url(':/images/spinbox-up-disabled.png');
+    width: 8px;
+    height: 5px;
+    padding: 0;
+    margin: 0;
+}
+QTimeEdit::down-arrow:disabled#timeCounter,
+QTimeEdit::down-arrow:off#timeCounter {
+    image: url(':/images/spinbox-down-disabled.png');
+    width: 8px;
+    height: 5px;
+    padding: 0;
+    margin: 0;
+}''')
+        else:
+            self.timeedit.setStyle(QStyleFactory.create('Fusion'))
         self.timeedit.setFrame(False)
         self.timeedit.setDisplayFormat('hh:mm:ss.zzz')
         self.timeedit.timeChanged.connect(self.timeChangeHandler)
@@ -97,7 +132,6 @@ class FrameCounter(QWidget):
     def __init__(self, parent=None):
         super(FrameCounter, self).__init__(parent)
         self.parent = parent
-        # self.setMinimumWidth(90)
         self.currentframe = QSpinBox(self, objectName='frameCounter')
         self.currentframe.setFrame(False)
         self.currentframe.setAlignment(Qt.AlignRight)
