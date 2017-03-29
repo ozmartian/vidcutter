@@ -156,7 +156,7 @@ class VideoCutter(QWidget):
         countersGroup.setObjectName('counterwidgets')
         countersGroup.setContentsMargins(0, 0, 0, 0)
         countersGroup.setLayout(countersLayout)
-        countersGroup.setFixedHeight(22)
+        countersGroup.setFixedHeight(24)
         countersGroup.setStyleSheet('margin:0; padding:0;')
 
         self.initMPV()
