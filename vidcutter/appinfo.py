@@ -39,14 +39,14 @@ class AppInfo(QDialog):
         self.setObjectName('aboutwidget')
         self.setWindowModality(Qt.ApplicationModal)
         header = QLabel('''
-            <style>table { color: #000; }</style>
+            <style>table { color: #000; background-color: transparent; }</style>
             <table border="0" cellpadding="5" cellspacing="1" width="100%%">
                 <tr>
                     <td width="82">
                         <img src=":/images/vidcutter-small.png" width="82" />
                     </td>
                     <td style="padding:4px;">
-                        <span style="font-family:'Futura LT', sans-serif;font-size:30px;font-weight:400;color:#642C68;">
+                        <span style="font-family:'Futura LT', sans-serif;font-size:30px;font-weight:500;color:#642C68;">
                             <span style="font-size:46px;">V</span>ID<span style="font-size:46px;">C</span>UTTER
                         </span>
                         <br/>&nbsp;&nbsp;
@@ -63,7 +63,7 @@ class AppInfo(QDialog):
                     </td>
                 </tr>
             </table>''' % (qApp.applicationVersion(), platform.architecture()[0]), self)
-        header.setStyleSheet('border:1px solid #999; background:#FFF;')
+        header.setStyleSheet('border:none;')
         self.tab_about = AboutTab(self)
         self.tab_credits = CreditsTab()
         self.tab_license = LicenseTab()

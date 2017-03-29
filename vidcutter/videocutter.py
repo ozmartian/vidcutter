@@ -30,7 +30,7 @@ import time
 from datetime import timedelta
 from locale import setlocale, LC_NUMERIC
 
-from PyQt5.QtCore import (QDir, QFile, QFileInfo, QJsonDocument, QModelIndex, QPoint, QSize, Qt, QTextStream, QTime,
+from PyQt5.QtCore import (QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTextStream, QTime,
                           QUrl, pyqtSlot)
 from PyQt5.QtGui import QCloseEvent, QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMovie, QPixmap
 from PyQt5.QtWidgets import (QAbstractItemView, QAction, qApp, QDialogButtonBox, QFileDialog, QGroupBox,
@@ -156,7 +156,7 @@ class VideoCutter(QWidget):
         countersGroup.setObjectName('counterwidgets')
         countersGroup.setContentsMargins(0, 0, 0, 0)
         countersGroup.setLayout(countersLayout)
-        countersGroup.setFixedHeight(26)
+        countersGroup.setFixedHeight(22)
 
         self.initMPV()
 
@@ -304,12 +304,12 @@ class VideoCutter(QWidget):
         self.keyRefIcon = QIcon(':/images/keymap.png')
 
     def initActions(self) -> None:
-        self.openAction = QAction(self.openIcon, 'Open\nMedia', self, statusTip='Open a valid media file',
+        self.openAction = QAction(self.openIcon, 'Open\nMedia', self, statusTip='Open a media file',
                                   triggered=self.openMedia)
         self.playAction = QAction(self.playIcon, 'Play\nMedia', self, triggered=self.playMedia,
-                                  statusTip='Play the loaded media file', enabled=False)
+                                  statusTip='Play media file', enabled=False)
         self.pauseAction = QAction(self.pauseIcon, 'Pause\nMedia', self, visible=False, triggered=self.playMedia,
-                                   statusTip='Pause the currently playing media file')
+                                   statusTip='Pause currently playing media')
         self.cutStartAction = QAction(self.cutStartIcon, 'Clip\nStart', self, triggered=self.setCutStart, enabled=False,
                                       statusTip='Set the start position of a new clip')
         self.cutEndAction = QAction(self.cutEndIcon, 'Clip\nEnd', self, triggered=self.setCutEnd,
@@ -333,7 +333,7 @@ class VideoCutter(QWidget):
         self.viewLogsAction = QAction(self.viewLogsIcon, 'View log file', self, triggered=self.viewLogs,
                                       statusTip='View the application\'s log file')
         self.updateCheckAction = QAction(self.updateCheckIcon, 'Check for updates...', self,
-                                         statusTip='Check for application updates', triggered=self.updateCheck)
+                                         statusTip='Check for application updates', triggered=self.updater.check)
         self.aboutQtAction = QAction('About Qt', self, statusTip='About Qt', triggered=qApp.aboutQt)
         self.aboutAction = QAction('About %s' % qApp.applicationName(), self, triggered=self.aboutApp,
                                    statusTip='About %s' % qApp.applicationName())
@@ -393,6 +393,8 @@ class VideoCutter(QWidget):
         else:
             self.toolbar.setToolButtonStyle(Qt.ToolButtonIconOnly)
 
+    # TODO: move cliplist functions into VideoList class
+
     def itemMenu(self, pos: QPoint) -> None:
         globalPos = self.cliplist.mapToGlobal(pos)
         self.moveItemUpAction.setEnabled(False)
@@ -451,6 +453,37 @@ class VideoCutter(QWidget):
         filters = ''
         for ext in video_exts:
             filters += '*.%s ' % ext
+        
+        video_file_types = '''
+All media files
+All video files
+All audio files
+3GPP files (*.3gp, *.3g2)
+AMV files (*.amv)
+AVI files (* .avi)
+DivX Video (*.divx, *.div)
+Flash Video (*.flv, *.f4v)
+WebM files (*.webm)
+MKV Video (*.mkv)
+MPEG Audio (*.mp3, *.mpa, *.mp1)
+MPEG Video (*.mpeg, *.mpg, *.mpe, *.m1v, *.tod)
+MPEG-2 (*.mpv, *.m2v, *.ts, *.m2t, *.m2ts)
+MPEG-4 Video (*.mp4, *.m4v, *.mpv4)
+MOD files (*.mod)
+MJPEG Video files (*.mjpg, *.mjpeg)
+QuickTime files (*.mov, *.qt) 
+RealMedia files (*.rm, *.rmvb)
+VCD DAT files (*.dat)
+VCD SVCD bin/cue images (*.bin)
+VOB Video files (*.vob)
+Wave Audio files (*.wav)
+Windows Media Audio (*.wma)
+Windows Media files (*.wmv, *.asf, *.asx)
+Xvid Video (*.xvid)
+All files (*.*)
+'''
+        
+        
         return filters.strip()
 
     def openMedia(self) -> None:
@@ -827,23 +860,10 @@ class VideoCutter(QWidget):
         appInfo = AppInfo(self)
         appInfo.exec_()
 
-    def updateCheck(self, version=None) -> None:
-        pass
-        # if type(version) is QJsonDocument:
-        #     mbox = QMessageBox(icon=self.thumbsupIcon, windowTitle='Update check', minimumWidth=450,
-        #                        textFormat=Qt.RichText)
-        #     mbox.setIconPixmap(self.thumbsupIcon.pixmap(64, 64))
-        #     # mbox.setText('<pre>%s</pre>' % str(version.toJson(QJsonDocument.Indented), 'utf8'))
-        #     mbox.adjustSize()
-        #     mbox.exec_()
-        # else:
-        #     self.updater.latest_release()
-        #     self.updater.latestVersion.connect(lambda ver: self.updateCheck(ver))
-        #     # QDesktopServices.openUrl(QUrl(self.latest_release_url))
-
     def showProgress(self, steps: int, label: str = 'Analyzing media...') -> None:
-        self.progress = QProgressDialog(label, None, 0, steps, self.parent, windowModality=Qt.ApplicationModal,
-                                        windowIcon=self.parent.windowIcon(), minimumDuration=0, minimumWidth=500)
+        self.progress = QProgressDialog(label, None, 0, steps, self.parent, f=Qt.WindowCloseButtonHint,
+                                        windowModality=Qt.ApplicationModal, windowIcon=self.parent.windowIcon(),
+                                        minimumDuration=0, minimumWidth=500)
         self.progress.show()
         for i in range(steps):
             self.progress.setValue(i)
@@ -852,15 +872,17 @@ class VideoCutter(QWidget):
 
     def complete(self) -> None:
         info = QFileInfo(self.finalFilename)
-        mbox = QMessageBox(icon=self.thumbsupIcon, windowTitle='Your video is ready', minimumWidth=500,
-                           textFormat=Qt.RichText)
-        mbox.setIconPixmap(self.thumbsupIcon.pixmap(64, 64))
+        mbox = QMessageBox(icon=self.thumbsupIcon, windowTitle='Operation complete', minimumWidth=500,
+                           textFormat=Qt.RichText, objectName='completedialog')
+        mbox.setIconPixmap(self.thumbsupIcon.pixmap(128, 128))
         mbox.setText('''
     <style>
         table.info { margin:6px; padding:4px 15px; }
         td.label { font-weight:bold; font-size:10pt; text-align:right; }
         td.value { font-size:10pt; }
+        h3 { font-family:'Futura LT', sans-serif; }
     </style>
+    <h3>Your new media is ready!</h3>
     <table class="info" cellpadding="4" cellspacing="0">
         <tr>
             <td class="label"><b>File:</b></td>

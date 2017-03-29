@@ -12,11 +12,15 @@ script:
   - cat > usr/bin/vidcutter <<\EOF
   - #!/usr/bin/python3
   - import sys
+  - from pkg_resources import load_entry_point, DistributionNotFound
   - from signal import SIGINT, SIG_DFL, SIGTERM, signal
-  - from vidcutter.__main__ import main
   - signal(SIGINT, SIG_DFL)
   - signal(SIGTERM, SIG_DFL)
   - sys.path.insert(0, "/usr/lib/python3/dist-packages/")
-  - main()
+  - try:
+  -     sys.exit(load_entry_point('vidcutter', 'gui_scripts', 'vidcutter')())
+  - except DistributionNotFound:
+  -     from vidcutter.__main__ import main
+  -     main()
   - EOF
   - mv usr/lib/x86_64-linux-gnu/caca/*.so* usr/lib/x86_64-linux-gnu/

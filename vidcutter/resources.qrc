@@ -8,6 +8,8 @@
         <file>images/complete-open.png</file>
         <file>images/complete-play.png</file>
         <file>images/complete-restart.png</file>
+        <file>images/dialog-backdrop.png</file>
+        <file>images/dialog-backdrop-02.png</file>
         <file>images/down.png</file>
         <file>images/edl.png</file>
         <file>images/filmstrip.png</file>
@@ -17,7 +19,6 @@
         <file>images/menu.png</file>
         <file>images/menu-active.png</file>
         <file>images/muted.png</file>
-        <file>images/novideo.png</file>
         <file>images/novideotext.gif</file>
         <file>images/python.png</file>
         <file>images/qt.png</file>

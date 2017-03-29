@@ -23,41 +23,121 @@
 #######################################################################
 
 import logging
+import os
+import sys
+from pkg_resources import parse_version
 
-from PyQt5.QtCore import QJsonDocument, QObject, QUrl, pyqtSignal
+from PyQt5.QtCore import QJsonDocument, QObject, QUrl, Qt
+from PyQt5.QtGui import QCloseEvent, QDesktopServices, QPixmap
 from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkReply, QNetworkRequest
+from PyQt5.QtWidgets import qApp, QDialog, QDialogButtonBox, QLabel, QHBoxLayout, QSizePolicy, QVBoxLayout, QWidget
 
 
-class Updater(QObject):
-    latestVersion = pyqtSignal(QJsonDocument)
-
+class Updater(QWidget):
     def __init__(self, parent=None):
         super(Updater, self).__init__(parent)
         self.parent = parent
         self.logger = logging.getLogger(__name__)
+        self.update_available = False
         self.api_github_latest = QUrl('https://api.github.com/repos/ozmartian/vidcutter/releases/latest')
         self.manager = QNetworkAccessManager(self)
-        self.manager.finished.connect(self.reply_finished)
+        self.manager.finished.connect(self.done)
 
-    def download(self, url: QUrl) -> None:
+    def get(self, url: QUrl) -> None:
         if url.isValid():
             self.manager.get(QNetworkRequest(url))
 
-    def reply_finished(self, reply: QNetworkReply) -> None:
-        if reply.error():
+    def done(self, reply: QNetworkReply) -> None:
+        if os.getenv('DEBUG', False):
+            self.log_request(reply)
+        if reply.error() != QNetworkReply.NoError:
             self.logger.error(reply.errorString())
             return
-        self.log_request(reply)
-        jsondoc = QJsonDocument.fromBinaryData(reply.readAll())
-        self.latestVersion.emit(jsondoc)
+        jsondoc = QJsonDocument.fromJson(reply.readAll())
         reply.deleteLater()
+        jsonobj = jsondoc.object()
+        latest = parse_version(jsonobj['tag_name'].toString())
+        current = parse_version(qApp.applicationVersion())
+        response = '''
+            <style>
+                p { min-width: 600px; }
+                h1 { color: #642C68; font-family: 'Futura LT', sans-serif; font-weight: 400; }
+            </style>
+        '''
+        if latest > current:
+            response += '<h1>A new version is available!</h1>'
+            response += '<p style="font-size:15px;"><b>Latest version:</b> %s<br/><b>Installed version:</b> %s</p>'\
+                        % (str(latest), str(current))
+            response += '''<p>Would you list to visit the <b>VidCutter releases page</b> for more details now?</p>'''
+            self.update_available = True
+        else:
+            response += '<h2>You are already running the latest version</h2>'
+            response += '<p style="font-size:15px;"><b>Latest version:</b> %s<br/><b>Installed version:</b> %s</p>'\
+                        % (str(latest), str(current))
+            self.update_available = False
+        if os.getenv('DEBUG', False):
+            self.logger.info('latest version = %s VS current version = %s' % (str(latest), str(current)))
+        mbox = UpdaterMsgBox(parent=self)
+        mbox.setText(response)
+        mbox.show()
 
-    def log_request(self, reply: QNetworkReply):
-        self.logger.info(reply.header(QNetworkRequest.ContentTypeHeader))
-        self.logger.info(reply.header(QNetworkRequest.LastModifiedHeader).toString('dd-mm-yyyy hh:mm:ss'))
-        # self.logger.info(reply.header(QNetworkRequest.ContentLengthHeader).toULongLong())
-        self.logger.info(reply.attribute(QNetworkRequest.HttpStatusCodeAttribute))
-        self.logger.info(reply.attribute(QNetworkRequest.HttpReasonPhraseAttribute))
+    def check(self) -> None:
+        self.get(self.api_github_latest)
 
-    def latest_release(self) -> None:
-        self.download(self.api_github_latest)
+    def log_request(self, reply: QNetworkReply) -> None:
+        self.logger.info('request made at %s' %
+                         reply.header(QNetworkRequest.LastModifiedHeader).toString('dd-MM-yyyy hh:mm:ss'))
+        self.logger.info('response: %s (%i)  type: %s' %
+                         (reply.attribute(QNetworkRequest.HttpReasonPhraseAttribute).upper(),
+                          reply.attribute(QNetworkRequest.HttpStatusCodeAttribute),
+                          reply.header(QNetworkRequest.ContentTypeHeader)))
+
+
+class UpdaterMsgBox(QDialog):
+    def __init__(self, parent=None, f=Qt.WindowCloseButtonHint, title='Checking updates...'):
+        super(UpdaterMsgBox, self).__init__(parent, f)
+        self.parent = parent
+        self.setObjectName('updatermsgbox')
+        self.releases_url = QUrl('https://github.com/ozmartian/vidcutter/releases/latest')
+        self.setWindowModality(Qt.WindowModal)
+        self.contentLabel = QLabel(textFormat=Qt.RichText, wordWrap=True)
+
+        layout = QVBoxLayout()
+        layout.addWidget(self.contentLabel)
+        if self.parent.update_available and sys.platform.startswith('linux'):
+            disclaimer = QLabel('''<p>Linux users should always install via their distribution's package manager.
+                Packages in formats such as TAR.XZ (Arch Linux), DEB (Ubuntu/Debian) and RPM (Fedora, openSUSE) are
+                always produced with every official version released. These can be installed via distribution specific
+                channels such as the Arch Linux AUR, Ubuntu LaunchPad PPA, Fedora copr, openSUSE OBS and third party
+                repositories There is also an AppImage package available for those unable to get things working.</p>
+                <p>More details are available at the VidCutter homepage.</p>''')
+            disclaimer.setStyleSheet('font-size:12px; border:1px solid #999; padding:2px 10px;' +
+                                     'background:rgba(255, 255, 255, 0.8); margin-bottom:20px;')
+            disclaimer.setWordWrap(True)
+            layout.addWidget(disclaimer)
+
+        if self.parent.update_available:
+            buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+            buttons.accepted.connect(self.releases_page)
+            buttons.rejected.connect(self.close)
+        else:
+            buttons = QDialogButtonBox(QDialogButtonBox.Ok)
+            buttons.accepted.connect(self.close)
+
+        layout.addWidget(buttons, Qt.AlignRight)
+
+        self.setLayout(layout)
+
+        self.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Preferred)
+        self.setWindowTitle(title)
+        self.setMinimumSize(602, 202)
+
+    def releases_page(self):
+        QDesktopServices.openUrl(self.releases_url)
+
+    def setText(self, content: str) -> None:
+        self.contentLabel.setText(content)
+
+    def closeEvent(self, event: QCloseEvent) -> None:
+        self.deleteLater()
+        event.accept()

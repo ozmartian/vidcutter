@@ -17,7 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
-QMainWindow, QDialog#aboutwidget {
+QMainWindow {
     background-color: #EFF0F1;
 }
 
@@ -30,6 +30,17 @@ QWidget#shortcuts {
 QWidget#novideoWidget {
     border: 1px solid #999;
     border-image: url(:/images/startup-backdrop.png) 0 0 0 0 stretch stretch;
+    background-color: #EFF0F1;
+}
+
+QDialog#aboutwidget {
+    border-image: url(':/images/dialog-backdrop-02.png') 0 0 0 0 stretch stretch;
+    background-color: #EFF0F1;
+}
+
+QDialog#updatermsgbox {
+    border-image: url(:/images/dialog-backdrop.png) 0 0 0 0 stretch stretch;
+    background-color: #EFF0F1;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -60,11 +71,11 @@ QToolBar#appcontrols QToolButton:pressed {
 
 QToolBar#appcontrols QToolButton:disabled,
 QToolBar#appcontrols QToolButton:disabled#saveButton {
-    color: #AAA;
+    color: rgba(170, 170, 170, 0.7)
 }
 
 QToolBar#appcontrols QToolButton#saveButton {
-    color: #642C68;
+        color: #642C68;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -75,7 +86,7 @@ QListView#cliplist {
     border-left: 1px solid #B9B9B9;
     border-right: 1px solid #B9B9B9;
     show-decoration-selected: 1;
-    background-color: #FFF;
+    background-color: rgba(255, 255, 255, 0.8);
 }
 
 QListView::item#cliplist {
@@ -135,7 +146,7 @@ QTimeEdit::down-arrow#timeCounter {
 QTimeEdit::up-arrow:disabled#timeCounter,
 QTimeEdit::up-arrow:off#timeCounter,
 QTimeEdit::down-arrow:disabled#timeCounter,
-QTimeEdit::down-arrow:off#timeCounter{
+QTimeEdit::down-arrow:off#timeCounter {
     opacity: 0.5;
 }
 
@@ -146,6 +157,14 @@ QGroupBox#counterwidgets {
     background-color: #000;
     color: #FFF;
     margin: 0;
+}
+
+/* -------------------------------------------------------------------------- */
+
+QMessageBox#completedialog {
+    border-image: url(:/images/dialog-backdrop.png) 0 0 0 0 stretch stretch;
+    background-color: #FFF;
+    font-size: 10pt;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -194,25 +213,22 @@ QStatusBar {
     color: #444;
     margin: 0;
     padding: 0;
-    min-height: 30px;
     border: none;
 }
 
 QStatusBar::item {
     border: none;
     outline: none;
+    padding: 0;
+    margin: 0;
 }
 
 /* -------------------------------------------------------------------------- */
 
 QTextBrowser {
-    /* background-image: url(':/images/watermark.png');
-    background-repeat: no-repeat;
-    background-position: center top;
-    background-attachment: fixed; */
-    border-image: url(:/images/cliplist-watermark.png) 0 0 0 0 stretch stretch;
-    background-color: #FFFFFF;
+    background-color: rgba(255, 255, 255, 0.8);
     color: #000;
+    border: none;
 }
 
 /* -------------------------------------------------------------------------- */
