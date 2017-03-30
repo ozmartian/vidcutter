@@ -35,7 +35,7 @@ from PyQt5.QtCore import (QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt
 from PyQt5.QtGui import QCloseEvent, QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMovie, QPixmap
 from PyQt5.QtWidgets import (QAbstractItemView, QAction, qApp, QApplication, QDialogButtonBox, QFileDialog, QGroupBox,
                              QHBoxLayout, QLabel, QListWidgetItem, QMenu, QMessageBox, QProgressDialog, QPushButton,
-                             QSizePolicy, QSlider, QStyle, QTextBrowser, QVBoxLayout, QWidget)
+                             QSizePolicy, QSlider, QTextBrowser, QVBoxLayout, QWidget)
 
 import vidcutter.mpv as mpv
 import vidcutter.resources
@@ -78,9 +78,6 @@ class VideoCutter(QWidget):
         stylesheet = ':/styles/vidcutter_osx.qss' if sys.platform == 'darwin' else ':/styles/vidcutter.qss'
         self.parent.load_stylesheet(stylesheet)
         QApplication.setFont(QFont('Open Sans', 12 if sys.platform == 'darwin' else 10, 300))
-
-        if os.getenv('DEBUG', False):
-            self.logger.info('** BASE APP STYLE  >>> %s <<< ***' % QApplication.style().metaObject().className())
 
         self.clipTimes = []
         self.inCut = False
