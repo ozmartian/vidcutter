@@ -37,36 +37,14 @@ class TimeCounter(QWidget):
         self.timeedit = QTimeEdit(QTime(0, 0), self, objectName='timeCounter')
         if sys.platform == 'win32':
             self.timeedit.setStyleSheet('''
-QTimeEdit::up-arrow#timeCounter {
-    image: url(':/images/spinbox-up.png');
-    width: 8px;
-    height: 5px;
-    padding: 0;
-    margin: 0;
-}
-QTimeEdit::down-arrow#timeCounter {
-    image: url(':/images/spinbox-down.png');
-    width: 8px;
-    height: 5px;
-    padding: 0;
-    margin: 0;
-}
-QTimeEdit::up-arrow:disabled#timeCounter,
-QTimeEdit::up-arrow:off#timeCounter {
-    image: url(':/images/spinbox-up-disabled.png');
-    width: 8px;
-    height: 5px;
-    padding: 0;
-    margin: 0;
-}
-QTimeEdit::down-arrow:disabled#timeCounter,
-QTimeEdit::down-arrow:off#timeCounter {
-    image: url(':/images/spinbox-down-disabled.png');
-    width: 8px;
-    height: 5px;
-    padding: 0;
-    margin: 0;
-}''')
+                QTimeEdit::up-arrow, QTimeEdit::down-arrow { padding: 0; margin: 0; }
+                QTimeEdit::up-arrow#timeCounter { image: url(':/images/spinbox-up.png'); }
+                QTimeEdit::down-arrow#timeCounter { image: url(':/images/spinbox-down.png'); }
+                QTimeEdit::up-arrow:disabled#timeCounter,
+                QTimeEdit::up-arrow:off#timeCounter { image: url(':/images/spinbox-up-disabled.png'); }
+                QTimeEdit::down-arrow:disabled#timeCounter,
+                QTimeEdit::down-arrow:off#timeCounter { image: url(':/images/spinbox-down-disabled.png'); }
+            ''')
         else:
             self.timeedit.setStyle(QStyleFactory.create('Fusion'))
         self.timeedit.setFrame(False)

@@ -217,7 +217,7 @@ class MainWindow(QMainWindow):
 
 def main():
     if hasattr(Qt, 'AA_EnableHighDpiScaling'):
-        qApp.setAttribute(Qt.AA_EnableHighDpiScaling, True)
+        QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
     app = QApplication(sys.argv)
     app.setApplicationName('VidCutter')
     app.setApplicationVersion(MainWindow.get_version())

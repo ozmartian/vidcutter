@@ -33,9 +33,9 @@ from locale import setlocale, LC_NUMERIC
 from PyQt5.QtCore import (QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTextStream, QTime,
                           QUrl, pyqtSlot)
 from PyQt5.QtGui import QCloseEvent, QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMovie, QPixmap
-from PyQt5.QtWidgets import (QAbstractItemView, QAction, qApp, QDialogButtonBox, QFileDialog, QGroupBox,
+from PyQt5.QtWidgets import (QAbstractItemView, QAction, qApp, QApplication, QDialogButtonBox, QFileDialog, QGroupBox,
                              QHBoxLayout, QLabel, QListWidgetItem, QMenu, QMessageBox, QProgressDialog, QPushButton,
-                             QSizePolicy, QSlider, QTextBrowser, QVBoxLayout, QWidget, QApplication)
+                             QSizePolicy, QSlider, QStyle, QTextBrowser, QVBoxLayout, QWidget)
 
 import vidcutter.mpv as mpv
 import vidcutter.resources
@@ -159,7 +159,7 @@ class VideoCutter(QWidget):
         countersGroup.setObjectName('counterwidgets')
         countersGroup.setContentsMargins(0, 0, 0, 0)
         countersGroup.setLayout(countersLayout)
-        countersGroup.setFixedHeight(28)
+        countersGroup.setMaximumHeight(28)
         countersGroup.setStyleSheet('margin:0; padding:0;')
 
         self.initMPV()
@@ -343,13 +343,15 @@ class VideoCutter(QWidget):
                                    statusTip='About %s' % qApp.applicationName())
         self.keyRefAction = QAction(self.keyRefIcon, 'Keyboard shortcuts', self, triggered=self.showKeyRef,
                                     statusTip='View shortcut key bindings')
+        self.lightThemeAction = QAction('Use a light theme to match your desktop', self)
+        self.darkThemeAction = QAction('Use a dark theme to match your desktop', self)
         self.toggleLabelsAction = QAction('Show toolbar labels', self, statusTip='Show text labels on toolbar',
                                           checkable=True, checked=True, triggered=self.toolbar.toggleLabels)
         self.labelPositionAction = QAction('Show text beside button', self, statusTip='Show text beside toolbar button',
                                            checkable=True, checked=True, triggered=self.toolbar.setLabelPosition)
-        self.compactModeAction = QAction('Enable compact mode', self, statusTip='Enable compact mode for more video ' +
-                                                                                'output space', checkable=True,
-                                         checked=False, triggered=self.toolbar.setCompactMode)
+        self.compactModeAction = QAction('Enable compact mode', self, checkable=True, checked=False,
+                                         triggered=self.toolbar.setCompactMode, enabled=False,
+                                         statusTip='Enable compact mode for more video output space')
 
     def initToolbar(self) -> None:
         self.toolbar.addAction(self.openAction)
