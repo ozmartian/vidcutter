@@ -44,7 +44,7 @@ signal.signal(signal.SIGTERM, signal.SIG_DFL)
 class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
-        self.edl, self.video = '', ''
+        self.edl, self.video, self.devmode = '', '', False
         self.parse_cmdline()
         self.init_logger()
         self.init_scale()
@@ -118,15 +118,20 @@ class MainWindow(QMainWindow):
         self.parser = QCommandLineParser()
         self.parser.setApplicationDescription('...the fast & accurate cross-platform video cutter & joiner...')
         self.parser.addPositionalArgument('video', 'Preloads the video file in app.', '[video]')
-        self.edl_option = QCommandLineOption('edl', 'Preloads clip index from a previously saved EDL file.\n' +
-                                             'NOTE: You must also set the video argument for this to work.', 'edl file')
-        self.debug_option = QCommandLineOption(['d', 'debug'], 'Output all info, warnings and errors to the console. ' +
+        self.edl_option = QCommandLineOption(['edl'], 'Preloads clip index from a previously saved EDL file.' +
+                                             '\nNOTE: You must also set the video argument for this to work.', 'edl file')
+        self.debug_option = QCommandLineOption(['debug'], 'debug mode; verbose console output & logging. ' +
                                                'This will basically output what is being logged to file to the ' +
                                                'console stdout. Mainly useful for debugging problems with your ' +
                                                'system video and/or audio stack and codec configuration.')
-
+        self.dev_option = QCommandLineOption(['dev'], 'developer mode; disables the use of compiled resource files so ' +
+                                              'that all app resources & assets are accessed directly from the file system allowing you ' +
+                                              'to see UI changes immediately. this typically relates to changes made to Qt stylesheets (.qss), ' +
+                                              'layout/templates, content includes and images. basically all assets defined in .qrc files ' +
+                                              'throughout the codebase.')
         self.parser.addOption(self.edl_option)
         self.parser.addOption(self.debug_option)
+        self.parser.addOption(self.dev_option)
         self.parser.addVersionOption()
         self.parser.addHelpOption()
         self.parser.process(qApp)
@@ -143,6 +148,8 @@ class MainWindow(QMainWindow):
             self.edl = self.parser.value('edl')
         if self.parser.isSet(self.debug_option):
             os.environ['DEBUG'] = '1'
+        if self.parser.isSet(self.dev_option):
+            self.devmode = True
         if len(self.args) > 0 and not os.path.exists(self.args[0]):
             print('\n    ERROR: Video file not found.\n', file=sys.stderr)
             self.close()

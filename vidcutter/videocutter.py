@@ -75,7 +75,12 @@ class VideoCutter(QWidget):
         QFontDatabase.addApplicationFont(':/fonts/FuturaLT.ttf')
         QFontDatabase.addApplicationFont(':/fonts/OpenSans.ttf')
 
-        stylesheet = ':/styles/vidcutter_osx.qss' if sys.platform == 'darwin' else ':/styles/vidcutter.qss'
+        if self.parent.devmode:
+            stylesheet = 'styles/vidcutter_osx.qss' if sys.platform == 'darwin' else 'styles/light.qss'
+            stylesheet = self.parent.get_path(stylesheet, override=True)
+        else:
+            stylesheet = ':/styles/vidcutter_osx.qss' if sys.platform == 'darwin' else ':/styles/light.qss'
+        
         self.parent.load_stylesheet(stylesheet)
         QApplication.setFont(QFont('Open Sans', 12 if sys.platform == 'darwin' else 10, 300))
 
@@ -250,13 +255,14 @@ class VideoCutter(QWidget):
         self.novideoWidget = QWidget(self, objectName='novideoWidget')
         self.novideoWidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.MinimumExpanding)
         self.novideoLabel = QLabel(alignment=Qt.AlignCenter)
+        self.novideoLabel.setStyleSheet('margin-top:160px;')
         self.novideoMovie = QMovie(':/images/novideotext.gif')
         self.novideoMovie.frameChanged.connect(lambda: self.novideoLabel.setPixmap(self.novideoMovie.currentPixmap()))
         self.novideoMovie.start()
         novideoLayout = QVBoxLayout()
-        novideoLayout.addStretch(4)
-        novideoLayout.addWidget(self.novideoLabel, alignment=Qt.AlignBottom)
-        novideoLayout.addStretch(2)
+        novideoLayout.addStretch(1)
+        novideoLayout.addWidget(self.novideoLabel)
+        novideoLayout.addStretch(1)
         self.novideoWidget.setLayout(novideoLayout)
 
     def initIcons(self) -> None:
