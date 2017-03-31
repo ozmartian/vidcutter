@@ -22,3 +22,4 @@ testing
 _build/pyinstaller/libmpv
 mpv-1.dll
 D3DCompiler_43.dll
+opengl
