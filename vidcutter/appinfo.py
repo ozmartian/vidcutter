@@ -46,8 +46,8 @@ class AppInfo(QDialog):
                         <img src=":/images/vidcutter-small.png" width="82" />
                     </td>
                     <td style="padding:4px;">
-                        <span style="font-family:'Futura LT', sans-serif;font-size:30px;font-weight:500;color:#642C68;">
-                            <span style="font-size:46px;">V</span>ID<span style="font-size:46px;">C</span>UTTER
+                        <span style="font-family:'Futura LT', sans-serif;font-size:40px;font-weight:500;color:#642C68;">
+                            <span style="font-size:58px;">V</span>ID<span style="font-size:58px;">C</span>UTTER
                         </span>
                         <br/>&nbsp;&nbsp;
                         <span style="font-size:16px;">version %s</span>
@@ -149,6 +149,7 @@ class AboutTab(BaseTab):
                 Icon design by <a href="https://github.com/PapirusDevelopmentTeam">Papirus
                 Development Team</a>
             </p>
+            <br/>
             <p style="font-size:11px;">
                 This program is free software; you can redistribute it and/or
                 modify it under the terms of the GNU General Public License

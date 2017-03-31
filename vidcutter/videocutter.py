@@ -845,9 +845,10 @@ class VideoCutter(QWidget):
         appInfo.exec_()
 
     def showProgress(self, steps: int, label: str = 'Analyzing media...') -> None:
-        self.progress = QProgressDialog(label, None, 0, steps, self.parent, f=Qt.WindowCloseButtonHint,
+        self.progress = QProgressDialog(label, None, 0, steps, self.parent,
                                         windowModality=Qt.ApplicationModal, windowIcon=self.parent.windowIcon(),
                                         minimumDuration=0, minimumWidth=500)
+        self.progress.setWindowFlags(Qt.WindowCloseButtonHint)
         self.progress.show()
         for i in range(steps):
             self.progress.setValue(i)

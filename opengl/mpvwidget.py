@@ -24,7 +24,8 @@ class MPVWidget(QOpenGLWidget):
         self.init_mpv_opts()
 
         self.gl = self.mpv.opengl_cb_api()
-        # self.gl.init_gl(None, gpa)
+        self.mpv.set_option('opengl-hwdec-interop', 'auto')
+        self.gl.init_gl(None, gpa)
 
         if not self.gl:
             raise RuntimeError('OpenGL is not compiled in')
@@ -47,8 +48,9 @@ class MPVWidget(QOpenGLWidget):
         self.mpv.set_property('quiet', True)
 
     def initializeGL(self):
+        print('initializeGL() called')
         vp = QOpenGLVersionProfile()
-        vp.setVersion(2, 1)
+        vp.setVersion(4, 1)
         vp.setProfile(QSurfaceFormat.CoreProfile)
         self.local_gl = self.context().versionFunctions(vp)
         self.local_gl.initializeOpenGLFunctions()
