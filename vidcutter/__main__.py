@@ -124,8 +124,8 @@ class MainWindow(QMainWindow):
         settings_file = '%s.ini' % qApp.applicationName().lower()
         self.settings = QSettings(os.path.join(settings_path, settings_file), QSettings.IniFormat)
 
-        # self.restoreGeometry(self.settings.value('MainWindow/geometry'))
-        # self.restoreState(self.settings.value('MainWindow/windowState'))
+        self.restoreGeometry(self.settings.value('geometry'))
+        self.restoreState(self.settings.value('windowState'))
 
     @staticmethod
     def log_uncaught_exceptions(cls, exc, tb) -> None:
@@ -236,6 +236,8 @@ class MainWindow(QMainWindow):
         event.accept()
 
     def closeEvent(self, event: QCloseEvent) -> None:
+        self.settings.setValue('showLabels', self.cutter.toggleLabelsAction.isChecked())
+        self.settings.setValue('labelPosition', self.cutter.labelPositionAction.isChecked())
         self.settings.setValue('geometry', self.saveGeometry())
         self.settings.setValue('windowState', self.saveState())
         if hasattr(self, 'cutter'):

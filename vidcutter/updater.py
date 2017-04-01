@@ -60,37 +60,34 @@ class Updater(QWidget):
         current = parse_version(qApp.applicationVersion())
         if latest > current:
             response = '''
-                <style>
-                    p { min-width: 600px; }
-                    h1 { color: #642C68; font-family: 'Futura LT', sans-serif; font-weight: 400; }
-                </style>
-            '''
-            response += '''<h1>A new version is available!</h1>
-                              <p style="font-size:15px;">
-                                <b>Latest version:</b> %s
-                                <br/>
-                                <b>Installed version:</b> %s
-                              </p>''' % (str(latest), str(current))
+<style>
+    h1 { color: #642C68; font-family: 'Futura LT', sans-serif; font-weight: 400; }
+    p { color: #444; }
+    b { color: #642C68; }
+</style>
+<div align="center">
+    <h1>A new version is available!</h1>
+    <p>
+        <b>latest version:</b> %s
+        <br/>
+        <b>installed version:</b> %s
+    </p>
+</div>''' % (str(latest), str(current))
             self.update_available = True
         else:
             response = '''
-                <style>
-                    h1 { color: #642C68; font-family: 'Futura LT', sans-serif; font-weight: 400; }
-                </style>
-            '''
-            response += '''
-<h1 style="text-align:right;">You are already running the latest version</h1>
-<div align="center" style="margin-left:100px;">
-    <table cellpadding="3" cellspacing="1" border="0">
-        <tr valign="middle">
-            <td style="color:#642C68; font-family: 'Futura LT', sans-serif; font-size:15px; text-align:right;">latest version:</td>
-            <td style="color:#000; font-size:15px; font-weight:400;">%s</td>
-        </tr>
-        <tr valign="middle">
-            <td style="color:#642C68; font-family: 'Futura LT', sans-serif; font-size:15px; text-align:right;">installed version:</td>
-            <td style="color:#000; font-size:15px; font-weight:400;">%s</td>
-        </tr>
-    </table>
+<style>
+    h1 { color: #642C68; font-family: 'Futura LT', sans-serif; font-weight: 400; }
+    p { color: #444; }
+    b { color: #642C68; }
+</style>
+<div align="center">
+    <h1>You are already running the latest version</h1>
+    <p>
+        <b>latest version:</b> %s
+        <br/>
+        <b>installed version:</b> %s
+    </p>
 </div>''' % (str(latest), str(current))
             self.update_available = False
         if os.getenv('DEBUG', False):
@@ -129,11 +126,12 @@ class UpdaterMsgBox(QDialog):
                 channels such as the Arch Linux AUR, Ubuntu LaunchPad PPA, Fedora copr, openSUSE OBS and third party
                 repositories There is also an AppImage package available for those unable to get things working.</p>
                 <p>More details are available at the VidCutter homepage.</p>''')
-            disclaimer.setStyleSheet('font-size:12px; border:1px solid #999; padding:2px 10px;' +
-                                     'background:rgba(255, 255, 255, 0.8); margin:10px 5px;')
+            disclaimer.setStyleSheet('font-size:11px; border:1px solid #999; padding:2px 10px;' +
+                                     'background:rgba(255, 255, 255, 0.8); color:#444; margin:10px 5px;')
             disclaimer.setWordWrap(True)
             layout.addWidget(disclaimer)
-            layout.addWidget(QLabel('Would you list to visit the <b>VidCutter releases page</b> for more details now?'))
+            layout.addWidget(QLabel('<div style="text-align:center; color:#444;">Would you like to visit the ' +
+                                      '<b>VidCutter releases page</b> for more details now?</div>'))
 
         if self.parent.update_available:
             buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)

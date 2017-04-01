@@ -25,6 +25,7 @@
 import sys
 
 from PyQt5.QtCore import pyqtSlot, QObject, QEvent, Qt
+from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtWidgets import QStyleFactory, QToolBar, QToolButton
 
 
@@ -32,9 +33,10 @@ class VideoToolBar(QToolBar):
     def __init__(self, parent=None, *arg, **kwargs):
         super(VideoToolBar, self).__init__(parent, *arg, **kwargs)
         self.parent = parent
-        self.labelPosition = Qt.ToolButtonTextBesideIcon
+        self.settings = self.parent.settings
         self.setObjectName('appcontrols')
-        self.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.setLabelPosition(checked=bool(self.settings.value('labelPosition', True)), save=False)
+        self.toggleLabels(checked=bool(self.settings.value('showLabels', True)), save=False)
         if sys.platform == 'darwin':
             self.setStyle(QStyleFactory.create('Fusion'))
 
@@ -50,7 +52,7 @@ class VideoToolBar(QToolBar):
         pass
 
     @pyqtSlot(bool)
-    def setLabelPosition(self, checked: bool = True):
+    def setLabelPosition(self, checked: bool = True, save: bool = True):
         if checked:
             self.labelPosition = Qt.ToolButtonTextBesideIcon
             for button in self.findChildren(QToolButton):
@@ -60,14 +62,20 @@ class VideoToolBar(QToolBar):
             for button in self.findChildren(QToolButton):
                 button.setText(button.text().replace('\n', ' '))
         self.setToolButtonStyle(self.labelPosition)
+        if save:
+            self.settings.setValue('labelPosition', checked)
 
     @pyqtSlot(bool)
-    def toggleLabels(self, checked: bool = True):
+    def toggleLabels(self, checked: bool = True, save: bool = True):
         if not checked:
             self.setToolButtonStyle(Qt.ToolButtonIconOnly)
         else:
             self.setToolButtonStyle(self.labelPosition)
-        self.parent.labelPositionAction.setEnabled(checked)
+        if save:
+            self.settings.setValue('showLabels', checked)
+
+    def mouseMoveEvent(self, event: QMouseEvent):
+        pass
 
     def eventFilter(self, obj: QObject, event: QEvent) -> bool:
         if event.type() == QEvent.ToolTip:

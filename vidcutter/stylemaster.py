@@ -24,15 +24,13 @@
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QColor, QPalette
-from PyQt5.QtWidgets import qApp, QStyleFactory
+from PyQt5.QtWidgets import qApp, QProxyStyle, QStyle, QStyleFactory
 
 
 class StyleMaster:
 
     @staticmethod
     def dark():
-        qApp.setStyle(QStyleFactory.create('Fusion'))
-
         darkPalette = QPalette()
         darkPalette.setColor(QPalette.Window, QColor(27, 35, 38))
         darkPalette.setColor(QPalette.WindowText, QColor(234, 234, 234))
@@ -48,9 +46,10 @@ class StyleMaster:
         darkPalette.setColor(QPalette.Highlight, QColor(126, 71, 130))
         darkPalette.setColor(QPalette.HighlightedText, Qt.white)
 
-        darkPalette.setColor(QPalette.Disabled, QPalette.Text, QColor(79, 85, 87))
+        darkPalette.setColor(QPalette.Disabled, QPalette.Text, QColor(12, 15, 16))
         darkPalette.setColor(QPalette.Disabled, QPalette.Light, QColor(12, 15, 16))
+        darkPalette.setColor(QPalette.Disabled, QPalette.Dark, QColor(12, 15, 16))
 
         qApp.setPalette(darkPalette)
-
+        qApp.setStyleSheet('*:disabled { color: #666; } ')
         qApp.setStyleSheet('QToolTip { color:#FFF; background-color:#642C68; border:1px solid #0C0F10; }')

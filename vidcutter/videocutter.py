@@ -56,6 +56,7 @@ class VideoCutter(QWidget):
         self.logger = logging.getLogger(__name__)
         self.parent = parent
         self.theme = self.parent.theme
+        self.settings = self.parent.settings
         self.videoService = VideoService(self)
         self.updater = Updater(self)
         self.latest_release_url = 'https://github.com/ozmartian/vidcutter/releases/latest'
@@ -198,7 +199,6 @@ class VideoCutter(QWidget):
 
         toolbarGroup = QGroupBox()
         toolbarGroup.setLayout(toolbarLayout)
-        toolbarGroup.setCursor(Qt.PointingHandCursor)
         toolbarGroup.setStyleSheet('border: 0;')
 
         controlsLayout = QHBoxLayout(spacing=0)
@@ -356,9 +356,11 @@ class VideoCutter(QWidget):
                                        checkable=True, checked=(True if self.theme == 'dark' else False),
                                        triggered=self.switchTheme)
         self.toggleLabelsAction = QAction('Show toolbar labels', self, statusTip='Show text labels on toolbar',
-                                          checkable=True, checked=True, triggered=self.toolbar.toggleLabels)
+                                          checkable=True, checked=bool(self.settings.value('showLabels', True)),
+                                          triggered=self.toolbar.toggleLabels)
         self.labelPositionAction = QAction('Show text beside button', self, statusTip='Show text beside toolbar button',
-                                           checkable=True, checked=True, triggered=self.toolbar.setLabelPosition)
+                                           checkable=True, triggered=self.toolbar.setLabelPosition,
+                                           checked=bool(self.settings.value('labelPosition', True)))
         self.compactModeAction = QAction('Enable compact mode', self, checkable=True, checked=False,
                                          triggered=self.toolbar.setCompactMode, enabled=False,
                                          statusTip='Enable compact mode for more video output space')
@@ -1005,5 +1007,5 @@ class VideoCutter(QWidget):
                 self.playMedia()
             event.accept()
 
-    def closeEvent(self, event: QCloseEvent) -> None:
-        self.parentWidget().closeEvent(event)
+    # def closeEvent(self, event: QCloseEvent) -> None:
+    #     self.parentWidget().closeEvent(event)
