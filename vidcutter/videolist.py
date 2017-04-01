@@ -28,8 +28,9 @@ from PyQt5.QtWidgets import QAbstractItemDelegate, QStyleOptionViewItem, QStyle,
 
 
 class VideoList(QListWidget):
-    def __init__(self, *arg, **kwargs):
-        super(VideoList, self).__init__(*arg, **kwargs)
+    def __init__(self, parent, *arg, **kwargs):
+        super(VideoList, self).__init__(parent, *arg, **kwargs)
+        self.theme = parent.theme
         self.itemPressed.connect(lambda item: self.parentWidget().seekSlider.selectRegion(self.row(item)))
         self.setMouseTracking(True)
         self.setDropIndicatorShown(True)
@@ -51,15 +52,20 @@ class VideoList(QListWidget):
 class VideoItem(QAbstractItemDelegate):
     def __init__(self, parent=None):
         super(VideoItem, self).__init__(parent)
+        self.parent = parent
+        self.theme = self.parent.theme
 
     def paint(self, painter: QPainter, option: QStyleOptionViewItem, index: QModelIndex) -> None:
         r = option.rect
         if option.state & QStyle.State_Selected:
             painter.setBrush(QColor('#96BE4E'))
+            pencolor = Qt.white if self.theme == 'dark' else Qt.black
         elif option.state & QStyle.State_MouseOver:
             painter.setBrush(QColor('#E3D4E8'))
+            pencolor = Qt.black
         else:
             painter.setBrush(Qt.transparent if index.row() % 2 == 0 else QColor('#EFF0F1'))
+            pencolor = Qt.white if self.theme == 'dark' else Qt.black
         painter.setPen(Qt.NoPen)
         painter.drawRect(r)
         thumb = QIcon(index.data(Qt.DecorationRole))
@@ -67,7 +73,7 @@ class VideoItem(QAbstractItemDelegate):
         endtime = index.data(Qt.UserRole + 1)
         r = option.rect.adjusted(5, 0, 0, 0)
         thumb.paint(painter, r, Qt.AlignVCenter | Qt.AlignLeft)
-        painter.setPen(QPen(Qt.black, 1, Qt.SolidLine))
+        painter.setPen(QPen(pencolor, 1, Qt.SolidLine))
         r = option.rect.adjusted(110, 8, 0, 0)
         painter.setFont(QFont('Open Sans', 8, QFont.Bold))
         painter.drawText(r, Qt.AlignLeft, 'START')

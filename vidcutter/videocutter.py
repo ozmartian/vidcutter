@@ -81,7 +81,7 @@ class VideoCutter(QWidget):
             stylesheet = self.parent.get_path(stylesheet, override=True)
         else:
             stylesheet = ':/styles/vidcutter_osx.qss' if sys.platform == 'darwin' else ':/styles/%s.qss' % self.theme
-        
+
         self.parent.load_stylesheet(stylesheet)
         QApplication.setFont(QFont('Open Sans', 12 if sys.platform == 'darwin' else 10, 300))
 
@@ -113,7 +113,7 @@ class VideoCutter(QWidget):
 
         self.initNoVideo()
 
-        self.cliplist = VideoList(sizePolicy=QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding),
+        self.cliplist = VideoList(parent=self, sizePolicy=QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding),
                                   contextMenuPolicy=Qt.CustomContextMenu, uniformItemSizes=True,
                                   dragEnabled=True, dragDropMode=QAbstractItemView.InternalMove,
                                   alternatingRowColors=True, customContextMenuRequested=self.itemMenu,
@@ -126,7 +126,7 @@ class VideoCutter(QWidget):
 
         self.cliplist.setStyleSheet('QListView::item { border: none; }')
 
-        listHeader = QLabel(pixmap=QPixmap(':/images/clipindex.png', 'PNG'), alignment=Qt.AlignCenter)
+        listHeader = QLabel(pixmap=QPixmap(':/images/%s/clipindex.png' % self.theme, 'PNG'), alignment=Qt.AlignCenter)
         listHeader.setObjectName('listHeader')
 
         self.runtimeLabel = QLabel('<div align="right">00:00:00</div>', textFormat=Qt.RichText)
@@ -293,8 +293,8 @@ class VideoCutter(QWidget):
         self.saveIcon.addFile(':/images/%s/toolbar-save.png' % theme, QSize(50, 53), QIcon.Normal)
         self.saveIcon.addFile(':/images/%s/toolbar-save-on.png' % theme, QSize(50, 53), QIcon.Active)
         self.saveIcon.addFile(':/images/%s/toolbar-save-disabled.png' % theme, QSize(50, 53), QIcon.Disabled)
-        self.muteIcon = QIcon(':/images/muted.png')
-        self.unmuteIcon = QIcon(':/images/unmuted.png')
+        self.muteIcon = QIcon(':/images/%s/muted.png' % theme)
+        self.unmuteIcon = QIcon(':/images/%s/unmuted.png' % theme)
         self.upIcon = QIcon(':/images/up.png')
         self.downIcon = QIcon(':/images/down.png')
         self.removeIcon = QIcon(':/images/remove.png')
@@ -348,8 +348,8 @@ class VideoCutter(QWidget):
                                    statusTip='About %s' % qApp.applicationName())
         self.keyRefAction = QAction(self.keyRefIcon, 'Keyboard shortcuts', self, triggered=self.showKeyRef,
                                     statusTip='View shortcut key bindings')
-        self.lightThemeAction = QAction('Use a light theme to match your desktop', self)
-        self.darkThemeAction = QAction('Use a dark theme to match your desktop', self)
+        self.darkThemeAction = QAction('Use dark theme', self, statusTip='Use a dark theme to match your desktop',
+                                       checkable=True, checked=False, triggered=self.switchTheme)
         self.toggleLabelsAction = QAction('Show toolbar labels', self, statusTip='Show text labels on toolbar',
                                           checkable=True, checked=True, triggered=self.toolbar.toggleLabels)
         self.labelPositionAction = QAction('Show text beside button', self, statusTip='Show text beside toolbar button',
@@ -369,6 +369,7 @@ class VideoCutter(QWidget):
 
     def initMenus(self) -> None:
         self.optionsMenu = QMenu('Interface settings...', self.appMenu)
+        self.optionsMenu.addAction(self.darkThemeAction)
         self.optionsMenu.addAction(self.toggleLabelsAction)
         self.optionsMenu.addAction(self.labelPositionAction)
         self.optionsMenu.addAction(self.compactModeAction)
@@ -914,6 +915,10 @@ class VideoCutter(QWidget):
     @pyqtSlot()
     def openFolder(self) -> None:
         self.openResult(pathonly=True)
+
+    @pyqtSlot(bool)
+    def switchTheme(self, checked: bool) -> None:
+        self.theme = 'dark' if checked else 'light'
 
     @pyqtSlot(bool)
     def openResult(self, pathonly: bool = False) -> None:

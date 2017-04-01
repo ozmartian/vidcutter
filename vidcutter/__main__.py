@@ -30,8 +30,8 @@ import signal
 import sys
 import traceback
 
-from PyQt5.QtCore import (QCommandLineOption, QCommandLineParser, QDir, QFile, QFileInfo, QSize, QStandardPaths, Qt,
-                          QTextStream)
+from PyQt5.QtCore import (QCommandLineOption, QCommandLineParser, QDir, QFile, QFileInfo, QSettings, QSize,
+                          QStandardPaths, Qt, QTextStream)
 from PyQt5.QtGui import QCloseEvent, QContextMenuEvent, QDragEnterEvent, QDropEvent, QMouseEvent
 from PyQt5.QtWidgets import qApp, QApplication, QMainWindow, QMessageBox, QSizePolicy
 
@@ -48,6 +48,7 @@ class MainWindow(QMainWindow):
         self.edl, self.video, self.devmode = '', '', False
         self.parse_cmdline()
         self.init_logger()
+        self.init_settings()
         self.init_scale()
         self.init_cutter()
         self.setWindowTitle('%s' % qApp.applicationName())
@@ -96,7 +97,6 @@ class MainWindow(QMainWindow):
                 log_path = os.path.join(QDir.homePath(), 'Library', 'Preferences', qApp.applicationName()).lower()
             else:
                 log_path = os.path.join(QDir.homePath(), '.config', qApp.applicationName()).lower()
-
         os.makedirs(log_path, exist_ok=True)
         handlers = [logging.handlers.RotatingFileHandler(os.path.join(log_path, '%s.log'
                                                                       % qApp.applicationName().lower()),
@@ -109,6 +109,23 @@ class MainWindow(QMainWindow):
                             level=logging.INFO)
         logging.captureWarnings(capture=True)
         sys.excepthook = self.log_uncaught_exceptions
+
+    def init_settings(self) -> None:
+        try:
+            settings_path = QStandardPaths.writableLocation(QStandardPaths.AppConfigLocation).lower()
+        except AttributeError:
+            if sys.platform == 'win32':
+                settings_path = os.path.join(QDir.homePath(), 'AppData', 'Local', qApp.applicationName().lower())
+            elif sys.platform == 'darwin':
+                settings_path = os.path.join(QDir.homePath(), 'Library', 'Preferences', qApp.applicationName()).lower()
+            else:
+                settings_path = os.path.join(QDir.homePath(), '.config', qApp.applicationName()).lower()
+        os.makedirs(settings_path, exist_ok=True)
+        settings_file = '%s.ini' % qApp.applicationName().lower()
+        self.settings = QSettings(os.path.join(settings_path, settings_file), QSettings.IniFormat)
+
+        # self.restoreGeometry(self.settings.value('MainWindow/geometry'))
+        # self.restoreState(self.settings.value('MainWindow/windowState'))
 
     @staticmethod
     def log_uncaught_exceptions(cls, exc, tb) -> None:
@@ -219,10 +236,12 @@ class MainWindow(QMainWindow):
         event.accept()
 
     def closeEvent(self, event: QCloseEvent) -> None:
+        self.settings.setValue('geometry', self.saveGeometry())
+        self.settings.setValue('windowState', self.saveState())
         if hasattr(self, 'cutter'):
             if hasattr(self.cutter, 'mediaPlayer'):
                 self.cutter.mediaPlayer.terminate()
-        qApp.quit()
+        super(MainWindow, self).closeEvent(event)
 
 
 def main():
@@ -233,7 +252,7 @@ def main():
     app = QApplication(sys.argv)
     app.setApplicationName('VidCutter')
     app.setApplicationVersion(MainWindow.get_version())
-    app.setOrganizationDomain('http://vidcutter.ozmartians.com')
+    app.setOrganizationDomain('ozmartians.com')
     app.setQuitOnLastWindowClosed(True)
     win = MainWindow()
     sys.exit(app.exec_())

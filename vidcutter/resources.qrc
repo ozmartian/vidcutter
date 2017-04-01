@@ -2,7 +2,6 @@
     <qresource prefix="/">
         <file>fonts/FuturaLT.ttf</file>
         <file>fonts/OpenSans.ttf</file>
-        <file>images/clipindex.png</file>
         <file>images/cliplist-watermark.png</file>
         <file>images/complete-exit.png</file>
         <file>images/complete-open.png</file>
@@ -16,7 +15,6 @@
         <file>images/handle.png</file>
         <file>images/info.png</file>
         <file>images/keymap.png</file>
-        <file>images/muted.png</file>
         <file>images/novideotext.gif</file>
         <file>images/python.png</file>
         <file>images/qt.png</file>
@@ -32,15 +30,16 @@
         <file>images/spinbox-up-disabled.png</file>
         <file>images/startup-backdrop.png</file>
         <file>images/thumbsup.png</file>
-        <file>images/unmuted.png</file>
         <file>images/up.png</file>
         <file>images/update.png</file>
         <file>images/vidcutter.png</file>
         <file>images/vidcutter-small.png</file>
         <file>images/viewlogs.png</file>
         <file>images/watermark.png</file>
+        <file>images/dark/clipindex.png</file>
         <file>images/dark/menu.png</file>
-        <file>images/dark/menu-active.png</file>        
+        <file>images/dark/menu-active.png</file>
+        <file>images/dark/muted.png</file>
         <file>images/dark/toolbar-end.png</file>
         <file>images/dark/toolbar-end-disabled.png</file>
         <file>images/dark/toolbar-end-on.png</file>
@@ -59,8 +58,11 @@
         <file>images/dark/toolbar-start.png</file>
         <file>images/dark/toolbar-start-disabled.png</file>
         <file>images/dark/toolbar-start-on.png</file>
+        <file>images/dark/unmuted.png</file>
+        <file>images/light/clipindex.png</file>
         <file>images/light/menu.png</file>
-        <file>images/light/menu-active.png</file>  
+        <file>images/light/menu-active.png</file>
+        <file>images/light/muted.png</file>
         <file>images/light/toolbar-end.png</file>    
         <file>images/light/toolbar-end-disabled.png</file>
         <file>images/light/toolbar-end-on.png</file>
@@ -79,6 +81,7 @@
         <file>images/light/toolbar-start.png</file>
         <file>images/light/toolbar-start-disabled.png</file>
         <file>images/light/toolbar-start-on.png</file>
+        <file>images/light/unmuted.png</file>
         <file>styles/light.qss</file>
         <file>styles/dark.qss</file>
         <file>styles/vidcutter_osx.qss</file>

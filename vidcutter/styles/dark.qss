@@ -18,12 +18,12 @@
  *************************************************************************/
 
 QMainWindow {
-    background-color: #33393B;
+    background-color: #1B2326;
 }
 
 QWidget#shortcuts {
     border-image: url(':/images/watermark.png') 0 0 0 0 stretch stretch;
-    background-color: #33393B;
+    background-color: #1B2326;
 }
 
 QWidget#novideoWidget {
@@ -33,12 +33,12 @@ QWidget#novideoWidget {
 
 QDialog#aboutwidget {
     border-image: url(':/images/dialog-backdrop-02.png') 0 0 0 0 stretch stretch;
-    background-color: #33393B;
+    background-color: #1B2326;
 }
 
 QDialog#updatermsgbox {
     border-image: url(:/images/dialog-backdrop.png) 0 0 0 0 stretch stretch;
-    background-color: #33393B;
+    background-color: #1B2326;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -50,7 +50,7 @@ QToolBar#appcontrols {
 QToolBar#appcontrols QToolButton {
     padding: 1px 2px;
     margin: 0;
-    color: #444;
+    color: #EAEAEA;
     font-size: 10pt;
     font-weight: 400;
     line-height: 80%;
@@ -59,21 +59,21 @@ QToolBar#appcontrols QToolButton {
 }
 
 QToolBar#appcontrols QToolButton:hover {
-    color: #444;
+    color: #EAEAEA;
 }
 
 QToolBar#appcontrols QToolButton:pressed {
     font-weight: 500;
-    color: #444;
+    color: #EAEAEA;
 }
 
 QToolBar#appcontrols QToolButton:disabled,
 QToolBar#appcontrols QToolButton:disabled#saveButton {
-    color: rgba(170, 170, 170, 0.7)
+    color: #444;
 }
 
 QToolBar#appcontrols QToolButton#saveButton {
-        color: #642C68;
+    color: #D326F9;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -84,11 +84,12 @@ QListView#cliplist {
     border-left: 1px solid #000;
     border-right: 1px solid #000;
     show-decoration-selected: 1;
-    background-color: #252A2C;
+    background-color: #0C0F10;
 }
 
 QListView::item#cliplist {
     padding: 10px;
+    color: #EAEAEA;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -97,7 +98,7 @@ QLabel#listHeader {
     padding: 8px 5px 5px;
     border: 1px solid #000;
     background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-        stop: 0 #FFF, stop: 0.5 #EAEAEA, stop: 0.6 #EAEAEA, stop: 1 #FFF);
+        stop: 0 #000, stop: 0.5 #1B2326, stop: 0.6 #1B2326, stop: 1 #000);
 }
 
 QLabel#runtimeLabel {
@@ -186,7 +187,7 @@ QTreeView::branch {
 /* -------------------------------------------------------------------------- */
 
 QStatusBar {
-    color: #444;
+    color: #EAEAEA;
     margin: 0;
     padding: 0;
     border: none;
