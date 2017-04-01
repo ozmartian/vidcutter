@@ -41,6 +41,7 @@ import vidcutter.mpv as mpv
 import vidcutter.resources
 from vidcutter.appinfo import AppInfo
 from vidcutter.customwidgets import FrameCounter, TimeCounter
+from vidcutter.stylemaster import StyleMaster
 from vidcutter.updater import Updater
 from vidcutter.videoframe import VideoFrame
 from vidcutter.videolist import VideoList, VideoItem
@@ -72,6 +73,8 @@ class VideoCutter(QWidget):
                 32: 'https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-32bit-static.tar.xz'
             }
         }
+
+        StyleMaster.dark()
 
         QFontDatabase.addApplicationFont(':/fonts/FuturaLT.ttf')
         QFontDatabase.addApplicationFont(':/fonts/OpenSans.ttf')
@@ -184,7 +187,8 @@ class VideoCutter(QWidget):
                                     cursor=Qt.PointingHandCursor, value=100, minimum=0, maximum=130,
                                     sliderMoved=self.setVolume, objectName='volumeSlider')
 
-        self.menuButton = QPushButton(toolTip='Menu', cursor=Qt.PointingHandCursor, flat=True, objectName='menuButton')
+        self.menuButton = QPushButton(self, toolTip='Menu', cursor=Qt.PointingHandCursor, flat=True,
+                                      objectName='menuButton')
         self.menuButton.setFixedSize(QSize(40, 42))
         self.menuButton.setMenu(self.appMenu)
 
@@ -349,7 +353,8 @@ class VideoCutter(QWidget):
         self.keyRefAction = QAction(self.keyRefIcon, 'Keyboard shortcuts', self, triggered=self.showKeyRef,
                                     statusTip='View shortcut key bindings')
         self.darkThemeAction = QAction('Use dark theme', self, statusTip='Use a dark theme to match your desktop',
-                                       checkable=True, checked=False, triggered=self.switchTheme)
+                                       checkable=True, checked=(True if self.theme == 'dark' else False),
+                                       triggered=self.switchTheme)
         self.toggleLabelsAction = QAction('Show toolbar labels', self, statusTip='Show text labels on toolbar',
                                           checkable=True, checked=True, triggered=self.toolbar.toggleLabels)
         self.labelPositionAction = QAction('Show text beside button', self, statusTip='Show text beside toolbar button',
@@ -370,9 +375,10 @@ class VideoCutter(QWidget):
     def initMenus(self) -> None:
         self.optionsMenu = QMenu('Interface settings...', self.appMenu)
         self.optionsMenu.addAction(self.darkThemeAction)
+        self.optionsMenu.addSeparator()
         self.optionsMenu.addAction(self.toggleLabelsAction)
         self.optionsMenu.addAction(self.labelPositionAction)
-        self.optionsMenu.addAction(self.compactModeAction)
+        # self.optionsMenu.addAction(self.compactModeAction)
 
         self.appMenu.addAction(self.openEDLAction)
         self.appMenu.addAction(self.saveEDLAction)
@@ -831,7 +837,9 @@ class VideoCutter(QWidget):
         buttons = QDialogButtonBox(QDialogButtonBox.Ok, parent=shortcuts)
         buttons.accepted.connect(shortcuts.hide)
         layout = QVBoxLayout(spacing=0)
-        layout.addWidget(QLabel(pixmap=QPixmap(':/images/shortcuts.png')))
+        label = QLabel(pixmap=QPixmap(':/images/shortcuts.png'))
+        label.setStyleSheet('background-color:rgba(255, 255, 255, 0.65); margin-bottom:10px;')
+        layout.addWidget(label)
         layout.addWidget(buttons)
         shortcuts.setLayout(layout)
         shortcuts.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
@@ -919,6 +927,7 @@ class VideoCutter(QWidget):
     @pyqtSlot(bool)
     def switchTheme(self, checked: bool) -> None:
         self.theme = 'dark' if checked else 'light'
+        self.parent.restart()
 
     @pyqtSlot(bool)
     def openResult(self, pathonly: bool = False) -> None:
