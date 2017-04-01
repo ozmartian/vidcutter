@@ -39,13 +39,11 @@ class VideoToolBar(QToolBar):
             self.setStyle(QStyleFactory.create('Fusion'))
 
     def disableTooltips(self):
-        c = 1
-        total = len(self.findChildren(QToolButton))
-        for button in self.findChildren(QToolButton):
+        buttonlist = self.findChildren(QToolButton)
+        for button in buttonlist:
             button.installEventFilter(self)
-            if c == total:
+            if button == buttonlist[len(buttonlist)-1]:
                 button.setObjectName('saveButton')
-            c += 1
 
     @pyqtSlot(bool)
     def setCompactMode(self, checked: bool = False):

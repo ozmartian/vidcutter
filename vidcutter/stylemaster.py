@@ -48,21 +48,9 @@ class StyleMaster:
         darkPalette.setColor(QPalette.Highlight, QColor(126, 71, 130))
         darkPalette.setColor(QPalette.HighlightedText, Qt.white)
 
-        darkPalette.setColor(QPalette.Disabled, QPalette.Window, QColor(27, 35, 38))
-        darkPalette.setColor(QPalette.Disabled, QPalette.WindowText, QColor(234, 234, 234))
-        darkPalette.setColor(QPalette.Disabled, QPalette.Base, QColor(27, 35, 38))
-        darkPalette.setColor(QPalette.Disabled, QPalette.AlternateBase, QColor(12, 15, 16))
-        darkPalette.setColor(QPalette.Disabled, QPalette.ToolTipBase, QColor(234, 234, 234))
-        darkPalette.setColor(QPalette.Disabled, QPalette.ToolTipText, Qt.white)
         darkPalette.setColor(QPalette.Disabled, QPalette.Text, QColor(79, 85, 87))
-        darkPalette.setColor(QPalette.Disabled, QPalette.Button, QColor(27, 35, 38))
-        darkPalette.setColor(QPalette.Disabled, QPalette.ButtonText, Qt.white)
-        darkPalette.setColor(QPalette.Disabled, QPalette.BrightText, QColor(100, 215, 222))
-        darkPalette.setColor(QPalette.Disabled, QPalette.Link, QColor(126, 71, 130))
-        darkPalette.setColor(QPalette.Disabled, QPalette.Highlight, QColor(126, 71, 130))
-        darkPalette.setColor(QPalette.Disabled, QPalette.HighlightedText, Qt.white)
+        darkPalette.setColor(QPalette.Disabled, QPalette.Light, QColor(12, 15, 16))
 
         qApp.setPalette(darkPalette)
 
-        qApp.setStyleSheet('border: #0C0F10;')
         qApp.setStyleSheet('QToolTip { color:#FFF; background-color:#642C68; border:1px solid #0C0F10; }')
