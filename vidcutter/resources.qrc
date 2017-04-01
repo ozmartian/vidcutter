@@ -16,8 +16,6 @@
         <file>images/handle.png</file>
         <file>images/info.png</file>
         <file>images/keymap.png</file>
-        <file>images/menu.png</file>
-        <file>images/menu-active.png</file>
         <file>images/muted.png</file>
         <file>images/novideotext.gif</file>
         <file>images/python.png</file>
@@ -34,24 +32,6 @@
         <file>images/spinbox-up-disabled.png</file>
         <file>images/startup-backdrop.png</file>
         <file>images/thumbsup.png</file>
-        <file>images/toolbar-end.png</file>
-        <file>images/toolbar-end-disabled.png</file>
-        <file>images/toolbar-end-on.png</file>
-        <file>images/toolbar-open.png</file>
-        <file>images/toolbar-open-disabled.png</file>
-        <file>images/toolbar-open-on.png</file>
-        <file>images/toolbar-pause.png</file>
-        <file>images/toolbar-pause-disabled.png</file>
-        <file>images/toolbar-pause-on.png</file>
-        <file>images/toolbar-play.png</file>
-        <file>images/toolbar-play-disabled.png</file>
-        <file>images/toolbar-play-on.png</file>
-        <file>images/toolbar-save.png</file>
-        <file>images/toolbar-save-disabled.png</file>
-        <file>images/toolbar-save-on.png</file>
-        <file>images/toolbar-start.png</file>
-        <file>images/toolbar-start-disabled.png</file>
-        <file>images/toolbar-start-on.png</file>
         <file>images/unmuted.png</file>
         <file>images/up.png</file>
         <file>images/update.png</file>
@@ -59,6 +39,46 @@
         <file>images/vidcutter-small.png</file>
         <file>images/viewlogs.png</file>
         <file>images/watermark.png</file>
+        <file>images/dark/menu.png</file>
+        <file>images/dark/menu-active.png</file>        
+        <file>images/dark/toolbar-end.png</file>
+        <file>images/dark/toolbar-end-disabled.png</file>
+        <file>images/dark/toolbar-end-on.png</file>
+        <file>images/dark/toolbar-open.png</file>
+        <file>images/dark/toolbar-open-disabled.png</file>
+        <file>images/dark/toolbar-open-on.png</file>
+        <file>images/dark/toolbar-pause.png</file>
+        <file>images/dark/toolbar-pause-disabled.png</file>
+        <file>images/dark/toolbar-pause-on.png</file>
+        <file>images/dark/toolbar-play.png</file>
+        <file>images/dark/toolbar-play-disabled.png</file>
+        <file>images/dark/toolbar-play-on.png</file>
+        <file>images/dark/toolbar-save.png</file>
+        <file>images/dark/toolbar-save-disabled.png</file>
+        <file>images/dark/toolbar-save-on.png</file>
+        <file>images/dark/toolbar-start.png</file>
+        <file>images/dark/toolbar-start-disabled.png</file>
+        <file>images/dark/toolbar-start-on.png</file>
+        <file>images/light/menu.png</file>
+        <file>images/light/menu-active.png</file>  
+        <file>images/light/toolbar-end.png</file>    
+        <file>images/light/toolbar-end-disabled.png</file>
+        <file>images/light/toolbar-end-on.png</file>
+        <file>images/light/toolbar-open.png</file>
+        <file>images/light/toolbar-open-disabled.png</file>
+        <file>images/light/toolbar-open-on.png</file>
+        <file>images/light/toolbar-pause.png</file>
+        <file>images/light/toolbar-pause-disabled.png</file>
+        <file>images/light/toolbar-pause-on.png</file>
+        <file>images/light/toolbar-play.png</file>
+        <file>images/light/toolbar-play-disabled.png</file>
+        <file>images/light/toolbar-play-on.png</file>
+        <file>images/light/toolbar-save.png</file>
+        <file>images/light/toolbar-save-disabled.png</file>
+        <file>images/light/toolbar-save-on.png</file>
+        <file>images/light/toolbar-start.png</file>
+        <file>images/light/toolbar-start-disabled.png</file>
+        <file>images/light/toolbar-start-on.png</file>
         <file>styles/light.qss</file>
         <file>styles/dark.qss</file>
         <file>styles/vidcutter_osx.qss</file>

@@ -44,6 +44,7 @@ signal.signal(signal.SIGTERM, signal.SIG_DFL)
 class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
+        self.theme = 'dark'
         self.edl, self.video, self.devmode = '', '', False
         self.parse_cmdline()
         self.init_logger()
@@ -119,16 +120,18 @@ class MainWindow(QMainWindow):
         self.parser.setApplicationDescription('...the fast & accurate cross-platform video cutter & joiner...')
         self.parser.addPositionalArgument('video', 'Preloads the video file in app.', '[video]')
         self.edl_option = QCommandLineOption(['edl'], 'Preloads clip index from a previously saved EDL file.' +
-                                             '\nNOTE: You must also set the video argument for this to work.', 'edl file')
+                                             '\nNOTE: You must also set the video argument for this to work.',
+                                             'edl file')
         self.debug_option = QCommandLineOption(['debug'], 'debug mode; verbose console output & logging. ' +
                                                'This will basically output what is being logged to file to the ' +
                                                'console stdout. Mainly useful for debugging problems with your ' +
                                                'system video and/or audio stack and codec configuration.')
-        self.dev_option = QCommandLineOption(['dev'], 'developer mode; disables the use of compiled resource files so ' +
-                                              'that all app resources & assets are accessed directly from the file system allowing you ' +
-                                              'to see UI changes immediately. this typically relates to changes made to Qt stylesheets (.qss), ' +
-                                              'layout/templates, content includes and images. basically all assets defined in .qrc files ' +
-                                              'throughout the codebase.')
+        self.dev_option = QCommandLineOption(['dev'], 'developer mode; disables the use of compiled resource files ' +
+                                             'so that all app resources & assets are accessed directly from the file ' +
+                                             'system allowing you to see UI changes immediately. this typically ' +
+                                             'relates to changes made to Qt stylesheets (.qss), layout/templates, ' +
+                                             'content includes and images. basically all assets defined in .qrc ' +
+                                             'files throughout the codebase.')
         self.parser.addOption(self.edl_option)
         self.parser.addOption(self.debug_option)
         self.parser.addOption(self.dev_option)

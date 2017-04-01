@@ -54,6 +54,7 @@ class VideoCutter(QWidget):
         super(VideoCutter, self).__init__(parent)
         self.logger = logging.getLogger(__name__)
         self.parent = parent
+        self.theme = self.parent.theme
         self.videoService = VideoService(self)
         self.updater = Updater(self)
         self.latest_release_url = 'https://github.com/ozmartian/vidcutter/releases/latest'
@@ -76,10 +77,10 @@ class VideoCutter(QWidget):
         QFontDatabase.addApplicationFont(':/fonts/OpenSans.ttf')
 
         if self.parent.devmode:
-            stylesheet = 'styles/vidcutter_osx.qss' if sys.platform == 'darwin' else 'styles/light.qss'
+            stylesheet = 'styles/vidcutter_osx.qss' if sys.platform == 'darwin' else 'styles/%s.qss' % self.theme
             stylesheet = self.parent.get_path(stylesheet, override=True)
         else:
-            stylesheet = ':/styles/vidcutter_osx.qss' if sys.platform == 'darwin' else ':/styles/light.qss'
+            stylesheet = ':/styles/vidcutter_osx.qss' if sys.platform == 'darwin' else ':/styles/%s.qss' % self.theme
         
         self.parent.load_stylesheet(stylesheet)
         QApplication.setFont(QFont('Open Sans', 12 if sys.platform == 'darwin' else 10, 300))
@@ -266,31 +267,32 @@ class VideoCutter(QWidget):
         self.novideoWidget.setLayout(novideoLayout)
 
     def initIcons(self) -> None:
+        theme = self.parent.theme
         self.appIcon = QIcon(':/images/vidcutter.png')
         self.openIcon = QIcon()
-        self.openIcon.addFile(':/images/toolbar-open.png', QSize(50, 53), QIcon.Normal)
-        self.openIcon.addFile(':/images/toolbar-open-on.png', QSize(50, 53), QIcon.Active)
-        self.openIcon.addFile(':/images/toolbar-open-disabled.png', QSize(50, 53), QIcon.Disabled)
+        self.openIcon.addFile(':/images/%s/toolbar-open.png' % theme, QSize(50, 53), QIcon.Normal)
+        self.openIcon.addFile(':/images/%s/toolbar-open-on.png' % theme, QSize(50, 53), QIcon.Active)
+        self.openIcon.addFile(':/images/%s/toolbar-open-disabled.png' % theme, QSize(50, 53), QIcon.Disabled)
         self.playIcon = QIcon()
-        self.playIcon.addFile(':/images/toolbar-play.png', QSize(50, 53), QIcon.Normal)
-        self.playIcon.addFile(':/images/toolbar-play-on.png', QSize(50, 53), QIcon.Active)
-        self.playIcon.addFile(':/images/toolbar-play-disabled.png', QSize(50, 53), QIcon.Disabled)
+        self.playIcon.addFile(':/images/%s/toolbar-play.png' % theme, QSize(50, 53), QIcon.Normal)
+        self.playIcon.addFile(':/images/%s/toolbar-play-on.png' % theme, QSize(50, 53), QIcon.Active)
+        self.playIcon.addFile(':/images/%s/toolbar-play-disabled.png' % theme, QSize(50, 53), QIcon.Disabled)
         self.pauseIcon = QIcon()
-        self.pauseIcon.addFile(':/images/toolbar-pause.png', QSize(50, 53), QIcon.Normal)
-        self.pauseIcon.addFile(':/images/toolbar-pause-on.png', QSize(50, 53), QIcon.Active)
-        self.pauseIcon.addFile(':/images/toolbar-pause-disabled.png', QSize(50, 53), QIcon.Disabled)
+        self.pauseIcon.addFile(':/images/%s/toolbar-pause.png' % theme, QSize(50, 53), QIcon.Normal)
+        self.pauseIcon.addFile(':/images/%s/toolbar-pause-on.png' % theme, QSize(50, 53), QIcon.Active)
+        self.pauseIcon.addFile(':/images/%s/toolbar-pause-disabled.png' % theme, QSize(50, 53), QIcon.Disabled)
         self.cutStartIcon = QIcon()
-        self.cutStartIcon.addFile(':/images/toolbar-start.png', QSize(50, 53), QIcon.Normal)
-        self.cutStartIcon.addFile(':/images/toolbar-start-on.png', QSize(50, 53), QIcon.Active)
-        self.cutStartIcon.addFile(':/images/toolbar-start-disabled.png', QSize(50, 53), QIcon.Disabled)
+        self.cutStartIcon.addFile(':/images/%s/toolbar-start.png' % theme, QSize(50, 53), QIcon.Normal)
+        self.cutStartIcon.addFile(':/images/%s/toolbar-start-on.png' % theme, QSize(50, 53), QIcon.Active)
+        self.cutStartIcon.addFile(':/images/%s/toolbar-start-disabled.png' % theme, QSize(50, 53), QIcon.Disabled)
         self.cutEndIcon = QIcon()
-        self.cutEndIcon.addFile(':/images/toolbar-end.png', QSize(50, 53), QIcon.Normal)
-        self.cutEndIcon.addFile(':/images/toolbar-end-on.png', QSize(50, 53), QIcon.Active)
-        self.cutEndIcon.addFile(':/images/toolbar-end-disabled.png', QSize(50, 53), QIcon.Disabled)
+        self.cutEndIcon.addFile(':/images/%s/toolbar-end.png' % theme, QSize(50, 53), QIcon.Normal)
+        self.cutEndIcon.addFile(':/images/%s/toolbar-end-on.png' % theme, QSize(50, 53), QIcon.Active)
+        self.cutEndIcon.addFile(':/images/%s/toolbar-end-disabled.png' % theme, QSize(50, 53), QIcon.Disabled)
         self.saveIcon = QIcon()
-        self.saveIcon.addFile(':/images/toolbar-save.png', QSize(50, 53), QIcon.Normal)
-        self.saveIcon.addFile(':/images/toolbar-save-on.png', QSize(50, 53), QIcon.Active)
-        self.saveIcon.addFile(':/images/toolbar-save-disabled.png', QSize(50, 53), QIcon.Disabled)
+        self.saveIcon.addFile(':/images/%s/toolbar-save.png' % theme, QSize(50, 53), QIcon.Normal)
+        self.saveIcon.addFile(':/images/%s/toolbar-save-on.png' % theme, QSize(50, 53), QIcon.Active)
+        self.saveIcon.addFile(':/images/%s/toolbar-save-disabled.png' % theme, QSize(50, 53), QIcon.Disabled)
         self.muteIcon = QIcon(':/images/muted.png')
         self.unmuteIcon = QIcon(':/images/unmuted.png')
         self.upIcon = QIcon(':/images/up.png')

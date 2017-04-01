@@ -26,7 +26,7 @@ import logging
 import sys
 
 from PyQt5.QtCore import QEvent, QObject, Qt, pyqtSlot
-from PyQt5.QtGui import (QBrush, QColor, QCursor, QKeyEvent, QMouseEvent, QPaintEvent, QPainterPath, QPen, QPixmap,
+from PyQt5.QtGui import (QColor, QCursor, QKeyEvent, QMouseEvent, QPaintEvent, QPainterPath, QPen, QPixmap,
                          QWheelEvent)
 from PyQt5.QtWidgets import QSlider, QStyle, QStyleOptionSlider, QStylePainter, qApp
 
@@ -34,6 +34,7 @@ from PyQt5.QtWidgets import QSlider, QStyle, QStyleOptionSlider, QStylePainter, 
 class VideoSlider(QSlider):
     def __init__(self, *arg, **kwargs):
         super(VideoSlider, self).__init__(*arg, **kwargs)
+        self.theme = self.parentWidget().theme
         self._regions = list()
         self._regionHeight = 12
         self._regionSelected = -1
@@ -92,7 +93,8 @@ class VideoSlider(QSlider):
                     h = 7
                     w = 0.8
                     z = 15
-                pen = QPen(QColor('#444'))
+                tickcolor = '#EAEAEA' if self.theme == 'dark' else '#444'
+                pen = QPen(QColor(tickcolor))
                 pen.setWidthF(w)
                 painter.setPen(pen)
                 if self.tickPosition() in (QSlider.TicksBothSides, QSlider.TicksAbove):

@@ -18,28 +18,27 @@
  *************************************************************************/
 
 QMainWindow {
-    background-color: rgba(108, 117, 102, 1);
+    background-color: #33393B;
 }
 
 QWidget#shortcuts {
     border-image: url(':/images/watermark.png') 0 0 0 0 stretch stretch;
-    background-color: rgba(108, 117, 102, 1);
-    /* background-attachment: fixed; */
+    background-color: #33393B;
 }
 
 QWidget#novideoWidget {
-    border: 1px solid #999;
+    border: 1px solid #000;
     background: #000 url(:/images/startup-backdrop.png) no-repeat center center;
 }
 
 QDialog#aboutwidget {
     border-image: url(':/images/dialog-backdrop-02.png') 0 0 0 0 stretch stretch;
-    background-color: rgba(108, 117, 102, 1);
+    background-color: #33393B;
 }
 
 QDialog#updatermsgbox {
     border-image: url(:/images/dialog-backdrop.png) 0 0 0 0 stretch stretch;
-    background-color: rgba(108, 117, 102, 1);
+    background-color: #33393B;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -82,10 +81,10 @@ QToolBar#appcontrols QToolButton#saveButton {
 QListView#cliplist {
     border-radius: 0;
     border: none;
-    border-left: 1px solid #B9B9B9;
-    border-right: 1px solid #B9B9B9;
+    border-left: 1px solid #000;
+    border-right: 1px solid #000;
     show-decoration-selected: 1;
-    background-color: #FFF;
+    background-color: #252A2C;
 }
 
 QListView::item#cliplist {
@@ -96,7 +95,7 @@ QListView::item#cliplist {
 
 QLabel#listHeader {
     padding: 8px 5px 5px;
-    border: 1px solid #B9B9B9;
+    border: 1px solid #000;
     background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
         stop: 0 #FFF, stop: 0.5 #EAEAEA, stop: 0.6 #EAEAEA, stop: 1 #FFF);
 }
@@ -106,7 +105,7 @@ QLabel#runtimeLabel {
     color: #FFF;
     background: rgb(106, 69, 114) url(:images/runtime.png) no-repeat left center;
     padding: 2px 8px 2px 2px;
-    border: 1px solid #B9B9B9;
+    border: 1px solid #000;
 }
 
 QTimeEdit#timeCounter, QLabel#timeSeparator, QLabel#timeDuration,
@@ -147,13 +146,13 @@ QMessageBox#completedialog {
 /* -------------------------------------------------------------------------- */
 
 QPushButton#menuButton {
-    border-image: url(:/images/menu.png);
+    border-image: url(:/images/dark/menu.png);
     width: 40px;
     height: 42px;
 }
 
 QPushButton:hover#menuButton, QPushButton:pressed#menuButton {
-    border-image: url(:/images/menu-active.png);
+    border-image: url(:/images/dark/menu-active.png);
 }
 
 QPushButton::menu-indicator#menuButton {
