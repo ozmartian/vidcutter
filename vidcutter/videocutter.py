@@ -32,7 +32,7 @@ from locale import setlocale, LC_NUMERIC
 
 from PyQt5.QtCore import (QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTextStream, QTime,
                           QUrl, pyqtSlot)
-from PyQt5.QtGui import QCloseEvent, QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMovie, QPixmap
+from PyQt5.QtGui import QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMovie, QPixmap
 from PyQt5.QtWidgets import (QAbstractItemView, QAction, qApp, QApplication, QDialogButtonBox, QFileDialog, QGroupBox,
                              QHBoxLayout, QLabel, QListWidgetItem, QMenu, QMessageBox, QProgressDialog, QPushButton,
                              QSizePolicy, QSlider, QTextBrowser, QVBoxLayout, QWidget)
@@ -51,12 +51,12 @@ from vidcutter.videotoolbar import VideoToolBar
 
 
 class VideoCutter(QWidget):
-    def __init__(self, parent):
+    def __init__(self, parent: QWidget, config: dict):
         super(VideoCutter, self).__init__(parent)
         self.logger = logging.getLogger(__name__)
         self.parent = parent
         self.theme = self.parent.theme
-        self.settings = self.parent.settings
+        self.config = config
         self.videoService = VideoService(self)
         self.updater = Updater(self)
         self.latest_release_url = 'https://github.com/ozmartian/vidcutter/releases/latest'
@@ -104,10 +104,8 @@ class VideoCutter(QWidget):
         self.edlblock_re = re.compile(r'(\d+(?:\.?\d+)?)\s(\d+(?:\.?\d+)?)\s([01])')
 
         self.initIcons()
-
-        self.toolbar = VideoToolBar(self, floatable=False, movable=False, iconSize=QSize(50, 53))
-
         self.initActions()
+        self.toolbar = VideoToolBar(self, floatable=False, movable=False, iconSize=QSize(50, 53))
         self.initToolbar()
 
         self.appMenu, self.cliplistMenu = QMenu(self), QMenu(self)
@@ -353,17 +351,15 @@ class VideoCutter(QWidget):
         self.keyRefAction = QAction(self.keyRefIcon, 'Keyboard shortcuts', self, triggered=self.showKeyRef,
                                     statusTip='View shortcut key bindings')
         self.darkThemeAction = QAction('Use dark theme', self, statusTip='Use a dark theme to match your desktop',
-                                       checkable=True, checked=(True if self.theme == 'dark' else False),
-                                       triggered=self.switchTheme)
+                                       checkable=True, checked=self.config['darkTheme'], triggered=self.parent.reboot)
+        self.zoomVideoAction = QAction('')
         self.toggleLabelsAction = QAction('Show toolbar labels', self, statusTip='Show text labels on toolbar',
-                                          checkable=True, checked=bool(self.settings.value('showLabels', True)),
-                                          triggered=self.toolbar.toggleLabels)
+                                          checkable=True, checked=self.config['showLabels'])
         self.labelPositionAction = QAction('Show text beside button', self, statusTip='Show text beside toolbar button',
-                                           checkable=True, triggered=self.toolbar.setLabelPosition,
-                                           checked=bool(self.settings.value('labelPosition', True)))
-        self.compactModeAction = QAction('Enable compact mode', self, checkable=True, checked=False,
-                                         triggered=self.toolbar.setCompactMode, enabled=False,
-                                         statusTip='Enable compact mode for more video output space')
+                                           checkable=True, checked=self.config['labelPosition'])
+        # self.compactModeAction = QAction('Enable compact mode', self, checkable=True, checked=False,
+        #                                  triggered=self.toolbar.setCompactMode, enabled=False,
+        #                                  statusTip='Enable compact mode for more video output space')
 
     def initToolbar(self) -> None:
         self.toolbar.addAction(self.openAction)
@@ -377,6 +373,8 @@ class VideoCutter(QWidget):
     def initMenus(self) -> None:
         self.optionsMenu = QMenu('Interface settings...', self.appMenu)
         self.optionsMenu.addAction(self.darkThemeAction)
+        self.optionsMenu.addSeparator()
+        self.optionsMenu.addAction(self.zoomVideoAction)
         self.optionsMenu.addSeparator()
         self.optionsMenu.addAction(self.toggleLabelsAction)
         self.optionsMenu.addAction(self.labelPositionAction)
@@ -403,15 +401,6 @@ class VideoCutter(QWidget):
 
     def setRunningTime(self, runtime: str) -> None:
         self.runtimeLabel.setText('<div align="right">%s</div>' % runtime)
-
-    @pyqtSlot(bool)
-    def toggleToolbarLabels(self, checked: bool = True):
-        if not checked:
-            self.toolbar.setToolButtonStyle(Qt.ToolButtonIconOnly)
-        if not self.labelPositionAction.isChecked():
-            self.toolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        else:
-            self.toolbar.setToolButtonStyle(Qt.ToolButtonIconOnly)
 
     # TODO: move cliplist functions into VideoList class
 
@@ -927,11 +916,6 @@ class VideoCutter(QWidget):
         self.openResult(pathonly=True)
 
     @pyqtSlot(bool)
-    def switchTheme(self, checked: bool) -> None:
-        self.theme = 'dark' if checked else 'light'
-        self.parent.restart()
-
-    @pyqtSlot(bool)
     def openResult(self, pathonly: bool = False) -> None:
         self.parent.restart()
         if len(self.finalFilename) and os.path.exists(self.finalFilename):
@@ -988,11 +972,17 @@ class VideoCutter(QWidget):
             if event.key() == Qt.Key_Left:
                 self.mediaPlayer.frame_back_step()
             elif event.key() == Qt.Key_Down:
-                self.mediaPlayer.seek(-5, 'relative+exact')
+                if qApp.queryKeyboardModifiers() == Qt.ShiftModifier:
+                    self.mediaPlayer.seek(-5, 'relative+exact')
+                else:
+                    self.mediaPlayer.seek(-2, 'relative+exact')
             elif event.key() == Qt.Key_Right:
                 self.mediaPlayer.frame_step()
             elif event.key() == Qt.Key_Up:
-                self.mediaPlayer.seek(5, 'relative+exact')
+                if qApp.queryKeyboardModifiers() == Qt.ShiftModifier:
+                    self.mediaPlayer.seek(5, 'relative+exact')
+                else:
+                    self.mediaPlayer.seek(2, 'relative+exact')
             elif event.key() == Qt.Key_Home:
                 self.mediaPlayer.time_pos = 0
             elif event.key() == Qt.Key_End:
@@ -1006,6 +996,3 @@ class VideoCutter(QWidget):
             elif event.key() == Qt.Key_Space:
                 self.playMedia()
             event.accept()
-
-    # def closeEvent(self, event: QCloseEvent) -> None:
-    #     self.parentWidget().closeEvent(event)

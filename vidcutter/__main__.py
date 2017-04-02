@@ -29,9 +29,10 @@ import re
 import signal
 import sys
 import traceback
+from distutils.util import strtobool
 
 from PyQt5.QtCore import (QCommandLineOption, QCommandLineParser, QDir, QFile, QFileInfo, QSettings, QSize,
-                          QStandardPaths, Qt, QTextStream)
+                          QStandardPaths, Qt, QTextStream, pyqtSlot)
 from PyQt5.QtGui import QCloseEvent, QContextMenuEvent, QDragEnterEvent, QDropEvent, QMouseEvent
 from PyQt5.QtWidgets import qApp, QApplication, QMainWindow, QMessageBox, QSizePolicy
 
@@ -42,15 +43,16 @@ signal.signal(signal.SIGTERM, signal.SIG_DFL)
 
 
 class MainWindow(QMainWindow):
+    EXIT_CODE_REBOOT = -123456789
+
     def __init__(self):
         super(MainWindow, self).__init__()
-        self.theme = 'dark'
         self.edl, self.video, self.devmode = '', '', False
         self.parse_cmdline()
         self.init_logger()
         self.init_settings()
         self.init_scale()
-        self.init_cutter()
+        self.init_cutter(self.config)
         self.setWindowTitle('%s' % qApp.applicationName())
         self.setContentsMargins(0, 0, 0, 0)
         self.statusBar().showMessage('Ready')
@@ -123,9 +125,16 @@ class MainWindow(QMainWindow):
         os.makedirs(settings_path, exist_ok=True)
         settings_file = '%s.ini' % qApp.applicationName().lower()
         self.settings = QSettings(os.path.join(settings_path, settings_file), QSettings.IniFormat)
-
-        self.restoreGeometry(self.settings.value('geometry'))
-        self.restoreState(self.settings.value('windowState'))
+        if self.settings.value('geometry') is not None:
+            self.restoreGeometry(self.settings.value('geometry'))
+        if self.settings.value('windowState') is not None:
+            self.restoreState(self.settings.value('windowState'))
+        self.config = dict(
+            darkTheme=strtobool(self.settings.value('darkTheme', 'false')),
+            showLabels=strtobool(self.settings.value('showLabels', 'true')),
+            labelPosition=strtobool(self.settings.value('labelPosition', 'true'))
+        )
+        self.theme = 'dark' if self.config['darkTheme'] else 'light'
 
     @staticmethod
     def log_uncaught_exceptions(cls, exc, tb) -> None:
@@ -177,8 +186,8 @@ class MainWindow(QMainWindow):
         if len(self.args) > 0:
             self.video = self.args[0]
 
-    def init_cutter(self) -> None:
-        self.cutter = VideoCutter(self)
+    def init_cutter(self, config: dict) -> None:
+        self.cutter = VideoCutter(self, config)
         qApp.setWindowIcon(self.cutter.appIcon)
         self.setCentralWidget(self.cutter)
 
@@ -189,7 +198,19 @@ class MainWindow(QMainWindow):
 
     def restart(self) -> None:
         self.cutter.deleteLater()
-        self.init_cutter()
+        self.init_cutter(self.config)
+
+    @pyqtSlot(bool)
+    def reboot(self, checked: bool) -> None:
+        self.save_settings()
+        qApp.exit(MainWindow.EXIT_CODE_REBOOT)
+
+    def save_settings(self) -> None:
+        self.settings.setValue('darkTheme', self.cutter.darkThemeAction.isChecked())
+        self.settings.setValue('showLabels', self.cutter.toggleLabelsAction.isChecked())
+        self.settings.setValue('labelPosition', self.cutter.labelPositionAction.isChecked())
+        self.settings.setValue('geometry', self.saveGeometry())
+        self.settings.setValue('windowState', self.saveState())
 
     @staticmethod
     def get_path(path: str = None, override: bool = False) -> str:
@@ -236,29 +257,29 @@ class MainWindow(QMainWindow):
         event.accept()
 
     def closeEvent(self, event: QCloseEvent) -> None:
-        self.settings.setValue('showLabels', self.cutter.toggleLabelsAction.isChecked())
-        self.settings.setValue('labelPosition', self.cutter.labelPositionAction.isChecked())
-        self.settings.setValue('geometry', self.saveGeometry())
-        self.settings.setValue('windowState', self.saveState())
+        self.save_settings()
         if hasattr(self, 'cutter'):
             if hasattr(self.cutter, 'mediaPlayer'):
                 self.cutter.mediaPlayer.terminate()
         super(MainWindow, self).closeEvent(event)
 
 
-def main():
-    if hasattr(Qt, 'AA_EnableHighDpiScaling'):
-        QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
-    if hasattr(Qt, 'AA_Use96Dpi'):
-        QApplication.setAttribute(Qt.AA_Use96Dpi, True)
-    app = QApplication(sys.argv)
-    app.setApplicationName('VidCutter')
-    app.setApplicationVersion(MainWindow.get_version())
-    app.setOrganizationDomain('ozmartians.com')
-    app.setQuitOnLastWindowClosed(True)
-    win = MainWindow()
-    sys.exit(app.exec_())
-
+def main() -> int:
+    while True:
+        if hasattr(Qt, 'AA_EnableHighDpiScaling'):
+            QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
+        if hasattr(Qt, 'AA_Use96Dpi'):
+            QApplication.setAttribute(Qt.AA_Use96Dpi, True)
+        app = QApplication(sys.argv)
+        app.setApplicationName('VidCutter')
+        app.setApplicationVersion(MainWindow.get_version())
+        app.setOrganizationDomain('ozmartians.com')
+        app.setQuitOnLastWindowClosed(True)
+        win = MainWindow()
+        exitcode = app.exec_()
+        if exitcode != MainWindow.EXIT_CODE_REBOOT:
+            break
+    return exitcode
 
 if __name__ == '__main__':
     main()

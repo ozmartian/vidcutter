@@ -22,34 +22,54 @@
 #
 #######################################################################
 
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import QObject, Qt
 from PyQt5.QtGui import QColor, QPalette
-from PyQt5.QtWidgets import qApp, QProxyStyle, QStyle, QStyleFactory
+from PyQt5.QtWidgets import qApp
 
 
-class StyleMaster:
+class StyleMaster(QObject):
+    _dark, _light = None, None
 
     @staticmethod
     def dark():
-        darkPalette = QPalette()
-        darkPalette.setColor(QPalette.Window, QColor(27, 35, 38))
-        darkPalette.setColor(QPalette.WindowText, QColor(234, 234, 234))
-        darkPalette.setColor(QPalette.Base, QColor(27, 35, 38))
-        darkPalette.setColor(QPalette.AlternateBase, QColor(12, 15, 16))
-        darkPalette.setColor(QPalette.ToolTipBase, QColor(234, 234, 234))
-        darkPalette.setColor(QPalette.ToolTipText, Qt.white)
-        darkPalette.setColor(QPalette.Text, QColor(234, 234, 234))
-        darkPalette.setColor(QPalette.Button, QColor(27, 35, 38))
-        darkPalette.setColor(QPalette.ButtonText, Qt.white)
-        darkPalette.setColor(QPalette.BrightText, QColor(100, 215, 222))
-        darkPalette.setColor(QPalette.Link, QColor(126, 71, 130))
-        darkPalette.setColor(QPalette.Highlight, QColor(126, 71, 130))
-        darkPalette.setColor(QPalette.HighlightedText, Qt.white)
+        if StyleMaster._dark is None:
+            palette = QPalette()
+            palette.setColor(QPalette.Window, QColor(27, 35, 38))
+            palette.setColor(QPalette.WindowText, QColor(234, 234, 234))
+            palette.setColor(QPalette.Base, QColor(27, 35, 38))
+            palette.setColor(QPalette.AlternateBase, QColor(12, 15, 16))
+            palette.setColor(QPalette.ToolTipBase, QColor(27, 35, 38))
+            palette.setColor(QPalette.ToolTipText, Qt.white)
+            palette.setColor(QPalette.Text, QColor(234, 234, 234))
+            palette.setColor(QPalette.Button, QColor(27, 35, 38))
+            palette.setColor(QPalette.ButtonText, Qt.white)
+            palette.setColor(QPalette.BrightText, QColor(100, 215, 222))
+            palette.setColor(QPalette.Link, QColor(126, 71, 130))
+            palette.setColor(QPalette.Highlight, QColor(126, 71, 130))
+            palette.setColor(QPalette.HighlightedText, Qt.white)
+            palette.setColor(QPalette.Disabled, QPalette.Light, Qt.black)
+            palette.setColor(QPalette.Disabled, QPalette.Shadow, QColor(12, 15, 16))
+            StyleMaster._dark = palette
+        qApp.setPalette(StyleMaster._dark)
 
-        darkPalette.setColor(QPalette.Disabled, QPalette.Text, QColor(12, 15, 16))
-        darkPalette.setColor(QPalette.Disabled, QPalette.Light, QColor(12, 15, 16))
-        darkPalette.setColor(QPalette.Disabled, QPalette.Dark, QColor(12, 15, 16))
-
-        qApp.setPalette(darkPalette)
-        qApp.setStyleSheet('*:disabled { color: #666; } ')
-        qApp.setStyleSheet('QToolTip { color:#FFF; background-color:#642C68; border:1px solid #0C0F10; }')
+    @staticmethod
+    def light():
+        if StyleMaster._light is None:
+            palette = QPalette()
+            palette.setColor(QPalette.Window, QColor(239, 240, 241))
+            palette.setColor(QPalette.WindowText, QColor(49, 54, 59))
+            palette.setColor(QPalette.Base, QColor(252, 252, 252))
+            palette.setColor(QPalette.AlternateBase, QColor(239, 240, 241))
+            palette.setColor(QPalette.ToolTipBase, QColor(239, 240, 241))
+            palette.setColor(QPalette.ToolTipText, QColor(49, 54, 59))
+            palette.setColor(QPalette.Text, QColor(49, 54, 59))
+            palette.setColor(QPalette.Button, QColor(239, 240, 241))
+            palette.setColor(QPalette.ButtonText, QColor(49, 54, 59))
+            palette.setColor(QPalette.BrightText, QColor(255, 255, 255))
+            palette.setColor(QPalette.Link, QColor(41, 128, 185))
+            palette.setColor(QPalette.Highlight, QColor(136, 136, 136))
+            palette.setColor(QPalette.HighlightedText, QColor(239, 240, 241))
+            palette.setColor(QPalette.Disabled, QPalette.Light, Qt.white)
+            palette.setColor(QPalette.Disabled, QPalette.Shadow, QColor(234, 234, 234))
+            StyleMaster._light = palette
+        qApp.setPalette(StyleMaster._light)

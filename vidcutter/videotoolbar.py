@@ -25,18 +25,18 @@
 import sys
 
 from PyQt5.QtCore import pyqtSlot, QObject, QEvent, Qt
-from PyQt5.QtGui import QMouseEvent
-from PyQt5.QtWidgets import QStyleFactory, QToolBar, QToolButton
+from PyQt5.QtWidgets import QStyleFactory, QToolBar, QToolButton, qApp
 
 
 class VideoToolBar(QToolBar):
     def __init__(self, parent=None, *arg, **kwargs):
         super(VideoToolBar, self).__init__(parent, *arg, **kwargs)
         self.parent = parent
-        self.settings = self.parent.settings
         self.setObjectName('appcontrols')
-        self.setLabelPosition(checked=bool(self.settings.value('labelPosition', True)), save=False)
-        self.toggleLabels(checked=bool(self.settings.value('showLabels', True)), save=False)
+        self.setLabelPosition(self.parent.config['labelPosition'])
+        self.toggleLabels(self.parent.config['showLabels'])
+        self.parent.labelPositionAction.triggered.connect(self.setLabelPosition)
+        self.parent.toggleLabelsAction.triggered.connect(self.toggleLabels)
         if sys.platform == 'darwin':
             self.setStyle(QStyleFactory.create('Fusion'))
 
@@ -48,11 +48,7 @@ class VideoToolBar(QToolBar):
                 button.setObjectName('saveButton')
 
     @pyqtSlot(bool)
-    def setCompactMode(self, checked: bool = False):
-        pass
-
-    @pyqtSlot(bool)
-    def setLabelPosition(self, checked: bool = True, save: bool = True):
+    def setLabelPosition(self, checked: bool = True):
         if checked:
             self.labelPosition = Qt.ToolButtonTextBesideIcon
             for button in self.findChildren(QToolButton):
@@ -62,24 +58,23 @@ class VideoToolBar(QToolBar):
             for button in self.findChildren(QToolButton):
                 button.setText(button.text().replace('\n', ' '))
         self.setToolButtonStyle(self.labelPosition)
-        if save:
-            self.settings.setValue('labelPosition', checked)
 
     @pyqtSlot(bool)
-    def toggleLabels(self, checked: bool = True, save: bool = True):
+    def toggleLabels(self, checked: bool = True):
         if not checked:
             self.setToolButtonStyle(Qt.ToolButtonIconOnly)
+            self.parent.labelPositionAction.setDisabled(True)
         else:
             self.setToolButtonStyle(self.labelPosition)
-        if save:
-            self.settings.setValue('showLabels', checked)
-
-    def mouseMoveEvent(self, event: QMouseEvent):
-        pass
+            self.parent.labelPositionAction.setEnabled(True)
 
     def eventFilter(self, obj: QObject, event: QEvent) -> bool:
         if event.type() == QEvent.ToolTip:
             return True
+        elif event.type() == QEvent.Enter and obj.isEnabled():
+            qApp.setOverrideCursor(Qt.PointingHandCursor)
+        elif event.type() == QEvent.Leave:
+            qApp.restoreOverrideCursor()
         elif event.type() == QEvent.StatusTip and not obj.isEnabled():
             return True
         return super(VideoToolBar, self).eventFilter(obj, event)

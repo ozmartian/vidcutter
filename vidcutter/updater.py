@@ -58,40 +58,26 @@ class Updater(QWidget):
         jsonobj = jsondoc.object()
         latest = parse_version(jsonobj['tag_name'].toString())
         current = parse_version(qApp.applicationVersion())
-        if latest > current:
-            response = '''
+        response = '''
 <style>
     h1 { color: #642C68; font-family: 'Futura LT', sans-serif; font-weight: 400; }
-    p { color: #444; }
+    p { color: #444; font-size: 15px; }
     b { color: #642C68; }
 </style>
-<div align="center">
-    <h1>A new version is available!</h1>
-    <p>
-        <b>latest version:</b> %s
-        <br/>
-        <b>installed version:</b> %s
-    </p>
-</div>''' % (str(latest), str(current))
+<div align="center">'''
+        if latest > current:
+            response += '<h1>A new version is available!</h1>'
             self.update_available = True
         else:
-            response = '''
-<style>
-    h1 { color: #642C68; font-family: 'Futura LT', sans-serif; font-weight: 400; }
-    p { color: #444; }
-    b { color: #642C68; }
-</style>
-<div align="center">
-    <h1>You are already running the latest version</h1>
+            response += '<h1>You are already running the latest version</h1>'
+            self.update_available = False
+        response += '''
     <p>
         <b>latest version:</b> %s
         <br/>
         <b>installed version:</b> %s
     </p>
 </div>''' % (str(latest), str(current))
-            self.update_available = False
-        if os.getenv('DEBUG', False):
-            self.logger.info('latest version = %s VS current version = %s' % (str(latest), str(current)))
         mbox = UpdaterMsgBox(parent=self)
         mbox.setText(response)
         mbox.show()
@@ -124,14 +110,15 @@ class UpdaterMsgBox(QDialog):
                 Packages in formats such as TAR.XZ (Arch Linux), DEB (Ubuntu/Debian) and RPM (Fedora, openSUSE) are
                 always produced with every official version released. These can be installed via distribution specific
                 channels such as the Arch Linux AUR, Ubuntu LaunchPad PPA, Fedora copr, openSUSE OBS and third party
-                repositories There is also an AppImage package available for those unable to get things working.</p>
-                <p>More details are available at the VidCutter homepage.</p>''')
+                repositories.</p>
+                <p>Alternatively, you should try the AppImage version available to download for those unable to
+                get newer updated versions to work. An AppImage is always produced for every update released.</p>''')
             disclaimer.setStyleSheet('font-size:11px; border:1px solid #999; padding:2px 10px;' +
                                      'background:rgba(255, 255, 255, 0.8); color:#444; margin:10px 5px;')
             disclaimer.setWordWrap(True)
             layout.addWidget(disclaimer)
             layout.addWidget(QLabel('<div style="text-align:center; color:#444;">Would you like to visit the ' +
-                                      '<b>VidCutter releases page</b> for more details now?</div>'))
+                                    '<b>VidCutter releases page</b> for more details now?</div>'))
 
         if self.parent.update_available:
             buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
