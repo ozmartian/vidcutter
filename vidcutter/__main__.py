@@ -128,7 +128,7 @@ class MainWindow(QMainWindow):
             self.restoreGeometry(self.settings.value('geometry'))
         if self.settings.value('windowState') is not None:
             self.restoreState(self.settings.value('windowState'))
-        self.theme = 'dark' if self.settings.value('darkTheme') == 'true' else 'light'
+        self.theme = self.settings.value('theme', 'light')
 
     @staticmethod
     def log_uncaught_exceptions(cls, exc, tb) -> None:
@@ -181,7 +181,7 @@ class MainWindow(QMainWindow):
             self.video = self.args[0]
 
     def init_cutter(self) -> None:
-        self.cutter = VideoCutter(self, self.settings)
+        self.cutter = VideoCutter(self)
         qApp.setWindowIcon(self.cutter.appIcon)
         self.setCentralWidget(self.cutter)
 
@@ -200,14 +200,14 @@ class MainWindow(QMainWindow):
         qApp.exit(MainWindow.EXIT_CODE_REBOOT)
 
     def save_settings(self) -> None:
-        labels = 'beside'
-        if self.cutter.besideLabelsAction.isChecked():
-            labels = 'beside'
-        elif self.cutter.underLabelsAction.isChecked():
+        theme = 'dark' if self.cutter.darkThemeAction.isChecked() else 'light'
+        if self.cutter.underLabelsAction.isChecked():
             labels = 'under'
         elif self.cutter.noLabelsAction.isChecked():
             labels = 'none'
-        self.settings.setValue('darkTheme', self.cutter.darkThemeAction.isChecked())
+        else:
+            labels = 'beside'
+        self.settings.setValue('theme', theme)
         self.settings.setValue('toolbarLabels', labels)
         self.settings.setValue('geometry', self.saveGeometry())
         self.settings.setValue('windowState', self.saveState())

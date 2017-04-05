@@ -51,17 +51,12 @@ from vidcutter.videotoolbar import VideoToolBar
 
 
 class VideoCutter(QWidget):
-    def __init__(self, parent: QWidget, settings: QSettings):
+    def __init__(self, parent: QWidget):
         super(VideoCutter, self).__init__(parent)
         self.logger = logging.getLogger(__name__)
         self.parent = parent
         self.theme = self.parent.theme
-        self.settings = settings
-
-        self.toolbarLabels = self.settings.value('toolbarLabels', 'beside')
-        self.besideLabel = True if self.toolbarLabels == 'beside' else False
-        self.underLabel = True if self.toolbarLabels == 'under' else False
-        self.noLabel = True if self.toolbarLabels == 'none' else False
+        self.settings = self.parent.settings
 
         self.videoService = VideoService(self)
         self.updater = Updater(self)
@@ -316,6 +311,7 @@ class VideoCutter(QWidget):
         self.keyRefIcon = QIcon(':/images/keymap.png')
 
     def initActions(self) -> None:
+        self.themeAction = QActionGroup(self)
         self.zoomAction = QActionGroup(self)
         self.labelAction = QActionGroup(self)
         self.openAction = QAction(self.openIcon, 'Open\nMedia', self, statusTip='Open a media file',
@@ -353,8 +349,10 @@ class VideoCutter(QWidget):
                                    statusTip='About %s' % qApp.applicationName())
         self.keyRefAction = QAction(self.keyRefIcon, 'Keyboard shortcuts', self, triggered=self.showKeyRef,
                                     statusTip='View shortcut key bindings')
-        self.darkThemeAction = QAction('Use dark theme', self, statusTip='Use a dark theme to match your desktop',
-                                       checkable=True, checked=(self.theme == 'dark'), triggered=self.parent.reboot)
+        self.lightThemeAction = QAction('Light', self.themeAction, statusTip='Use a light colored theme to match your desktop',
+                                       checkable=True, checked=(self.theme == 'light'))
+        self.darkThemeAction = QAction('Dark', self.themeAction, statusTip='Use a dark colored theme to match your desktop',
+                                       checkable=True, checked=(self.theme == 'dark'))
         self.qtrZoomAction = QAction('1:4 Quarter', self.zoomAction, checkable=True, checked=False,
                                      statusTip='Zoom to a quarter of the source video size')
         self.halfZoomAction = QAction('1:2 Half', self.zoomAction, statusTip='Zoom to half of the source video size',
@@ -365,11 +363,12 @@ class VideoCutter(QWidget):
                                      statusTip='Zoom to double the original source video size')
         self.besideLabelsAction = QAction('Labels next to buttons', self.labelAction, checkable=True,
                                           statusTip='Show labels on right side of toolbar buttons',
-                                          checked=self.besideLabel)
+                                          checked=True)
         self.underLabelsAction = QAction('Labels under buttons', self.labelAction, checkable=True,
-                                         statusTip='Show labels under toolbar buttons', checked=self.underLabel)
-        self.noLabelsAction = QAction('Do not show', self.labelAction, statusTip='Do not show labels on toolbar',
-                                         checkable=True, checked=self.noLabel)
+                                         statusTip='Show labels under toolbar buttons', checked=False)
+        self.noLabelsAction = QAction('No labels', self.labelAction, statusTip='Do not show labels on toolbar',
+                                         checkable=True, checked=False)
+        self.themeAction.triggered.connect(self.switchTheme)
         self.zoomAction.setEnabled(False)
         self.zoomAction.triggered.connect(self.setZoom)
 
@@ -381,8 +380,8 @@ class VideoCutter(QWidget):
         self.toolbar.addAction(self.cutEndAction)
         self.toolbar.addAction(self.saveAction)
         self.toolbar.disableTooltips()
-        self.toolbar.setLabels(self.labelAction.checkedAction())
         self.labelAction.triggered.connect(self.toolbar.setLabels)
+        self.toolbar.setLabelByType(self.settings.value('toolbarLabels', 'beside'))
 
     def initMenus(self) -> None:
         labelsMenu = QMenu('Toolbar labels', self.appMenu)
@@ -397,6 +396,8 @@ class VideoCutter(QWidget):
         zoomMenu.addAction(self.dblZoomAction)
 
         optionsMenu = QMenu('Display options', self.appMenu)
+        optionsMenu.addSection('Theme')
+        optionsMenu.addAction(self.lightThemeAction)
         optionsMenu.addAction(self.darkThemeAction)
         optionsMenu.addSeparator()
         optionsMenu.addMenu(labelsMenu)
@@ -972,6 +973,15 @@ class VideoCutter(QWidget):
     @pyqtSlot()
     def viewLogs(self) -> None:
         QDesktopServices.openUrl(QUrl.fromLocalFile(logging.getLoggerClass().root.handlers[0].baseFilename))
+
+    @pyqtSlot(QAction)
+    def switchTheme(self, action: QAction) -> None:
+        if action == self.darkThemeAction:
+            newtheme = 'dark'
+        else:
+            newtheme = 'light'
+        if newtheme != self.theme:
+            self.parent.reboot()
 
     def startNew(self, checked: bool = False) -> None:
         qApp.restoreOverrideCursor()

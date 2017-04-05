@@ -33,10 +33,11 @@ class VideoToolBar(QToolBar):
         super(VideoToolBar, self).__init__(parent, *arg, **kwargs)
         self.parent = parent
         self.setObjectName('appcontrols')
+        self.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         if sys.platform == 'darwin':
             self.setStyle(QStyleFactory.create('Fusion'))
 
-    def disableTooltips(self):
+    def disableTooltips(self) -> None:
         buttonlist = self.findChildren(QToolButton)
         for button in buttonlist:
             button.installEventFilter(self)
@@ -44,7 +45,7 @@ class VideoToolBar(QToolBar):
                 button.setObjectName('saveButton')
 
     @pyqtSlot(QAction)
-    def setLabels(self, action: QAction):
+    def setLabels(self, action: QAction) -> None:
         if action == self.parent.besideLabelsAction:
             self.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
             for button in self.findChildren(QToolButton):
@@ -54,6 +55,21 @@ class VideoToolBar(QToolBar):
             for button in self.findChildren(QToolButton):
                 button.setText(button.text().replace('\n', ' '))
         elif action == self.parent.noLabelsAction:
+            self.setToolButtonStyle(Qt.ToolButtonIconOnly)
+
+    def setLabelByType(self, type: str) -> None:
+        if type == 'beside':
+            self.parent.besideLabelsAction.setChecked(True)
+            self.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+            for button in self.findChildren(QToolButton):
+                button.setText(button.text().replace(' ', '\n'))
+        elif type == 'under':
+            self.parent.underLabelsAction.setChecked(True)
+            self.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
+            for button in self.findChildren(QToolButton):
+                button.setText(button.text().replace('\n', ' '))
+        elif type == 'none':
+            self.parent.noLabelsAction.setChecked(True)
             self.setToolButtonStyle(Qt.ToolButtonIconOnly)
 
     def eventFilter(self, obj: QObject, event: QEvent) -> bool:
