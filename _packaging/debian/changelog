@@ -20,6 +20,28 @@ vidcutter-unstable (3.2.0-0) unstable; urgency=medium
     up/down arrow controls to the right of the running time code, highlight the
     segment you wish to increase or decrease (i.e. hours, mins, secs, msecs)
 
+ * new dark theme; app is now better integrated for those who prefer to work
+    with the darker side of the force; configurable via new menu option
+
+ * video zoom level option added; configurable via new menu option
+
+ * "Check for updates..." now checks for the latest release version of the app
+   via the GitHub API and alerts user accordingly. It only offers to take user to
+   release page while also explaining to stick with distriubution specific packages
+   if running on Linux. Automatic updates are a goal of the future but would only
+   be for Windows, macOS and AppImage linux versions.
+
+ * The app will automatically check for updates; it will do this weekly and only
+    disturb the user if an update has been released AND it has been at least one
+    week since the last time updates were checked for.
+
+ * new look startup video graphic retaining blinking no video text.
+
+ * new look dialogs including updater and about.
+
+ * application settings now saved across all platforms; this includes window
+   state and geometry as well as options set since the last application run.
+
  -- Pete Alexandrou <pete@ozmartians.com>  Wed, 22 Mar 2017 02:33:00 +0800
 
 vidcutter (3.0.0-1) stable; urgency=medium
