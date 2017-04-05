@@ -24,7 +24,6 @@ QMainWindow {
 QWidget#shortcuts {
     border-image: url(':/images/watermark.png') 0 0 0 0 stretch stretch;
     background-color: #EFF0F1;
-    /* background-attachment: fixed; */
 }
 
 QWidget#novideoWidget {

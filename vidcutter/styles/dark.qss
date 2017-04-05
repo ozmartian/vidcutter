@@ -27,7 +27,7 @@ QWidget#shortcuts {
 }
 
 QWidget#novideoWidget {
-    border: 1px solid #000;
+    border: 1px solid #4D5355;
     background: #000 url(:/images/startup-backdrop.png) no-repeat center center;
 }
 
@@ -81,8 +81,8 @@ QToolBar#appcontrols QToolButton#saveButton {
 QListView#cliplist {
     border-radius: 0;
     border: none;
-    border-left: 1px solid #000;
-    border-right: 1px solid #000;
+    border-left: 1px solid #4D5355;
+    border-right: 1px solid #4D5355;
     show-decoration-selected: 1;
     background-color: #0C0F10;
 }
@@ -96,9 +96,9 @@ QListView::item#cliplist {
 
 QLabel#listHeader {
     padding: 8px 5px 5px;
-    border: 1px solid #000;
+    border: 1px solid #4D5355;
     background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-        stop: 0 #000, stop: 0.5 #1B2326, stop: 0.6 #1B2326, stop: 1 #000);
+        stop: 0 #111, stop: 0.5 #1B2326, stop: 0.6 #1B2326, stop: 1 #111);
 }
 
 QLabel#runtimeLabel {
@@ -106,7 +106,7 @@ QLabel#runtimeLabel {
     color: #FFF;
     background: rgb(106, 69, 114) url(:images/runtime.png) no-repeat left center;
     padding: 2px 8px 2px 2px;
-    border: 1px solid #000;
+    border: 1px solid #4D5355;
 }
 
 QTimeEdit#timeCounter, QLabel#timeSeparator, QLabel#timeDuration,

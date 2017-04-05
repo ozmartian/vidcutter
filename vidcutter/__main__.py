@@ -271,7 +271,10 @@ def main():
     win = MainWindow()
     exit_code = app.exec_()
     if exit_code == MainWindow.EXIT_CODE_REBOOT:
-        QProcess.startDetached(sys.executable, ['-m', 'vidcutter'])
+        args = sys.argv
+        args.remove(args[0])
+        args = ['-m', 'vidcutter'] + args
+        QProcess.startDetached(sys.executable, args)
     sys.exit(exit_code)
 
 if __name__ == '__main__':
