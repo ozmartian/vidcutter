@@ -30,12 +30,12 @@ import time
 from datetime import timedelta
 from locale import setlocale, LC_NUMERIC
 
-from PyQt5.QtCore import (QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTextStream, QTime,
+from PyQt5.QtCore import (QDir, QFile, QFileInfo, QModelIndex, QPoint, QSettings, QSize, Qt, QTextStream, QTime,
                           QUrl, pyqtSlot)
-from PyQt5.QtGui import QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMovie, QPixmap
-from PyQt5.QtWidgets import (QAbstractItemView, QAction, qApp, QApplication, QDialogButtonBox, QFileDialog, QGroupBox,
-                             QHBoxLayout, QLabel, QListWidgetItem, QMenu, QMessageBox, QProgressDialog, QPushButton,
-                             QSizePolicy, QSlider, QTextBrowser, QVBoxLayout, QWidget)
+from PyQt5.QtGui import QCloseEvent, QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMovie, QPixmap
+from PyQt5.QtWidgets import (QAbstractItemView, QAction, QActionGroup, qApp, QApplication, QDialogButtonBox,
+                             QFileDialog, QGroupBox, QHBoxLayout, QLabel, QListWidgetItem, QMenu, QMessageBox,
+                             QProgressDialog, QPushButton, QSizePolicy, QSlider, QTextBrowser, QVBoxLayout, QWidget)
 
 import vidcutter.mpv as mpv
 import vidcutter.resources
@@ -51,12 +51,18 @@ from vidcutter.videotoolbar import VideoToolBar
 
 
 class VideoCutter(QWidget):
-    def __init__(self, parent: QWidget, config: dict):
+    def __init__(self, parent: QWidget, settings: QSettings):
         super(VideoCutter, self).__init__(parent)
         self.logger = logging.getLogger(__name__)
         self.parent = parent
         self.theme = self.parent.theme
-        self.config = config
+        self.settings = settings
+
+        self.toolbarLabels = self.settings.value('toolbarLabels', 'beside')
+        self.besideLabel = True if self.toolbarLabels == 'beside' else False
+        self.underLabel = True if self.toolbarLabels == 'under' else False
+        self.noLabel = True if self.toolbarLabels == 'none' else False
+
         self.videoService = VideoService(self)
         self.updater = Updater(self)
         self.latest_release_url = 'https://github.com/ozmartian/vidcutter/releases/latest'
@@ -75,19 +81,7 @@ class VideoCutter(QWidget):
             }
         }
 
-        StyleMaster.dark()
-
-        QFontDatabase.addApplicationFont(':/fonts/FuturaLT.ttf')
-        QFontDatabase.addApplicationFont(':/fonts/OpenSans.ttf')
-
-        if self.parent.devmode:
-            stylesheet = 'styles/vidcutter_osx.qss' if sys.platform == 'darwin' else 'styles/%s.qss' % self.theme
-            stylesheet = self.parent.get_path(stylesheet, override=True)
-        else:
-            stylesheet = ':/styles/vidcutter_osx.qss' if sys.platform == 'darwin' else ':/styles/%s.qss' % self.theme
-
-        self.parent.load_stylesheet(stylesheet)
-        QApplication.setFont(QFont('Open Sans', 12 if sys.platform == 'darwin' else 10, 300))
+        self.init_theme()
 
         self.clipTimes = []
         self.inCut = False
@@ -143,6 +137,7 @@ class VideoCutter(QWidget):
         self.videoLayout = QHBoxLayout()
         self.videoLayout.setContentsMargins(0, 0, 0, 0)
         self.videoLayout.addWidget(self.novideoWidget)
+        self.videoLayout.addSpacing(10)
         self.videoLayout.addLayout(self.clipindexLayout)
 
         self.timeCounter = TimeCounter(self)
@@ -199,7 +194,7 @@ class VideoCutter(QWidget):
         toolbarGroup.setLayout(toolbarLayout)
         toolbarGroup.setStyleSheet('border: 0;')
 
-        controlsLayout = QHBoxLayout(spacing=0)
+        controlsLayout = QHBoxLayout()
         controlsLayout.addStretch(1)
         controlsLayout.addWidget(toolbarGroup)
         controlsLayout.addStretch(1)
@@ -210,7 +205,7 @@ class VideoCutter(QWidget):
         controlsLayout.addWidget(self.menuButton)
         controlsLayout.addSpacing(10)
 
-        layout = QVBoxLayout()
+        layout = QVBoxLayout(spacing=0)
         layout.setContentsMargins(10, 10, 10, 4)
         layout.addLayout(self.videoLayout)
         layout.addWidget(self.seekSlider)
@@ -218,6 +213,13 @@ class VideoCutter(QWidget):
         layout.addLayout(controlsLayout)
 
         self.setLayout(layout)
+
+    def init_theme(self) -> None:
+        StyleMaster.dark() if self.theme == 'dark' else StyleMaster.light()
+        QFontDatabase.addApplicationFont(':/fonts/FuturaLT.ttf')
+        QFontDatabase.addApplicationFont(':/fonts/OpenSans.ttf')
+        StyleMaster.loadQSS(self.theme, self.parent.devmode)
+        QApplication.setFont(QFont('Open Sans', 12 if sys.platform == 'darwin' else 10, 300))
 
     def logMPV(self, loglevel, component, message):
         log_msg = 'MPV {} - {}: {}'.format(loglevel, component, message)
@@ -269,34 +271,33 @@ class VideoCutter(QWidget):
         self.novideoWidget.setLayout(novideoLayout)
 
     def initIcons(self) -> None:
-        theme = self.parent.theme
         self.appIcon = QIcon(':/images/vidcutter.png')
         self.openIcon = QIcon()
-        self.openIcon.addFile(':/images/%s/toolbar-open.png' % theme, QSize(50, 53), QIcon.Normal)
-        self.openIcon.addFile(':/images/%s/toolbar-open-on.png' % theme, QSize(50, 53), QIcon.Active)
-        self.openIcon.addFile(':/images/%s/toolbar-open-disabled.png' % theme, QSize(50, 53), QIcon.Disabled)
+        self.openIcon.addFile(':/images/%s/toolbar-open.png' % self.theme, QSize(50, 53), QIcon.Normal)
+        self.openIcon.addFile(':/images/%s/toolbar-open-on.png' % self.theme, QSize(50, 53), QIcon.Active)
+        self.openIcon.addFile(':/images/%s/toolbar-open-disabled.png' % self.theme, QSize(50, 53), QIcon.Disabled)
         self.playIcon = QIcon()
-        self.playIcon.addFile(':/images/%s/toolbar-play.png' % theme, QSize(50, 53), QIcon.Normal)
-        self.playIcon.addFile(':/images/%s/toolbar-play-on.png' % theme, QSize(50, 53), QIcon.Active)
-        self.playIcon.addFile(':/images/%s/toolbar-play-disabled.png' % theme, QSize(50, 53), QIcon.Disabled)
+        self.playIcon.addFile(':/images/%s/toolbar-play.png' % self.theme, QSize(50, 53), QIcon.Normal)
+        self.playIcon.addFile(':/images/%s/toolbar-play-on.png' % self.theme, QSize(50, 53), QIcon.Active)
+        self.playIcon.addFile(':/images/%s/toolbar-play-disabled.png' % self.theme, QSize(50, 53), QIcon.Disabled)
         self.pauseIcon = QIcon()
-        self.pauseIcon.addFile(':/images/%s/toolbar-pause.png' % theme, QSize(50, 53), QIcon.Normal)
-        self.pauseIcon.addFile(':/images/%s/toolbar-pause-on.png' % theme, QSize(50, 53), QIcon.Active)
-        self.pauseIcon.addFile(':/images/%s/toolbar-pause-disabled.png' % theme, QSize(50, 53), QIcon.Disabled)
+        self.pauseIcon.addFile(':/images/%s/toolbar-pause.png' % self.theme, QSize(50, 53), QIcon.Normal)
+        self.pauseIcon.addFile(':/images/%s/toolbar-pause-on.png' % self.theme, QSize(50, 53), QIcon.Active)
+        self.pauseIcon.addFile(':/images/%s/toolbar-pause-disabled.png' % self.theme, QSize(50, 53), QIcon.Disabled)
         self.cutStartIcon = QIcon()
-        self.cutStartIcon.addFile(':/images/%s/toolbar-start.png' % theme, QSize(50, 53), QIcon.Normal)
-        self.cutStartIcon.addFile(':/images/%s/toolbar-start-on.png' % theme, QSize(50, 53), QIcon.Active)
-        self.cutStartIcon.addFile(':/images/%s/toolbar-start-disabled.png' % theme, QSize(50, 53), QIcon.Disabled)
+        self.cutStartIcon.addFile(':/images/%s/toolbar-start.png' % self.theme, QSize(50, 53), QIcon.Normal)
+        self.cutStartIcon.addFile(':/images/%s/toolbar-start-on.png' % self.theme, QSize(50, 53), QIcon.Active)
+        self.cutStartIcon.addFile(':/images/%s/toolbar-start-disabled.png' % self.theme, QSize(50, 53), QIcon.Disabled)
         self.cutEndIcon = QIcon()
-        self.cutEndIcon.addFile(':/images/%s/toolbar-end.png' % theme, QSize(50, 53), QIcon.Normal)
-        self.cutEndIcon.addFile(':/images/%s/toolbar-end-on.png' % theme, QSize(50, 53), QIcon.Active)
-        self.cutEndIcon.addFile(':/images/%s/toolbar-end-disabled.png' % theme, QSize(50, 53), QIcon.Disabled)
+        self.cutEndIcon.addFile(':/images/%s/toolbar-end.png' % self.theme, QSize(50, 53), QIcon.Normal)
+        self.cutEndIcon.addFile(':/images/%s/toolbar-end-on.png' % self.theme, QSize(50, 53), QIcon.Active)
+        self.cutEndIcon.addFile(':/images/%s/toolbar-end-disabled.png' % self.theme, QSize(50, 53), QIcon.Disabled)
         self.saveIcon = QIcon()
-        self.saveIcon.addFile(':/images/%s/toolbar-save.png' % theme, QSize(50, 53), QIcon.Normal)
-        self.saveIcon.addFile(':/images/%s/toolbar-save-on.png' % theme, QSize(50, 53), QIcon.Active)
-        self.saveIcon.addFile(':/images/%s/toolbar-save-disabled.png' % theme, QSize(50, 53), QIcon.Disabled)
-        self.muteIcon = QIcon(':/images/%s/muted.png' % theme)
-        self.unmuteIcon = QIcon(':/images/%s/unmuted.png' % theme)
+        self.saveIcon.addFile(':/images/%s/toolbar-save.png' % self.theme, QSize(50, 53), QIcon.Normal)
+        self.saveIcon.addFile(':/images/%s/toolbar-save-on.png' % self.theme, QSize(50, 53), QIcon.Active)
+        self.saveIcon.addFile(':/images/%s/toolbar-save-disabled.png' % self.theme, QSize(50, 53), QIcon.Disabled)
+        self.muteIcon = QIcon(':/images/%s/muted.png' % self.theme)
+        self.unmuteIcon = QIcon(':/images/%s/unmuted.png' % self.theme)
         self.upIcon = QIcon(':/images/up.png')
         self.downIcon = QIcon(':/images/down.png')
         self.removeIcon = QIcon(':/images/remove.png')
@@ -315,6 +316,8 @@ class VideoCutter(QWidget):
         self.keyRefIcon = QIcon(':/images/keymap.png')
 
     def initActions(self) -> None:
+        self.zoomAction = QActionGroup(self)
+        self.labelAction = QActionGroup(self)
         self.openAction = QAction(self.openIcon, 'Open\nMedia', self, statusTip='Open a media file',
                                   triggered=self.openMedia)
         self.playAction = QAction(self.playIcon, 'Play\nMedia', self, triggered=self.playMedia,
@@ -351,15 +354,24 @@ class VideoCutter(QWidget):
         self.keyRefAction = QAction(self.keyRefIcon, 'Keyboard shortcuts', self, triggered=self.showKeyRef,
                                     statusTip='View shortcut key bindings')
         self.darkThemeAction = QAction('Use dark theme', self, statusTip='Use a dark theme to match your desktop',
-                                       checkable=True, checked=self.config['darkTheme'], triggered=self.parent.reboot)
-        self.zoomVideoAction = QAction('')
-        self.toggleLabelsAction = QAction('Show toolbar labels', self, statusTip='Show text labels on toolbar',
-                                          checkable=True, checked=self.config['showLabels'])
-        self.labelPositionAction = QAction('Show text beside button', self, statusTip='Show text beside toolbar button',
-                                           checkable=True, checked=self.config['labelPosition'])
-        # self.compactModeAction = QAction('Enable compact mode', self, checkable=True, checked=False,
-        #                                  triggered=self.toolbar.setCompactMode, enabled=False,
-        #                                  statusTip='Enable compact mode for more video output space')
+                                       checkable=True, checked=(self.theme == 'dark'), triggered=self.parent.reboot)
+        self.qtrZoomAction = QAction('1:4 Quarter', self.zoomAction, checkable=True, checked=False,
+                                     statusTip='Zoom to a quarter of the source video size')
+        self.halfZoomAction = QAction('1:2 Half', self.zoomAction, statusTip='Zoom to half of the source video size',
+                                     checkable=True, checked=False)
+        self.origZoomAction = QAction('1:1 Original', self.zoomAction, checkable=True, checked=True,
+                                      statusTip='Set to original source video zoom level')
+        self.dblZoomAction = QAction('2:1 Double', self.zoomAction, checkable=True, checked=False,
+                                     statusTip='Zoom to double the original source video size')
+        self.besideLabelsAction = QAction('Labels next to buttons', self.labelAction, checkable=True,
+                                          statusTip='Show labels on right side of toolbar buttons',
+                                          checked=self.besideLabel)
+        self.underLabelsAction = QAction('Labels under buttons', self.labelAction, checkable=True,
+                                         statusTip='Show labels under toolbar buttons', checked=self.underLabel)
+        self.noLabelsAction = QAction('Do not show', self.labelAction, statusTip='Do not show labels on toolbar',
+                                         checkable=True, checked=self.noLabel)
+        self.zoomAction.setEnabled(False)
+        self.zoomAction.triggered.connect(self.setZoom)
 
     def initToolbar(self) -> None:
         self.toolbar.addAction(self.openAction)
@@ -369,23 +381,34 @@ class VideoCutter(QWidget):
         self.toolbar.addAction(self.cutEndAction)
         self.toolbar.addAction(self.saveAction)
         self.toolbar.disableTooltips()
+        self.toolbar.setLabels(self.labelAction.checkedAction())
+        self.labelAction.triggered.connect(self.toolbar.setLabels)
 
     def initMenus(self) -> None:
-        self.optionsMenu = QMenu('Interface settings...', self.appMenu)
-        self.optionsMenu.addAction(self.darkThemeAction)
-        self.optionsMenu.addSeparator()
-        self.optionsMenu.addAction(self.zoomVideoAction)
-        self.optionsMenu.addSeparator()
-        self.optionsMenu.addAction(self.toggleLabelsAction)
-        self.optionsMenu.addAction(self.labelPositionAction)
-        # self.optionsMenu.addAction(self.compactModeAction)
+        labelsMenu = QMenu('Toolbar labels', self.appMenu)
+        labelsMenu.addAction(self.besideLabelsAction)
+        labelsMenu.addAction(self.underLabelsAction)
+        labelsMenu.addAction(self.noLabelsAction)
+
+        zoomMenu = QMenu('Zoom level', self.appMenu)
+        zoomMenu.addAction(self.qtrZoomAction)
+        zoomMenu.addAction(self.halfZoomAction)
+        zoomMenu.addAction(self.origZoomAction)
+        zoomMenu.addAction(self.dblZoomAction)
+
+        optionsMenu = QMenu('Display options', self.appMenu)
+        optionsMenu.addAction(self.darkThemeAction)
+        optionsMenu.addSeparator()
+        optionsMenu.addMenu(labelsMenu)
+        optionsMenu.addSeparator()
+        optionsMenu.addMenu(zoomMenu)
 
         self.appMenu.addAction(self.openEDLAction)
         self.appMenu.addAction(self.saveEDLAction)
         self.appMenu.addSeparator()
         self.appMenu.addAction(self.mediaInfoAction)
         self.appMenu.addAction(self.keyRefAction)
-        self.appMenu.addMenu(self.optionsMenu)
+        self.appMenu.addMenu(optionsMenu)
         self.appMenu.addSeparator()
         self.appMenu.addAction(self.viewLogsAction)
         self.appMenu.addAction(self.updateCheckAction)
@@ -588,6 +611,7 @@ class VideoCutter(QWidget):
         self.cutStartAction.setEnabled(flag)
         self.cutEndAction.setEnabled(False)
         self.mediaInfoAction.setEnabled(flag)
+        self.zoomAction.setEnabled(flag)
         self.seekSlider.setValue(0)
         self.seekSlider.setRange(0, 0)
         self.seekSlider.clearRegions()
@@ -623,6 +647,29 @@ class VideoCutter(QWidget):
 
     def setVolume(self, volume: int) -> None:
         self.mediaPlayer.volume = volume
+
+    @pyqtSlot(QAction)
+    def setZoom(self, action: QAction) -> None:
+        level, scale = 0, 1
+        if action == self.qtrZoomAction:
+            level = -2
+            scale = 0.25
+        elif action == self.halfZoomAction:
+            level = -1
+            scale = 0.5
+        elif action == self.origZoomAction:
+            level = 0
+            scale = 1
+        elif action == self.dblZoomAction:
+            level = 1
+            scale = 2
+        self.mediaPlayer.video_zoom = level
+        w = self.mediaPlayer.width
+        h = self.mediaPlayer.height
+        if ((w * scale) > self.parent.maximumWidth()) or ((h * scale) > self.parent.maximumHeight()) :
+            self.parent.showMaximized()
+        else:
+            self.parent.setFixedSize(w * scale, h * scale)
 
     def setCutStart(self) -> None:
         if os.getenv('DEBUG', False):
@@ -926,8 +973,7 @@ class VideoCutter(QWidget):
     def viewLogs(self) -> None:
         QDesktopServices.openUrl(QUrl.fromLocalFile(logging.getLoggerClass().root.handlers[0].baseFilename))
 
-    @pyqtSlot()
-    def startNew(self) -> None:
+    def startNew(self, checked: bool = False) -> None:
         qApp.restoreOverrideCursor()
         self.clearList()
         self.mpvFrame.hide()
@@ -996,3 +1042,6 @@ class VideoCutter(QWidget):
             elif event.key() == Qt.Key_Space:
                 self.playMedia()
             event.accept()
+
+    def closeEvent(self, event: QCloseEvent) -> None:
+        self.parentWidget().closeEvent(event)

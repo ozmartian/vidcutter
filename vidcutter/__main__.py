@@ -29,10 +29,9 @@ import re
 import signal
 import sys
 import traceback
-from distutils.util import strtobool
 
-from PyQt5.QtCore import (QCommandLineOption, QCommandLineParser, QDir, QFile, QFileInfo, QSettings, QSize,
-                          QStandardPaths, Qt, QTextStream, pyqtSlot)
+from PyQt5.QtCore import (QCommandLineOption, QCommandLineParser, QDir, QFileInfo, QProcess, QSettings, QSize,
+                          QStandardPaths, Qt, pyqtSlot)
 from PyQt5.QtGui import QCloseEvent, QContextMenuEvent, QDragEnterEvent, QDropEvent, QMouseEvent
 from PyQt5.QtWidgets import qApp, QApplication, QMainWindow, QMessageBox, QSizePolicy
 
@@ -43,7 +42,7 @@ signal.signal(signal.SIGTERM, signal.SIG_DFL)
 
 
 class MainWindow(QMainWindow):
-    EXIT_CODE_REBOOT = -123456789
+    EXIT_CODE_REBOOT = 987
 
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -52,7 +51,7 @@ class MainWindow(QMainWindow):
         self.init_logger()
         self.init_settings()
         self.init_scale()
-        self.init_cutter(self.config)
+        self.init_cutter()
         self.setWindowTitle('%s' % qApp.applicationName())
         self.setContentsMargins(0, 0, 0, 0)
         self.statusBar().showMessage('Ready')
@@ -70,13 +69,13 @@ class MainWindow(QMainWindow):
             qApp.restoreOverrideCursor()
             self.cutter.startNew()
         if not self.cutter.ffmpeg_check():
-            self.close()
-            sys.exit(1)
+            qApp.exit(1)
 
     def init_scale(self) -> None:
         screen_size = qApp.desktop().availableGeometry(-1)
         self.scale = 'LOW' if screen_size.width() <= 1024 else 'NORMAL'
         self.setMinimumSize(self.get_size(self.scale))
+        self.setMaximumSize(screen_size.size())
         if os.getenv('DEBUG', False):
             print('minimum size set to: %s (%s)' % (self.get_size(self.scale), self.scale))
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -129,12 +128,7 @@ class MainWindow(QMainWindow):
             self.restoreGeometry(self.settings.value('geometry'))
         if self.settings.value('windowState') is not None:
             self.restoreState(self.settings.value('windowState'))
-        self.config = dict(
-            darkTheme=strtobool(self.settings.value('darkTheme', 'false')),
-            showLabels=strtobool(self.settings.value('showLabels', 'true')),
-            labelPosition=strtobool(self.settings.value('labelPosition', 'true'))
-        )
-        self.theme = 'dark' if self.config['darkTheme'] else 'light'
+        self.theme = 'dark' if self.settings.value('darkTheme') == 'true' else 'light'
 
     @staticmethod
     def log_uncaught_exceptions(cls, exc, tb) -> None:
@@ -186,8 +180,8 @@ class MainWindow(QMainWindow):
         if len(self.args) > 0:
             self.video = self.args[0]
 
-    def init_cutter(self, config: dict) -> None:
-        self.cutter = VideoCutter(self, config)
+    def init_cutter(self) -> None:
+        self.cutter = VideoCutter(self, self.settings)
         qApp.setWindowIcon(self.cutter.appIcon)
         self.setCentralWidget(self.cutter)
 
@@ -198,19 +192,26 @@ class MainWindow(QMainWindow):
 
     def restart(self) -> None:
         self.cutter.deleteLater()
-        self.init_cutter(self.config)
+        self.init_cutter()
 
-    @pyqtSlot(bool)
-    def reboot(self, checked: bool) -> None:
+    @pyqtSlot()
+    def reboot(self) -> None:
         self.save_settings()
         qApp.exit(MainWindow.EXIT_CODE_REBOOT)
 
     def save_settings(self) -> None:
+        labels = 'beside'
+        if self.cutter.besideLabelsAction.isChecked():
+            labels = 'beside'
+        elif self.cutter.underLabelsAction.isChecked():
+            labels = 'under'
+        elif self.cutter.noLabelsAction.isChecked():
+            labels = 'none'
         self.settings.setValue('darkTheme', self.cutter.darkThemeAction.isChecked())
-        self.settings.setValue('showLabels', self.cutter.toggleLabelsAction.isChecked())
-        self.settings.setValue('labelPosition', self.cutter.labelPositionAction.isChecked())
+        self.settings.setValue('toolbarLabels', labels)
         self.settings.setValue('geometry', self.saveGeometry())
         self.settings.setValue('windowState', self.saveState())
+        self.settings.sync()
 
     @staticmethod
     def get_path(path: str = None, override: bool = False) -> str:
@@ -219,13 +220,6 @@ class MainWindow(QMainWindow):
                 return os.path.join(sys._MEIPASS, path)
             return os.path.join(QFileInfo(__file__).absolutePath(), path)
         return ':%s' % path
-
-    @staticmethod
-    def load_stylesheet(qssfile: str) -> None:
-        if QFileInfo(qssfile).exists():
-            qss = QFile(qssfile)
-            qss.open(QFile.ReadOnly | QFile.Text)
-            QApplication.instance().setStyleSheet(QTextStream(qss).readAll())
 
     @staticmethod
     def get_version(filename: str = '__init__.py') -> str:
@@ -261,25 +255,24 @@ class MainWindow(QMainWindow):
         if hasattr(self, 'cutter'):
             if hasattr(self.cutter, 'mediaPlayer'):
                 self.cutter.mediaPlayer.terminate()
-        super(MainWindow, self).closeEvent(event)
+        qApp.quit()
 
 
-def main() -> int:
-    while True:
-        if hasattr(Qt, 'AA_EnableHighDpiScaling'):
-            QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
-        if hasattr(Qt, 'AA_Use96Dpi'):
-            QApplication.setAttribute(Qt.AA_Use96Dpi, True)
-        app = QApplication(sys.argv)
-        app.setApplicationName('VidCutter')
-        app.setApplicationVersion(MainWindow.get_version())
-        app.setOrganizationDomain('ozmartians.com')
-        app.setQuitOnLastWindowClosed(True)
-        win = MainWindow()
-        exitcode = app.exec_()
-        if exitcode != MainWindow.EXIT_CODE_REBOOT:
-            break
-    return exitcode
+def main():
+    if hasattr(Qt, 'AA_EnableHighDpiScaling'):
+        QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
+    if hasattr(Qt, 'AA_Use96Dpi'):
+        QApplication.setAttribute(Qt.AA_Use96Dpi, True)
+    app = QApplication(sys.argv)
+    app.setApplicationName('VidCutter')
+    app.setApplicationVersion(MainWindow.get_version())
+    app.setOrganizationDomain('ozmartians.com')
+    app.setQuitOnLastWindowClosed(True)
+    win = MainWindow()
+    exit_code = app.exec_()
+    if exit_code == MainWindow.EXIT_CODE_REBOOT:
+        QProcess.startDetached(sys.executable, ['-m', 'vidcutter'])
+    sys.exit(exit_code)
 
 if __name__ == '__main__':
     main()

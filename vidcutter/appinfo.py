@@ -123,34 +123,28 @@ class AboutTab(BaseTab):
 </style>
 <table border="0" cellpadding="8" cellspacing="4">
     <tr>
-        <td>'''
-        # if os.getenv('DEBUG', False):
-        html += '''
-        <p style="font-size:13px;">
-            <b>libmpv:</b> %s
-            %s
-            <b>FFmpeg:</b> %s
-            <br/>
-            <b>Python:</b> %s
-            &nbsp;&nbsp;&nbsp;
-            <b>PyQt5:</b> %s
-            &nbsp;&nbsp;&nbsp;
-            <b>SIP:</b> %s
-        </p>''' % (self.parent.parent.mediaPlayer.mpv_version.replace('mpv ', ''),
-                   linebreak, ffmpeg_version, sys.version.split(' ')[0],
-                   PYQT_VERSION_STR, SIP_VERSION_STR)
-        html += '''
+        <td>
+            <p style="font-size:13px;">
+                <b>libmpv:</b> %s
+                %s
+                <b>FFmpeg:</b> %s
+                <br/>
+                <b>Python:</b> %s
+                &nbsp;&nbsp;&nbsp;
+                <b>PyQt5:</b> %s
+                &nbsp;&nbsp;&nbsp;
+                <b>SIP:</b> %s
+            </p> 
             <p style="font-size:13px;">
                 Copyright &copy; 2017 <a href="mailto:pete@ozmartians.com">Pete Alexandrou</a>
                 <br/>
-                Website: <a href="%s">%s</a>
+                Website: <a href="http://vidcutter.ozmartians.com">http://vidcutter.ozmartians.com</a>
             </p>
             <p style="font-size:13px;">
                 Icon design by <a href="https://github.com/PapirusDevelopmentTeam">Papirus
                 Development Team</a>
             </p>
-            <br/>
-            <p style="font-size:11px;">
+            <p style="font-size:11px; margin-top:15px;">
                 This program is free software; you can redistribute it and/or
                 modify it under the terms of the GNU General Public License
                 version 3, or (at your option) any later version.
@@ -160,7 +154,8 @@ class AboutTab(BaseTab):
             </p>
         </td>
     </tr>
-</table>''' % (qApp.organizationDomain(), qApp.organizationDomain())
+</table>''' % (self.parent.parent.mediaPlayer.mpv_version.replace('mpv ', ''), linebreak,
+               ffmpeg_version, sys.version.split(' ')[0], PYQT_VERSION_STR, SIP_VERSION_STR)
         self.setHtml(html)
 
 

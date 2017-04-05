@@ -22,17 +22,31 @@
 #
 #######################################################################
 
-from PyQt5.QtCore import QObject, Qt
+from PyQt5.QtCore import QFile, QFileInfo, QObject, Qt, QTextStream
 from PyQt5.QtGui import QColor, QPalette
-from PyQt5.QtWidgets import qApp
+from PyQt5.QtWidgets import qApp, QStyleFactory
 
 
 class StyleMaster(QObject):
     _dark, _light = None, None
 
     @staticmethod
+    def loadQSS(theme, devmode: bool = False):
+        if devmode:
+            filename = 'styles/%s.qss' % theme
+        else:
+            filename = ':/styles/%s.qss' % theme
+        if QFileInfo(filename).exists():
+            qssfile = QFile(filename)
+            qssfile.open(QFile.ReadOnly | QFile.Text)
+            content = QTextStream(qssfile).readAll()
+            qApp.setStyleSheet(content)
+            return content
+
+    @staticmethod
     def dark():
         if StyleMaster._dark is None:
+            # qApp.setStyle(QStyleFactory.create('Fusion'))
             palette = QPalette()
             palette.setColor(QPalette.Window, QColor(27, 35, 38))
             palette.setColor(QPalette.WindowText, QColor(234, 234, 234))
@@ -55,6 +69,7 @@ class StyleMaster(QObject):
     @staticmethod
     def light():
         if StyleMaster._light is None:
+            # qApp.setStyle(QStyleFactory.create('Fusion'))
             palette = QPalette()
             palette.setColor(QPalette.Window, QColor(239, 240, 241))
             palette.setColor(QPalette.WindowText, QColor(49, 54, 59))

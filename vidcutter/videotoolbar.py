@@ -25,7 +25,7 @@
 import sys
 
 from PyQt5.QtCore import pyqtSlot, QObject, QEvent, Qt
-from PyQt5.QtWidgets import QStyleFactory, QToolBar, QToolButton, qApp
+from PyQt5.QtWidgets import QAction, qApp, QStyleFactory, QToolBar, QToolButton
 
 
 class VideoToolBar(QToolBar):
@@ -33,10 +33,6 @@ class VideoToolBar(QToolBar):
         super(VideoToolBar, self).__init__(parent, *arg, **kwargs)
         self.parent = parent
         self.setObjectName('appcontrols')
-        self.setLabelPosition(self.parent.config['labelPosition'])
-        self.toggleLabels(self.parent.config['showLabels'])
-        self.parent.labelPositionAction.triggered.connect(self.setLabelPosition)
-        self.parent.toggleLabelsAction.triggered.connect(self.toggleLabels)
         if sys.platform == 'darwin':
             self.setStyle(QStyleFactory.create('Fusion'))
 
@@ -47,26 +43,18 @@ class VideoToolBar(QToolBar):
             if button == buttonlist[len(buttonlist)-1]:
                 button.setObjectName('saveButton')
 
-    @pyqtSlot(bool)
-    def setLabelPosition(self, checked: bool = True):
-        if checked:
-            self.labelPosition = Qt.ToolButtonTextBesideIcon
+    @pyqtSlot(QAction)
+    def setLabels(self, action: QAction):
+        if action == self.parent.besideLabelsAction:
+            self.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
             for button in self.findChildren(QToolButton):
                 button.setText(button.text().replace(' ', '\n'))
-        else:
-            self.labelPosition = Qt.ToolButtonTextUnderIcon
+        elif action == self.parent.underLabelsAction:
+            self.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
             for button in self.findChildren(QToolButton):
                 button.setText(button.text().replace('\n', ' '))
-        self.setToolButtonStyle(self.labelPosition)
-
-    @pyqtSlot(bool)
-    def toggleLabels(self, checked: bool = True):
-        if not checked:
+        elif action == self.parent.noLabelsAction:
             self.setToolButtonStyle(Qt.ToolButtonIconOnly)
-            self.parent.labelPositionAction.setDisabled(True)
-        else:
-            self.setToolButtonStyle(self.labelPosition)
-            self.parent.labelPositionAction.setEnabled(True)
 
     def eventFilter(self, obj: QObject, event: QEvent) -> bool:
         if event.type() == QEvent.ToolTip:
