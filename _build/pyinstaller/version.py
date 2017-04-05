@@ -4,7 +4,7 @@ import sys
 import sysconfig
 from codecs import open
 from os import path
-from re import match
+from re import match, sub
 
 
 with open(path.join(path.abspath(path.dirname(__file__)),
@@ -12,4 +12,4 @@ with open(path.join(path.abspath(path.dirname(__file__)),
     for line in initfile.readlines():
         m = match('__version__ *= *[\'](.*)[\']', line)
         if m:
-            print(m.group(1))
+            print(sub('rc(.*)$', '', m.group(1)))

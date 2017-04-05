@@ -7,23 +7,23 @@
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{76D4D864-E70F-4923-8289-C2504A2A9E67}
 AppName=VidCutter
-AppVersion=3.0.1
+AppVersion=3.2.0
 AppVerName=VidCutter
 AppPublisher=Pete Alexandrou
 AppPublisherURL=http://vidcutter.ozmartians.com
 DefaultDirName={pf}\VidCutter
 DefaultGroupName=VidCutter
-OutputBaseFilename=VidCutter-3.0.1-setup-x86
+OutputBaseFilename=VidCutter-3.2.0-setup-x86
 SetupIconFile=C:\DEV\vidcutter\data\icons\vidcutter.ico
 UninstallDisplayIcon={app}\vidcutter.exe
 Compression=lzma2
 SolidCompression=yes
 ShowLanguageDialog=no
-VersionInfoVersion=3.0.1
+VersionInfoVersion=3.2.0
 VersionInfoCompany=ozmartians.com
 VersionInfoCopyright=(c) 2017 Pete Alexandrou
 VersionInfoProductName=VidCutter x86
-VersionInfoProductVersion=3.0.1
+VersionInfoProductVersion=3.2.0
 WizardImageFile=C:\DEV\vidcutter\_build\InnoSetup\assets\WizModernImage.bmp
 WizardSmallImageFile=C:\DEV\vidcutter\_build\InnoSetup\assets\SmallWizardImage.bmp
 WizardImageStretch=False
