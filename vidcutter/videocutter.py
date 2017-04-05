@@ -35,7 +35,7 @@ from PyQt5.QtCore import (QDir, QFile, QFileInfo, QModelIndex, QPoint, QSettings
 from PyQt5.QtGui import QCloseEvent, QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMovie, QPixmap
 from PyQt5.QtWidgets import (QAbstractItemView, QAction, QActionGroup, qApp, QApplication, QDialogButtonBox,
                              QFileDialog, QGroupBox, QHBoxLayout, QLabel, QListWidgetItem, QMenu, QMessageBox,
-                             QProgressDialog, QPushButton, QSizePolicy, QSlider, QTextBrowser, QVBoxLayout, QWidget)
+                             QProgressDialog, QPushButton, QSizePolicy, QSlider, QStyleFactory, QTextBrowser, QVBoxLayout, QWidget)
 
 import vidcutter.mpv as mpv
 import vidcutter.resources
@@ -422,6 +422,13 @@ class VideoCutter(QWidget):
         self.cliplistMenu.addSeparator()
         self.cliplistMenu.addAction(self.removeItemAction)
         self.cliplistMenu.addAction(self.removeAllAction)
+
+        if sys.platform == 'win32':
+            labelsMenu.setStyle(QStyleFactory.create('Fusion'))
+            zoomMenu.setStyle(QStyleFactory.create('Fusion'))
+            optionsMenu.setStyle(QStyleFactory.create('Fusion'))
+            self.appMenu.setStyle(QStyleFactory.create('Fusion'))
+            self.cliplistMenu.setStyle(QStyleFactory.create('Fusion'))
 
     def setRunningTime(self, runtime: str) -> None:
         self.runtimeLabel.setText('<div align="right">%s</div>' % runtime)

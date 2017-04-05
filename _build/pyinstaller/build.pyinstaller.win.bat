@@ -29,6 +29,7 @@ REM ......................cleanup previous build scraps......................
 
 rd /s /q build
 rd /s /q dist
+if not exist "..\..\bin\" mkdir ..\..\bin\
 del /q ..\..\bin\*.*
 
 REM ......................download latest FFmpeg static binary......................

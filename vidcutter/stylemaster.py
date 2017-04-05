@@ -50,8 +50,8 @@ class StyleMaster(QObject):
     @staticmethod
     def dark():
         if StyleMaster._dark is None:
-            if sys.platform == 'win32':
-                qApp.setStyle(QStyleFactory.create('Fusion'))
+            # if sys.platform == 'win32':
+            #     qApp.setStyle(QStyleFactory.create('Fusion'))
             palette = QPalette()
             palette.setColor(QPalette.Window, QColor(27, 35, 38))
             palette.setColor(QPalette.WindowText, QColor(234, 234, 234))
@@ -74,8 +74,8 @@ class StyleMaster(QObject):
     @staticmethod
     def light():
         if StyleMaster._light is None:
-            if sys.platform == 'win32':
-                qApp.setStyle(QStyleFactory.create('Fusion'))
+            # if sys.platform == 'win32':
+            #     qApp.setStyle(QStyleFactory.create('Fusion'))
             palette = QPalette()
             palette.setColor(QPalette.Window, QColor(239, 240, 241))
             palette.setColor(QPalette.WindowText, QColor(49, 54, 59))
