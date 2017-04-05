@@ -877,7 +877,10 @@ class VideoCutter(QWidget):
         buttons.accepted.connect(shortcuts.hide)
         layout = QVBoxLayout(spacing=0)
         label = QLabel(pixmap=QPixmap(':/images/shortcuts.png'))
-        label.setStyleSheet('background-color:rgba(255, 255, 255, 0.65); margin-bottom:10px;')
+        styles = 'margin-bottom:10px;'
+        if self.theme == 'dark':
+            styles += ' background-color:rgba(255, 255, 255, 0.65);'
+        label.setStyleSheet(styles)
         layout.addWidget(label)
         layout.addWidget(buttons)
         shortcuts.setLayout(layout)

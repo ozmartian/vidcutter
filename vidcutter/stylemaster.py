@@ -22,6 +22,8 @@
 #
 #######################################################################
 
+import sys
+
 from PyQt5.QtCore import QFile, QFileInfo, QObject, Qt, QTextStream
 from PyQt5.QtGui import QColor, QPalette
 from PyQt5.QtWidgets import qApp, QStyleFactory
@@ -46,7 +48,8 @@ class StyleMaster(QObject):
     @staticmethod
     def dark():
         if StyleMaster._dark is None:
-            # qApp.setStyle(QStyleFactory.create('Fusion'))
+            if sys.platform == 'win32':
+                qApp.setStyle(QStyleFactory.create('Fusion'))
             palette = QPalette()
             palette.setColor(QPalette.Window, QColor(27, 35, 38))
             palette.setColor(QPalette.WindowText, QColor(234, 234, 234))
@@ -69,7 +72,8 @@ class StyleMaster(QObject):
     @staticmethod
     def light():
         if StyleMaster._light is None:
-            # qApp.setStyle(QStyleFactory.create('Fusion'))
+            if sys.platform == 'win32':
+                qApp.setStyle(QStyleFactory.create('Fusion'))
             palette = QPalette()
             palette.setColor(QPalette.Window, QColor(239, 240, 241))
             palette.setColor(QPalette.WindowText, QColor(49, 54, 59))

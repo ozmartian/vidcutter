@@ -86,7 +86,7 @@ class AppInfo(QDialog):
     def get_size(self, mode: str = 'NORMAL') -> QSize:
         modes = {
             'LOW': QSize(450, 250),
-            'NORMAL': QSize(540, 430),
+            'NORMAL': QSize(540, 440),
             'HIGH': QSize(1080, 840)
         }
         return modes[mode]
