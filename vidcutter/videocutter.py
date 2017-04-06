@@ -245,7 +245,8 @@ class VideoCutter(QWidget):
                                    hr_seek_framedrop=True,
                                    rebase_start_time=False,
                                    keepaspect=True,
-                                   hwdec='cuda')
+                                   keepaspect_window=True,
+                                   hwdec='auto')
         if sys.platform != 'darwin':
             self.mediaPlayer.force_window = 'immediate'
         self.mediaPlayer.observe_property('time-pos', lambda ptime: self.positionChanged(ptime * 1000))
@@ -368,6 +369,8 @@ class VideoCutter(QWidget):
                                          statusTip='Show labels under toolbar buttons', checked=False)
         self.noLabelsAction = QAction('No labels', self.labelAction, statusTip='Do not show labels on toolbar',
                                          checkable=True, checked=False)
+        self.keepRatioAction = QAction('Keep aspect ratio', self, statusTip='Do not show labels on toolbar',
+                                         checkable=True, checked=True)
         if self.theme == 'dark':
             self.darkThemeAction.setChecked(True)
         else:
@@ -662,26 +665,15 @@ class VideoCutter(QWidget):
 
     @pyqtSlot(QAction)
     def setZoom(self, action: QAction) -> None:
-        level, scale = 0, 1
         if action == self.qtrZoomAction:
             level = -2
-            scale = 0.25
         elif action == self.halfZoomAction:
             level = -1
-            scale = 0.5
-        elif action == self.origZoomAction:
-            level = 0
-            scale = 1
         elif action == self.dblZoomAction:
             level = 1
-            scale = 2
-        self.mediaPlayer.video_zoom = level
-        w = self.mediaPlayer.width
-        h = self.mediaPlayer.height
-        if ((w * scale) > self.parent.maximumWidth()) or ((h * scale) > self.parent.maximumHeight()) :
-            self.parent.showMaximized()
         else:
-            self.parent.setFixedSize(w * scale, h * scale)
+            level = 0
+        self.mediaPlayer.video_zoom = level
 
     def setCutStart(self) -> None:
         if os.getenv('DEBUG', False):
