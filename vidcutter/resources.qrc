@@ -22,7 +22,6 @@
         <file>images/remove-all.png</file>
         <file>images/runtime.png</file>
         <file>images/save.png</file>
-        <file>images/shortcuts.png</file>
         <file>images/slider-cursor.png</file>
         <file>images/spinbox-down.png</file>
         <file>images/spinbox-down-disabled.png</file>
@@ -40,6 +39,7 @@
         <file>images/dark/menu.png</file>
         <file>images/dark/menu-active.png</file>
         <file>images/dark/muted.png</file>
+        <file>images/dark/shortcuts.png</file>
         <file>images/dark/toolbar-end.png</file>
         <file>images/dark/toolbar-end-disabled.png</file>
         <file>images/dark/toolbar-end-on.png</file>
@@ -63,6 +63,7 @@
         <file>images/light/menu.png</file>
         <file>images/light/menu-active.png</file>
         <file>images/light/muted.png</file>
+        <file>images/light/shortcuts.png</file>
         <file>images/light/toolbar-end.png</file>    
         <file>images/light/toolbar-end-disabled.png</file>
         <file>images/light/toolbar-end-on.png</file>

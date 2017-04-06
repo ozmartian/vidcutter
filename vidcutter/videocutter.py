@@ -887,11 +887,8 @@ class VideoCutter(QWidget):
         buttons = QDialogButtonBox(QDialogButtonBox.Ok, parent=shortcuts)
         buttons.accepted.connect(shortcuts.hide)
         layout = QVBoxLayout(spacing=0)
-        label = QLabel(pixmap=QPixmap(':/images/shortcuts.png'))
-        styles = 'margin-bottom:10px;'
-        if self.theme == 'dark':
-            styles += ' background-color:rgba(255, 255, 255, 0.65);'
-        label.setStyleSheet(styles)
+        label = QLabel(pixmap=QPixmap(':/images/%s/shortcuts.png' % self.theme))
+        label.setStyleSheet('margin-bottom:10px;')
         layout.addWidget(label)
         layout.addWidget(buttons)
         shortcuts.setLayout(layout)
