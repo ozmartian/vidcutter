@@ -245,7 +245,7 @@ class VideoCutter(QWidget):
                                    hr_seek_framedrop=True,
                                    rebase_start_time=False,
                                    keepaspect=True,
-                                   hwdec='auto')
+                                   hwdec='cuda')
         if sys.platform != 'darwin':
             self.mediaPlayer.force_window = 'immediate'
         self.mediaPlayer.observe_property('time-pos', lambda ptime: self.positionChanged(ptime * 1000))
@@ -350,9 +350,9 @@ class VideoCutter(QWidget):
         self.keyRefAction = QAction(self.keyRefIcon, 'Keyboard shortcuts', self, triggered=self.showKeyRef,
                                     statusTip='View shortcut key bindings')
         self.lightThemeAction = QAction('Light', self.themeAction, statusTip='Use a light colored theme to match your desktop',
-                                       checkable=True, checked=(self.theme == 'light'))
+                                       checkable=True, checked=True)
         self.darkThemeAction = QAction('Dark', self.themeAction, statusTip='Use a dark colored theme to match your desktop',
-                                       checkable=True, checked=(self.theme == 'dark'))
+                                       checkable=True, checked=False)
         self.qtrZoomAction = QAction('1:4 Quarter', self.zoomAction, checkable=True, checked=False,
                                      statusTip='Zoom to a quarter of the source video size')
         self.halfZoomAction = QAction('1:2 Half', self.zoomAction, statusTip='Zoom to half of the source video size',
@@ -368,6 +368,10 @@ class VideoCutter(QWidget):
                                          statusTip='Show labels under toolbar buttons', checked=False)
         self.noLabelsAction = QAction('No labels', self.labelAction, statusTip='Do not show labels on toolbar',
                                          checkable=True, checked=False)
+        if self.theme == 'dark':
+            self.darkThemeAction.setChecked(True)
+        else:
+            self.lightThemeAction.setChecked(True)
         self.themeAction.triggered.connect(self.switchTheme)
         self.zoomAction.setEnabled(False)
         self.zoomAction.triggered.connect(self.setZoom)
