@@ -272,7 +272,7 @@ def main():
     exit_code = app.exec_()
     if exit_code == MainWindow.EXIT_CODE_REBOOT:
         if sys.platform == 'win32':
-            QProcess.startDetached(sys.executable)
+            QProcess.startDetached('"%s"' % qApp.applicationFilePath())
         else:
             args = sys.argv
             args.remove(args[0])
