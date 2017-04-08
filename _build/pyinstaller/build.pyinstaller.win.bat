@@ -27,27 +27,27 @@ for /f "delims=" %%a in ('python version.py') do @set VERSION=%%a
 
 REM ......................cleanup previous build scraps......................
 
-rem rd /s /q build
-rem rd /s /q dist
-rem if not exist "..\..\bin\" mkdir ..\..\bin\
-rem del /q ..\..\bin\*.*
+rd /s /q build
+rd /s /q dist
+if not exist "..\..\bin\" mkdir ..\..\bin\
+del /q ..\..\bin\*.*
 
 REM ......................download latest FFmpeg static binary......................
 
-rem if not exist ".\temp\" mkdir temp
-rem del /q temp\*.*
-rem aria2c -d temp -x 6 %FFMPEG%
-rem aria2c -d temp -x 6 %MEDIAINFO_URL%
+if not exist ".\temp\" mkdir temp
+del /q temp\*.*
+aria2c -d temp -x 6 %FFMPEG%
+aria2c -d temp -x 6 %MEDIAINFO_URL%
 
 REM ......................extract ffmpeg.exe to its expected location......................
 
-rem cd temp
-rem 7z e ffmpeg-latest-win%ARCH%-static.7z ffmpeg-latest-win%ARCH%-static/bin/ffmpeg.exe
-rem unzip %MEDIAINFO% MediaInfo.exe
-rem if not exist "..\..\..\bin\" mkdir "..\..\..\bin\"
-rem move ffmpeg.exe ..\..\..\bin\
-rem move MediaInfo.exe ..\..\..\bin\
-rem cd ..
+cd temp
+7z e ffmpeg-latest-win%ARCH%-static.7z ffmpeg-latest-win%ARCH%-static/bin/ffmpeg.exe
+unzip %MEDIAINFO% MediaInfo.exe
+if not exist "..\..\..\bin\" mkdir "..\..\..\bin\"
+move ffmpeg.exe ..\..\..\bin\
+move MediaInfo.exe ..\..\..\bin\
+cd ..
 
 REM ......................run pyinstaller......................
 
