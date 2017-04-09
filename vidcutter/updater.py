@@ -28,10 +28,10 @@ import sys
 from pkg_resources import parse_version
 
 from PyQt5.QtCore import QJsonDocument, QUrl, Qt
-from PyQt5.QtGui import QDesktopServices, QMovie
+from PyQt5.QtGui import QDesktopServices
 from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkReply, QNetworkRequest
-from PyQt5.QtWidgets import (qApp, QDialog, QDialogButtonBox, QLabel, QHBoxLayout, QProgressDialog, QSizePolicy,
-                             QStyleFactory, QVBoxLayout, QWidget)
+from PyQt5.QtWidgets import (qApp, QDialog, QDialogButtonBox, QLabel, QProgressDialog, QStyleFactory, QVBoxLayout,
+                             QWidget)
 
 
 class Updater(QWidget):
@@ -79,7 +79,7 @@ class UpdaterMsgBox(QDialog):
         self.parent = parent
         self.setWindowTitle(title)
         self.setObjectName('updaterdialog')
-        self.loading = QProgressDialog('Connecting to server...', None, 0, 0, self, Qt.WindowCloseButtonHint)
+        self.loading = QProgressDialog('contacting server', None, 0, 0, self, Qt.WindowCloseButtonHint)
         self.loading.setStyle(QStyleFactory.create('Fusion'))
         self.loading.setWindowTitle(title)
         self.loading.setMinimumWidth(485)
