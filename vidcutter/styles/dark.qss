@@ -31,13 +31,20 @@ QWidget#novideoWidget {
     background: #000 url(:/images/startup-backdrop.png) no-repeat center center;
 }
 
+QProgressDialog {
+    background-color: #1B2326;
+    color: #FFF;
+}
+
+/* -------------------------------------------------------------------------- */
+
 QDialog#aboutwidget {
     border-image: url(':/images/dialog-backdrop-02.png') 0 0 0 0 stretch stretch;
     background-color: #1B2326;
 }
 
-QDialog#updatermsgbox {
-    border-image: url(:/images/dialog-backdrop.png) 0 0 0 0 stretch stretch;
+QDialog#updaterdialog {
+    border-image: url(':/images/dialog-backdrop.png') 0 0 0 0 stretch stretch;
     background-color: #1B2326;
 }
 
@@ -98,7 +105,7 @@ QLabel#listHeader {
     padding: 8px 5px 5px;
     border: 1px solid #4D5355;
     background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-        stop: 0 #111, stop: 0.5 #1B2326, stop: 0.6 #1B2326, stop: 1 #111);
+        stop: 0 #333, stop: 0.5 #1B2326, stop: 0.6 #1B2326, stop: 1 #333);
 }
 
 QLabel#runtimeLabel {

@@ -31,13 +31,15 @@ QWidget#novideoWidget {
     background: #000 url(:/images/startup-backdrop.png) no-repeat center center;
 }
 
+/* -------------------------------------------------------------------------- */
+
 QDialog#aboutwidget {
     border-image: url(':/images/dialog-backdrop-02.png') 0 0 0 0 stretch stretch;
     background-color: #EFF0F1;
 }
 
-QDialog#updatermsgbox {
-    border-image: url(:/images/dialog-backdrop.png) 0 0 0 0 stretch stretch;
+QDialog#updaterdialog {
+    border-image: url(':/images/dialog-backdrop.png') 0 0 0 0 stretch stretch;
     background-color: #EFF0F1;
 }
 

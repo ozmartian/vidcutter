@@ -28,7 +28,7 @@ import sys
 from PyQt5.Qt import PYQT_VERSION_STR
 from PyQt5.QtCore import QSize, Qt, QUrl
 from PyQt5.QtGui import QCloseEvent
-from PyQt5.QtWidgets import (QDialog, QDialogButtonBox, QLabel, QTabWidget, QTextBrowser, QVBoxLayout, qApp)
+from PyQt5.QtWidgets import qApp, QDialog, QDialogButtonBox, QLabel, QTabWidget, QTextBrowser, QVBoxLayout
 from sip import SIP_VERSION_STR
 
 

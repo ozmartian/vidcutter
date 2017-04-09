@@ -64,7 +64,8 @@ class VideoItem(QAbstractItemDelegate):
             painter.setBrush(QColor('#E3D4E8'))
             pencolor = Qt.black
         else:
-            painter.setBrush(Qt.transparent if index.row() % 2 == 0 else QColor('#EFF0F1'))
+            brushcolor = QColor(79, 85, 87, 175) if self.theme == 'dark' else QColor('#EFF0F1')
+            painter.setBrush(Qt.transparent if index.row() % 2 == 0 else brushcolor)
             pencolor = Qt.white if self.theme == 'dark' else Qt.black
         painter.setPen(Qt.NoPen)
         painter.drawRect(r)

@@ -23,11 +23,10 @@
 #######################################################################
 
 import os
-import sys
 
 from PyQt5.QtCore import QFile, QFileInfo, QObject, Qt, QTextStream
 from PyQt5.QtGui import QColor, QPalette
-from PyQt5.QtWidgets import qApp, QStyleFactory
+from PyQt5.QtWidgets import qApp
 
 
 class StyleMaster(QObject):
@@ -36,8 +35,7 @@ class StyleMaster(QObject):
     @staticmethod
     def loadQSS(theme, devmode: bool = False):
         if devmode:
-            filename = os.path.join(QFileInfo(__file__).absolutePath(),
-                                       'vidcutter/styles/%s.qss' % theme)
+            filename = os.path.join(QFileInfo(__file__).absolutePath(), 'vidcutter/styles/%s.qss' % theme)
         else:
             filename = ':/styles/%s.qss' % theme
         if QFileInfo(filename).exists():

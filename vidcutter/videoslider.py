@@ -28,13 +28,44 @@ import sys
 from PyQt5.QtCore import QEvent, QObject, Qt, pyqtSlot
 from PyQt5.QtGui import (QColor, QCursor, QKeyEvent, QMouseEvent, QPaintEvent, QPainterPath, QPen, QPixmap,
                          QWheelEvent)
-from PyQt5.QtWidgets import QSlider, QStyle, QStyleOptionSlider, QStylePainter, qApp
+from PyQt5.QtWidgets import qApp, QSlider, QStyle, QStyleOptionSlider, QStylePainter
 
 
 class VideoSlider(QSlider):
     def __init__(self, *arg, **kwargs):
         super(VideoSlider, self).__init__(*arg, **kwargs)
         self.theme = self.parentWidget().theme
+        self._styles = '''QSlider:horizontal { margin: 25px 0 18px; }
+        QSlider::groove:horizontal {
+            border: none;
+            height: 32px;
+            background: #333 url(:images/filmstrip.png) repeat-x;
+            position: absolute;
+            left: 4px;
+            right: 4px;
+            margin: 0;
+        }
+        QSlider::sub-page:horizontal {
+            border: none;
+            background: %s;
+            height: 20px;
+            position: absolute;
+            left: 0;
+            right: 0;
+            margin: 0;
+            margin-left: %s;
+        }
+        QSlider::add-page:horizontal{
+            border: none;
+            background: transparent;
+        }
+        QSlider::handle:horizontal {
+            border: none;
+            background: url(:images/handle.png) no-repeat top center;
+            width: 20px;
+            height: 58px;
+            margin: -15px -8px;
+        }'''
         self._regions = list()
         self._regionHeight = 12
         self._regionSelected = -1
@@ -58,10 +89,8 @@ class VideoSlider(QSlider):
         self.installEventFilter(self)
 
     def initStyle(self, selected: bool = False, margin: str = '0') -> None:
-        bground = 'transparent'
-        if selected:
-            bground = 'rgba(200, 213, 236, 0.85)'
-        self.setStyleSheet(self.getStyleSheet(bground, margin))
+        bground = 'rgba(200, 213, 236, 0.85)' if selected else 'transparent'
+        self.setStyleSheet(self._styles % (bground, margin))
 
     def setRestrictValue(self, value: int, force: bool = False) -> None:
         self.restrictValue = value
@@ -166,36 +195,3 @@ class VideoSlider(QSlider):
                 self.setValue(QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.x(), self.width()))
                 self.parentWidget().setPosition(self.sliderPosition())
         return super(VideoSlider, self).eventFilter(obj, event)
-
-    def getStyleSheet(self, bground: str, margin: str) -> str:
-        return '''QSlider:horizontal { margin: 25px 0 18px; }
-QSlider::groove:horizontal {
-    border: none;
-    height: 32px;
-    background: #333 url(:images/filmstrip.png) repeat-x;
-    position: absolute;
-    left: 4px;
-    right: 4px;
-    margin: 0;
-}
-QSlider::sub-page:horizontal {
-    border: none;
-    background: %s;
-    height: 20px;
-    position: absolute;
-    left: 0;
-    right: 0;
-    margin: 0;
-    margin-left: %s;
-}
-QSlider::add-page:horizontal{
-    border: none;
-    background: transparent;
-}
-QSlider::handle:horizontal {
-    border: none;
-    background: url(:images/handle.png) no-repeat top center;
-    width: 20px;
-    height: 58px;
-    margin: -15px -8px;
-}''' % (bground, margin)

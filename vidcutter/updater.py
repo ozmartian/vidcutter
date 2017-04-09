@@ -27,18 +27,18 @@ import os
 import sys
 from pkg_resources import parse_version
 
-from PyQt5.QtCore import QJsonDocument, QObject, QUrl, Qt
-from PyQt5.QtGui import QCloseEvent, QDesktopServices, QPixmap
+from PyQt5.QtCore import QJsonDocument, QUrl, Qt
+from PyQt5.QtGui import QDesktopServices, QMovie
 from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkReply, QNetworkRequest
-from PyQt5.QtWidgets import qApp, QDialog, QDialogButtonBox, QLabel, QHBoxLayout, QSizePolicy, QVBoxLayout, QWidget
+from PyQt5.QtWidgets import (qApp, QDialog, QDialogButtonBox, QLabel, QHBoxLayout, QProgressDialog, QSizePolicy,
+                             QStyleFactory, QVBoxLayout, QWidget)
 
 
 class Updater(QWidget):
-    def __init__(self, parent=None):
-        super(Updater, self).__init__(parent)
+    def __init__(self, parent=None, f=Qt.WindowCloseButtonHint):
+        super(Updater, self).__init__(parent, f)
         self.parent = parent
         self.logger = logging.getLogger(__name__)
-        self.update_available = False
         self.api_github_latest = QUrl('https://api.github.com/repos/ozmartian/vidcutter/releases/latest')
         self.manager = QNetworkAccessManager(self)
         self.manager.finished.connect(self.done)
@@ -48,41 +48,20 @@ class Updater(QWidget):
             self.manager.get(QNetworkRequest(url))
 
     def done(self, reply: QNetworkReply) -> None:
-        if os.getenv('DEBUG', False):
-            self.log_request(reply)
         if reply.error() != QNetworkReply.NoError:
             self.logger.error(reply.errorString())
             return
+        if os.getenv('DEBUG', False):
+            self.log_request(reply)
         jsondoc = QJsonDocument.fromJson(reply.readAll())
         reply.deleteLater()
         jsonobj = jsondoc.object()
-        latest = parse_version(jsonobj['tag_name'].toString())
+        latest = parse_version(jsonobj.get('tag_name').toString())
         current = parse_version(qApp.applicationVersion())
-        response = '''
-<style>
-    h1 { color: #642C68; font-family: 'Futura LT', sans-serif; font-weight: 400; }
-    p { color: #444; font-size: 15px; }
-    b { color: #642C68; }
-</style>
-<div align="center">'''
-        if latest > current:
-            response += '<h1>A new version is available!</h1>'
-            self.update_available = True
-        else:
-            response += '<h1>You are already running the latest version</h1>'
-            self.update_available = False
-        response += '''
-    <p>
-        <b>latest version:</b> %s
-        <br/>
-        <b>installed version:</b> %s
-    </p>
-</div>''' % (str(latest), str(current))
-        mbox = UpdaterMsgBox(parent=self)
-        mbox.setText(response)
-        mbox.show()
+        self.mbox.show_result(latest, current)
 
     def check(self) -> None:
+        self.mbox = UpdaterMsgBox(self)
         self.get(self.api_github_latest)
 
     def log_request(self, reply: QNetworkReply) -> None:
@@ -95,57 +74,89 @@ class Updater(QWidget):
 
 
 class UpdaterMsgBox(QDialog):
-    def __init__(self, parent=None, f=Qt.WindowCloseButtonHint, title='Checking updates...'):
+    def __init__(self, parent=None, title='Checking updates...', f=Qt.WindowCloseButtonHint):
         super(UpdaterMsgBox, self).__init__(parent, f)
         self.parent = parent
-        self.setObjectName('updatermsgbox')
-        self.releases_url = QUrl('https://github.com/ozmartian/vidcutter/releases/latest')
-        self.setWindowModality(Qt.WindowModal)
-        self.contentLabel = QLabel(textFormat=Qt.RichText, wordWrap=True)
-
-        layout = QVBoxLayout()
-        layout.addWidget(self.contentLabel)
-        if self.parent.update_available and sys.platform.startswith('linux'):
-            disclaimer = QLabel('''<p>Linux users should always install via their distribution's package manager.
-                Packages in formats such as TAR.XZ (Arch Linux), DEB (Ubuntu/Debian) and RPM (Fedora, openSUSE) are
-                always produced with every official version released. These can be installed via distribution specific
-                channels such as the Arch Linux AUR, Ubuntu LaunchPad PPA, Fedora copr, openSUSE OBS and third party
-                repositories.</p>
-                <p>Alternatively, you should try the AppImage version available to download for those unable to
-                get newer updated versions to work. An AppImage is always produced for every update released.</p>''')
-            disclaimer.setStyleSheet('font-size:11px; border:1px solid #999; padding:2px 10px;' +
-                                     'background:rgba(255, 255, 255, 0.8); color:#444; margin:10px 5px;')
-            disclaimer.setWordWrap(True)
-            layout.addWidget(disclaimer)
-            layout.addWidget(QLabel('<div style="text-align:center; color:#444;">Would you like to visit the ' +
-                                    '<b>VidCutter releases page</b> for more details now?</div>'))
-
-        if self.parent.update_available:
-            buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
-            buttons.accepted.connect(self.releases_page)
-            buttons.rejected.connect(self.close)
-        else:
-            buttons = QDialogButtonBox(QDialogButtonBox.Ok)
-            buttons.accepted.connect(self.close)
-
-        buttonLayout = QHBoxLayout()
-        buttonLayout.addStretch(1)
-        buttonLayout.addWidget(buttons)
-        buttonLayout.addStretch(1)
-
-        layout.addLayout(buttonLayout)
-        self.setLayout(layout)
-
-        self.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Preferred)
         self.setWindowTitle(title)
-        self.setMinimumWidth(602)
+        self.setObjectName('updaterdialog')
+        self.loading = QProgressDialog('Connecting to server...', None, 0, 0, self, Qt.WindowCloseButtonHint)
+        self.loading.setStyle(QStyleFactory.create('Fusion'))
+        self.loading.setWindowTitle(title)
+        self.loading.setMinimumWidth(485)
+        self.loading.setWindowModality(Qt.ApplicationModal)
+        self.loading.show()
 
     def releases_page(self):
         QDesktopServices.openUrl(self.releases_url)
 
-    def setText(self, content: str) -> None:
-        self.contentLabel.setText(content)
+    def show_result(self, latest: str, current: str):
+        self.releases_url = QUrl('https://github.com/ozmartian/vidcutter/releases/latest')
+        update_available = True if latest > current else False
 
-    def closeEvent(self, event: QCloseEvent) -> None:
-        self.deleteLater()
-        event.accept()
+        pencolor1 = '#C681D5' if self.parent.parent.theme == 'dark' else '#642C68'
+        pencolor2 = '#FFF' if self.parent.parent.theme == 'dark' else '#222'
+        content = '''<style>
+                        h1 {
+                            text-align: center;
+                            color: %s;
+                            font-family: 'Futura LT', sans-serif;
+                            font-weight: 400;
+                        }
+                        div {
+                            border: 1px solid #999;
+                            color: %s;
+                        }
+                        p {
+                            color: %s;
+                            font-size: 15px;
+                        }
+                        b { color: %s; }
+                    </style>''' % (pencolor1, pencolor2, pencolor2, pencolor1)
+
+        if update_available:
+            content += '<h1>A new version is available!</h1>'
+        else:
+            content += '<h1>You are already running the latest version</h1>'
+
+        content += '''
+            <p align="center">
+                <b>latest version:</b> %s
+                <br/>
+                <b>installed version:</b> %s
+            </p>''' % (str(latest), str(current))
+
+        if update_available and sys.platform.startswith('linux'):
+            content += '''<div style="font-size: 12px; padding: 2px 10px; margin:10px 5px;">
+                Linux users should always install via their distribution's package manager.
+                Packages in formats such as TAR.XZ (Arch Linux), DEB (Ubuntu/Debian) and RPM (Fedora, openSUSE) are
+                always produced with every official version released. These can be installed via distribution specific
+                channels such as the Arch Linux AUR, Ubuntu LaunchPad PPA, Fedora copr, openSUSE OBS and third party
+                repositories.
+                <br/><br/>
+                Alternatively, you should try the AppImage version available to download for those unable to
+                get newer updated versions to work. An AppImage should always be available with  produced for every
+                update released.
+            </div>
+            <p align="center">
+                Would you like to visit the <b>VidCutter releases page</b> for more details now?
+            </p>'''
+
+        if update_available:
+            buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+            buttons.accepted.connect(self.releases_page)
+            buttons.rejected.connect(lambda: self.close())
+        else:
+            buttons = QDialogButtonBox(QDialogButtonBox.Ok)
+            buttons.accepted.connect(lambda: self.close())
+
+        contentLabel = QLabel(content, self.parent, wordWrap=True, textFormat=Qt.RichText)
+
+        layout = QVBoxLayout()
+        layout.addWidget(contentLabel)
+        layout.addWidget(buttons)
+
+        self.loading.cancel()
+
+        self.setLayout(layout)
+        self.setMinimumWidth(602)
+        self.show()

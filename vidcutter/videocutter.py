@@ -30,12 +30,13 @@ import time
 from datetime import timedelta
 from locale import setlocale, LC_NUMERIC
 
-from PyQt5.QtCore import (QDir, QFile, QFileInfo, QModelIndex, QPoint, QSettings, QSize, Qt, QTextStream, QTime,
+from PyQt5.QtCore import (QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTextStream, QTime,
                           QUrl, pyqtSlot)
 from PyQt5.QtGui import QCloseEvent, QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMovie, QPixmap
 from PyQt5.QtWidgets import (QAbstractItemView, QAction, QActionGroup, qApp, QApplication, QDialogButtonBox,
                              QFileDialog, QGroupBox, QHBoxLayout, QLabel, QListWidgetItem, QMenu, QMessageBox,
-                             QProgressDialog, QPushButton, QSizePolicy, QSlider, QStyleFactory, QTextBrowser, QVBoxLayout, QWidget)
+                             QProgressDialog, QPushButton, QSizePolicy, QSlider, QStyleFactory, QTextBrowser,
+                             QVBoxLayout, QWidget)
 
 import vidcutter.mpv as mpv
 import vidcutter.resources
@@ -58,6 +59,7 @@ class VideoCutter(QWidget):
         self.theme = self.parent.theme
         self.settings = self.parent.settings
 
+        self.mediaPlayer = None
         self.videoService = VideoService(self)
         self.updater = Updater(self)
         self.latest_release_url = 'https://github.com/ozmartian/vidcutter/releases/latest'
@@ -226,6 +228,9 @@ class VideoCutter(QWidget):
     def initMPV(self) -> None:
         setlocale(LC_NUMERIC, 'C')
         self.mpvFrame = VideoFrame(self)
+        if self.mediaPlayer is not None:
+            self.mediaPlayer.terminate()
+            del self.mediaPlayer
         self.mediaPlayer = mpv.MPV(wid=int(self.mpvFrame.winId()),
                                    log_handler=self.logMPV,
                                    ytdl=False,
@@ -244,9 +249,10 @@ class VideoCutter(QWidget):
                                    hr_seek='absolute',
                                    hr_seek_framedrop=True,
                                    rebase_start_time=False,
-                                   keepaspect=True,
-                                   keepaspect_window=True,
-                                   hwdec='auto')
+                                   keepaspect=self.keepRatioAction.isChecked(),
+                                   hwdec='auto',
+                                   x11_netwm=True,
+                                   x11_bypass_compositor='fs-only')
         if sys.platform != 'darwin':
             self.mediaPlayer.force_window = 'immediate'
         self.mediaPlayer.observe_property('time-pos', lambda ptime: self.positionChanged(ptime * 1000))
@@ -350,10 +356,10 @@ class VideoCutter(QWidget):
                                    statusTip='About %s' % qApp.applicationName())
         self.keyRefAction = QAction(self.keyRefIcon, 'Keyboard shortcuts', self, triggered=self.showKeyRef,
                                     statusTip='View shortcut key bindings')
-        self.lightThemeAction = QAction('Light', self.themeAction, statusTip='Use a light colored theme to match your desktop',
-                                       checkable=True, checked=True)
-        self.darkThemeAction = QAction('Dark', self.themeAction, statusTip='Use a dark colored theme to match your desktop',
-                                       checkable=True, checked=False)
+        self.lightThemeAction = QAction('Light', self.themeAction, checkable=True, checked=True,
+                                        statusTip='Use a light colored theme to match your desktop')
+        self.darkThemeAction = QAction('Dark', self.themeAction, checkable=True, checked=False,
+                                       statusTip='Use a dark colored theme to match your desktop')
         self.qtrZoomAction = QAction('1:4 Quarter', self.zoomAction, checkable=True, checked=False,
                                      statusTip='Zoom to a quarter of the source video size')
         self.halfZoomAction = QAction('1:2 Half', self.zoomAction, statusTip='Zoom to half of the source video size',
@@ -363,20 +369,21 @@ class VideoCutter(QWidget):
         self.dblZoomAction = QAction('2:1 Double', self.zoomAction, checkable=True, checked=False,
                                      statusTip='Zoom to double the original source video size')
         self.besideLabelsAction = QAction('Labels next to buttons', self.labelAction, checkable=True,
-                                          statusTip='Show labels on right side of toolbar buttons',
-                                          checked=True)
+                                          statusTip='Show labels on right side of toolbar buttons', checked=True)
         self.underLabelsAction = QAction('Labels under buttons', self.labelAction, checkable=True,
                                          statusTip='Show labels under toolbar buttons', checked=False)
         self.noLabelsAction = QAction('No labels', self.labelAction, statusTip='Do not show labels on toolbar',
                                          checkable=True, checked=False)
-        self.keepRatioAction = QAction('Keep aspect ratio', self, statusTip='Do not show labels on toolbar',
-                                         checkable=True, checked=True)
+        self.keepRatioAction = QAction('Keep aspect ratio', self, checkable=True, triggered=self.setAspect,
+                                       statusTip='Keep window aspect ratio when resizing the window', enabled=False)
         if self.theme == 'dark':
             self.darkThemeAction.setChecked(True)
         else:
             self.lightThemeAction.setChecked(True)
         self.themeAction.triggered.connect(self.switchTheme)
-        self.zoomAction.setEnabled(False)
+        if self.settings.value('aspectRatio', 'keep') == 'keep':
+            self.keepRatioAction.setChecked(True)
+            self.zoomAction.setEnabled(False)
         self.zoomAction.triggered.connect(self.setZoom)
 
     def initToolbar(self) -> None:
@@ -391,32 +398,33 @@ class VideoCutter(QWidget):
         self.toolbar.setLabelByType(self.settings.value('toolbarLabels', 'beside'))
 
     def initMenus(self) -> None:
-        labelsMenu = QMenu('Toolbar labels', self.appMenu)
+        labelsMenu = QMenu('Toolbar', self.appMenu)
         labelsMenu.addAction(self.besideLabelsAction)
         labelsMenu.addAction(self.underLabelsAction)
         labelsMenu.addAction(self.noLabelsAction)
 
-        zoomMenu = QMenu('Zoom level', self.appMenu)
+        zoomMenu = QMenu('Zoom', self.appMenu)
         zoomMenu.addAction(self.qtrZoomAction)
         zoomMenu.addAction(self.halfZoomAction)
         zoomMenu.addAction(self.origZoomAction)
         zoomMenu.addAction(self.dblZoomAction)
 
-        optionsMenu = QMenu('Display options', self.appMenu)
+        optionsMenu = QMenu('Settings...', self.appMenu)
         optionsMenu.addSection('Theme')
         optionsMenu.addAction(self.lightThemeAction)
         optionsMenu.addAction(self.darkThemeAction)
         optionsMenu.addSeparator()
+        optionsMenu.addAction(self.keepRatioAction)
         optionsMenu.addMenu(labelsMenu)
-        optionsMenu.addSeparator()
         optionsMenu.addMenu(zoomMenu)
 
         self.appMenu.addAction(self.openEDLAction)
         self.appMenu.addAction(self.saveEDLAction)
         self.appMenu.addSeparator()
+        self.appMenu.addMenu(optionsMenu)
+        self.appMenu.addSeparator()
         self.appMenu.addAction(self.mediaInfoAction)
         self.appMenu.addAction(self.keyRefAction)
-        self.appMenu.addMenu(optionsMenu)
         self.appMenu.addSeparator()
         self.appMenu.addAction(self.viewLogsAction)
         self.appMenu.addAction(self.updateCheckAction)
@@ -626,6 +634,7 @@ class VideoCutter(QWidget):
         self.cutStartAction.setEnabled(flag)
         self.cutEndAction.setEnabled(False)
         self.mediaInfoAction.setEnabled(flag)
+        self.keepRatioAction.setEnabled(flag)
         self.zoomAction.setEnabled(flag)
         self.seekSlider.setValue(0)
         self.seekSlider.setRange(0, 0)
@@ -662,6 +671,11 @@ class VideoCutter(QWidget):
 
     def setVolume(self, volume: int) -> None:
         self.mediaPlayer.volume = volume
+
+    @pyqtSlot(bool)
+    def setAspect(self, checked: bool = True) -> None:
+        self.mediaPlayer.setaspect(checked)
+        self.zoomAction.setEnabled(checked)
 
     @pyqtSlot(QAction)
     def setZoom(self, action: QAction) -> None:
@@ -979,6 +993,7 @@ class VideoCutter(QWidget):
 
     @pyqtSlot(QAction)
     def switchTheme(self, action: QAction) -> None:
+        # TODO: warn user about app restart needed for theme switch to avoid losing project work
         if action == self.darkThemeAction:
             newtheme = 'dark'
         else:

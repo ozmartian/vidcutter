@@ -258,7 +258,7 @@ class MpvEventScriptInputDispatch(Structure):
                 ('type', c_char_p)]
 
     def as_dict(self):
-        pass  # TODO
+        pass
 
 
 class MpvEventClientMessage(Structure):
@@ -596,6 +596,12 @@ class MPV(object):
     def show_progress(self):
         self.command('show_progress')
 
+    def setaspect(self, flag):
+        self._set_property('keepaspect', flag)
+
+    def opengl_dumbmode(self, flag):
+        self._set_property('opengl-dumb-mode', flag)
+
     def discnav(self, command):
         self.command('discnav', command)
 
@@ -831,6 +837,8 @@ ALL_PROPERTIES = {
         'estimated-vf-fps':             (float,  'r'),
         'window-scale':                 (float,  'rw'),
         'video-aspect':                 (str,    'rw'),
+        'keepaspect':                   (bool,   'rw'),
+        'opengl-dumb-mode':             (bool,   'rw'),
         'osd-width':                    (int,    'r'),
         'osd-height':                   (int,    'r'),
         'osd-par':                      (float,  'r'),

@@ -133,7 +133,8 @@ class VideoService(QObject):
                                  '<p>%s</p>' % self.proc.errorString(), buttons=QMessageBox.Close)
             qApp.quit()
 
-    def getAppPath(self) -> str:
+    @staticmethod
+    def getAppPath() -> str:
         if getattr(sys, 'frozen', False):
             return sys._MEIPASS
         return QFileInfo(__file__).absolutePath()

@@ -1,4 +1,4 @@
-    #!/usr/bin/env python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 #######################################################################
@@ -24,6 +24,7 @@
 
 import logging
 import logging.handlers
+import notify2
 import os
 import re
 import signal
@@ -185,6 +186,20 @@ class MainWindow(QMainWindow):
         qApp.setWindowIcon(self.cutter.appIcon)
         self.setCentralWidget(self.cutter)
 
+    def notify(self, title: str, msg: str, icon: str = None, appname: str = None, urgency: str = 'normal') -> bool:
+        args = ''
+        if icon is None:
+            icon = ':/assets/images/tvlinker.png'
+        if icon == 'success':
+            icon = ':/assets/images/thumbsup.png'
+        if appname is None:
+            appname = qApp.applicationName()
+        args += '-u %s' % urgency
+        args += '-a %s' % appname
+        args += '-i %s ' % icon
+        args += '%s %s' % (title, msg)
+        return self.cmdexec('%s %s' % ('notify-send', args))
+
     @staticmethod
     def get_bitness() -> int:
         from struct import calcsize
@@ -201,14 +216,16 @@ class MainWindow(QMainWindow):
 
     def save_settings(self) -> None:
         theme = 'dark' if self.cutter.darkThemeAction.isChecked() else 'light'
+        self.settings.setValue('theme', theme)
         if self.cutter.underLabelsAction.isChecked():
             labels = 'under'
         elif self.cutter.noLabelsAction.isChecked():
             labels = 'none'
         else:
             labels = 'beside'
-        self.settings.setValue('theme', theme)
         self.settings.setValue('toolbarLabels', labels)
+        aspect = 'keep' if self.cutter.keepRatioAction.isChecked() else 'stretch'
+        self.settings.setValue('aspectRatio', aspect)
         self.settings.setValue('geometry', self.saveGeometry())
         self.settings.setValue('windowState', self.saveState())
         self.settings.sync()
@@ -263,6 +280,8 @@ def main():
         QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
     if hasattr(Qt, 'AA_Use96Dpi'):
         QApplication.setAttribute(Qt.AA_Use96Dpi, True)
+    if hasattr(Qt, 'AA_UseStyleSheetPropagationInWidgetStyles'):
+        QApplication.setAttribute(Qt.AA_UseStyleSheetPropagationInWidgetStyles, True)
     app = QApplication(sys.argv)
     app.setApplicationName('VidCutter')
     app.setApplicationVersion(MainWindow.get_version())
