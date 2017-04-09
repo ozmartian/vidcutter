@@ -146,9 +146,9 @@ QGroupBox#counterwidgets {
 /* -------------------------------------------------------------------------- */
 
 QMessageBox#completedialog {
-    border-image: url(:/images/dialog-backdrop.png) 0 0 0 0 stretch stretch;
-    background-color: #FFF;
-    font-size: 10pt;
+    border-image: url(':/images/dialog-backdrop.png') 0 0 0 0 stretch stretch;
+    background-color: #EFF0F1;
+    color: #444;
 }
 
 /* -------------------------------------------------------------------------- */

@@ -158,5 +158,5 @@ class UpdaterMsgBox(QDialog):
         self.loading.cancel()
 
         self.setLayout(layout)
-        self.setMinimumWidth(602)
+        self.setMinimumWidth(600)
         self.show()

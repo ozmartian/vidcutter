@@ -314,7 +314,7 @@ class VideoCutter(QWidget):
         self.mediaInfoIcon = QIcon(':/images/info.png')
         self.viewLogsIcon = QIcon(':/images/viewlogs.png')
         self.updateCheckIcon = QIcon(':/images/update.png')
-        self.thumbsupIcon = QIcon(':/images/thumbsup.png')
+        self.thumbsupIcon = QIcon(':/images/thumbs-up.png')
         self.keyRefIcon = QIcon(':/images/keymap.png')
 
     def initActions(self) -> None:
@@ -926,15 +926,28 @@ class VideoCutter(QWidget):
         info = QFileInfo(self.finalFilename)
         mbox = QMessageBox(icon=self.thumbsupIcon, windowTitle='Operation complete', minimumWidth=500,
                            textFormat=Qt.RichText, objectName='completedialog')
-        mbox.setIconPixmap(self.thumbsupIcon.pixmap(128, 128))
+        mbox.setIconPixmap(self.thumbsupIcon.pixmap(150, 144))
+        pencolor = '#C681D5' if self.theme == 'dark' else '#642C68'
         mbox.setText('''
     <style>
-        table.info { margin:6px; padding:4px 15px; }
-        td.label { font-weight:bold; font-size:10pt; text-align:right; }
-        td.value { font-size:10pt; }
-        h3 { font-family:'Futura LT', sans-serif; }
+        h1 {
+            color: %s;
+            font-family: 'Futura LT', sans-serif;
+            font-weight: 400;
+        }
+        table.info {
+            font-size: 15px;
+            margin: 6px;
+            padding: 4px 15px;
+        }
+        td.label {
+            font-size: 15px;
+            font-weight: bold;
+            text-align: right;
+        }
+        td.info { font-size: 15px; }
     </style>
-    <h3>Your new media is ready!</h3>
+    <h1>Your new media is ready!</h1>
     <table class="info" cellpadding="4" cellspacing="0">
         <tr>
             <td class="label"><b>File:</b></td>
@@ -948,9 +961,8 @@ class VideoCutter(QWidget):
             <td class="label"><b>Length:</b></td>
             <td class="value">%s</td>
         </tr>
-    </table><br/>''' % (
-            QDir.toNativeSeparators(self.finalFilename), self.sizeof_fmt(int(info.size())),
-            self.delta2QTime(self.totalRuntime).toString(self.timeformat)))
+    </table><br/>''' % (pencolor, QDir.toNativeSeparators(self.finalFilename), self.sizeof_fmt(int(info.size())),
+                        self.delta2QTime(self.totalRuntime).toString(self.timeformat)))
         play = mbox.addButton('Play', QMessageBox.AcceptRole)
         play.setIcon(self.completePlayIcon)
         play.clicked.connect(self.openResult)
@@ -965,7 +977,6 @@ class VideoCutter(QWidget):
         new.clicked.connect(self.parent.restart)
         mbox.setDefaultButton(new)
         mbox.setEscapeButton(new)
-        mbox.adjustSize()
         mbox.exec_()
 
     @staticmethod
