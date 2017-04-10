@@ -32,7 +32,8 @@ from locale import setlocale, LC_NUMERIC
 
 from PyQt5.QtCore import (QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTextStream, QTime,
                           QUrl, pyqtSlot)
-from PyQt5.QtGui import QCloseEvent, QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMovie, QPixmap
+from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMouseEvent, QMovie,
+                         QPixmap)
 from PyQt5.QtWidgets import (QAbstractItemView, QAction, QActionGroup, qApp, QApplication, QDialogButtonBox,
                              QFileDialog, QGroupBox, QHBoxLayout, QLabel, QListWidgetItem, QMenu, QMessageBox,
                              QProgressDialog, QPushButton, QSizePolicy, QSlider, QStyleFactory, QTextBrowser,
@@ -201,13 +202,15 @@ class VideoCutter(QWidget):
         controlsLayout.addSpacing(20)
         controlsLayout.addWidget(self.menuButton)
         controlsLayout.addSpacing(10)
+        self.controlsWidget = QWidget(self)
+        self.controlsWidget.setLayout(controlsLayout)
 
         layout = QVBoxLayout(spacing=0)
         layout.setContentsMargins(10, 10, 10, 4)
         layout.addLayout(self.videoLayout)
         layout.addWidget(self.seekSlider)
         layout.addSpacing(2)
-        layout.addLayout(controlsLayout)
+        layout.addWidget(self.controlsWidget)
 
         self.setLayout(layout)
 
@@ -376,6 +379,9 @@ class VideoCutter(QWidget):
                                          checkable=True, checked=False)
         self.keepRatioAction = QAction('Keep aspect ratio', self, checkable=True, triggered=self.setAspect,
                                        statusTip='Keep window aspect ratio when resizing the window', enabled=False)
+        self.alwaysOnTopAction = QAction('Always on top', self, checkable=True, triggered=self.parent.set_always_on_top,
+                                         statusTip='Keep app window on top of all other windows',
+                                         checked=self.parent.ontop)
         if self.theme == 'dark':
             self.darkThemeAction.setChecked(True)
         else:
@@ -415,6 +421,8 @@ class VideoCutter(QWidget):
         optionsMenu.addAction(self.darkThemeAction)
         optionsMenu.addSeparator()
         optionsMenu.addAction(self.keepRatioAction)
+        optionsMenu.addAction(self.alwaysOnTopAction)
+        optionsMenu.addSeparator()
         optionsMenu.addMenu(labelsMenu)
         optionsMenu.addMenu(zoomMenu)
 
@@ -912,10 +920,11 @@ class VideoCutter(QWidget):
         appInfo.exec_()
 
     def showProgress(self, steps: int, label: str = 'Analyzing media...') -> None:
-        self.progress = QProgressDialog(label, None, 0, steps, self.parent,
+        self.progress = QProgressDialog(label, None, 0, steps, self, Qt.FramelessWindowHint,
                                         windowModality=Qt.ApplicationModal, windowIcon=self.parent.windowIcon(),
                                         minimumDuration=0, minimumWidth=500)
-        self.progress.setWindowFlags(Qt.WindowCloseButtonHint)
+        self.progress.setStyleSheet('QProgressDialog { border: 1px solid %s; }'
+                                    % '#FFF' if self.theme == 'dark' else '#666')
         self.progress.show()
         for i in range(steps):
             self.progress.setValue(i)
@@ -924,15 +933,15 @@ class VideoCutter(QWidget):
 
     def complete(self) -> None:
         info = QFileInfo(self.finalFilename)
-        mbox = QMessageBox(icon=self.thumbsupIcon, windowTitle='Operation complete', minimumWidth=500,
-                           textFormat=Qt.RichText, objectName='completedialog')
+        mbox = QMessageBox(windowTitle='Operation complete', minimumWidth=500, textFormat=Qt.RichText,
+                           objectName='genericdialog')
         mbox.setIconPixmap(self.thumbsupIcon.pixmap(150, 144))
         pencolor = '#C681D5' if self.theme == 'dark' else '#642C68'
         mbox.setText('''
     <style>
         h1 {
             color: %s;
-            font-family: 'Futura LT', sans-serif;
+            font-family: "Futura LT", sans-serif;
             font-weight: 400;
         }
         table.info {
@@ -1004,15 +1013,39 @@ class VideoCutter(QWidget):
 
     @pyqtSlot(QAction)
     def switchTheme(self, action: QAction) -> None:
-        # TODO: warn user about app restart needed for theme switch to avoid losing project work
         if action == self.darkThemeAction:
             newtheme = 'dark'
         else:
             newtheme = 'light'
         if newtheme != self.theme:
-            self.parent.reboot()
+            mbox = QMessageBox(icon=QMessageBox.NoIcon, windowTitle='Restart required', minimumWidth=500,
+                               textFormat=Qt.RichText, objectName='genericdialog')
+            mbox.setText('''
+                <style>
+                    h1 {
+                        color: %s;
+                        font-family: "Futura LT", sans-serif;
+                        font-weight: 400;
+                    }
+                    p { font-size: 15px; }
+                </style>
+                <h1>Warning</h1>
+                <p>The application needs to be restarted in order to switch the theme. Ensure you have saved
+                your project and no tasks are still in progress.</p>
+                <p>Is it okay to restart the app and switch themes now?</p>'''
+                         % ('#C681D5' if self.theme == 'dark' else '#642C68'))
+            mbox.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+            mbox.setDefaultButton(QMessageBox.Yes)
+            doit = mbox.exec_()
+            if doit == QMessageBox.Yes:
+                self.parent.reboot()
+            else:
+                if action == self.darkThemeAction:
+                    self.lightThemeAction.setChecked(True)
+                else:
+                    self.darkThemeAction.setChecked(True)
 
-    def startNew(self, checked: bool = False) -> None:
+    def startNew(self) -> None:
         qApp.restoreOverrideCursor()
         self.clearList()
         self.mpvFrame.hide()
@@ -1052,7 +1085,21 @@ class VideoCutter(QWidget):
                                  'root access (Linux/Mac) in order to do this.</p>')
         return valid
 
+    def toggleMaximised(self) -> None:
+        if self.parent.isMaximized():
+            self.parent.showNormal()
+        else:
+            self.parent.showMaximized()
+
+    def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
+        self.toggleMaximised()
+        event.accept()
+
     def keyPressEvent(self, event: QKeyEvent) -> None:
+        if event.key() == Qt.Key_F:
+            self.toggleMaximised()
+            event.accept()
+            return
         if self.mediaAvailable:
             if event.key() == Qt.Key_Left:
                 self.mediaPlayer.frame_back_step()
@@ -1073,7 +1120,7 @@ class VideoCutter(QWidget):
             elif event.key() == Qt.Key_End:
                 self.setPosition(self.seekSlider.maximum() - 1)
             elif event.key() in (Qt.Key_Return, Qt.Key_Enter) and (
-                not self.timeCounter.hasFocus() and not self.frameCounter.hasFocus()):
+                        not self.timeCounter.hasFocus() and not self.frameCounter.hasFocus()):
                 if self.cutStartAction.isEnabled():
                     self.setCutStart()
                 elif self.cutEndAction.isEnabled():

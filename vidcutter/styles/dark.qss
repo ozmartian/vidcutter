@@ -151,8 +151,11 @@ QGroupBox#counterwidgets {
 
 /* -------------------------------------------------------------------------- */
 
-QMessageBox#completedialog {
+QMessageBox#genericdialog {
     border-image: url(':/images/dialog-backdrop.png') 0 0 0 0 stretch stretch;
+}
+
+QMessageBox {
     background-color: #1B2326;
     color: #FFF;
 }

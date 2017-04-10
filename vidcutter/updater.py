@@ -61,7 +61,7 @@ class Updater(QWidget):
         self.mbox.show_result(latest, current)
 
     def check(self) -> None:
-        self.mbox = UpdaterMsgBox(self)
+        self.mbox = UpdaterMsgBox(self, theme=self.parent.theme)
         self.get(self.api_github_latest)
 
     def log_request(self, reply: QNetworkReply) -> None:
@@ -74,13 +74,16 @@ class Updater(QWidget):
 
 
 class UpdaterMsgBox(QDialog):
-    def __init__(self, parent=None, title='Checking updates...', f=Qt.WindowCloseButtonHint):
+    def __init__(self, parent=None, theme: str='light', title: str='Checking updates...', f=Qt.WindowCloseButtonHint):
         super(UpdaterMsgBox, self).__init__(parent, f)
         self.parent = parent
+        self.theme = theme
         self.setWindowTitle(title)
         self.setObjectName('updaterdialog')
-        self.loading = QProgressDialog('contacting server', None, 0, 0, self, Qt.WindowCloseButtonHint)
+        self.loading = QProgressDialog('contacting server', None, 0, 0, self, Qt.FramelessWindowHint)
         self.loading.setStyle(QStyleFactory.create('Fusion'))
+        self.loading.setStyleSheet('QProgressDialog { border: 1px solid %s; }'
+                                   % '#FFF' if self.theme == 'dark' else '#666')
         self.loading.setWindowTitle(title)
         self.loading.setMinimumWidth(485)
         self.loading.setWindowModality(Qt.ApplicationModal)
@@ -93,8 +96,8 @@ class UpdaterMsgBox(QDialog):
         self.releases_url = QUrl('https://github.com/ozmartian/vidcutter/releases/latest')
         update_available = True if latest > current else False
 
-        pencolor1 = '#C681D5' if self.parent.parent.theme == 'dark' else '#642C68'
-        pencolor2 = '#FFF' if self.parent.parent.theme == 'dark' else '#222'
+        pencolor1 = '#C681D5' if self.theme == 'dark' else '#642C68'
+        pencolor2 = '#FFF' if self.theme == 'dark' else '#222'
         content = '''<style>
                         h1 {
                             text-align: center;

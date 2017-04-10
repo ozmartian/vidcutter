@@ -24,7 +24,6 @@
 
 import logging
 import logging.handlers
-import notify2
 import os
 import re
 import signal
@@ -130,6 +129,9 @@ class MainWindow(QMainWindow):
         if self.settings.value('windowState') is not None:
             self.restoreState(self.settings.value('windowState'))
         self.theme = self.settings.value('theme', 'light')
+        self.ontop = True if self.settings.value('alwaysOnTop', 'false') == 'true' else False
+        if self.ontop:
+            self.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint)
 
     @staticmethod
     def log_uncaught_exceptions(cls, exc, tb) -> None:
@@ -226,9 +228,19 @@ class MainWindow(QMainWindow):
         self.settings.setValue('toolbarLabels', labels)
         aspect = 'keep' if self.cutter.keepRatioAction.isChecked() else 'stretch'
         self.settings.setValue('aspectRatio', aspect)
+        ontop = 'true' if self.cutter.alwaysOnTopAction.isChecked() else 'false'
+        self.settings.setValue('alwaysOnTop', ontop)
         self.settings.setValue('geometry', self.saveGeometry())
         self.settings.setValue('windowState', self.saveState())
         self.settings.sync()
+
+    @pyqtSlot(bool)
+    def set_always_on_top(self, flag: bool) -> None:
+        if flag:
+            self.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint)
+        else:
+            self.setWindowFlags(self.windowFlags() & ~Qt.WindowStaysOnTopHint)
+        self.show()
 
     @staticmethod
     def get_path(path: str = None, override: bool = False) -> str:
