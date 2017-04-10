@@ -80,7 +80,7 @@ class UpdaterMsgBox(QDialog):
         self.theme = theme
         self.setWindowTitle(title)
         self.setObjectName('updaterdialog')
-        self.loading = QProgressDialog('contacting server', None, 0, 0, self, Qt.FramelessWindowHint)
+        self.loading = QProgressDialog('contacting server', None, 0, 0, self.parent, Qt.FramelessWindowHint)
         self.loading.setStyle(QStyleFactory.create('Fusion'))
         self.loading.setStyleSheet('QProgressDialog { border: 1px solid %s; }'
                                    % '#FFF' if self.theme == 'dark' else '#666')
