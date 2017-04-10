@@ -46,12 +46,15 @@ class AppInfo(QDialog):
                         <img src=":/images/vidcutter-small.png" width="82" />
                     </td>
                     <td style="padding:4px;">
-                        <span style="font-family:'Futura LT', sans-serif;font-size:40px;font-weight:500;color:#642C68;">
+                        <div style="font-family:'Futura LT', sans-serif;font-size:40px;font-weight:500;color:#642C68;">
                             <span style="font-size:58px;">V</span>ID<span style="font-size:58px;">C</span>UTTER
-                        </span>
-                        <br/>&nbsp;&nbsp;
-                        <span style="font-size:16px;">version %s</span>
-                        <span style="font-size:10pt;margin-left:5px;">- %s</span>
+                        </div>
+                        &nbsp;&nbsp;
+                        <div style="padding:0; margin:0; margin-left:10px;">
+                            <b style="font-size:10pt;font-weight:6s00;">version:</b>
+                            <span style="font-size:20px;font-weight:400;">%s</span>
+                            <span style="font-size:10pt;margin-left:5px;"> - %s</span>
+                        </div>
                     </td>
                     <td align="right" style="padding:15px;">
                         <div style="padding:20px 0 10px 0;">
