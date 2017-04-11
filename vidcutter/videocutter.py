@@ -81,6 +81,9 @@ class VideoCutter(QWidget):
 
         self.init_theme()
 
+        if sys.platform == 'win32':
+            qApp.setStyleSheet('QPushButton { color: #444; }')
+
         self.clipTimes = []
         self.inCut = False
         self.timeformat = 'hh:mm:ss.zzz'
@@ -176,7 +179,7 @@ class VideoCutter(QWidget):
                                       cursor=Qt.PointingHandCursor, clicked=self.muteAudio)
 
         self.volumeSlider = QSlider(Qt.Horizontal, toolTip='Volume', statusTip='Adjust volume level',
-                                    cursor=Qt.PointingHandCursor, value=100, minimum=0, maximum=130,
+                                    cursor=Qt.PointingHandCursor, value=self.parent.startupvol, minimum=0, maximum=130,
                                     sliderMoved=self.setVolume, objectName='volumeSlider')
 
         self.menuButton = QPushButton(self, toolTip='Menu', cursor=Qt.PointingHandCursor, flat=True,

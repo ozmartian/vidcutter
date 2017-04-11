@@ -162,10 +162,6 @@ QMessageBox {
 
 /* -------------------------------------------------------------------------- */
 
-QPushButton {
-    color: #444;
-}
-
 QPushButton#menuButton {
     border-image: url(:/images/dark/menu.png);
     width: 40px;

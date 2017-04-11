@@ -132,6 +132,7 @@ class MainWindow(QMainWindow):
         self.ontop = True if self.settings.value('alwaysOnTop', 'false') == 'true' else False
         if self.ontop:
             self.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint)
+        self.startupvol = int(self.settings.value('volume', '100'))
 
     @staticmethod
     def log_uncaught_exceptions(cls, exc, tb) -> None:
@@ -188,20 +189,6 @@ class MainWindow(QMainWindow):
         qApp.setWindowIcon(self.cutter.appIcon)
         self.setCentralWidget(self.cutter)
 
-    def notify(self, title: str, msg: str, icon: str = None, appname: str = None, urgency: str = 'normal') -> bool:
-        args = ''
-        if icon is None:
-            icon = ':/assets/images/tvlinker.png'
-        if icon == 'success':
-            icon = ':/assets/images/thumbsup.png'
-        if appname is None:
-            appname = qApp.applicationName()
-        args += '-u %s' % urgency
-        args += '-a %s' % appname
-        args += '-i %s ' % icon
-        args += '%s %s' % (title, msg)
-        return self.cmdexec('%s %s' % ('notify-send', args))
-
     @staticmethod
     def get_bitness() -> int:
         from struct import calcsize
@@ -232,6 +219,7 @@ class MainWindow(QMainWindow):
         self.settings.setValue('alwaysOnTop', ontop)
         self.settings.setValue('geometry', self.saveGeometry())
         self.settings.setValue('windowState', self.saveState())
+        self.settings.setValue('volume', self.cutter.mediaPlayer.volume)
         self.settings.sync()
 
     @pyqtSlot(bool)
