@@ -251,11 +251,8 @@ class VideoCutter(QWidget):
                                    hr_seek_framedrop=True,
                                    rebase_start_time=False,
                                    keepaspect=self.keepRatioAction.isChecked(),
-                                   hwdec='auto',
-                                   x11_netwm=True,
-                                   x11_bypass_compositor='fs-only')
-        if sys.platform != 'darwin':
-            self.mediaPlayer.force_window = 'immediate'
+                                   hwdec='auto')
+        
         self.mediaPlayer.observe_property('time-pos', lambda ptime: self.positionChanged(ptime * 1000))
         self.mediaPlayer.observe_property('duration', lambda dtime: self.durationChanged(dtime * 1000))
 

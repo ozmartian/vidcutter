@@ -22,11 +22,12 @@
 #
 #######################################################################
 
+import os
 import platform
 import sys
 
 from PyQt5.Qt import PYQT_VERSION_STR
-from PyQt5.QtCore import QSize, Qt, QUrl
+from PyQt5.QtCore import QFileInfo, QSize, Qt, QUrl
 from PyQt5.QtGui import QCloseEvent
 from PyQt5.QtWidgets import qApp, QDialog, QDialogButtonBox, QLabel, QTabWidget, QTextBrowser, QVBoxLayout
 from sip import SIP_VERSION_STR
@@ -38,34 +39,46 @@ class AppInfo(QDialog):
         self.parent = parent
         self.setObjectName('aboutwidget')
         self.setWindowModality(Qt.ApplicationModal)
+        builddate = QFileInfo(os.path.join(QFileInfo(__file__).absolutePath(), '__init__.py')).lastModified()
+        builddate = builddate.toString('dd MMM yyyy').upper()
         header = QLabel('''
-            <style>table { color: #000; background-color: transparent; }</style>
-            <table border="0" cellpadding="5" cellspacing="1" width="100%%">
-                <tr>
-                    <td width="82">
-                        <img src=":/images/vidcutter-small.png" width="82" />
-                    </td>
-                    <td style="padding:4px;">
-                        <div style="font-family:'Futura LT', sans-serif;font-size:40px;font-weight:500;color:#642C68;">
-                            <span style="font-size:58px;">V</span>ID<span style="font-size:58px;">C</span>UTTER
-                        </div>
-                        &nbsp;&nbsp;
-                        <div style="padding:0; margin:0; margin-left:10px;">
-                            <b style="font-size:10pt;font-weight:6s00;">version:</b>
-                            <span style="font-size:20px;font-weight:400;">%s</span>
-                            <span style="font-size:10pt;margin-left:5px;"> - %s</span>
-                        </div>
-                    </td>
-                    <td align="right" style="padding:15px;">
-                        <div style="padding:20px 0 10px 0;">
-                            <img src=":/images/python.png"/>
-                        </div>
-                        <div style="margin-top:10px;">
-                            <img src=":/images/qt.png" />
-                        </div>
-                    </td>
-                </tr>
-            </table>''' % (qApp.applicationVersion(), platform.architecture()[0]), self)
+        <style>table { color: #000; background-color: transparent; }</style>
+        <table border="0" cellpadding="5" cellspacing="1" width="100%%">
+            <tr>
+                <td width="82" style="padding-top:18px;">
+                    <img src=":/images/vidcutter-small.png" width="82" />
+                </td>
+                <td style="padding:4px;">
+                    <div style="font-family:'Futura LT', sans-serif;font-size:40px;font-weight:400;color:#642C68;">
+                        <span style="font-size:58px;">V</span>ID<span style="font-size:58px;">C</span>UTTER
+                    </div>
+                    &nbsp;&nbsp;
+                    <div style="padding:0; margin:0; margin-left:10px;">
+                        <table border="0" cellpadding="2" cellspacing="0">
+                        <tr valign="bottom">
+                            <td style="text-align:right;font-size:10pt;font-weight:500;color:#642C68;">version:</td>
+                            <td>
+                                <span style="font-size:18px;font-weight:400;">%s</span>
+                                &nbsp;<span style="font-size:10pt;margin-left:5px;">(%s)</span>
+                            </td>
+                        </tr>
+                        <tr valign="bottom">
+                            <td style="text-align:right;font-size:10pt;font-weight:500;color:#642C68;">build date:</td>
+                            <td style="font-size:10pt;font-weight:400;">%s</td>
+                        </tr>
+                        </table>
+                    </div>
+                </td>
+                <td align="right" style="padding:50px 15px 15px 15px;">
+                    <div style="padding:20px 0 10px 0;">
+                        <img src=":/images/python.png"/>
+                    </div>
+                    <div style="margin-top:10px;">
+                        <img src=":/images/qt.png" />
+                    </div>
+                </td>
+            </tr>
+        </table>''' % (qApp.applicationVersion(), platform.architecture()[0], builddate), self)
         header.setStyleSheet('border:none;')
         self.tab_about = AboutTab(self)
         self.tab_credits = CreditsTab()
@@ -89,8 +102,8 @@ class AppInfo(QDialog):
     def get_size(self, mode: str = 'NORMAL') -> QSize:
         modes = {
             'LOW': QSize(450, 250),
-            'NORMAL': QSize(540, 440),
-            'HIGH': QSize(1080, 840)
+            'NORMAL': QSize(540, 460),
+            'HIGH': QSize(1080, 920)
         }
         return modes[mode]
 
