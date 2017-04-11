@@ -23,6 +23,7 @@
 #######################################################################
 
 import os
+import sys
 
 from PyQt5.QtCore import QFile, QFileInfo, QObject, Qt, QTextStream
 from PyQt5.QtGui import QColor, QPalette
@@ -42,6 +43,10 @@ class StyleMaster(QObject):
             qssfile = QFile(filename)
             qssfile.open(QFile.ReadOnly | QFile.Text)
             content = QTextStream(qssfile).readAll()
+            if sys.platform == 'win32':
+                content += '''
+                    QPushButton { color: #444; }
+                '''
             qApp.setStyleSheet(content)
             return content
 

@@ -81,9 +81,6 @@ class VideoCutter(QWidget):
 
         self.init_theme()
 
-        if sys.platform == 'win32':
-            qApp.setStyleSheet('QPushButton { color: #444; }')
-
         self.clipTimes = []
         self.inCut = False
         self.timeformat = 'hh:mm:ss.zzz'
