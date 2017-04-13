@@ -80,7 +80,8 @@ class MainWindow(QMainWindow):
             print('minimum size set to: %s (%s)' % (self.get_size(self.scale), self.scale))
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
-    def get_size(self, mode: str = 'NORMAL') -> QSize:
+    @staticmethod
+    def get_size(mode: str = 'NORMAL') -> QSize:
         modes = {
             'LOW': QSize(750, 405),
             'NORMAL': QSize(900, 640),

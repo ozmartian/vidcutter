@@ -455,8 +455,6 @@ class VideoCutter(QWidget):
     def setRunningTime(self, runtime: str) -> None:
         self.runtimeLabel.setText('<div align="right">%s</div>' % runtime)
 
-    # TODO: move cliplist functions into VideoList class
-
     def itemMenu(self, pos: QPoint) -> None:
         globalPos = self.cliplist.mapToGlobal(pos)
         self.moveItemUpAction.setEnabled(False)

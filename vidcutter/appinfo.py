@@ -99,7 +99,8 @@ class AppInfo(QDialog):
         self.setWindowIcon(self.parent.windowIcon())
         self.setMinimumSize(self.get_size(self.parent.parent.scale))
 
-    def get_size(self, mode: str = 'NORMAL') -> QSize:
+    @staticmethod
+    def get_size(mode: str = 'NORMAL') -> QSize:
         modes = {
             'LOW': QSize(450, 250),
             'NORMAL': QSize(540, 460),
