@@ -120,7 +120,7 @@ class VideoService(QObject):
             self.proc.start(cmd, shlex.split(args))
             self.proc.waitForFinished(-1)
             if output:
-                return str(self.proc.readAllStandardOutput(), 'utf-8')
+                return str(self.proc.readAllStandardOutput().data(), 'utf-8')
             if self.proc.exitStatus() == QProcess.NormalExit and self.proc.exitCode() == 0:
                 return True
         return False
