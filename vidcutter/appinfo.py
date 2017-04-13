@@ -45,7 +45,7 @@ class AppInfo(QDialog):
         <style>table { color: #000; background-color: transparent; }</style>
         <table border="0" cellpadding="5" cellspacing="1" width="100%%">
             <tr>
-                <td width="82" style="padding-top:18px;">
+                <td width="82" style="padding-top:18px;padding-right:10px;">
                     <img src=":/images/vidcutter-small.png" width="82" />
                 </td>
                 <td style="padding:4px;">
@@ -53,7 +53,7 @@ class AppInfo(QDialog):
                         <span style="font-size:58px;">V</span>ID<span style="font-size:58px;">C</span>UTTER
                     </div>
                     &nbsp;&nbsp;
-                    <div style="padding:0; margin:0; margin-left:10px;">
+                    <div style="padding:0; margin:0; margin-left:20px;">
                         <table border="0" cellpadding="2" cellspacing="0">
                         <tr valign="bottom">
                             <td style="text-align:right;font-size:10pt;font-weight:500;color:#642C68;">version:</td>
@@ -69,7 +69,7 @@ class AppInfo(QDialog):
                         </table>
                     </div>
                 </td>
-                <td align="right" style="padding:50px 15px 15px 15px;">
+                <td align="right" style="padding:30px 15px 15px 15px;">
                     <div style="padding:20px 0 10px 0;">
                         <img src=":/images/python.png"/>
                     </div>

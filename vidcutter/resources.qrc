@@ -2,6 +2,7 @@
     <qresource prefix="/">
         <file>fonts/FuturaLT.ttf</file>
         <file>fonts/OpenSans.ttf</file>
+        <file>images/about-background.png</file>
         <file>images/cliplist-watermark.png</file>
         <file>images/complete-exit.png</file>
         <file>images/complete-open.png</file>

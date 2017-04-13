@@ -91,6 +91,7 @@ class VideoCutter(QWidget):
         self.notifyInterval = 1000
         self.currentMedia = ''
         self.mediaAvailable = False
+        self.keepFragments = self.settings.value('keepFragments', 'false') == 'true'
 
         self.edl = ''
         self.edlblock_re = re.compile(r'(\d+(?:\.?\d+)?)\s(\d+(?:\.?\d+)?)\s([01])')
@@ -170,10 +171,9 @@ class VideoCutter(QWidget):
         self.videoplayerWidget = QWidget(self, visible=False)
         self.videoplayerWidget.setLayout(videoplayerLayout)
 
-        self.muteButton = QPushButton(objectName='muteButton', icon=self.unmuteIcon,
-                                      flat=True, toolTip='Mute',
-                                      statusTip='Toggle audio mute', iconSize=QSize(16, 16),
-                                      cursor=Qt.PointingHandCursor, clicked=self.muteAudio)
+        self.muteButton = QPushButton(objectName='muteButton', icon=self.unmuteIcon, flat=True, toolTip='Mute',
+                                      statusTip='Toggle audio mute', iconSize=QSize(16, 16), clicked=self.muteAudio,
+                                      cursor=Qt.PointingHandCursor)
 
         self.volumeSlider = QSlider(Qt.Horizontal, toolTip='Volume', statusTip='Adjust volume level',
                                     cursor=Qt.PointingHandCursor, value=self.parent.startupvol, minimum=0, maximum=130,
@@ -377,6 +377,8 @@ class VideoCutter(QWidget):
         self.alwaysOnTopAction = QAction('Always on top', self, checkable=True, triggered=self.parent.set_always_on_top,
                                          statusTip='Keep app window on top of all other windows',
                                          checked=self.parent.ontop)
+        self.keepFragmentsAction = QAction('Save clip fragments', self, checkable=True, checked=self.keepFragments,
+                                           statusTip='Keep the individual clips used to produce final media')
         if self.theme == 'dark':
             self.darkThemeAction.setChecked(True)
         else:
@@ -417,6 +419,8 @@ class VideoCutter(QWidget):
         optionsMenu.addSeparator()
         optionsMenu.addAction(self.keepRatioAction)
         optionsMenu.addAction(self.alwaysOnTopAction)
+        optionsMenu.addSeparator()
+        optionsMenu.addAction(self.keepFragmentsAction)
         optionsMenu.addSeparator()
         optionsMenu.addMenu(labelsMenu)
         optionsMenu.addMenu(zoomMenu)
@@ -828,6 +832,10 @@ class VideoCutter(QWidget):
                 index += 1
             if len(filelist) > 1:
                 self.joinVideos(filelist, self.finalFilename)
+                if not self.keepFragmentsAction.isChecked():
+                    for f in filelist:
+                        if os.path.isfile(f):
+                            QFile.remove(f)
             else:
                 QFile.remove(self.finalFilename)
                 QFile.rename(filename, self.finalFilename)
@@ -849,9 +857,6 @@ class VideoCutter(QWidget):
         fobj.close()
         self.videoService.join(listfile, filename)
         QFile.remove(listfile)
-        for file in joinlist:
-            if os.path.isfile(file):
-                QFile.remove(file)
 
     def mediaInfo(self):
         if self.mediaAvailable:
@@ -929,8 +934,9 @@ class VideoCutter(QWidget):
 
     def complete(self) -> None:
         info = QFileInfo(self.finalFilename)
-        mbox = QMessageBox(windowTitle='Operation complete', minimumWidth=500, textFormat=Qt.RichText,
-                           objectName='genericdialog')
+        mbox = QMessageBox(windowTitle='Operation complete', minimumWidth=600, textFormat=Qt.RichText,
+                           objectName='genericdialog2')
+        mbox.setWindowFlags(Qt.Widget | Qt.WindowCloseButtonHint)
         mbox.setIconPixmap(self.thumbsupIcon.pixmap(150, 144))
         pencolor = '#C681D5' if self.theme == 'dark' else '#642C68'
         mbox.setText('''
@@ -941,7 +947,6 @@ class VideoCutter(QWidget):
             font-weight: 400;
         }
         table.info {
-            font-size: 15px;
             margin: 6px;
             padding: 4px 15px;
         }
@@ -949,11 +954,12 @@ class VideoCutter(QWidget):
             font-size: 15px;
             font-weight: bold;
             text-align: right;
+            color: %s;
         }
-        td.info { font-size: 15px; }
+        td.value { font-size: 15px; }
     </style>
     <h1>Your new media is ready!</h1>
-    <table class="info" cellpadding="4" cellspacing="0">
+    <table class="info" cellpadding="4" cellspacing="0" width="600">
         <tr>
             <td class="label"><b>File:</b></td>
             <td class="value" nowrap>%s</td>
@@ -966,7 +972,8 @@ class VideoCutter(QWidget):
             <td class="label"><b>Length:</b></td>
             <td class="value">%s</td>
         </tr>
-    </table><br/>''' % (pencolor, QDir.toNativeSeparators(self.finalFilename), self.sizeof_fmt(int(info.size())),
+    </table><br/>''' % (pencolor, pencolor, QDir.toNativeSeparators(self.finalFilename),
+                        self.sizeof_fmt(int(info.size())),
                         self.delta2QTime(self.totalRuntime).toString(self.timeformat)))
         play = mbox.addButton('Play', QMessageBox.AcceptRole)
         play.setIcon(self.completePlayIcon)
@@ -1016,6 +1023,7 @@ class VideoCutter(QWidget):
         if newtheme != self.theme:
             mbox = QMessageBox(icon=QMessageBox.NoIcon, windowTitle='Restart required', minimumWidth=500,
                                textFormat=Qt.RichText, objectName='genericdialog')
+            mbox.setWindowFlags(Qt.Widget | Qt.WindowCloseButtonHint)
             mbox.setText('''
                 <style>
                     h1 {
@@ -1028,7 +1036,7 @@ class VideoCutter(QWidget):
                 <h1>Warning</h1>
                 <p>The application needs to be restarted in order to switch the theme. Ensure you have saved
                 your project and no tasks are still in progress.</p>
-                <p>Is it okay to restart the app and switch themes now?</p>'''
+                <p>Would you like to restart and switch themes now?</p>'''
                          % ('#C681D5' if self.theme == 'dark' else '#642C68'))
             mbox.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
             mbox.setDefaultButton(QMessageBox.Yes)

@@ -213,13 +213,12 @@ class MainWindow(QMainWindow):
         else:
             labels = 'beside'
         self.settings.setValue('toolbarLabels', labels)
-        aspect = 'keep' if self.cutter.keepRatioAction.isChecked() else 'stretch'
-        self.settings.setValue('aspectRatio', aspect)
-        ontop = 'true' if self.cutter.alwaysOnTopAction.isChecked() else 'false'
-        self.settings.setValue('alwaysOnTop', ontop)
+        self.settings.setValue('aspectRatio', 'keep' if self.cutter.keepRatioAction.isChecked() else 'stretch')
+        self.settings.setValue('alwaysOnTop', 'true' if self.cutter.alwaysOnTopAction.isChecked() else 'false')
         self.settings.setValue('geometry', self.saveGeometry())
         self.settings.setValue('windowState', self.saveState())
         self.settings.setValue('volume', self.cutter.mediaPlayer.volume)
+        self.settings.setValue('keepFragments', 'true' if self.cutter.keepFragmentsAction.isChecked() else 'false')
         self.settings.sync()
 
     @pyqtSlot(bool)

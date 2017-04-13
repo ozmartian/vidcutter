@@ -39,7 +39,7 @@ QProgressDialog {
 /* -------------------------------------------------------------------------- */
 
 QDialog#aboutwidget {
-    border-image: url(':/images/dialog-backdrop-02.png') 0 0 0 0 stretch stretch;
+    border-image: url(':/images/about-background.png') 0 0 0 0 stretch stretch;
     background-color: #1B2326;
 }
 
@@ -151,8 +151,12 @@ QGroupBox#counterwidgets {
 
 /* -------------------------------------------------------------------------- */
 
-QMessageBox#genericdialog {
+QWidget#genericdialog {
     border-image: url(':/images/dialog-backdrop.png') 0 0 0 0 stretch stretch;
+}
+
+QWidget#genericdialog2 {
+    border-image: url(':/images/dialog-backdrop-02.png') 0 0 0 0 stretch stretch;
 }
 
 QMessageBox {
