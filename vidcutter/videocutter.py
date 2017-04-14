@@ -247,14 +247,17 @@ class VideoCutter(QWidget):
                                    sub_auto=False,
                                    osd_level=0,
                                    sid=False,
+                                   cache_backbuffer=(10 * 1024),
+                                   cache_default=(10 * 1024),
+                                   demuxer_max_bytes=(25 * 1024 * 1024),
                                    hr_seek='absolute',
                                    hr_seek_framedrop=True,
                                    rebase_start_time=False,
                                    keepaspect=self.keepRatioAction.isChecked(),
                                    hwdec='auto')
         
-        self.mediaPlayer.observe_property('time-pos', lambda ptime: self.positionChanged(ptime * 1000))
-        self.mediaPlayer.observe_property('duration', lambda dtime: self.durationChanged(dtime * 1000))
+        self.mediaPlayer.observe_property('time-pos', lambda ptime: self.positionChanged(ptime))
+        self.mediaPlayer.observe_property('duration', lambda dtime: self.durationChanged(dtime))
 
     def initNoVideo(self) -> None:
         self.novideoWidget = QWidget(self, objectName='novideoWidget')
@@ -655,12 +658,18 @@ class VideoCutter(QWidget):
         self.mediaPlayer.time_pos = position / 1000
 
     def positionChanged(self, progress: int) -> None:
+        if progress is None:
+            return
+        progress *= 1000
         if self.seekSlider.restrictValue < progress or progress == 0:
             self.seekSlider.setValue(progress)
             self.timeCounter.setTime(self.delta2QTime(progress).toString(self.timeformat))
             self.frameCounter.setFrame(self.mediaPlayer.estimated_frame_number)
 
     def durationChanged(self, duration: int) -> None:
+        if duration is None:
+            return
+        duration *= 1000
         self.seekSlider.setRange(0, duration)
         self.timeCounter.setDuration(self.delta2QTime(duration).toString(self.timeformat))
         self.frameCounter.setFrameCount(self.mediaPlayer.estimated_frame_count)
