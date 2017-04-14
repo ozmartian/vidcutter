@@ -30,8 +30,8 @@ import signal
 import sys
 import traceback
 
-from PyQt5.QtCore import (QCommandLineOption, QCommandLineParser, QDir, QFileInfo, QProcess, QSettings, QSize,
-                          QStandardPaths, Qt, pyqtSlot)
+from PyQt5.QtCore import (QCommandLineOption, QCommandLineParser, QDir, QFileInfo, QSettings, QSize, QStandardPaths,
+                          Qt, pyqtSlot)
 from PyQt5.QtGui import QCloseEvent, QContextMenuEvent, QDragEnterEvent, QDropEvent, QMouseEvent
 from PyQt5.QtWidgets import qApp, QApplication, QMainWindow, QMessageBox, QSizePolicy
 
@@ -42,7 +42,7 @@ signal.signal(signal.SIGTERM, signal.SIG_DFL)
 
 
 class MainWindow(QMainWindow):
-    EXIT_CODE_REBOOT = 987
+    EXIT_CODE_REBOOT = 666
 
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -290,15 +290,9 @@ def main():
     win = MainWindow()
     exit_code = app.exec_()
     if exit_code == MainWindow.EXIT_CODE_REBOOT:
-        os.execl(sys.executable, sys.executable, * sys.argv)
-        # if sys.platform == 'win32':
-        #     QProcess.startDetached('"%s"' % qApp.applicationFilePath())
-        # else:
-        #     args = sys.argv
-        #     args.remove(args[0])
-        #     args = ['-m', 'vidcutter'] + args
-        #     QProcess.startDetached(sys.executable, args)
+        os.execl(sys.executable, sys.executable, *sys.argv)
     sys.exit(exit_code)
+
 
 if __name__ == '__main__':
     main()
