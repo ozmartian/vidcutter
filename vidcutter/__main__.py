@@ -133,7 +133,7 @@ class MainWindow(QMainWindow):
         self.ontop = True if self.settings.value('alwaysOnTop', 'false') == 'true' else False
         if self.ontop:
             self.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint)
-        self.startupvol = self.settings.value('volume', 100).toInt()
+        self.startupvol = int(self.settings.value('volume', '100'))
 
     @staticmethod
     def log_uncaught_exceptions(cls, exc, tb) -> None:
