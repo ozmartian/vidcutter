@@ -675,7 +675,8 @@ class VideoCutter(QWidget):
         self.mediaPlayer.mute = not self.mediaPlayer.mute
 
     def setVolume(self, volume: int) -> None:
-        self.mediaPlayer.volume = volume
+        if self.mediaAvailable:
+            self.mediaPlayer.volume = volume
 
     @pyqtSlot(bool)
     def setAspect(self, checked: bool = True) -> None:
