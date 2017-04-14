@@ -30,8 +30,8 @@ import signal
 import sys
 import traceback
 
-from PyQt5.QtCore import (QCommandLineOption, QCommandLineParser, QDir, QFileInfo, QSettings, QSize, QStandardPaths,
-                          Qt, pyqtSlot)
+from PyQt5.QtCore import (QCommandLineOption, QCommandLineParser, QDir, QFileInfo, QProcess,
+                          QSettings, QSize, QStandardPaths, Qt, pyqtSlot)
 from PyQt5.QtGui import QCloseEvent, QContextMenuEvent, QDragEnterEvent, QDropEvent, QMouseEvent
 from PyQt5.QtWidgets import qApp, QApplication, QMainWindow, QMessageBox, QSizePolicy
 
@@ -290,7 +290,10 @@ def main():
     win = MainWindow()
     exit_code = app.exec_()
     if exit_code == MainWindow.EXIT_CODE_REBOOT:
-        os.execl(sys.executable, sys.executable, *sys.argv)
+        if sys.platform == 'win32':
+            QProcess.startDetached('"%s"' % qApp.applicationFilePath())
+        else:
+            os.execl(sys.executable, sys.executable, *sys.argv)
     sys.exit(exit_code)
 
 
