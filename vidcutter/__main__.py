@@ -218,7 +218,7 @@ class MainWindow(QMainWindow):
         self.settings.setValue('alwaysOnTop', 'true' if self.cutter.alwaysOnTopAction.isChecked() else 'false')
         self.settings.setValue('geometry', self.saveGeometry())
         self.settings.setValue('windowState', self.saveState())
-        self.settings.setValue('volume', self.cutter.mediaPlayer.volume)
+        self.settings.setValue('volume', self.cutter.volumeSlider.value())
         self.settings.setValue('keepFragments', 'true' if self.cutter.keepFragmentsAction.isChecked() else 'false')
         self.settings.sync()
 
