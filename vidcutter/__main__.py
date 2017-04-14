@@ -290,13 +290,14 @@ def main():
     win = MainWindow()
     exit_code = app.exec_()
     if exit_code == MainWindow.EXIT_CODE_REBOOT:
-        if sys.platform == 'win32':
-            QProcess.startDetached('"%s"' % qApp.applicationFilePath())
-        else:
-            args = sys.argv
-            args.remove(args[0])
-            args = ['-m', 'vidcutter'] + args
-            QProcess.startDetached(sys.executable, args)
+        os.execl(sys.executable, sys.executable, * sys.argv)
+        # if sys.platform == 'win32':
+        #     QProcess.startDetached('"%s"' % qApp.applicationFilePath())
+        # else:
+        #     args = sys.argv
+        #     args.remove(args[0])
+        #     args = ['-m', 'vidcutter'] + args
+        #     QProcess.startDetached(sys.executable, args)
     sys.exit(exit_code)
 
 if __name__ == '__main__':
