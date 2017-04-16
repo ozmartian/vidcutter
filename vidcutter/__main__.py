@@ -32,7 +32,7 @@ import traceback
 
 from PyQt5.QtCore import (QCommandLineOption, QCommandLineParser, QDir, QFileInfo, QProcess,
                           QSettings, QSize, QStandardPaths, Qt, pyqtSlot)
-from PyQt5.QtGui import QCloseEvent, QContextMenuEvent, QDragEnterEvent, QDropEvent, QMouseEvent
+from PyQt5.QtGui import QCloseEvent, QContextMenuEvent, QDragEnterEvent, QDropEvent, QIcon, QMouseEvent
 from PyQt5.QtWidgets import qApp, QApplication, QMainWindow, QMessageBox, QSizePolicy
 
 from vidcutter.videocutter import VideoCutter
@@ -187,7 +187,7 @@ class MainWindow(QMainWindow):
 
     def init_cutter(self) -> None:
         self.cutter = VideoCutter(self)
-        qApp.setWindowIcon(self.cutter.appIcon)
+        qApp.setWindowIcon(QIcon(':/images/vidcutter.png'))
         self.setCentralWidget(self.cutter)
 
     @staticmethod

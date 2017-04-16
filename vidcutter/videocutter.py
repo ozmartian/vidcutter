@@ -53,9 +53,11 @@ from vidcutter.videotoolbar import VideoToolBar
 
 try:
     import vidcutter.mpv as mpv
-    libmpv = True
+    mpv_error = False
+    mpv_exc = None
 except OSError:
-    libmpv = False
+    mpv_error = True
+    mpv_exc = sys.exc_info()[0]
 
 
 class VideoCutter(QWidget):
@@ -65,178 +67,197 @@ class VideoCutter(QWidget):
         self.parent = parent
         self.theme = self.parent.theme
         self.settings = self.parent.settings
-
-        self.checkMPV()
-
-        self.mediaPlayer = None
-        self.videoService = VideoService(self)
-        self.updater = Updater(self)
-        self.latest_release_url = 'https://github.com/ozmartian/vidcutter/releases/latest'
-        self.ffmpeg_installer = {
-            'win32': {
-                64: 'https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-latest-win64-static.7z',
-                32: 'https://ffmpeg.zeranoe.com/builds/win32/static/ffmpeg-latest-win32-static.7z'
-            },
-            'darwin': {
-                64: 'http://evermeet.cx/pub/ffmpeg/snapshots',
-                32: 'http://evermeet.cx/pub/ffmpeg/snapshots'
-            },
-            'linux': {
-                64: 'https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-64bit-static.tar.xz',
-                32: 'https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-32bit-static.tar.xz'
-            }
-        }
-
         self.init_theme()
+        if self.checkMPV():
+            self.mediaPlayer = None
+            self.videoService = VideoService(self)
+            self.updater = Updater(self)
+            self.latest_release_url = 'https://github.com/ozmartian/vidcutter/releases/latest'
+            self.ffmpeg_installer = {
+                'win32': {
+                    64: 'https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-latest-win64-static.7z',
+                    32: 'https://ffmpeg.zeranoe.com/builds/win32/static/ffmpeg-latest-win32-static.7z'
+                },
+                'darwin': {
+                    64: 'http://evermeet.cx/pub/ffmpeg/snapshots',
+                    32: 'http://evermeet.cx/pub/ffmpeg/snapshots'
+                },
+                'linux': {
+                    64: 'https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-64bit-static.tar.xz',
+                    32: 'https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-32bit-static.tar.xz'
+                }
+            }
+            self.clipTimes = []
+            self.inCut = False
+            self.timeformat = 'hh:mm:ss.zzz'
+            self.runtimeformat = 'hh:mm:ss'
+            self.finalFilename = ''
+            self.totalRuntime = 0
+            self.frameRate = 0
+            self.notifyInterval = 1000
+            self.currentMedia = ''
+            self.mediaAvailable = False
 
-        self.clipTimes = []
-        self.inCut = False
-        self.timeformat = 'hh:mm:ss.zzz'
-        self.runtimeformat = 'hh:mm:ss'
-        self.finalFilename = ''
-        self.totalRuntime = 0
-        self.frameRate = 0
-        self.notifyInterval = 1000
-        self.currentMedia = ''
-        self.mediaAvailable = False
+            self.keepClips = self.settings.value('keepClips', 'false') == 'true'
+            self.hardwareDecoding = self.settings.value('hwdec', 'auto') == 'auto'
 
-        self.keepClips = self.settings.value('keepClips', 'false') == 'true'
-        self.hardwareDecoding = self.settings.value('hwdec', 'auto') == 'auto'
+            self.edl = ''
+            self.edlblock_re = re.compile(r'(\d+(?:\.?\d+)?)\s(\d+(?:\.?\d+)?)\s([01])')
 
-        self.edl = ''
-        self.edlblock_re = re.compile(r'(\d+(?:\.?\d+)?)\s(\d+(?:\.?\d+)?)\s([01])')
+            self.initIcons()
+            self.initActions()
+            self.toolbar = VideoToolBar(self, floatable=False, movable=False, iconSize=QSize(50, 53))
+            self.initToolbar()
 
-        self.initIcons()
-        self.initActions()
-        self.toolbar = VideoToolBar(self, floatable=False, movable=False, iconSize=QSize(50, 53))
-        self.initToolbar()
+            self.appMenu, self.cliplistMenu = QMenu(self), QMenu(self)
+            self.initMenus()
 
-        self.appMenu, self.cliplistMenu = QMenu(self), QMenu(self)
-        self.initMenus()
+            self.seekSlider = VideoSlider(parent=self, sliderMoved=self.setPosition)
 
-        self.seekSlider = VideoSlider(parent=self, sliderMoved=self.setPosition)
+            self.initNoVideo()
 
-        self.initNoVideo()
+            self.cliplist = VideoList(parent=self, sizePolicy=QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding),
+                                      contextMenuPolicy=Qt.CustomContextMenu, uniformItemSizes=True,
+                                      dragEnabled=True, dragDropMode=QAbstractItemView.InternalMove,
+                                      alternatingRowColors=True, customContextMenuRequested=self.itemMenu,
+                                      objectName='cliplist')
+            self.cliplist.setItemDelegate(VideoItem(self.cliplist))
+            self.cliplist.setContentsMargins(0, 0, 0, 0)
+            self.cliplist.setFixedWidth(190)
+            self.cliplist.setAttribute(Qt.WA_MacShowFocusRect, False)
+            self.cliplist.model().rowsMoved.connect(self.syncClipList)
 
-        self.cliplist = VideoList(parent=self, sizePolicy=QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding),
-                                  contextMenuPolicy=Qt.CustomContextMenu, uniformItemSizes=True,
-                                  dragEnabled=True, dragDropMode=QAbstractItemView.InternalMove,
-                                  alternatingRowColors=True, customContextMenuRequested=self.itemMenu,
-                                  objectName='cliplist')
-        self.cliplist.setItemDelegate(VideoItem(self.cliplist))
-        self.cliplist.setContentsMargins(0, 0, 0, 0)
-        self.cliplist.setFixedWidth(190)
-        self.cliplist.setAttribute(Qt.WA_MacShowFocusRect, False)
-        self.cliplist.model().rowsMoved.connect(self.syncClipList)
+            self.cliplist.setStyleSheet('QListView::item { border: none; }')
 
-        self.cliplist.setStyleSheet('QListView::item { border: none; }')
+            listHeader = QLabel(pixmap=QPixmap(':/images/%s/clipindex.png' % self.theme, 'PNG'), alignment=Qt.AlignCenter)
+            listHeader.setObjectName('listHeader')
 
-        listHeader = QLabel(pixmap=QPixmap(':/images/%s/clipindex.png' % self.theme, 'PNG'), alignment=Qt.AlignCenter)
-        listHeader.setObjectName('listHeader')
+            self.runtimeLabel = QLabel('<div align="right">00:00:00</div>', textFormat=Qt.RichText)
+            self.runtimeLabel.setObjectName('runtimeLabel')
 
-        self.runtimeLabel = QLabel('<div align="right">00:00:00</div>', textFormat=Qt.RichText)
-        self.runtimeLabel.setObjectName('runtimeLabel')
+            self.clipindexLayout = QVBoxLayout(spacing=0)
+            self.clipindexLayout.setContentsMargins(0, 0, 0, 0)
+            self.clipindexLayout.addWidget(listHeader)
+            self.clipindexLayout.addWidget(self.cliplist)
+            self.clipindexLayout.addWidget(self.runtimeLabel)
 
-        self.clipindexLayout = QVBoxLayout(spacing=0)
-        self.clipindexLayout.setContentsMargins(0, 0, 0, 0)
-        self.clipindexLayout.addWidget(listHeader)
-        self.clipindexLayout.addWidget(self.cliplist)
-        self.clipindexLayout.addWidget(self.runtimeLabel)
+            self.videoLayout = QHBoxLayout()
+            self.videoLayout.setContentsMargins(0, 0, 0, 0)
+            self.videoLayout.addWidget(self.novideoWidget)
+            self.videoLayout.addSpacing(10)
+            self.videoLayout.addLayout(self.clipindexLayout)
 
-        self.videoLayout = QHBoxLayout()
-        self.videoLayout.setContentsMargins(0, 0, 0, 0)
-        self.videoLayout.addWidget(self.novideoWidget)
-        self.videoLayout.addSpacing(10)
-        self.videoLayout.addLayout(self.clipindexLayout)
+            self.timeCounter = TimeCounter(self)
+            self.timeCounter.timeChanged.connect(lambda newtime: self.setPosition(newtime.msecsSinceStartOfDay()))
+            self.frameCounter = FrameCounter(self)
+            self.frameCounter.setReadOnly(True)
 
-        self.timeCounter = TimeCounter(self)
-        self.timeCounter.timeChanged.connect(lambda newtime: self.setPosition(newtime.msecsSinceStartOfDay()))
-        self.frameCounter = FrameCounter(self)
-        self.frameCounter.setReadOnly(True)
+            countersLayout = QHBoxLayout()
+            countersLayout.setContentsMargins(0, 0, 0, 0)
+            countersLayout.addStretch(1)
+            countersLayout.addWidget(QLabel('TIME:', objectName='tcLabel'))
+            countersLayout.addWidget(self.timeCounter)
+            countersLayout.addStretch(1)
+            countersLayout.addWidget(QLabel('FRAME:', objectName='fcLabel'))
+            countersLayout.addWidget(self.frameCounter)
+            countersLayout.addStretch(1)
 
-        countersLayout = QHBoxLayout()
-        countersLayout.setContentsMargins(0, 0, 0, 0)
-        countersLayout.addStretch(1)
-        countersLayout.addWidget(QLabel('TIME:', objectName='tcLabel'))
-        countersLayout.addWidget(self.timeCounter)
-        countersLayout.addStretch(1)
-        countersLayout.addWidget(QLabel('FRAME:', objectName='fcLabel'))
-        countersLayout.addWidget(self.frameCounter)
-        countersLayout.addStretch(1)
+            countersGroup = QGroupBox()
+            countersGroup.setObjectName('counterwidgets')
+            countersGroup.setContentsMargins(0, 0, 0, 0)
+            countersGroup.setLayout(countersLayout)
+            countersGroup.setMaximumHeight(28)
+            countersGroup.setStyleSheet('margin:0; padding:0;')
 
-        countersGroup = QGroupBox()
-        countersGroup.setObjectName('counterwidgets')
-        countersGroup.setContentsMargins(0, 0, 0, 0)
-        countersGroup.setLayout(countersLayout)
-        countersGroup.setMaximumHeight(28)
-        countersGroup.setStyleSheet('margin:0; padding:0;')
+            self.initMPV()
 
-        # self.initMPV()
+            videoplayerLayout = QVBoxLayout(spacing=0)
+            videoplayerLayout.setContentsMargins(0, 0, 0, 0)
+            videoplayerLayout.addWidget(self.mpvFrame)
+            videoplayerLayout.addWidget(countersGroup)
 
-        videoplayerLayout = QVBoxLayout(spacing=0)
-        videoplayerLayout.setContentsMargins(0, 0, 0, 0)
-        videoplayerLayout.addWidget(self.mpvFrame)
-        videoplayerLayout.addWidget(countersGroup)
+            self.videoplayerWidget = QWidget(self, visible=False)
+            self.videoplayerWidget.setLayout(videoplayerLayout)
 
-        self.videoplayerWidget = QWidget(self, visible=False)
-        self.videoplayerWidget.setLayout(videoplayerLayout)
+            self.muteButton = QPushButton(objectName='muteButton', icon=self.unmuteIcon, flat=True, toolTip='Mute',
+                                          statusTip='Toggle audio mute', iconSize=QSize(16, 16), clicked=self.muteAudio,
+                                          cursor=Qt.PointingHandCursor)
 
-        self.muteButton = QPushButton(objectName='muteButton', icon=self.unmuteIcon, flat=True, toolTip='Mute',
-                                      statusTip='Toggle audio mute', iconSize=QSize(16, 16), clicked=self.muteAudio,
-                                      cursor=Qt.PointingHandCursor)
+            self.volumeSlider = QSlider(Qt.Horizontal, toolTip='Volume', statusTip='Adjust volume level',
+                                        cursor=Qt.PointingHandCursor, value=self.parent.startupvol, minimum=0, maximum=130,
+                                        sliderMoved=self.setVolume, objectName='volumeSlider')
 
-        self.volumeSlider = QSlider(Qt.Horizontal, toolTip='Volume', statusTip='Adjust volume level',
-                                    cursor=Qt.PointingHandCursor, value=self.parent.startupvol, minimum=0, maximum=130,
-                                    sliderMoved=self.setVolume, objectName='volumeSlider')
+            self.menuButton = QPushButton(self, toolTip='Menu', cursor=Qt.PointingHandCursor, flat=True,
+                                          objectName='menuButton')
+            self.menuButton.setFixedSize(QSize(40, 42))
+            self.menuButton.setMenu(self.appMenu)
 
-        self.menuButton = QPushButton(self, toolTip='Menu', cursor=Qt.PointingHandCursor, flat=True,
-                                      objectName='menuButton')
-        self.menuButton.setFixedSize(QSize(40, 42))
-        self.menuButton.setMenu(self.appMenu)
+            toolbarLayout = QHBoxLayout()
+            toolbarLayout.addWidget(self.toolbar)
+            toolbarLayout.setContentsMargins(0, 0, 0, 0)
 
-        toolbarLayout = QHBoxLayout()
-        toolbarLayout.addWidget(self.toolbar)
-        toolbarLayout.setContentsMargins(0, 0, 0, 0)
+            toolbarGroup = QGroupBox()
+            toolbarGroup.setLayout(toolbarLayout)
+            toolbarGroup.setStyleSheet('border: 0;')
 
-        toolbarGroup = QGroupBox()
-        toolbarGroup.setLayout(toolbarLayout)
-        toolbarGroup.setStyleSheet('border: 0;')
+            controlsLayout = QHBoxLayout()
+            controlsLayout.addStretch(1)
+            controlsLayout.addWidget(toolbarGroup)
+            controlsLayout.addStretch(1)
+            controlsLayout.addWidget(self.muteButton)
+            controlsLayout.addSpacing(5)
+            controlsLayout.addWidget(self.volumeSlider)
+            controlsLayout.addSpacing(20)
+            controlsLayout.addWidget(self.menuButton)
+            controlsLayout.addSpacing(10)
 
-        controlsLayout = QHBoxLayout()
-        controlsLayout.addStretch(1)
-        controlsLayout.addWidget(toolbarGroup)
-        controlsLayout.addStretch(1)
-        controlsLayout.addWidget(self.muteButton)
-        controlsLayout.addSpacing(5)
-        controlsLayout.addWidget(self.volumeSlider)
-        controlsLayout.addSpacing(20)
-        controlsLayout.addWidget(self.menuButton)
-        controlsLayout.addSpacing(10)
+            layout = QVBoxLayout(spacing=0)
+            layout.setContentsMargins(10, 10, 10, 4)
+            layout.addLayout(self.videoLayout)
+            layout.addWidget(self.seekSlider)
+            layout.addSpacing(2)
+            layout.addLayout(controlsLayout)
 
-        layout = QVBoxLayout(spacing=0)
-        layout.setContentsMargins(10, 10, 10, 4)
-        layout.addLayout(self.videoLayout)
-        layout.addWidget(self.seekSlider)
-        layout.addSpacing(2)
-        layout.addLayout(controlsLayout)
+            self.setLayout(layout)
 
-        self.setLayout(layout)
-
-    def checkMPV(self) -> None:
-        global libmpv
-        if libmpv:
-            return
-        QMessageBox.critical(self, 'Missing libmpv library...', '''
-        <h1>Could not locate libmmpv (MPV libraries) required for media playback.</h1>
-        <p>The app will now exit, please try again once you have installed
-        libmpv via package installation or building from mpv source yourself.
-        In most distributions libmpv can be found under package names like:
-        <ul>
-            <li>mpv (it comes bundled with the mpv video player)</li>
-            <li>libmpv1</li>
-            <li>mpv-libs</li>
-        </ul></p>''')
-        qApp.exit(1)
+    def checkMPV(self) -> bool:
+        global mpv_error, mpv_exc
+        if not mpv_error:
+            return True
+        self.logger.exception(mpv_exc)
+        pencolor1 = '#C681D5' if self.theme == 'dark' else '#642C68'
+        pencolor2 = '#FFF' if self.theme == 'dark' else '#222'
+        mbox = QMessageBox(self, objectName='genericdialog')
+        mbox.setWindowFlags(Qt.Dialog | Qt.WindowCloseButtonHint)
+        mbox.setIconPixmap(QIcon(':/images/mpv.png').pixmap(128, 128))
+        mbox.setWindowTitle('Missing libmpv library...')
+        mbox.setMinimumWidth(500)
+        mbox.setText('''
+        <style>
+            h1 {
+                color: %s;
+                font-family: 'Futura LT', sans-serif;
+                font-weight: 400;
+            }
+            p, li { font-size: 15px; }
+            p { color: %s; }
+            li { color: %s; font-weight: bold; }
+        </style>
+        <table border="0" cellpadding="6" cellspacing="0" width="500">
+        <tr><td>
+            <h1>Cannot locate libmpv (MPV libraries) required for media playback</h1>
+            <p>The app will now exit, please try again once you have installed
+            libmpv via package installation or building from mpv source yourself.
+            In most distributions libmpv can be found under package names like:
+            <ul>
+                <li>mpv <span style="font-size:12px;">(bundled with the mpv video player)</span></li>
+                <li>libmpv1</li>
+                <li>mpv-libs</li>
+            </ul></p>
+        </td></tr>
+        </table>''' % (pencolor1, pencolor2, pencolor1))
+        mbox.addButton(QMessageBox.Ok)
+        sys.exit(mbox.exec_())
 
     def init_theme(self) -> None:
         StyleMaster.dark() if self.theme == 'dark' else StyleMaster.light()
