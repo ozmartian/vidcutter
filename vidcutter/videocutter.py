@@ -217,7 +217,9 @@ class VideoCutter(QWidget):
     def init_theme(self) -> None:
         StyleMaster.dark() if self.theme == 'dark' else StyleMaster.light()
         QFontDatabase.addApplicationFont(':/fonts/FuturaLT.ttf')
+        QFontDatabase.addApplicationFont(':/fonts/FuturaLTBold.ttf')
         QFontDatabase.addApplicationFont(':/fonts/OpenSans.ttf')
+        QFontDatabase.addApplicationFont(':/fonts/OpenSansBold.ttf')
         StyleMaster.loadQSS(self.theme, self.parent.devmode)
         QApplication.setFont(QFont('Open Sans', 12 if sys.platform == 'darwin' else 10, 300))
 
