@@ -90,7 +90,7 @@ class VideoService(QObject):
 
     def cut(self, source: str, output: str, frametime: str, duration: str, allstreams: bool=True) -> bool:
         if allstreams:
-            args = '-i "%s" -ss %s -t %s -vcodec copy -acodec copy -map 0 -y "%s"' \
+            args = '-i "%s" -ss %s -t %s -vcodec copy -acodec copy -scodec copy -map 0 -y "%s"' \
                    % (source, frametime, duration, QDir.fromNativeSeparators(output))
         else:
             args = '-i "%s" -ss %s -t %s -vcodec copy -acodec copy -y "%s"' \
