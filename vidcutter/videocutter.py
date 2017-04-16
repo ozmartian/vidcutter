@@ -385,7 +385,7 @@ class VideoCutter(QWidget):
         self.alwaysOnTopAction = QAction('Always on top', self, checkable=True, triggered=self.parent.set_always_on_top,
                                          statusTip='Keep app window on top of all other windows',
                                          checked=self.parent.ontop)
-        self.keepFragmentsAction = QAction('Save clip fragments', self, checkable=True, checked=self.keepFragments,
+        self.keepFragmentsAction = QAction('Keep individual clips', self, checkable=True, checked=self.keepFragments,
                                            statusTip='Keep the individual clips used to produce final media')
         self.hardwareDecodingAction = QAction('Hardware decoding', self, triggered=self.switchDecoding,
                                               checkable=True, checked=self.hardwareDecoding,
