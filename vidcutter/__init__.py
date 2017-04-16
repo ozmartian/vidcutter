@@ -24,4 +24,4 @@
 
 __version__ = '3.2.0rc6'
 
-__packager__ = 'pypi'  # [ pypi | arch | deb ]
+__packager__ = 'arch'  # [ pypi | arch | deb ]

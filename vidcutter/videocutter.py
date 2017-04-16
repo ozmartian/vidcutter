@@ -389,7 +389,7 @@ class VideoCutter(QWidget):
         self.keepClipsAction = QAction('Keep individual clips', self, checkable=True, checked=self.keepClips,
                                        statusTip='Keep the individual clips used to produce final media')
         self.hardwareDecodingAction = QAction('Hardware decoding', self, triggered=self.switchDecoding,
-                                              checkable=True, checked=self.hardwareDecoding,
+                                              checkable=True,
                                               statusTip='Enable hardware based video decoding during playback ' +
                                               '(e.g. vdpau, vaapi, dxva2, d3d11, cuda, videotoolbox)')
         if self.theme == 'dark':
@@ -401,6 +401,7 @@ class VideoCutter(QWidget):
             self.keepRatioAction.setChecked(True)
             self.zoomAction.setEnabled(False)
         self.zoomAction.triggered.connect(self.setZoom)
+        self.hardwareDecodingAction.setChecked(self.hardwareDecoding)
 
     def initToolbar(self) -> None:
         self.toolbar.addAction(self.openAction)
