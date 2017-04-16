@@ -91,7 +91,9 @@ class VideoCutter(QWidget):
         self.notifyInterval = 1000
         self.currentMedia = ''
         self.mediaAvailable = False
+
         self.keepFragments = self.settings.value('keepFragments', 'false') == 'true'
+        self.hardwareDecoding = self.settings.value('hwdec', 'auto') == 'auto'
 
         self.edl = ''
         self.edlblock_re = re.compile(r'(\d+(?:\.?\d+)?)\s(\d+(?:\.?\d+)?)\s([01])')
@@ -232,6 +234,7 @@ class VideoCutter(QWidget):
         if self.mediaPlayer is not None:
             self.mediaPlayer.terminate()
             del self.mediaPlayer
+
         self.mediaPlayer = mpv.MPV(wid=int(self.mpvFrame.winId()),
                                    log_handler=self.logMPV,
                                    ytdl=False,
@@ -254,8 +257,8 @@ class VideoCutter(QWidget):
                                    hr_seek_framedrop=True,
                                    rebase_start_time=False,
                                    keepaspect=self.keepRatioAction.isChecked(),
-                                   hwdec='auto')
-        
+                                   hwdec='auto' if self.hardwareDecodingAction.isChecked() else 'no')
+
         self.mediaPlayer.observe_property('time-pos', lambda ptime: self.positionChanged(ptime))
         self.mediaPlayer.observe_property('duration', lambda dtime: self.durationChanged(dtime))
 
@@ -382,6 +385,10 @@ class VideoCutter(QWidget):
                                          checked=self.parent.ontop)
         self.keepFragmentsAction = QAction('Save clip fragments', self, checkable=True, checked=self.keepFragments,
                                            statusTip='Keep the individual clips used to produce final media')
+        self.hardwareDecodingAction = QAction('Hardware decoding', self, triggered=self.switchDecoding,
+                                              checkable=True, checked=self.hardwareDecoding,
+                                              statusTip='Enable hardware based video decoding during playback ' +
+                                              '(e.g. vdpau, vaapi, dxva2, d3d11, cuda, videotoolbox)')
         if self.theme == 'dark':
             self.darkThemeAction.setChecked(True)
         else:
@@ -420,6 +427,7 @@ class VideoCutter(QWidget):
         optionsMenu.addAction(self.lightThemeAction)
         optionsMenu.addAction(self.darkThemeAction)
         optionsMenu.addSeparator()
+        optionsMenu.addAction(self.hardwareDecodingAction)
         optionsMenu.addAction(self.keepRatioAction)
         optionsMenu.addAction(self.alwaysOnTopAction)
         optionsMenu.addSeparator()
@@ -1021,6 +1029,10 @@ class VideoCutter(QWidget):
     @pyqtSlot()
     def viewLogs(self) -> None:
         QDesktopServices.openUrl(QUrl.fromLocalFile(logging.getLoggerClass().root.handlers[0].baseFilename))
+
+    @pyqtSlot(bool)
+    def switchDecoding(self, checked: bool = True):
+        self.mediaPlayer.hwdec = 'auto' if checked else 'no'
 
     @pyqtSlot(QAction)
     def switchTheme(self, action: QAction) -> None:
