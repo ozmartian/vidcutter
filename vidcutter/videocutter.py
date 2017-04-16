@@ -43,6 +43,7 @@ import vidcutter.mpv as mpv
 import vidcutter.resources
 from vidcutter.appinfo import AppInfo
 from vidcutter.customwidgets import FrameCounter, TimeCounter
+# from vidcutter.qroundprogressbar import QRoundProgressBar
 from vidcutter.stylemaster import StyleMaster
 from vidcutter.updater import Updater
 from vidcutter.videoframe import VideoFrame
@@ -92,7 +93,7 @@ class VideoCutter(QWidget):
         self.currentMedia = ''
         self.mediaAvailable = False
 
-        self.keepFragments = self.settings.value('keepFragments', 'false') == 'true'
+        self.keepClips = self.settings.value('keepClips', 'false') == 'true'
         self.hardwareDecoding = self.settings.value('hwdec', 'auto') == 'auto'
 
         self.edl = ''
@@ -385,8 +386,8 @@ class VideoCutter(QWidget):
         self.alwaysOnTopAction = QAction('Always on top', self, checkable=True, triggered=self.parent.set_always_on_top,
                                          statusTip='Keep app window on top of all other windows',
                                          checked=self.parent.ontop)
-        self.keepFragmentsAction = QAction('Keep individual clips', self, checkable=True, checked=self.keepFragments,
-                                           statusTip='Keep the individual clips used to produce final media')
+        self.keepClipsAction = QAction('Keep individual clips', self, checkable=True, checked=self.keepClips,
+                                       statusTip='Keep the individual clips used to produce final media')
         self.hardwareDecodingAction = QAction('Hardware decoding', self, triggered=self.switchDecoding,
                                               checkable=True, checked=self.hardwareDecoding,
                                               statusTip='Enable hardware based video decoding during playback ' +
@@ -433,7 +434,7 @@ class VideoCutter(QWidget):
         optionsMenu.addAction(self.keepRatioAction)
         optionsMenu.addAction(self.alwaysOnTopAction)
         optionsMenu.addSeparator()
-        optionsMenu.addAction(self.keepFragmentsAction)
+        optionsMenu.addAction(self.keepClipsAction)
         optionsMenu.addSeparator()
         optionsMenu.addMenu(labelsMenu)
         optionsMenu.addMenu(zoomMenu)
@@ -850,7 +851,7 @@ class VideoCutter(QWidget):
                 index += 1
             if len(filelist) > 1:
                 self.joinVideos(filelist, self.finalFilename)
-                if not self.keepFragmentsAction.isChecked():
+                if not self.keepClipsAction.isChecked():
                     for f in filelist:
                         if os.path.isfile(f):
                             QFile.remove(f)
@@ -892,7 +893,7 @@ class VideoCutter(QWidget):
             mediainfo.setObjectName('mediainfo')
             buttons = QDialogButtonBox(QDialogButtonBox.Ok, parent=mediainfo)
             buttons.accepted.connect(mediainfo.hide)
-            metadata = '<div align="center" style="margin:15px;">%s</div>' \
+            metadata = '<div align="center" style="margin:15px;">%s</div>'\
                        % self.videoService.metadata(source=self.currentMedia)
             browser = QTextBrowser(self)
             browser.setObjectName('metadata')

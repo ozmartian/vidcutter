@@ -219,7 +219,7 @@ class MainWindow(QMainWindow):
         self.settings.setValue('geometry', self.saveGeometry())
         self.settings.setValue('windowState', self.saveState())
         self.settings.setValue('volume', self.cutter.volumeSlider.value())
-        self.settings.setValue('keepFragments', 'true' if self.cutter.keepFragmentsAction.isChecked() else 'false')
+        self.settings.setValue('keepClips', 'true' if self.cutter.keepClipsAction.isChecked() else 'false')
         self.settings.setValue('hwdec', 'auto' if self.cutter.hardwareDecodingAction.isChecked() else 'no')
         self.settings.sync()
 
