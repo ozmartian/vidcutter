@@ -247,8 +247,8 @@ class VideoCutter(QWidget):
         <tr><td>
             <h1>Cannot locate libmpv (MPV libraries) required for media playback</h1>
             <p>The app will now exit, please try again once you have installed
-            libmpv via package installation or building from mpv source yourself.
-            In most distributions libmpv can be found under package names like:
+            libmpv via package installation or building from mpv source yourself.</p>
+            <p>In most distributions libmpv can be found under package names like:
             <ul>
                 <li>mpv <span style="font-size:12px;">(bundled with the mpv video player)</span></li>
                 <li>libmpv1</li>
