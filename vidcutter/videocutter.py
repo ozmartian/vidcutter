@@ -39,7 +39,6 @@ from PyQt5.QtWidgets import (QAbstractItemView, QAction, QActionGroup, qApp, QAp
                              QProgressDialog, QPushButton, QSizePolicy, QSlider, QStyleFactory, QTextBrowser,
                              QVBoxLayout, QWidget)
 
-import vidcutter.mpv as mpv
 import vidcutter.resources
 from vidcutter.appinfo import AppInfo
 from vidcutter.customwidgets import FrameCounter, TimeCounter
@@ -52,6 +51,12 @@ from vidcutter.videoservice import VideoService
 from vidcutter.videoslider import VideoSlider
 from vidcutter.videotoolbar import VideoToolBar
 
+try:
+    import vidcutter.mpv as mpv
+    libmpv = True
+except OSError:
+    libmpv = False
+
 
 class VideoCutter(QWidget):
     def __init__(self, parent: QWidget):
@@ -60,6 +65,8 @@ class VideoCutter(QWidget):
         self.parent = parent
         self.theme = self.parent.theme
         self.settings = self.parent.settings
+
+        self.checkMPV()
 
         self.mediaPlayer = None
         self.videoService = VideoService(self)
@@ -164,7 +171,7 @@ class VideoCutter(QWidget):
         countersGroup.setMaximumHeight(28)
         countersGroup.setStyleSheet('margin:0; padding:0;')
 
-        self.initMPV()
+        # self.initMPV()
 
         videoplayerLayout = QVBoxLayout(spacing=0)
         videoplayerLayout.setContentsMargins(0, 0, 0, 0)
@@ -214,6 +221,22 @@ class VideoCutter(QWidget):
         layout.addLayout(controlsLayout)
 
         self.setLayout(layout)
+
+    def checkMPV(self) -> None:
+        global libmpv
+        if libmpv:
+            return
+        QMessageBox.critical(self, 'Missing libmpv library...', '''
+        <h1>Could not locate libmmpv (MPV libraries) required for media playback.</h1>
+        <p>The app will now exit, please try again once you have installed
+        libmpv via package installation or building from mpv source yourself.
+        In most distributions libmpv can be found under package names like:
+        <ul>
+            <li>mpv (it comes bundled with the mpv video player)</li>
+            <li>libmpv1</li>
+            <li>mpv-libs</li>
+        </ul></p>''')
+        qApp.exit(1)
 
     def init_theme(self) -> None:
         StyleMaster.dark() if self.theme == 'dark' else StyleMaster.light()
