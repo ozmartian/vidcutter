@@ -1,7 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>fonts/FuturaLT.ttf</file>
-        <file>fonts/FuturaLTBold.ttf</file>
         <file>fonts/OpenSans.ttf</file>
         <file>fonts/OpenSansBold.ttf</file>
         <file>images/cliplist-watermark.png</file>

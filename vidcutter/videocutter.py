@@ -54,10 +54,8 @@ from vidcutter.videotoolbar import VideoToolBar
 try:
     import vidcutter.mpv as mpv
     mpv_error = False
-    mpv_exc = None
 except OSError:
     mpv_error = True
-    mpv_exc = sys.exc_info()[0]
 
 
 class VideoCutter(QWidget):
@@ -221,10 +219,9 @@ class VideoCutter(QWidget):
             self.setLayout(layout)
 
     def checkMPV(self) -> bool:
-        global mpv_error, mpv_exc
+        global mpv_error
         if not mpv_error:
             return True
-        self.logger.exception(mpv_exc)
         pencolor1 = '#C681D5' if self.theme == 'dark' else '#642C68'
         pencolor2 = '#FFF' if self.theme == 'dark' else '#222'
         mbox = QMessageBox(self, objectName='genericdialog')
@@ -262,7 +259,6 @@ class VideoCutter(QWidget):
     def init_theme(self) -> None:
         StyleMaster.dark() if self.theme == 'dark' else StyleMaster.light()
         QFontDatabase.addApplicationFont(':/fonts/FuturaLT.ttf')
-        QFontDatabase.addApplicationFont(':/fonts/FuturaLTBold.ttf')
         QFontDatabase.addApplicationFont(':/fonts/OpenSans.ttf')
         QFontDatabase.addApplicationFont(':/fonts/OpenSansBold.ttf')
         StyleMaster.loadQSS(self.theme, self.parent.devmode)
