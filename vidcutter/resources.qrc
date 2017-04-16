@@ -4,7 +4,6 @@
         <file>fonts/FuturaLTBold.ttf</file>
         <file>fonts/OpenSans.ttf</file>
         <file>fonts/OpenSansBold.ttf</file>
-        <file>images/about-background.png</file>
         <file>images/cliplist-watermark.png</file>
         <file>images/complete-exit.png</file>
         <file>images/complete-open.png</file>
@@ -19,7 +18,6 @@
         <file>images/info.png</file>
         <file>images/keymap.png</file>
         <file>images/novideotext.gif</file>
-        <file>images/python.png</file>
         <file>images/qt.png</file>
         <file>images/remove.png</file>
         <file>images/remove-all.png</file>
@@ -40,10 +38,12 @@
         <file>images/vidcutter-small.png</file>
         <file>images/viewlogs.png</file>
         <file>images/watermark.png</file>
+        <file>images/dark/about-background.png</file>
         <file>images/dark/clipindex.png</file>
         <file>images/dark/menu.png</file>
         <file>images/dark/menu-active.png</file>
         <file>images/dark/muted.png</file>
+        <file>images/dark/python.png</file>
         <file>images/dark/shortcuts.png</file>
         <file>images/dark/toolbar-end.png</file>
         <file>images/dark/toolbar-end-disabled.png</file>
@@ -64,10 +64,12 @@
         <file>images/dark/toolbar-start-disabled.png</file>
         <file>images/dark/toolbar-start-on.png</file>
         <file>images/dark/unmuted.png</file>
+        <file>images/light/about-background.png</file>
         <file>images/light/clipindex.png</file>
         <file>images/light/menu.png</file>
         <file>images/light/menu-active.png</file>
         <file>images/light/muted.png</file>
+        <file>images/light/python.png</file>
         <file>images/light/shortcuts.png</file>
         <file>images/light/toolbar-end.png</file>    
         <file>images/light/toolbar-end-disabled.png</file>

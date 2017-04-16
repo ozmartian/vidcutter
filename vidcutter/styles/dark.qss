@@ -39,7 +39,7 @@ QProgressDialog {
 /* -------------------------------------------------------------------------- */
 
 QDialog#aboutwidget {
-    border-image: url(':/images/about-background.png') 0 0 0 0 stretch stretch;
+    border-image: url(':/images/dark/about-background.png') 0 0 0 0 stretch stretch;
     background-color: #1B2326;
 }
 
