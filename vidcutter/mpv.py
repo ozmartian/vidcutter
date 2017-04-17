@@ -25,16 +25,23 @@ else:
     locale.setlocale(locale.LC_NUMERIC, 'C')
 
     sofile = ctypes.util.find_library('mpv')
+
+    # need this hack for AppImage bundles to work
     if sofile is None:
         sofile = 'libmpv.so.1'
 
-    try:
-        backend = CDLL(sofile)
-    except OSError:
-        raise OSError("Cannot find libmpv in the usual places. Depending on your distro, you may try installing an "
-                "mpv-devel or mpv-libs package. If you have libmpv around but this script can't find it, maybe consult "
-                "the documentation for ctypes.util.find_library which this script uses to look up the library "
-                "filename.")
+    backend = CDLL(sofile)
+
+    # commenting this out so th original exception can be thrown and thus caught/handled accordingly
+    #
+    # try:
+    #     backend = CDLL(sofile)
+    # except OSError:
+    #     raise OSError("Cannot find libmpv in the usual places. Depending on your distro, you may try installing an "
+    #             "mpv-devel or mpv-libs package. If you have libmpv around but this script can't find it, maybe consult "
+    #             "the documentation for ctypes.util.find_library which this script uses to look up the library "
+    #             "filename.")
+    
     fs_enc = sys.getfilesystemencoding()
 
 
