@@ -86,7 +86,7 @@ setup(
     url='http://vidcutter.ozmartians.com',
     license='GPLv3+',
 
-    packages=['vidcutter'],
+    packages=['vidcutter', 'vidcutter.libs'],
 
     setup_requires=['setuptools'],
 
