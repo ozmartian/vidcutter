@@ -21,6 +21,8 @@ QMainWindow {
     background-color: #EFF0F1;
 }
 
+/* -------------------------------------------------------------------------- */
+
 QWidget#shortcuts {
     border-image: url(':/images/watermark.png') 0 0 0 0 stretch stretch;
     background-color: #EFF0F1;
@@ -29,6 +31,14 @@ QWidget#shortcuts {
 QWidget#novideoWidget {
     border: 1px solid #999;
     background: #000 url(:/images/startup-backdrop.png) no-repeat center center;
+}
+
+QWidget#genericdialog {
+    border-image: url(':/images/dialog-backdrop.png') 0 0 0 0 stretch stretch;
+}
+
+QWidget#genericdialog2 {
+    border-image: url(':/images/dialog-backdrop-02.png') 0 0 0 0 stretch stretch;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -145,14 +155,6 @@ QGroupBox#counterwidgets {
 
 /* -------------------------------------------------------------------------- */
 
-QWidget#genericdialog {
-    border-image: url(':/images/dialog-backdrop.png') 0 0 0 0 stretch stretch;
-}
-
-QWidget#genericdialog2 {
-    border-image: url(':/images/dialog-backdrop-02.png') 0 0 0 0 stretch stretch;
-}
-
 QMessageBox {
     background-color: #EFF0F1;
     color: #222;
@@ -267,4 +269,17 @@ QTabBar::tab:top:selected {
 QTabBar::tab:top:last,
 QTabBar::tab:top:only-one {
     margin-right: 0;
+}
+
+/* -------------------------------------------------------------------------- */
+
+VCProgressBar {
+    border: 2px solid #FFF;
+}
+
+VCProgressBar QLabel {
+    font-family: "Futura LT", sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: #000;
 }

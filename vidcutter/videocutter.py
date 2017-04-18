@@ -30,8 +30,7 @@ import time
 from datetime import timedelta
 from locale import setlocale, LC_NUMERIC
 
-from PyQt5.QtCore import (QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTextStream, QTime,
-                          QUrl, pyqtSlot)
+from PyQt5.QtCore import pyqtSlot, QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTextStream, QTime, QUrl
 from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMouseEvent, QMovie,
                          QPixmap)
 from PyQt5.QtWidgets import (QAbstractItemView, QAction, QActionGroup, qApp, QApplication, QDialogButtonBox,
@@ -39,20 +38,20 @@ from PyQt5.QtWidgets import (QAbstractItemView, QAction, QActionGroup, qApp, QAp
                              QProgressDialog, QPushButton, QSizePolicy, QSlider, QStyleFactory, QTextBrowser,
                              QVBoxLayout, QWidget)
 
+from vidcutter.libs.customwidgets import FrameCounter, TimeCounter, VCProgressBar
+from vidcutter.libs.videoservice import VideoService
+
 import vidcutter.resources
-from vidcutter.appinfo import AppInfo
-from vidcutter.customwidgets import FrameCounter, TimeCounter
-# from vidcutter.qroundprogressbar import QRoundProgressBar
-from vidcutter.stylemaster import StyleMaster
+from vidcutter.about import About
 from vidcutter.updater import Updater
 from vidcutter.videoframe import VideoFrame
 from vidcutter.videolist import VideoList, VideoItem
-from vidcutter.videoservice import VideoService
 from vidcutter.videoslider import VideoSlider
+from vidcutter.videostyles import VideoStyles
 from vidcutter.videotoolbar import VideoToolBar
 
 try:
-    import vidcutter.mpv as mpv
+    import vidcutter.libs.mpv as mpv
     mpv_error = False
 except OSError:
     mpv_error = True
@@ -127,7 +126,8 @@ class VideoCutter(QWidget):
 
             self.cliplist.setStyleSheet('QListView::item { border: none; }')
 
-            listHeader = QLabel(pixmap=QPixmap(':/images/%s/clipindex.png' % self.theme, 'PNG'), alignment=Qt.AlignCenter)
+            listHeader = QLabel(pixmap=QPixmap(':/images/%s/clipindex.png' % self.theme, 'PNG'),
+                                alignment=Qt.AlignCenter)
             listHeader.setObjectName('listHeader')
 
             self.runtimeLabel = QLabel('<div align="right">00:00:00</div>', textFormat=Qt.RichText)
@@ -182,7 +182,8 @@ class VideoCutter(QWidget):
                                           cursor=Qt.PointingHandCursor)
 
             self.volumeSlider = QSlider(Qt.Horizontal, toolTip='Volume', statusTip='Adjust volume level',
-                                        cursor=Qt.PointingHandCursor, value=self.parent.startupvol, minimum=0, maximum=130,
+                                        cursor=Qt.PointingHandCursor, value=self.parent.startupvol, minimum=0,
+                                        maximum=130,
                                         sliderMoved=self.setVolume, objectName='volumeSlider')
 
             self.menuButton = QPushButton(self, toolTip='Menu', cursor=Qt.PointingHandCursor, flat=True,
@@ -257,11 +258,11 @@ class VideoCutter(QWidget):
         sys.exit(mbox.exec_())
 
     def init_theme(self) -> None:
-        StyleMaster.dark() if self.theme == 'dark' else StyleMaster.light()
+        VideoStyles.dark() if self.theme == 'dark' else VideoStyles.light()
         QFontDatabase.addApplicationFont(':/fonts/FuturaLT.ttf')
         QFontDatabase.addApplicationFont(':/fonts/OpenSans.ttf')
         QFontDatabase.addApplicationFont(':/fonts/OpenSansBold.ttf')
-        StyleMaster.loadQSS(self.theme, self.parent.devmode)
+        VideoStyles.loadQSS(self.theme, self.parent.devmode)
         QApplication.setFont(QFont('Open Sans', 12 if sys.platform == 'darwin' else 10, 300))
 
     def logMPV(self, loglevel, component, message):
@@ -410,7 +411,7 @@ class VideoCutter(QWidget):
         self.qtrZoomAction = QAction('1:4 Quarter', self.zoomAction, checkable=True, checked=False,
                                      statusTip='Zoom to a quarter of the source video size')
         self.halfZoomAction = QAction('1:2 Half', self.zoomAction, statusTip='Zoom to half of the source video size',
-                                     checkable=True, checked=False)
+                                      checkable=True, checked=False)
         self.origZoomAction = QAction('1:1 Original', self.zoomAction, checkable=True, checked=True,
                                       statusTip='Set to original source video zoom level')
         self.dblZoomAction = QAction('2:1 Double', self.zoomAction, checkable=True, checked=False,
@@ -420,7 +421,7 @@ class VideoCutter(QWidget):
         self.underLabelsAction = QAction('Labels under buttons', self.labelAction, checkable=True,
                                          statusTip='Show labels under toolbar buttons', checked=False)
         self.noLabelsAction = QAction('No labels', self.labelAction, statusTip='Do not show labels on toolbar',
-                                         checkable=True, checked=False)
+                                      checkable=True, checked=False)
         self.keepRatioAction = QAction('Keep aspect ratio', self, checkable=True, triggered=self.setAspect,
                                        statusTip='Keep window aspect ratio when resizing the window', enabled=False)
         self.alwaysOnTopAction = QAction('Always on top', self, checkable=True, triggered=self.parent.set_always_on_top,
@@ -431,7 +432,7 @@ class VideoCutter(QWidget):
         self.hardwareDecodingAction = QAction('Hardware decoding', self, triggered=self.switchDecoding,
                                               checkable=True,
                                               statusTip='Enable hardware based video decoding during playback ' +
-                                              '(e.g. vdpau, vaapi, dxva2, d3d11, cuda, videotoolbox)')
+                                                        '(e.g. vdpau, vaapi, dxva2, d3d11, cuda, videotoolbox)')
         if self.theme == 'dark':
             self.darkThemeAction.setChecked(True)
         else:
@@ -553,7 +554,7 @@ class VideoCutter(QWidget):
 
     def clearList(self) -> None:
         self.clipTimes.clear()
-        self.cliplist.clear()   
+        self.cliplist.clear()
         self.seekSlider.clearRegions()
         self.inCut = False
         self.renderTimes()
@@ -561,23 +562,23 @@ class VideoCutter(QWidget):
 
     @staticmethod
     def fileFilters() -> str:
-        all_types = 'All media files (*.3gp, *.3g2, *.amv, * .avi, *.divx, *.div, *.flv, *.f4v, *.webm, *.mkv, ' +\
-                     '*.mp3, *.mpa, *.mp1, *.mpeg, *.mpg, *.mpe, *.m1v, *.tod, *.mpv, *.m2v, *.ts, *.m2t, *.m2ts, ' +\
-                     '*.mp4, *.m4v, *.mpv4, *.mod, *.mjpg, *.mjpeg, *.mov, *.qt, *.rm, *.rmvb, *.dat, *.bin, *.vob, ' +\
-                     '*.wav, *.wma, *.wmv, *.asf, *.asx, *.xvid)'
-        video_types = 'All video files (*.3gp, *.3g2, *.amv, * .avi, *.divx, *.div, *.flv, *.f4v, *.webm, *.mkv, ' +\
-                      '*.mpeg, *.mpg, *.mpe, *.m1v, *.tod, *.mpv, *.m2v, *.ts, *.m2t, *.m2ts, ' +\
-                      '*.mp4, *.m4v, *.mpv4, *.mod, *.mjpg, *.mjpeg, *.mov, *.qt, *.rm, *.rmvb, *.dat, *.bin, ' +\
+        all_types = 'All media files (*.3gp, *.3g2, *.amv, * .avi, *.divx, *.div, *.flv, *.f4v, *.webm, *.mkv, ' + \
+                    '*.mp3, *.mpa, *.mp1, *.mpeg, *.mpg, *.mpe, *.m1v, *.tod, *.mpv, *.m2v, *.ts, *.m2t, *.m2ts, ' + \
+                    '*.mp4, *.m4v, *.mpv4, *.mod, *.mjpg, *.mjpeg, *.mov, *.qt, *.rm, *.rmvb, *.dat, *.bin, *.vob, ' + \
+                    '*.wav, *.wma, *.wmv, *.asf, *.asx, *.xvid)'
+        video_types = 'All video files (*.3gp, *.3g2, *.amv, * .avi, *.divx, *.div, *.flv, *.f4v, *.webm, *.mkv, ' + \
+                      '*.mpeg, *.mpg, *.mpe, *.m1v, *.tod, *.mpv, *.m2v, *.ts, *.m2t, *.m2ts, ' + \
+                      '*.mp4, *.m4v, *.mpv4, *.mod, *.mjpg, *.mjpeg, *.mov, *.qt, *.rm, *.rmvb, *.dat, *.bin, ' + \
                       '*.vob, *.wmv, *.asf, *.asx, *.xvid)'
         audio_types = 'All audio files (*.mp3, *.mpa, *.mp1, *.wav, *.wma)'
-        specific_types = '3GPP files (*.3gp, *.3g2);;AMV files (*.amv);;AVI files (* .avi);;' +\
-                         'DivX files (*.divx, *.div);;Flash files (*.flv, *.f4v);;WebM files (*.webm);;' +\
-                         'MKV files (*.mkv);;MPEG Audio files (*.mp3, *.mpa, *.mp1);;' +\
-                         'MPEG files (*.mpeg, *.mpg, *.mpe, *.m1v, *.tod);;' +\
-                         'MPEG-2 files (*.mpv, *.m2v, *.ts, *.m2t, *.m2ts);;MPEG-4 files (*.mp4, *.m4v, *.mpv4);;' +\
-                         'MOD files (*.mod);;MJPEG files (*.mjpg, *.mjpeg);;QuickTime files (*.mov, *.qt) ;;' +\
-                         'RealMedia files (*.rm, *.rmvb);;VCD DAT files (*.dat);;VCD SVCD BIN/CUE images (*.bin);;' +\
-                         'VOB files (*.vob);;Wave Audio files (*.wav);;Windows Media Audio files (*.wma);;' +\
+        specific_types = '3GPP files (*.3gp, *.3g2);;AMV files (*.amv);;AVI files (* .avi);;' + \
+                         'DivX files (*.divx, *.div);;Flash files (*.flv, *.f4v);;WebM files (*.webm);;' + \
+                         'MKV files (*.mkv);;MPEG Audio files (*.mp3, *.mpa, *.mp1);;' + \
+                         'MPEG files (*.mpeg, *.mpg, *.mpe, *.m1v, *.tod);;' + \
+                         'MPEG-2 files (*.mpv, *.m2v, *.ts, *.m2t, *.m2ts);;MPEG-4 files (*.mp4, *.m4v, *.mpv4);;' + \
+                         'MOD files (*.mod);;MJPEG files (*.mjpg, *.mjpeg);;QuickTime files (*.mov, *.qt) ;;' + \
+                         'RealMedia files (*.rm, *.rmvb);;VCD DAT files (*.dat);;VCD SVCD BIN/CUE images (*.bin);;' + \
+                         'VOB files (*.vob);;Wave Audio files (*.wav);;Windows Media Audio files (*.wma);;' + \
                          'Windows Media files (*.wmv, *.asf, *.asx);;Xvid files (*.xvid)'
         return '%s;;%s;;%s;;%s;;All files (*.*)' % (all_types, video_types, audio_types, specific_types)
 
@@ -870,7 +871,7 @@ class VideoCutter(QWidget):
             self.saveAction.setDisabled(True)
             self.showProgress(clips)
             index = 1
-            self.progress.setLabelText('Cutting media files...')
+            self.progress.setText('Cutting media files...')
             qApp.processEvents()
             for clip in self.clipTimes:
                 duration = self.delta2QTime(clip[0].msecsTo(clip[1])).toString(self.timeformat)
@@ -899,7 +900,7 @@ class VideoCutter(QWidget):
             else:
                 QFile.remove(self.finalFilename)
                 QFile.rename(filename, self.finalFilename)
-            self.progress.setLabelText('Complete...')
+            self.progress.setText('Complete...')
             self.progress.setValue(100)
             qApp.processEvents()
             self.progress.close()
@@ -934,7 +935,7 @@ class VideoCutter(QWidget):
             mediainfo.setObjectName('mediainfo')
             buttons = QDialogButtonBox(QDialogButtonBox.Ok, parent=mediainfo)
             buttons.accepted.connect(mediainfo.hide)
-            metadata = '<div align="center" style="margin:15px;">%s</div>'\
+            metadata = '<div align="center" style="margin:15px;">%s</div>' \
                        % self.videoService.metadata(source=self.currentMedia)
             browser = QTextBrowser(self)
             browser.setObjectName('metadata')
@@ -977,15 +978,14 @@ class VideoCutter(QWidget):
 
     @pyqtSlot()
     def aboutApp(self) -> None:
-        appInfo = AppInfo(self)
+        appInfo = About(self)
         appInfo.exec_()
 
     def showProgress(self, steps: int, label: str = 'Analyzing media...') -> None:
-        self.progress = QProgressDialog(label, None, 0, steps, self, Qt.FramelessWindowHint,
-                                        windowModality=Qt.ApplicationModal, windowIcon=self.parent.windowIcon(),
-                                        minimumDuration=0, minimumWidth=500)
-        self.progress.setStyleSheet('QProgressDialog { border: 1px solid %s; }'
-                                    % '#FFF' if self.theme == 'dark' else '#666')
+        self.progress = VCProgressBar(self)
+        self.progress.setText(label)
+        self.progress.setMinimumWidth(500)
+        self.progress.setRange(0, steps)
         self.progress.show()
         for i in range(steps):
             self.progress.setValue(i)

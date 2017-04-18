@@ -27,11 +27,12 @@ import os
 import sys
 from pkg_resources import parse_version
 
-from PyQt5.QtCore import QJsonDocument, QUrl, Qt
+from PyQt5.QtCore import QJsonDocument, Qt, QUrl
 from PyQt5.QtGui import QDesktopServices
 from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkReply, QNetworkRequest
-from PyQt5.QtWidgets import (qApp, QDialog, QDialogButtonBox, QLabel, QProgressDialog, QStyleFactory, QVBoxLayout,
-                             QWidget)
+from PyQt5.QtWidgets import qApp, QDialog, QDialogButtonBox, QLabel, QVBoxLayout, QWidget
+
+from vidcutter.libs.customwidgets import VCProgressBar
 
 
 class Updater(QWidget):
@@ -74,19 +75,15 @@ class Updater(QWidget):
 
 
 class UpdaterMsgBox(QDialog):
-    def __init__(self, parent=None, theme: str='light', title: str='Checking updates...', f=Qt.WindowCloseButtonHint):
+    def __init__(self, parent=None, theme: str='light', title: str='Application updates', f=Qt.WindowCloseButtonHint):
         super(UpdaterMsgBox, self).__init__(parent, f)
         self.parent = parent
         self.theme = theme
         self.setWindowTitle(title)
         self.setObjectName('updaterdialog')
-        self.loading = QProgressDialog('contacting server', None, 0, 0, self.parent, Qt.FramelessWindowHint)
-        self.loading.setStyle(QStyleFactory.create('Fusion'))
-        self.loading.setStyleSheet('QProgressDialog { border: 1px solid %s; }'
-                                   % '#FFF' if self.theme == 'dark' else '#666')
-        self.loading.setWindowTitle(title)
+        self.loading = VCProgressBar(self.parent)
+        self.loading.setText('contacting server...')
         self.loading.setMinimumWidth(485)
-        self.loading.setWindowModality(Qt.ApplicationModal)
         self.loading.show()
 
     def releases_page(self):
@@ -95,39 +92,39 @@ class UpdaterMsgBox(QDialog):
     def show_result(self, latest: str, current: str):
         self.releases_url = QUrl('https://github.com/ozmartian/vidcutter/releases/latest')
         update_available = True if latest > current else False
-
-        pencolor1 = '#C681D5' if self.theme == 'dark' else '#642C68'
-        pencolor2 = '#FFF' if self.theme == 'dark' else '#222'
+        if self.theme == 'dark':
+            pencolor1 = '#C681D5'
+            pencolor2 = '#FFF'
+        else:
+            pencolor1 = '#642C68'
+            pencolor2 = '#222'
         content = '''<style>
-                        h1 {
-                            text-align: center;
-                            color: %s;
-                            font-family: 'Futura LT', sans-serif;
-                            font-weight: 400;
-                        }
-                        div {
-                            border: 1px solid #999;
-                            color: %s;
-                        }
-                        p {
-                            color: %s;
-                            font-size: 15px;
-                        }
-                        b { color: %s; }
-                    </style>''' % (pencolor1, pencolor2, pencolor2, pencolor1)
-
+            h1 {
+                text-align: center;
+                color: %s;
+                font-family: 'Futura LT', sans-serif;
+                font-weight: 400;
+            }
+            div {
+                border: 1px solid #999;
+                color: %s;
+            }
+            p {
+                color: %s;
+                font-size: 15px;
+            }
+            b { color: %s; }
+        </style>''' % (pencolor1, pencolor2, pencolor2, pencolor1)
         if update_available:
             content += '<h1>A new version is available!</h1>'
         else:
             content += '<h1>You are already running the latest version</h1>'
-
         content += '''
             <p align="center">
                 <b>latest version:</b> %s
                 <br/>
                 <b>installed version:</b> %s
             </p>''' % (str(latest), str(current))
-
         if update_available and sys.platform.startswith('linux'):
             content += '''<div style="font-size: 12px; padding: 2px 10px; margin:10px 5px;">
                 Linux users should always install via their distribution's package manager.
@@ -143,7 +140,6 @@ class UpdaterMsgBox(QDialog):
             <p align="center">
                 Would you like to visit the <b>VidCutter releases page</b> for more details now?
             </p>'''
-
         if update_available:
             buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
             buttons.accepted.connect(self.releases_page)
@@ -151,15 +147,12 @@ class UpdaterMsgBox(QDialog):
         else:
             buttons = QDialogButtonBox(QDialogButtonBox.Ok)
             buttons.accepted.connect(lambda: self.close())
-
         contentLabel = QLabel(content, self.parent, wordWrap=True, textFormat=Qt.RichText)
-
         layout = QVBoxLayout()
         layout.addWidget(contentLabel)
         layout.addWidget(buttons)
-
-        self.loading.cancel()
-
+        self.loading.close()
+        self.loading.deleteLater()
         self.setLayout(layout)
         self.setMinimumWidth(600)
         self.show()

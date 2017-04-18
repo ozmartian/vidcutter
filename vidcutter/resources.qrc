@@ -92,6 +92,6 @@
         <file>images/light/unmuted.png</file>
         <file>styles/light.qss</file>
         <file>styles/dark.qss</file>
-        <file>LICENSE.html</file>
+        <file>license.html</file>
     </qresource>
 </RCC>
