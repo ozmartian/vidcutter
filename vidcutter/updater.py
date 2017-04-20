@@ -22,12 +22,13 @@
 #
 #######################################################################
 
+import json
 import logging
 import os
 import sys
 from pkg_resources import parse_version
 
-from PyQt5.QtCore import QJsonDocument, Qt, QUrl
+from PyQt5.QtCore import Qt, QUrl
 from PyQt5.QtGui import QDesktopServices
 from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkReply, QNetworkRequest
 from PyQt5.QtWidgets import qApp, QDialog, QDialogButtonBox, QLabel, QVBoxLayout, QWidget
@@ -54,10 +55,9 @@ class Updater(QWidget):
             return
         if os.getenv('DEBUG', False):
             self.log_request(reply)
-        jsondoc = QJsonDocument.fromJson(reply.readAll())
+        jsonobj = json.loads(str(reply.readAll(), 'utf-8'))
         reply.deleteLater()
-        jsonobj = jsondoc.object()
-        latest = parse_version(jsonobj.get('tag_name').toString())
+        latest = parse_version(jsonobj.get('tag_name'))
         current = parse_version(qApp.applicationVersion())
         self.mbox.show_result(latest, current)
 
