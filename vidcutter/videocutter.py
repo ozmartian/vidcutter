@@ -708,7 +708,8 @@ class VideoCutter(QWidget):
         self.saveEDLAction.setEnabled(False)
 
     def setPosition(self, position: int) -> None:
-        self.mediaPlayer.time_pos = position / 1000
+        if not self.mediaPlayer.seeking:
+            self.mediaPlayer.time_pos = position / 1000
 
     def positionChanged(self, progress: int) -> None:
         if progress is None:
