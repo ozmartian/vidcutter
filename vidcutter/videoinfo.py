@@ -26,7 +26,7 @@ import logging
 import os
 
 from PyQt5.QtCore import QSize, Qt
-from PyQt5.QtGui import QBrush, QColor, QFont
+from PyQt5.QtGui import QBrush, QColor, QFont, QPixmap
 from PyQt5.QtWidgets import (QAbstractItemView, QDialog, QDialogButtonBox, QFrame, QHeaderView, QLabel, QPushButton,
                              QScrollArea, QSizePolicy, QStyle, QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget)
 
@@ -160,6 +160,7 @@ class VideoInfo(QDialog):
         scroller.setFrameShape(QFrame.NoFrame)
         scroller.setWidget(content)
         layout = QVBoxLayout()
+        layout.addWidget(QLabel(pixmap=QPixmap(':/images/%s/mediainfo-heading.png' % self.parent.theme)))
         layout.addWidget(scroller)
         layout.addWidget(buttons)
         advanced.setLayout(layout)

@@ -40,6 +40,7 @@
         <file>images/watermark.png</file>
         <file>images/dark/about-background.png</file>
         <file>images/dark/clipindex.png</file>
+        <file>images/dark/mediainfo-heading.png</file>
         <file>images/dark/menu.png</file>
         <file>images/dark/menu-active.png</file>
         <file>images/dark/muted.png</file>
@@ -66,6 +67,7 @@
         <file>images/dark/unmuted.png</file>
         <file>images/light/about-background.png</file>
         <file>images/light/clipindex.png</file>
+        <file>images/light/mediainfo-heading.png</file>
         <file>images/light/menu.png</file>
         <file>images/light/menu-active.png</file>
         <file>images/light/muted.png</file>
