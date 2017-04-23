@@ -2,7 +2,6 @@ import os
 import locale
 import json
 import sys
-from pkg_resources import get_distribution
 import xml.etree.ElementTree as ET
 from ctypes import *
 
@@ -11,7 +10,6 @@ if sys.version_info < (3,):
 else:
     import urllib.parse as urlparse
 
-__version__ = get_distribution("pymediainfo").version
 
 class Track(object):
     def __getattribute__(self, name):
