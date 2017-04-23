@@ -276,7 +276,7 @@ QTabBar::tab:top:only-one {
 /* -------------------------------------------------------------------------- */
 
 VCProgressBar {
-    background-color: #1B2326w;
+    background-color: #1B2326;
     border: 2px solid #000;
 }
 
