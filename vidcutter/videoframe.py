@@ -32,6 +32,8 @@ class VideoFrame(QFrame):
         self.parent = parent
         self.setAttribute(Qt.WA_DontCreateNativeAncestors)
         self.setAttribute(Qt.WA_NativeWindow)
+        self.setFrameShape(QFrame.StyledPanel)
+        self.setFrameShadow(QFrame.Sunken)
         self.setCursor(Qt.ArrowCursor)
         self.installEventFilter(self)
 

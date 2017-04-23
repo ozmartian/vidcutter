@@ -227,8 +227,12 @@ class MainWindow(QMainWindow):
     def set_always_on_top(self, flag: bool) -> None:
         if flag:
             self.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint)
+            if self.cutter.mediaAvailable:
+                self.cutter.mediaPlayer.ontop = True
         else:
             self.setWindowFlags(self.windowFlags() & ~Qt.WindowStaysOnTopHint)
+            if self.cutter.mediaAvailable:
+                self.cutter.mediaPlayer.ontop = False
         self.show()
 
     @staticmethod

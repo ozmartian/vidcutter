@@ -28,6 +28,7 @@ import re
 import sys
 import time
 from datetime import timedelta
+
 from locale import setlocale, LC_NUMERIC
 
 from PyQt5.QtCore import pyqtSlot, QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTextStream, QTime, QUrl
@@ -35,20 +36,20 @@ from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QFont, QFontDatabase, QI
                          QPixmap)
 from PyQt5.QtWidgets import (QAbstractItemView, QAction, QActionGroup, qApp, QApplication, QDialogButtonBox,
                              QFileDialog, QGroupBox, QHBoxLayout, QLabel, QListWidgetItem, QMenu, QMessageBox,
-                             QProgressDialog, QPushButton, QSizePolicy, QSlider, QStyleFactory, QTextBrowser,
-                             QVBoxLayout, QWidget)
+                             QPushButton, QSizePolicy, QSlider, QStyleFactory, QVBoxLayout, QWidget)
 
 from vidcutter.libs.customwidgets import FrameCounter, TimeCounter, VCProgressBar
 from vidcutter.libs.videoservice import VideoService
 
-import vidcutter.resources
 from vidcutter.about import About
 from vidcutter.updater import Updater
 from vidcutter.videoframe import VideoFrame
+from vidcutter.videoinfo import VideoInfo
 from vidcutter.videolist import VideoList, VideoItem
 from vidcutter.videoslider import VideoSlider
 from vidcutter.videostyles import VideoStyles
 from vidcutter.videotoolbar import VideoToolBar
+import vidcutter.resources
 
 try:
     import vidcutter.libs.mpv as mpv
@@ -294,12 +295,12 @@ class VideoCutter(QWidget):
                                    sub_auto=False,
                                    osd_level=0,
                                    sid=False,
-                                   cache_backbuffer=(10 * 1024),
-                                   cache_default=(10 * 1024),
-                                   demuxer_max_bytes=(25 * 1024 * 1024),
+                                   player_operation_mode='pseudo-gui',
+                                   # cache_backbuffer=(10 * 1024),
+                                   # cache_default=(10 * 1024),
+                                   # demuxer_max_bytes=(25 * 1024 * 1024),
                                    hr_seek='absolute',
                                    hr_seek_framedrop=True,
-                                   rebase_start_time=False,
                                    keepaspect=self.keepRatioAction.isChecked(),
                                    hwdec='auto' if self.hardwareDecodingAction.isChecked() else 'no')
 
@@ -390,7 +391,7 @@ class VideoCutter(QWidget):
         self.removeAllAction = QAction(self.removeAllIcon, 'Clear list', self, statusTip='Clear all clips from list',
                                        triggered=self.clearList, enabled=False)
         self.mediaInfoAction = QAction(self.mediaInfoIcon, 'Media information', self, triggered=self.mediaInfo,
-                                       statusTip='View current media file information', enabled=False)
+                                       statusTip='View current media file\'s technical properties', enabled=False)
         self.openEDLAction = QAction(self.openEDLIcon, 'Open project file', self, triggered=self.openEDL, enabled=False,
                                      statusTip='Open a previously saved project file (EDL)')
         self.saveEDLAction = QAction(self.saveEDLIcon, 'Save project file', self, triggered=self.saveEDL, enabled=False,
@@ -919,44 +920,23 @@ class VideoCutter(QWidget):
         self.videoService.join(listfile, filename)
         QFile.remove(listfile)
 
-    def mediaInfo(self):
+    @pyqtSlot()
+    def mediaInfo(self) -> None:
         if self.mediaAvailable:
             if self.videoService.mediainfo is None:
-                self.logger.error('Missing dependency: mediainfo. Failing media ' +
-                                  'info page gracefully.')
-                QMessageBox.critical(self, 'Missing application dependency',
-                                     'Could not find <b>mediainfo</b> on your system. ' +
+                self.logger.error('Error trying to load media information. mediainfo could not be found')
+                QMessageBox.critical(self, 'Could not find mediainfo tool',
+                                     'The <b>mediainfo</b> command line tool could not be found on your system. ' +
                                      'This is required for the Media Information option ' +
                                      'to work.<br/><br/>If you are on Linux, you can solve ' +
                                      'this by installing the <b>mediainfo</b> package via your ' +
                                      'package manager.')
                 return
-            mediainfo = QWidget(self, flags=Qt.Dialog | Qt.WindowCloseButtonHint)
-            mediainfo.setObjectName('mediainfo')
-            buttons = QDialogButtonBox(QDialogButtonBox.Ok, parent=mediainfo)
-            buttons.accepted.connect(mediainfo.hide)
-            metadata = '<div align="center" style="margin:15px;">%s</div>' \
-                       % self.videoService.metadata(source=self.currentMedia)
-            browser = QTextBrowser(self)
-            browser.setObjectName('metadata')
-            browser.setHtml(metadata)
-            layout = QVBoxLayout()
-            layout.addWidget(browser)
-            layout.addWidget(buttons)
-            mediainfo.setLayout(layout)
-            mediainfo.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-            mediainfo.setContentsMargins(0, 0, 0, 0)
-            mediainfo.setWindowModality(Qt.NonModal)
-            mediainfo.setWindowIcon(self.parent.windowIcon())
-            mediainfo.setWindowTitle('Media Information')
-            if self.parent.scale == 'LOW':
-                mediainfo.setMinimumSize(600, 300)
-            else:
-                mediainfo.setMinimumSize(750, 450)
-            mediainfo.show()
+            mediainfo = VideoInfo(self)
+            mediainfo.analyse(self.currentMedia)
 
     @pyqtSlot()
-    def showKeyRef(self):
+    def showKeyRef(self) -> None:
         shortcuts = QWidget(self)
         shortcuts.setWindowFlags(Qt.Dialog | Qt.WindowCloseButtonHint)
         shortcuts.setObjectName('shortcuts')
@@ -1075,7 +1055,7 @@ class VideoCutter(QWidget):
         QDesktopServices.openUrl(QUrl.fromLocalFile(logging.getLoggerClass().root.handlers[0].baseFilename))
 
     @pyqtSlot(bool)
-    def switchDecoding(self, checked: bool = True):
+    def switchDecoding(self, checked: bool = True) -> None:
         self.mediaPlayer.hwdec = 'auto' if checked else 'no'
 
     @pyqtSlot(QAction)

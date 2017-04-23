@@ -1,34 +1,8 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
-#######################################################################
-#
-# VidCutter - a simple yet fast & accurate video cutter & joiner
-#
-# copyright © 2017 Pete Alexandrou
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
-#######################################################################
-
-# this wrapper code is a slightly modified version of pymediainfo
-# originally available at: https://github.com/sbraz/pymediainfo
-
-import json
-import locale
 import os
+import locale
+import json
 import sys
+from pkg_resources import get_distribution
 import xml.etree.ElementTree as ET
 from ctypes import *
 
@@ -37,6 +11,7 @@ if sys.version_info < (3,):
 else:
     import urllib.parse as urlparse
 
+__version__ = get_distribution("pymediainfo").version
 
 class Track(object):
     def __getattribute__(self, name):
@@ -45,7 +20,6 @@ class Track(object):
         except:
             pass
         return None
-
     def __init__(self, xml_dom_fragment):
         self.xml_dom_fragment = xml_dom_fragment
         self.track_type = xml_dom_fragment.attrib['type']
@@ -76,10 +50,8 @@ class Track(object):
                         break
                     except:
                         pass
-
     def __repr__(self):
-        return ("<Track track_id='{0}', track_type='{1}'>".format(self.track_id, self.track_type))
-
+        return("<Track track_id='{0}', track_type='{1}'>".format(self.track_id, self.track_type))
     def to_data(self):
         data = {}
         for k, v in self.__dict__.items():
@@ -98,7 +70,6 @@ class MediaInfo(object):
             return ET.fromstring(xml_data.encode("utf-8"))
         except:
             return None
-
     @staticmethod
     def _get_library():
         if os.name in ("nt", "dos", "os2", "ce"):
@@ -110,7 +81,6 @@ class MediaInfo(object):
                 return CDLL("libmediainfo.dylib")
         else:
             return CDLL("libmediainfo.so.0")
-
     @classmethod
     def can_parse(cls):
         try:
@@ -118,7 +88,6 @@ class MediaInfo(object):
             return True
         except:
             return False
-
     @classmethod
     def parse(cls, filename):
         lib = cls._get_library()
@@ -131,7 +100,7 @@ class MediaInfo(object):
         # Define arguments and return types
         lib.MediaInfo_Inform.restype = c_wchar_p
         lib.MediaInfo_New.argtypes = []
-        lib.MediaInfo_New.restype = c_void_p
+        lib.MediaInfo_New.restype  = c_void_p
         lib.MediaInfo_Option.argtypes = [c_void_p, c_wchar_p, c_wchar_p]
         lib.MediaInfo_Option.restype = c_wchar_p
         lib.MediaInfo_Inform.argtypes = [c_void_p, c_size_t]
@@ -139,7 +108,7 @@ class MediaInfo(object):
         lib.MediaInfo_Open.argtypes = [c_void_p, c_wchar_p]
         lib.MediaInfo_Open.restype = c_size_t
         lib.MediaInfo_Delete.argtypes = [c_void_p]
-        lib.MediaInfo_Delete.restype = None
+        lib.MediaInfo_Delete.restype  = None
         lib.MediaInfo_Close.argtypes = [c_void_p]
         lib.MediaInfo_Close.restype = None
         # Create a MediaInfo handle
@@ -149,7 +118,7 @@ class MediaInfo(object):
         # Python 2 does not change LC_CTYPE
         # at startup: https://bugs.python.org/issue6203
         if (sys.version_info < (3,) and os.name == "posix"
-            and locale.getlocale() == (None, None)):
+                and locale.getlocale() == (None, None)):
             locale.setlocale(locale.LC_CTYPE, locale.getdefaultlocale())
         lib.MediaInfo_Option(None, "Inform", "XML")
         lib.MediaInfo_Option(None, "Complete", "1")
@@ -159,14 +128,12 @@ class MediaInfo(object):
         lib.MediaInfo_Close(handle)
         lib.MediaInfo_Delete(handle)
         return cls(xml)
-
     def _populate_tracks(self):
         if self.xml_dom is None:
             return
         iterator = "getiterator" if sys.version_info < (2, 7) else "iter"
         for xml_track in getattr(self.xml_dom, iterator)("track"):
             self._tracks.append(Track(xml_track))
-
     @property
     def tracks(self):
         if not hasattr(self, "_tracks"):
@@ -174,12 +141,10 @@ class MediaInfo(object):
         if len(self._tracks) == 0:
             self._populate_tracks()
         return self._tracks
-
     def to_data(self):
         data = {'tracks': []}
         for track in self.tracks:
             data['tracks'].append(track.to_data())
         return data
-
     def to_json(self):
         return json.dumps(self.to_data())

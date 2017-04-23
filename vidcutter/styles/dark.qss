@@ -18,14 +18,14 @@
  *************************************************************************/
 
 QMainWindow {
-    background-color: #1B2326;
+    background-color: #494949;
 }
 
 /* -------------------------------------------------------------------------- */
 
 QWidget#shortcuts {
     border-image: url(':/images/watermark.png') 0 0 0 0 stretch stretch;
-    background-color: #1B2326;
+    background-color: #494949;
 }
 
 QWidget#novideoWidget {
@@ -45,12 +45,12 @@ QWidget#genericdialog2 {
 
 QDialog#aboutwidget {
     border-image: url(':/images/dark/about-background.png') 0 0 0 0 stretch stretch;
-    background-color: #1B2326;
+    background-color: #494949;
 }
 
 QDialog#updaterdialog {
     border-image: url(':/images/dialog-backdrop.png') 0 0 0 0 stretch stretch;
-    background-color: #1B2326;
+    background-color: #494949;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -110,7 +110,7 @@ QLabel#listHeader {
     padding: 8px 5px 5px;
     border: 1px solid #4D5355;
     background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-        stop: 0 #333, stop: 0.5 #1B2326, stop: 0.6 #1B2326, stop: 1 #333);
+        stop: 0 #333, stop: 0.5 #494949, stop: 0.6 #494949, stop: 1 #333);
 }
 
 QLabel#runtimeLabel {
@@ -157,7 +157,7 @@ QGroupBox#counterwidgets {
 /* -------------------------------------------------------------------------- */
 
 QMessageBox {
-    background-color: #1B2326;
+    background-color: #494949;
     color: #FFF;
 }
 
@@ -228,7 +228,7 @@ QTextBrowser {
 /* -------------------------------------------------------------------------- */
 
 QTabWidget::pane {
-    border: 1px solid #999;
+    border: 1px solid #FFF;
 }
 
 QTabWidget::tab-bar:top {
@@ -276,7 +276,7 @@ QTabBar::tab:top:only-one {
 /* -------------------------------------------------------------------------- */
 
 VCProgressBar {
-    background-color: #1B2326;
+    background-color: #494949w;
     border: 2px solid #000;
 }
 

@@ -100,7 +100,6 @@ class About(QDialog):
         self.setLayout(layout)
         self.setWindowTitle('About %s' % qApp.applicationName())
         self.setWindowIcon(self.parent.windowIcon())
-        self.setMinimumSize(self.get_size(self.parent.parent.scale))
 
     @staticmethod
     def get_size(mode: str = 'NORMAL') -> QSize:
