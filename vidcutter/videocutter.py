@@ -952,7 +952,7 @@ class VideoCutter(QWidget):
         shortcuts.setContentsMargins(0, 0, 0, 0)
         shortcuts.setWindowModality(Qt.NonModal)
         shortcuts.setWindowIcon(self.parent.windowIcon())
-        shortcuts.setWindowTitle('Keyboard Shortcuts')
+        shortcuts.setWindowTitle('Keyboard shortcuts')
         shortcuts.setMinimumWidth(500 if self.parent.scale == 'LOW' else 800)
         shortcuts.show()
 
@@ -1067,7 +1067,7 @@ class VideoCutter(QWidget):
         if newtheme != self.theme:
             mbox = QMessageBox(icon=QMessageBox.NoIcon, windowTitle='Restart required', minimumWidth=500,
                                textFormat=Qt.RichText, objectName='genericdialog')
-            mbox.setWindowFlags(Qt.Widget | Qt.WindowCloseButtonHint)
+            mbox.setWindowFlags(Qt.Dialog | Qt.WindowCloseButtonHint)
             mbox.setText('''
                 <style>
                     h1 {
@@ -1084,8 +1084,8 @@ class VideoCutter(QWidget):
                          % ('#C681D5' if self.theme == 'dark' else '#642C68'))
             mbox.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
             mbox.setDefaultButton(QMessageBox.Yes)
-            doit = mbox.exec_()
-            if doit == QMessageBox.Yes:
+            response = mbox.exec_()
+            if response == QMessageBox.Yes:
                 self.parent.reboot()
             else:
                 if action == self.darkThemeAction:

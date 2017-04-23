@@ -24,16 +24,17 @@
 
 import os
 
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
+from PyQt5.QtCore import QSize, Qt
+from PyQt5.QtGui import QBrush, QColor, QFont
+from PyQt5.QtWidgets import (QAbstractItemView, QDialog, QDialogButtonBox, QFrame, QHeaderView, QLabel, QScrollArea,
+                             QSizePolicy, QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget)
 
 
 class VideoInfo(QDialog):
     modes = {
-        'LOW': QSize(450, 250),
-        'NORMAL': QSize(540, 545),
-        'HIGH': QSize(1080, 1090)
+        'LOW': QSize(450, 300),
+        'NORMAL': QSize(540, 400),
+        'HIGH': QSize(1080, 700)
     }
 
     def __init__(self, parent=None, flags=Qt.WindowCloseButtonHint):
@@ -69,7 +70,7 @@ class VideoInfo(QDialog):
 
     def analyse(self, media: str) -> None:
         streams = self.service.streams(media)
-        table = QTableWidget(0, 2, self)
+        table = QTableWidget(16, 2, self)
         table.setEditTriggers(QAbstractItemView.NoEditTriggers)
         table.horizontalHeader().hide()
         table.verticalHeader().hide()
@@ -77,44 +78,42 @@ class VideoInfo(QDialog):
         table.setSelectionMode(QAbstractItemView.NoSelection)
         table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)
         table.horizontalHeader().setStretchLastSection(True)
-        table.setRowCount(16)
-        table.setItem(0, 0, self._label('Filename'))
+        table.setItem(0, 0, self._label('filename'))
         table.setItem(0, 1, self._value(os.path.basename(media)))
-        table.setItem(1, 0, self._label('Audio bitrate'))
+        table.setItem(1, 0, self._label('audio bitrate'))
         table.setItem(1, 1, self._value(streams.get('audio')[0].get('other_bit_rate')[0]))
-        table.setItem(2, 0, self._label('Audio channels'))
+        table.setItem(2, 0, self._label('audio channels'))
         table.setItem(2, 1, self._value(streams.get('audio')[0].get('other_channel_s')[0]))
-        table.setItem(3, 0, self._label('Audio codec'))
+        table.setItem(3, 0, self._label('audio codec'))
         table.setItem(3, 1, self._value(self.player.audio_codec))
-        table.setItem(4, 0, self._label('Audio frequency'))
+        table.setItem(4, 0, self._label('audio frequency'))
         table.setItem(4, 1, self._value(streams.get('audio')[0].get('other_sampling_rate')[0]))
-        table.setItem(5, 0, self._label('Bitrate'))
+        table.setItem(5, 0, self._label('bitrate'))
         table.setItem(5, 1, self._value(streams.get('general')[0].get('other_overall_bit_rate')[0]))
-        table.setItem(6, 0, self._label('Color matrix'))
+        table.setItem(6, 0, self._label('color matrix'))
         table.setItem(6, 1, self._value(self.player.colormatrix))
-        table.setItem(7, 0, self._label('Duration'))
+        table.setItem(7, 0, self._label('duration'))
         table.setItem(7, 1, self._value(streams.get('video')[0].get('other_duration')[0]))
-        table.setItem(8, 0, self._label('Encoder'))
+        table.setItem(8, 0, self._label('encoder'))
         table.setItem(8, 1, self._value(streams.get('video')[0].get('other_writing_library')[0]))
-        table.setItem(9, 0, self._label('File size'))
+        table.setItem(9, 0, self._label('file size'))
         table.setItem(9, 1, self._value(streams.get('general')[0].get('other_file_size')[0]))
-        table.setItem(10, 0, self._label('Frame rate'))
+        table.setItem(10, 0, self._label('frame rate'))
         table.setItem(10, 1, self._value(streams.get('general')[0].get('other_frame_rate')[0]))
-        table.setItem(11, 0, self._label('Frame size'))
+        table.setItem(11, 0, self._label('frame size'))
         table.setItem(11, 1, self._value('%sx%s' % (self.player.width, self.player.height)))
-        table.setItem(12, 0, self._label('Pixel aspect ratio'))
+        table.setItem(12, 0, self._label('pixel aspect ratio'))
         table.setItem(12, 1, self._value(streams.get('video')[0].get('pixel_aspect_ratio')))
-        table.setItem(13, 0, self._label('Pixel format'))
+        table.setItem(13, 0, self._label('pixel format'))
         table.setItem(13, 1, self._value(self.player.video_out_params.get('pixelformat')))
-        table.setItem(14, 0, self._label('Video bitrate'))
+        table.setItem(14, 0, self._label('video bitrate'))
         table.setItem(14, 1, self._value(streams.get('video')[0].get('other_bit_rate')[0]))
-        table.setItem(15, 0, self._label('Video codec'))
+        table.setItem(15, 0, self._label('video codec'))
         table.setItem(15, 1, self._value(self.player.video_codec))
-
         buttons = QDialogButtonBox()
         buttons.addButton('Advanced', QDialogButtonBox.AcceptRole)
         buttons.addButton(QDialogButtonBox.Close)
-        buttons.accepted.connect(self.advanced)
+        buttons.accepted.connect(lambda: self.advanced(media))
         buttons.rejected.connect(self.close)
         layout = QVBoxLayout()
         layout.addWidget(table)
@@ -123,4 +122,27 @@ class VideoInfo(QDialog):
         self.show()
 
     def advanced(self, media: str) -> None:
-        pass
+        self.close()
+        advanced = QWidget(self.parent, flags=Qt.Dialog | Qt.WindowCloseButtonHint)
+        buttons = QDialogButtonBox(QDialogButtonBox.Close)
+        buttons.rejected.connect(advanced.close)
+        metadata = '<div align="center" style="margin:15px;">%s</div>' % self.service.metadata(media)
+        content = QLabel(metadata)
+        content.setStyleSheet('QLabel { background: transparent; color: %s; }'
+                              % '#FFF' if self.parent.theme == 'dark' else '#000')
+        scroller = QScrollArea()
+        scroller.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        scroller.setFrameShape(QFrame.NoFrame)
+        scroller.setWidget(content)
+        layout = QVBoxLayout()
+        layout.addWidget(scroller)
+        layout.addWidget(buttons)
+        advanced.setLayout(layout)
+        advanced.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        advanced.setContentsMargins(0, 0, 0, 0)
+        advanced.setWindowTitle('Media information (Advanced)')
+        if self.parent.parent.scale == 'LOW':
+            advanced.setMinimumSize(600, 300)
+        else:
+            advanced.setMinimumSize(750, 450)
+        advanced.show()

@@ -38,6 +38,7 @@ class About(QDialog):
         super(About, self).__init__(parent, f)
         self.parent = parent
         self.setObjectName('aboutwidget')
+        self.setContentsMargins(0, 0, 0, 0)
         self.setWindowModality(Qt.ApplicationModal)
         builddate = QFileInfo(os.path.join(QFileInfo(__file__).absolutePath(), '__init__.py')).lastModified()
         builddate = builddate.toString('dd MMM yyyy').upper()
@@ -100,6 +101,7 @@ class About(QDialog):
         self.setLayout(layout)
         self.setWindowTitle('About %s' % qApp.applicationName())
         self.setWindowIcon(self.parent.windowIcon())
+        self.setMinimumSize(self.get_size(self.parent.parent.scale))
 
     @staticmethod
     def get_size(mode: str = 'NORMAL') -> QSize:
