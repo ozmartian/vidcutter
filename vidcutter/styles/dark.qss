@@ -219,9 +219,15 @@ QStatusBar::item {
 
 /* -------------------------------------------------------------------------- */
 
-QTextBrowser {
+#aboutwidget QTextBrowser {
     background-color: rgba(255, 255, 255, 0.8);
     color: #000;
+    border: none;
+}
+
+#mediainfo_advanced QTextBrowser {
+    background: transparent;
+    color: #FFF;
     border: none;
 }
 
@@ -283,6 +289,6 @@ VCProgressBar {
 VCProgressBar QLabel {
     font-family: "Futura LT", sans-serif;
     font-size: 15px;
-    font-weight: bold;
+    font-weight: 500;
     color: #FFF;
 }

@@ -28,7 +28,7 @@ import os
 from PyQt5.QtCore import QSize, Qt
 from PyQt5.QtGui import QBrush, QColor, QFont, QPixmap
 from PyQt5.QtWidgets import (QAbstractItemView, QDialog, QDialogButtonBox, QFrame, QHeaderView, QLabel, QPushButton,
-                             QScrollArea, QSizePolicy, QStyle, QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget)
+                             QSizePolicy, QStyle, QTextBrowser, QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget)
 
 
 class VideoInfo(QDialog):
@@ -149,19 +149,24 @@ class VideoInfo(QDialog):
     def advanced(self, media: str) -> None:
         self.close()
         advanced = QWidget(self.parent, flags=Qt.Dialog | Qt.WindowCloseButtonHint)
+        advanced.setObjectName('mediainfo_advanced')
         buttons = QDialogButtonBox(QDialogButtonBox.Close)
         buttons.rejected.connect(advanced.close)
-        metadata = '<div align="center" style="margin:15px;">%s</div>' % self.service.metadata(media)
-        content = QLabel(metadata)
-        content.setStyleSheet('QLabel { background: transparent; color: %s; }'
-                              % '#FFF' if self.parent.theme == 'dark' else '#000')
-        scroller = QScrollArea()
-        scroller.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        scroller.setFrameShape(QFrame.NoFrame)
-        scroller.setWidget(content)
+        metadata = '''
+            <style>
+                table { font-family: "Open Sans", sans-serif; font-size: 13px; }
+                td i { font-weight: 500; font-style: normal; text-align: right; color: %s; }
+                td { font-weight: normal; }
+                h1, h2, h3 { color: %s; }
+            </style>
+            <div align="center" style="margin:15px;">%s</div>''' % ('#C681D5' if self.parent.theme == 'dark' else '#642C68',
+                                                                    '#C681D5' if self.parent.theme == 'dark' else '#642C68',
+                                                                    self.service.metadata(media))
+        content = QTextBrowser(self.parent)
+        content.setHtml(metadata)
         layout = QVBoxLayout()
         layout.addWidget(QLabel(pixmap=QPixmap(':/images/%s/mediainfo-heading.png' % self.parent.theme)))
-        layout.addWidget(scroller)
+        layout.addWidget(content)
         layout.addWidget(buttons)
         advanced.setLayout(layout)
         advanced.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
