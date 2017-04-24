@@ -96,6 +96,7 @@ class VideoCutter(QWidget):
             self.currentMedia = ''
             self.mediaAvailable = False
 
+            self.nativeDialogs = self.settings.value('nativeDialogs', 'true') == 'true'
             self.keepClips = self.settings.value('keepClips', 'false') == 'true'
             self.hardwareDecoding = self.settings.value('hwdec', 'auto') == 'auto'
 
@@ -300,6 +301,7 @@ class VideoCutter(QWidget):
                                    demuxer_max_bytes=(25 * 1024 * 1024),
                                    hr_seek='absolute',
                                    hr_seek_framedrop=True,
+                                   rebase_start_time=False,
                                    keepaspect=self.keepRatioAction.isChecked(),
                                    hwdec='auto' if self.hardwareDecodingAction.isChecked() else 'no')
 
@@ -424,6 +426,8 @@ class VideoCutter(QWidget):
                                       checkable=True, checked=False)
         self.keepRatioAction = QAction('Keep aspect ratio', self, checkable=True, triggered=self.setAspect,
                                        statusTip='Keep window aspect ratio when resizing the window', enabled=False)
+        self.nativeDialogsAction = QAction('Use native dialogs', self, checkable=True, checked=self.nativeDialogs,
+                                         statusTip='Use platform-native dialogs for file open & save operations')
         self.alwaysOnTopAction = QAction('Always on top', self, checkable=True, triggered=self.parent.set_always_on_top,
                                          statusTip='Keep app window on top of all other windows',
                                          checked=self.parent.ontop)
@@ -472,13 +476,14 @@ class VideoCutter(QWidget):
         optionsMenu.addAction(self.lightThemeAction)
         optionsMenu.addAction(self.darkThemeAction)
         optionsMenu.addSeparator()
-        optionsMenu.addAction(self.hardwareDecodingAction)
-        optionsMenu.addAction(self.keepRatioAction)
-        optionsMenu.addAction(self.alwaysOnTopAction)
-        optionsMenu.addSeparator()
         optionsMenu.addAction(self.keepClipsAction)
         optionsMenu.addSeparator()
+        optionsMenu.addAction(self.nativeDialogsAction)
+        optionsMenu.addAction(self.alwaysOnTopAction)
         optionsMenu.addMenu(labelsMenu)
+        optionsMenu.addSeparator()
+        optionsMenu.addAction(self.hardwareDecodingAction)
+        optionsMenu.addAction(self.keepRatioAction)
         optionsMenu.addMenu(zoomMenu)
 
         self.appMenu.addAction(self.openEDLAction)
@@ -584,7 +589,10 @@ class VideoCutter(QWidget):
 
     def openMedia(self) -> None:
         filename, _ = QFileDialog.getOpenFileName(self.parent, caption='Select media file', filter=self.fileFilters(),
-                                                  directory=QDir.homePath())
+                                                  directory=QDir.homePath(),
+                                                  options=(QFileDialog.DontUseNativeDialog
+                                                           if not self.nativeDialogsAction.isChecked()
+                                                           else QFileDialog.Options()))
         if filename != '':
             self.loadMedia(filename)
 
@@ -595,7 +603,10 @@ class VideoCutter(QWidget):
             self.edl, _ = QFileDialog.getOpenFileName(self.parent, caption='Select EDL file',
                                                       filter='MPlayer EDL (*.edl);;All files (*.*)',
                                                       initialFilter='MPlayer EDL (*.edl)',
-                                                      directory=os.path.join(QDir.homePath(), '%s.edl' % source_file))
+                                                      directory=os.path.join(QDir.homePath(), '%s.edl' % source_file),
+                                                      options=(QFileDialog.DontUseNativeDialog
+                                                               if not self.nativeDialogsAction.isChecked()
+                                                               else QFileDialog.Options()))
         if self.edl.strip():
             file = QFile(self.edl)
             if not file.open(QFile.ReadOnly | QFile.Text):
@@ -643,7 +654,10 @@ class VideoCutter(QWidget):
     def saveEDL(self, filepath: str) -> None:
         source_file, _ = os.path.splitext(self.currentMedia)
         edlsave = self.edl if self.edl.strip() else '%s.edl' % source_file
-        edlsave, _ = QFileDialog.getSaveFileName(parent=self.parent, caption='Save EDL file', directory=edlsave)
+        edlsave, _ = QFileDialog.getSaveFileName(parent=self.parent, caption='Save EDL file', directory=edlsave,
+                                                 options=(QFileDialog.DontUseNativeDialog
+                                                          if not self.nativeDialogsAction.isChecked()
+                                                          else QFileDialog.Options()))
         if edlsave.strip():
             file = QFile(edlsave)
             if not file.open(QFile.WriteOnly | QFile.Text):
@@ -861,7 +875,10 @@ class VideoCutter(QWidget):
         if clips > 0:
             self.finalFilename, _ = QFileDialog.getSaveFileName(parent=self.parent, caption='Save video',
                                                                 directory='%s_EDIT%s' % (source_file, source_ext),
-                                                                filter='Video files (*%s)' % source_ext)
+                                                                filter='Video files (*%s)' % source_ext,
+                                                                options=(QFileDialog.DontUseNativeDialog
+                                                                         if not self.nativeDialogsAction.isChecked()
+                                                                         else QFileDialog.Options()))
             if self.finalFilename == '':
                 return False
             file, ext = os.path.splitext(self.finalFilename)

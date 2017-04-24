@@ -215,12 +215,13 @@ class MainWindow(QMainWindow):
             labels = 'beside'
         self.settings.setValue('toolbarLabels', labels)
         self.settings.setValue('aspectRatio', 'keep' if self.cutter.keepRatioAction.isChecked() else 'stretch')
+        self.settings.setValue('nativeDialogs', 'true' if self.cutter.nativeDialogsAction.isChecked() else 'false')
         self.settings.setValue('alwaysOnTop', 'true' if self.cutter.alwaysOnTopAction.isChecked() else 'false')
-        self.settings.setValue('geometry', self.saveGeometry())
-        self.settings.setValue('windowState', self.saveState())
         self.settings.setValue('volume', self.cutter.volumeSlider.value())
         self.settings.setValue('keepClips', 'true' if self.cutter.keepClipsAction.isChecked() else 'false')
         self.settings.setValue('hwdec', 'auto' if self.cutter.hardwareDecodingAction.isChecked() else 'no')
+        self.settings.setValue('geometry', self.saveGeometry())
+        self.settings.setValue('windowState', self.saveState())
         self.settings.sync()
 
     @pyqtSlot(bool)
