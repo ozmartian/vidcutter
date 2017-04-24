@@ -40,7 +40,7 @@ class About(QDialog):
         self.setObjectName('aboutwidget')
         self.setContentsMargins(0, 0, 0, 0)
         self.setWindowModality(Qt.ApplicationModal)
-        builddate = QFileInfo(os.path.join(QFileInfo(__file__).absolutePath(), '__init__.py')).lastModified()
+        builddate = QFileInfo(self.parent.parent.get_path('__init__.py', override=True)).lastModified()
         builddate = builddate.toString('dd MMM yyyy').upper()
         pencolor1 = '#9A45A2' if self.parent.theme == 'dark' else '#642C68'
         pencolor2 = '#FFF' if self.parent.theme == 'dark' else '#000'

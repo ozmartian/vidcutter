@@ -296,9 +296,6 @@ class VideoCutter(QWidget):
                                    sub_auto=False,
                                    osd_level=0,
                                    sid=False,
-                                   cache_backbuffer=(10 * 1024),
-                                   cache_default=(10 * 1024),
-                                   demuxer_max_bytes=(25 * 1024 * 1024),
                                    hr_seek='absolute',
                                    hr_seek_framedrop=True,
                                    rebase_start_time=False,
@@ -723,7 +720,7 @@ class VideoCutter(QWidget):
 
     def setPosition(self, position: int) -> None:
         if not self.mediaPlayer.seeking:
-            self.mediaPlayer.time_pos = position / 1000
+            self.mediaPlayer.seek(self.delta2QTime(position).toString(self.timeformat), reference='absolute', precision='exact')
 
     def positionChanged(self, progress: int) -> None:
         if progress is None:
