@@ -25,9 +25,10 @@
 import os
 import platform
 import sys
+from datetime import datetime
 
 from PyQt5.Qt import PYQT_VERSION_STR
-from PyQt5.QtCore import QFileInfo, QSize, Qt, QUrl
+from PyQt5.QtCore import QSize, Qt, QUrl
 from PyQt5.QtGui import QCloseEvent
 from PyQt5.QtWidgets import qApp, QDialog, QDialogButtonBox, QLabel, QTabWidget, QTextBrowser, QVBoxLayout
 from sip import SIP_VERSION_STR
@@ -40,8 +41,7 @@ class About(QDialog):
         self.setObjectName('aboutwidget')
         self.setContentsMargins(0, 0, 0, 0)
         self.setWindowModality(Qt.ApplicationModal)
-        builddate = QFileInfo(self.parent.parent.get_path('__init__.py', override=True)).lastModified()
-        builddate = builddate.toString('dd MMM yyyy').upper()
+        builddate = datetime.fromtimestamp(os.path.getmtime(self.parent.parent.get_path('__init__.py', override=True))).strftime('%d %b %Y')
         pencolor1 = '#9A45A2' if self.parent.theme == 'dark' else '#642C68'
         pencolor2 = '#FFF' if self.parent.theme == 'dark' else '#000'
         header = QLabel('''
@@ -82,7 +82,7 @@ class About(QDialog):
                 </td>
             </tr>
         </table>''' % (pencolor2, pencolor1, pencolor1, qApp.applicationVersion(), platform.architecture()[0],
-                       pencolor1, builddate, self.parent.theme), self)
+                       pencolor1, builddate.upper(), self.parent.theme), self)
         header.setStyleSheet('border:none;')
         self.tab_about = AboutTab(self)
         self.tab_credits = CreditsTab()

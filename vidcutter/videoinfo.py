@@ -154,8 +154,8 @@ class VideoInfo(QDialog):
         buttons.rejected.connect(advanced.close)
         metadata = '''
             <style>
-                table { font-family: "Open Sans", sans-serif; font-size: 13px; }
-                td i { font-weight: 500; font-style: normal; text-align: right; color: %s; }
+                table { font-family: "Open Sans", sans-serif; font-size: 13px; margin-top: -10px; }
+                td i { font-weight: 500; font-style: normal; text-align: right; color: %s; white-space: nowrap; }
                 td { font-weight: normal; }
                 h1, h2, h3 { color: %s; }
             </style>
