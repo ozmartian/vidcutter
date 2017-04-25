@@ -122,12 +122,16 @@ class VideoService(QObject):
             'general': [general for general in mediainfo if general['track_type'] == 'General'],
             'video': [video for video in mediainfo if video['track_type'] == 'Video'],
             'audio': [audio for audio in mediainfo if audio['track_type'] == 'Audio'],
-            'text': [text for text in mediainfo if text['track_type'] == 'Text']
+            'text': [text for text in mediainfo if text['track_type'] == 'Text'],
+            'other': [other for other in mediainfo if other['track_type'] == 'Other'],
         }
 
     def cmdExec(self, cmd: str, args: str = None, output: bool = False):
         if os.getenv('DEBUG', False):
-            print('VideoService CMD: %s %s' % (cmd, args))
+            try:
+                self.logger.info('\nVideoService cmdExec: "%s %s"' % (cmd, args))
+            except:
+                pass
         if self.proc.state() == QProcess.NotRunning:
             self.proc.start(cmd, shlex.split(args))
             self.proc.waitForFinished(-1)

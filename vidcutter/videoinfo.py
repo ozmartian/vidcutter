@@ -80,6 +80,8 @@ class VideoInfo(QDialog):
         table.setSelectionMode(QAbstractItemView.NoSelection)
         table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)
         table.horizontalHeader().setStretchLastSection(True)
+
+
         try:
             table.setItem(0, 0, self._label('filename'))
             table.setItem(0, 1, self._value(os.path.basename(media)))
@@ -163,6 +165,7 @@ class VideoInfo(QDialog):
                                                                     '#C681D5' if self.parent.theme == 'dark' else '#642C68',
                                                                     self.service.metadata(media))
         content = QTextBrowser(self.parent)
+        content.setObjectName('genericdialog2')
         content.setHtml(metadata)
         layout = QVBoxLayout()
         layout.addWidget(QLabel(pixmap=QPixmap(':/images/%s/mediainfo-heading.png' % self.parent.theme)))

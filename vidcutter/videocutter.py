@@ -296,7 +296,7 @@ class VideoCutter(QWidget):
                                    sub_auto=False,
                                    osd_level=0,
                                    sid=False,
-                                   hr_seek='absolute',
+                                   hr_seek=False,
                                    hr_seek_framedrop=True,
                                    rebase_start_time=False,
                                    keepaspect=self.keepRatioAction.isChecked(),
@@ -457,7 +457,7 @@ class VideoCutter(QWidget):
         self.toolbar.setLabelByType(self.settings.value('toolbarLabels', 'beside'))
 
     def initMenus(self) -> None:
-        labelsMenu = QMenu('Toolbar', self.appMenu)
+        labelsMenu = QMenu('Toolbar labels', self.appMenu)
         labelsMenu.addAction(self.besideLabelsAction)
         labelsMenu.addAction(self.underLabelsAction)
         labelsMenu.addAction(self.noLabelsAction)
