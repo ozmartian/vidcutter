@@ -298,7 +298,7 @@ class VideoCutter(QWidget):
                                    sid=False,
                                    hr_seek=False,
                                    hr_seek_framedrop=True,
-                                   rebase_start_time=False,
+                                   rebase_start_time=True,
                                    keepaspect=self.keepRatioAction.isChecked(),
                                    hwdec='auto' if self.hardwareDecodingAction.isChecked() else 'no')
 
