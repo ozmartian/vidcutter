@@ -176,7 +176,7 @@ class VideoInfo(QDialog):
         advanced.setContentsMargins(0, 0, 0, 0)
         advanced.setWindowTitle('Media information (Advanced)')
         if self.parent.parent.scale == 'LOW':
-            advanced.setMinimumSize(600, 300)
+            advanced.setMinimumSize(485, 300)
         else:
-            advanced.setMinimumSize(750, 450)
+            advanced.setMinimumSize(600, 450)
         advanced.show()
