@@ -65,6 +65,7 @@ QToolBar#appcontrols QToolButton {
     color: #EAEAEA;
     font-size: 10pt;
     font-weight: 400;
+    font-family: "Open Sans", sans-serif;
     line-height: 80%;
     background: transparent;
     border: none;

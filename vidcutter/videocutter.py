@@ -720,7 +720,8 @@ class VideoCutter(QWidget):
 
     def setPosition(self, position: int) -> None:
         if not self.mediaPlayer.seeking:
-            self.mediaPlayer.seek(self.delta2QTime(position).toString(self.timeformat), reference='absolute', precision='exact')
+            self.mediaPlayer.seek(self.delta2QTime(position).toString(self.timeformat),
+                                  reference='absolute', precision='exact')
 
     def positionChanged(self, progress: int) -> None:
         if progress is None:
