@@ -33,7 +33,7 @@ from PyQt5.QtCore import QDir, QFileInfo, QObject, QProcess, QProcessEnvironment
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import qApp, QMessageBox
 
-from vidcutter.libs.mediainfo import MediaInfo
+# from vidcutter.libs.mediainfo import MediaInfo
 
 
 class VideoService(QObject):
@@ -115,16 +115,16 @@ class VideoService(QObject):
         result = self.cmdExec(self.mediainfo, args, True)
         return result.strip()
 
-    @staticmethod
-    def streams(source: str) -> dict:
-        mediainfo = MediaInfo.parse(source).to_data().get('tracks')
-        return {
-            'general': [general for general in mediainfo if general['track_type'] == 'General'],
-            'video': [video for video in mediainfo if video['track_type'] == 'Video'],
-            'audio': [audio for audio in mediainfo if audio['track_type'] == 'Audio'],
-            'text': [text for text in mediainfo if text['track_type'] == 'Text'],
-            'other': [other for other in mediainfo if other['track_type'] == 'Other'],
-        }
+    # @staticmethod
+    # def streams(source: str) -> dict:
+    #     mediainfo = MediaInfo.parse(source).to_data().get('tracks')
+    #     return {
+    #         'general': [general for general in mediainfo if general['track_type'] == 'General'],
+    #         'video': [video for video in mediainfo if video['track_type'] == 'Video'],
+    #         'audio': [audio for audio in mediainfo if audio['track_type'] == 'Audio'],
+    #         'text': [text for text in mediainfo if text['track_type'] == 'Text'],
+    #         'other': [other for other in mediainfo if other['track_type'] == 'Other'],
+    #     }
 
     def cmdExec(self, cmd: str, args: str = None, output: bool = False):
         if os.getenv('DEBUG', False):
