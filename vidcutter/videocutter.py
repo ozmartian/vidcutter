@@ -185,8 +185,7 @@ class VideoCutter(QWidget):
 
             self.volumeSlider = QSlider(Qt.Horizontal, toolTip='Volume', statusTip='Adjust volume level',
                                         cursor=Qt.PointingHandCursor, value=self.parent.startupvol, minimum=0,
-                                        maximum=130,
-                                        sliderMoved=self.setVolume, objectName='volumeSlider')
+                                        maximum=130, sliderMoved=self.setVolume, objectName='volumeSlider')
 
             self.menuButton = QPushButton(self, toolTip='Menu', cursor=Qt.PointingHandCursor, flat=True,
                                           objectName='menuButton')
@@ -288,17 +287,19 @@ class VideoCutter(QWidget):
                                    keep_open=True,
                                    idle=True,
                                    osc=False,
+                                   osd_font='Futura LT',
+                                   osd_level=0,
                                    cursor_autohide=False,
                                    input_cursor=False,
                                    input_default_bindings=False,
                                    stop_playback_on_init_failure=False,
                                    input_vo_keyboard=False,
                                    sub_auto=False,
-                                   osd_level=0,
                                    sid=False,
                                    hr_seek=False,
                                    hr_seek_framedrop=True,
                                    rebase_start_time=True,
+                                   volume=self.parent.startupvol,
                                    keepaspect=self.keepRatioAction.isChecked(),
                                    hwdec='auto' if self.hardwareDecodingAction.isChecked() else 'no')
 
@@ -374,9 +375,9 @@ class VideoCutter(QWidget):
                                   statusTip='Play media file', enabled=False)
         self.pauseAction = QAction(self.pauseIcon, 'Pause\nMedia', self, visible=False, triggered=self.playMedia,
                                    statusTip='Pause currently playing media')
-        self.cutStartAction = QAction(self.cutStartIcon, 'Clip\nStart', self, triggered=self.setCutStart, enabled=False,
+        self.cutStartAction = QAction(self.cutStartIcon, 'Clip\nStart', self, triggered=self.clipStart, enabled=False,
                                       statusTip='Set the start position of a new clip')
-        self.cutEndAction = QAction(self.cutEndIcon, 'Clip\nEnd', self, triggered=self.setCutEnd,
+        self.cutEndAction = QAction(self.cutEndIcon, 'Clip\nEnd', self, triggered=self.clipEnd,
                                     enabled=False, statusTip='Set the end position of a new clip')
         self.saveAction = QAction(self.saveIcon, 'Save\nMedia', self, triggered=self.cutVideo, enabled=False,
                                   statusTip='Save clips to a new media file')
@@ -646,7 +647,7 @@ class VideoCutter(QWidget):
             self.inCut = False
             self.renderTimes()
             qApp.restoreOverrideCursor()
-            self.parent.statusBar().showMessage('EDL file was successfully read...', 2000)
+            self.showText('EDL file was successfully read...')
 
     def saveEDL(self, filepath: str) -> None:
         source_file, _ = os.path.splitext(self.currentMedia)
@@ -669,7 +670,7 @@ class VideoCutter(QWidget):
                                       milliseconds=clip[1].msec())
                 QTextStream(file) << '%s\t%s\t%d\n' % (self.delta2String(start_time), self.delta2String(stop_time), 0)
             qApp.restoreOverrideCursor()
-            self.parent.statusBar().showMessage('EDL file was successfully saved...', 2000)
+            self.showText('EDL file was successfully saved...')
 
     def loadMedia(self, filename: str) -> None:
         if not os.path.exists(filename):
@@ -696,9 +697,14 @@ class VideoCutter(QWidget):
         else:
             self.playAction.setVisible(True)
             self.pauseAction.setVisible(False)
+            self.showText('Paused')
         self.timeCounter.clearFocus()
         self.frameCounter.clearFocus()
         self.mediaPlayer.pause = not self.mediaPlayer.pause
+
+    def showText(self, text: str, duration: int = 3) -> None:
+        if len(text.strip()) and self.mediaAvailable:
+            self.mediaPlayer.show_text(text, duration * 1000, 0)
 
     def initMediaControls(self, flag: bool = True) -> None:
         self.playAction.setEnabled(flag)
@@ -770,7 +776,7 @@ class VideoCutter(QWidget):
             level = 0
         self.mediaPlayer.video_zoom = level
 
-    def setCutStart(self) -> None:
+    def clipStart(self) -> None:
         if os.getenv('DEBUG', False):
             print('cut start position: %s' % self.seekSlider.value())
         starttime = self.delta2QTime(self.mediaPlayer.playback_time * 1000)
@@ -781,25 +787,25 @@ class VideoCutter(QWidget):
         self.cutEndAction.setEnabled(True)
         self.seekSlider.setRestrictValue(self.seekSlider.value(), True)
         self.inCut = True
-        self.mediaPlayer.show_text('clip start marker set', 3000, 0)
+        self.showText('New clip started at\n%s' % starttime.toString(self.timeformat))
         self.renderTimes()
 
-    def setCutEnd(self) -> None:
+    def clipEnd(self) -> None:
         if os.getenv('DEBUG', False):
             print('cut end position: %s' % self.seekSlider.value())
         item = self.clipTimes[len(self.clipTimes) - 1]
-        selected = self.delta2QTime(self.mediaPlayer.playback_time * 1000)
-        if selected.__lt__(item[0]):
+        endtime = self.delta2QTime(self.mediaPlayer.playback_time * 1000)
+        if endtime.__lt__(item[0]):
             QMessageBox.critical(self.parent, 'Invalid END Time',
                                  'The clip end time must come AFTER it\'s start time. Please try again.')
             return
-        item[1] = selected
+        item[1] = endtime
         self.cutStartAction.setEnabled(True)
         self.cutEndAction.setDisabled(True)
         self.timeCounter.setMinimum()
         self.seekSlider.setRestrictValue(0, False)
         self.inCut = False
-        self.mediaPlayer.show_text('clip end marker set', 3000, 0)
+        self.showText('New clip ended at\n%s' % endtime.toString(self.timeformat))
         self.renderTimes()
 
     @pyqtSlot(QModelIndex, int, int, QModelIndex, int)
@@ -947,8 +953,8 @@ class VideoCutter(QWidget):
                                      'this by installing the <b>mediainfo</b> package via your ' +
                                      'package manager.')
                 return
-            mediainfo = VideoInfo(self)
-            mediainfo.analyse(self.currentMedia)
+            mediainfo = VideoInfo(media=self.currentMedia, parent=self)
+            mediainfo.show()
 
     @pyqtSlot()
     def showKeyRef(self) -> None:
@@ -1185,9 +1191,9 @@ class VideoCutter(QWidget):
             elif event.key() in (Qt.Key_Return, Qt.Key_Enter) and (
                         not self.timeCounter.hasFocus() and not self.frameCounter.hasFocus()):
                 if self.cutStartAction.isEnabled():
-                    self.setCutStart()
+                    self.clipStart()
                 elif self.cutEndAction.isEnabled():
-                    self.setCutEnd()
+                    self.clipEnd()
             elif event.key() == Qt.Key_Space:
                 self.playMedia()
             event.accept()
