@@ -124,6 +124,7 @@ class VideoCutter(QWidget):
             self.cliplist.setContentsMargins(0, 0, 0, 0)
             self.cliplist.setFixedWidth(190)
             self.cliplist.setAttribute(Qt.WA_MacShowFocusRect, False)
+            self.cliplist.itemClicked.connect(self.positionAtClip)
             self.cliplist.model().rowsMoved.connect(self.syncClipList)
 
             self.cliplist.setStyleSheet('QListView::item { border: none; }')
@@ -735,6 +736,11 @@ class VideoCutter(QWidget):
             self.seekSlider.setValue(progress)
             self.timeCounter.setTime(self.delta2QTime(progress).toString(self.timeformat))
             self.frameCounter.setFrame(self.mediaPlayer.estimated_frame_number)
+
+    @pyqtSlot(QListWidgetItem)
+    def positionAtClip(self, item: QListWidgetItem) -> None:
+        row = self.cliplist.indexFromItem(item).row()
+        self.setPosition(self.clipTimes[row][0].msecsSinceStartOfDay())
 
     def durationChanged(self, duration: int) -> None:
         if duration is None:
