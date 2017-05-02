@@ -147,7 +147,7 @@ class VideoService(QObject):
             QMessageBox.critical(self.parent.parent, '',
                                  '<h4>%s Error:</h4>' % self.backend +
                                  '<p>%s</p>' % self.proc.errorString(), buttons=QMessageBox.Close)
-            qApp.quit()
+            # qApp.quit()
 
     @staticmethod
     def getAppPath() -> str:
