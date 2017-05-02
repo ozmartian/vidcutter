@@ -303,7 +303,6 @@ class VideoCutter(QWidget):
                                    hwdec='auto' if self.hardwareDecodingAction.isChecked() else 'no')
         self.mediaPlayer.observe_property('time-pos', lambda ptime: self.positionChanged(ptime))
         self.mediaPlayer.observe_property('duration', lambda dtime: self.durationChanged(dtime))
-        self.mediaPlayer.wait_for_playback()
 
     def initNoVideo(self) -> None:
         self.novideoWidget = QWidget(self, objectName='novideoWidget')
