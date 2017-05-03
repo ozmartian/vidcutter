@@ -878,7 +878,7 @@ class VideoCutter(QWidget):
     def cutVideo(self) -> bool:
         clips = len(self.clipTimes)
         filename, filelist = '', []
-        allstreams = True
+
         source_file, source_ext = os.path.splitext(self.currentMedia)
         if clips > 0:
             self.finalFilename, _ = QFileDialog.getSaveFileName(parent=self.parent, caption='Save video',
@@ -907,18 +907,20 @@ class VideoCutter(QWidget):
                                       output=filename,
                                       frametime=clip[0].toString(self.timeformat),
                                       duration=duration,
-                                      allstreams=allstreams)
+                                      allstreams=True)
                 if not QFile(filename).size():
-                    self.logger.info('cut resulted in 0 length file, trying again without stream mapping')
-                    allstreams = False
+                    self.logger.info('cut resulted in 0 length file, trying again without all stream mapping')
                     self.videoService.cut(source='%s%s' % (source_file, source_ext),
                                           output=filename,
                                           frametime=clip[0].toString(self.timeformat),
                                           duration=duration,
-                                          allstreams=allstreams)
+                                          allstreams=False)
                 index += 1
             if len(filelist) > 1:
-                self.joinVideos(filelist, self.finalFilename)
+                rc = self.joinVideos(filelist, self.finalFilename, True)
+                if not rc or not QFile(self.finalFilename).size():
+                    self.logger.info('join() resulted in 0 length file, trying again without all stream mapping')
+                    self.joinVideos(filelist, self.finalFilename, False)
                 if not self.keepClipsAction.isChecked():
                     for f in filelist:
                         if os.path.isfile(f):
@@ -936,18 +938,19 @@ class VideoCutter(QWidget):
             return True
         return False
 
-    def joinVideos(self, joinlist: list, filename: str) -> None:
+    def joinVideos(self, joinlist: list, filename: str, allstreams: bool = True) -> bool:
         listfile = os.path.normpath(os.path.join(os.path.dirname(joinlist[0]), '.vidcutter.list'))
         fobj = open(listfile, 'w')
         for file in joinlist:
             fobj.write('file \'%s\'\n' % file.replace("'", "\\'"))
         fobj.close()
-        self.videoService.join(listfile, filename)
+        result = self.videoService.join(listfile, filename, allstreams)
         QFile.remove(listfile)
+        return result
 
     @pyqtSlot()
     def mediaInfo(self) -> None:
-        if self.mediaAvailable:
+        if self.mediaAvailable: 
             if self.videoService.mediainfo is None:
                 self.logger.error('Error trying to load media information. mediainfo could not be found')
                 QMessageBox.critical(self, 'Could not find mediainfo tool',
@@ -1023,8 +1026,8 @@ class VideoCutter(QWidget):
         }
         td.value { font-size: 15px; }
     </style>
-    <h1>Your new media is ready!</h1>
-    <table class="info" cellpadding="4" cellspacing="0" width="600">
+    <h1>Your media is ready!</h1>
+    <table class="info" cellpadding="2" cellspacing="0" width="500">
         <tr>
             <td class="label"><b>File:</b></td>
             <td class="value" nowrap>%s</td>
@@ -1040,20 +1043,20 @@ class VideoCutter(QWidget):
     </table><br/>''' % (pencolor, pencolor, QDir.toNativeSeparators(self.finalFilename),
                         self.sizeof_fmt(int(info.size())),
                         self.delta2QTime(self.totalRuntime).toString(self.timeformat)))
-        play = mbox.addButton('Play', QMessageBox.AcceptRole)
-        play.setIcon(self.completePlayIcon)
-        play.clicked.connect(self.openResult)
-        fileman = mbox.addButton('Open', QMessageBox.AcceptRole)
-        fileman.setIcon(self.completeOpenIcon)
-        fileman.clicked.connect(self.openFolder)
-        end = mbox.addButton('Exit', QMessageBox.AcceptRole)
-        end.setIcon(self.completeExitIcon)
-        end.clicked.connect(self.close)
-        new = mbox.addButton('Restart', QMessageBox.AcceptRole)
-        new.setIcon(self.completeRestartIcon)
-        new.clicked.connect(self.parent.restart)
-        mbox.setDefaultButton(new)
-        mbox.setEscapeButton(new)
+        btn_play = mbox.addButton('Play', QMessageBox.HelpRole)
+        btn_play.setIcon(self.completePlayIcon)
+        btn_play.clicked.connect(self.openResult)
+        btn_open = mbox.addButton('Open', QMessageBox.ResetRole)
+        btn_open.setIcon(self.completeOpenIcon)
+        btn_open.clicked.connect(self.openFolder)
+        btn_exit = mbox.addButton('Exit', QMessageBox.ApplyRole)
+        btn_exit.setIcon(self.completeExitIcon)
+        btn_exit.clicked.connect(self.close)
+        btn_restart = mbox.addButton('Restart', QMessageBox.AcceptRole)
+        btn_restart.setIcon(self.completeRestartIcon)
+        btn_restart.clicked.connect(self.parent.restart)
+        mbox.setDefaultButton(btn_restart)
+        mbox.setEscapeButton(btn_restart)
         mbox.exec_()
 
     @staticmethod

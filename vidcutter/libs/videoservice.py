@@ -53,7 +53,7 @@ class VideoService(QObject):
             self.backend = os.path.join(self.getAppPath(), 'bin', 'ffmpeg')
             self.mediainfo = os.path.join(self.getAppPath(), 'bin', 'mediainfo')
             if not os.path.exists(self.backend):
-                for exe in ('ffmpeg', 'avconv'):
+                for exe in ('ffmpeg', 'ffmpeg2.8', 'avconv'):
                     exe_path = find_executable(exe)
                     if exe_path is not None:
                         self.backend = exe_path

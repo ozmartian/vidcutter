@@ -41,7 +41,8 @@ class About(QDialog):
         self.setObjectName('aboutwidget')
         self.setContentsMargins(0, 0, 0, 0)
         self.setWindowModality(Qt.ApplicationModal)
-        builddate = datetime.fromtimestamp(os.path.getmtime(self.parent.parent.get_path('__init__.py', override=True))).strftime('%d %b %Y')
+        builddate = datetime.fromtimestamp(os.path.getmtime(
+            self.parent.parent.get_path('__init__.py',override=True))).strftime('%d %b %Y')
         pencolor1 = '#9A45A2' if self.parent.theme == 'dark' else '#642C68'
         pencolor2 = '#FFF' if self.parent.theme == 'dark' else '#000'
         header = QLabel('''
@@ -85,7 +86,7 @@ class About(QDialog):
                        pencolor1, builddate.upper(), self.parent.theme), self)
         header.setStyleSheet('border:none;')
         self.tab_about = AboutTab(self)
-        self.tab_credits = CreditsTab()
+        self.tab_credits = CreditsTab(self)
         self.tab_license = LicenseTab()
         tabs = QTabWidget()
         tabs.setFocusPolicy(Qt.NoFocus)
@@ -130,7 +131,6 @@ class AboutTab(BaseTab):
     def __init__(self, parent=None):
         super(AboutTab, self).__init__(parent)
         self.parent = parent
-        weight = 500 if sys.platform == 'win32' else 600
         linebreak = '<br/>' if sys.platform == 'win32' else '&nbsp;&nbsp;&nbsp;'
         try:
             ffmpeg_version = self.parent.parent.mediaPlayer.ffmpeg_version
@@ -138,9 +138,8 @@ class AboutTab(BaseTab):
             ffmpeg_version = '2.8.10'
         html = '''
 <style>
-    a { color:#441d4e; text-decoration:none; font-weight:bold; }
-    a:hover { text-decoration:underline; }
     table { width: 100%%; font-family: "Open Sans", sans-serif; }
+    a { color: %s; text-decoration: none; font-weight: bold; }
 </style>
 <table border="0" cellpadding="8" cellspacing="4">
     <tr>
@@ -175,16 +174,18 @@ class AboutTab(BaseTab):
             </p>
         </td>
     </tr>
-</table>''' % (self.parent.parent.mediaPlayer.mpv_version.replace('mpv ', ''), linebreak,
+</table>''' % ('#EA95FF' if self.parent.parent.theme == 'dark' else '#441D4E',
+               self.parent.parent.mediaPlayer.mpv_version.replace('mpv ', ''), linebreak,
                ffmpeg_version, sys.version.split(' ')[0], PYQT_VERSION_STR, SIP_VERSION_STR)
         self.setHtml(html)
 
 
 class CreditsTab(BaseTab):
-    def __init__(self):
-        super(CreditsTab, self).__init__()
+    def __init__(self, parent=None):
+        super(CreditsTab, self).__init__(parent)
+        self.parent = parent
         self.setObjectName('credits')
-        self.setHtml('''<style>a { color:#441d4e; text-decoration:none; font-weight:bold; }
+        self.setHtml('''<style>a { color:%s; text-decoration:none; font-weight:bold; }
         a:hover { text-decoration:underline; }</style>
         <h3 style="text-align:center;">CREDITS</h3>
         <p>
@@ -233,7 +234,7 @@ class CreditsTab(BaseTab):
                     </p>
                 </td>
             </tr>
-        </table>''')
+        </table>''' % '#EA95FF' if self.parent.parent.theme == 'dark' else '#441D4E')
 
 
 class LicenseTab(BaseTab):

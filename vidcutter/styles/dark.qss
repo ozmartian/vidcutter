@@ -221,8 +221,8 @@ QStatusBar::item {
 /* -------------------------------------------------------------------------- */
 
 #aboutwidget QTextBrowser {
-    background-color: rgba(255, 255, 255, 0.8);
-    color: #000;
+    background-color: rgba(12, 15, 16, 0.9);
+    color: #FFF;
     border: none;
 }
 
