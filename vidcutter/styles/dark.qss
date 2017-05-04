@@ -86,7 +86,7 @@ QToolBar#appcontrols QToolButton:disabled#saveButton {
 }
 
 QToolBar#appcontrols QToolButton#saveButton {
-    color: #7E4782;
+    color: #B973C2;
 }
 
 /* -------------------------------------------------------------------------- */

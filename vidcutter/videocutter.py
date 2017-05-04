@@ -1016,6 +1016,7 @@ class VideoCutter(QWidget):
         }
         table.info {
             margin: 6px;
+            margin-top: 15px;
             padding: 4px 15px;
         }
         td.label {
@@ -1027,7 +1028,7 @@ class VideoCutter(QWidget):
         td.value { font-size: 15px; }
     </style>
     <h1>Your media is ready!</h1>
-    <table class="info" cellpadding="2" cellspacing="0" width="500">
+    <table class="info" cellpadding="2" cellspacing="0" width="400">
         <tr>
             <td class="label"><b>File:</b></td>
             <td class="value" nowrap>%s</td>
@@ -1040,16 +1041,16 @@ class VideoCutter(QWidget):
             <td class="label"><b>Length:</b></td>
             <td class="value">%s</td>
         </tr>
-    </table><br/>''' % (pencolor, pencolor, QDir.toNativeSeparators(self.finalFilename),
+    </table><br/>''' % (pencolor, pencolor, os.path.basename(self.finalFilename),
                         self.sizeof_fmt(int(info.size())),
                         self.delta2QTime(self.totalRuntime).toString(self.timeformat)))
-        btn_play = mbox.addButton('Play', QMessageBox.HelpRole)
+        btn_play = mbox.addButton('Play', QMessageBox.ResetRole)
         btn_play.setIcon(self.completePlayIcon)
         btn_play.clicked.connect(self.openResult)
         btn_open = mbox.addButton('Open', QMessageBox.ResetRole)
         btn_open.setIcon(self.completeOpenIcon)
         btn_open.clicked.connect(self.openFolder)
-        btn_exit = mbox.addButton('Exit', QMessageBox.ApplyRole)
+        btn_exit = mbox.addButton('Exit', QMessageBox.AcceptRole)
         btn_exit.setIcon(self.completeExitIcon)
         btn_exit.clicked.connect(self.close)
         btn_restart = mbox.addButton('Restart', QMessageBox.AcceptRole)
