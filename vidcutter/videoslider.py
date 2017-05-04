@@ -64,7 +64,7 @@ class VideoSlider(QSlider):
             background: url(:images/handle.png) no-repeat top center;
             width: 20px;
             height: 58px;
-            margin: -15px -8px;
+            margin: -19px -6px;
         }'''
         self._regions = list()
         self._regionHeight = 12
