@@ -4,6 +4,8 @@
 
 ### Windows + macOS Users
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/425a00c7c6af446ba87c6152567d9f7e)](https://www.codacy.com/app/ozmartian/vidcutter?utm_source=github.com&utm_medium=referral&utm_content=ozmartian/vidcutter&utm_campaign=badger)
+
 Native installers for Windows and macOS are available on the releases page with every new version, or just click the button below. 
 
 <p style="text-align:center;"><a href="https://github.com/ozmartian/vidcutter/releases/latest"><img alt="Latest Release" src="http://tvlinker.ozmartians.com/images/button-latest-release.png" style="max-width:100%;"></a></p>
