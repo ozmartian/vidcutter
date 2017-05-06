@@ -1,6 +1,7 @@
 ![VidCutter](https://raw.githubusercontent.com/ozmartian/vidcutter/gh-pages/vidcutter-banner.png)
 
-![Build Status](https://travis-ci.org/ozmartian/vidcutter.svg?branch=master)
+![Build Status](https://travis-ci.org/ozmartian/vidcutter.svg?branch=master) 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/425a00c7c6af446ba87c6152567d9f7e)](https://www.codacy.com/app/ozmartian/vidcutter?utm_source=github.com&utm_medium=referral&utm_content=ozmartian/vidcutter&utm_campaign=badger)
 
 ### Windows + macOS Users
 
