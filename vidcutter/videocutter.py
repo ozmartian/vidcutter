@@ -220,7 +220,6 @@ class VideoCutter(QWidget):
             self.setLayout(layout)
 
     def checkMPV(self) -> bool:
-        global mpv_error
         if not mpv_error:
             return True
         pencolor1 = '#C681D5' if self.theme == 'dark' else '#642C68'
@@ -300,8 +299,8 @@ class VideoCutter(QWidget):
                                    volume=self.parent.startupvol,
                                    keepaspect=self.keepRatioAction.isChecked(),
                                    hwdec='auto' if self.hardwareDecodingAction.isChecked() else 'no')
-        self.mediaPlayer.observe_property('time-pos', lambda ptime: self.positionChanged(ptime))
-        self.mediaPlayer.observe_property('duration', lambda dtime: self.durationChanged(dtime))
+        self.mediaPlayer.observe_property('time-pos', self.positionChanged)
+        self.mediaPlayer.observe_property('duration', self.durationChanged)
 
     def initNoVideo(self) -> None:
         self.novideoWidget = QWidget(self, objectName='novideoWidget')
@@ -843,7 +842,7 @@ class VideoCutter(QWidget):
         self.totalRuntime = 0
         for clip in self.clipTimes:
             endItem = ''
-            if type(clip[1]) is QTime:
+            if isinstance(clip[1], QTime):
                 endItem = clip[1].toString(self.timeformat)
                 self.totalRuntime += clip[0].msecsTo(clip[1])
             listitem = QListWidgetItem()
@@ -855,12 +854,12 @@ class VideoCutter(QWidget):
             listitem.setData(Qt.UserRole + 1, endItem)
             listitem.setFlags(Qt.ItemIsSelectable | Qt.ItemIsDragEnabled | Qt.ItemIsEnabled)
             self.cliplist.addItem(listitem)
-            if type(clip[1]) is QTime:
+            if isinstance(clip[1], QTime):
                 self.seekSlider.addRegion(clip[0].msecsSinceStartOfDay(), clip[1].msecsSinceStartOfDay())
         if len(self.clipTimes) and not self.inCut:
             self.saveAction.setEnabled(True)
             self.saveProjectAction.setEnabled(True)
-        if self.inCut or len(self.clipTimes) == 0 or not type(self.clipTimes[0][1]) is QTime:
+        if self.inCut or len(self.clipTimes) == 0 or not isinstance(self.clipTimes[0][1], QTime):
             self.saveAction.setEnabled(False)
             self.saveProjectAction.setEnabled(False)
         self.setRunningTime(self.delta2QTime(self.totalRuntime).toString(self.runtimeformat))
@@ -883,7 +882,7 @@ class VideoCutter(QWidget):
         else:
             frametime = self.delta2QTime(frametime)
         imagecap = self.videoService.capture(self.currentMedia, frametime.toString(self.timeformat))
-        if type(imagecap) is QPixmap:
+        if isinstance(imagecap, QPixmap):
             return imagecap
 
     def cutVideo(self) -> bool:
@@ -961,7 +960,7 @@ class VideoCutter(QWidget):
 
     @pyqtSlot()
     def mediaInfo(self) -> None:
-        if self.mediaAvailable: 
+        if self.mediaAvailable:
             if self.videoService.mediainfo is None:
                 self.logger.error('Error trying to load media information. mediainfo could not be found')
                 QMessageBox.critical(self, 'Could not find mediainfo tool',
@@ -1090,8 +1089,9 @@ class VideoCutter(QWidget):
             target = self.finalFilename if not pathonly else os.path.dirname(self.finalFilename)
             QDesktopServices.openUrl(QUrl.fromLocalFile(target))
 
+    @staticmethod
     @pyqtSlot()
-    def viewLogs(self) -> None:
+    def viewLogs() -> None:
         QDesktopServices.openUrl(QUrl.fromLocalFile(logging.getLoggerClass().root.handlers[0].baseFilename))
 
     @pyqtSlot(bool)

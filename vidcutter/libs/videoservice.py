@@ -123,10 +123,7 @@ class VideoService(QObject):
 
     def cmdExec(self, cmd: str, args: str = None, output: bool = False):
         if os.getenv('DEBUG', False):
-            try:
-                self.logger.info('\nVideoService cmdExec: "%s %s"' % (cmd, args))
-            except:
-                pass
+            self.logger.info('\nVideoService cmdExec: "%s %s"' % (cmd, args if args is not None else ''))
         if self.proc.state() == QProcess.NotRunning:
             self.proc.setProcessChannelMode(QProcess.SeparateChannels if cmd == self.mediainfo else QProcess.MergedChannels)
             self.proc.start(cmd, shlex.split(args))
