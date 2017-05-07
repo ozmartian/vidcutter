@@ -143,10 +143,10 @@ class UpdaterMsgBox(QDialog):
         if update_available:
             buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
             buttons.accepted.connect(self.releases_page)
-            buttons.rejected.connect(lambda: self.close())
+            buttons.rejected.connect(self.close)
         else:
             buttons = QDialogButtonBox(QDialogButtonBox.Ok)
-            buttons.accepted.connect(lambda: self.close())
+            buttons.accepted.connect(self.close)
         contentLabel = QLabel(content, self.parent, wordWrap=True, textFormat=Qt.RichText)
         layout = QVBoxLayout()
         layout.addWidget(contentLabel)
