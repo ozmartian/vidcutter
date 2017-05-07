@@ -31,7 +31,7 @@ from distutils.spawn import find_executable
 
 from PyQt5.QtCore import QDir, QFileInfo, QObject, QProcess, QProcessEnvironment, QTemporaryFile, pyqtSlot
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import qApp, QMessageBox
+from PyQt5.QtWidgets import QMessageBox
 
 # from vidcutter.libs.mediainfo import MediaInfo
 
@@ -61,11 +61,7 @@ class VideoService(QObject):
             if not os.path.exists(self.mediainfo):
                 self.mediainfo = find_executable('mediainfo')
         if os.getenv('DEBUG', False):
-            try:
-                self.logger.info('\nVideoService.backend = %s\nVideoService.mediainfo = %s'
-                                 % (self.backend, self.mediainfo))
-            except:
-                pass
+            self.logger.info('VideoService: backend = "%s"\tmediainfo = "%s"' % (self.backend, self.mediainfo))
         self.initProc()
 
     def initProc(self) -> None:
@@ -105,8 +101,8 @@ class VideoService(QObject):
             args = '-f concat -safe 0 -i "%s" -c copy -y "%s"' % (filelist, QDir.fromNativeSeparators(output))
         return self.cmdExec(self.backend, args)
 
-    def streamcount(self, source: str, type: str = 'audio') -> int:
-        m = re.findall('\n^%s' % type.title(), self.metadata(source, type), re.MULTILINE)
+    def streamcount(self, source: str, stream_type: str = 'audio') -> int:
+        m = re.findall('\n^%s' % stream_type.title(), self.metadata(source, stream_type), re.MULTILINE)
         return len(m)
 
     def metadata(self, source: str, output: str = 'HTML') -> str:

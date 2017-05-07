@@ -22,7 +22,7 @@
 #
 #######################################################################
 
-import locale
+from locale import setlocale, LC_NUMERIC
 
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -38,6 +38,7 @@ except OSError:
 class LibMPV(QObject):
     def __init__(self, parent=None, ):
         super(LibMPV, self).__init__(parent)
+        setlocale(LC_NUMERIC, 'C')
         self.player = mpv.MPV()
 
     # TODO
@@ -78,4 +79,3 @@ class LibMPV(QObject):
 
     def __del__(self):
         self.player.terminate()
-        self.player.deleteLater()
