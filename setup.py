@@ -22,8 +22,8 @@
 #
 #######################################################################
 
+import codecs
 import sys
-from codecs import open
 from os import path
 from re import match
 
@@ -31,7 +31,7 @@ from setuptools import setup
 
 
 def get_value(varname, filename='vidcutter/__init__.py'):
-    with open(path.join(here, filename), encoding='utf-8') as initfile:
+    with codecs.open(path.join(here, filename), encoding='utf-8') as initfile:
         for line in initfile.readlines():
             m = match('__%s__ *= *[\'](.*)[\']' % varname, line)
             if m:
@@ -39,7 +39,7 @@ def get_value(varname, filename='vidcutter/__init__.py'):
 
 
 def get_description(filename='README.md'):
-    with open(path.join(here, filename), encoding='utf-8') as f:
+    with codecs.open(path.join(here, filename), encoding='utf-8') as f:
         file = list(f)
     desc = ''
     for item in file[11: len(file)]:
