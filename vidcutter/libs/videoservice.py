@@ -125,7 +125,8 @@ class VideoService(QObject):
         if os.getenv('DEBUG', False):
             self.logger.info('\nVideoService cmdExec: "%s %s"' % (cmd, args if args is not None else ''))
         if self.proc.state() == QProcess.NotRunning:
-            self.proc.setProcessChannelMode(QProcess.SeparateChannels if cmd == self.mediainfo else QProcess.MergedChannels)
+            self.proc.setProcessChannelMode(QProcess.SeparateChannels if cmd == self.mediainfo
+                                            else QProcess.MergedChannels)
             self.proc.start(cmd, shlex.split(args))
             self.proc.waitForFinished(-1)
             if output:

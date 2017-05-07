@@ -429,10 +429,9 @@ class VideoCutter(QWidget):
                                          checked=self.parent.ontop)
         self.keepClipsAction = QAction('Keep individual clips', self, checkable=True, checked=self.keepClips,
                                        statusTip='Keep the individual clips used to produce final media')
-        self.hardwareDecodingAction = QAction('Hardware decoding', self, triggered=self.switchDecoding,
-                                              checkable=True,
+        self.hardwareDecodingAction = QAction('Hardware decoding', self, triggered=self.switchDecoding, checkable=True,
                                               statusTip='Enable hardware based video decoding during playback ' +
-                                                        '(e.g. vdpau, vaapi, dxva2, d3d11, cuda, videotoolbox)')
+                                                        '(e.g. vdpau, vaapi, dxva2, d3d11, cuda, etc.)')
         if self.theme == 'dark':
             self.darkThemeAction.setChecked(True)
         else:
