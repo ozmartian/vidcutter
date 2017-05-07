@@ -38,8 +38,8 @@ from PyQt5.QtWidgets import (QAbstractItemView, QAction, QActionGroup, qApp, QAp
                              QFileDialog, QGroupBox, QHBoxLayout, QLabel, QListWidgetItem, QMenu, QMessageBox,
                              QPushButton, QSizePolicy, QSlider, QStyleFactory, QVBoxLayout, QWidget)
 
-from vidcutter.libs.customwidgets import FrameCounter, TimeCounter, VCProgressBar
 from vidcutter.libs.videoservice import VideoService
+from vidcutter.libs.widgets import FrameCounter, TimeCounter, VCProgressBar
 
 from vidcutter.about import About
 from vidcutter.updater import Updater
@@ -93,14 +93,12 @@ class VideoCutter(QWidget):
             self.totalRuntime = 0
             self.frameRate = 0
             self.notifyInterval = 1000
-            self.currentMedia = ''
-            self.mediaAvailable = False
+            self.currentMedia, self.mediaAvailable = None, False
 
             self.nativeDialogs = self.settings.value('nativeDialogs', 'true') == 'true'
             self.keepClips = self.settings.value('keepClips', 'false') == 'true'
             self.hardwareDecoding = self.settings.value('hwdec', 'auto') == 'auto'
 
-            self.edl = ''
             self.edlblock_re = re.compile(r'(\d+(?:\.?\d+)?)\s(\d+(?:\.?\d+)?)\s([01])')
 
             self.initIcons()
@@ -189,7 +187,7 @@ class VideoCutter(QWidget):
                                         maximum=130, sliderMoved=self.setVolume, objectName='volumeSlider')
 
             self.menuButton = QPushButton(self, toolTip='Menu', cursor=Qt.PointingHandCursor, flat=True,
-                                          objectName='menuButton')
+                                          objectName='menuButton', statusTip='Click to view menu options')
             self.menuButton.setFixedSize(QSize(40, 42))
             self.menuButton.setMenu(self.appMenu)
 
@@ -356,8 +354,8 @@ class VideoCutter(QWidget):
         self.completeOpenIcon = QIcon(':/images/complete-open.png')
         self.completeRestartIcon = QIcon(':/images/complete-restart.png')
         self.completeExitIcon = QIcon(':/images/complete-exit.png')
-        self.openEDLIcon = QIcon(':/images/edl.png')
-        self.saveEDLIcon = QIcon(':/images/save.png')
+        self.openProjectIcon = QIcon(':/images/open.png')
+        self.saveProjectIcon = QIcon(':/images/save.png')
         self.mediaInfoIcon = QIcon(':/images/info.png')
         self.viewLogsIcon = QIcon(':/images/viewlogs.png')
         self.updateCheckIcon = QIcon(':/images/update.png')
@@ -390,10 +388,12 @@ class VideoCutter(QWidget):
                                        triggered=self.clearList, enabled=False)
         self.mediaInfoAction = QAction(self.mediaInfoIcon, 'Media information', self, triggered=self.mediaInfo,
                                        statusTip='View current media file\'s technical properties', enabled=False)
-        self.openEDLAction = QAction(self.openEDLIcon, 'Open project file', self, triggered=self.openEDL, enabled=False,
-                                     statusTip='Open a previously saved project file (EDL)')
-        self.saveEDLAction = QAction(self.saveEDLIcon, 'Save project file', self, triggered=self.saveEDL, enabled=False,
-                                     statusTip='Save current clip index to a project file (EDL)')
+        self.openProjectAction = QAction(self.openProjectIcon, 'Open project file', self, triggered=self.openProject,
+                                         statusTip='Open a previously saved project file (*.vcp or *.edl)',
+                                         enabled=True)
+        self.saveProjectAction = QAction(self.saveProjectIcon, 'Save project file', self, triggered=self.saveProject,
+                                         statusTip='Save current work to a project file (*.vcp or *.edl)',
+                                         enabled=False)
         self.viewLogsAction = QAction(self.viewLogsIcon, 'View log file', self, triggered=self.viewLogs,
                                       statusTip='View the application\'s log file')
         self.updateCheckAction = QAction(self.updateCheckIcon, 'Check for updates...', self,
@@ -483,8 +483,8 @@ class VideoCutter(QWidget):
         optionsMenu.addAction(self.keepRatioAction)
         optionsMenu.addMenu(zoomMenu)
 
-        self.appMenu.addAction(self.openEDLAction)
-        self.appMenu.addAction(self.saveEDLAction)
+        self.appMenu.addAction(self.openProjectAction)
+        self.appMenu.addAction(self.saveProjectAction)
         self.appMenu.addSeparator()
         self.appMenu.addMenu(optionsMenu)
         self.appMenu.addSeparator()
@@ -562,8 +562,12 @@ class VideoCutter(QWidget):
         self.renderTimes()
         self.initMediaControls()
 
+    def projectFilters(self) -> str:
+        return 'VidCutter Project (*.vcp);;%sAll files (*.*)' \
+               % ('MPlayer EDL (*.edl);;' if self.mediaAvailable else '')
+
     @staticmethod
-    def fileFilters() -> str:
+    def mediaFilters() -> str:
         all_types = 'All media files (*.3gp, *.3g2, *.amv, * .avi, *.divx, *.div, *.flv, *.f4v, *.webm, *.mkv, ' + \
                     '*.mp3, *.mpa, *.mp1, *.mpeg, *.mpg, *.mpe, *.m1v, *.tod, *.mpv, *.m2v, *.ts, *.m2t, *.m2ts, ' + \
                     '*.mp4, *.m4v, *.mpv4, *.mod, *.mjpg, *.mjpeg, *.mov, *.qt, *.rm, *.rmvb, *.dat, *.bin, *.vob, ' + \
@@ -585,7 +589,7 @@ class VideoCutter(QWidget):
         return '%s;;%s;;%s;;%s;;All files (*.*)' % (all_types, video_types, audio_types, specific_types)
 
     def openMedia(self) -> None:
-        filename, _ = QFileDialog.getOpenFileName(self.parent, caption='Select media file', filter=self.fileFilters(),
+        filename, _ = QFileDialog.getOpenFileName(self.parent, caption='Select media file', filter=self.mediaFilters(),
                                                   directory=QDir.homePath(),
                                                   options=(QFileDialog.DontUseNativeDialog
                                                            if not self.nativeDialogsAction.isChecked()
@@ -593,22 +597,21 @@ class VideoCutter(QWidget):
         if filename != '':
             self.loadMedia(filename)
 
-    def openEDL(self, checked: bool = False, edlfile: str = '') -> None:
-        source_file, _ = os.path.splitext(self.currentMedia)
-        self.edl = edlfile
-        if not len(self.edl.strip()):
-            self.edl, _ = QFileDialog.getOpenFileName(self.parent, caption='Select EDL file',
-                                                      filter='MPlayer EDL (*.edl);;All files (*.*)',
-                                                      initialFilter='MPlayer EDL (*.edl)',
-                                                      directory=os.path.join(QDir.homePath(), '%s.edl' % source_file),
+    def openProject(self, checked: bool = False) -> None:
+        project_file, _ = QFileDialog.getOpenFileName(self.parent, caption='Select project file',
+                                                      filter=self.projectFilters(),
+                                                      initialFilter='VidCutter Project (*.vcp)',
+                                                      directory=QDir.homePath(),
                                                       options=(QFileDialog.DontUseNativeDialog
                                                                if not self.nativeDialogsAction.isChecked()
                                                                else QFileDialog.Options()))
-        if self.edl.strip():
-            file = QFile(self.edl)
+        if project_file.strip():
+            file = QFile(project_file)
+            info = QFileInfo(file)
+            project_type = info.suffix()
             if not file.open(QFile.ReadOnly | QFile.Text):
-                QMessageBox.critical(self.parent, 'Open EDL file',
-                                     'Cannot read EDL file %s:\n\n%s' % (self.edl, file.errorString()))
+                QMessageBox.critical(self.parent, 'Open project file',
+                                     'Cannot read project file %s:\n\n%s' % (project_file, file.errorString()))
                 return
             qApp.setOverrideCursor(Qt.WaitCursor)
             self.clipTimes.clear()
@@ -622,23 +625,25 @@ class VideoCutter(QWidget):
                         line = str(line)
                     except UnicodeDecodeError:
                         qApp.restoreOverrideCursor()
-                        self.logger.error('Invalid EDL formatted file was selected', exc_info=True)
-                        QMessageBox.critical(self.parent, 'Invalid EDL file',
-                                             'Could not make any sense of the EDL file supplied. Try viewing it in a ' +
-                                             'text editor to ensure it is valid and not corrupted.\n\nAborting EDL ' +
-                                             'processing now...')
+                        self.logger.error('Invalid project file was selected', exc_info=True)
+                        QMessageBox.critical(self.parent, 'Invalid project file',
+                                             'Could not make sense of the selected project file. Try viewing it in a ' +
+                                             'text editor to ensure it is valid and not corrupted.')
                         return
-                    mo = self.edlblock_re.match(line)
-                    if mo:
-                        start, stop, action = mo.groups()
-                        clip_start = self.delta2QTime(int(float(start) * 1000))
-                        clip_end = self.delta2QTime(int(float(stop) * 1000))
-                        clip_image = self.captureImage(frametime=int(float(start) * 1000))
-                        self.clipTimes.append([clip_start, clip_end, clip_image])
+                    if project_type == 'vcp' and linenum == 1:
+                        self.loadMedia(line)
                     else:
-                        qApp.restoreOverrideCursor()
-                        QMessageBox.critical(self.parent, 'Invalid EDL file',
-                                             'Invalid entry at line %s:\n\n%s' % (linenum, line))
+                        mo = self.edlblock_re.match(line)
+                        if mo:
+                            start, stop, action = mo.groups()
+                            clip_start = self.delta2QTime(int(float(start) * 1000))
+                            clip_end = self.delta2QTime(int(float(stop) * 1000))
+                            clip_image = self.captureImage(frametime=int(float(start) * 1000))
+                            self.clipTimes.append([clip_start, clip_end, clip_image])
+                        else:
+                            qApp.restoreOverrideCursor()
+                            QMessageBox.critical(self.parent, 'Invalid EDL file',
+                                                 'Invalid entry at line %s:\n\n%s' % (linenum, line))
                 linenum += 1
             self.cutStartAction.setEnabled(True)
             self.cutEndAction.setDisabled(True)
@@ -646,22 +651,28 @@ class VideoCutter(QWidget):
             self.inCut = False
             self.renderTimes()
             qApp.restoreOverrideCursor()
-            self.showText('EDL file was successfully read...')
+            self.showText('Project file successfully loaded...')
 
-    def saveEDL(self, filepath: str) -> None:
-        source_file, _ = os.path.splitext(self.currentMedia)
-        edlsave = self.edl if self.edl.strip() else '%s.edl' % source_file
-        edlsave, _ = QFileDialog.getSaveFileName(parent=self.parent, caption='Save EDL file', directory=edlsave,
-                                                 options=(QFileDialog.DontUseNativeDialog
-                                                          if not self.nativeDialogsAction.isChecked()
-                                                          else QFileDialog.Options()))
-        if edlsave.strip():
-            file = QFile(edlsave)
+    def saveProject(self, filepath: str) -> None:
+        if self.currentMedia is None:
+            return
+        project_file, _ = os.path.splitext(self.currentMedia)
+        project_save, ptype = QFileDialog.getSaveFileName(self.parent, caption='Save project',
+                                                          directory='%s.vcp' % project_file,
+                                                          filter=self.projectFilters(),
+                                                          initialFilter='VidCutter Project (*.vcp)',
+                                                          options=(QFileDialog.DontUseNativeDialog
+                                                                   if not self.nativeDialogsAction.isChecked()
+                                                                   else QFileDialog.Options()))
+        if project_save.strip():
+            file = QFile(project_save)
             if not file.open(QFile.WriteOnly | QFile.Text):
-                QMessageBox.critical(self.parent, 'Save EDL file',
-                                     'Cannot write EDL file %s:\n\n%s' % (edlsave, file.errorString()))
+                QMessageBox.critical(self.parent, 'Save project',
+                                     'Cannot write project file to %s:\n\n%s' % (project_save, file.errorString()))
                 return
             qApp.setOverrideCursor(Qt.WaitCursor)
+            if ptype == 'VidCutter Project (*.vcp)':
+                QTextStream(file) << '%s\n' % self.currentMedia
             for clip in self.clipTimes:
                 start_time = timedelta(hours=clip[0].hour(), minutes=clip[0].minute(), seconds=clip[0].second(),
                                        milliseconds=clip[0].msec())
@@ -669,7 +680,7 @@ class VideoCutter(QWidget):
                                       milliseconds=clip[1].msec())
                 QTextStream(file) << '%s\t%s\t%d\n' % (self.delta2String(start_time), self.delta2String(stop_time), 0)
             qApp.restoreOverrideCursor()
-            self.showText('EDL file was successfully saved...')
+            self.showText('Project was successfully saved...')
 
     def loadMedia(self, filename: str) -> None:
         if not os.path.exists(filename):
@@ -720,11 +731,11 @@ class VideoCutter(QWidget):
             self.seekSlider.setRestrictValue(0)
         self.timeCounter.reset()
         self.frameCounter.reset()
-        self.openEDLAction.setEnabled(flag)
-        self.saveEDLAction.setEnabled(False)
+        self.openProjectAction.setEnabled(flag)
+        self.saveProjectAction.setEnabled(False)
 
     def setPosition(self, position: int) -> None:
-        if not self.mediaPlayer.seeking:
+        if not self.mediaPlayer.seeking and position >= self.seekSlider.restrictValue:
             self.mediaPlayer.seek(self.delta2QTime(position).toString(self.timeformat),
                                   reference='absolute', precision='exact')
 
@@ -848,10 +859,10 @@ class VideoCutter(QWidget):
                 self.seekSlider.addRegion(clip[0].msecsSinceStartOfDay(), clip[1].msecsSinceStartOfDay())
         if len(self.clipTimes) and not self.inCut:
             self.saveAction.setEnabled(True)
-            self.saveEDLAction.setEnabled(True)
+            self.saveProjectAction.setEnabled(True)
         if self.inCut or len(self.clipTimes) == 0 or not type(self.clipTimes[0][1]) is QTime:
             self.saveAction.setEnabled(False)
-            self.saveEDLAction.setEnabled(False)
+            self.saveProjectAction.setEnabled(False)
         self.setRunningTime(self.delta2QTime(self.totalRuntime).toString(self.runtimeformat))
 
     @staticmethod

@@ -70,7 +70,6 @@ class VideoService(QObject):
 
     def initProc(self) -> None:
         self.proc = QProcess(self.parent)
-        self.proc.setProcessChannelMode(QProcess.MergedChannels)
         env = QProcessEnvironment.systemEnvironment()
         self.proc.setProcessEnvironment(env)
         self.proc.setWorkingDirectory(self.getAppPath())
@@ -133,6 +132,7 @@ class VideoService(QObject):
             except:
                 pass
         if self.proc.state() == QProcess.NotRunning:
+            self.proc.setProcessChannelMode(QProcess.SeparateChannels if cmd == self.mediainfo else QProcess.MergedChannels)
             self.proc.start(cmd, shlex.split(args))
             self.proc.waitForFinished(-1)
             if output:

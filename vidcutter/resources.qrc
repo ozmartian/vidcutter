@@ -11,13 +11,12 @@
         <file>images/dialog-backdrop.png</file>
         <file>images/dialog-backdrop-02.png</file>
         <file>images/down.png</file>
-        <file>images/edl.png</file>
         <file>images/filmstrip.png</file>
-        <file>images/handle.png</file>
         <file>images/info.png</file>
         <file>images/keymap.png</file>
         <file>images/mpv.png</file>
         <file>images/novideotext.gif</file>
+        <file>images/open.png</file>
         <file>images/qt.png</file>
         <file>images/remove.png</file>
         <file>images/remove-all.png</file>
@@ -40,6 +39,7 @@
         <file>images/watermark.png</file>
         <file>images/dark/about-background.png</file>
         <file>images/dark/clipindex.png</file>
+        <file>images/dark/handle.png</file>
         <file>images/dark/mediainfo-heading.png</file>
         <file>images/dark/menu.png</file>
         <file>images/dark/menu-active.png</file>
@@ -67,6 +67,7 @@
         <file>images/dark/unmuted.png</file>
         <file>images/light/about-background.png</file>
         <file>images/light/clipindex.png</file>
+        <file>images/light/handle.png</file>
         <file>images/light/mediainfo-heading.png</file>
         <file>images/light/menu.png</file>
         <file>images/light/menu-active.png</file>

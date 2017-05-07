@@ -4,7 +4,7 @@
 Name:           %{pkg_name}
 Version:        3.0.1
 Release:        2%{?dist}
-Summary:        the simple & fast video cutter & joiner with the help of mpv + FFmpeg
+Summary:        the simplest + fastest video cut & merge tool
 
 License:        GPLv3+
 URL:            http://vidcutter.ozmartians.com

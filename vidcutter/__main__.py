@@ -46,7 +46,7 @@ class MainWindow(QMainWindow):
 
     def __init__(self):
         super(MainWindow, self).__init__()
-        self.edl, self.video, self.devmode = '', '', False
+        self.video, self.devmode = '', False
         self.parse_cmdline()
         self.init_logger()
         self.init_settings()
@@ -61,8 +61,6 @@ class MainWindow(QMainWindow):
         try:
             if len(self.video):
                 self.cutter.loadMedia(self.video)
-            if len(self.edl):
-                self.cutter.openEDL(edlfile=self.edl)
         except (FileNotFoundError, PermissionError) as e:
             QMessageBox.critical(self, 'Error loading file', sys.exc_info()[0])
             logging.exception('Error loading file')
@@ -151,9 +149,6 @@ class MainWindow(QMainWindow):
         self.parser = QCommandLineParser()
         self.parser.setApplicationDescription('...the fast & accurate cross-platform video cutter & joiner...')
         self.parser.addPositionalArgument('video', 'Preloads the video file in app.', '[video]')
-        self.edl_option = QCommandLineOption(['edl'], 'Preloads clip index from a previously saved EDL file.' +
-                                             '\nNOTE: You must also set the video argument for this to work.',
-                                             'edl file')
         self.debug_option = QCommandLineOption(['debug'], 'debug mode; verbose console output & logging. ' +
                                                'This will basically output what is being logged to file to the ' +
                                                'console stdout. Mainly useful for debugging problems with your ' +
@@ -164,23 +159,12 @@ class MainWindow(QMainWindow):
                                              'relates to changes made to Qt stylesheets (.qss), layout/templates, ' +
                                              'content includes and images. basically all assets defined in .qrc ' +
                                              'files throughout the codebase.')
-        self.parser.addOption(self.edl_option)
         self.parser.addOption(self.debug_option)
         self.parser.addOption(self.dev_option)
         self.parser.addVersionOption()
         self.parser.addHelpOption()
         self.parser.process(qApp)
         self.args = self.parser.positionalArguments()
-        if self.parser.value('edl').strip() and not os.path.exists(self.parser.value('edl')):
-            print('\n    ERROR: EDL file not found.\n', file=sys.stderr)
-            self.close()
-            sys.exit(1)
-        if self.parser.value('edl').strip() and len(self.args) == 0:
-            print('\n    ERROR: Video file argument is missing.\n', file=sys.stderr)
-            self.close()
-            sys.exit(1)
-        if self.parser.value('edl').strip():
-            self.edl = self.parser.value('edl')
         if self.parser.isSet(self.debug_option):
             os.environ['DEBUG'] = '1'
         if self.parser.isSet(self.dev_option):

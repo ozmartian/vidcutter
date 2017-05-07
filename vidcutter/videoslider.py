@@ -61,7 +61,7 @@ class VideoSlider(QSlider):
         }
         QSlider::handle:horizontal {
             border: none;
-            background: url(:images/handle.png) no-repeat top center;
+            background: url(:images/%s/handle.png) no-repeat top center;
             width: 20px;
             height: 58px;
             margin: -19px -6px;
@@ -90,7 +90,7 @@ class VideoSlider(QSlider):
 
     def initStyle(self, selected: bool = False, margin: str = '0') -> None:
         bground = 'rgba(200, 213, 236, 0.85)' if selected else 'transparent'
-        self.setStyleSheet(self._styles % (bground, margin))
+        self.setStyleSheet(self._styles % (bground, margin, self.theme))
 
     def setRestrictValue(self, value: int, force: bool = False) -> None:
         self.restrictValue = value
@@ -184,7 +184,7 @@ class VideoSlider(QSlider):
         self.initStyleOption(opt)
         handle = self.style().subControlRect(QStyle.CC_Slider, opt, QStyle.SC_SliderHandle, self)
         if handle.x() <= event.pos().x() <= (handle.x() + handle.width()):
-            self.setCursor(self.slider_cursor)
+            self.setCursor(Qt.PointingHandCursor)
         else:
             self.unsetCursor()
         super(VideoSlider, self).mouseMoveEvent(event)

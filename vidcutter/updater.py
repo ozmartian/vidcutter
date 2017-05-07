@@ -33,7 +33,7 @@ from PyQt5.QtGui import QDesktopServices
 from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkReply, QNetworkRequest
 from PyQt5.QtWidgets import qApp, QDialog, QDialogButtonBox, QLabel, QVBoxLayout, QWidget
 
-from vidcutter.libs.customwidgets import VCProgressBar
+from vidcutter.libs.widgets import VCProgressBar
 
 
 class Updater(QWidget):
