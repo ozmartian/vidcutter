@@ -37,9 +37,10 @@ class VideoSlider(QSlider):
         self.theme = self.parentWidget().theme
         self._styles = '''QSlider:horizontal { margin: 25px 0 18px; }
         QSlider::groove:horizontal {
-            border: none;
+            border-top: 1px solid #8F8F8F;
+            border-bottom: 1px solid #444;
             height: 32px;
-            background: #333 url(:images/filmstrip.png) repeat-x;
+            background: #444 url(:images/filmstrip.png) repeat-x;
             position: absolute;
             left: 4px;
             right: 4px;
@@ -61,7 +62,7 @@ class VideoSlider(QSlider):
         }
         QSlider::handle:horizontal {
             border: none;
-            background: url(:images/%s/handle.png) no-repeat top center;
+            background: url(:images/handle.png) no-repeat top center;
             width: 20px;
             height: 58px;
             margin: -19px -6px;
@@ -90,7 +91,7 @@ class VideoSlider(QSlider):
 
     def initStyle(self, selected: bool = False, margin: str = '0') -> None:
         bground = 'rgba(200, 213, 236, 0.85)' if selected else 'transparent'
-        self.setStyleSheet(self._styles % (bground, margin, self.theme))
+        self.setStyleSheet(self._styles % (bground, margin))
 
     def setRestrictValue(self, value: int, force: bool = False) -> None:
         self.restrictValue = value
@@ -115,14 +116,14 @@ class VideoSlider(QSlider):
             x = 4
             for i in range(self.minimum(), self.width(), x):
                 if i % 5 == 0:
-                    h = 18
+                    h = 10
                     w = 1
-                    z = 8
+                    z = 12
                 else:
-                    h = 7
-                    w = 0.8
-                    z = 15
-                tickcolor = '#EAEAEA' if self.theme == 'dark' else '#444'
+                    h = 5
+                    w = 1
+                    z = 16
+                tickcolor = '#8F8F8F' if self.theme == 'dark' else '#444'
                 pen = QPen(QColor(tickcolor))
                 pen.setWidthF(w)
                 painter.setPen(pen)
@@ -132,7 +133,7 @@ class VideoSlider(QSlider):
                 if self.tickPosition() in (QSlider.TicksBothSides, QSlider.TicksBelow):
                     y = self.rect().bottom() - z
                     painter.drawLine(x, y, x, y - h)
-                x += 10
+                x += 15
         opt.subControls = QStyle.SC_SliderGroove
         painter.drawComplexControl(QStyle.CC_Slider, opt)
         for path in self._regions:
