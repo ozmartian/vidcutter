@@ -121,9 +121,9 @@ class UpdaterMsgBox(QDialog):
             content += '<h1>You are already running the latest version</h1>'
         content += '''
             <p align="center">
-                <b>latest version:</b> %s
+                latest: <b>%s</b>
                 <br/>
-                <b>installed version:</b> %s
+                installed: <b>%s</b>
             </p>''' % (str(latest), str(current))
         if update_available and sys.platform.startswith('linux'):
             content += '''<div style="font-size: 12px; padding: 2px 10px; margin:10px 5px;">

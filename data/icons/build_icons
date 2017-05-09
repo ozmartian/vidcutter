@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# X11 icons
+echo -e "\n[ creating X11 icons ]\n"
+inkscape -z -e ./vidcutter.png -w 256 -h 256 vidcutter.svg
+inkscape -z -e ./hicolor/16x16/apps/vidcutter.png -w 16 -h 16 vidcutter.svg
+inkscape -z -e ./hicolor/22x22/apps/vidcutter.png -w 22 -h 22 vidcutter.svg
+inkscape -z -e ./hicolor/24x24/apps/vidcutter.png -w 24 -h 24 vidcutter.svg
+inkscape -z -e ./hicolor/32x32/apps/vidcutter.png -w 32 -h 32 vidcutter.svg
+inkscape -z -e ./hicolor/48x48/apps/vidcutter.png -w 48 -h 48 vidcutter.svg
+inkscape -z -e ./hicolor/64x64/apps/vidcutter.png -w 64 -h 64 vidcutter.svg
+inkscape -z -e ./hicolor/128x128/apps/vidcutter.png -w 128 -h 128 vidcutter.svg
+inkscape -z -e ./hicolor/256x256/apps/vidcutter.png -w 256 -h 256 vidcutter.svg
+inkscape -z -e ./hicolor/512x512/apps/vidcutter.png -w 512 -h 512 vidcutter.svg
+
+# Windows icons
+echo -e "\n[ creating Windows icon ]\n"
+icotool -c -o vidcutter.ico ./hicolor/16x16/apps/vidcutter.png ./hicolor/32x32/apps/vidcutter.png ./hicolor/128x128/apps/vidcutter.png
+
+# macOS icon
+echo -e "\n[ creating macOS icon ]\n"
+png2icns vidcutter.icns vidcutter.png
+
+# application icons
+echo -e "\n[ creating application icons ]\n"
+inkscape -z -e ../../vidcutter/images/vidcutter.png -w 128 -h 128 vidcutter.svg
+inkscape -z -e ../../vidcutter/images/vidcutter-small.png -w 82 -h 82 vidcutter.svg
+
+# recreate PyQt resource file
+echo -e "\n[ updating PyQt resource file ]\n"
+cd ../../vidcutter
+pyrcc5 -compress 9 -o resources.py resources.qrc
+
+echo -e "\n** DONE **"
