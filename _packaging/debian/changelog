@@ -1,4 +1,4 @@
-vidcutter-unstable (3.2.0-0) unstable; urgency=medium
+vidcutter (3.2.0-1) stable; urgency=medium
  
  * dark and light themes; chosen in the new settings sub-menu found in the
     right-click menu or via menu toolbar icon
