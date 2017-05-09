@@ -43,10 +43,17 @@ class VideoStyles(QObject):
             qssfile = QFile(filename)
             qssfile.open(QFile.ReadOnly | QFile.Text)
             content = QTextStream(qssfile).readAll()
-            if sys.platform == 'win32':
+            if sys.platform in ('win32', 'darwin'):
                 content += '''
                     QPushButton { color: #444; }
                 '''
+            if sys.platform == 'darwin' and theme == 'dark':
+                content += '''
+                    QMenu::item { color: #444; }
+                    QMenu::item:selected { color: #FFF; }
+                    QComboBox { color: #444; }
+                    QHeaderView::section { color: #444; }
+            '''
             qApp.setStyleSheet(content)
             return content
 
