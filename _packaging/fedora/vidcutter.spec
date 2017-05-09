@@ -2,9 +2,10 @@
 %global pkg_name vidcutter
 
 Name:           %{pkg_name}
-Version:        3.0.1
-Release:        2%{?dist}
+Version:        3.2.0
+Release:        1%{?dist}
 Summary:        the simplest + fastest video cut & merge tool
+Group:          Applications/Multimedia
 
 License:        GPLv3+
 URL:            http://vidcutter.ozmartians.com
@@ -36,12 +37,13 @@ sed -i "s/pypi/rpm/" vidcutter/__init__.py
 %py3_install
 
 %files -n %{pkg_name}
-%license vidcutter/LICENSE.html LICENSE
+%license LICENSE
 %doc README.md
 %{python3_sitelib}/%{pkg_name}
 %{python3_sitelib}/%{pkg_name}-%{version}-py?.?.egg-info
 %{_bindir}/vidcutter
 %{_datadir}/applications/vidcutter.desktop
+%{_datadir}/icons/hicolor/16x16/apps/vidcutter.png
 %{_datadir}/icons/hicolor/128x128/apps/vidcutter.png
 %{_datadir}/icons/hicolor/22x22/apps/vidcutter.png
 %{_datadir}/icons/hicolor/24x24/apps/vidcutter.png
@@ -54,10 +56,11 @@ sed -i "s/pypi/rpm/" vidcutter/__init__.py
 %{_datadir}/pixmaps/vidcutter.svg
 
 %changelog
-* Sun Mar 05 2017 Pete Alexandrou <pete@ozmartians.com> - 3.0.1-2
+* Tue May 09 2017 Pete Alexandrou <pete AT ozmartians DOT com> 3.2.0-1
+- latest release
+* Sun Mar 05 2017 Pete Alexandrou <pete AT ozmartians DOT com> - 3.0.1-2
 - mageia + epel repos included
-* Sun Mar 05 2017 Pete Alexandrou <pete@ozmartians.com> - 3.0.1-1
+* Sun Mar 05 2017 Pete Alexandrou <pete AT ozmartians DOT com> - 3.0.1-1
 - version bump
-* Sun Mar 05 2017 Pete Alexandrou <pete@ozmartians.com> - 3.0.0-1
+* Sun Mar 05 2017 Pete Alexandrou <pete AT ozmartians DOT com> - 3.0.0-1
 - Initial packaging
-
