@@ -15,7 +15,7 @@ inkscape -z -e ./hicolor/512x512/apps/vidcutter.png -w 512 -h 512 vidcutter.svg
 
 # Windows icons
 echo -e "\n[ creating Windows icon ]\n"
-icotool -c -o vidcutter.ico ./hicolor/16x16/apps/vidcutter.png ./hicolor/32x32/apps/vidcutter.png ./hicolor/128x128/apps/vidcutter.png
+icotool -c -o vidcutter.ico ./hicolor/16x16/apps/vidcutter.png ./hicolor/32x32/apps/vidcutter.png ./hicolor/128x128/apps/vidcutter.png ./hicolor/256x256/apps/vidcutter.png
 
 # macOS icon
 echo -e "\n[ creating macOS icon ]\n"
