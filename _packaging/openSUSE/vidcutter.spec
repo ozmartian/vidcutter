@@ -1,5 +1,5 @@
 Name:           vidcutter
-Version:        3.0.1
+Version:        3.2.0
 Release:        0
 Summary:        the simplest + fastest video cut & merge tool
 License:        GPL-3.0+
@@ -48,6 +48,7 @@ python3 setup.py install --root %{buildroot}
 %{python3_sitelib}/%{name}-%{version}-py*.egg-info/
 %{python3_sitelib}/%{name}/
 %{_datadir}/applications/%{name}.desktop
+%{_datadir}/icons/hicolor/16x16/apps/%{name}.png
 %{_datadir}/icons/hicolor/22x22/apps/%{name}.png
 %{_datadir}/icons/hicolor/24x24/apps/%{name}.png
 %{_datadir}/icons/hicolor/32x32/apps/%{name}.png
