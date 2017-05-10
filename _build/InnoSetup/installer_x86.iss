@@ -44,7 +44,7 @@ Source: "C:\DEV\vidcutter\data\icons\uninstall.ico"; DestDir: "{app}"
 [Icons]
 Name: "{group}\VidCutter"; Filename: "{app}\vidcutter.exe"
 Name: "{userdesktop}\VidCutter"; Filename: "{app}\vidcutter.exe"; Tasks: desktopicon
-Name: "{group}\{cm:UninstallProgram, VidCutter}"; Filename: "{uninstallexe}"; IconFilename: "{app}\uninstall.ico"
+Name: "{group}\{cm:UninstallProgram,VidCutter}"; Filename: "{uninstallexe}"; IconFilename: "{app}\uninstall.ico"
 
 [Run]
 Filename: "{app}\vidcutter.exe"; Flags: nowait postinstall skipifsilent 32bit; Description: "{cm:LaunchProgram,VidCutter}"
