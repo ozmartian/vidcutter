@@ -1,4 +1,4 @@
-/*************************************************************************
+w/*************************************************************************
  *  VidCutter - a simple yet fast & accurate video cutter & joiner
  *
  *  copyright © 2017 Pete Alexandrou
@@ -45,6 +45,11 @@ QWidget#genericdialog2 {
 
 QDialog#aboutwidget {
     border-image: url(':/images/dark/about-background.png') 0 0 0 0 stretch stretch;
+    background-color: #1B2326;
+}
+
+QDialog#videoinfo {
+    border-image: url(':/images/dialog-backdrop-02.png') 0 0 0 0 stretch stretch;
     background-color: #1B2326;
 }
 
@@ -220,16 +225,13 @@ QStatusBar::item {
 
 /* -------------------------------------------------------------------------- */
 
-#aboutwidget QTextBrowser {
+QTextBrowser {
     background-color: rgba(12, 15, 16, 0.9);
     color: #FFF;
-    border: none;
 }
 
-#mediainfo_advanced QTextBrowser {
-    background: transparent;
-    color: #FFF;
-    border: none;
+#aboutwidget QTextBrowser {
+    border: no  ne;
 }
 
 /* -------------------------------------------------------------------------- */

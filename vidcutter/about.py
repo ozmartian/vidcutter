@@ -234,7 +234,7 @@ class CreditsTab(BaseTab):
                     </p>
                 </td>
             </tr>
-        </table>''' % '#EA95FF' if self.parent.parent.theme == 'dark' else '#441D4E')
+        </table>''' % ('#EA95FF' if self.parent.parent.theme == 'dark' else '#441D4E'))
 
 
 class LicenseTab(BaseTab):

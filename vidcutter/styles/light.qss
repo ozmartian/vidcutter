@@ -48,6 +48,11 @@ QDialog#aboutwidget {
     background-color: #EFF0F1;
 }
 
+QDialog#videoinfo {
+    border-image: url(':/images/dialog-backdrop-02.png') 0 0 0 0 stretch stretch;
+    background-color: #EFF0F1;
+}
+
 QDialog#updaterdialog {
     border-image: url(':/images/dialog-backdrop.png') 0 0 0 0 stretch stretch;
     background-color: #EFF0F1;
@@ -219,15 +224,12 @@ QStatusBar::item {
 
 /* -------------------------------------------------------------------------- */
 
-#aboutwidget QTextBrowser {
+QTextBrowser {
     background-color: rgba(255, 255, 255, 0.8);
     color: #000;
-    border: none;
 }
 
-#mediainfo_advanced QTextBrowser {
-    background: transparent;
-    color: #000;
+#aboutwidget QTextBrowser {
     border: none;
 }
 

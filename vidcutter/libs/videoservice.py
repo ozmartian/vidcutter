@@ -33,8 +33,6 @@ from PyQt5.QtCore import QDir, QFileInfo, QObject, QProcess, QProcessEnvironment
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QMessageBox
 
-# from vidcutter.libs.mediainfo import MediaInfo
-
 
 class VideoService(QObject):
     def __init__(self, parent=None):
