@@ -95,9 +95,9 @@ class VideoCutter(QWidget):
             self.notifyInterval = 1000
             self.currentMedia, self.mediaAvailable = None, False
 
-            self.nativeDialogs = self.settings.value('nativeDialogs', 'true') == 'true'
-            self.keepClips = self.settings.value('keepClips', 'false') == 'true'
-            self.hardwareDecoding = self.settings.value('hwdec', 'auto') == 'auto'
+            self.nativeDialogs = self.settings.value('nativeDialogs', True, bool)
+            self.keepClips = self.settings.value('keepClips', False, bool)
+            self.hardwareDecoding = self.settings.value('hwdec', 'auto', str) == 'auto'
 
             self.edlblock_re = re.compile(r'(\d+(?:\.?\d+)?)\s(\d+(?:\.?\d+)?)\s([01])')
 
@@ -437,7 +437,7 @@ class VideoCutter(QWidget):
         else:
             self.lightThemeAction.setChecked(True)
         self.themeAction.triggered.connect(self.switchTheme)
-        if self.settings.value('aspectRatio', 'keep') == 'keep':
+        if self.settings.value('aspectRatio', 'keep', str) == 'keep':
             self.keepRatioAction.setChecked(True)
             self.zoomAction.setEnabled(False)
         self.zoomAction.triggered.connect(self.setZoom)
@@ -452,7 +452,7 @@ class VideoCutter(QWidget):
         self.toolbar.addAction(self.saveAction)
         self.toolbar.disableTooltips()
         self.labelAction.triggered.connect(self.toolbar.setLabels)
-        self.toolbar.setLabelByType(self.settings.value('toolbarLabels', 'beside'))
+        self.toolbar.setLabelByType(self.settings.value('toolbarLabels', 'beside', str))
 
     def initMenus(self) -> None:
         labelsMenu = QMenu('Toolbar labels', self.appMenu)

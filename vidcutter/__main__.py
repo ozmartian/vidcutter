@@ -134,11 +134,11 @@ class MainWindow(QMainWindow):
             self.restoreGeometry(self.settings.value('geometry'))
         if self.settings.value('windowState') is not None:
             self.restoreState(self.settings.value('windowState'))
-        self.theme = self.settings.value('theme', 'light')
-        self.ontop = True if self.settings.value('alwaysOnTop', 'false') == 'true' else False
+        self.theme = self.settings.value('theme', 'light', str)
+        self.ontop = self.settings.value('alwaysOnTop', False, bool)
         if self.ontop:
             self.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint)
-        self.startupvol = int(self.settings.value('volume', '100'))
+        self.startupvol = self.settings.value('volume', 100, int)
 
     @staticmethod
     def log_uncaught_exceptions(cls, exc, tb) -> None:
