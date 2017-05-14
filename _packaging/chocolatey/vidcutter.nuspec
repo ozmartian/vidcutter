@@ -14,7 +14,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <projectSourceUrl>https://github.com/ozmartian/vidcutter/archive/3.2.0.zip</projectSourceUrl>
     <bugTrackerUrl>https://github.com/ozmartian/vidcutter/issues</bugTrackerUrl>
-    <tags>vidcutter ffmpeg audiovideo mpv libmpv videoeditor video videoedit pyqt Qt5 multimedia</tags>
+    <tags>vidcutter ffmpeg audiovideo mpv libmpv videoeditor video videoedit pyqt Qt5 multimedia admin</tags>
     <summary>the simplest + fastest video cut &amp; merge tool</summary>
     <description>
     The simplest &amp; sexiest tool for cutting and joining your videos without needing to re-encode.
