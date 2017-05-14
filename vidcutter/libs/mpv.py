@@ -474,7 +474,7 @@ class MPV(object):
             self._event_thread = None
 
         if log_handler is not None:
-            self.set_loglevel('terminal-default')
+            self.set_loglevel('terminal-default' if _mpv_client_api_version() >= (1, 19) else 'info')
 
     def wait_for_playback(self):
         """ Waits until playback of the current title is paused or done """

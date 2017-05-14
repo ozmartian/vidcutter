@@ -279,6 +279,7 @@ class VideoCutter(QWidget):
             del self.mediaPlayer
         self.mediaPlayer = mpv.MPV(wid=int(self.mpvFrame.winId()),
                                    log_handler=self.logMPV,
+                                   # msg_level='all=v',
                                    ytdl=False,
                                    pause=True,
                                    keep_open=True,
@@ -295,7 +296,6 @@ class VideoCutter(QWidget):
                                    sid=False,
                                    hr_seek=False,
                                    hr_seek_framedrop=True,
-                                   rebase_start_time=True,
                                    volume=self.parent.startupvol,
                                    keepaspect=self.keepRatioAction.isChecked(),
                                    hwdec='auto' if self.hardwareDecodingAction.isChecked() else 'no')
