@@ -674,8 +674,9 @@ class VideoCutter(QWidget):
                             self.clipTimes.append([clip_start, clip_end, clip_image])
                         else:
                             qApp.restoreOverrideCursor()
-                            QMessageBox.critical(self.parent, 'Invalid EDL file',
+                            QMessageBox.critical(self.parent, 'Invalid project file',
                                                  'Invalid entry at line %s:\n\n%s' % (linenum, line))
+                            return
                 linenum += 1
             self.cutStartAction.setEnabled(True)
             self.cutEndAction.setDisabled(True)
@@ -683,7 +684,7 @@ class VideoCutter(QWidget):
             self.inCut = False
             self.renderTimes()
             qApp.restoreOverrideCursor()
-            self.showText('Project file successfully loaded...')
+            self.showText('Project loaded...')
 
     def saveProject(self, filepath: str) -> None:
         if self.currentMedia is None:
@@ -700,7 +701,7 @@ class VideoCutter(QWidget):
             file = QFile(project_save)
             if not file.open(QFile.WriteOnly | QFile.Text):
                 QMessageBox.critical(self.parent, 'Save project',
-                                     'Cannot write project file to %s:\n\n%s' % (project_save, file.errorString()))
+                                     'Cannot save project file at %s:\n\n%s' % (project_save, file.errorString()))
                 return
             qApp.setOverrideCursor(Qt.WaitCursor)
             if ptype == 'VidCutter Project (*.vcp)':
