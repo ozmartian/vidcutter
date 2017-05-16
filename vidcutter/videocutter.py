@@ -32,11 +32,12 @@ from datetime import timedelta
 from locale import setlocale, LC_NUMERIC
 
 from PyQt5.QtCore import pyqtSlot, QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTextStream, QTime, QUrl
-from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMouseEvent, QMovie,
-                         QPixmap)
+from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent,
+                         QMouseEvent, QMovie, QPixmap)
 from PyQt5.QtWidgets import (QAbstractItemView, QAction, QActionGroup, qApp, QApplication, QDialogButtonBox,
-                             QFileDialog, QGroupBox, QHBoxLayout, QLabel, QListWidgetItem, QMenu, QMessageBox,
-                             QPushButton, QSizePolicy, QSlider, QStyleFactory, QVBoxLayout, QWidget)
+                             QDoubleSpinBox, QFileDialog, QGroupBox, QHBoxLayout, QLabel, QListWidgetItem, QMenu,
+                             QMessageBox, QPushButton, QSizePolicy, QSlider, QStyleFactory, QVBoxLayout, QWidget,
+                             QWidgetAction)
 
 from vidcutter.libs.videoservice import VideoService
 from vidcutter.libs.widgets import FrameCounter, TimeCounter, VCProgressBar
@@ -467,10 +468,41 @@ class VideoCutter(QWidget):
         zoomMenu.addAction(self.origZoomAction)
         zoomMenu.addAction(self.dblZoomAction)
 
+        self.level1_spinner = QDoubleSpinBox(self)
+        self.level1_spinner.setDecimals(1)
+        self.level1_spinner.setRange(0.1, 999.9)
+        self.level1_spinner.setSingleStep(0.1)
+        self.level1_spinner.setSuffix(' secs')
+        self.level1_spinner.setValue(self.settings.value('level1Seek', 2, float))
+        level1_layout = QHBoxLayout()
+        level1_layout.addWidget(self.level1_spinner)
+        level1_layout.addWidget(QLabel('Level 1'))
+        level1Seek = QWidget(self)
+        level1Seek.setLayout(level1_layout)
+        level1seekAction = QWidgetAction(self)
+        level1seekAction.setDefaultWidget(level1Seek)
+        
+        self.level2_spinner = QDoubleSpinBox(self)
+        self.level2_spinner.setDecimals(1)
+        self.level2_spinner.setRange(0.1, 999.9)
+        self.level2_spinner.setSingleStep(0.1)
+        self.level2_spinner.setSuffix(' secs')
+        self.level2_spinner.setValue(self.settings.value('level2Seek', 5, float))
+        level2_layout = QHBoxLayout()
+        level2_layout.addWidget(self.level2_spinner)
+        level2_layout.addWidget(QLabel('Level 2'))
+        level2Seek = QWidget(self)
+        level2Seek.setLayout(level2_layout)
+        level2seekAction = QWidgetAction(self)
+        level2seekAction.setDefaultWidget(level2Seek)
+
         optionsMenu = QMenu('Settings...', self.appMenu)
         optionsMenu.addSection('Theme')
         optionsMenu.addAction(self.lightThemeAction)
         optionsMenu.addAction(self.darkThemeAction)
+        optionsMenu.addSection('Seeking Levels')
+        optionsMenu.addAction(level1seekAction)
+        optionsMenu.addAction(level2seekAction)
         optionsMenu.addSeparator()
         optionsMenu.addAction(self.keepClipsAction)
         optionsMenu.addSeparator()
@@ -482,6 +514,7 @@ class VideoCutter(QWidget):
         optionsMenu.addAction(self.keepRatioAction)
         optionsMenu.addMenu(zoomMenu)
 
+        self.appMenu.setSeparatorsCollapsible(True)
         self.appMenu.addAction(self.openProjectAction)
         self.appMenu.addAction(self.saveProjectAction)
         self.appMenu.addSeparator()
@@ -1193,16 +1226,16 @@ class VideoCutter(QWidget):
                 self.mediaPlayer.frame_back_step()
             elif event.key() == Qt.Key_Down:
                 if qApp.queryKeyboardModifiers() == Qt.ShiftModifier:
-                    self.mediaPlayer.seek(-5, 'relative+exact')
+                    self.mediaPlayer.seek(-self.level2_spinner.value(), 'relative+exact')
                 else:
-                    self.mediaPlayer.seek(-2, 'relative+exact')
+                    self.mediaPlayer.seek(-self.level1_spinner.value(), 'relative+exact')
             elif event.key() == Qt.Key_Right:
                 self.mediaPlayer.frame_step()
             elif event.key() == Qt.Key_Up:
                 if qApp.queryKeyboardModifiers() == Qt.ShiftModifier:
-                    self.mediaPlayer.seek(5, 'relative+exact')
+                    self.mediaPlayer.seek(self.level2_spinner.value(), 'relative+exact')
                 else:
-                    self.mediaPlayer.seek(2, 'relative+exact')
+                    self.mediaPlayer.seek(self.level1_spinner.value(), 'relative+exact')
             elif event.key() == Qt.Key_Home:
                 self.mediaPlayer.time_pos = 0
             elif event.key() == Qt.Key_End:
