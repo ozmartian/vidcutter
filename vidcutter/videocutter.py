@@ -36,8 +36,8 @@ from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QFont, QFontDatabase, QI
                          QMouseEvent, QMovie, QPixmap)
 from PyQt5.QtWidgets import (QAbstractItemView, QAction, QActionGroup, qApp, QApplication, QDialogButtonBox,
                              QDoubleSpinBox, QFileDialog, QGroupBox, QHBoxLayout, QLabel, QListWidgetItem, QMenu,
-                             QMessageBox, QPushButton, QSizePolicy, QSlider, QStyleFactory, QVBoxLayout, QWidget,
-                             QWidgetAction)
+                             QMessageBox, QPushButton, QSizePolicy, QSlider, QStyle, QStyleFactory, QVBoxLayout,
+                             QWidget, QWidgetAction)
 
 from vidcutter.libs.videoservice import VideoService
 from vidcutter.libs.widgets import FrameCounter, TimeCounter, VCProgressBar
@@ -599,10 +599,9 @@ class VideoCutter(QWidget):
     def clearList(self) -> None:
         self.clipTimes.clear()
         self.cliplist.clear()
-        self.seekSlider.clearRegions()
         self.inCut = False
         self.renderTimes()
-        self.initMediaControls()
+        self.initMediaControls(True)
 
     def projectFilters(self) -> str:
         return 'VidCutter Project (*.vcp);;%sAll files (*.*)' \
@@ -767,13 +766,14 @@ class VideoCutter(QWidget):
         self.mediaInfoAction.setEnabled(flag)
         self.keepRatioAction.setEnabled(flag)
         self.zoomAction.setEnabled(flag)
-        self.seekSlider.setValue(0)
-        self.seekSlider.setRange(0, 0)
         self.seekSlider.clearRegions()
         if flag:
             self.seekSlider.setRestrictValue(0)
-        self.timeCounter.reset()
-        self.frameCounter.reset()
+        else:
+            self.seekSlider.setValue(0)
+            self.seekSlider.setRange(0, 0)
+            self.timeCounter.reset()
+            self.frameCounter.reset()
         self.openProjectAction.setEnabled(flag)
         self.saveProjectAction.setEnabled(False)
 
@@ -1103,15 +1103,18 @@ class VideoCutter(QWidget):
         btn_play.clicked.connect(self.openResult)
         btn_open = mbox.addButton('Open', QMessageBox.ResetRole)
         btn_open.setIcon(self.completeOpenIcon)
-        btn_open.clicked.connect(self.openFolder)
+        btn_open.clicked.connect(lambda: self.openResult(pathonly=True))
         btn_exit = mbox.addButton('Exit', QMessageBox.AcceptRole)
         btn_exit.setIcon(self.completeExitIcon)
         btn_exit.clicked.connect(self.close)
         btn_restart = mbox.addButton('Restart', QMessageBox.AcceptRole)
         btn_restart.setIcon(self.completeRestartIcon)
         btn_restart.clicked.connect(self.parent.restart)
-        mbox.setDefaultButton(btn_restart)
-        mbox.setEscapeButton(btn_restart)
+        btn_continue = mbox.addButton('Continue', QMessageBox.AcceptRole)
+        btn_continue.setIcon(self.style().standardIcon(QStyle.SP_DialogOkButton))
+        btn_continue.clicked.connect(mbox.close)
+        mbox.setDefaultButton(btn_continue)
+        mbox.setEscapeButton(btn_continue)
         mbox.exec_()
 
     @staticmethod
@@ -1122,13 +1125,8 @@ class VideoCutter(QWidget):
             num /= 1024.0
         return "%.1f %s%s" % (num, 'Y', suffix)
 
-    @pyqtSlot()
-    def openFolder(self) -> None:
-        self.openResult(pathonly=True)
-
     @pyqtSlot(bool)
     def openResult(self, pathonly: bool = False) -> None:
-        self.parent.restart()
         if len(self.finalFilename) and os.path.exists(self.finalFilename):
             target = self.finalFilename if not pathonly else os.path.dirname(self.finalFilename)
             QDesktopServices.openUrl(QUrl.fromLocalFile(target))
