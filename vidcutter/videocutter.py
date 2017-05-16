@@ -475,8 +475,10 @@ class VideoCutter(QWidget):
         self.level1_spinner.setSuffix(' secs')
         self.level1_spinner.setValue(self.settings.value('level1Seek', 2, float))
         level1_layout = QHBoxLayout()
-        level1_layout.addWidget(self.level1_spinner)
+        level1_layout.addStretch(1)
         level1_layout.addWidget(QLabel('Level 1'))
+        level1_layout.addWidget(self.level1_spinner)
+        level1_layout.addStretch(1)
         level1Seek = QWidget(self)
         level1Seek.setLayout(level1_layout)
         level1seekAction = QWidgetAction(self)
@@ -489,8 +491,10 @@ class VideoCutter(QWidget):
         self.level2_spinner.setSuffix(' secs')
         self.level2_spinner.setValue(self.settings.value('level2Seek', 5, float))
         level2_layout = QHBoxLayout()
-        level2_layout.addWidget(self.level2_spinner)
+        level2_layout.addStretch(1)
         level2_layout.addWidget(QLabel('Level 2'))
+        level2_layout.addWidget(self.level2_spinner)
+        level2_layout.addStretch(1)
         level2Seek = QWidget(self)
         level2Seek.setLayout(level2_layout)
         level2seekAction = QWidgetAction(self)
@@ -500,7 +504,7 @@ class VideoCutter(QWidget):
         optionsMenu.addSection('Theme')
         optionsMenu.addAction(self.lightThemeAction)
         optionsMenu.addAction(self.darkThemeAction)
-        optionsMenu.addSection('Seeking Levels')
+        optionsMenu.addSection('Seek Times')
         optionsMenu.addAction(level1seekAction)
         optionsMenu.addAction(level2seekAction)
         optionsMenu.addSeparator()
@@ -513,6 +517,7 @@ class VideoCutter(QWidget):
         optionsMenu.addAction(self.hardwareDecodingAction)
         optionsMenu.addAction(self.keepRatioAction)
         optionsMenu.addMenu(zoomMenu)
+        optionsMenu.aboutToShow.connect(self.clearSpinners)
 
         self.appMenu.setSeparatorsCollapsible(True)
         self.appMenu.addAction(self.openProjectAction)
@@ -541,6 +546,11 @@ class VideoCutter(QWidget):
             optionsMenu.setStyle(QStyleFactory.create('Fusion'))
             self.appMenu.setStyle(QStyleFactory.create('Fusion'))
             self.cliplistMenu.setStyle(QStyleFactory.create('Fusion'))
+
+    def clearSpinners(self) -> None:
+        for obj in (self.level1_spinner, self.level2_spinner):
+            obj.clearFocus()
+            obj.lineEdit().deselect()
 
     def setRunningTime(self, runtime: str) -> None:
         self.runtimeLabel.setText('<div align="right">%s</div>' % runtime)
