@@ -96,11 +96,14 @@ class VideoCutter(QWidget):
             self.notifyInterval = 1000
             self.currentMedia, self.mediaAvailable = None, False
 
-            self.nativeDialogs = self.settings.value('nativeDialogs', True, bool)
-            self.keepClips = self.settings.value('keepClips', False, bool)
-            self.hardwareDecoding = self.settings.value('hwdec', 'auto', str) == 'auto'
+            self.nativeDialogs = bool(self.settings.value('nativeDialogs', True, type=bool))
+            print('nativeDialogs = %s' % self.nativeDialogs)
+            self.keepClips = bool(self.settings.value('keepClips', False, type=bool))
+            self.hardwareDecoding = self.settings.value('hwdec', 'auto', type=str) == 'auto'
 
             self.edlblock_re = re.compile(r'(\d+(?:\.?\d+)?)\s(\d+(?:\.?\d+)?)\s([01])')
+
+            self.level1_spinner, self.level2_spinner = QDoubleSpinBox(self), QDoubleSpinBox(self)
 
             self.initIcons()
             self.initActions()
@@ -425,25 +428,25 @@ class VideoCutter(QWidget):
         self.keepRatioAction = QAction('Keep aspect ratio', self, checkable=True, triggered=self.setAspect,
                                        statusTip='Keep window aspect ratio when resizing the window', enabled=False)
         self.nativeDialogsAction = QAction('Use native dialogs', self, checkable=True, checked=self.nativeDialogs,
-                                         statusTip='Use platform-native dialogs for file open & save operations')
+                                         statusTip='Use platform-native dialogs on file open & save operations')
         self.alwaysOnTopAction = QAction('Always on top', self, checkable=True, triggered=self.parent.set_always_on_top,
                                          statusTip='Keep app window on top of all other windows',
                                          checked=self.parent.ontop)
         self.keepClipsAction = QAction('Keep individual clips', self, checkable=True, checked=self.keepClips,
                                        statusTip='Keep the individual clips used to produce final media')
         self.hardwareDecodingAction = QAction('Hardware decoding', self, triggered=self.switchDecoding, checkable=True,
-                                              statusTip='Enable hardware based video decoding during playback ' +
+                                              checked=self.hardwareDecoding,
+                                              statusTip='Enable hardware based video decoding for playback ' +
                                                         '(e.g. vdpau, vaapi, dxva2, d3d11, cuda, etc.)')
         if self.theme == 'dark':
             self.darkThemeAction.setChecked(True)
         else:
             self.lightThemeAction.setChecked(True)
         self.themeAction.triggered.connect(self.switchTheme)
-        if self.settings.value('aspectRatio', 'keep', str) == 'keep':
+        if self.settings.value('aspectRatio', 'keep', type=str) == 'keep':
             self.keepRatioAction.setChecked(True)
             self.zoomAction.setEnabled(False)
         self.zoomAction.triggered.connect(self.setZoom)
-        self.hardwareDecodingAction.setChecked(self.hardwareDecoding)
 
     def initToolbar(self) -> None:
         self.toolbar.addAction(self.openAction)
@@ -454,7 +457,7 @@ class VideoCutter(QWidget):
         self.toolbar.addAction(self.saveAction)
         self.toolbar.disableTooltips()
         self.labelAction.triggered.connect(self.toolbar.setLabels)
-        self.toolbar.setLabelByType(self.settings.value('toolbarLabels', 'beside', str))
+        self.toolbar.setLabelByType(self.settings.value('toolbarLabels', 'beside', type=str))
 
     def initMenus(self) -> None:
         labelsMenu = QMenu('Toolbar labels', self.appMenu)
@@ -468,12 +471,11 @@ class VideoCutter(QWidget):
         zoomMenu.addAction(self.origZoomAction)
         zoomMenu.addAction(self.dblZoomAction)
 
-        self.level1_spinner = QDoubleSpinBox(self)
         self.level1_spinner.setDecimals(1)
         self.level1_spinner.setRange(0.1, 999.9)
         self.level1_spinner.setSingleStep(0.1)
         self.level1_spinner.setSuffix(' secs')
-        self.level1_spinner.setValue(self.settings.value('level1Seek', 2, float))
+        self.level1_spinner.setValue(self.settings.value('level1Seek', 2, type=float))
         level1_layout = QHBoxLayout()
         level1_layout.addStretch(1)
         level1_layout.addWidget(QLabel('Level 1'))
@@ -484,12 +486,11 @@ class VideoCutter(QWidget):
         level1seekAction = QWidgetAction(self)
         level1seekAction.setDefaultWidget(level1Seek)
         
-        self.level2_spinner = QDoubleSpinBox(self)
         self.level2_spinner.setDecimals(1)
         self.level2_spinner.setRange(0.1, 999.9)
         self.level2_spinner.setSingleStep(0.1)
         self.level2_spinner.setSuffix(' secs')
-        self.level2_spinner.setValue(self.settings.value('level2Seek', 5, float))
+        self.level2_spinner.setValue(self.settings.value('level2Seek', 5, type=float))
         level2_layout = QHBoxLayout()
         level2_layout.addStretch(1)
         level2_layout.addWidget(QLabel('Level 2'))

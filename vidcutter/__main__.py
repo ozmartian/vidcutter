@@ -134,11 +134,11 @@ class MainWindow(QMainWindow):
             self.restoreGeometry(self.settings.value('geometry'))
         if self.settings.value('windowState') is not None:
             self.restoreState(self.settings.value('windowState'))
-        self.theme = self.settings.value('theme', 'light', str)
-        self.ontop = self.settings.value('alwaysOnTop', False, bool)
+        self.theme = self.settings.value('theme', 'light', type=str)
+        self.ontop = self.settings.value('alwaysOnTop', False, type=bool)
         if self.ontop:
             self.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint)
-        self.startupvol = self.settings.value('volume', 100, int)
+        self.startupvol = self.settings.value('volume', 100, type=int)
 
     @staticmethod
     def log_uncaught_exceptions(cls, exc, tb) -> None:
@@ -204,15 +204,15 @@ class MainWindow(QMainWindow):
             labels = 'none'
         else:
             labels = 'beside'
-        self.settings.setValue('toolbarLabels', labels)
+        self.settings.setValue('nativeDialogs', self.cutter.nativeDialogsAction.isChecked())
+        self.settings.setValue('alwaysOnTop', self.cutter.alwaysOnTopAction.isChecked())
+        self.settings.setValue('keepClips', self.cutter.keepClipsAction.isChecked())
         self.settings.setValue('aspectRatio', 'keep' if self.cutter.keepRatioAction.isChecked() else 'stretch')
-        self.settings.setValue('nativeDialogs', 'true' if self.cutter.nativeDialogsAction.isChecked() else 'false')
-        self.settings.setValue('alwaysOnTop', 'true' if self.cutter.alwaysOnTopAction.isChecked() else 'false')
-        self.settings.setValue('volume', self.cutter.volumeSlider.value())
-        self.settings.setValue('keepClips', 'true' if self.cutter.keepClipsAction.isChecked() else 'false')
         self.settings.setValue('hwdec', 'auto' if self.cutter.hardwareDecodingAction.isChecked() else 'no')
+        self.settings.setValue('volume', self.cutter.volumeSlider.value())
         self.settings.setValue('level1Seek', self.cutter.level1_spinner.value())
         self.settings.setValue('level2Seek', self.cutter.level2_spinner.value())
+        self.settings.setValue('toolbarLabels', labels)
         self.settings.setValue('geometry', self.saveGeometry())
         self.settings.setValue('windowState', self.saveState())
         self.settings.sync()
@@ -221,11 +221,11 @@ class MainWindow(QMainWindow):
     def set_always_on_top(self, flag: bool) -> None:
         if flag:
             self.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint)
-            if self.cutter.mediaAvailable:
+            if hasattr(self.cutter, 'mediaPlayer'):
                 self.cutter.mediaPlayer.ontop = True
         else:
             self.setWindowFlags(self.windowFlags() & ~Qt.WindowStaysOnTopHint)
-            if self.cutter.mediaAvailable:
+            if hasattr(self.cutter, 'mediaPlayer'):
                 self.cutter.mediaPlayer.ontop = False
         self.show()
 
@@ -267,6 +267,7 @@ class MainWindow(QMainWindow):
         event.accept()
 
     def closeEvent(self, event: QCloseEvent) -> None:
+        event.accept()
         self.save_settings()
         if hasattr(self, 'cutter'):
             if hasattr(self.cutter, 'mediaPlayer'):
