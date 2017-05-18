@@ -96,8 +96,8 @@ class VideoCutter(QWidget):
             self.notifyInterval = 1000
             self.currentMedia, self.mediaAvailable = None, False
 
-            self.nativeDialogs = bool(self.settings.value('nativeDialogs', True, type=bool))
-            self.keepClips = bool(self.settings.value('keepClips', False, type=bool))
+            self.nativeDialogs = bool(self.settings.value('nativeDialogs', 1))
+            self.keepClips = bool(self.settings.value('keepClips', 0))
             self.hardwareDecoding = self.settings.value('hwdec', 'auto', type=str) == 'auto'
 
             self.edlblock_re = re.compile(r'(\d+(?:\.?\d+)?)\s(\d+(?:\.?\d+)?)\s([01])')
@@ -1024,18 +1024,15 @@ class VideoCutter(QWidget):
         shortcuts.setObjectName('shortcuts')
         buttons = QDialogButtonBox(QDialogButtonBox.Ok, parent=shortcuts)
         buttons.accepted.connect(shortcuts.hide)
-        layout = QVBoxLayout(spacing=0)
-        label = QLabel(pixmap=QPixmap(':/images/%s/shortcuts.png' % self.theme))
-        label.setStyleSheet('margin-bottom:0;')
-        layout.addWidget(label)
+        layout = QVBoxLayout()
+        layout.addWidget(QLabel(pixmap=QPixmap(':/images/%s/shortcuts.png' % self.theme)))
         layout.addWidget(buttons)
         shortcuts.setLayout(layout)
         shortcuts.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         shortcuts.setContentsMargins(10, 10, 10, 10)
-        shortcuts.setWindowModality(Qt.NonModal)
-        shortcuts.setWindowIcon(self.parent.windowIcon())
+        shortcuts.setWindowModality(Qt.WindowModal)
         shortcuts.setWindowTitle('Keyboard shortcuts')
-        shortcuts.setMinimumWidth(500 if self.parent.scale == 'LOW' else 800)
+        shortcuts.setMinimumWidth(400 if self.parent.scale == 'LOW' else 600)
         shortcuts.show()
 
     @pyqtSlot()

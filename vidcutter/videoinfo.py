@@ -47,8 +47,8 @@ class VideoInfo(QDialog):
             raise AttributeError('VideoService class unavailable in parent')
 
         self.setContentsMargins(0, 0, 0, 0)
-        self.setWindowModality(Qt.NonModal)
-        self.setWindowIcon(self.parent.parent.windowIcon())
+        self.setWindowModality(Qt.WindowModal)
+        # self.setWindowIcon(self.parent.parent.windowIcon())
         self.setWindowTitle('Media information')
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         self.setMinimumSize(self.modes.get(self.parent.parent.scale))
@@ -89,7 +89,7 @@ class VideoInfo(QDialog):
             mediainfo_version = mediainfo_version.split('\n')[1]
             mediainfo_label = QLabel('<div style="font-size:11px;"><b>Media information by:</b><br/>%s @ '
                                      % mediainfo_version + '<a href="https://mediaarea.net" target="_blank">' +
-                                     'https://mediaarea.net</a></div>')
+                                     'mediaarea.net</a></div>')
             button_layout = QHBoxLayout()
             button_layout.addWidget(mediainfo_label)
             button_layout.addWidget(buttons)

@@ -161,8 +161,7 @@ class AboutTab(BaseTab):
                 Website: <a href="http://vidcutter.ozmartians.com">http://vidcutter.ozmartians.com</a>
             </p>
             <p style="font-size:13px;">
-                Icon design by <a href="https://github.com/PapirusDevelopmentTeam">Papirus
-                Development Team</a>
+                Found a bug? Then why not <a href="https://github.com/ozmartian/vidcutter/issues">REPORT IT HERE</a>
             </p>
             <p style="font-size:11px; margin-top:15px;">
                 This program is free software; you can redistribute it and/or
