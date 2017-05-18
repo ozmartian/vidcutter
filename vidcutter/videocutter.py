@@ -97,7 +97,6 @@ class VideoCutter(QWidget):
             self.currentMedia, self.mediaAvailable = None, False
 
             self.nativeDialogs = bool(self.settings.value('nativeDialogs', True, type=bool))
-            print('nativeDialogs = %s' % self.nativeDialogs)
             self.keepClips = bool(self.settings.value('keepClips', False, type=bool))
             self.hardwareDecoding = self.settings.value('hwdec', 'auto', type=str) == 'auto'
 
@@ -215,7 +214,7 @@ class VideoCutter(QWidget):
             controlsLayout.addSpacing(10)
 
             layout = QVBoxLayout(spacing=0)
-            layout.setContentsMargins(10, 10, 10, 4)
+            layout.setContentsMargins(10, 10, 10, 0)
             layout.addLayout(self.videoLayout)
             layout.addSpacing(5)
             layout.addWidget(self.seekSlider)
@@ -478,7 +477,7 @@ class VideoCutter(QWidget):
         self.level1_spinner.setValue(self.settings.value('level1Seek', 2, type=float))
         level1_layout = QHBoxLayout()
         level1_layout.addStretch(1)
-        level1_layout.addWidget(QLabel('Level 1'))
+        level1_layout.addWidget(QLabel('Seek #1'))
         level1_layout.addWidget(self.level1_spinner)
         level1_layout.addStretch(1)
         level1Seek = QWidget(self)
@@ -493,7 +492,7 @@ class VideoCutter(QWidget):
         self.level2_spinner.setValue(self.settings.value('level2Seek', 5, type=float))
         level2_layout = QHBoxLayout()
         level2_layout.addStretch(1)
-        level2_layout.addWidget(QLabel('Level 2'))
+        level2_layout.addWidget(QLabel('Seek #2'))
         level2_layout.addWidget(self.level2_spinner)
         level2_layout.addStretch(1)
         level2Seek = QWidget(self)
@@ -505,11 +504,11 @@ class VideoCutter(QWidget):
         optionsMenu.addSection('Theme')
         optionsMenu.addAction(self.lightThemeAction)
         optionsMenu.addAction(self.darkThemeAction)
-        optionsMenu.addSection('Seek Times')
-        optionsMenu.addAction(level1seekAction)
-        optionsMenu.addAction(level2seekAction)
         optionsMenu.addSeparator()
         optionsMenu.addAction(self.keepClipsAction)
+        optionsMenu.addSeparator()
+        optionsMenu.addAction(level1seekAction)
+        optionsMenu.addAction(level2seekAction)
         optionsMenu.addSeparator()
         optionsMenu.addAction(self.nativeDialogsAction)
         optionsMenu.addAction(self.alwaysOnTopAction)
