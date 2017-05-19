@@ -12,112 +12,20 @@
     <copyright>All Rights Reserved</copyright>
     <licenseUrl>http://www.gnu.org/licenses/gpl.html</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <projectSourceUrl>https://github.com/ozmartian/vidcutter/archive/3.2.0.zip</projectSourceUrl>
+    <projectSourceUrl>https://github.com/ozmartian/vidcutter</projectSourceUrl>
     <bugTrackerUrl>https://github.com/ozmartian/vidcutter/issues</bugTrackerUrl>
     <tags>vidcutter ffmpeg audiovideo mpv libmpv videoeditor video videoedit pyqt Qt5 multimedia admin</tags>
-    <summary>the simplest + fastest video cut &amp; merge tool</summary>
+    <summary>the simplest + fastest cross-platform video cut &amp; join tool</summary>
     <description>
     The simplest &amp; sexiest tool for cutting and joining your videos without needing to re-encode.
-    VidCutter focuses on just getting the job done using the best options determined from your source media.
-    Did we mention it was super fast too? :-)
+    
+    VidCutter focuses on just getting the job done using the best options determined from your source media. Did we mention it was super fast too? :-)
 
-    Installation directory = C:\Program Files\VidCutter
+    mpv powered playback for frame-level accuracy and support for the widest array of media file formats and codec/filter configurations, it should work with any source media you throw at it as long as its valid. It should even accept moderately corrupted media too, re-indexing and salvaging what it can if the metadata exists. Direct-stream cutting and joining is then performed with the help of the legendary FFmpeg library. No reencoding ever, even blue-ray sized files cut into scenes, rearranged in the index and joined together in under 10 seconds in most cases.
+
+    Technical Note: Installation is in C:\Program Files\VidCutter via Chocolatey for both the 32 and 64 bit versions.
     </description>
-    <releaseNotes>
- * dark and light themes; chosen in the new settings sub-menu found in the
-    right-click menu or via menu toolbar icon
-
- * new settings sub-menu (right-click or menu toolbar icon). some blurb
-   on the settings (since i am too lazy to produce a help file right now :-)
-
-    - Themes = select from the new dark and light themes (requires app restart)
-
-    - Keep individual clips = each clip made from the clip index, which are then
-       merged to produce the final product, are not deleted at end of proceess.
-       They can be found in the same folder as the final produced video file 
-       with file name sequence 001....00n appended.
-
-    - Use native dialogs = on by default; can switch off to not use your 
-      desktop manager's native file open/save dialogs and instead use a generic
-      cross-platform version supplied by Qt framework.
-
-    - Always on top = sets application window as the top-most window, avoiding
-      others apps from displaying over the top of it.
-
-    - Toolbar labels = self-explanatory; allows you to set the main toolbar
-      labels to display beside icons (default), under icons or hidden from view.
-
-    - Hardware decoding = on by default to make the most of your GPU hardware.
-      Switch this off if you are experiencing problems with the video playback.
-      This option doesn't affect video cutting itself and is primarily for playback.
-
-    - Keep aspect ratio = as the title suggests, switching this off caues video
-      fill the available frame space rather than maintain its intended ratio for
-      viewport width and height. This option doesn't affect video cutting itself
-      and is primarily for playback.
-
-    - Zoom = zoom in video from half its original size and up to double. This
-      option doesn't affect video cutting itself and is primarily for playback.
-
-    - a few minor changes to keyboard shortcuts; check the keyboad shortcuts
-      cheatsheet via right-click or toolbar menu options.
-
- * new app icon
-
- * improved timeline look + new slider image + remove awkward mouse cursor
-    previously in use to standard pointing hand cursor which feels better IMHO.
-
- * new VidCutter project file format; this is the same as an EDL but includes
-    the full path to the media file associated with it. These can be saved and
-    opened after program launch to set you back to where you last were in a
-    cutting project.
-
- * eeePC and better support for HiDPI
-
- * better handling of multistreamed video sources including VOB files; if the
-    standard method of creation produces a 0 length file the app will now run
-    it again using various other methods to achieve th desired result. all cases
-    reported by users as bugs in this area are now working. in most cases you
-    will continue to get back exactly what you put in (pardon the pun). some VOBs
-    are problematic so until the UI is built to allow users finer control over the
-    backend settings the app will continue to make its own best judgement on
-    behalf of the user. so, in the worse case scenario you should now get back a
-    valid video file instead of 0 length video, but it may only include a single audio
-    track rather than all the tracks from the source. keep in mind that in these rare
-    cases the app will choose the best quality audio/video track when it can only 
-    work with just the one stream. The next version will allow you to select which
-    streams from source media to include in your final generated video file.
-
- * improved handling of corrupted media files. the app should now work with far
-    more source files than before.
-
- * time counter widget created allowing manual entry of timecode. just click on 
-    the time segment to edit and video will seek to that exact point OR use the
-    up/down arrow controls to the right of the running time code, highlight the
-    segment you wish to increase or decrease (i.e. hours, mins, secs, msecs)
-
- * new dark theme; app is now better integrated for those who prefer to work
-    with the darker side of the force; configurable via new menu option
-
- * video zoom level option added; configurable via new menu option
-
- * "Check for updates..." now checks for the latest release version of the app
-   via the GitHub API and alerts user accordingly. It only offers to take user to
-   release page while also explaining to stick with distriubution specific packages
-   if running on Linux. Automatic updates are a goal of the future but would only
-   be for Windows, macOS and AppImage linux versions.
-
- * The app will automatically check for updates; it will do this weekly and only
-    disturb the user if an update has been released AND it has been at least one
-    week since the last time updates were checked for.
-
- * new startup graphic.
-
- * new look dialogs including updater and about.
-
- * application settings now saved across all platforms; this includes window
-   state and geometry as well as new settings in right-click context menu.
-    </releaseNotes>
+    <releaseNotes>https://github.com/ozmartian/vidcutter/releases/tag/3.2.0</releaseNotes>
   </metadata>
   <files>
     <file src="tools\**" target="tools" />
