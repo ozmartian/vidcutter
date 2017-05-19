@@ -29,7 +29,7 @@ import shlex
 import sys
 from distutils.spawn import find_executable
 
-from PyQt5.QtCore import QDir, QFileInfo, QObject, QProcess, QProcessEnvironment, QTemporaryFile, pyqtSlot
+from PyQt5.QtCore import QDir, QFileInfo, QObject, QProcess, QProcessEnvironment, QSize, QTemporaryFile, pyqtSlot
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QMessageBox
 
@@ -70,13 +70,14 @@ class VideoService(QObject):
         if hasattr(self.proc, 'errorOccurred'):
             self.proc.errorOccurred.connect(self.cmdError)
 
-    def capture(self, source: str, frametime: str) -> QPixmap:
+    def capture(self, source: str, frametime: str, size: QSize = QSize(100, 70)) -> QPixmap:
         img, capres = None, QPixmap()
         try:
             img = QTemporaryFile(os.path.join(QDir.tempPath(), 'XXXXXX.jpg'))
             if img.open():
                 imagecap = img.fileName()
-                args = '-ss %s -i "%s" -vframes 1 -s 100x70 -y %s' % (frametime, source, imagecap)
+                args = '-ss %s -i "%s" -vframes 1 -s %ix%i -y %s' % (frametime, source,
+                                                                     size.width(), size.height(), imagecap)
                 if self.cmdExec(self.backend, args):
                     capres = QPixmap(imagecap, 'JPG')
         finally:

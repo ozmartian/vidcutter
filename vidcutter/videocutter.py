@@ -291,6 +291,8 @@ class VideoCutter(QWidget):
                                    osc=False,
                                    osd_font='Futura LT',
                                    osd_level=0,
+                                   osd_align_x='center',
+                                   osd_align_y='center',
                                    cursor_autohide=False,
                                    input_cursor=False,
                                    input_default_bindings=False,
@@ -845,7 +847,7 @@ class VideoCutter(QWidget):
         self.cutEndAction.setEnabled(True)
         self.seekSlider.setRestrictValue(self.seekSlider.value(), True)
         self.inCut = True
-        self.showText('New clip started at\n%s' % starttime.toString(self.timeformat))
+        self.showText('clip started at\n%s' % starttime.toString(self.timeformat))
         self.renderTimes()
 
     def clipEnd(self) -> None:
@@ -863,7 +865,7 @@ class VideoCutter(QWidget):
         self.timeCounter.setMinimum()
         self.seekSlider.setRestrictValue(0, False)
         self.inCut = False
-        self.showText('New clip ended at\n%s' % endtime.toString(self.timeformat))
+        self.showText('clip ended at\n%s' % endtime.toString(self.timeformat))
         self.renderTimes()
 
     @pyqtSlot(QModelIndex, int, int, QModelIndex, int)
@@ -921,10 +923,7 @@ class VideoCutter(QWidget):
             return '%f' % (td.days * 86400 + td.seconds + td.microseconds / 1000000.)
 
     def captureImage(self, frametime=None) -> QPixmap:
-        if frametime is None:
-            frametime = self.delta2QTime(self.mediaPlayer.playback_time * 1000)
-        else:
-            frametime = self.delta2QTime(frametime)
+        frametime = self.delta2QTime((self.mediaPlayer.playback_time * 1000) if frametime is None else frametime)
         imagecap = self.videoService.capture(self.currentMedia, frametime.toString(self.timeformat))
         if isinstance(imagecap, QPixmap):
             return imagecap
