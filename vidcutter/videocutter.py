@@ -484,7 +484,7 @@ class VideoCutter(QWidget):
         level1Seek.setLayout(level1_layout)
         level1seekAction = QWidgetAction(self)
         level1seekAction.setDefaultWidget(level1Seek)
-        
+
         self.level2_spinner.setDecimals(1)
         self.level2_spinner.setRange(0.1, 999.9)
         self.level2_spinner.setSingleStep(0.1)
