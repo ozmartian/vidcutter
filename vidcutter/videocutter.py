@@ -96,8 +96,9 @@ class VideoCutter(QWidget):
             self.notifyInterval = 1000
             self.currentMedia, self.mediaAvailable = None, False
 
-            self.nativeDialogs = bool(self.settings.value('nativeDialogs', 1))
-            self.keepClips = bool(self.settings.value('keepClips', 0))
+            self.nativeDialogs = self.settings.value('nativeDialogs', True, type=bool)
+            self.keepClips = self.settings.value('keepClips', False, type=bool)
+            self.timelineThumbs = self.settings.value('timelineThumbs', True, type=bool)
             self.hardwareDecoding = self.settings.value('hwdec', 'auto', type=str) == 'auto'
 
             self.edlblock_re = re.compile(r'(\d+(?:\.?\d+)?)\s(\d+(?:\.?\d+)?)\s([01])')
@@ -181,6 +182,13 @@ class VideoCutter(QWidget):
             self.videoplayerWidget = QWidget(self, visible=False)
             self.videoplayerWidget.setLayout(videoplayerLayout)
 
+            self.thumbnailsButton = QPushButton(objectName='storyboardButton', icon=self.thumbnailsIcon, flat=True,
+                                                toolTip='Thumbnails', statusTip='Toggle timeline thumbnails',
+                                                iconSize=QSize(16, 16), toggled=self.seekSlider.toggleThumbnails,
+                                                checkable=True, cursor=Qt.PointingHandCursor)
+            if self.timelineThumbs:
+                self.thumbnailsButton.setChecked(True)
+
             self.muteButton = QPushButton(objectName='muteButton', icon=self.unmuteIcon, flat=True, toolTip='Mute',
                                           statusTip='Toggle audio mute', iconSize=QSize(16, 16), clicked=self.muteAudio,
                                           cursor=Qt.PointingHandCursor)
@@ -203,6 +211,8 @@ class VideoCutter(QWidget):
             toolbarGroup.setStyleSheet('border: 0;')
 
             controlsLayout = QHBoxLayout()
+            controlsLayout.addSpacing(10)
+            controlsLayout.addWidget(self.thumbnailsButton)
             controlsLayout.addStretch(1)
             controlsLayout.addWidget(toolbarGroup)
             controlsLayout.addStretch(1)
@@ -366,6 +376,7 @@ class VideoCutter(QWidget):
         self.updateCheckIcon = QIcon(':/images/update.png')
         self.thumbsupIcon = QIcon(':/images/thumbs-up.png')
         self.keyRefIcon = QIcon(':/images/keymap.png')
+        self.thumbnailsIcon = QIcon(':/images/%s/storyboard.png' % self.theme)
 
     def initActions(self) -> None:
         self.themeAction = QActionGroup(self)

@@ -65,7 +65,7 @@ class VideoSlider(QSlider):
             background: url(:images/handle.png) no-repeat top center;
             width: 20px;
             height: 58px;
-            margin: -19px -6px;
+            margin: -17px -6px;
         }'''
         self._regions = list()
         self._regionHeight = 12
@@ -168,6 +168,12 @@ class VideoSlider(QSlider):
         self._regions.clear()
         self._regionSelected = -1
         self.update()
+
+    def toggleThumbnails(self, checked: bool) -> None:
+        if checked:
+            print('thumbnails ON')
+        else:
+            print('thumbnails OFF')
 
     def wheelEvent(self, event: QWheelEvent) -> None:
         if self.parentWidget().mediaAvailable:

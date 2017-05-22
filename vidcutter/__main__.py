@@ -213,6 +213,7 @@ class MainWindow(QMainWindow):
         self.settings.setValue('level1Seek', self.cutter.level1_spinner.value())
         self.settings.setValue('level2Seek', self.cutter.level2_spinner.value())
         self.settings.setValue('toolbarLabels', labels)
+        self.settings.setValue('timelineThumbs', self.cutter.thumbnailsButton.isChecked())
         self.settings.setValue('geometry', self.saveGeometry())
         self.settings.setValue('windowState', self.saveState())
         self.settings.sync()
