@@ -63,9 +63,9 @@ class VideoSlider(QSlider):
         QSlider::handle:horizontal {
             border: none;
             background: url(:images/handle.png) no-repeat top center;
-            width: 20px;
-            height: 56px;
-            margin: -14px -10px;
+            width: 18px;
+            height: 65px;
+            margin: -12px -10px -22px;
         }'''
         self._regions = list()
         self._regionHeight = 12
