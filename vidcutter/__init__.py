@@ -24,4 +24,6 @@
 
 __version__ = '3.2.0'
 
+__author__ = 'Pete Alexandrou <pete@ozmartians.com>'
+
 __packager__ = 'pypi'  # [ pypi | arch | deb ]

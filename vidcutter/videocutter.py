@@ -36,8 +36,8 @@ from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QFont, QFontDatabase, QI
                          QMouseEvent, QMovie, QPixmap)
 from PyQt5.QtWidgets import (QAbstractItemView, QAction, QActionGroup, qApp, QApplication, QDialogButtonBox,
                              QDoubleSpinBox, QFileDialog, QGroupBox, QHBoxLayout, QLabel, QListWidgetItem, QMenu,
-                             QMessageBox, QPushButton, QSizePolicy, QSlider, QStyle, QStyleFactory, QVBoxLayout,
-                             QWidget, QWidgetAction)
+                             QMessageBox, QPushButton, QSizePolicy, QSlider, QStackedLayout, QStackedWidget, QStyle,
+                             QStyleFactory, QVBoxLayout, QWidget, QWidgetAction)
 
 from vidcutter.libs.videoservice import VideoService
 from vidcutter.libs.widgets import FrameCounter, TimeCounter, VCProgressBar
@@ -113,7 +113,7 @@ class VideoCutter(QWidget):
             self.appMenu, self.cliplistMenu = QMenu(self), QMenu(self)
             self.initMenus()
 
-            self.seekSlider = VideoSlider(parent=self, sliderMoved=self.setPosition)
+            self.seekSlider = VideoSlider(self, sliderMoved=self.setPosition)
 
             self.initNoVideo()
 
@@ -223,10 +223,21 @@ class VideoCutter(QWidget):
             controlsLayout.addWidget(self.menuButton)
             controlsLayout.addSpacing(10)
 
+            self.timelineThumbs = QWidget(self)
+            self.timelineThumbs.setStyleSheet('background: #444; margin: 16px 8px 22px; height: %spx;'
+                                              % self.seekSlider.height())
+
+            sliderStack = QStackedWidget()
+            sliderStack.setContentsMargins(0, 0, 0, 0)
+            sliderStack.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+            sliderStack.layout().setStackingMode(QStackedLayout.StackAll)
+            sliderStack.addWidget(self.seekSlider)
+            sliderStack.addWidget(self.timelineThumbs)
+
             layout = QVBoxLayout(spacing=0)
             layout.setContentsMargins(10, 10, 10, 0)
             layout.addLayout(self.videoLayout)
-            layout.addWidget(self.seekSlider)
+            layout.addWidget(sliderStack)
             layout.addSpacing(12)
             layout.addLayout(controlsLayout)
 
@@ -281,6 +292,7 @@ class VideoCutter(QWidget):
         log_msg = 'MPV {} - {}: {}'.format(loglevel, component, message)
         if loglevel in ('fatal', 'error'):
             self.logger.critical(log_msg)
+            sys.stderr.write(log_msg)
         else:
             self.logger.info(log_msg)
 
@@ -679,6 +691,7 @@ class VideoCutter(QWidget):
                     except UnicodeDecodeError:
                         qApp.restoreOverrideCursor()
                         self.logger.error('Invalid project file was selected', exc_info=True)
+                        sys.stderr.write('Invalid project file was selected')
                         QMessageBox.critical(self.parent, 'Invalid project file',
                                              'Could not make sense of the selected project file. Try viewing it in a ' +
                                              'text editor to ensure it is valid and not corrupted.')
@@ -813,6 +826,8 @@ class VideoCutter(QWidget):
             return
         duration *= 1000
         self.seekSlider.setRange(0, duration)
+        if self.thumbnailsButton.isChecked():
+            self.seekSlider.timeline(self.currentMedia)
         self.timeCounter.setDuration(self.delta2QTime(duration).toString(self.timeformat))
         self.frameCounter.setFrameCount(self.mediaPlayer.estimated_frame_count)
 
@@ -1016,6 +1031,7 @@ class VideoCutter(QWidget):
         if self.mediaAvailable:
             if self.videoService.mediainfo is None:
                 self.logger.error('Error trying to load media information. mediainfo could not be found')
+                sys.stderr.write('Error trying to load media information. mediainfo could not be found')
                 QMessageBox.critical(self, 'Could not find mediainfo tool',
                                      'The <b>mediainfo</b> command line tool could not be found on your system. ' +
                                      'This is required for the Media Information option ' +

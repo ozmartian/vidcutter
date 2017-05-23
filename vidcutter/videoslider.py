@@ -22,32 +22,36 @@
 #
 #######################################################################
 
-import logging
 import sys
+import logging
 
 from PyQt5.QtCore import QEvent, QObject, Qt, pyqtSlot
-from PyQt5.QtGui import (QColor, QCursor, QKeyEvent, QMouseEvent, QPaintEvent, QPainterPath, QPen, QPixmap,
-                         QWheelEvent)
-from PyQt5.QtWidgets import qApp, QSlider, QStyle, QStyleOptionSlider, QStylePainter
+from PyQt5.QtGui import QColor, QKeyEvent, QMouseEvent, QPaintEvent, QPainterPath, QPen, QResizeEvent, QWheelEvent
+from PyQt5.QtWidgets import qApp, QHBoxLayout, QLabel, QSlider, QStyle, QStyleOptionSlider, QStylePainter
+
+from vidcutter.videothreads import TimelineThumbsThread
+from vidcutter.libs.videoservice import VideoService
 
 
 class VideoSlider(QSlider):
-    def __init__(self, *arg, **kwargs):
-        super(VideoSlider, self).__init__(*arg, **kwargs)
-        self.theme = self.parentWidget().theme
+    def __init__(self, parent=None, *arg, **kwargs):
+        super(VideoSlider, self).__init__(parent, *arg, **kwargs)
+        self.parent = parent
+        self.logger = logging.getLogger(__name__)
+        self.theme = self.parent.theme
         self._styles = '''QSlider:horizontal { margin: 16px 4px 22px; height: 40px; }
         QSlider::groove:horizontal {
             border-bottom: 1px solid #444;
             border-top: 1px solid #444;
             height: 38px;
-            background: #444 url(:images/filmstrip.png) repeat-x;
+            background: transparent url(:images/filmstrip.png) repeat-x left;
             position: absolute;
             left: 4px;
             right: 4px;
             margin: 0;
         }
         QSlider::sub-page:horizontal {
-            border: none;s
+            border: none;
             background: %s;
             height: 20px;
             position: absolute;
@@ -67,10 +71,11 @@ class VideoSlider(QSlider):
             height: 65px;
             margin: -12px -10px -22px;
         }'''
+        self._offset = 8
         self._regions = list()
-        self._regionHeight = 12
+        self._regionHeight = 22
         self._regionSelected = -1
-        self.logger = logging.getLogger(__name__)
+        self._timelineThumbs = True
         self.setOrientation(Qt.Horizontal)
         self.setObjectName('videoslider')
         self.setAttribute(Qt.WA_Hover, True)
@@ -81,8 +86,6 @@ class VideoSlider(QSlider):
         self.setMouseTracking(True)
         self.setTracking(True)
         self.setTickPosition(QSlider.TicksBelow)
-        self.slider_cursor = QCursor(QPixmap(':/images/slider-cursor.png', 'PNG'))\
-            if sys.platform.startswith('linux') else Qt.SplitHCursor
         self.setFocus()
         self.initStyle()
         self.restrictValue = 0
@@ -99,7 +102,7 @@ class VideoSlider(QSlider):
             opt = QStyleOptionSlider()
             self.initStyleOption(opt)
             handle = self.style().subControlRect(QStyle.CC_Slider, opt, QStyle.SC_SliderHandle, self)
-            self.initStyle(True, '%ipx' % (handle.x() + 5))
+            self.initStyle(True, '%ipx' % handle.x())
         else:
             self.initStyle()
 
@@ -116,7 +119,7 @@ class VideoSlider(QSlider):
         opt = QStyleOptionSlider()
         self.initStyleOption(opt)
         if self.tickPosition() != QSlider.NoTicks:
-            x = 8
+            x = self._offset
             for i in range(self.minimum(), self.width(), x):
                 if i % 5 == 0:
                     h = 14
@@ -138,11 +141,10 @@ class VideoSlider(QSlider):
                     painter.drawLine(x, y, x, y - h)
                     if i % 30 == 0:
                         painter.setPen(Qt.white if self.theme == 'dark' else Qt.black)
-                        if self.parentWidget().currentMedia is not None:
-                            timecode = QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), x - 4,
+                        if self.parent.currentMedia is not None:
+                            timecode = QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), x - self._offset,
                                                                       self.width())
-                            timecode= self.parentWidget().delta2QTime(timecode) \
-                                .toString(self.parentWidget().runtimeformat)
+                            timecode= self.parent.delta2QTime(timecode).toString(self.parent.runtimeformat)
                         else:
                             timecode = '00:00:00'
                         painter.drawText(x + 4, y + 8, timecode)
@@ -166,7 +168,7 @@ class VideoSlider(QSlider):
         width = QStyle.sliderPositionFromValue(self.minimum(), self.maximum(), end, self.width()) - x
         height = self._regionHeight
         path = QPainterPath()
-        path.addRect(x, y + 3, width, height)
+        path.addRect(x, y - 3, width, height)
         self._regions.append(path)
         self.update()
 
@@ -175,7 +177,7 @@ class VideoSlider(QSlider):
         self._regions.insert(index2, reg)
         self.update()
 
-    def selectRegion(self, clipindex: int):
+    def selectRegion(self, clipindex: int) -> None:
         self._regionSelected = clipindex
         self.update()
 
@@ -185,18 +187,51 @@ class VideoSlider(QSlider):
         self.update()
 
     def toggleThumbnails(self, checked: bool) -> None:
-        pass
+        self._timelineThumbs = checked
+        self.update()
+
+    def timeline(self, source: str) -> None:
+        thumbWidth = VideoService.ThumbSize.TIMELINE.value.width()
+        step = QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), thumbWidth, self.width())
+        index = list(range(0, self.maximum(), step))
+        frametimes = list()
+        for msec in index:
+            frametimes.append(self.parent.delta2QTime(msec).toString(self.parent.timeformat))
+        self.thumbsThread = TimelineThumbsThread(source, frametimes)
+        self.thumbsThread.errorOccurred.connect(self.errorHandler)
+        self.thumbsThread.completed.connect(self.buildTimeline)
+        self.thumbsThread.start()
+
+    @pyqtSlot(list)
+    def buildTimeline(self, thumbs: list) -> None:
+        layout = QHBoxLayout(spacing=0)
+        layout.setContentsMargins(0, 0, 0, 0)
+        for thumb in thumbs:
+            label = QLabel()
+            label.setStyleSheet('padding:0; margin:-5px 8px 0 0; background:transparent;')
+            label.setPixmap(thumb)
+            layout.addWidget(label)
+        self.parent.timelineThumbs.setLayout(layout)
+        self.parent.timelineThumbs.setFixedWidth(self.width())
+
+    def errorHandler(self, error: str) -> None:
+        self.logger.error(error)
+        sys.stderr.write(error)
+
+    def resizeEvent(self, event: QResizeEvent) -> None:
+        if self.parent.currentMedia is not None and self.parent.thumbnailsButton.isChecked():
+            self.timeline(self.parent.currentMedia)
 
     def wheelEvent(self, event: QWheelEvent) -> None:
-        if self.parentWidget().mediaAvailable:
+        if self.parent.mediaAvailable:
             if event.angleDelta().y() > 0:
-                self.parentWidget().mediaPlayer.frame_back_step()
+                self.parent.mediaPlayer.frame_back_step()
             else:
-                self.parentWidget().mediaPlayer.frame_step()
+                self.parent.mediaPlayer.frame_step()
             event.accept()
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
-        qApp.sendEvent(self.parentWidget(), event)
+        qApp.sendEvent(self.parent, event)
 
     def mouseMoveEvent(self, event: QMouseEvent) -> None:
         opt = QStyleOptionSlider()
@@ -210,7 +245,7 @@ class VideoSlider(QSlider):
 
     def eventFilter(self, obj: QObject, event: QEvent) -> bool:
         if event.type() == QEvent.MouseButtonRelease:
-            if self.parentWidget().mediaAvailable:
+            if self.parent.mediaAvailable:
                 self.setValue(QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.x(), self.width()))
-                self.parentWidget().setPosition(self.sliderPosition())
+                self.parent.setPosition(self.sliderPosition())
         return super(VideoSlider, self).eventFilter(obj, event)

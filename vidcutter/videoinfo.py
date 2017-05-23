@@ -22,6 +22,7 @@
 #
 #######################################################################
 
+import sys
 import logging
 
 from PyQt5.QtCore import QSize, Qt
@@ -42,6 +43,8 @@ class VideoInfo(QDialog):
         self.parent = parent
         self.setObjectName('videoinfo')
         if not hasattr(self.parent, 'videoService'):
+            self.logger.error('VideoService class unavailable in parent')
+            sys.stderr.write('VideoService class unavailable in parent')
             raise AttributeError('VideoService class unavailable in parent')
 
         self.setContentsMargins(0, 0, 0, 0)

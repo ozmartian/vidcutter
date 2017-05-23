@@ -170,7 +170,7 @@ class MainWindow(QMainWindow):
         if self.parser.isSet(self.dev_option):
             self.devmode = True
         if len(self.args) > 0 and not os.path.exists(self.args[0]):
-            print('\n    ERROR: Video file not found.\n', file=sys.stderr)
+            sys.stderr.write('\n    ERROR: Video file not found.\n', file=sys.stderr)
             self.close()
             sys.exit(1)
         if len(self.args) > 0:
@@ -252,7 +252,7 @@ class MainWindow(QMainWindow):
             event.accept()
         super(MainWindow, self).contextMenuEvent(event)
 
-    def mousePressEvent(self, event: QMouseEvent):
+    def mousePressEvent(self, event: QMouseEvent) -> None:
         if event.button() == Qt.LeftButton and self.cutter.mediaAvailable:
             self.cutter.cliplist.clearSelection()
             self.cutter.timeCounter.clearFocus()

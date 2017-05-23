@@ -52,6 +52,7 @@ class Updater(QWidget):
     def done(self, reply: QNetworkReply) -> None:
         if reply.error() != QNetworkReply.NoError:
             self.logger.error(reply.errorString())
+            sys.stderr.write(reply.errorString())
             return
         if os.getenv('DEBUG', False):
             self.log_request(reply)
@@ -86,10 +87,10 @@ class UpdaterMsgBox(QDialog):
         self.loading.setMinimumWidth(485)
         self.loading.show()
 
-    def releases_page(self):
+    def releases_page(self) -> None:
         QDesktopServices.openUrl(self.releases_url)
 
-    def show_result(self, latest: str, current: str):
+    def show_result(self, latest: str, current: str) -> None:
         self.releases_url = QUrl('https://github.com/ozmartian/vidcutter/releases/latest')
         update_available = True if latest > current else False
         if self.theme == 'dark':

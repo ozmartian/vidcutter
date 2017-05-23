@@ -20,7 +20,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-#######################################################################
+#################################################################s######
 
 import logging
 import os
@@ -28,6 +28,7 @@ import re
 import shlex
 import sys
 from distutils.spawn import find_executable
+from enum import Enum
 
 from PyQt5.QtCore import QDir, QFileInfo, QObject, QProcess, QProcessEnvironment, QSize, QTemporaryFile, pyqtSlot
 from PyQt5.QtGui import QPixmap
@@ -35,6 +36,11 @@ from PyQt5.QtWidgets import QMessageBox
 
 
 class VideoService(QObject):
+
+    class ThumbSize(Enum):
+        INDEX = QSize(100, 70)
+        TIMELINE = QSize(50, 38)
+
     def __init__(self, parent=None):
         super(VideoService, self).__init__(parent)
         self.parent = parent
@@ -70,14 +76,15 @@ class VideoService(QObject):
         if hasattr(self.proc, 'errorOccurred'):
             self.proc.errorOccurred.connect(self.cmdError)
 
-    def capture(self, source: str, frametime: str, size: QSize = QSize(100, 70)) -> QPixmap:
+    def capture(self, source: str, frametime: str, thumbsize: ThumbSize = ThumbSize.INDEX) -> QPixmap:
         img, capres = None, QPixmap()
         try:
             img = QTemporaryFile(os.path.join(QDir.tempPath(), 'XXXXXX.jpg'))
             if img.open():
                 imagecap = img.fileName()
-                args = '-ss %s -i "%s" -vframes 1 -s %ix%i -y %s' % (frametime, source,
-                                                                     size.width(), size.height(), imagecap)
+                size = thumbsize.value
+                args = '-ss %s -i "%s" -vframes 1 -s %ix%i -y %s' % (frametime, source, size.width(), size.height(),
+                                                                     imagecap)
                 if self.cmdExec(self.backend, args):
                     capres = QPixmap(imagecap, 'JPG')
         finally:

@@ -113,7 +113,7 @@ class About(QDialog):
         }
         return modes[mode]
 
-    def closeEvent(self, event: QCloseEvent):
+    def closeEvent(self, event: QCloseEvent) -> None:
         self.tab_about.deleteLater()
         self.tab_credits.deleteLater()
         self.tab_license.deleteLater()
