@@ -3,7 +3,7 @@
 
 #######################################################################
 #
-# VidCutter - a simple yet fast & accurate video cutter & joiner
+# VidCutter - media cutter & joiner
 #
 # copyright © 2017 Pete Alexandrou
 #
@@ -37,7 +37,7 @@ class VideoSlider(QSlider):
         self.theme = self.parentWidget().theme
         self._styles = '''QSlider:horizontal { margin: 16px 4px 22px; height: 40px; }
         QSlider::groove:horizontal {
-            border-bottom: 1px solid #8F8F8F;
+            border-bottom: 1px solid #444;
             border-top: 1px solid #444;
             height: 38px;
             background: #444 url(:images/filmstrip.png) repeat-x;
@@ -117,7 +117,7 @@ class VideoSlider(QSlider):
         self.initStyleOption(opt)
         if self.tickPosition() != QSlider.NoTicks:
             x = 8
-            for i in range(self.minimum(), self.width() - 100, x):
+            for i in range(self.minimum(), self.width(), x):
                 if i % 5 == 0:
                     h = 14
                     w = 1
@@ -146,6 +146,8 @@ class VideoSlider(QSlider):
                         else:
                             timecode = '00:00:00'
                         painter.drawText(x + 4, y + 8, timecode)
+                if x + 30 > self.width():
+                    break
                 x += 15
         opt.subControls = QStyle.SC_SliderGroove
         painter.drawComplexControl(QStyle.CC_Slider, opt)
@@ -183,10 +185,7 @@ class VideoSlider(QSlider):
         self.update()
 
     def toggleThumbnails(self, checked: bool) -> None:
-        if checked:
-            print('thumbnails ON')
-        else:
-            print('thumbnails OFF')
+        pass
 
     def wheelEvent(self, event: QWheelEvent) -> None:
         if self.parentWidget().mediaAvailable:
