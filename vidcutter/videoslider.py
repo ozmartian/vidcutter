@@ -35,11 +35,11 @@ class VideoSlider(QSlider):
     def __init__(self, *arg, **kwargs):
         super(VideoSlider, self).__init__(*arg, **kwargs)
         self.theme = self.parentWidget().theme
-        self._styles = '''QSlider:horizontal { margin: 25px 0 18px; }
+        self._styles = '''QSlider:horizontal { margin: 16px 4px 22px; height: 40px; }
         QSlider::groove:horizontal {
-            border-top: 1px solid #8F8F8F;
-            border-bottom: 1px solid #444;
-            height: 32px;
+            border-bottom: 1px solid #8F8F8F;
+            border-top: 1px solid #444;
+            height: 38px;
             background: #444 url(:images/filmstrip.png) repeat-x;
             position: absolute;
             left: 4px;
@@ -47,7 +47,7 @@ class VideoSlider(QSlider):
             margin: 0;
         }
         QSlider::sub-page:horizontal {
-            border: none;
+            border: none;s
             background: %s;
             height: 20px;
             position: absolute;
@@ -64,8 +64,8 @@ class VideoSlider(QSlider):
             border: none;
             background: url(:images/handle.png) no-repeat top center;
             width: 20px;
-            height: 58px;
-            margin: -17px -6px;
+            height: 56px;
+            margin: -14px -10px;
         }'''
         self._regions = list()
         self._regionHeight = 12
@@ -80,7 +80,7 @@ class VideoSlider(QSlider):
         self.setSingleStep(1)
         self.setMouseTracking(True)
         self.setTracking(True)
-        self.setTickPosition(QSlider.TicksAbove)
+        self.setTickPosition(QSlider.TicksBelow)
         self.slider_cursor = QCursor(QPixmap(':/images/slider-cursor.png', 'PNG'))\
             if sys.platform.startswith('linux') else Qt.SplitHCursor
         self.setFocus()
@@ -110,15 +110,18 @@ class VideoSlider(QSlider):
 
     def paintEvent(self, event: QPaintEvent) -> None:
         painter = QStylePainter(self)
+        font = painter.font()
+        font.setPixelSize(10)
+        painter.setFont(font)
         opt = QStyleOptionSlider()
         self.initStyleOption(opt)
         if self.tickPosition() != QSlider.NoTicks:
-            x = 4
-            for i in range(self.minimum(), self.width(), x):
+            x = 8
+            for i in range(self.minimum(), self.width() - 100, x):
                 if i % 5 == 0:
-                    h = 10
+                    h = 14
                     w = 1
-                    z = 12
+                    z = 8
                 else:
                     h = 5
                     w = 1
@@ -133,6 +136,16 @@ class VideoSlider(QSlider):
                 if self.tickPosition() in (QSlider.TicksBothSides, QSlider.TicksBelow):
                     y = self.rect().bottom() - z
                     painter.drawLine(x, y, x, y - h)
+                    if i % 30 == 0:
+                        painter.setPen(Qt.white if self.theme == 'dark' else Qt.black)
+                        if self.parentWidget().currentMedia is not None:
+                            timecode = QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), x - 4,
+                                                                      self.width())
+                            timecode= self.parentWidget().delta2QTime(timecode) \
+                                .toString(self.parentWidget().runtimeformat)
+                        else:
+                            timecode = '00:00:00'
+                        painter.drawText(x + 4, y + 8, timecode)
                 x += 15
         opt.subControls = QStyle.SC_SliderGroove
         painter.drawComplexControl(QStyle.CC_Slider, opt)

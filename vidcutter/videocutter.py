@@ -226,9 +226,8 @@ class VideoCutter(QWidget):
             layout = QVBoxLayout(spacing=0)
             layout.setContentsMargins(10, 10, 10, 0)
             layout.addLayout(self.videoLayout)
-            layout.addSpacing(5)
             layout.addWidget(self.seekSlider)
-            layout.addSpacing(2)
+            layout.addSpacing(12)
             layout.addLayout(controlsLayout)
 
             self.setLayout(layout)
