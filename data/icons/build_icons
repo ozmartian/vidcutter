@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SVG_SOURCE=vidcutter_NEW.svg
+SVG_SOURCE=vidcutter.svg
 
 # X11 icons
 echo -e "\n[ creating X11 icons ]\n"
