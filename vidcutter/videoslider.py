@@ -44,7 +44,7 @@ class VideoSlider(QSlider):
             border-bottom: 1px solid #444;
             border-top: 1px solid #444;
             height: 38px;
-            background: transparent url(:images/filmstrip.png) repeat-x left;
+            background: transparent url(:images/%s.png) repeat-x left;
             position: absolute;
             left: 4px;
             right: 4px;
@@ -87,14 +87,14 @@ class VideoSlider(QSlider):
         self.setTracking(True)
         self.setTickPosition(QSlider.TicksBelow)
         self.setFocus()
-        self.initStyle()
         self.restrictValue = 0
         self.valueChanged.connect(self.restrictMove)
         self.installEventFilter(self)
 
     def initStyle(self, selected: bool = False, margin: str = '0') -> None:
         bground = 'rgba(200, 213, 236, 0.85)' if selected else 'transparent'
-        self.setStyleSheet(self._styles % (bground, margin))
+        timeline_bground = 'filmstrip_thumbs' if self.parent.currentMedia is not None and self.parent.thumbnailsButton.isChecked() else 'filmstrip'
+        self.setStyleSheet(self._styles % (timeline_bground, bground, margin))
 
     def setRestrictValue(self, value: int, force: bool = False) -> None:
         self.restrictValue = value
@@ -208,7 +208,7 @@ class VideoSlider(QSlider):
         layout.setContentsMargins(0, 0, 0, 0)
         for thumb in thumbs:
             label = QLabel()
-            label.setStyleSheet('padding:0; margin:-5px 8px 0 0; background:transparent;')
+            label.setStyleSheet('padding: 0; margin: -5px 0 0 0; background: transparent;')
             label.setPixmap(thumb)
             layout.addWidget(label)
         self.parent.timelineThumbs.setLayout(layout)

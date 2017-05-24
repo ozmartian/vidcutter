@@ -202,6 +202,8 @@ class VideoCutter(QWidget):
             self.menuButton.setFixedSize(QSize(40, 42))
             self.menuButton.setMenu(self.appMenu)
 
+            self.seekSlider.initStyle()
+
             toolbarLayout = QHBoxLayout()
             toolbarLayout.addWidget(self.toolbar)
             toolbarLayout.setContentsMargins(0, 0, 0, 0)
