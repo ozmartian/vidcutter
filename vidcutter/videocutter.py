@@ -802,7 +802,7 @@ class VideoCutter(QWidget):
             self.mediaPlayer.seek(self.delta2QTime(position).toString(self.timeformat),
                                   reference='absolute', precision='exact')
 
-    def positionChanged(self, progress: int) -> None:
+    def positionChanged(self, name: str, progress: int) -> None:
         if progress is None:
             return
         progress *= 1000
@@ -811,12 +811,7 @@ class VideoCutter(QWidget):
             self.timeCounter.setTime(self.delta2QTime(progress).toString(self.timeformat))
             self.frameCounter.setFrame(self.mediaPlayer.estimated_frame_number)
 
-    @pyqtSlot(QListWidgetItem)
-    def positionAtClip(self, item: QListWidgetItem) -> None:
-        row = self.cliplist.indexFromItem(item).row()
-        self.setPosition(self.clipTimes[row][0].msecsSinceStartOfDay())
-
-    def durationChanged(self, duration: int) -> None:
+    def durationChanged(self, name: str, duration: int) -> None:
         if duration is None:
             return
         duration *= 1000
@@ -825,6 +820,11 @@ class VideoCutter(QWidget):
         self.frameCounter.setFrameCount(self.mediaPlayer.estimated_frame_count)
         if self.thumbnailsButton.isChecked():
             self.seekSlider.timeline(self.currentMedia)
+
+    @pyqtSlot(QListWidgetItem)
+    def positionAtClip(self, item: QListWidgetItem) -> None:
+        row = self.cliplist.indexFromItem(item).row()
+        self.setPosition(self.clipTimes[row][0].msecsSinceStartOfDay())
 
     def muteAudio(self) -> None:
         if self.mediaPlayer.mute:
