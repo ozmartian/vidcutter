@@ -224,7 +224,7 @@ class VideoSlider(QSlider):
             layout.addWidget(label)
         thumbnails = QWidget(self)
         thumbnails.setContentsMargins(8, 0, 8, 0)
-        thumbnails.setStyleSheet('background: transparent; margin: 16px 8px 22px; height: %spx;' % self.height())
+        thumbnails.setStyleSheet('background: transparent; margin: 16px 0 22px; height: %spx;' % self.height())
         thumbnails.setFixedWidth(self.width())
         thumbnails.setLayout(layout)
         self.removeThumbs()
