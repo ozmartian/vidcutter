@@ -60,7 +60,10 @@ class MainWindow(QMainWindow):
         self.show()
         try:
             if len(self.video):
-                self.cutter.loadMedia(self.video)
+                if QFileInfo(self.video).suffix() == 'vcp':
+                    self.cutter.openProject(project_file=self.video)
+                else:
+                    self.cutter.loadMedia(self.video)
         except (FileNotFoundError, PermissionError) as e:
             QMessageBox.critical(self, 'Error loading file', sys.exc_info()[0])
             logging.exception('Error loading file')
@@ -166,12 +169,13 @@ class MainWindow(QMainWindow):
             os.environ['DEBUG'] = '1'
         if self.parser.isSet(self.dev_option):
             self.devmode = True
-        if len(self.args) > 0 and not os.path.exists(self.args[0]):
-            sys.stderr.write('\n    ERROR: Video file not found.\n', file=sys.stderr)
-            self.close()
-            sys.exit(1)
         if len(self.args) > 0:
-            self.video = self.args[0]
+            file_path = QFileInfo(self.args[0]).absoluteFilePath()
+            if not os.path.exists(file_path):
+                sys.stderr.write('\nERROR: File not found: %s\n\n' % file_path)
+                self.close()
+                sys.exit(1)
+            self.video = file_path
 
     def init_cutter(self) -> None:
         self.cutter = VideoCutter(self)
@@ -272,8 +276,8 @@ class MainWindow(QMainWindow):
 
     def closeEvent(self, event: QCloseEvent) -> None:
         event.accept()
-        self.save_settings()
         if hasattr(self, 'cutter'):
+            self.save_settings()
             if hasattr(self.cutter, 'mediaPlayer'):
                 self.cutter.mediaPlayer.terminate()
         qApp.quit()

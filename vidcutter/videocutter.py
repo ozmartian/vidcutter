@@ -661,14 +661,15 @@ class VideoCutter(QWidget):
         if filename != '':
             self.loadMedia(filename)
 
-    def openProject(self, checked: bool = False) -> None:
-        project_file, _ = QFileDialog.getOpenFileName(self.parent, caption='Select project file',
-                                                      filter=self.projectFilters(),
-                                                      initialFilter='VidCutter Project (*.vcp)',
-                                                      directory=QDir.homePath(),
-                                                      options=(QFileDialog.DontUseNativeDialog
-                                                               if not self.nativeDialogsAction.isChecked()
-                                                               else QFileDialog.Options()))
+    def openProject(self, checked: bool = False, project_file: str = None) -> None:
+        if project_file is None:
+            project_file, _ = QFileDialog.getOpenFileName(self.parent, caption='Select project file',
+                                                          filter=self.projectFilters(),
+                                                          initialFilter='VidCutter Project (*.vcp)',
+                                                          directory=QDir.homePath(),
+                                                          options=(QFileDialog.DontUseNativeDialog
+                                                                   if not self.nativeDialogsAction.isChecked()
+                                                                   else QFileDialog.Options()))
         if project_file.strip():
             file = QFile(project_file)
             info = QFileInfo(file)
