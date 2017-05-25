@@ -31,7 +31,8 @@ from datetime import timedelta
 
 from locale import setlocale, LC_NUMERIC
 
-from PyQt5.QtCore import pyqtSlot, QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTextStream, QTime, QUrl
+from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTextStream,
+                          QTime, QUrl)
 from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent,
                          QMouseEvent, QMovie, QPixmap)
 from PyQt5.QtWidgets import (QAbstractItemView, QAction, QActionGroup, qApp, QApplication, QDialogButtonBox,
@@ -60,6 +61,8 @@ except OSError:
 
 
 class VideoCutter(QWidget):
+    errorOccurred = pyqtSignal(str)
+
     def __init__(self, parent: QWidget):
         super(VideoCutter, self).__init__(parent)
         self.logger = logging.getLogger(__name__)
@@ -288,8 +291,8 @@ class VideoCutter(QWidget):
         if loglevel in ('fatal', 'error'):
             self.logger.critical(log_msg)
             sys.stderr.write(log_msg)
-            QMessageBox.critical(self.parent, 'Playback error', '%s<br><br>Please try again or use a different '
-                                 % message + 'media file.', QMessageBox.Ok)
+            if loglevel == 'fatal' or 'file format' in message:
+                self.errorOccurred.emit(message)
         else:
             self.logger.info(log_msg)
 

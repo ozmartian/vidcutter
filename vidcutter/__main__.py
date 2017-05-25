@@ -177,6 +177,7 @@ class MainWindow(QMainWindow):
 
     def init_cutter(self) -> None:
         self.cutter = VideoCutter(self)
+        self.cutter.errorOccurred.connect(self.errorHandler)
         qApp.setWindowIcon(QIcon(':/images/vidcutter.png'))
         self.setCentralWidget(self.cutter)
 
@@ -244,6 +245,11 @@ class MainWindow(QMainWindow):
                 m = re.match('__version__ *= *[\'](.*)[\']', line)
                 if m:
                     return m.group(1)
+
+    @pyqtSlot(str)
+    def errorHandler(self, msg: str) -> None:
+        QMessageBox.critical(self, 'An error occurred', '%s<br/>Please try again or use a valid media file.' % msg,
+                             QMessageBox.Ok)
 
     def contextMenuEvent(self, event: QContextMenuEvent) -> None:
         if event.reason() == QContextMenuEvent.Mouse:
