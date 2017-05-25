@@ -28,6 +28,11 @@ QWidget#shortcuts {
     background-color: #EFF0F1;
 }
 
+QWidget#videoplayer {
+    border: none;
+    background: #000;
+}
+
 QWidget#novideoWidget {
     border: 1px solid #999;
     background: #000 url(:/images/startup-backdrop.png) no-repeat center center;
@@ -157,6 +162,8 @@ QGroupBox#counterwidgets {
     border: none;
     background-color: #000;
     color: #FFF;
+    margin: 0;
+    padding: 0;
 }
 
 /* -------------------------------------------------------------------------- */

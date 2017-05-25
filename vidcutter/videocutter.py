@@ -54,9 +54,9 @@ import vidcutter.resources
 
 try:
     import vidcutter.libs.mpv as mpv
-    mpv_error = False
+    libmpv_error = False
 except OSError:
-    mpv_error = True
+    libmpv_error = True
 
 
 class VideoCutter(QWidget):
@@ -94,7 +94,7 @@ class VideoCutter(QWidget):
             self.totalRuntime = 0
             self.frameRate = 0
             self.notifyInterval = 1000
-            self.currentMedia, self.mediaAvailable = None, False
+            self.currentMedia, self.mediaAvailable, self.mpvError = None, False, False
 
             self.nativeDialogs = self.settings.value('nativeDialogs', True, type=bool)
             self.keepClips = self.settings.value('keepClips', False, type=bool)
@@ -171,7 +171,6 @@ class VideoCutter(QWidget):
             countersGroup.setContentsMargins(0, 0, 0, 0)
             countersGroup.setLayout(countersLayout)
             countersGroup.setMaximumHeight(28)
-            countersGroup.setStyleSheet('margin:0; padding:0;')
 
             self.initMPV()
 
@@ -180,24 +179,28 @@ class VideoCutter(QWidget):
             videoplayerLayout.addWidget(self.mpvFrame)
             videoplayerLayout.addWidget(countersGroup)
 
-            self.videoplayerWidget = QWidget(self, visible=False)
+            self.videoplayerWidget = QWidget(self, visible=False, objectName='videoplayer')
             self.videoplayerWidget.setLayout(videoplayerLayout)
 
+            # noinspection PyArgumentList
             self.thumbnailsButton = QPushButton(objectName='storyboardButton', icon=self.thumbnailsIcon, flat=True,
-                                                toolTip='Thumbnails', statusTip='Toggle timeline thumbnails',
-                                                iconSize=QSize(16, 16), toggled=self.seekSlider.toggleThumbnails,
-                                                checkable=True, cursor=Qt.PointingHandCursor)
+                                                statusTip='Show timeline thumbnails', iconSize=QSize(16, 16),
+                                                toggled=self.seekSlider.toggleThumbnails, checkable=True,
+                                                cursor=Qt.PointingHandCursor)
             if self.timelineThumbs:
                 self.thumbnailsButton.setChecked(True)
 
+            # noinspection PyArgumentList
             self.muteButton = QPushButton(objectName='muteButton', icon=self.unmuteIcon, flat=True, toolTip='Mute',
                                           statusTip='Toggle audio mute', iconSize=QSize(16, 16), clicked=self.muteAudio,
                                           cursor=Qt.PointingHandCursor)
 
+            # noinspection PyArgumentList
             self.volumeSlider = QSlider(Qt.Horizontal, toolTip='Volume', statusTip='Adjust volume level',
                                         cursor=Qt.PointingHandCursor, value=self.parent.startupvol, minimum=0,
                                         maximum=130, sliderMoved=self.setVolume, objectName='volumeSlider')
 
+            # noinspection PyArgumentList
             self.menuButton = QPushButton(self, toolTip='Menu', cursor=Qt.PointingHandCursor, flat=True,
                                           objectName='menuButton', statusTip='Click to view menu options')
             self.menuButton.setFixedSize(QSize(40, 42))
@@ -236,7 +239,7 @@ class VideoCutter(QWidget):
             self.setLayout(layout)
 
     def checkMPV(self) -> bool:
-        if not mpv_error:
+        if not libmpv_error:
             return True
         pencolor1 = '#C681D5' if self.theme == 'dark' else '#642C68'
         pencolor2 = '#FFF' if self.theme == 'dark' else '#222'
@@ -285,18 +288,16 @@ class VideoCutter(QWidget):
         if loglevel in ('fatal', 'error'):
             self.logger.critical(log_msg)
             sys.stderr.write(log_msg)
+            QMessageBox.critical(self.parent, 'Playback error', '%s<br><br>Please try again or use a different '
+                                 % message + 'media file.', QMessageBox.Ok)
         else:
             self.logger.info(log_msg)
 
     def initMPV(self) -> None:
         setlocale(LC_NUMERIC, 'C')
         self.mpvFrame = VideoFrame(self)
-        if self.mediaPlayer is not None:
-            self.mediaPlayer.terminate()
-            del self.mediaPlayer
         self.mediaPlayer = mpv.MPV(wid=int(self.mpvFrame.winId()),
                                    log_handler=self.logMPV,
-                                   # msg_level='all=v',
                                    ytdl=False,
                                    pause=True,
                                    keep_open=True,
@@ -320,6 +321,8 @@ class VideoCutter(QWidget):
                                    hwdec='auto' if self.hardwareDecodingAction.isChecked() else 'no')
         self.mediaPlayer.observe_property('time-pos', self.positionChanged)
         self.mediaPlayer.observe_property('duration', self.durationChanged)
+        if os.getenv('DEBUG', False):
+            self.mediaPlayer.msg_level = 'all=v'
 
     def initNoVideo(self) -> None:
         self.novideoWidget = QWidget(self, objectName='novideoWidget')
@@ -381,6 +384,7 @@ class VideoCutter(QWidget):
         self.keyRefIcon = QIcon(':/images/keymap.png')
         self.thumbnailsIcon = QIcon(':/images/%s/storyboard.png' % self.theme)
 
+    # noinspection PyArgumentList
     def initActions(self) -> None:
         self.themeAction = QActionGroup(self)
         self.zoomAction = QActionGroup(self)
@@ -443,7 +447,7 @@ class VideoCutter(QWidget):
         self.keepRatioAction = QAction('Keep aspect ratio', self, checkable=True, triggered=self.setAspect,
                                        statusTip='Keep window aspect ratio when resizing the window', enabled=False)
         self.nativeDialogsAction = QAction('Use native dialogs', self, checkable=True, checked=self.nativeDialogs,
-                                         statusTip='Use platform-native dialogs on file open & save operations')
+                                           statusTip='Use platform-native dialogs on file open & save operations')
         self.alwaysOnTopAction = QAction('Always on top', self, checkable=True, triggered=self.parent.set_always_on_top,
                                          statusTip='Keep app window on top of all other windows',
                                          checked=self.parent.ontop)
@@ -452,7 +456,7 @@ class VideoCutter(QWidget):
         self.hardwareDecodingAction = QAction('Hardware decoding', self, triggered=self.switchDecoding, checkable=True,
                                               checked=self.hardwareDecoding,
                                               statusTip='Enable hardware based video decoding for playback ' +
-                                                        '(e.g. vdpau, vaapi, dxva2, d3d11, cuda, etc.)')
+                                                        '(e.g. vdpau, vaapi, dxva2, d3d11, cuda)')
         if self.theme == 'dark':
             self.darkThemeAction.setChecked(True)
         else:
@@ -675,7 +679,7 @@ class VideoCutter(QWidget):
             linenum = 1
             while not file.atEnd():
                 line = file.readLine().trimmed()
-                if line.length() != 0:
+                if line.length() > 0:
                     try:
                         line = str(line, encoding='utf-8')
                     except TypeError:
@@ -766,7 +770,6 @@ class VideoCutter(QWidget):
         else:
             self.playAction.setVisible(True)
             self.pauseAction.setVisible(False)
-            self.showText('Paused')
         self.timeCounter.clearFocus()
         self.frameCounter.clearFocus()
         self.mediaPlayer.pause = not self.mediaPlayer.pause
@@ -930,7 +933,7 @@ class VideoCutter(QWidget):
     @staticmethod
     def delta2QTime(millisecs: int) -> QTime:
         secs = millisecs / 1000
-        return QTime((secs / 3600) % 60, (secs / 60) % 60, secs % 60, (secs * 1000) % 1000)
+        return QTime(int((secs / 3600) % 60), int((secs / 60) % 60), int(secs % 60), int((secs * 1000) % 1000))
 
     @staticmethod
     def delta2String(td: timedelta) -> str:
@@ -1070,6 +1073,7 @@ class VideoCutter(QWidget):
 
     def complete(self) -> None:
         info = QFileInfo(self.finalFilename)
+        # noinspection PyArgumentList
         mbox = QMessageBox(windowTitle='Operation complete', minimumWidth=600, textFormat=Qt.RichText,
                            objectName='genericdialog2')
         mbox.setWindowFlags(Qt.Widget | Qt.WindowCloseButtonHint)
@@ -1161,6 +1165,7 @@ class VideoCutter(QWidget):
         else:
             newtheme = 'light'
         if newtheme != self.theme:
+            # noinspection PyArgumentList
             mbox = QMessageBox(icon=QMessageBox.NoIcon, windowTitle='Restart required', minimumWidth=500,
                                textFormat=Qt.RichText, objectName='genericdialog')
             mbox.setWindowFlags(Qt.Dialog | Qt.WindowCloseButtonHint)
@@ -1188,18 +1193,6 @@ class VideoCutter(QWidget):
                     self.lightThemeAction.setChecked(True)
                 else:
                     self.darkThemeAction.setChecked(True)
-
-    def startNew(self) -> None:
-        qApp.restoreOverrideCursor()
-        self.clearList()
-        self.mpvFrame.hide()
-        self.initNoVideo()
-        self.videoLayout.replaceWidget(self.videoplayerWidget, self.novideoWidget)
-        self.mpvFrame.deleteLater()
-        del self.mediaPlayer
-        self.initMPV()
-        self.initMediaControls(False)
-        self.parent.setWindowTitle('%s' % qApp.applicationName())
 
     def ffmpeg_check(self) -> bool:
         valid = os.path.exists(self.videoService.backend) if self.videoService.backend is not None else False

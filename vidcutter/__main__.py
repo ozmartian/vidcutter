@@ -65,7 +65,7 @@ class MainWindow(QMainWindow):
             QMessageBox.critical(self, 'Error loading file', sys.exc_info()[0])
             logging.exception('Error loading file')
             qApp.restoreOverrideCursor()
-            self.cutter.startNew()
+            self.restart()
         if not self.cutter.ffmpeg_check():
             qApp.exit(1)
 

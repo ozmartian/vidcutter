@@ -760,7 +760,7 @@ ALL_PROPERTIES = {
         'loop':                         (str,    'rw'),
         'loop-file':                    (str,    'rw'),
         'speed':                        (float,  'rw'),
-        'media':                     (bytes,  'r'),
+        'media':                        (bytes,  'r'),
         'file-size':                    (int,    'r'),
         'path':                         (bytes,  'r'),
         'media-title':                  (bytes,  'r'),
@@ -953,6 +953,7 @@ ALL_PROPERTIES = {
         'options':                      (node,   'r', True),
         'file-local-options':           (node,   'r', True),
         'property-list':                (commalist,'r')}
+
 
 def bindproperty(MPV, name, proptype, access, decode_str=False):
     getter = lambda self: self._get_property(name, proptype, decode_str)

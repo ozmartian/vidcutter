@@ -28,7 +28,7 @@ import logging
 from PyQt5.QtCore import QEvent, QObject, Qt, pyqtSlot
 from PyQt5.QtGui import QColor, QKeyEvent, QMouseEvent, QPaintEvent, QPainterPath, QPen, QResizeEvent, QWheelEvent
 from PyQt5.QtWidgets import (qApp, QHBoxLayout, QLabel, QSlider, QStyle, QStyleOptionSlider, QStackedWidget,
-                             QStylePainter, QWidget, QSizePolicy, QStackedLayout, QVBoxLayout)
+                             QStylePainter, QWidget, QSizePolicy, QStackedLayout)
 
 from vidcutter.videothreads import TimelineThumbsThread
 from vidcutter.libs.videoservice import VideoService
@@ -223,16 +223,15 @@ class VideoSlider(QSlider):
             label.setPixmap(thumb)
             layout.addWidget(label)
         thumbnails = QWidget(self)
-        thumbnails.setContentsMargins(8, 0, 8, 0)
-        thumbnails.setStyleSheet('background: transparent; margin: 16px 0 22px; height: %spx;' % self.height())
-        thumbnails.setFixedWidth(self.width())
+        thumbnails.setContentsMargins(8, 16, 8, 22)
+        thumbnails.setFixedSize(self.width(), self.height())
         thumbnails.setLayout(layout)
         self.removeThumbs()
         self.parent.sliderWidget.addWidget(thumbnails)
         self._thumbnailsOn = True
         self.initStyle()
 
-    def removeThumbs(self):
+    def removeThumbs(self) -> None:
         if self.parent.sliderWidget.count() == 2:
             thumbWidget = self.parent.sliderWidget.widget(1)
             self.parent.sliderWidget.removeWidget(thumbWidget)
@@ -245,6 +244,8 @@ class VideoSlider(QSlider):
 
     def resizeEvent(self, event: QResizeEvent) -> None:
         if self._thumbnailsOn:
+
+            self.setStyleSheet(self._styles % ('#444', 'filmstrip', 'transparent', 0))
             self.timeline(self.parent.currentMedia)
 
     def wheelEvent(self, event: QWheelEvent) -> None:
