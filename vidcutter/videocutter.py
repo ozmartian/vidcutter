@@ -698,6 +698,7 @@ class VideoCutter(QWidget):
                         return
                     if project_type == 'vcp' and linenum == 1:
                         self.loadMedia(line)
+                        time.sleep(1)
                     else:
                         mo = self.edlblock_re.match(line)
                         if mo:
