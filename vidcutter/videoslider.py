@@ -27,7 +27,8 @@ import logging
 
 from PyQt5.QtCore import QEvent, QObject, Qt, pyqtSlot
 from PyQt5.QtGui import QColor, QKeyEvent, QMouseEvent, QPaintEvent, QPainterPath, QPen, QResizeEvent, QWheelEvent
-from PyQt5.QtWidgets import qApp, QHBoxLayout, QLabel, QSlider, QStyle, QStyleOptionSlider, QStylePainter
+from PyQt5.QtWidgets import (qApp, QHBoxLayout, QLabel, QSlider, QStyle, QStyleOptionSlider, QStackedWidget,
+                             QStylePainter, QWidget, QSizePolicy, QStackedLayout, QVBoxLayout)
 
 from vidcutter.videothreads import TimelineThumbsThread
 from vidcutter.libs.videoservice import VideoService
@@ -44,7 +45,7 @@ class VideoSlider(QSlider):
             border-bottom: 1px solid #444;
             border-top: 1px solid #444;
             height: 38px;
-            background: transparent url(:images/%s.png) repeat-x left;
+            background: %s url(:images/%s.png) repeat-x left;
             position: absolute;
             left: 4px;
             right: 4px;
@@ -75,7 +76,8 @@ class VideoSlider(QSlider):
         self._regions = list()
         self._regionHeight = 22
         self._regionSelected = -1
-        self._timelineThumbs = True
+        self._showThumbs = True
+        self._thumbnailsOn = False
         self.setOrientation(Qt.Horizontal)
         self.setObjectName('videoslider')
         self.setAttribute(Qt.WA_Hover, True)
@@ -93,8 +95,13 @@ class VideoSlider(QSlider):
 
     def initStyle(self, selected: bool = False, margin: str = '0') -> None:
         bground = 'rgba(200, 213, 236, 0.85)' if selected else 'transparent'
-        timeline_bground = 'filmstrip_thumbs' if self.parent.currentMedia is not None and self.parent.thumbnailsButton.isChecked() else 'filmstrip'
-        self.setStyleSheet(self._styles % (timeline_bground, bground, margin))
+        if self._thumbnailsOn:
+            timeline_bground = 'transparent'
+            timeline_image = 'filmstrip_thumbs'
+        else:
+            timeline_bground = '#444'
+            timeline_image = 'filmstrip'
+        self.setStyleSheet(self._styles % (timeline_bground, timeline_image, bground, margin))
 
     def setRestrictValue(self, value: int, force: bool = False) -> None:
         self.restrictValue = value
@@ -187,8 +194,12 @@ class VideoSlider(QSlider):
         self.update()
 
     def toggleThumbnails(self, checked: bool) -> None:
-        self._timelineThumbs = checked
-        self.update()
+        if self._showThumbs and self._thumbnailsOn and not checked:
+            self.removeThumbs()
+            self.initStyle()
+        elif self.parent.currentMedia is not None:
+            self.timeline(self.parent.currentMedia)
+        self._showThumbs = checked
 
     def timeline(self, source: str) -> None:
         thumbWidth = VideoService.ThumbSize.TIMELINE.value.width()
@@ -211,15 +222,29 @@ class VideoSlider(QSlider):
             label.setStyleSheet('padding: 0; margin: -5px 0 0 0; background: transparent;')
             label.setPixmap(thumb)
             layout.addWidget(label)
-        self.parent.timelineThumbs.setLayout(layout)
-        self.parent.timelineThumbs.setFixedWidth(self.width())
+        thumbnails = QWidget(self)
+        thumbnails.setContentsMargins(8, 0, 8, 0)
+        thumbnails.setStyleSheet('background: transparent; margin: 16px 8px 22px; height: %spx;' % self.height())
+        thumbnails.setFixedWidth(self.width())
+        thumbnails.setLayout(layout)
+        self.removeThumbs()
+        self.parent.sliderWidget.addWidget(thumbnails)
+        self._thumbnailsOn = True
+        self.initStyle()
+
+    def removeThumbs(self):
+        if self.parent.sliderWidget.count() == 2:
+            thumbWidget = self.parent.sliderWidget.widget(1)
+            self.parent.sliderWidget.removeWidget(thumbWidget)
+            thumbWidget.deleteLater()
+            self._thumbnailsOn = False
 
     def errorHandler(self, error: str) -> None:
         self.logger.error(error)
         sys.stderr.write(error)
 
     def resizeEvent(self, event: QResizeEvent) -> None:
-        if self.parent.currentMedia is not None and self.parent.thumbnailsButton.isChecked():
+        if self._thumbnailsOn:
             self.timeline(self.parent.currentMedia)
 
     def wheelEvent(self, event: QWheelEvent) -> None:
@@ -249,3 +274,14 @@ class VideoSlider(QSlider):
                 self.setValue(QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.x(), self.width()))
                 self.parent.setPosition(self.sliderPosition())
         return super(VideoSlider, self).eventFilter(obj, event)
+
+
+class VideoSliderWidget(QStackedWidget):
+    def __init__(self, parent, slider: VideoSlider):
+        super(VideoSliderWidget, self).__init__(parent)
+
+        self.setContentsMargins(0, 0, 0, 0)
+        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        self.layout().setStackingMode(QStackedLayout.StackAll)
+
+        self.addWidget(slider)

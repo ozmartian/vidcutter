@@ -36,8 +36,8 @@ from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QFont, QFontDatabase, QI
                          QMouseEvent, QMovie, QPixmap)
 from PyQt5.QtWidgets import (QAbstractItemView, QAction, QActionGroup, qApp, QApplication, QDialogButtonBox,
                              QDoubleSpinBox, QFileDialog, QGroupBox, QHBoxLayout, QLabel, QListWidgetItem, QMenu,
-                             QMessageBox, QPushButton, QSizePolicy, QSlider, QStackedLayout, QStackedWidget, QStyle,
-                             QStyleFactory, QVBoxLayout, QWidget, QWidgetAction)
+                             QMessageBox, QPushButton, QSizePolicy, QSlider, QStyle, QStyleFactory, QVBoxLayout,
+                             QWidget, QWidgetAction)
 
 from vidcutter.libs.videoservice import VideoService
 from vidcutter.libs.widgets import FrameCounter, TimeCounter, VCProgressBar
@@ -47,7 +47,7 @@ from vidcutter.updater import Updater
 from vidcutter.videoframe import VideoFrame
 from vidcutter.videoinfo import VideoInfo
 from vidcutter.videolist import VideoList, VideoItem
-from vidcutter.videoslider import VideoSlider
+from vidcutter.videoslider import VideoSlider, VideoSliderWidget
 from vidcutter.videostyles import VideoStyles
 from vidcutter.videotoolbar import VideoToolBar
 import vidcutter.resources
@@ -114,6 +114,7 @@ class VideoCutter(QWidget):
             self.initMenus()
 
             self.seekSlider = VideoSlider(self, sliderMoved=self.setPosition)
+            self.sliderWidget = VideoSliderWidget(self, self.seekSlider)
 
             self.initNoVideo()
 
@@ -225,21 +226,10 @@ class VideoCutter(QWidget):
             controlsLayout.addWidget(self.menuButton)
             controlsLayout.addSpacing(10)
 
-            self.timelineThumbs = QWidget(self)
-            self.timelineThumbs.setStyleSheet('background: #444; margin: 16px 8px 22px; height: %spx;'
-                                              % self.seekSlider.height())
-
-            sliderStack = QStackedWidget()
-            sliderStack.setContentsMargins(0, 0, 0, 0)
-            sliderStack.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-            sliderStack.layout().setStackingMode(QStackedLayout.StackAll)
-            sliderStack.addWidget(self.seekSlider)
-            sliderStack.addWidget(self.timelineThumbs)
-
             layout = QVBoxLayout(spacing=0)
             layout.setContentsMargins(10, 10, 10, 0)
             layout.addLayout(self.videoLayout)
-            layout.addWidget(sliderStack)
+            layout.addWidget(self.sliderWidget)
             layout.addSpacing(12)
             layout.addLayout(controlsLayout)
 
@@ -828,10 +818,10 @@ class VideoCutter(QWidget):
             return
         duration *= 1000
         self.seekSlider.setRange(0, duration)
-        if self.thumbnailsButton.isChecked():
-            self.seekSlider.timeline(self.currentMedia)
         self.timeCounter.setDuration(self.delta2QTime(duration).toString(self.timeformat))
         self.frameCounter.setFrameCount(self.mediaPlayer.estimated_frame_count)
+        if self.thumbnailsButton.isChecked():
+            self.seekSlider.timeline(self.currentMedia)
 
     def muteAudio(self) -> None:
         if self.mediaPlayer.mute:
