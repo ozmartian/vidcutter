@@ -110,20 +110,25 @@ NOTE: a Fedora25 RPM package is now included in release builds so use that. The 
   ```
   $ vidcutter --help
 
-  Usage: vidcutter [options] [video]
-    The simply FAST & ACCURATE video cutter & joiner
+Usage: /home/ozmartian/Projects/vidcutter/vidcutter/__main__.py [options] [video] [project]
 
-  Options:
-    --edl <edl file>  Preloads clip index from a previously saved EDL file.
-                      NOTE: You must also set the video argument for this to work.
-    -d, --debug       Output all info, warnings and errors to the console. This
-                      will basically output what is being logged to file to the
-                      console stdout. Mainly useful for debugging problems with
-                      your system video and/or audio stack and codec
-                      configuration.
-    -v, --version     Displays version information.
-    -h, --help        Displays this help.
+VidCutter - the simplest + fastest video cutter & joiner
 
-  Arguments:
-    video             Preloads the video file in app.
+Options:
+  --debug        debug mode; verbose console output & logging. This will
+                 basically output what is being logged to file to the console
+                 stdout. Mainly useful for debugging problems with your system
+                 video and/or audio stack and codec configuration.
+  --dev          developer mode; disables the use of compiled resource files so
+                 that all app resources & assets are accessed directly from the
+                 file system allowing you to see UI changes immediately. this
+                 typically relates to changes made to Qt stylesheets (.qss),
+                 layout/templates, content includes and images. basically all
+                 assets defined in .qrc files throughout the codebase.
+  -v, --version  Displays version information.
+  -h, --help     Displays this help.
+
+Arguments:
+  video          Preload video file
+  project        Open VidCutter project file (.vcp)
   ```
