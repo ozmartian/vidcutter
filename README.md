@@ -110,7 +110,7 @@ NOTE: a Fedora25 RPM package is now included in release builds so use that. The 
   ```
   $ vidcutter --help
 
-Usage: /home/ozmartian/Projects/vidcutter/vidcutter/__main__.py [options] [video] [project]
+Usage: vidcutter [options] [video] [project]
 
 VidCutter - the simplest + fastest video cutter & joiner
 
