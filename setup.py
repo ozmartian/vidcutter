@@ -83,7 +83,7 @@ setup(
     version=get_value('version'),
     author='Pete Alexandrou',
     author_email='pete@ozmartians.com',
-    description='the simplest + fastest video cut & merge tool',
+    description='the simplest + fastest video cutter & joiner',
     long_description=get_description(),
     url='http://vidcutter.ozmartians.com',
     license='GPLv3+',
