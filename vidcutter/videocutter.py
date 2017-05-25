@@ -166,18 +166,18 @@ class VideoCutter(QWidget):
             countersLayout.addWidget(self.frameCounter)
             countersLayout.addStretch(1)
 
-            countersGroup = QGroupBox()
-            countersGroup.setObjectName('counterwidgets')
-            countersGroup.setContentsMargins(0, 0, 0, 0)
-            countersGroup.setLayout(countersLayout)
-            countersGroup.setMaximumHeight(28)
+            countersWidget = QWidget(self)
+            countersWidget.setObjectName('counterwidgets')
+            countersWidget.setContentsMargins(0, 0, 0, 0)
+            countersWidget.setLayout(countersLayout)
+            countersWidget.setMaximumHeight(28)
 
             self.initMPV()
 
             videoplayerLayout = QVBoxLayout(spacing=0)
             videoplayerLayout.setContentsMargins(0, 0, 0, 0)
             videoplayerLayout.addWidget(self.mpvFrame)
-            videoplayerLayout.addWidget(countersGroup)
+            videoplayerLayout.addWidget(countersWidget)
 
             self.videoplayerWidget = QWidget(self, visible=False, objectName='videoplayer')
             self.videoplayerWidget.setLayout(videoplayerLayout)
