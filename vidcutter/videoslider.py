@@ -203,7 +203,7 @@ class VideoSlider(QSlider):
 
     def timeline(self, source: str) -> None:
         thumbWidth = VideoService.ThumbSize.TIMELINE.value.width()
-        step = QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), thumbWidth, self.width())
+        step = QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), thumbWidth, self.width() - self._offset)
         index = list(range(0, self.maximum(), step))
         frametimes = list()
         for msec in index:
