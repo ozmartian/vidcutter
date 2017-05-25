@@ -36,17 +36,13 @@ class TimelineThumbsThread(QThread):
         QThread.__init__(self)
         self.source = source
         self.index = index
-        self.service = VideoService(self)
         self.thumbs = list()
 
     def __del__(self) -> None:
         self.wait()
 
-    def generateThumbnails(self) -> None:
-        status = True
-        for frametime in self.index:
-            self.thumbs.append(self.service.capture(self.source, frametime, VideoService.ThumbSize.TIMELINE))
-        self.completed.emit(self.thumbs)
-
     def run(self) -> None:
-        self.generateThumbnails()
+        service = VideoService()
+        for frametime in self.index:
+            self.thumbs.append(service.capture(self.source, frametime, VideoService.ThumbSize.TIMELINE))
+        self.completed.emit(self.thumbs)
