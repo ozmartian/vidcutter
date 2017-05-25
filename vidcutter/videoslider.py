@@ -244,9 +244,9 @@ class VideoSlider(QSlider):
 
     def resizeEvent(self, event: QResizeEvent) -> None:
         if self._thumbnailsOn:
-
             self.setStyleSheet(self._styles % ('#444', 'filmstrip', 'transparent', 0))
             self.timeline(self.parent.currentMedia)
+        self.parent.renderTimes()
 
     def wheelEvent(self, event: QWheelEvent) -> None:
         if self.parent.mediaAvailable:
