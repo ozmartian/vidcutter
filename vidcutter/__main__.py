@@ -118,14 +118,12 @@ class MainWindow(QMainWindow):
                 settings_path = QStandardPaths.writableLocation(QStandardPaths.AppConfigLocation).lower()
             except AttributeError:
                 if sys.platform == 'win32':
-                    settings_path = os.path.join(QDir.homePath(), 'AppData', 'Local',
-                                                 qApp.applicationName().lower())
+                    settings_path = os.path.join(QDir.homePath(), 'AppData', 'Local', qApp.applicationName().lower())
                 elif sys.platform == 'darwin':
                     settings_path = os.path.join(QDir.homePath(), 'Library', 'Preferences',
                                                  qApp.applicationName()).lower()
                 else:
-                    settings_path = os.path.join(QDir.homePath(), '.config',
-                                                 qApp.applicationName()).lower()
+                    settings_path = os.path.join(QDir.homePath(), '.config', qApp.applicationName()).lower()
             os.makedirs(settings_path, exist_ok=True)
             settings_file = '%s.ini' % qApp.applicationName().lower()
             self.settings = QSettings(os.path.join(settings_path, settings_file), QSettings.IniFormat)
@@ -134,10 +132,10 @@ class MainWindow(QMainWindow):
         if self.settings.value('windowState') is not None:
             self.restoreState(self.settings.value('windowState'))
         self.theme = self.settings.value('theme', 'light', type=str)
+        self.startupvol = self.settings.value('volume', 100, type=int)
         self.ontop = self.settings.value('alwaysOnTop', False, type=bool)
         if self.ontop:
-            self.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint)
-        self.startupvol = self.settings.value('volume', 100, type=int)
+            self.set_always_on_top(self.ontop)
 
     @staticmethod
     def log_uncaught_exceptions(cls, exc, tb) -> None:
