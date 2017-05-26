@@ -714,6 +714,7 @@ class MPV(object):
 
         def wrapper(fun):
             self.observe_property(name, fun, force_fmt=force_fmt)
+            fun.unobserve_mpv_properties = lambda: self.unobserve_property(None, fun)
             return fun
 
         return wrapper
@@ -762,7 +763,6 @@ class MPV(object):
 
     def _register_script_message_handler_internal(self, target, handler):
         handler.mpv_message_targets = getattr(handler, 'mpv_script_message_targets', []) + [target]
-        handler.unregister_mpv_messages = lambda: self.unregister_message_handler(handler)
         self._message_handlers[target] = handler
 
     def unregister_message_handler(self, target_or_handler):
@@ -795,6 +795,7 @@ class MPV(object):
 
         def register(handler):
             self._register_message_handler_internal(target, handler)
+            handler.unregister_mpv_messages = lambda: self.unregister_message_handler(handler)
             return handler
 
         return register
@@ -1127,7 +1128,7 @@ ALL_PROPERTIES = {
     'packet-sub-bitrate': (float, 'r'),
     #        'ass-use-margins':              (bool,   'rw'),
     'ass-vsfilter-aspect-compat': (bool, 'rw'),
-    'ass-style-override': (bool, 'rw'),
+    'ass-style-override': (str, 'rw'),
     #        'stream-capture':               (str,    'rw'),
     'tv-brightness': (int, 'rw'),
     'tv-contrast': (int, 'rw'),
