@@ -61,6 +61,8 @@ except OSError:
 
 
 class VideoCutter(QWidget):
+    positionChanged = pyqtSignal(int)
+    durationChanged = pyqtSignal(int)
     errorOccurred = pyqtSignal(str)
 
     def __init__(self, parent: QWidget):
@@ -241,6 +243,9 @@ class VideoCutter(QWidget):
 
             self.setLayout(layout)
 
+            self.positionChanged.connect(self.on_positionChanged)
+            self.durationChanged.connect(self.on_durationChanged)
+
     def checkMPV(self) -> bool:
         if not libmpv_error:
             return True
@@ -322,8 +327,8 @@ class VideoCutter(QWidget):
                                    volume=self.parent.startupvol,
                                    keepaspect=self.keepRatioAction.isChecked(),
                                    hwdec='auto' if self.hardwareDecodingAction.isChecked() else 'no')
-        self.mediaPlayer.observe_property('time-pos', self.positionChanged)
-        self.mediaPlayer.observe_property('duration', self.durationChanged)
+        self.mediaPlayer.observe_property('time-pos', lambda prop, val: self.positionChanged.emit(val))
+        self.mediaPlayer.observe_property('duration', lambda prop, val: self.durationChanged.emit(val))
         if os.getenv('DEBUG', False):
             self.mediaPlayer.msg_level = 'all=v'
 
@@ -807,18 +812,16 @@ class VideoCutter(QWidget):
             self.mediaPlayer.seek(self.delta2QTime(position).toString(self.timeformat),
                                   reference='absolute', precision='exact')
 
-    def positionChanged(self, name: str, progress: int) -> None:
-        if progress is None:
-            return
+    @pyqtSlot(int)
+    def on_positionChanged(self, progress: int) -> None:
         progress *= 1000
         if self.seekSlider.restrictValue < progress or progress == 0:
             self.seekSlider.setValue(progress)
             self.timeCounter.setTime(self.delta2QTime(progress).toString(self.timeformat))
             self.frameCounter.setFrame(self.mediaPlayer.estimated_frame_number)
 
-    def durationChanged(self, name: str, duration: int) -> None:
-        if duration is None:
-            return
+    @pyqtSlot(int)
+    def on_durationChanged(self, duration: int) -> None:
         duration *= 1000
         self.seekSlider.setRange(0, duration)
         self.timeCounter.setDuration(self.delta2QTime(duration).toString(self.timeformat))
