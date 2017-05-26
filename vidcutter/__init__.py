@@ -24,6 +24,7 @@
 
 __version__ = '3.5.0'
 
-__author__ = 'Pete Alexandrou <pete@ozmartians.com>'
+__author__ = 'Pete Alexandrou'
+__email__ = 'pete@ozmartians.com'
 
 __packager__ = 'pypi'  # [ pypi | arch | deb ]
