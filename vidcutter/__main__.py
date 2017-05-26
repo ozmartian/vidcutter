@@ -253,6 +253,7 @@ class MainWindow(QMainWindow):
     def errorHandler(self, msg: str) -> None:
         QMessageBox.critical(self, 'An error occurred', '%s<br/>Please try again or use a valid media file.' % msg,
                              QMessageBox.Ok)
+        self.cutter.initMediaControls(False)
 
     def contextMenuEvent(self, event: QContextMenuEvent) -> None:
         if event.reason() == QContextMenuEvent.Mouse:
