@@ -22,8 +22,6 @@
 #
 #######################################################################
 
-import sys
-
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QTime
 from PyQt5.QtWidgets import (QAbstractSpinBox, QDialog, QGridLayout, QHBoxLayout, QLabel, QProgressBar, QSpinBox,
                              QStyle, QStyleFactory, QTimeEdit, QWidget)
