@@ -40,9 +40,12 @@
         <file>images/dark/menu.png</file>
         <file>images/dark/menu-active.png</file>
         <file>images/dark/muted.png</file>
+        <file>images/dark/osd-off.png</file>
+        <file>images/dark/osd-on.png</file>
         <file>images/dark/python.png</file>
         <file>images/dark/shortcuts.png</file>
-        <file>images/dark/storyboard.png</file>
+        <file>images/dark/thumbnails-off.png</file>
+        <file>images/dark/thumbnails-on.png</file>
         <file>images/dark/toolbar-end.png</file>
         <file>images/dark/toolbar-end-disabled.png</file>
         <file>images/dark/toolbar-end-on.png</file>
@@ -68,9 +71,12 @@
         <file>images/light/menu.png</file>
         <file>images/light/menu-active.png</file>
         <file>images/light/muted.png</file>
+        <file>images/light/osd-off.png</file>
+        <file>images/light/osd-on.png</file>
         <file>images/light/python.png</file>
         <file>images/light/shortcuts.png</file>
-        <file>images/light/storyboard.png</file>
+        <file>images/light/thumbnails-off.png</file>
+        <file>images/light/thumbnails-on.png</file>
         <file>images/light/toolbar-end.png</file>
         <file>images/light/toolbar-end-disabled.png</file>
         <file>images/light/toolbar-end-on.png</file>

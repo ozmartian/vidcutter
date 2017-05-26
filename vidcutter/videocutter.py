@@ -105,6 +105,7 @@ class VideoCutter(QWidget):
             self.keepClips = self.settings.value('keepClips', False, type=bool)
             self.timelineThumbs = self.settings.value('timelineThumbs', True, type=bool)
             self.hardwareDecoding = self.settings.value('hwdec', 'auto', type=str) == 'auto'
+            self.enableOSD = self.settings.value('enableOSD', True, type=bool)
 
             self.edlblock_re = re.compile(r'(\d+(?:\.?\d+)?)\s(\d+(?:\.?\d+)?)\s([01])')
 
@@ -188,12 +189,19 @@ class VideoCutter(QWidget):
             self.videoplayerWidget.setLayout(videoplayerLayout)
 
             # noinspection PyArgumentList
-            self.thumbnailsButton = QPushButton(objectName='storyboardButton', icon=self.thumbnailsIcon, flat=True,
-                                                statusTip='Show timeline thumbnails', iconSize=QSize(16, 16),
+            self.thumbnailsButton = QPushButton(icon=self.thumbnailsIcon, flat=True, iconSize=QSize(16, 16),
+                                                statusTip='Show timeline thumbnails', cursor=Qt.PointingHandCursor,
                                                 toggled=self.seekSlider.toggleThumbnails, checkable=True,
-                                                cursor=Qt.PointingHandCursor)
+                                                objectName='thumbnailsButton')
             if self.timelineThumbs:
                 self.thumbnailsButton.setChecked(True)
+
+            # noinspection PyArgumentList
+            self.osdButton = QPushButton(icon=self.osdIcon, flat=True, iconSize=QSize(16, 16), checkable=True,
+                                         statusTip='Toggle on-screen-display', cursor=Qt.PointingHandCursor,
+                                         objectName='osdButton')
+            if self.enableOSD:
+                self.osdButton.setChecked(True)
 
             # noinspection PyArgumentList
             self.muteButton = QPushButton(objectName='muteButton', icon=self.unmuteIcon, flat=True, toolTip='Mute',
@@ -224,6 +232,7 @@ class VideoCutter(QWidget):
             controlsLayout = QHBoxLayout()
             controlsLayout.addSpacing(10)
             controlsLayout.addWidget(self.thumbnailsButton)
+            controlsLayout.addWidget(self.osdButton)
             controlsLayout.addStretch(1)
             controlsLayout.addWidget(toolbarGroup)
             controlsLayout.addStretch(1)
@@ -390,7 +399,14 @@ class VideoCutter(QWidget):
         self.updateCheckIcon = QIcon(':/images/update.png')
         self.thumbsupIcon = QIcon(':/images/thumbs-up.png')
         self.keyRefIcon = QIcon(':/images/keymap.png')
-        self.thumbnailsIcon = QIcon(':/images/%s/storyboard.png' % self.theme)
+        self.thumbnailsIcon = QIcon()
+        self.thumbnailsIcon.addFile(':/images/%s/thumbnails-on.png' % self.theme, QSize(16, 16),
+                                    QIcon.Normal, QIcon.On)
+        self.thumbnailsIcon.addFile(':/images/%s/thumbnails-off.png' % self.theme, QSize(16, 16),
+                                    QIcon.Normal, QIcon.Off)
+        self.osdIcon = QIcon()
+        self.osdIcon.addFile(':/images/%s/osd-on.png' % self.theme, QSize(16, 16), QIcon.Normal, QIcon.On)
+        self.osdIcon.addFile(':/images/%s/osd-off.png' % self.theme, QSize(16, 16), QIcon.Normal, QIcon.Off)
 
     # noinspection PyArgumentList
     def initActions(self) -> None:
@@ -785,6 +801,8 @@ class VideoCutter(QWidget):
         self.mediaPlayer.pause = not self.mediaPlayer.pause
 
     def showText(self, text: str, duration: int = 3) -> None:
+        if not self.osdButton.isChecked():
+            return
         if len(text.strip()) and self.mediaAvailable:
             self.mediaPlayer.show_text(text, duration * 1000, 0)
 
