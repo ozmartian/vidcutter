@@ -867,7 +867,7 @@ class VideoCutter(QWidget):
 
     @pyqtSlot(bool)
     def setAspect(self, checked: bool = True) -> None:
-        self.mediaPlayer.setaspect(checked)
+        self.mediaPlayer.keep_aspect(checked)
         self.zoomAction.setEnabled(checked)
 
     @pyqtSlot(QAction)

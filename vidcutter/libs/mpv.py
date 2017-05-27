@@ -567,6 +567,9 @@ class MPV(object):
         """ Mapped mpv seek command, see man mpv(1). """
         self.command('frame_back_step')
 
+    def keep_aspect(self, flag):
+        self._set_property('keepaspect', flag)
+
     def _add_property(self, name, value=None):
         self.command('add_property', name, value)
 
@@ -1057,6 +1060,7 @@ ALL_PROPERTIES = {
     'eof-reached': (bool, 'r'),
     #        'pts-association-mode':         (str,    'rw'),
     'hr-seek': (str, 'rw'),
+    'keepaspect': (bool, 'rw'),
     'volume': (float, 'rw'),
     'volume-max': (int, 'rw'),
     'ao-volume': (float, 'rw'),
