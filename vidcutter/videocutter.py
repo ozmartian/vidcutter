@@ -1153,7 +1153,7 @@ class VideoCutter(QWidget):
         btn_exit.clicked.connect(self.close)
         btn_restart = mbox.addButton('Restart', QMessageBox.AcceptRole)
         btn_restart.setIcon(self.completeRestartIcon)
-        btn_restart.clicked.connect(self.parent.restart)
+        btn_restart.clicked.connect(self.parent.reboot)
         btn_continue = mbox.addButton('Continue', QMessageBox.AcceptRole)
         btn_continue.setIcon(self.style().standardIcon(QStyle.SP_DialogOkButton))
         btn_continue.clicked.connect(mbox.close)

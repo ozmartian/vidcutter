@@ -189,9 +189,9 @@ class MainWindow(QMainWindow):
         from struct import calcsize
         return calcsize('P') * 8
 
-    def restart(self) -> None:
-        self.cutter.deleteLater()
-        self.init_cutter()
+    # def restart(self) -> None:
+    #     self.cutter.deleteLater()
+    #     self.init_cutter()
 
     @pyqtSlot()
     def reboot(self) -> None:
