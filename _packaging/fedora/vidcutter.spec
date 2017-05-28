@@ -2,9 +2,9 @@
 %global pkg_name vidcutter
 
 Name:           %{pkg_name}
-Version:        3.2.0
+Version:        3.5.0
 Release:        1%{?dist}
-Summary:        the simplest + fastest video cut & merge tool
+Summary:        the simplest + fastest video cutter & joiner
 Group:          Applications/Multimedia
 
 License:        GPLv3+
@@ -56,6 +56,8 @@ sed -i "s/pypi/rpm/" vidcutter/__init__.py
 %{_datadir}/pixmaps/vidcutter.svg
 
 %changelog
+* Mon May 29 2017 Pete Alexandrou <pete AT ozmartians DOT com> 3.5.0-1
+- 3.5.0 release
 * Tue May 09 2017 Pete Alexandrou <pete AT ozmartians DOT com> 3.2.0-1
 - latest release
 * Sun Mar 05 2017 Pete Alexandrou <pete AT ozmartians DOT com> - 3.0.1-2

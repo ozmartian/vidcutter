@@ -1,7 +1,7 @@
 Name:           vidcutter
-Version:        3.2.0
+Version:        3.5.0
 Release:        0
-Summary:        the simplest + fastest video cut & merge tool
+Summary:       the simplest + fastest video cutter & joiner
 License:        GPL-3.0+
 Group:          Productivity/Multimedia/Video/Editors and Convertors
 Url:            http://vidcutter.ozmartians.com/

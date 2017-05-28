@@ -1,3 +1,48 @@
+vidcutter (3.5.0-1) stable; urgency=medium
+
+ * redesigned timeline & slider with timecode labels at fixed intervals as per
+   regular video editors
+
+ * thumbnail previews on timeline; the entire timeline background is overlayed
+   with thumbnail previews which looks good + helps you target where you want
+   to mark a start/stop point. thumbnil generation is threaded so will not
+   slow the app down or hinder your use of it. thumbnails will regenerate on
+   app resize
+
+ * thumbnail previews and on screen display toggle buttons added to far left of
+   main toolbar; what they do is self-explanatory
+
+ * slider movement/sync with mpv backend improved; should be less jumpy on
+   problematic videos with bad indexes
+
+ * configurable seeking time lengths; this is for the up+down and shift up+down
+   keys which were set to 2 secs and 5 secs forwards and backwards. you can
+   now set the number of secs as preferred via new spinboxes added to the
+   settings menu labelled Seek #1 and Seek #2
+
+ * additional on screen display text added to various functions
+
+ * fixed bug when clearing clip index and you could not continue navigating video
+   requiring you to reload
+
+ * continue button added to the job completion dialog and set as the default
+   button selection
+
+ * libmpv bindings library updated with the latest changed from upstream;
+   should not be noticeable to users albeit improved playback or slider position
+   sync
+
+ * VidCutter project files (.vcp) can now be preloaded like regular videos either
+   by passing file path on command line or drag 'n dropping project onto a
+   VidCutter application/shortcut icon
+
+ * new icon, let me know if you find the old icon still being used someplace
+
+ * some other minor bug fixes from user issues that I am sure I have forgotten
+   to list
+
+ -- Pete Alexandrou <pete@ozmartians.com>  Mon, 29 May 2017 06:40:00 +0800
+
 vidcutter (3.2.0-1) stable; urgency=medium
  
  * dark and light themes; chosen in the new settings sub-menu found in the
