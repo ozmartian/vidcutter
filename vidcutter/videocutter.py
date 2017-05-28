@@ -201,7 +201,7 @@ class VideoCutter(QWidget):
             # noinspection PyArgumentList
             self.osdButton = QPushButton(icon=self.osdIcon, flat=True, iconSize=QSize(16, 16), checkable=True,
                                          statusTip='Toggle on-screen-display', cursor=Qt.PointingHandCursor,
-                                         objectName='osdButton')
+                                         toggled=self.toggleOSD, objectName='osdButton')
             if self.enableOSD:
                 self.osdButton.setChecked(True)
 
@@ -325,8 +325,8 @@ class VideoCutter(QWidget):
                                    osc=False,
                                    osd_font='Futura LT',
                                    osd_level=0,
-                                   osd_align_x='center',
-                                   osd_align_y='center',
+                                   osd_align_x='left',
+                                   osd_align_y='top',
                                    cursor_autohide=False,
                                    input_cursor=False,
                                    input_default_bindings=False,
@@ -803,8 +803,8 @@ class VideoCutter(QWidget):
         self.frameCounter.clearFocus()
         self.mediaPlayer.pause = not self.mediaPlayer.pause
 
-    def showText(self, text: str, duration: int = 3) -> None:
-        if not self.osdButton.isChecked():
+    def showText(self, text: str, duration: int = 3, override: bool = False) -> None:
+        if not self.osdButton.isChecked() and not override:
             return
         if len(text.strip()) and self.mediaAvailable:
             self.mediaPlayer.show_text(text, duration * 1000, 0)
@@ -858,9 +858,11 @@ class VideoCutter(QWidget):
 
     def muteAudio(self) -> None:
         if self.mediaPlayer.mute:
+            self.showText('Audio enabled')
             self.muteButton.setIcon(self.unmuteIcon)
             self.muteButton.setToolTip('Mute')
         else:
+            self.showText('Audio disabled')
             self.muteButton.setIcon(self.muteIcon)
             self.muteButton.setToolTip('Unmute')
         self.mediaPlayer.mute = not self.mediaPlayer.mute
@@ -1257,6 +1259,9 @@ class VideoCutter(QWidget):
             self.parent.showNormal()
         else:
             self.parent.showMaximized()
+
+    def toggleOSD(self, checked: bool) -> None:
+        self.showText('On screen display %s' % ('enabled' if checked else 'disabled'), override=True)
 
     def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
         self.toggleMaximised()

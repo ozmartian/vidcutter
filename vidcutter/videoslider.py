@@ -196,9 +196,11 @@ class VideoSlider(QSlider):
 
     def toggleThumbnails(self, checked: bool) -> None:
         if self._showThumbs and self._thumbnailsOn and not checked:
+            self.parent.showText('Timeline thumbnails disabled')
             self.removeThumbs()
             self.initStyle()
         elif self.parent.currentMedia is not None:
+            self.parent.showText('Timeline thumbnails enabled')
             self.timeline(self.parent.currentMedia)
         self._showThumbs = checked
 
