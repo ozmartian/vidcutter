@@ -24,7 +24,7 @@
 
 import sys
 
-from PyQt5.QtCore import pyqtSlot, QObject, QEvent, Qt
+from PyQt5.QtCore import pyqtSlot, QEvent, QObject, Qt
 from PyQt5.QtWidgets import QAction, qApp, QStyleFactory, QToolBar, QToolButton
 
 
