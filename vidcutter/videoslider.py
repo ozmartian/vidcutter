@@ -26,9 +26,10 @@ import sys
 import logging
 
 from PyQt5.QtCore import QEvent, QObject, Qt, pyqtSlot
-from PyQt5.QtGui import QColor, QKeyEvent, QMouseEvent, QPaintEvent, QPainterPath, QPen, QResizeEvent, QWheelEvent
-from PyQt5.QtWidgets import (qApp, QHBoxLayout, QLabel, QSlider, QStyle, QStyleOptionSlider, QStackedWidget,
-                             QStylePainter, QWidget, QSizePolicy, QStackedLayout)
+from PyQt5.QtGui import (QColor, QKeyEvent, QMouseEvent, QPaintEvent, QPainter, QPainterPath, QPen, QResizeEvent,
+                         QTransform, QWheelEvent)
+from PyQt5.QtWidgets import (qApp, QGraphicsEffect, QHBoxLayout, QLabel, QSlider, QStyle, QStyleOptionSlider,
+                             QStackedWidget, QStylePainter, QWidget, QSizePolicy, QStackedLayout)
 
 from vidcutter.videothreads import TimelineThumbsThread
 from vidcutter.libs.videoservice import VideoService
@@ -208,6 +209,7 @@ class VideoSlider(QSlider):
         frametimes = list()
         for msec in index:
             frametimes.append(self.parent.delta2QTime(msec).toString(self.parent.timeformat))
+        self.parent.sliderWidget.setLoader(True)
         self.thumbsThread = TimelineThumbsThread(source, frametimes)
         self.thumbsThread.errorOccurred.connect(self.errorHandler)
         self.thumbsThread.completed.connect(self.buildTimeline)
@@ -230,6 +232,7 @@ class VideoSlider(QSlider):
         self.parent.sliderWidget.addWidget(thumbnails)
         self._thumbnailsOn = True
         self.initStyle()
+        self.parent.sliderWidget.setLoader(False)
 
     def removeThumbs(self) -> None:
         if self.parent.sliderWidget.count() == 2:
@@ -283,9 +286,25 @@ class VideoSlider(QSlider):
 class VideoSliderWidget(QStackedWidget):
     def __init__(self, parent, slider: VideoSlider):
         super(VideoSliderWidget, self).__init__(parent)
-
+        self.loaderEffect = self.LoaderEffect()
+        self.loaderEffect.setEnabled(False)
+        self.setGraphicsEffect(self.loaderEffect)
         self.setContentsMargins(0, 0, 0, 0)
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         self.layout().setStackingMode(QStackedLayout.StackAll)
-
         self.addWidget(slider)
+
+    def setLoader(self, enabled: bool = False):
+        self.loaderEffect.setEnabled(enabled)
+
+    class LoaderEffect(QGraphicsEffect):
+        def draw(self, painter: QPainter) -> None:
+            if self.sourceIsPixmap():
+                pixmap, offset = self.sourcePixmap(Qt.LogicalCoordinates, QGraphicsEffect.PadToEffectiveBoundingRect)
+            else:
+                pixmap, offset = self.sourcePixmap(Qt.DeviceCoordinates, QGraphicsEffect.PadToEffectiveBoundingRect)
+                painter.setWorldTransform(QTransform())
+            painter.setBrush(Qt.black)
+            painter.drawRect(pixmap.rect())
+            painter.setOpacity(0.2)
+            painter.drawPixmap(offset, pixmap)

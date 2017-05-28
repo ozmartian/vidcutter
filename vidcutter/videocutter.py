@@ -61,6 +61,7 @@ except OSError:
 
 
 class VideoCutter(QWidget):
+    sliderMoved = pyqtSignal(int)
     positionChanged = pyqtSignal(int)
     durationChanged = pyqtSignal(int)
     errorOccurred = pyqtSignal(str)
@@ -119,7 +120,8 @@ class VideoCutter(QWidget):
             self.appMenu, self.cliplistMenu = QMenu(self), QMenu(self)
             self.initMenus()
 
-            self.seekSlider = VideoSlider(self, sliderMoved=self.setPosition)
+            self.seekSlider = VideoSlider(self, sliderMoved=self.sliderMoved.emit)
+            self.seekSlider.sliderMoved.connect(lambda pos: self.sliderMoved.emit(pos))
             self.sliderWidget = VideoSliderWidget(self, self.seekSlider)
 
             self.initNoVideo()
@@ -252,6 +254,7 @@ class VideoCutter(QWidget):
 
             self.setLayout(layout)
 
+            self.sliderMoved.connect(self.setPosition)
             self.positionChanged.connect(self.on_positionChanged)
             self.durationChanged.connect(self.on_durationChanged)
 
@@ -825,6 +828,7 @@ class VideoCutter(QWidget):
         self.openProjectAction.setEnabled(flag)
         self.saveProjectAction.setEnabled(False)
 
+    @pyqtSlot(int)
     def setPosition(self, position: int) -> None:
         if not self.mediaPlayer.seeking and position >= self.seekSlider.restrictValue:
             self.mediaPlayer.seek(self.delta2QTime(position).toString(self.timeformat),
