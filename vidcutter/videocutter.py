@@ -121,7 +121,7 @@ class VideoCutter(QWidget):
             self.initMenus()
 
             self.seekSlider = VideoSlider(self, sliderMoved=self.sliderMoved.emit)
-            self.seekSlider.sliderMoved.connect(lambda pos: self.sliderMoved.emit(pos))
+            self.seekSlider.sliderMoved.connect(self.sliderMoved.emit)
             self.sliderWidget = VideoSliderWidget(self, self.seekSlider)
 
             self.initNoVideo()
