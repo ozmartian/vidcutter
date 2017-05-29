@@ -205,6 +205,10 @@ class VideoCutter(QWidget):
             if self.enableOSD:
                 self.osdButton.setChecked(True)
 
+            if sys.platform == 'darwin':
+                self.thumbnailsButton.setStyle(QStyleFactory.create('fusion'))
+                self.osdButton.setStyle(QStyleFactory.create('fusion'))
+
             # noinspection PyArgumentList
             self.muteButton = QPushButton(objectName='muteButton', icon=self.unmuteIcon, flat=True, toolTip='Mute',
                                           statusTip='Toggle audio mute', iconSize=QSize(16, 16), clicked=self.muteAudio,
