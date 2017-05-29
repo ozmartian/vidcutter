@@ -126,19 +126,10 @@ class VideoCutter(QWidget):
 
             self.initNoVideo()
 
-            self.cliplist = VideoList(parent=self, sizePolicy=QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding),
-                                      contextMenuPolicy=Qt.CustomContextMenu, uniformItemSizes=True,
-                                      dragEnabled=True, dragDropMode=QAbstractItemView.InternalMove,
-                                      alternatingRowColors=True, customContextMenuRequested=self.itemMenu,
-                                      objectName='cliplist')
-            self.cliplist.setItemDelegate(VideoItem(self.cliplist))
-            self.cliplist.setContentsMargins(0, 0, 0, 0)
-            self.cliplist.setFixedWidth(190)
-            self.cliplist.setAttribute(Qt.WA_MacShowFocusRect, False)
+            self.cliplist = VideoList(self)
+            self.cliplist.customContextMenuRequested.connect(self.itemMenu)
             self.cliplist.itemClicked.connect(self.positionAtClip)
             self.cliplist.model().rowsMoved.connect(self.syncClipList)
-
-            self.cliplist.setStyleSheet('QListView::item { border: none; }')
 
             listHeader = QLabel(pixmap=QPixmap(':/images/%s/clipindex.png' % self.theme, 'PNG'),
                                 alignment=Qt.AlignCenter)

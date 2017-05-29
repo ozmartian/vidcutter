@@ -24,7 +24,7 @@
 
 from PyQt5.QtCore import QModelIndex, Qt, QSize
 from PyQt5.QtGui import QPainter, QColor, QIcon, QPen, QFont, QMouseEvent
-from PyQt5.QtWidgets import QAbstractItemDelegate, QStyleOptionViewItem, QStyle, QListWidget
+from PyQt5.QtWidgets import QAbstractItemDelegate, QAbstractItemView, QListWidget, QSizePolicy, QStyle, QStyleOptionViewItem
 
 
 class VideoList(QListWidget):
@@ -34,6 +34,18 @@ class VideoList(QListWidget):
         self.itemPressed.connect(lambda item: self.parentWidget().seekSlider.selectRegion(self.row(item)))
         self.setMouseTracking(True)
         self.setDropIndicatorShown(True)
+        self.setFixedWidth(190)
+        self.setAttribute(Qt.WA_MacShowFocusRect, False)
+        self.setContentsMargins(0, 0, 0, 0)
+        self.setItemDelegate(VideoItem(self))
+        self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding)
+        self.setUniformItemSizes(True)
+        self.setDragEnabled(True)
+        self.setDragDropMode(QAbstractItemView.InternalMove)
+        self.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.setAlternatingRowColors(True)
+        self.setObjectName('cliplist')
+        self.setStyleSheet('QListView::item { border: none; }')
 
     def mouseMoveEvent(self, event: QMouseEvent) -> None:
         if self.count() > 0:
