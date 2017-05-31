@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
   <metadata>
     <id>vidcutter</id>
-    <version>3.2.0.1</version>
+    <version>3.5.0.1</version>
     <packageSourceUrl>https://github.com/ozmartian/vidcutter/blob/master/_packaging/chocolatey</packageSourceUrl>
     <owners>ozmartian</owners>
     <title>VidCutter</title>
@@ -12,10 +12,10 @@
     <copyright>All Rights Reserved</copyright>
     <licenseUrl>http://www.gnu.org/licenses/gpl.html</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <projectSourceUrl>https://github.com/ozmartian/vidcutter</projectSourceUrl>
+    <projectSourceUrl>https://github.com/ozmartian/vidcutter.git</projectSourceUrl>
     <bugTrackerUrl>https://github.com/ozmartian/vidcutter/issues</bugTrackerUrl>
     <tags>vidcutter ffmpeg audiovideo mpv libmpv videoeditor video videoedit pyqt Qt5 multimedia admin</tags>
-    <summary>the simplest + fastest cross-platform video cut &amp; join tool</summary>
+    <summary>the simplest + fastest video cutter &amp; joiner</summary>
     <description>
     The simplest &amp; sexiest tool for cutting and joining your videos without needing to re-encode.
     
@@ -25,7 +25,7 @@
 
     Technical Note: Installation is in C:\Program Files\VidCutter via Chocolatey for both the 32 and 64 bit versions.
     </description>
-    <releaseNotes>https://github.com/ozmartian/vidcutter/releases/tag/3.2.0</releaseNotes>
+    <releaseNotes>https://github.com/ozmartian/vidcutter/releases/tag/3.5.0</releaseNotes>
   </metadata>
   <files>
     <file src="tools\**" target="tools" />
