@@ -29,3 +29,4 @@ parts:
         - libmpv1
         - ffmpeg
         - mediainfo
+    prepare: sed -i "s/pypi/deb/" "vidcutter/__init__.py"
