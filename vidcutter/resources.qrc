@@ -4,10 +4,6 @@
         <file>fonts/OpenSans.ttf</file>
         <file>fonts/OpenSansBold.ttf</file>
         <file>images/cliplist-watermark.png</file>
-        <file>images/complete-exit.png</file>
-        <file>images/complete-open.png</file>
-        <file>images/complete-play.png</file>
-        <file>images/complete-restart.png</file>
         <file>images/dialog-backdrop.png</file>
         <file>images/dialog-backdrop-02.png</file>
         <file>images/down.png</file>
@@ -36,6 +32,11 @@
         <file>images/watermark.png</file>
         <file>images/dark/about-background.png</file>
         <file>images/dark/clipindex.png</file>
+        <file>images/dark/complete-continue.png</file>
+        <file>images/dark/complete-exit.png</file>
+        <file>images/dark/complete-open.png</file>
+        <file>images/dark/complete-play.png</file>
+        <file>images/dark/complete-restart.png</file>
         <file>images/dark/mediainfo-heading.png</file>
         <file>images/dark/menu.png</file>
         <file>images/dark/menu-active.png</file>
@@ -67,6 +68,11 @@
         <file>images/dark/unmuted.png</file>
         <file>images/light/about-background.png</file>
         <file>images/light/clipindex.png</file>
+        <file>images/light/complete-continue.png</file>
+        <file>images/light/complete-exit.png</file>
+        <file>images/light/complete-open.png</file>
+        <file>images/light/complete-play.png</file>
+        <file>images/light/complete-restart.png</file>
         <file>images/light/mediainfo-heading.png</file>
         <file>images/light/menu.png</file>
         <file>images/light/menu-active.png</file>
