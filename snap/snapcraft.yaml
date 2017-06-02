@@ -13,14 +13,16 @@ confinement: devmode
 
 apps:
   vidcutter:
-    command: env LC_ALL=C.UTF-8 $SNAP/bin/vidcutter
-    plugs: [home]
+    command: env LC_ALL=C.UTF-8 desktop-launch $SNAP/vidcutter
+    plugs: [home, pulseaudio, x11, opengl]
 
 parts:
   vidcutter:
     plugin: python
-    source: git://github.com/ozmartian/vidcutter.git
-    source-type: git
+    plugin-version: python3
+    process-dependency-links: false
+    source: https://github.com/ozmartian/vidcutter/archive/3.5.0.tar.gz
+    after: [desktop-qt5]
     build-packages:
         - python3-dev
         - python3-setuptools
