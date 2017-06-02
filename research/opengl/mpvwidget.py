@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from OpenGL import GL
+
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt
 from PyQt5.QtOpenGL import QGLContext
 from PyQt5.QtWidgets import QOpenGLWidget

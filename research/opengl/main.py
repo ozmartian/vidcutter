@@ -35,10 +35,10 @@ class MainWindow(QMainWindow):
         vb.addWidget(self.m_mpv)
         vb.addWidget(self.m_slider)
         vb.addLayout(hb)
-        widget = QWidget()
-        widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        widget.setLayout(vb)
-        self.setCentralWidget(widget)
+        self.widget = QWidget(self)
+        self.widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.widget.setLayout(vb)
+        self.setCentralWidget(self.widget)
         self.m_mpv.mpv.positionChanged.connect(self.m_slider.setValue)
         self.m_mpv.mpv.durationChanged.connect(self.setSliderRange)
         self.m_slider.sliderMoved.connect(self.seek)
@@ -47,7 +47,7 @@ class MainWindow(QMainWindow):
 
     @pyqtSlot()
     def open(self):
-        file, _ = QFileDialog.getOpenFileName(self, 'Open a video')
+        file, _ = QFileDialog.getOpenFileName(self.widget, 'Open a video', options=QFileDialog.DontUseNativeDialog)
         if len(file):
             self.m_mpv.mpv.play(file)
             self.m_slider.setEnabled(True)
