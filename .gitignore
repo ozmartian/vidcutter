@@ -25,6 +25,5 @@ mpv-1.dll
 D3DCompiler_*.dll
 d3dcompiler_*.dll
 MediaInfo.dll
-opengl*
 *.*.nupkg
 *.pyc
