@@ -100,7 +100,7 @@ class VideoService(QObject):
                    % (source, frametime, duration, QDir.fromNativeSeparators(output))
         return self.cmdExec(self.backend, args)
 
-    def join(self, filelist: list, output: str, allstreams: bool = True) -> bool:
+    def join(self, filelist: str, output: str, allstreams: bool = True) -> bool:
         if allstreams:
             args = '-f concat -safe 0 -i "%s" -c copy -map 0 -y "%s"' % (filelist, QDir.fromNativeSeparators(output))
         else:

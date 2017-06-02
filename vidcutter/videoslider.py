@@ -36,8 +36,8 @@ from vidcutter.libs.videoservice import VideoService
 
 
 class VideoSlider(QSlider):
-    def __init__(self, parent=None, *arg, **kwargs):
-        super(VideoSlider, self).__init__(parent, *arg, **kwargs)
+    def __init__(self, parent=None):
+        super(VideoSlider, self).__init__(parent)
         self.parent = parent
         self.logger = logging.getLogger(__name__)
         self.theme = self.parent.theme

@@ -24,16 +24,19 @@
 
 import sys
 
-from PyQt5.QtCore import pyqtSlot, QEvent, QObject, Qt
+from PyQt5.QtCore import pyqtSlot, QEvent, QObject, QSize, Qt
 from PyQt5.QtWidgets import QAction, qApp, QStyleFactory, QToolBar, QToolButton
 
 
 class VideoToolBar(QToolBar):
-    def __init__(self, parent=None, *arg, **kwargs):
-        super(VideoToolBar, self).__init__(parent, *arg, **kwargs)
+    def __init__(self, parent=None):
+        super(VideoToolBar, self).__init__(parent)
         self.parent = parent
         self.setObjectName('appcontrols')
         self.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.setFloatable(False)
+        self.setMovable(False)
+        self.setIconSize(QSize(50, 53))
         if sys.platform == 'darwin':
             self.setStyle(QStyleFactory.create('Fusion'))
 

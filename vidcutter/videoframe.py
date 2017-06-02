@@ -27,8 +27,8 @@ from PyQt5.QtWidgets import QFrame
 
 
 class VideoFrame(QFrame):
-    def __init__(self, parent=None, *arg, **kwargs):
-        super(VideoFrame, self).__init__(parent, *arg, **kwargs)
+    def __init__(self, parent=None):
+        super(VideoFrame, self).__init__(parent)
         self.parent = parent
         self.setAttribute(Qt.WA_DontCreateNativeAncestors)
         self.setAttribute(Qt.WA_NativeWindow)

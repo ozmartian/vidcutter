@@ -35,10 +35,9 @@ from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QDir, QFile, QFileInfo, QModelIn
                           QTime, QUrl)
 from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent,
                          QMouseEvent, QMovie, QPixmap)
-from PyQt5.QtWidgets import (QAbstractItemView, QAction, QActionGroup, qApp, QApplication, QDialogButtonBox,
-                             QDoubleSpinBox, QFileDialog, QGroupBox, QHBoxLayout, QLabel, QListWidgetItem, QMenu,
-                             QMessageBox, QPushButton, QSizePolicy, QSlider, QStyle, QStyleFactory, QVBoxLayout,
-                             QWidget, QWidgetAction)
+from PyQt5.QtWidgets import (QAction, QActionGroup, qApp, QApplication, QDialogButtonBox, QDoubleSpinBox, QFileDialog,
+                             QGroupBox, QHBoxLayout, QLabel, QListWidgetItem, QMenu, QMessageBox, QPushButton,
+                             QSizePolicy, QSlider, QStyleFactory, QVBoxLayout, QWidget, QWidgetAction)
 
 from vidcutter.libs.videoservice import VideoService
 from vidcutter.libs.widgets import FrameCounter, TimeCounter, VCProgressBar
@@ -47,7 +46,7 @@ from vidcutter.about import About
 from vidcutter.updater import Updater
 from vidcutter.videoframe import VideoFrame
 from vidcutter.videoinfo import VideoInfo
-from vidcutter.videolist import VideoList, VideoItem
+from vidcutter.videolist import VideoList
 from vidcutter.videoslider import VideoSlider, VideoSliderWidget
 from vidcutter.videostyles import VideoStyles
 from vidcutter.videotoolbar import VideoToolBar
@@ -114,13 +113,13 @@ class VideoCutter(QWidget):
 
             self.initIcons()
             self.initActions()
-            self.toolbar = VideoToolBar(self, floatable=False, movable=False, iconSize=QSize(50, 53))
+            self.toolbar = VideoToolBar(self)
             self.initToolbar()
 
             self.appMenu, self.cliplistMenu = QMenu(self), QMenu(self)
             self.initMenus()
 
-            self.seekSlider = VideoSlider(self, sliderMoved=self.sliderMoved.emit)
+            self.seekSlider = VideoSlider(self)
             self.seekSlider.sliderMoved.connect(self.sliderMoved.emit)
             self.sliderWidget = VideoSliderWidget(self, self.seekSlider)
 
@@ -131,14 +130,16 @@ class VideoCutter(QWidget):
             self.cliplist.itemClicked.connect(self.positionAtClip)
             self.cliplist.model().rowsMoved.connect(self.syncClipList)
 
-            listHeader = QLabel(pixmap=QPixmap(':/images/%s/clipindex.png' % self.theme, 'PNG'),
-                                alignment=Qt.AlignCenter)
+            listHeader = QLabel(self)
+            listHeader.setPixmap(QPixmap(':/images/%s/clipindex.png' % self.theme, 'PNG'))
+            listHeader.setAlignment(Qt.AlignCenter)
             listHeader.setObjectName('listHeader')
 
-            self.runtimeLabel = QLabel('<div align="right">00:00:00</div>', textFormat=Qt.RichText)
+            self.runtimeLabel = QLabel('<div align="right">00:00:00</div>', self)
             self.runtimeLabel.setObjectName('runtimeLabel')
 
-            self.clipindexLayout = QVBoxLayout(spacing=0)
+            self.clipindexLayout = QVBoxLayout()
+            self.clipindexLayout.setSpacing(0)
             self.clipindexLayout.setContentsMargins(0, 0, 0, 0)
             self.clipindexLayout.addWidget(listHeader)
             self.clipindexLayout.addWidget(self.cliplist)
@@ -173,12 +174,15 @@ class VideoCutter(QWidget):
 
             self.initMPV()
 
-            videoplayerLayout = QVBoxLayout(spacing=0)
+            videoplayerLayout = QVBoxLayout()
+            videoplayerLayout.setSpacing(0)
             videoplayerLayout.setContentsMargins(0, 0, 0, 0)
             videoplayerLayout.addWidget(self.mpvFrame)
             videoplayerLayout.addWidget(countersWidget)
 
-            self.videoplayerWidget = QWidget(self, visible=False, objectName='videoplayer')
+            self.videoplayerWidget = QWidget(self)
+            self.videoplayerWidget.setVisible(False)
+            self.videoplayerWidget.setObjectName('videoplayer')
             self.videoplayerWidget.setLayout(videoplayerLayout)
 
             # noinspection PyArgumentList
@@ -340,9 +344,11 @@ class VideoCutter(QWidget):
             self.mediaPlayer.msg_level = 'all=v'
 
     def initNoVideo(self) -> None:
-        self.novideoWidget = QWidget(self, objectName='novideoWidget')
+        self.novideoWidget = QWidget(self)
+        self.novideoWidget.setObjectName('novideoWidget')
         self.novideoWidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.MinimumExpanding)
-        self.novideoLabel = QLabel(alignment=Qt.AlignCenter)
+        self.novideoLabel = QLabel(self)
+        self.novideoLabel.setAlignment(Qt.AlignCenter)
         self.novideoLabel.setStyleSheet('margin-top:160px;')
         self.novideoMovie = QMovie(':/images/novideotext.gif')
         self.novideoMovie.frameChanged.connect(lambda: self.novideoLabel.setPixmap(self.novideoMovie.currentPixmap()))
@@ -895,7 +901,7 @@ class VideoCutter(QWidget):
         self.cutEndAction.setEnabled(True)
         self.seekSlider.setRestrictValue(self.seekSlider.value(), True)
         self.inCut = True
-        self.showText('clip started at\n%s' % starttime.toString(self.timeformat))
+        self.showText('start clip at %s' % starttime.toString(self.timeformat))
         self.renderTimes()
 
     def clipEnd(self) -> None:
@@ -913,7 +919,7 @@ class VideoCutter(QWidget):
         self.timeCounter.setMinimum()
         self.seekSlider.setRestrictValue(0, False)
         self.inCut = False
-        self.showText('clip ended at\n%s' % endtime.toString(self.timeformat))
+        self.showText('end clip at %s' % endtime.toString(self.timeformat))
         self.renderTimes()
 
     @pyqtSlot(QModelIndex, int, int, QModelIndex, int)
@@ -1055,7 +1061,7 @@ class VideoCutter(QWidget):
             if self.videoService.mediainfo is None:
                 self.logger.error('Error trying to load media information. mediainfo could not be found')
                 sys.stderr.write('Error trying to load media information. mediainfo could not be found')
-                QMessageBox.critical(self, 'Could not find mediainfo tool',
+                QMessageBox.critical(self.parent, 'Could not find mediainfo tool',
                                      'The <b>mediainfo</b> command line tool could not be found on your system. ' +
                                      'This is required for the Media Information option ' +
                                      'to work.<br/><br/>If you are on Linux, you can solve ' +
@@ -1234,7 +1240,7 @@ class VideoCutter(QWidget):
                 link = self.ffmpeg_installer['linux'][self.parent.get_bitness()]
             else:
                 link = self.ffmpeg_installer[sys.platform][self.parent.get_bitness()]
-            QMessageBox.critical(None, 'Missing FFMpeg executable', '<style>li { margin: 1em 0; }</style>' +
+            QMessageBox.critical(self.parent, 'Missing FFMpeg executable', '<style>li { margin: 1em 0; }</style>' +
                                  '<h3 style="color:#6A687D;">MISSING FFMPEG EXECUTABLE</h3>' +
                                  '<p>The FFMpeg utility is missing in your ' +
                                  'installation. It should have been installed when you first setup VidCutter.</p>' +
@@ -1298,4 +1304,4 @@ class VideoCutter(QWidget):
             event.accept()
 
     def closeEvent(self, event: QCloseEvent) -> None:
-        self.parentWidget().closeEvent(event)
+        self.parent.closeEvent(event)

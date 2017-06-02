@@ -24,14 +24,16 @@
 
 from PyQt5.QtCore import QModelIndex, Qt, QSize
 from PyQt5.QtGui import QPainter, QColor, QIcon, QPen, QFont, QMouseEvent
-from PyQt5.QtWidgets import QAbstractItemDelegate, QAbstractItemView, QListWidget, QSizePolicy, QStyle, QStyleOptionViewItem
+from PyQt5.QtWidgets import (QAbstractItemDelegate, QAbstractItemView, QListWidget, QSizePolicy, QStyle,
+                             QStyleOptionViewItem)
 
 
 class VideoList(QListWidget):
-    def __init__(self, parent, *arg, **kwargs):
-        super(VideoList, self).__init__(parent, *arg, **kwargs)
-        self.theme = parent.theme
-        self.itemPressed.connect(lambda item: self.parentWidget().seekSlider.selectRegion(self.row(item)))
+    def __init__(self, parent=None):
+        super(VideoList, self).__init__(parent)
+        self.parent = parent
+        self.theme = self.parent.theme
+        self.itemPressed.connect(lambda item: self.parent.seekSlider.selectRegion(self.row(item)))
         self.setMouseTracking(True)
         self.setDropIndicatorShown(True)
         self.setFixedWidth(190)
@@ -57,7 +59,7 @@ class VideoList(QListWidget):
         super(VideoList, self).mouseMoveEvent(event)
 
     def clearSelection(self) -> None:
-        self.parentWidget().seekSlider.selectRegion(-1)
+        self.parent.seekSlider.selectRegion(-1)
         super(VideoList, self).clearSelection()
 
 
