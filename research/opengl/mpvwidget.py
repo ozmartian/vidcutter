@@ -22,6 +22,7 @@ class MpvWidget(QOpenGLWidget):
         super(MpvWidget, self).__init__(parent)
         self.mpv = Mpv(
             pause=True,
+            terminal=True,
             msg_level='all=v',
             vo='opengl-cb',
             hwdec='auto',
