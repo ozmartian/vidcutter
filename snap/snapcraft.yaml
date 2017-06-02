@@ -19,7 +19,6 @@ apps:
 parts:
   vidcutter:
     plugin: python
-    plugin-version: python3
     process-dependency-links: false
     source: https://github.com/ozmartian/vidcutter/archive/3.5.0.tar.gz
     after: [desktop-qt5]
