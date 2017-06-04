@@ -168,7 +168,6 @@ class LibMPV(object):
         return cast(self.mpv_get_sub_api(ctx, SubApi.MPV_SUB_API_OPENGL_CB), POINTER(MpvOpenGLCbContext))
 
     def opengl_cb_set_update_callback(self, ctx, callback, callback_ctx):
-        # if callback is not None:
         callback = OpenGlCbUpdateFn(callback)
         cb_ctx = cast(pointer(py_object(callback_ctx)), c_void_p)
         self.mpv_opengl_cb_set_update_callback(ctx, callback, cb_ctx)
