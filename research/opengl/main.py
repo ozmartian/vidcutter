@@ -47,7 +47,7 @@ class MainWindow(QMainWindow):
 
     @pyqtSlot()
     def open(self):
-        file, _ = QFileDialog.getOpenFileName(self.widget, 'Open a video', options=QFileDialog.DontUseNativeDialog)
+        file, _ = QFileDialog.getOpenFileName(self.widget, 'Open a video')
         if len(file):
             self.m_mpv.mpv.play(file)
             self.m_slider.setEnabled(True)
@@ -63,9 +63,9 @@ class MainWindow(QMainWindow):
     def seek(self, pos):
         self.m_mpv.mpv.seek(pos, 'absolute+exact')
 
-    @pyqtSlot(float)
+    @pyqtSlot(int)
     def setSliderRange(self, duration):
-        self.m_slider.setRange(0, int(duration))
+        self.m_slider.setRange(0, duration)
 
 
 if __name__ == '__main__':

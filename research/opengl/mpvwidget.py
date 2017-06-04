@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from ctypes import cast, c_void_p
+
+# this is required for Ubuntu which seems to
+# have a broken PyQt5 OpenGL implementation
 from OpenGL import GL
 
-from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt
+from PyQt5.QtCore import pyqtSignal, pyqtSlot, QMetaObject, Qt
 from PyQt5.QtOpenGL import QGLContext
 from PyQt5.QtWidgets import QOpenGLWidget
 
@@ -36,14 +40,20 @@ class MpvWidget(QOpenGLWidget):
             keep_open=True,
             idle=True,
             observe=['time-pos', 'duration'])
-
         self.mpv.get_opengl_api()
-
         self.mpv.opengl_set_update_callback(MpvWidget.on_update)
-        self.mpv.set_option('opengl-hwdec-interop', 'auto')
-
-        self.updated.connect(self.doUpdate, Qt.QueuedConnection)
+        # ignore expection thrown by older versions of libmpv that do not implement the option
+        try:
+            self.mpv.set_option('opengl-hwdec-interop', 'auto')
+        except:
+            pass
         self.frameSwapped.connect(self.swapped, Qt.DirectConnection)
+        self.updated.connect(self.updateHandler, Qt.QueuedConnection)
+
+    def __del__(self):
+        self.makeCurrent()
+        self.mpv.opengl_set_update_callback(cast(None, c_void_p))
+        self.mpv.opengl_uninit_gl()
 
     def initializeGL(self):
         self.mpv.opengl_init_gl(get_proc_address)
@@ -54,14 +64,15 @@ class MpvWidget(QOpenGLWidget):
     @pyqtSlot()
     def swapped(self):
         self.mpv.opengl_report_flip()
-        self.update()
+        self.updated.emit()
 
     @staticmethod
     def on_update(ctx):
-        ctx.updated.emit()
+        if isinstance(ctx, MpvWidget):
+            ctx.updated.emit()
 
     @pyqtSlot()
-    def doUpdate(self):
+    def updateHandler(self):
         if self.window().isMinimized():
             self.makeCurrent()
             self.paintGL()
@@ -73,13 +84,13 @@ class MpvWidget(QOpenGLWidget):
 
 
 class Mpv(mpv.templates.MpvTemplatePyQt):
-    durationChanged = pyqtSignal(float)
-    positionChanged = pyqtSignal(float)
+    durationChanged = pyqtSignal(int)
+    positionChanged = pyqtSignal(int)
 
     def on_property_change(self, event):
         if event.data is None:
             return
         if event.name == 'time-pos':
-            self.positionChanged.emit(event.data)
+            self.positionChanged.emit(int(event.data))
         elif event.name == 'duration':
-            self.durationChanged.emit(event.data)
+            self.durationChanged.emit(int(event.data))
