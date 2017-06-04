@@ -7,7 +7,7 @@ from ctypes import cast, c_void_p
 # have a broken PyQt5 OpenGL implementation
 from OpenGL import GL
 
-from PyQt5.QtCore import pyqtSignal, pyqtSlot, QMetaObject, Qt
+from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt
 from PyQt5.QtOpenGL import QGLContext
 from PyQt5.QtWidgets import QOpenGLWidget
 
