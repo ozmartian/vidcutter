@@ -67,6 +67,21 @@ class MainWindow(QMainWindow):
     def setSliderRange(self, duration):
         self.m_slider.setRange(0, duration)
 
+    def mouseDoubleClickEvent(self, event):
+        if self.m_mpv.window().isFullScreen():
+            self.m_mpv.window().showNormal()
+        else:
+            self.m_mpv.window().showFullScreen()
+        self.m_mpv.mpv.fullscreen = not self.m_mpv.mpv.fullscreen
+        event.accept()
+
+    def keyPressEvent(self, event):
+        if event.key() in (Qt.Key_Enter, Qt.Key_Return):
+            fs = not self.m_mpv.mpv.fullscreen
+            self.m_mpv.showFullScreen() if fs else self.m_mpv.showNormal()
+            self.m_mpv.mpv.fullscreen = fs
+        super(MainWindow, self).keyPressEvent(event)
+
 
 if __name__ == '__main__':
     QApplication.setAttribute(Qt.AA_ShareOpenGLContexts, True)

@@ -45,7 +45,6 @@ class VideoService(QObject):
         super(VideoService, self).__init__(parent)
         self.parent = parent
         self.logger = logging.getLogger(__name__)
-        self.consoleOutput = ''
         if sys.platform == 'win32':
             self.backend = os.path.join(self.getAppPath(), 'bin', 'ffmpeg.exe')
             self.mediainfo = os.path.join(self.getAppPath(), 'bin', 'MediaInfo.exe')
@@ -64,8 +63,8 @@ class VideoService(QObject):
                         break
             if not os.path.exists(self.mediainfo):
                 self.mediainfo = find_executable('mediainfo')
-        if os.getenv('DEBUG', False):
-            self.logger.info('VideoService: backend = "%s"\tmediainfo = "%s"' % (self.backend, self.mediainfo))
+        # if os.getenv('DEBUG', False):
+        #     self.logger.info('VideoService: backend = "%s"\tmediainfo = "%s"' % (self.backend, self.mediainfo))
         self.initProc()
 
     def initProc(self) -> None:
@@ -147,7 +146,6 @@ class VideoService(QObject):
             QMessageBox.critical(self.parent.parent, '',
                                  '<h4>%s Error:</h4>' % self.backend +
                                  '<p>%s</p>' % self.proc.errorString(), buttons=QMessageBox.Close)
-            # qApp.quit()
 
     @staticmethod
     def getAppPath() -> str:

@@ -48,14 +48,14 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__()
         self.video, self.devmode = '', False
         self.parse_cmdline()
-        self.init_logger()
+        #self.init_logger()
         self.init_settings()
         self.init_scale()
         self.init_cutter()
         self.setWindowTitle('%s' % qApp.applicationName())
         self.setContentsMargins(0, 0, 0, 0)
         self.statusBar().showMessage('Ready')
-        self.statusBar().setStyleSheet('border:none;padding:0;margin:0;')
+        self.statusBar().setStyleSheet('border: none; padding: 0; margin: 0;')
         self.setAcceptDrops(True)
         self.show()
         try:
@@ -110,6 +110,7 @@ class MainWindow(QMainWindow):
                             datefmt='%Y-%m-%d %H:%M',
                             level=logging.INFO)
         logging.captureWarnings(capture=True)
+
         sys.excepthook = self.log_uncaught_exceptions
 
     def init_settings(self) -> None:
@@ -254,6 +255,7 @@ class MainWindow(QMainWindow):
     def errorHandler(self, msg: str) -> None:
         QMessageBox.critical(self, 'An error occurred', '%s<br/>Please try again or use a valid media file.' % msg,
                              QMessageBox.Ok)
+        logging.error(msg)
         self.cutter.initMediaControls(False)
 
     def contextMenuEvent(self, event: QContextMenuEvent) -> None:
@@ -282,7 +284,8 @@ class MainWindow(QMainWindow):
         if hasattr(self, 'cutter'):
             self.save_settings()
             if hasattr(self.cutter, 'mediaPlayer'):
-                self.cutter.mediaPlayer.terminate()
+                self.cutter.mediaPlayer.quit()
+                self.cutter.mpvWidget.deleteLater()
         qApp.quit()
 
 
@@ -293,11 +296,15 @@ def main():
         QApplication.setAttribute(Qt.AA_Use96Dpi, True)
     if hasattr(Qt, 'AA_UseStyleSheetPropagationInWidgetStyles'):
         QApplication.setAttribute(Qt.AA_UseStyleSheetPropagationInWidgetStyles, True)
+    if hasattr(Qt, 'AA_ShareOpenGLContexts'):
+        QApplication.setAttribute(Qt.AA_ShareOpenGLContexts, True)
+
     app = QApplication(sys.argv)
     app.setApplicationName('VidCutter')
     app.setApplicationVersion(MainWindow.get_version())
     app.setOrganizationDomain('ozmartians.com')
     app.setQuitOnLastWindowClosed(True)
+
     win = MainWindow()
     exit_code = app.exec_()
     if exit_code == MainWindow.EXIT_CODE_REBOOT:
@@ -305,8 +312,8 @@ def main():
             QProcess.startDetached('"%s"' % qApp.applicationFilePath())
         else:
             os.execl(sys.executable, sys.executable, *sys.argv)
-    sys.exit(exit_code)
 
+    sys.exit(exit_code)
 
 if __name__ == '__main__':
     main()

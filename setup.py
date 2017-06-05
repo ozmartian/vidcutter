@@ -23,23 +23,26 @@
 #######################################################################
 
 import codecs
+import os
+import re
+import shlex
+import subprocess
 import sys
-from os import path
-from re import match
 
+from distutils.spawn import find_executable
 from setuptools import setup
 
 
 def get_value(varname, filename='vidcutter/__init__.py'):
-    with codecs.open(path.join(here, filename), encoding='utf-8') as initfile:
+    with codecs.open(os.path.join(here, filename), encoding='utf-8') as initfile:
         for line in initfile.readlines():
-            m = match('__%s__ *= *[\'](.*)[\']' % varname, line)
+            m = re.match('__%s__ *= *[\'](.*)[\']' % varname, line)
             if m:
                 return m.group(1)
 
 
 def get_description(filename='README.md'):
-    with codecs.open(path.join(here, filename), encoding='utf-8') as f:
+    with codecs.open(os.path.join(here, filename), encoding='utf-8') as f:
         file = list(f)
     desc = ''
     for item in file[11: len(file)]:
@@ -48,10 +51,7 @@ def get_description(filename='README.md'):
 
 
 def get_install_requires():
-    deps = []
-    if packager == 'pypi':
-        deps.append('PyQt5')
-    return deps
+    return ['PyQt5'] if packager == 'pypi' else []
 
 
 def get_data_files():
@@ -74,11 +74,11 @@ def get_data_files():
         ]
     return files
 
-here = path.abspath(path.dirname(__file__))
+here = os.path.abspath(os.path.dirname(__file__))
 
 packager = get_value('packager')
 
-setup(
+result = setup(
     name='vidcutter',
     version=get_value('version'),
     author='Pete Alexandrou',
@@ -111,3 +111,45 @@ setup(
         'Programming Language :: Python :: 3 :: Only'
     ]
 )
+
+ROOT = os.geteuid() == 0
+if not sys.platform.startswith('linux') or not os.getenv('FAKEROOTKEY') is None:
+    ROOT = False
+
+if ROOT and not result is None:
+    try:
+        sys.stdout.write('Updating shared mime-info database... ')
+        exepath = find_executable('update-mime-database')
+        if exepath is None:
+            raise Exception
+        subprocess.call([exepath, '/usr/share/mime/'])
+    except:
+        sys.stdout.write('FAILED\n')
+    else:
+        sys.stdout.write('DONE\n')
+
+    try:
+        exepath = find_executable('update-desktop-database')
+        if exepath is None:
+            raise Exception
+        sys.stdout.write('Updating desktop file database... ')
+        subprocess.call([exepath])
+    except:
+        sys.stdout.write('FAILED\n')
+    else:
+        sys.stdout.write('DONE\n')
+
+    try:
+        sys.stdout.write('Updating mime-type and file-type info... ')
+        exepath = find_executable('xdg-icon-resource')
+        if exepath is None:
+            raise Exception
+        args = exepath + ' ' + \
+            'install --noupdate --context mimetypes --size 128 ' + \
+            '/usr/share/icons/hicolor/128x128/apps/vidcutter.png ' + \
+            'application-x-vidcutter'
+        subprocess.call(shlex.split(args))
+    except:
+        sys.stdout.write('FAILED\n')
+    else:
+        sys.stdout.write('DONE\n')
