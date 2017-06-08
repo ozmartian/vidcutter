@@ -753,6 +753,7 @@ class VideoCutter(QWidget):
         self.parent.setWindowTitle('%s - %s' % (qApp.applicationName(), os.path.basename(self.currentMedia)))
         if not self.mediaAvailable:
             self.videoLayout.replaceWidget(self.novideoWidget, self.videoplayerWidget)
+            self.novideoWidget.hide()
             self.novideoMovie.stop()
             self.novideoMovie.deleteLater()
             self.novideoWidget.deleteLater()
