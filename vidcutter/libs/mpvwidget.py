@@ -29,11 +29,11 @@ from ctypes import cast, c_void_p
 # noinspection PyUnresolvedReferences
 from OpenGL import GL
 
-from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt
+from PyQt5.QtCore import pyqtSignal, pyqtSlot
 from PyQt5.QtOpenGL import QGLContext
 from PyQt5.QtWidgets import QOpenGLWidget
 
-from .mpv.templates import templateqt
+from vidcutter.libs.mpv.templates import templateqt
 
 
 def get_proc_address(ctx, name):

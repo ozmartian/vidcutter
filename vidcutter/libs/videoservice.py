@@ -91,10 +91,10 @@ class VideoService(QObject):
         if img.open():
             imagecap = img.fileName()
             size = thumbsize.value
-            args = 'ffmpeg -ss %s -i "%s" -vframes 1 -s %ix%i -v 16 -y "%s"' % (frametime, source, size.width(),
-                                                                                size.height(), imagecap)
+            backend, _ = VideoService.initBackends()
+            args = '%s -ss %s -i "%s" -vframes 1 -s %ix%i -v 16 -y "%s"' % (backend, frametime, source, size.width(),
+                                                                            size.height(), imagecap)
             retcode = subprocess.call(shlex.split(args))
-            # if self.cmdExec(self.backend, args):
             if retcode == 0:
                 capres = QPixmap(imagecap, 'JPG')
         return capres

@@ -51,7 +51,7 @@ def get_description(filename='README.md'):
 
 
 def get_install_requires():
-    return ['PyQt5'] if packager == 'pypi' else []
+    return ['PyQt5', 'PyOpenGL'] if packager == 'pypi' else []
 
 
 def get_data_files():
@@ -88,7 +88,12 @@ result = setup(
     url='http://vidcutter.ozmartians.com',
     license='GPLv3+',
 
-    packages=['vidcutter', 'vidcutter.libs'],
+    packages=[
+        'vidcutter',
+        'vidcutter.libs',
+        'vidcutter.libs.mpv',
+        'vidcutter.libs.mpv.templates'
+    ],
 
     setup_requires=['setuptools'],
 
