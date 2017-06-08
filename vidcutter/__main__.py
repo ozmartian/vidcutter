@@ -288,11 +288,8 @@ def main():
         QApplication.setAttribute(Qt.AA_Use96Dpi, True)
     if hasattr(Qt, 'AA_UseStyleSheetPropagationInWidgetStyles'):
         QApplication.setAttribute(Qt.AA_UseStyleSheetPropagationInWidgetStyles, True)
-    if hasattr(Qt, 'AA_ShareOpenGLContexts'):
-        QApplication.setAttribute(Qt.AA_ShareOpenGLContexts, True)
-
-    QApplication.setAttribute(Qt.AA_DontCheckOpenGLContextThreadAffinity, True)
-
+    # if hasattr(Qt, 'AA_ShareOpenGLContexts'):
+    #     QApplication.setAttribute(Qt.AA_ShareOpenGLContexts, True)
     app = QApplication(sys.argv)
     app.setApplicationName('VidCutter')
     app.setApplicationVersion(MainWindow.get_version())

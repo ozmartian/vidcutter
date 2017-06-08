@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import locale
-import signal
+# import signal
 import shlex
 import sys
 
@@ -10,16 +10,16 @@ from PyQt5.QtCore import pyqtSlot, Qt, QProcess, QTemporaryFile
 from PyQt5.QtWidgets import (QApplication, QFileDialog, QHBoxLayout, QMainWindow, QMessageBox, QPushButton, QSizePolicy,
                              QSlider, QVBoxLayout, QWidget)
 
-from mpvwidget import MpvWidget
+# signal.signal(signal.SIGINT, signal.SIG_DFL)
+# signal.signal(signal.SIGTERM, signal.SIG_DFL)
 
-signal.signal(signal.SIGINT, signal.SIG_DFL)
-signal.signal(signal.SIGTERM, signal.SIG_DFL)
+from mpvwidget import mpvWidget
 
 
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
-        self.m_mpv = MpvWidget(self)
+        self.m_mpv = self.initMPV()
         self.m_mpv.setMinimumSize(800, 600)
         self.m_slider = QSlider(Qt.Horizontal, self)
         self.m_slider.setDisabled(True)
@@ -28,7 +28,6 @@ class MainWindow(QMainWindow):
         self.m_playBtn.setDisabled(True)
         self.m_testBtn = QPushButton('Test')
         self.m_testBtn.setDisabled(True)
-        self.m_testBtn.clicked.connect(self.test)
         hb = QHBoxLayout()
         hb.addStretch(1)
         hb.addWidget(m_openBtn)
@@ -44,11 +43,29 @@ class MainWindow(QMainWindow):
         self.widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.widget.setLayout(vb)
         self.setCentralWidget(self.widget)
-        self.m_mpv.mpv.positionChanged.connect(self.m_slider.setValue)
-        self.m_mpv.mpv.durationChanged.connect(self.setSliderRange)
+        # self.m_mpv.mpv.positionChanged.connect(self.m_slider.setValue)
+        # self.m_mpv.mpv.durationChanged.connect(self.setSliderRange)
         self.m_slider.sliderMoved.connect(self.seek)
         m_openBtn.clicked.connect(self.open)
         self.m_playBtn.clicked.connect(self.pause)
+        self.m_testBtn.clicked.connect(self.test)
+
+    @staticmethod
+    def initMPV():
+        return mpvWidget(
+            pause=True,
+            terminal=True,
+            msg_level='all=v',
+            vo='opengl-cb',
+            hwdec='auto',
+            hr_seek=False,
+            hr_seek_framedrop=True,
+            video_sync='display-vdrop',
+            audio_file_auto=False,
+            quiet=True,
+            keep_open=True,
+            idle=True,
+            observe=['time-pos', 'duration'])
 
     @pyqtSlot()
     def test(self):
@@ -68,20 +85,20 @@ class MainWindow(QMainWindow):
     def open(self):
         self.file, _ = QFileDialog.getOpenFileName(self.widget, 'Open a video')
         if len(self.file):
-            self.m_mpv.mpv.play(self.file)
+            self.m_mpv.mpv.command('loadfile', self.file)
             self.m_slider.setEnabled(True)
             self.m_playBtn.setEnabled(True)
             self.m_testBtn.setEnabled(True)
 
     @pyqtSlot()
     def pause(self):
-        paused = self.m_mpv.mpv.pause
+        paused = self.m_mpv.mpv.get_property('pause')
         self.m_playBtn.setText('Pause' if paused else 'Play')
-        self.m_mpv.mpv.pause = not paused
+        self.m_mpv.mpv.set_property('pause', not paused)
 
     @pyqtSlot(int)
     def seek(self, pos):
-        self.m_mpv.mpv.seek(pos, 'absolute+exact')
+        self.m_mpv.mpv.seek(pos, 'absolute+exact', async=True)
 
     @pyqtSlot(int)
     def setSliderRange(self, duration):

@@ -244,6 +244,7 @@ class VideoSlider(QSlider):
         sys.stderr.write(error)
 
     def resizeEvent(self, event: QResizeEvent) -> None:
+        self.parent.renderTimes()
         if self.thumbnailsOn:
             if self.parent.sliderWidget.count() == 2:
                 thumbWidget = self.parent.sliderWidget.widget(1)
@@ -251,7 +252,6 @@ class VideoSlider(QSlider):
             self.setStyleSheet(self._styles % ('#444', 'filmstrip', 'transparent', 0))
             qApp.processEvents()
             self.initTimeline()
-        self.parent.renderTimes()
 
     def wheelEvent(self, event: QWheelEvent) -> None:
         if self.parent.mediaAvailable:
