@@ -22,7 +22,7 @@
 #
 #######################################################################
 
-__version__ = '3.5.0'
+__version__ = '4.0.0'
 
 __author__ = 'Pete Alexandrou'
 __email__ = 'pete@ozmartians.com'
