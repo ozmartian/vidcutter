@@ -48,7 +48,7 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__()
         self.video, self.devmode = '', False
         self.parse_cmdline()
-        #self.init_logger()
+        self.init_logger()
         self.init_settings()
         self.init_scale()
         self.init_cutter()
@@ -76,8 +76,6 @@ class MainWindow(QMainWindow):
         screen_size = qApp.desktop().availableGeometry(-1)
         self.scale = 'LOW' if screen_size.width() <= 1024 else 'NORMAL'
         self.setMinimumSize(self.get_size(self.scale))
-        if os.getenv('DEBUG', False):
-            print('minimum size set to: %s (%s)' % (self.get_size(self.scale), self.scale))
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
     @staticmethod
@@ -190,10 +188,6 @@ class MainWindow(QMainWindow):
         from struct import calcsize
         return calcsize('P') * 8
 
-    # def restart(self) -> None:
-    #     self.cutter.deleteLater()
-    #     self.init_cutter()
-
     @pyqtSlot()
     def reboot(self) -> None:
         self.save_settings()
@@ -227,12 +221,12 @@ class MainWindow(QMainWindow):
     def set_always_on_top(self, flag: bool) -> None:
         if flag:
             self.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint)
-            if hasattr(self.cutter, 'mediaPlayer'):
-                self.cutter.mediaPlayer.ontop = True
+            if hasattr(self.cutter, 'mpvWidget.mpv'):
+                self.cutter.mpvWidget.mpv.ontop = True
         else:
             self.setWindowFlags(self.windowFlags() & ~Qt.WindowStaysOnTopHint)
-            if hasattr(self.cutter, 'mediaPlayer'):
-                self.cutter.mediaPlayer.ontop = False
+            if hasattr(self.cutter, 'mpvWidget.mpv'):
+                self.cutter.mpvWidget.mpv.ontop = False
         self.show()
 
     @staticmethod
@@ -253,10 +247,8 @@ class MainWindow(QMainWindow):
 
     @pyqtSlot(str)
     def errorHandler(self, msg: str) -> None:
-        QMessageBox.critical(self, 'An error occurred', '%s<br/>Please try again or use a valid media file.' % msg,
-                             QMessageBox.Ok)
+        QMessageBox.critical(self, 'An error occurred', msg, QMessageBox.Ok)
         logging.error(msg)
-        self.cutter.initMediaControls(False)
 
     def contextMenuEvent(self, event: QContextMenuEvent) -> None:
         if event.reason() == QContextMenuEvent.Mouse:
@@ -283,8 +275,8 @@ class MainWindow(QMainWindow):
         event.accept()
         if hasattr(self, 'cutter'):
             self.save_settings()
-            if hasattr(self.cutter, 'mediaPlayer'):
-                self.cutter.mediaPlayer.quit()
+            if hasattr(self.cutter, 'mpvWidget.mpv'):
+                self.cutter.mpvWidget.mpv.quit()
                 self.cutter.mpvWidget.deleteLater()
         qApp.quit()
 
@@ -299,6 +291,8 @@ def main():
     if hasattr(Qt, 'AA_ShareOpenGLContexts'):
         QApplication.setAttribute(Qt.AA_ShareOpenGLContexts, True)
 
+    QApplication.setAttribute(Qt.AA_DontCheckOpenGLContextThreadAffinity, True)
+
     app = QApplication(sys.argv)
     app.setApplicationName('VidCutter')
     app.setApplicationVersion(MainWindow.get_version())
@@ -312,7 +306,6 @@ def main():
             QProcess.startDetached('"%s"' % qApp.applicationFilePath())
         else:
             os.execl(sys.executable, sys.executable, *sys.argv)
-
     sys.exit(exit_code)
 
 if __name__ == '__main__':

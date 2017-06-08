@@ -1,15 +1,19 @@
-import logging
-import platform
 import locale
+import logging
+import sys
+
 from ctypes import (CDLL, POINTER, RTLD_GLOBAL, addressof, cast, c_int,
                     c_ulong, c_void_p, c_char_p, c_ulonglong, c_double,
                     py_object, pointer)
 from ctypes.util import find_library
+
 from .types import (MpvHandle, ErrorCode, Format, MpvEvent, EventID,
                     MpvNode, WakeupCallback, NodeBuilder, SubApi,
                     MpvOpenGLCbContext, OpenGlCbUpdateFn,
                     OpenGlCbGetProcAddrFn)
 from .exceptions import MpvError, LibraryNotLoadedError
+
+
 log = logging.getLogger(__name__)
 
 
@@ -27,7 +31,6 @@ def _wakeup(ctx):
 
 
 class LibMPV(object):
-
     def __init__(self, name=None):
         self.backend = None
         self._wakeup_callback_function = None
@@ -45,16 +48,13 @@ class LibMPV(object):
 
     def load_library(self, name=None):
         locale.setlocale(locale.LC_NUMERIC, 'C')
-        if name is not None:
-            self.backend = CDLL(name)
+        sharedlib = find_library(name if name is not None
+                                 else ('mpv-1.dll' if sys.platform == 'win32' else 'mpv'))
+        # hack for AppImage portable apps to work in Linux
+        if sharedlib is None and sys.platform.startswith('linux'):
+            self.backend = CDLL('libmpv.so.1')
         else:
-            if platform.system() == 'Windows':
-                self.backend = CDLL('mpv-1.dll')
-            else:
-                self.backend = CDLL(find_library('mpv'))
-                # hack for AppImage portable apps to work in Linux
-                if self.backend is None:
-                    self.backend = CDLL('libmpv.so.1')
+            self.backend = CDLL(sharedlib)
 
     def initialize(self):
         self.backend.mpv_client_api_version.restype = c_ulong

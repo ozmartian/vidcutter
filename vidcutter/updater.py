@@ -56,6 +56,7 @@ class Updater(QWidget):
             return
         if os.getenv('DEBUG', False):
             self.log_request(reply)
+        # noinspection PyTypeChecker
         jsonobj = json.loads(str(reply.readAll(), 'utf-8'))
         reply.deleteLater()
         latest = parse_version(jsonobj.get('tag_name'))
@@ -148,7 +149,9 @@ class UpdaterMsgBox(QDialog):
         else:
             buttons = QDialogButtonBox(QDialogButtonBox.Ok)
             buttons.accepted.connect(self.close)
-        contentLabel = QLabel(content, self.parent, wordWrap=True, textFormat=Qt.RichText)
+        contentLabel = QLabel(content, self.parent)
+        contentLabel.setWordWra(True)
+        contentLabel.setTextFormat(Qt.RichText)
         layout = QVBoxLayout()
         layout.addWidget(contentLabel)
         layout.addWidget(buttons)

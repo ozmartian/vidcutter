@@ -25,6 +25,7 @@
 import logging
 import os
 import re
+import subprocess
 import shlex
 import sys
 from distutils.spawn import find_executable
@@ -36,6 +37,16 @@ from PyQt5.QtWidgets import QMessageBox
 
 
 class VideoService(QObject):
+    utils = {
+        'nt': {
+            'ffmpeg': ['ffmpeg.exe'],
+            'mediainfo': ['MediaInfo.exe']
+        },
+        'posix': {
+            'ffmpeg': ['ffmpeg', 'ffmpeg2.8', 'avconv'],
+            'mediainfo': ['mediainfo']
+        }
+    }
 
     class ThumbSize(Enum):
         INDEX = QSize(100, 70)
@@ -45,65 +56,65 @@ class VideoService(QObject):
         super(VideoService, self).__init__(parent)
         self.parent = parent
         self.logger = logging.getLogger(__name__)
-        if sys.platform == 'win32':
-            self.backend = os.path.join(self.getAppPath(), 'bin', 'ffmpeg.exe')
-            self.mediainfo = os.path.join(self.getAppPath(), 'bin', 'MediaInfo.exe')
-            if not os.path.exists(self.backend):
-                self.backend = find_executable('ffmpeg.exe')
-            if not os.path.exists(self.mediainfo):
-                self.mediainfo = find_executable('MediaInfo.exe')
+        self.backend, self.mediainfo = self.initBackends()
+        if self.backend is not None:
+            self.initProc()
+            if os.getenv('DEBUG', False):
+                self.logger.info('backend: "%s"  mediainfo: "%s"' % (self.backend, self.mediainfo))
         else:
-            self.backend = os.path.join(self.getAppPath(), 'bin', 'ffmpeg')
-            self.mediainfo = os.path.join(self.getAppPath(), 'bin', 'mediainfo')
-            if not os.path.exists(self.backend):
-                for exe in ('ffmpeg', 'ffmpeg2.8', 'avconv'):
-                    exe_path = find_executable(exe)
-                    if exe_path is not None:
-                        self.backend = exe_path
-                        break
-            if not os.path.exists(self.mediainfo):
-                self.mediainfo = find_executable('mediainfo')
-        # if os.getenv('DEBUG', False):
-        #     self.logger.info('VideoService: backend = "%s"\tmediainfo = "%s"' % (self.backend, self.mediainfo))
-        self.initProc()
+            self.parent.errorOccurred.emit()
+
+    @staticmethod
+    def initBackends() -> tuple:
+        backend, mediainfo = None, None
+        for exe in VideoService.utils.get(os.name).get('ffmpeg'):
+            backend = find_executable(exe)
+            if backend is not None:
+                break
+        for exe in VideoService.utils.get(os.name).get('mediainfo'):
+            mediainfo = find_executable(exe)
+            if mediainfo is not None:
+                break
+        return backend, mediainfo
 
     def initProc(self) -> None:
-        self.proc = QProcess(self.parent)
+        self.proc = QProcess(self)
+        self.proc.errorOccurred.connect(self.cmdError)
         env = QProcessEnvironment.systemEnvironment()
         self.proc.setProcessEnvironment(env)
         self.proc.setWorkingDirectory(self.getAppPath())
-        if hasattr(self.proc, 'errorOccurred'):
-            self.proc.errorOccurred.connect(self.cmdError)
 
-    def capture(self, source: str, frametime: str, thumbsize: ThumbSize = ThumbSize.INDEX) -> QPixmap:
-        img, capres = None, QPixmap()
-        try:
-            img = QTemporaryFile(os.path.join(QDir.tempPath(), 'XXXXXX.jpg'))
-            if img.open():
-                imagecap = img.fileName()
-                size = thumbsize.value
-                args = '-ss %s -i "%s" -vframes 1 -s %ix%i -y %s' % (frametime, source, size.width(), size.height(),
-                                                                     imagecap)
-                if self.cmdExec(self.backend, args):
-                    capres = QPixmap(imagecap, 'JPG')
-        finally:
-            del img
+    @staticmethod
+    def capture(source: str, frametime: str, thumbsize: ThumbSize = ThumbSize.INDEX) -> QPixmap:
+        capres = QPixmap()
+        img = QTemporaryFile(os.path.join(QDir.tempPath(), 'XXXXXX.jpg'))
+        if img.open():
+            imagecap = img.fileName()
+            size = thumbsize.value
+            args = 'ffmpeg -ss %s -i "%s" -vframes 1 -s %ix%i -v 16 -y "%s"' % (frametime, source, size.width(),
+                                                                                size.height(), imagecap)
+            retcode = subprocess.call(shlex.split(args))
+            # if self.cmdExec(self.backend, args):
+            if retcode == 0:
+                capres = QPixmap(imagecap, 'JPG')
         return capres
 
     def cut(self, source: str, output: str, frametime: str, duration: str, allstreams: bool = True) -> bool:
         if allstreams:
-            args = '-i "%s" -ss %s -t %s -vcodec copy -acodec copy -scodec copy -map 0 -y "%s"' \
+            args = '-i "%s" -ss %s -t %s -vcodec copy -acodec copy -scodec copy -map 0 -v 16 -y "%s"' \
                    % (source, frametime, duration, QDir.fromNativeSeparators(output))
         else:
-            args = '-i "%s" -ss %s -t %s -vcodec copy -acodec copy -y "%s"' \
+            args = '-i "%s" -ss %s -t %s -vcodec copy -acodec copy -v 16 -y "%s"' \
                    % (source, frametime, duration, QDir.fromNativeSeparators(output))
         return self.cmdExec(self.backend, args)
 
     def join(self, filelist: str, output: str, allstreams: bool = True) -> bool:
         if allstreams:
-            args = '-f concat -safe 0 -i "%s" -c copy -map 0 -y "%s"' % (filelist, QDir.fromNativeSeparators(output))
+            args = '-f concat -safe 0 -i "%s" -c copy -map 0 -v 16 -y "%s"' % (filelist,
+                                                                               QDir.fromNativeSeparators(output))
         else:
-            args = '-f concat -safe 0 -i "%s" -c copy -y "%s"' % (filelist, QDir.fromNativeSeparators(output))
+            args = '-f concat -safe 0 -i "%s" -c copy -v 16 -y "%s"' % (filelist,
+                                                                        QDir.fromNativeSeparators(output))
         return self.cmdExec(self.backend, args)
 
     def streamcount(self, source: str, stream_type: str = 'audio') -> int:
@@ -127,8 +138,8 @@ class VideoService(QObject):
     #     }
 
     def cmdExec(self, cmd: str, args: str = None, output: bool = False):
-        if os.getenv('DEBUG', False):
-            self.logger.info('\nVideoService cmdExec: "%s %s"' % (cmd, args if args is not None else ''))
+        # if os.getenv('DEBUG', False):
+        #     self.logger.info('"%s %s"' % (cmd, args if args is not None else ''))
         if self.proc.state() == QProcess.NotRunning:
             self.proc.setProcessChannelMode(QProcess.SeparateChannels if cmd == self.mediainfo
                                             else QProcess.MergedChannels)
@@ -143,12 +154,13 @@ class VideoService(QObject):
     @pyqtSlot(QProcess.ProcessError)
     def cmdError(self, error: QProcess.ProcessError) -> None:
         if error != QProcess.Crashed:
-            QMessageBox.critical(self.parent.parent, '',
+            QMessageBox.critical(self.parent, '',
                                  '<h4>%s Error:</h4>' % self.backend +
                                  '<p>%s</p>' % self.proc.errorString(), buttons=QMessageBox.Close)
 
     @staticmethod
     def getAppPath() -> str:
         if getattr(sys, 'frozen', False):
+            # noinspection PyProtectedMember
             return sys._MEIPASS
         return QFileInfo(__file__).absolutePath()

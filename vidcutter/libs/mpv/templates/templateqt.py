@@ -2,26 +2,23 @@ import logging
 
 from PyQt5.QtCore import QThread, QObject, pyqtSignal, pyqtSlot
 
-import vidcutter.libs.mpv.api as mpv
-import vidcutter.libs.mpv.events as events
-import vidcutter.libs.mpv.types as types
-
+import vidcutter.libs.mpv as mpv
 from .base import AbstractTemplate
 
 log = logging.getLogger(__name__)
 
 
 class EventWorker(QObject):
-    mpv_event = pyqtSignal(events.Event)
+    mpv_event = pyqtSignal(mpv.types.Event)
     finished = pyqtSignal()
 
     def wait_event(self, mpv_instance):
         log.debug('Event loop: starting.')
         while mpv_instance.handle:
             event = mpv_instance.wait_event(-1)
-            if event.event_id == types.EventID.NONE:
+            if event.event_id == mpv.EventID.NONE:
                 log.debug('Event loop: None event.')
-            elif event.event_id == types.EventID.SHUTDOWN:
+            elif event.event_id == mpv.EventID.SHUTDOWN:
                 log.debug('Event loop: Shutdown event.')
                 self.mpv_event.emit(event)
                 break
@@ -62,12 +59,17 @@ class MpvTemplatePyQt(QObject, AbstractTemplate, mpv.Mpv):
     """
     _wakeup = pyqtSignal(mpv.Mpv)
     shutdown = pyqtSignal()
+    libmpvError = pyqtSignal(Exception)
 
-    def __init__(self, options=None, observe=None, log_level=types.LogLevel.INFO,
+    def __init__(self, options=None, observe=None, log_level=mpv.LogLevel.INFO,
                  log_handler=None, parent=None, **kwargs):
         QObject.__init__(self, parent)
         AbstractTemplate.__init__(self)
-        mpv.Mpv.__init__(self, options=options, **kwargs)
+
+        try:
+            mpv.Mpv.__init__(self, options=options, **kwargs)
+        except (mpv.ApiVersionError, mpv.LibraryNotLoadedError) as ex:
+            self.libmpvError.emit(ex)
 
         if observe is not None:
             for prop in observe:
@@ -126,11 +128,11 @@ class MpvTemplatePyQt(QObject, AbstractTemplate, mpv.Mpv):
     def set_volume(self, val):
         """
         Args:
-            val (float) [0, 100]: volume percentage as a float.
+            val (float) [0, 130]: volume percentage as a float.
 
         """
         if not self.handle:
             return
-        if val < 0 or val > 100:
-            raise ValueError('Must be in range [0, 100]')
+        if val < 0 or val > 130:
+            raise ValueError('Must be in range [0, 130]')
         self.volume = val

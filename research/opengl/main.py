@@ -3,11 +3,12 @@
 
 import locale
 import signal
+import shlex
 import sys
 
-from PyQt5.QtCore import pyqtSlot, Qt
-from PyQt5.QtWidgets import (QApplication, QFileDialog, QHBoxLayout, QMainWindow, QPushButton, QSizePolicy, QSlider,
-                             QVBoxLayout, QWidget)
+from PyQt5.QtCore import pyqtSlot, Qt, QProcess, QTemporaryFile
+from PyQt5.QtWidgets import (QApplication, QFileDialog, QHBoxLayout, QMainWindow, QMessageBox, QPushButton, QSizePolicy,
+                             QSlider, QVBoxLayout, QWidget)
 
 from mpvwidget import MpvWidget
 
@@ -25,12 +26,16 @@ class MainWindow(QMainWindow):
         m_openBtn = QPushButton('Open')
         self.m_playBtn = QPushButton('Play')
         self.m_playBtn.setDisabled(True)
+        self.m_testBtn = QPushButton('Test')
+        self.m_testBtn.setDisabled(True)
+        self.m_testBtn.clicked.connect(self.test)
         hb = QHBoxLayout()
         hb.addStretch(1)
         hb.addWidget(m_openBtn)
         hb.addSpacing(10)
         hb.addWidget(self.m_playBtn)
         hb.addStretch(1)
+        hb.addWidget(self.m_testBtn)
         vb = QVBoxLayout()
         vb.addWidget(self.m_mpv)
         vb.addWidget(self.m_slider)
@@ -46,12 +51,27 @@ class MainWindow(QMainWindow):
         self.m_playBtn.clicked.connect(self.pause)
 
     @pyqtSlot()
+    def test(self):
+        success = False
+        tempfile = QTemporaryFile('/tmp/XXXXXX.jpg')
+        proc = QProcess(self)
+        if tempfile.open() and proc.state() == QProcess.NotRunning:
+            args = '-ss %s -i "%s" -vframes 1 -s %ix%i -y %s' % ('00:00:30', self.file, 50, 38, tempfile.fileName())
+            proc.start('ffmpeg', shlex.split(args))
+            proc.waitForFinished(-1)
+            if proc.exitStatus() == QProcess.NormalExit and proc.exitCode() == 0:
+                success = True
+        msg = 'Process was successful' if success else 'Process was a failure'
+        QMessageBox.information(self, 'Test result', '%s\n\n%s' % (msg, tempfile.fileName()))
+
+    @pyqtSlot()
     def open(self):
-        file, _ = QFileDialog.getOpenFileName(self.widget, 'Open a video')
-        if len(file):
-            self.m_mpv.mpv.play(file)
+        self.file, _ = QFileDialog.getOpenFileName(self.widget, 'Open a video')
+        if len(self.file):
+            self.m_mpv.mpv.play(self.file)
             self.m_slider.setEnabled(True)
             self.m_playBtn.setEnabled(True)
+            self.m_testBtn.setEnabled(True)
 
     @pyqtSlot()
     def pause(self):

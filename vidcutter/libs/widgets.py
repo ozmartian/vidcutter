@@ -22,9 +22,12 @@
 #
 #######################################################################
 
-from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QTime
-from PyQt5.QtWidgets import (QAbstractSpinBox, QDialog, QGridLayout, QHBoxLayout, QLabel, QProgressBar, QSpinBox,
-                             QStyle, QStyleFactory, QTimeEdit, QWidget)
+import os
+
+from PyQt5.QtCore import pyqtSignal, pyqtSlot, QFileInfo, Qt, QTime, QUrl
+from PyQt5.QtGui import QDesktopServices, QIcon
+from PyQt5.QtWidgets import (QAbstractSpinBox, QDialog, QGridLayout, QHBoxLayout, QLabel, QMessageBox, QProgressBar,
+                             QSpinBox, QStyle, QStyleFactory, QTimeEdit, QWidget)
 
 
 class TimeCounter(QWidget):
@@ -185,3 +188,85 @@ class VCProgressBar(QDialog):
 
     def setValue(self, val: int) -> None:
         self._progress.setValue(val)
+
+
+class CompletionMessageBox(QMessageBox):
+    def __init__(self, parent=None):
+        super(CompletionMessageBox, self).__init__(parent)
+        self.parent = parent
+        self.theme = self.parent.theme
+        self.initIcons()
+        self.setWindowFlags(Qt.Dialog | Qt.WindowCloseButtonHint)
+        self.setWindowTitle('Operation complete')
+        self.setMinimumWidth(600)
+        self.setTextFormat(Qt.RichText)
+        self.setObjectName('genericdialog2')
+        self.setIconPixmap(self.parent.thumbsupIcon.pixmap(150, 144))
+        self.pencolor = '#C681D5' if self.theme == 'dark' else '#642C68'
+        self.setText('''
+    <style>
+        h1 {
+            color: %s;
+            font-family: "Futura LT", sans-serif;
+            font-weight: 400;
+        }
+        table.info {
+            margin: 6px;
+            margin-top: 15px;
+            padding: 4px 15px;
+        }
+        td.label {
+            font-size: 15px;
+            font-weight: bold;
+            text-align: right;
+            color: %s;
+        }
+        td.value { font-size: 15px; }
+    </style>
+    <h1>Your media is ready!</h1>
+    <table class="info" cellpadding="2" cellspacing="0" width="400">
+        <tr>
+            <td class="label"><b>File:</b></td>
+            <td class="value" nowrap>%s</td>
+        </tr>
+        <tr>
+            <td class="label"><b>Size:</b></td>
+            <td class="value">%s</td>
+        </tr>
+        <tr>
+            <td class="label"><b>Length:</b></td>
+            <td class="value">%s</td>
+        </tr>
+    </table><br/>''' % (self.pencolor, self.pencolor, os.path.basename(self.parent.finalFilename),
+                        self.parent.sizeof_fmt(int(QFileInfo(self.parent.finalFilename).size())),
+                        self.parent.delta2QTime(self.parent.totalRuntime).toString(self.parent.timeformat)))
+        self.btn_play = self.addButton('Play', self.ResetRole)
+        self.btn_play.setIcon(self.icon_play)
+        self.btn_play.clicked.connect(lambda: self.openResult(False))
+        self.btn_open = self.addButton('Open', self.ResetRole)
+        self.btn_open.setIcon(self.icon_open)
+        self.btn_open.clicked.connect(lambda: self.openResult(True))
+        self.btn_exit = self.addButton('Exit', self.AcceptRole)
+        self.btn_exit.setIcon(self.icon_exit)
+        self.btn_exit.clicked.connect(self.parent.close)
+        btn_restart = self.addButton('Restart', self.AcceptRole)
+        btn_restart.setIcon(self.icon_restart)
+        btn_restart.clicked.connect(self.parent.parent.reboot)
+        btn_continue = self.addButton('Continue', self.AcceptRole)
+        btn_continue.setIcon(self.icon_continue)
+        btn_continue.clicked.connect(self.close)
+        self.setDefaultButton(btn_continue)
+        self.setEscapeButton(btn_continue)
+
+    def initIcons(self) -> None:
+        self.icon_play = QIcon(':/images/%s/complete-play.png' % self.theme)
+        self.icon_open = QIcon(':/images/%s/complete-open.png' % self.theme)
+        self.icon_restart = QIcon(':/images/%s/complete-restart.png' % self.theme)
+        self.icon_exit = QIcon(':/images/%s/complete-exit.png' % self.theme)
+        self.icon_continue = QIcon(':/images/%s/complete-continue.png' % self.theme)
+
+    @pyqtSlot(bool)
+    def openResult(self, pathonly: bool = False) -> None:
+        if len(self.parent.finalFilename) and os.path.exists(self.parent.finalFilename):
+            target = self.parent.finalFilename if not pathonly else os.path.dirname(self.parent.finalFilename)
+            QDesktopServices.openUrl(QUrl.fromLocalFile(target))

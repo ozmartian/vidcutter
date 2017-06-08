@@ -31,34 +31,25 @@ from datetime import timedelta
 
 from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTextStream,
                           QTime, QUrl)
-from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent,
-                         QMouseEvent, QMovie, QPixmap)
+from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMouseEvent, QMovie,
+                         QPixmap)
 from PyQt5.QtWidgets import (QAction, QActionGroup, qApp, QApplication, QDialogButtonBox, QDoubleSpinBox, QFileDialog,
                              QGroupBox, QHBoxLayout, QLabel, QListWidgetItem, QMenu, QMessageBox, QPushButton,
                              QSizePolicy, QSlider, QStyleFactory, QVBoxLayout, QWidget, QWidgetAction)
 
-
-from vidcutter.libs.mpvwidget import mpvWidget
-from vidcutter.libs.videoservice import VideoService
-from vidcutter.libs.widgets import FrameCounter, TimeCounter, VCProgressBar
-
 from vidcutter.about import About
 from vidcutter.updater import Updater
-# from vidcutter.videoframe import VideoFrame
 from vidcutter.videoinfo import VideoInfo
 from vidcutter.videolist import VideoList
 from vidcutter.videoslider import VideoSlider, VideoSliderWidget
 from vidcutter.videostyles import VideoStyles
 from vidcutter.videotoolbar import VideoToolBar
-import vidcutter.resources
 
-try:
-    # import vidcutter.libs.mpv as mpv
-    import vidcutter.libs.mpv.templates
-except OSError:
-    libmpv_error = True
-else:
-    libmpv_error = False
+from vidcutter.libs.mpvwidget import mpvWidget
+from vidcutter.libs.videoservice import VideoService
+from vidcutter.libs.widgets import CompletionMessageBox, FrameCounter, TimeCounter, VCProgressBar
+
+import vidcutter.resources
 
 
 class VideoCutter(QWidget):
@@ -71,193 +62,194 @@ class VideoCutter(QWidget):
         self.theme = self.parent.theme
         self.settings = self.parent.settings
         self.init_theme()
-        if self.checkMPV():
-            self.mediaPlayer = None
-            self.videoService = VideoService(self)
-            self.updater = Updater(self)
-            self.latest_release_url = 'https://github.com/ozmartian/vidcutter/releases/latest'
-            self.ffmpeg_installer = {
-                'win32': {
-                    64: 'https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-latest-win64-static.7z',
-                    32: 'https://ffmpeg.zeranoe.com/builds/win32/static/ffmpeg-latest-win32-static.7z'
-                },
-                'darwin': {
-                    64: 'http://evermeet.cx/pub/ffmpeg/snapshots',
-                    32: 'http://evermeet.cx/pub/ffmpeg/snapshots'
-                },
-                'linux': {
-                    64: 'https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-64bit-static.tar.xz',
-                    32: 'https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-32bit-static.tar.xz'
-                }
+
+        self.videoService = VideoService(self)
+        self.updater = Updater(self)
+
+        self.latest_release_url = 'https://github.com/ozmartian/vidcutter/releases/latest'
+        self.ffmpeg_installer = {
+            'win32': {
+                64: 'https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-latest-win64-static.7z',
+                32: 'https://ffmpeg.zeranoe.com/builds/win32/static/ffmpeg-latest-win32-static.7z'
+            },
+            'darwin': {
+                64: 'http://evermeet.cx/pub/ffmpeg/snapshots',
+                32: 'http://evermeet.cx/pub/ffmpeg/snapshots'
+            },
+            'linux': {
+                64: 'https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-64bit-static.tar.xz',
+                32: 'https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-32bit-static.tar.xz'
             }
-            self.clipTimes = []
-            self.inCut = False
-            self.timeformat = 'hh:mm:ss.zzz'
-            self.runtimeformat = 'hh:mm:ss'
-            self.finalFilename = ''
-            self.totalRuntime = 0
-            self.frameRate = 0
-            self.notifyInterval = 1000
-            self.currentMedia, self.mediaAvailable, self.mpvError = None, False, False
+        }
 
-            self.nativeDialogs = self.settings.value('nativeDialogs', True, type=bool)
-            self.keepClips = self.settings.value('keepClips', False, type=bool)
-            self.timelineThumbs = self.settings.value('timelineThumbs', True, type=bool)
-            self.hardwareDecoding = self.settings.value('hwdec', 'auto', type=str) == 'auto'
-            self.enableOSD = self.settings.value('enableOSD', True, type=bool)
+        self.clipTimes = []
+        self.inCut = False
+        self.timeformat = 'hh:mm:ss.zzz'
+        self.runtimeformat = 'hh:mm:ss'
+        self.finalFilename = ''
+        self.totalRuntime = 0
+        self.frameRate = 0
+        self.notifyInterval = 1000
+        self.currentMedia, self.mediaAvailable, self.mpvError = None, False, False
 
-            self.edlblock_re = re.compile(r'(\d+(?:\.?\d+)?)\s(\d+(?:\.?\d+)?)\s([01])')
+        self.nativeDialogs = self.settings.value('nativeDialogs', True, type=bool)
+        self.keepClips = self.settings.value('keepClips', False, type=bool)
+        self.timelineThumbs = self.settings.value('timelineThumbs', True, type=bool)
+        self.hardwareDecoding = self.settings.value('hwdec', 'auto', type=str) == 'auto'
+        self.enableOSD = self.settings.value('enableOSD', True, type=bool)
 
-            self.level1_spinner, self.level2_spinner = QDoubleSpinBox(self), QDoubleSpinBox(self)
+        self.edlblock_re = re.compile(r'(\d+(?:\.?\d+)?)\s(\d+(?:\.?\d+)?)\s([01])')
 
-            self.initIcons()
-            self.initActions()
-            self.toolbar = VideoToolBar(self)
-            self.initToolbar()
+        self.level1_spinner, self.level2_spinner = QDoubleSpinBox(self), QDoubleSpinBox(self)
 
-            self.appMenu, self.cliplistMenu = QMenu(self), QMenu(self)
-            self.initMenus()
+        self.initIcons()
+        self.initActions()
+        self.toolbar = VideoToolBar(self)
+        self.initToolbar()
 
-            self.seekSlider = VideoSlider(self)
-            self.seekSlider.sliderMoved.connect(self.setPosition)
-            self.sliderWidget = VideoSliderWidget(self, self.seekSlider)
+        self.appMenu, self.cliplistMenu = QMenu(self), QMenu(self)
+        self.initMenus()
 
-            self.initNoVideo()
+        self.seekSlider = VideoSlider(self)
+        self.seekSlider.sliderMoved.connect(self.setPosition)
+        self.sliderWidget = VideoSliderWidget(self, self.seekSlider)
 
-            self.cliplist = VideoList(self)
-            self.cliplist.customContextMenuRequested.connect(self.itemMenu)
-            self.cliplist.itemClicked.connect(self.positionAtClip)
-            self.cliplist.model().rowsMoved.connect(self.syncClipList)
+        self.initNoVideo()
 
-            listHeader = QLabel(self)
-            listHeader.setPixmap(QPixmap(':/images/%s/clipindex.png' % self.theme, 'PNG'))
-            listHeader.setAlignment(Qt.AlignCenter)
-            listHeader.setObjectName('listHeader')
+        self.cliplist = VideoList(self)
+        self.cliplist.customContextMenuRequested.connect(self.itemMenu)
+        self.cliplist.itemClicked.connect(self.positionAtClip)
+        self.cliplist.model().rowsMoved.connect(self.syncClipList)
 
-            self.runtimeLabel = QLabel('<div align="right">00:00:00</div>', self)
-            self.runtimeLabel.setObjectName('runtimeLabel')
+        listHeader = QLabel(self)
+        listHeader.setPixmap(QPixmap(':/images/%s/clipindex.png' % self.theme, 'PNG'))
+        listHeader.setAlignment(Qt.AlignCenter)
+        listHeader.setObjectName('listHeader')
 
-            self.clipindexLayout = QVBoxLayout()
-            self.clipindexLayout.setSpacing(0)
-            self.clipindexLayout.setContentsMargins(0, 0, 0, 0)
-            self.clipindexLayout.addWidget(listHeader)
-            self.clipindexLayout.addWidget(self.cliplist)
-            self.clipindexLayout.addWidget(self.runtimeLabel)
+        self.runtimeLabel = QLabel('<div align="right">00:00:00</div>', self)
+        self.runtimeLabel.setObjectName('runtimeLabel')
 
-            self.videoLayout = QHBoxLayout()
-            self.videoLayout.setContentsMargins(0, 0, 0, 0)
-            self.videoLayout.addWidget(self.novideoWidget)
-            self.videoLayout.addSpacing(10)
-            self.videoLayout.addLayout(self.clipindexLayout)
+        self.clipindexLayout = QVBoxLayout()
+        self.clipindexLayout.setSpacing(0)
+        self.clipindexLayout.setContentsMargins(0, 0, 0, 0)
+        self.clipindexLayout.addWidget(listHeader)
+        self.clipindexLayout.addWidget(self.cliplist)
+        self.clipindexLayout.addWidget(self.runtimeLabel)
 
-            self.timeCounter = TimeCounter(self)
-            self.timeCounter.timeChanged.connect(lambda newtime: self.setPosition(newtime.msecsSinceStartOfDay()))
-            self.frameCounter = FrameCounter(self)
-            self.frameCounter.setReadOnly(True)
+        self.videoLayout = QHBoxLayout()
+        self.videoLayout.setContentsMargins(0, 0, 0, 0)
+        self.videoLayout.addWidget(self.novideoWidget)
+        self.videoLayout.addSpacing(10)
+        self.videoLayout.addLayout(self.clipindexLayout)
 
-            countersLayout = QHBoxLayout()
-            countersLayout.setContentsMargins(0, 0, 0, 0)
-            countersLayout.addStretch(1)
-            countersLayout.addWidget(QLabel('TIME:', objectName='tcLabel'))
-            countersLayout.addWidget(self.timeCounter)
-            countersLayout.addStretch(1)
-            countersLayout.addWidget(QLabel('FRAME:', objectName='fcLabel'))
-            countersLayout.addWidget(self.frameCounter)
-            countersLayout.addStretch(1)
+        self.timeCounter = TimeCounter(self)
+        self.timeCounter.timeChanged.connect(lambda newtime: self.setPosition(newtime.msecsSinceStartOfDay()))
+        self.frameCounter = FrameCounter(self)
+        self.frameCounter.setReadOnly(True)
 
-            countersWidget = QWidget(self)
-            countersWidget.setObjectName('counterwidgets')
-            countersWidget.setContentsMargins(0, 0, 0, 0)
-            countersWidget.setLayout(countersLayout)
-            countersWidget.setMaximumHeight(28)
+        countersLayout = QHBoxLayout()
+        countersLayout.setContentsMargins(0, 0, 0, 0)
+        countersLayout.addStretch(1)
+        countersLayout.addWidget(QLabel('TIME:', objectName='tcLabel'))
+        countersLayout.addWidget(self.timeCounter)
+        countersLayout.addStretch(1)
+        countersLayout.addWidget(QLabel('FRAME:', objectName='fcLabel'))
+        countersLayout.addWidget(self.frameCounter)
+        countersLayout.addStretch(1)
 
-            self.initMPV()
+        countersWidget = QWidget(self)
+        countersWidget.setObjectName('counterwidgets')
+        countersWidget.setContentsMargins(0, 0, 0, 0)
+        countersWidget.setLayout(countersLayout)
+        countersWidget.setMaximumHeight(28)
 
-            videoplayerLayout = QVBoxLayout()
-            videoplayerLayout.setSpacing(0)
-            videoplayerLayout.setContentsMargins(0, 0, 0, 0)
-            videoplayerLayout.addWidget(self.mpvWidget)
-            videoplayerLayout.addWidget(countersWidget)
+        self.initMPV()
 
-            self.videoplayerWidget = QWidget(self)
-            self.videoplayerWidget.setVisible(False)
-            self.videoplayerWidget.setObjectName('videoplayer')
-            self.videoplayerWidget.setLayout(videoplayerLayout)
+        videoplayerLayout = QVBoxLayout()
+        videoplayerLayout.setSpacing(0)
+        videoplayerLayout.setContentsMargins(0, 0, 0, 0)
+        videoplayerLayout.addWidget(self.mpvWidget)
+        videoplayerLayout.addWidget(countersWidget)
 
-            # noinspection PyArgumentList
-            self.thumbnailsButton = QPushButton(icon=self.thumbnailsIcon, flat=True, iconSize=QSize(16, 16),
-                                                statusTip='Show timeline thumbnails', cursor=Qt.PointingHandCursor,
-                                                toggled=self.seekSlider.toggleThumbnails, checkable=True,
-                                                objectName='thumbnailsButton')
-            if self.timelineThumbs:
-                self.thumbnailsButton.setChecked(True)
+        self.videoplayerWidget = QWidget(self)
+        self.videoplayerWidget.setVisible(False)
+        self.videoplayerWidget.setObjectName('videoplayer')
+        self.videoplayerWidget.setLayout(videoplayerLayout)
 
-            # noinspection PyArgumentList
-            self.osdButton = QPushButton(icon=self.osdIcon, flat=True, iconSize=QSize(16, 16), checkable=True,
-                                         statusTip='Toggle on-screen-display', cursor=Qt.PointingHandCursor,
-                                         toggled=self.toggleOSD, objectName='osdButton')
-            if self.enableOSD:
-                self.osdButton.setChecked(True)
+        # noinspection PyArgumentList
+        self.thumbnailsButton = QPushButton(icon=self.thumbnailsIcon, flat=True, iconSize=QSize(16, 16),
+                                            statusTip='Show timeline thumbnails', cursor=Qt.PointingHandCursor,
+                                            toggled=self.toggleThumbs, checkable=True,
+                                            objectName='thumbnailsButton')
+        if self.timelineThumbs:
+            self.thumbnailsButton.setChecked(True)
 
-            if sys.platform == 'darwin':
-                self.thumbnailsButton.setStyle(QStyleFactory.create('fusion'))
-                self.osdButton.setStyle(QStyleFactory.create('fusion'))
+        # noinspection PyArgumentList
+        self.osdButton = QPushButton(icon=self.osdIcon, flat=True, iconSize=QSize(16, 16), checkable=True,
+                                     statusTip='Toggle on-screen-display', cursor=Qt.PointingHandCursor,
+                                     toggled=self.toggleOSD, objectName='osdButton')
+        if self.enableOSD:
+            self.osdButton.setChecked(True)
 
-            # noinspection PyArgumentList
-            self.muteButton = QPushButton(objectName='muteButton', icon=self.unmuteIcon, flat=True, toolTip='Mute',
-                                          statusTip='Toggle audio mute', iconSize=QSize(16, 16), clicked=self.muteAudio,
-                                          cursor=Qt.PointingHandCursor)
+        self.thumbnailsButton.setStyle(QStyleFactory.create('fusion'))
+        self.osdButton.setStyle(QStyleFactory.create('fusion'))
 
-            # noinspection PyArgumentList
-            self.volumeSlider = QSlider(Qt.Horizontal, toolTip='Volume', statusTip='Adjust volume level',
-                                        cursor=Qt.PointingHandCursor, value=self.parent.startupvol, minimum=0,
-                                        maximum=130, sliderMoved=self.setVolume, objectName='volumeSlider')
+        # noinspection PyArgumentList
+        self.muteButton = QPushButton(objectName='muteButton', icon=self.unmuteIcon, flat=True, toolTip='Mute',
+                                      statusTip='Toggle audio mute', iconSize=QSize(16, 16), clicked=self.muteAudio,
+                                      cursor=Qt.PointingHandCursor)
 
-            # noinspection PyArgumentList
-            self.menuButton = QPushButton(self, toolTip='Menu', cursor=Qt.PointingHandCursor, flat=True,
-                                          objectName='menuButton', statusTip='Click to view menu options')
-            self.menuButton.setFixedSize(QSize(40, 42))
-            self.menuButton.setMenu(self.appMenu)
+        # noinspection PyArgumentList
+        self.volumeSlider = QSlider(Qt.Horizontal, toolTip='Volume', statusTip='Adjust volume level',
+                                    cursor=Qt.PointingHandCursor, value=self.parent.startupvol, minimum=0,
+                                    maximum=130, sliderMoved=self.setVolume, objectName='volumeSlider')
 
-            self.seekSlider.initStyle()
+        # noinspection PyArgumentList
+        self.menuButton = QPushButton(self, toolTip='Menu', cursor=Qt.PointingHandCursor, flat=True,
+                                      objectName='menuButton', statusTip='Click to view menu options')
+        self.menuButton.setFixedSize(QSize(40, 42))
+        self.menuButton.setMenu(self.appMenu)
 
-            toolbarLayout = QHBoxLayout()
-            toolbarLayout.addWidget(self.toolbar)
-            toolbarLayout.setContentsMargins(0, 0, 0, 0)
+        self.seekSlider.initStyle()
 
-            toolbarGroup = QGroupBox()
-            toolbarGroup.setLayout(toolbarLayout)
-            toolbarGroup.setStyleSheet('border: 0;')
+        toolbarLayout = QHBoxLayout()
+        toolbarLayout.addWidget(self.toolbar)
+        toolbarLayout.setContentsMargins(0, 0, 0, 0)
 
-            controlsLayout = QHBoxLayout()
-            controlsLayout.addSpacing(10)
-            controlsLayout.addWidget(self.thumbnailsButton)
-            controlsLayout.addWidget(self.osdButton)
-            controlsLayout.addStretch(1)
-            controlsLayout.addWidget(toolbarGroup)
-            controlsLayout.addStretch(1)
-            controlsLayout.addWidget(self.muteButton)
-            controlsLayout.addSpacing(5)
-            controlsLayout.addWidget(self.volumeSlider)
-            controlsLayout.addSpacing(20)
-            controlsLayout.addWidget(self.menuButton)
-            controlsLayout.addSpacing(10)
+        toolbarGroup = QGroupBox()
+        toolbarGroup.setLayout(toolbarLayout)
+        toolbarGroup.setStyleSheet('border: 0;')
 
-            layout = QVBoxLayout(spacing=0)
-            layout.setContentsMargins(10, 10, 10, 0)
-            layout.addLayout(self.videoLayout)
-            layout.addWidget(self.sliderWidget)
-            layout.addSpacing(12)
-            layout.addLayout(controlsLayout)
+        controlsLayout = QHBoxLayout()
+        controlsLayout.addSpacing(10)
+        controlsLayout.addWidget(self.thumbnailsButton)
+        controlsLayout.addSpacing(5)
+        controlsLayout.addWidget(self.osdButton)
+        controlsLayout.addStretch(1)
+        controlsLayout.addWidget(toolbarGroup)
+        controlsLayout.addStretch(1)
+        controlsLayout.addWidget(self.muteButton)
+        controlsLayout.addSpacing(5)
+        controlsLayout.addWidget(self.volumeSlider)
+        controlsLayout.addSpacing(20)
+        controlsLayout.addWidget(self.menuButton)
+        controlsLayout.addSpacing(10)
 
-            self.setLayout(layout)
+        layout = QVBoxLayout(spacing=0)
+        layout.setContentsMargins(10, 10, 10, 0)
+        layout.addLayout(self.videoLayout)
+        layout.addWidget(self.sliderWidget)
+        layout.addSpacing(12)
+        layout.addLayout(controlsLayout)
 
-    def checkMPV(self) -> bool:
-        if not libmpv_error:
-            return True
+        self.setLayout(layout)
+
+    @pyqtSlot(Exception)
+    def on_mpvError(self, error: Exception = None) -> None:
         pencolor1 = '#C681D5' if self.theme == 'dark' else '#642C68'
         pencolor2 = '#FFF' if self.theme == 'dark' else '#222'
-        mbox = QMessageBox(self, objectName='genericdialog')
+        mbox = QMessageBox(self)
+        mbox.setObjectName('genericdialog')
         mbox.setWindowFlags(Qt.Dialog | Qt.WindowCloseButtonHint)
         mbox.setIconPixmap(QIcon(':/images/mpv.png').pixmap(128, 128))
         mbox.setWindowTitle('Missing libmpv library...')
@@ -303,21 +295,24 @@ class VideoCutter(QWidget):
             self.logger.critical(log_msg)
             sys.stderr.write(log_msg)
             if loglevel == 'fatal' or 'file format' in message:
-                self.errorOccurred.emit(message)
+                self.errorOccurred.emit('{0}<br/>Please try again or use a valid media file.'.format(message))
+                self.initMediaControls(False)
         else:
             self.logger.info(log_msg)
 
     def initMPV(self) -> None:
         self.mpvWidget = mpvWidget(self)
-        self.mediaPlayer = self.mpvWidget.mpv
-        # self.mediaPlayer.log_handler = self.logMPV
-        self.mediaPlayer.volume = self.parent.startupvol
-        self.mediaPlayer.keepaspect = self.keepRatioAction.isChecked()
-        self.mediaPlayer.hwdec = ('auto' if self.hardwareDecodingAction.isChecked() else 'no')
-        self.mediaPlayer.durationChanged.connect(self.on_durationChanged)
-        self.mediaPlayer.positionChanged.connect(self.on_positionChanged)
+        self.mpvWidget.mpv = self.mpvWidget.mpv
+        self.mpvWidget.mpv.log_handler = self.logMPV
+        self.mpvWidget.mpv.volume = self.parent.startupvol
+        self.mpvWidget.mpv.keepaspect = self.keepRatioAction.isChecked()
+        self.mpvWidget.mpv.hwdec = ('auto' if self.hardwareDecodingAction.isChecked() else 'no')
+        self.mpvWidget.mpv.durationChanged.connect(self.on_durationChanged)
+        self.mpvWidget.mpv.durationChanged.connect(self.seekSlider.initTimeline, Qt.DirectConnection)
+        self.mpvWidget.mpv.positionChanged.connect(self.on_positionChanged)
+        self.mpvWidget.mpv.libmpvError.connect(self.on_mpvError)
         if os.getenv('DEBUG', False):
-            self.mediaPlayer.msg_level = 'all=v'
+            self.mpvWidget.mpv.msg_level = 'all=v'
 
     def initNoVideo(self) -> None:
         self.novideoWidget = QWidget(self)
@@ -368,11 +363,6 @@ class VideoCutter(QWidget):
         self.removeIcon = QIcon(':/images/remove.png')
         self.removeAllIcon = QIcon(':/images/remove-all.png')
         self.successIcon = QIcon(':/images/thumbsup.png')
-        self.completePlayIcon = QIcon(':/images/%s/complete-play.png' % self.theme)
-        self.completeOpenIcon = QIcon(':/images/%s/complete-open.png' % self.theme)
-        self.completeRestartIcon = QIcon(':/images/%s/complete-restart.png' % self.theme)
-        self.completeExitIcon = QIcon(':/images/%s/complete-exit.png' % self.theme)
-        self.completeContinueIcon = QIcon(':/images/%s/complete-continue.png' % self.theme)
         self.openProjectIcon = QIcon(':/images/open.png')
         self.saveProjectIcon = QIcon(':/images/save.png')
         self.mediaInfoIcon = QIcon(':/images/info.png')
@@ -768,10 +758,10 @@ class VideoCutter(QWidget):
             self.novideoWidget.deleteLater()
             self.videoplayerWidget.show()
             self.mediaAvailable = True
-        self.mediaPlayer.play(self.currentMedia)
+        self.mpvWidget.mpv.play(self.currentMedia)
 
     def playMedia(self) -> None:
-        if self.mediaPlayer.pause:
+        if self.mpvWidget.mpv.pause:
             self.playAction.setVisible(False)
             self.pauseAction.setVisible(True)
         else:
@@ -779,13 +769,13 @@ class VideoCutter(QWidget):
             self.pauseAction.setVisible(False)
         self.timeCounter.clearFocus()
         self.frameCounter.clearFocus()
-        self.mediaPlayer.pause = not self.mediaPlayer.pause
+        self.mpvWidget.mpv.pause = not self.mpvWidget.mpv.pause
 
     def showText(self, text: str, duration: int = 3, override: bool = False) -> None:
         if not self.osdButton.isChecked() and not override:
             return
         if len(text.strip()) and self.mediaAvailable:
-            self.mediaPlayer.show_text(text, duration * 1000, 0)
+            self.mpvWidget.mpv.show_text(text, duration * 1000, 0)
 
     def initMediaControls(self, flag: bool = True) -> None:
         self.playAction.setEnabled(flag)
@@ -808,25 +798,23 @@ class VideoCutter(QWidget):
 
     @pyqtSlot(int)
     def setPosition(self, position: int) -> None:
-        if not self.mediaPlayer.seeking and position >= self.seekSlider.restrictValue:
-            self.mediaPlayer.seek(self.delta2QTime(position).toString(self.timeformat), method='absolute+exact')
+        if not self.mpvWidget.mpv.seeking and position >= self.seekSlider.restrictValue:
+            self.mpvWidget.mpv.seek_absolute(position)
 
     @pyqtSlot(float, int)
-    def on_positionChanged(self, progress: float, frame_num: int) -> None:
+    def on_positionChanged(self, progress: float, frame: int) -> None:
         progress *= 1000
         if self.seekSlider.restrictValue < progress or progress == 0:
-            self.seekSlider.setValue(progress)
-            self.timeCounter.setTime(self.delta2QTime(progress).toString(self.timeformat))
-            self.frameCounter.setFrame(frame_num)
+            self.seekSlider.setValue(int(progress))
+            self.timeCounter.setTime(self.delta2QTime(int(progress)).toString(self.timeformat))
+            self.frameCounter.setFrame(frame)
 
     @pyqtSlot(float, int)
-    def on_durationChanged(self, duration: float, frame_count: int) -> None:
+    def on_durationChanged(self, duration: float, frames: int) -> None:
         duration *= 1000
-        self.seekSlider.setRange(0, duration)
-        self.timeCounter.setDuration(self.delta2QTime(duration).toString(self.timeformat))
-        self.frameCounter.setFrameCount(frame_count)
-        if self.thumbnailsButton.isChecked():
-            self.seekSlider.timeline(self.currentMedia)
+        self.seekSlider.setRange(0, int(duration))
+        self.timeCounter.setDuration(self.delta2QTime(int(duration)).toString(self.timeformat))
+        self.frameCounter.setFrameCount(frames)
 
     @pyqtSlot(QListWidgetItem)
     def positionAtClip(self, item: QListWidgetItem) -> None:
@@ -834,7 +822,7 @@ class VideoCutter(QWidget):
         self.setPosition(self.clipTimes[row][0].msecsSinceStartOfDay())
 
     def muteAudio(self) -> None:
-        if self.mediaPlayer.mute:
+        if self.mpvWidget.mpv.mute:
             self.showText('Audio enabled')
             self.muteButton.setIcon(self.unmuteIcon)
             self.muteButton.setToolTip('Mute')
@@ -842,15 +830,26 @@ class VideoCutter(QWidget):
             self.showText('Audio disabled')
             self.muteButton.setIcon(self.muteIcon)
             self.muteButton.setToolTip('Unmute')
-        self.mediaPlayer.mute = not self.mediaPlayer.mute
+        self.mpvWidget.mpv.mute = not self.mpvWidget.mpv.mute
 
-    def setVolume(self, volume: int) -> None:
+    def setVolume(self, vol: float) -> None:
         if self.mediaAvailable:
-            self.mediaPlayer.volume = volume
+            self.mpvWidget.mpv.set_volume(vol)
+
+    @pyqtSlot(bool)
+    def toggleThumbs(self, checked: bool) -> None:
+        if self.seekSlider.showThumbs and self.seekSlider.thumbnailsOn and not checked:
+            self.showText('Timeline thumbnails disabled')
+            self.seekSlider.removeThumbs()
+            self.seekSlider.initStyle()
+        elif self.currentMedia is not None:
+            self.showText('Timeline thumbnails enabled')
+            self.seekSlider.initTimeline()
+        self.seekSlider.showThumbs = checked
 
     @pyqtSlot(bool)
     def setAspect(self, checked: bool = True) -> None:
-        self.mediaPlayer.keep_aspect(checked)
+        self.mpvWidget.mpv.set_option('keepaspect', checked)
         self.zoomAction.setEnabled(checked)
 
     @pyqtSlot(QAction)
@@ -863,12 +862,12 @@ class VideoCutter(QWidget):
             level = 1
         else:
             level = 0
-        self.mediaPlayer.video_zoom = level
+        self.mpvWidget.mpv.video_zoom = level
 
     def clipStart(self) -> None:
-        if os.getenv('DEBUG', False):
-            print('cut start position: %s' % self.seekSlider.value())
-        starttime = self.delta2QTime(self.mediaPlayer.playback_time * 1000)
+        # if os.getenv('DEBUG', False):
+        #     sys.stdout.write('cut start position: %s' % self.seekSlider.value())
+        starttime = self.delta2QTime(self.mpvWidget.mpv.playback_time * 1000)
         self.clipTimes.append([starttime, '', self.captureImage()])
         self.timeCounter.setMinimum(starttime.toString(self.timeformat))
         self.frameCounter.lockMinimum()
@@ -880,10 +879,10 @@ class VideoCutter(QWidget):
         self.renderTimes()
 
     def clipEnd(self) -> None:
-        if os.getenv('DEBUG', False):
-            print('cut end position: %s' % self.seekSlider.value())
+        # if os.getenv('DEBUG', False):
+        #     sys.stdout.write('cut end position: %s' % self.seekSlider.value())
         item = self.clipTimes[len(self.clipTimes) - 1]
-        endtime = self.delta2QTime(self.mediaPlayer.playback_time * 1000)
+        endtime = self.delta2QTime(self.mpvWidget.mpv.playback_time * 1000)
         if endtime.__lt__(item[0]):
             QMessageBox.critical(self.parent, 'Invalid END Time',
                                  'The clip end time must come AFTER it\'s start time. Please try again.')
@@ -951,16 +950,13 @@ class VideoCutter(QWidget):
         else:
             return '%f' % (td.days * 86400 + td.seconds + td.microseconds / 1000000.)
 
-    def captureImage(self, frametime=None) -> QPixmap:
-        frametime = self.delta2QTime((self.mediaPlayer.playback_time * 1000) if frametime is None else frametime)
-        imagecap = self.videoService.capture(self.currentMedia, frametime.toString(self.timeformat))
-        if isinstance(imagecap, QPixmap):
-            return imagecap
+    def captureImage(self, frametime: QTime = None) -> QPixmap:
+        frametime = self.delta2QTime(self.seekSlider.value() if frametime is None else frametime)
+        return self.videoService.capture(self.currentMedia, frametime.toString(self.timeformat))
 
     def cutVideo(self) -> bool:
         clips = len(self.clipTimes)
         filename, filelist = '', []
-
         source_file, source_ext = os.path.splitext(self.currentMedia)
         if clips > 0:
             self.finalFilename, _ = QFileDialog.getSaveFileName(parent=self.parent, caption='Save video',
@@ -985,17 +981,13 @@ class VideoCutter(QWidget):
                 duration = self.delta2QTime(clip[0].msecsTo(clip[1])).toString(self.timeformat)
                 filename = '%s_%s%s' % (file, '{0:0>2}'.format(index), ext)
                 filelist.append(filename)
-                self.videoService.cut(source='%s%s' % (source_file, source_ext),
-                                      output=filename,
-                                      frametime=clip[0].toString(self.timeformat),
-                                      duration=duration,
+                self.videoService.cut(source='%s%s' % (source_file, source_ext), output=filename,
+                                      frametime=clip[0].toString(self.timeformat), duration=duration,
                                       allstreams=True)
                 if not QFile(filename).size():
                     self.logger.info('cut resulted in 0 length file, trying again without all stream mapping')
-                    self.videoService.cut(source='%s%s' % (source_file, source_ext),
-                                          output=filename,
-                                          frametime=clip[0].toString(self.timeformat),
-                                          duration=duration,
+                    self.videoService.cut(source='%s%s' % (source_file, source_ext), output=filename,
+                                          frametime=clip[0].toString(self.timeformat), duration=duration,
                                           allstreams=False)
                 index += 1
             if len(filelist) > 1:
@@ -1016,7 +1008,8 @@ class VideoCutter(QWidget):
             self.progress.close()
             self.progress.deleteLater()
             qApp.restoreOverrideCursor()
-            self.complete()
+            completed = CompletionMessageBox(self)
+            completed.exec_()
             return True
         return False
 
@@ -1080,70 +1073,6 @@ class VideoCutter(QWidget):
             qApp.processEvents()
             time.sleep(1)
 
-    def complete(self) -> None:
-        info = QFileInfo(self.finalFilename)
-        # noinspection PyArgumentList
-        mbox = QMessageBox(windowTitle='Operation complete', minimumWidth=600, textFormat=Qt.RichText,
-                           objectName='genericdialog2')
-        mbox.setWindowFlags(Qt.Widget | Qt.WindowCloseButtonHint)
-        mbox.setIconPixmap(self.thumbsupIcon.pixmap(150, 144))
-        pencolor = '#C681D5' if self.theme == 'dark' else '#642C68'
-        mbox.setText('''
-    <style>
-        h1 {
-            color: %s;
-            font-family: "Futura LT", sans-serif;
-            font-weight: 400;
-        }
-        table.info {
-            margin: 6px;
-            margin-top: 15px;
-            padding: 4px 15px;
-        }
-        td.label {
-            font-size: 15px;
-            font-weight: bold;
-            text-align: right;
-            color: %s;
-        }
-        td.value { font-size: 15px; }
-    </style>
-    <h1>Your media is ready!</h1>
-    <table class="info" cellpadding="2" cellspacing="0" width="400">
-        <tr>
-            <td class="label"><b>File:</b></td>
-            <td class="value" nowrap>%s</td>
-        </tr>
-        <tr>
-            <td class="label"><b>Size:</b></td>
-            <td class="value">%s</td>
-        </tr>
-        <tr>
-            <td class="label"><b>Length:</b></td>
-            <td class="value">%s</td>
-        </tr>
-    </table><br/>''' % (pencolor, pencolor, os.path.basename(self.finalFilename),
-                        self.sizeof_fmt(int(info.size())),
-                        self.delta2QTime(self.totalRuntime).toString(self.timeformat)))
-        btn_play = mbox.addButton('Play', QMessageBox.ResetRole)
-        btn_play.setIcon(self.completePlayIcon)
-        btn_play.clicked.connect(self.openResult)
-        btn_open = mbox.addButton('Open', QMessageBox.ResetRole)
-        btn_open.setIcon(self.completeOpenIcon)
-        btn_open.clicked.connect(lambda: self.openResult(pathonly=True))
-        btn_exit = mbox.addButton('Exit', QMessageBox.AcceptRole)
-        btn_exit.setIcon(self.completeExitIcon)
-        btn_exit.clicked.connect(self.close)
-        btn_restart = mbox.addButton('Restart', QMessageBox.AcceptRole)
-        btn_restart.setIcon(self.completeRestartIcon)
-        btn_restart.clicked.connect(self.parent.reboot)
-        btn_continue = mbox.addButton('Continue', QMessageBox.AcceptRole)
-        btn_continue.setIcon(self.completeContinueIcon)
-        btn_continue.clicked.connect(mbox.close)
-        mbox.setDefaultButton(btn_continue)
-        mbox.setEscapeButton(btn_continue)
-        mbox.exec_()
-
     @staticmethod
     def sizeof_fmt(num: float, suffix: chr = 'B') -> str:
         for unit in ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z']:
@@ -1152,12 +1081,6 @@ class VideoCutter(QWidget):
             num /= 1024.0
         return "%.1f %s%s" % (num, 'Y', suffix)
 
-    @pyqtSlot(bool)
-    def openResult(self, pathonly: bool = False) -> None:
-        if len(self.finalFilename) and os.path.exists(self.finalFilename):
-            target = self.finalFilename if not pathonly else os.path.dirname(self.finalFilename)
-            QDesktopServices.openUrl(QUrl.fromLocalFile(target))
-
     @staticmethod
     @pyqtSlot()
     def viewLogs() -> None:
@@ -1165,7 +1088,7 @@ class VideoCutter(QWidget):
 
     @pyqtSlot(bool)
     def switchDecoding(self, checked: bool = True) -> None:
-        self.mediaPlayer.hwdec = 'auto' if checked else 'no'
+        self.mpvWidget.mpv.hwdec = 'auto' if checked else 'no'
 
     @pyqtSlot(QAction)
     def switchTheme(self, action: QAction) -> None:
@@ -1251,21 +1174,21 @@ class VideoCutter(QWidget):
             return
         if self.mediaAvailable:
             if event.key() == Qt.Key_Left:
-                self.mediaPlayer.frame_back_step()
+                self.mpvWidget.mpv.frame_back_step()
             elif event.key() == Qt.Key_Down:
                 if qApp.queryKeyboardModifiers() == Qt.ShiftModifier:
-                    self.mediaPlayer.seek(-self.level2_spinner.value(), method='relative+exact')
+                    self.mpvWidget.mpv.seek_relative(-self.level2_spinner.value())
                 else:
-                    self.mediaPlayer.seek(-self.level1_spinner.value(), method='relative+exact')
+                    self.mpvWidget.mpv.seek_relative(-self.level1_spinner.value())
             elif event.key() == Qt.Key_Right:
-                self.mediaPlayer.frame_step()
+                self.mpvWidget.mpv.frame_step()
             elif event.key() == Qt.Key_Up:
                 if qApp.queryKeyboardModifiers() == Qt.ShiftModifier:
-                    self.mediaPlayer.seek(self.level2_spinner.value(), method='relative+exact')
+                    self.mpvWidget.mpv.seek_relative(self.level2_spinner.value())
                 else:
-                    self.mediaPlayer.seek(self.level1_spinner.value(), method='relative+exact')
+                    self.mpvWidget.mpv.seek_relative(self.level1_spinner.value())
             elif event.key() == Qt.Key_Home:
-                self.mediaPlayer.time_pos = 0
+                self.mpvWidget.mpv.time_pos = 0
             elif event.key() == Qt.Key_End:
                 self.setPosition(self.seekSlider.maximum() - 1)
             elif event.key() in (Qt.Key_Return, Qt.Key_Enter) and (

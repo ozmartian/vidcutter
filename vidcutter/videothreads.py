@@ -29,20 +29,18 @@ from vidcutter.libs.videoservice import VideoService
 
 
 class TimelineThumbsThread(QThread):
-    errorOccurred = pyqtSignal(str)
     completed = pyqtSignal(list)
 
     def __init__(self, source: str, index: list):
         QThread.__init__(self)
         self.source = source
         self.index = index
-        self.thumbs = list()
 
     def __del__(self) -> None:
         self.wait()
 
     def run(self) -> None:
-        service = VideoService()
+        thumbs = list()
         for frametime in self.index:
-            self.thumbs.append(service.capture(self.source, frametime, VideoService.ThumbSize.TIMELINE))
-        self.completed.emit(self.thumbs)
+            thumbs.append(VideoService.capture(self.source, frametime, VideoService.ThumbSize.TIMELINE))
+        self.completed.emit(thumbs)

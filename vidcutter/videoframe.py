@@ -37,5 +37,5 @@ class VideoFrame(QFrame):
 
     def eventFilter(self, obj: QObject, event: QEvent) -> bool:
         if self.parent.mediaAvailable and event.type() == QEvent.WinIdChange:
-            self.parent.mediaPlayer.wid = self.winId()
+            self.parent.mpvWidget.mpv.wid = self.winId()
         return super(VideoFrame, self).eventFilter(obj, event)

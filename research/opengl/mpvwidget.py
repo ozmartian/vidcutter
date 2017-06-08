@@ -22,8 +22,6 @@ def get_proc_address(ctx, proc):
 
 
 class MpvWidget(QOpenGLWidget):
-    updated = pyqtSignal()
-
     def __init__(self, parent=None):
         super(MpvWidget, self).__init__(parent)
         self.mpv = Mpv(
@@ -48,7 +46,6 @@ class MpvWidget(QOpenGLWidget):
         except:
             pass
         self.frameSwapped.connect(self.swapped, Qt.DirectConnection)
-        self.updated.connect(self.updateHandler, Qt.QueuedConnection)
 
     def __del__(self):
         self.makeCurrent()
@@ -62,14 +59,15 @@ class MpvWidget(QOpenGLWidget):
         self.mpv.opengl_draw(self.defaultFramebufferObject(), self.width(), -self.height())
 
     @pyqtSlot()
-    def swapped(self):
+    def swapped(self, update: bool = True):
         self.mpv.opengl_report_flip()
-        self.updated.emit()
+        if update:
+            self.updateHandler()
 
     @staticmethod
     def on_update(ctx):
         if isinstance(ctx, MpvWidget):
-            ctx.updated.emit()
+            ctx.updateHandler()
 
     @pyqtSlot()
     def updateHandler(self):
@@ -77,7 +75,7 @@ class MpvWidget(QOpenGLWidget):
             self.makeCurrent()
             self.paintGL()
             self.context().swapBuffers(self.context().surface())
-            self.swapped()
+            self.swapped(False)
             self.doneCurrent()
         else:
             self.update()

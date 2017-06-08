@@ -39,6 +39,12 @@ class SubApi(Enum):
     MPV_SUB_API_OPENGL_CB = 1  #:
 
 
+class ScreenshotFormat(Enum):
+    PNG = 0
+    JPG = 1
+    JPEG = 2
+
+
 class ErrorCode(Enum):
     """ For documentation on these, see ``libmpv/client.h`` """
     SUCCESS = 0  #:

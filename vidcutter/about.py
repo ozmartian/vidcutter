@@ -133,7 +133,7 @@ class AboutTab(BaseTab):
         self.parent = parent
         linebreak = '<br/>' if sys.platform == 'win32' else '&nbsp;&nbsp;&nbsp;'
         try:
-            ffmpeg_version = self.parent.parent.mediaPlayer.ffmpeg_version
+            ffmpeg_version = self.parent.parent.mpvWidget.mpv.ffmpeg_version
         except AttributeError:
             ffmpeg_version = '2.8.10'
         html = '''
@@ -174,7 +174,7 @@ class AboutTab(BaseTab):
         </td>
     </tr>
 </table>''' % ('#EA95FF' if self.parent.parent.theme == 'dark' else '#441D4E',
-               self.parent.parent.mediaPlayer.mpv_version.replace('mpv ', ''), linebreak,
+               self.parent.parent.mpvWidget.mpv.mpv_version.replace('mpv ', ''), linebreak,
                ffmpeg_version, sys.version.split(' ')[0], PYQT_VERSION_STR, SIP_VERSION_STR)
         self.setHtml(html)
 

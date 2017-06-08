@@ -45,12 +45,10 @@ def get_proc_address(ctx, name):
 
 
 class mpvWidget(QOpenGLWidget):
-    updated = pyqtSignal()
-
     def __init__(self, parent=None):
         super(mpvWidget, self).__init__(parent)
         self.mpv = mpv(
-            terminal=True,
+            parent=self,
             vo='opengl-cb',
             ytdl=False,
             pause=True,
@@ -73,16 +71,16 @@ class mpvWidget(QOpenGLWidget):
             video_sync='display-vdrop',
             audio_file_auto=False,
             quiet=True,
+            terminal=True,
             observe=['time-pos', 'duration'])
         self.mpv.get_opengl_api()
-        self.mpv.opengl_set_update_callback(mpvWidget.on_update)
+        self.mpv.opengl_set_update_callback(self.updateHandler)
         # ignore expection thrown by older versions of libmpv that do not implement the option
         try:
             self.mpv.set_option('opengl-hwdec-interop', 'auto')
         except:
             pass
-        self.frameSwapped.connect(self.swapped, Qt.DirectConnection)
-        self.updated.connect(self.updateHandler, Qt.QueuedConnection)
+        self.frameSwapped.connect(self.swapped)
 
     def __del__(self):
         self.makeCurrent()
@@ -96,22 +94,17 @@ class mpvWidget(QOpenGLWidget):
         self.mpv.opengl_draw(self.defaultFramebufferObject(), self.width(), -self.height())
 
     @pyqtSlot()
-    def swapped(self):
+    def swapped(self, do_update: bool = True):
         self.mpv.opengl_report_flip()
-        self.updated.emit()
+        if do_update:
+            self.updateHandler()
 
-    @staticmethod
-    def on_update(ctx):
-        if isinstance(ctx, mpvWidget):
-            ctx.updated.emit()
-
-    @pyqtSlot()
     def updateHandler(self):
         if self.window().isMinimized():
             self.makeCurrent()
             self.paintGL()
             self.context().swapBuffers(self.context().surface())
-            self.swapped()
+            self.swapped(False)
             self.doneCurrent()
         else:
             self.update()
@@ -120,9 +113,6 @@ class mpvWidget(QOpenGLWidget):
 class mpv(templateqt.MpvTemplatePyQt):
     durationChanged = pyqtSignal(float, int)
     positionChanged = pyqtSignal(float, int)
-
-    def __init__(self, parent=None, *arg, **kwargs):
-        super(mpv, self).__init__(parent, *arg, **kwargs)
 
     def on_property_change(self, event):
         if event.data is None:
