@@ -14,7 +14,7 @@ from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt
 from PyQt5.QtOpenGL import QGLContext
 from PyQt5.QtWidgets import QOpenGLWidget
 
-import mpv
+import vidcutter_demo.mpv as mpv
 
 
 def get_proc_address(proc):

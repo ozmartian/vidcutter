@@ -9,18 +9,18 @@ from setuptools.extension import Extension
 extensions = []
 using_cython = False
 
-if sys.platform != 'win32':
-    try:
-        # noinspection PyUnresolvedReferences
-        from Cython.Build import cythonize
-        extensions = cythonize([Extension('mpv', ['setup/mpv.pyx'], libraries=['mpv'])])
-        using_cython = True
-    except ImportError:
-        extensions = [Extension('mpv', ['setup/mpv.c'], libraries=['mpv'])]
+# if sys.platform != 'win32':
+try:
+    # noinspection PyUnresolvedReferences
+    from Cython.Build import cythonize
+    extensions = cythonize([Extension('vidcutter_demo.mpv', ['vidcutter_demo/pympv/mpv.pyx'], libraries=['mpv'])])
+    using_cython = True
+except ImportError:
+    extensions = [Extension('vidcutter_demo.mpv', ['vidcutter_demo/pympv/mpv.c'], libraries=['mpv'])]
 
 
 setup(
-    name='vidcutter.demo',
+    name='vidcutter_demo',
     version='1.0.0',
     description='Testing Cython install options',
     long_description='i am a long description',
@@ -28,9 +28,9 @@ setup(
     author_email='pete@ozmartians.com',
     url='http://vidcutter.ozmartians.com',
     license='GPLv3+',
-    packages=['.', 'setup'],
+    packages=['vidcutter_demo', 'vidcutter_demo.pympv'],
     setup_requires=['setuptools', 'Cython' if using_cython else ''],
-    entry_points={'gui_scripts': ['vidcutter.demo = main']},
+    entry_points={'gui_scripts': ['vidcutter_demo = vidcutter_demo.__main__:main']},
     ext_modules=extensions,
     keywords='vidcutter ffmpeg audiovideo mpv libmpv videoeditor video videoedit pyqt Qt5 multimedia',
     classifiers=[

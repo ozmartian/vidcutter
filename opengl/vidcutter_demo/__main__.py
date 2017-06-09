@@ -5,6 +5,7 @@ import locale
 # import signal
 import shlex
 import sys
+from distutils.spawn import find_executable
 
 from PyQt5.QtCore import pyqtSlot, Qt, QProcess, QTemporaryFile
 from PyQt5.QtWidgets import (QApplication, QDialogButtonBox, QFileDialog, QMainWindow, QMessageBox, QPushButton,
@@ -14,7 +15,7 @@ from PyQt5.QtWidgets import (QApplication, QDialogButtonBox, QFileDialog, QMainW
 # signal.signal(signal.SIGTERM, signal.SIG_DFL)
 
 # noinspection PyUnresolvedReferences
-from mpvwidget import mpvWidget
+from .mpvwidget import mpvWidget
 
 
 class MainWindow(QMainWindow):
@@ -73,12 +74,12 @@ class MainWindow(QMainWindow):
     @pyqtSlot()
     def test(self):
         success = False
-        tempfile = QTemporaryFile('/tmp/XXXXXX.jpg')
+        tempfile = QTemporaryFile('XXXXXX.jpg')
         proc = QProcess(self)
         if tempfile.open() and proc.state() == QProcess.NotRunning:
             args = '-ss %s -i "%s" -vframes 1 -s %ix%i -y %s' % ('00:00:30', self.currentMedia,
                                                                  50, 38, tempfile.fileName())
-            proc.start('ffmpeg', shlex.split(args))
+            proc.start(find_executable('ffmpeg'), shlex.split(args))
             proc.waitForFinished(-1)
             if proc.exitStatus() == QProcess.NormalExit and proc.exitCode() == 0:
                 success = True
@@ -104,10 +105,15 @@ class MainWindow(QMainWindow):
         self.m_mpv.mpv.set_property('pause', not paused)
 
 
-if __name__ == '__main__':
+
+def main():
     QApplication.setAttribute(Qt.AA_ShareOpenGLContexts, True)
     app = QApplication(sys.argv)
     locale.setlocale(locale.LC_NUMERIC, 'C')
     w = MainWindow()
     w.show()
     sys.exit(app.exec_())
+
+
+if __name__ == '__main__':
+    main()
