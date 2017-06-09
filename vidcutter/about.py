@@ -108,7 +108,7 @@ class About(QDialog):
     def get_size(mode: str = 'NORMAL') -> QSize:
         modes = {
             'LOW': QSize(450, 250),
-            'NORMAL': QSize(540, 460),
+            'NORMAL': QSize(600, 460),
             'HIGH': QSize(1080, 920)
         }
         return modes[mode]
@@ -166,10 +166,12 @@ class AboutTab(BaseTab):
             <p style="font-size:11px; margin-top:15px;">
                 This program is free software; you can redistribute it and/or
                 modify it under the terms of the GNU General Public License
-                version 3, or (at your option) any later version.
-                This software uses libraries from the <a href="https://mpv.io">mpv</a> and
+                version 3, or (at your option) any later version. This software uses code
+                produced by the <a href="https://mpv.io">mpv</a> and
                 <a href="https://www.ffmpeg.org">FFmpeg</a> projects under the
-                <a href="https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html">LGPLv2.1</a> license.
+                <a href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.html">GPLv2.0</a> and
+                <a href="https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html">LGPLv2.1</a>
+                licenses respectively.
             </p>
         </td>
     </tr>
@@ -195,36 +197,31 @@ class CreditsTab(BaseTab):
             <tr>
                 <td width="200">
                     <p>
+                        <a href="https://github.com/marcan/pympv">pympv</a>
+                        -
+                        GPLv3+
+                    </p>
+                    <p>
                         <a href="http://ffmpeg.org">FFmpeg</a>
                         -
                         GPLv2+
                     </p>
                     <p>
-                        <a href="http://mpv.io">mpv</a>
-                        -
-                        GPLv2+
-                    </p>
-                    <p>
-                        <a href="https://mpv.srsfckn.biz">libmpv</a>
+                        <a href="https://www.riverbankcomputing.com/software/pyqt">PyQt5</a>
                         -
                         GPLv3+
-                    </p>
-                    <p>
-                        <a href="https://github.com/jaseg/python-mpv">python-mpv</a>
-                        -
-                        AGPLv3
                     </p>
                 </td>
                 <td width="200">
                     <p>
+                        <a href="http://mpv.io">mpv (libmpv)</a>
+                        -
+                        GPLv2+
+                    </p>
+                    <p>
                         <a href="http://mediaarea.net/mediainfo">MediaInfo</a>
                         -
                         BSD-style
-                    </p>
-                    <p>
-                        <a href="https://www.riverbankcomputing.com/software/pyqt">PyQt5</a>
-                        -
-                        GPLv3+
                     </p>
                     <p>
                         <a href="https://www.qt.io">Qt5</a>

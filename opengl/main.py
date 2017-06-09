@@ -7,53 +7,24 @@ import shlex
 import sys
 
 from PyQt5.QtCore import pyqtSlot, Qt, QProcess, QTemporaryFile
-from PyQt5.QtWidgets import (QApplication, QFileDialog, QHBoxLayout, QMainWindow, QMessageBox, QPushButton, QSizePolicy,
-                             QSlider, QVBoxLayout, QWidget)
+from PyQt5.QtWidgets import (QApplication, QDialogButtonBox, QFileDialog, QMainWindow, QMessageBox, QPushButton,
+                             QSizePolicy, QSlider, QVBoxLayout, QWidget)
 
 # signal.signal(signal.SIGINT, signal.SIG_DFL)
 # signal.signal(signal.SIGTERM, signal.SIG_DFL)
 
+# noinspection PyUnresolvedReferences
 from mpvwidget import mpvWidget
 
 
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
-        self.m_mpv = self.initMPV()
-        self.m_mpv.setMinimumSize(800, 600)
-        self.m_slider = QSlider(Qt.Horizontal, self)
-        self.m_slider.setDisabled(True)
-        m_openBtn = QPushButton('Open')
-        self.m_playBtn = QPushButton('Play')
-        self.m_playBtn.setDisabled(True)
-        self.m_testBtn = QPushButton('Test')
-        self.m_testBtn.setDisabled(True)
-        hb = QHBoxLayout()
-        hb.addStretch(1)
-        hb.addWidget(m_openBtn)
-        hb.addSpacing(10)
-        hb.addWidget(self.m_playBtn)
-        hb.addStretch(1)
-        hb.addWidget(self.m_testBtn)
-        vb = QVBoxLayout()
-        vb.addWidget(self.m_mpv)
-        vb.addWidget(self.m_slider)
-        vb.addLayout(hb)
-        self.widget = QWidget(self)
-        self.widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        self.widget.setLayout(vb)
-        self.setCentralWidget(self.widget)
-        # self.m_mpv.mpv.positionChanged.connect(self.m_slider.setValue)
-        # self.m_mpv.mpv.durationChanged.connect(self.setSliderRange)
-        self.m_slider.sliderMoved.connect(self.seek)
-        m_openBtn.clicked.connect(self.open)
-        self.m_playBtn.clicked.connect(self.pause)
-        self.m_testBtn.clicked.connect(self.test)
+        self.currentMedia = None
 
-    @staticmethod
-    def initMPV():
-        return mpvWidget(
-            pause=True,
+        self.m_mpv = mpvWidget(
+            # pause=True,
+            parent=self,
             terminal=True,
             msg_level='all=v',
             vo='opengl-cb',
@@ -64,8 +35,40 @@ class MainWindow(QMainWindow):
             audio_file_auto=False,
             quiet=True,
             keep_open=True,
-            idle=True,
-            observe=['time-pos', 'duration'])
+            idle=True)
+
+        self.m_slider = QSlider(Qt.Horizontal, self)
+        self.m_slider.setDisabled(True)
+
+        self.m_openBtn = QPushButton('Open')
+        self.m_openBtn.setDefault(True)
+        self.m_playBtn = QPushButton('Play')
+        self.m_playBtn.setDisabled(True)
+        self.m_testBtn = QPushButton('Test')
+        self.m_testBtn.setDisabled(True)
+
+        self.buttons = QDialogButtonBox(Qt.Horizontal, self)
+        self.buttons.setCenterButtons(True)
+        self.buttons.addButton(self.m_openBtn, QDialogButtonBox.ActionRole)
+        self.buttons.addButton(self.m_playBtn, QDialogButtonBox.ActionRole)
+        self.buttons.addButton(self.m_testBtn, QDialogButtonBox.ActionRole)
+
+        vb = QVBoxLayout()
+        vb.addWidget(self.m_mpv)
+        vb.addWidget(self.m_slider)
+        vb.addWidget(self.buttons)
+
+        self.widget = QWidget(self)
+        self.widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.widget.setLayout(vb)
+        self.setCentralWidget(self.widget)
+
+        self.m_mpv.positionChanged.connect(self.m_slider.setValue)
+        self.m_mpv.durationChanged.connect(lambda val: self.m_slider.setRange(0, val))
+        self.m_slider.sliderMoved.connect(self.m_mpv.seek)
+        self.m_openBtn.clicked.connect(self.open)
+        self.m_playBtn.clicked.connect(self.pause)
+        self.m_testBtn.clicked.connect(self.test)
 
     @pyqtSlot()
     def test(self):
@@ -73,7 +76,8 @@ class MainWindow(QMainWindow):
         tempfile = QTemporaryFile('/tmp/XXXXXX.jpg')
         proc = QProcess(self)
         if tempfile.open() and proc.state() == QProcess.NotRunning:
-            args = '-ss %s -i "%s" -vframes 1 -s %ix%i -y %s' % ('00:00:30', self.file, 50, 38, tempfile.fileName())
+            args = '-ss %s -i "%s" -vframes 1 -s %ix%i -y %s' % ('00:00:30', self.currentMedia,
+                                                                 50, 38, tempfile.fileName())
             proc.start('ffmpeg', shlex.split(args))
             proc.waitForFinished(-1)
             if proc.exitStatus() == QProcess.NormalExit and proc.exitCode() == 0:
@@ -83,41 +87,21 @@ class MainWindow(QMainWindow):
 
     @pyqtSlot()
     def open(self):
-        self.file, _ = QFileDialog.getOpenFileName(self.widget, 'Open a video')
-        if len(self.file):
-            self.m_mpv.mpv.command('loadfile', self.file)
+        file, _ = QFileDialog.getOpenFileName(self.widget, 'Open a video')
+        if len(file):
+            self.currentMedia = file
             self.m_slider.setEnabled(True)
             self.m_playBtn.setEnabled(True)
+            self.m_playBtn.setDefault(True)
+            self.m_playBtn.setText('Pause')
             self.m_testBtn.setEnabled(True)
+            self.m_mpv.play(self.currentMedia)
 
     @pyqtSlot()
     def pause(self):
         paused = self.m_mpv.mpv.get_property('pause')
         self.m_playBtn.setText('Pause' if paused else 'Play')
         self.m_mpv.mpv.set_property('pause', not paused)
-
-    @pyqtSlot(int)
-    def seek(self, pos):
-        self.m_mpv.mpv.seek(pos, 'absolute+exact', async=True)
-
-    @pyqtSlot(int)
-    def setSliderRange(self, duration):
-        self.m_slider.setRange(0, duration)
-
-    def mouseDoubleClickEvent(self, event):
-        if self.m_mpv.window().isFullScreen():
-            self.m_mpv.window().showNormal()
-        else:
-            self.m_mpv.window().showFullScreen()
-        self.m_mpv.mpv.fullscreen = not self.m_mpv.mpv.fullscreen
-        event.accept()
-
-    def keyPressEvent(self, event):
-        if event.key() in (Qt.Key_Enter, Qt.Key_Return):
-            fs = not self.m_mpv.mpv.fullscreen
-            self.m_mpv.showFullScreen() if fs else self.m_mpv.showNormal()
-            self.m_mpv.mpv.fullscreen = fs
-        super(MainWindow, self).keyPressEvent(event)
 
 
 if __name__ == '__main__':
