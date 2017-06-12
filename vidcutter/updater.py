@@ -150,7 +150,7 @@ class UpdaterMsgBox(QDialog):
             buttons = QDialogButtonBox(QDialogButtonBox.Ok)
             buttons.accepted.connect(self.close)
         contentLabel = QLabel(content, self.parent)
-        contentLabel.setWordWrap(True)
+        contentLabel.setWordWrap (True)
         contentLabel.setTextFormat(Qt.RichText)
         layout = QVBoxLayout()
         layout.addWidget(contentLabel)
