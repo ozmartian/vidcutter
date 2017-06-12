@@ -901,7 +901,7 @@ class VideoCutter(QWidget):
         # if os.getenv('DEBUG', False):
         #     sys.stdout.write('cut start position: %s' % self.seekSlider.value())
         starttime = self.delta2QTime(self.seekSlider.value())
-        self.clipTimes.append([starttime, '', self.captureImage()])
+        self.clipTimes.append([starttime, '', self.captureImage(starttime)])
         self.timeCounter.setMinimum(starttime.toString(self.timeformat))
         self.frameCounter.lockMinimum()
         self.cutStartAction.setDisabled(True)
@@ -983,9 +983,8 @@ class VideoCutter(QWidget):
         else:
             return '%f' % (td.days * 86400 + td.seconds + td.microseconds / 1000000.)
 
-    def captureImage(self, frametime: QTime = None) -> QPixmap:
-        frametime = self.delta2QTime(self.seekSlider.value() if frametime is None else frametime)
-        return self.videoService.capture(self.currentMedia, frametime.toString(self.timeformat))
+    def captureImage(self, frametime: QTime) -> QPixmap:
+        return VideoService.capture(self.currentMedia, frametime.toString(self.timeformat))
 
     def cutVideo(self) -> bool:
         clips = len(self.clipTimes)
