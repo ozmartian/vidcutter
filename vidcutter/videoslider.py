@@ -27,11 +27,12 @@ import logging
 import sys
 
 from PyQt5.QtCore import QEvent, QObject, Qt, pyqtSlot
-from PyQt5.QtGui import (QColor, QKeyEvent, QMouseEvent, QPaintEvent, QPainter, QPainterPath, QPen, QResizeEvent,
-                         QTransform, QWheelEvent)
+from PyQt5.QtGui import (QColor, QKeyEvent, QMouseEvent, QPaintEvent, QPainter, QPainterPath, QPen, QPixmap,
+                         QResizeEvent, QTransform, QWheelEvent)
 from PyQt5.QtWidgets import (qApp, QGraphicsEffect, QHBoxLayout, QLabel, QSlider, QStyle, QStyleOptionSlider,
                              QStackedWidget, QStylePainter, QWidget, QSizePolicy, QStackedLayout)
 
+from vidcutter.videothreads import TimelineThumbsThread
 from vidcutter.libs.videoservice import VideoService
 
 
@@ -194,43 +195,38 @@ class VideoSlider(QSlider):
         self._regionSelected = -1
         self.update()
 
-    @pyqtSlot(float, int)
-    def initTimeline(self, duration: float = None, frames: int = None) -> None:
+    def initThumbs(self) -> None:
+        step = QStyle.sliderValueFromPosition(self.minimum(), self.maximum(),
+                                              VideoService.ThumbSize.TIMELINE.value.width(),
+                                              self.width() - self.offset)
+        index = list(range(self.minimum(), self.maximum(), step))
+        frametimes = list()
+        for msec in index:
+            frametimes.append(self.parent.delta2QTime(msec).toString(self.parent.timeformat))
         self.parent.sliderWidget.setLoader(True)
-        try:
-            # TODO: fix dodgy offset for more precise targetting on timeline
-            if duration is None:
-                duration = self.maximum()
-            else:
-                duration *= 1000
-            step = QStyle.sliderValueFromPosition(self.minimum(), int(duration),
-                                                  VideoService.ThumbSize.TIMELINE.value.width(),
-                                                  self.width() - self.offset)
-            # self.thumbsThread = TimelineThumbsThread(self.parent.currentMedia, frametimes)
-            # self.thumbsThread.completed.connect(self.buildTimeline)
-            # self.thumbsThread.start()
-            layout = QHBoxLayout()
-            layout.setSpacing(0)
-            layout.setContentsMargins(0, 0, 0, 0)
-            for msec in list(range(self.minimum(), int(duration), step)):
-                label = QLabel(self)
-                label.setStyleSheet('padding: 0; margin: -5px 0 0 0; background: transparent;')
-                label.setPixmap(VideoService.capture(self.parent.currentMedia,
-                                                     self.parent.delta2QTime(msec).toString(self.parent.timeformat),
-                                                     VideoService.ThumbSize.TIMELINE))
-                layout.addWidget(label)
-            thumbnails = QWidget(self)
-            thumbnails.setContentsMargins(8, 16, 8, 22)
-            thumbnails.setFixedSize(self.width(), self.height())
-            thumbnails.setLayout(layout)
-            self.removeThumbs()
-            self.parent.sliderWidget.addWidget(thumbnails)
-            self.thumbnailsOn = True
-            self.initStyle()
-            self.parent.sliderWidget.setLoader(False)
-        except:
-            self.logger.exception(msg='initTimeline error', exc_info=True)
-            self.parent.sliderWidget.setLoader(False)
+        self.thumbsThread = TimelineThumbsThread(self.parent.currentMedia, frametimes)
+        self.thumbsThread.completed.connect(self.buildTimeline)
+        self.thumbsThread.start()
+
+    @pyqtSlot(list)
+    def buildTimeline(self, thumbs: list) -> None:
+        layout = QHBoxLayout()
+        layout.setSpacing(0)
+        layout.setContentsMargins(0, 0, 0, 0)
+        for thumb in thumbs:
+            label = QLabel()
+            label.setStyleSheet('padding: 0; margin: -5px 0 0 0; background: transparent;')
+            label.setPixmap(thumb)
+            layout.addWidget(label)
+        thumbnails = QWidget(self)
+        thumbnails.setContentsMargins(8, 16, 8, 22)
+        thumbnails.setFixedSize(self.width(), self.height())
+        thumbnails.setLayout(layout)
+        self.removeThumbs()
+        self.parent.sliderWidget.addWidget(thumbnails)
+        self.thumbnailsOn = True
+        self.initStyle()
+        self.parent.sliderWidget.setLoader(False)
 
     def removeThumbs(self) -> None:
         if self.parent.sliderWidget.count() == 2:
@@ -244,21 +240,20 @@ class VideoSlider(QSlider):
         sys.stderr.write(error)
 
     def resizeEvent(self, event: QResizeEvent) -> None:
-        self.parent.renderTimes()
         if self.thumbnailsOn:
             if self.parent.sliderWidget.count() == 2:
                 thumbWidget = self.parent.sliderWidget.widget(1)
                 thumbWidget.hide()
             self.setStyleSheet(self._styles % ('#444', 'filmstrip', 'transparent', 0))
-            qApp.processEvents()
-            self.initTimeline()
+            self.initThumbs()
+        self.parent.renderTimes()
 
     def wheelEvent(self, event: QWheelEvent) -> None:
         if self.parent.mediaAvailable:
             if event.angleDelta().y() > 0:
-                self.parent.mpvWidget.mpv.frame_back_step()
+                self.parent.mpvWidget.frameBackStep()
             else:
-                self.parent.mpvWidget.mpv.frame_step()
+                self.parent.mpvWidget.frameStep()
             event.accept()
 
     def keyPressEvent(self, event: QKeyEvent) -> None:

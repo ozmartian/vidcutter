@@ -15,12 +15,13 @@ from PyQt5.QtWidgets import (QApplication, QDialogButtonBox, QFileDialog, QMainW
 # signal.signal(signal.SIGTERM, signal.SIG_DFL)
 
 # noinspection PyUnresolvedReferences
-from .mpvwidget import mpvWidget
+from mpvwidget import mpvWidget
 
 
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
+        self.setWindowTitle('VidCutter OpenGL Demo')
         self.currentMedia = None
 
         self.m_mpv = mpvWidget(
@@ -103,7 +104,6 @@ class MainWindow(QMainWindow):
         paused = self.m_mpv.mpv.get_property('pause')
         self.m_playBtn.setText('Pause' if paused else 'Play')
         self.m_mpv.mpv.set_property('pause', not paused)
-
 
 
 def main():

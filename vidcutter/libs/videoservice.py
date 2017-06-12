@@ -94,6 +94,8 @@ class VideoService(QObject):
             backend, _ = VideoService.initBackends()
             args = '%s -ss %s -i "%s" -vframes 1 -s %ix%i -v 16 -y "%s"' % (backend, frametime, source, size.width(),
                                                                             size.height(), imagecap)
+            if os.getenv('DEBUG', False):
+                sys.stdout.write(args)
             retcode = subprocess.call(shlex.split(args))
             if retcode == 0:
                 capres = QPixmap(imagecap, 'JPG')

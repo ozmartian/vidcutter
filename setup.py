@@ -31,6 +31,7 @@ import sys
 
 from distutils.spawn import find_executable
 from setuptools import setup
+from setuptools.extension import Extension
 
 
 def get_value(varname, filename='vidcutter/__init__.py'):
@@ -78,6 +79,16 @@ here = os.path.abspath(os.path.dirname(__file__))
 
 packager = get_value('packager')
 
+extensions = []
+if sys.platform != 'win32':
+    from Cython.Build import cythonize
+    extensions = cythonize([Extension(
+        'vidcutter.libs.mpv',
+        ['vidcutter/libs/pympv/mpv.pyx'],
+        libraries=['mpv'],
+        extra_compile_args=['-g0']
+    )])
+
 result = setup(
     name='vidcutter',
     version=get_value('version'),
@@ -88,18 +99,15 @@ result = setup(
     url='http://vidcutter.ozmartians.com',
     license='GPLv3+',
 
-    packages=[
-        'vidcutter',
-        'vidcutter.libs',
-        'vidcutter.libs.mpv',
-        'vidcutter.libs.mpv.templates'
-    ],
+    packages=['vidcutter', 'vidcutter.libs'],
 
-    setup_requires=['setuptools'],
+    setup_requires=['setuptools', 'Cython' if sys.platform != 'win32' else ''],
 
     install_requires=get_install_requires(),
 
     data_files=get_data_files(),
+
+    ext_modules=extensions,
 
     entry_points={'gui_scripts': ['vidcutter = vidcutter.__main__:main']},
 

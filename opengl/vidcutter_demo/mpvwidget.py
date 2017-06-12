@@ -14,7 +14,7 @@ from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt
 from PyQt5.QtOpenGL import QGLContext
 from PyQt5.QtWidgets import QOpenGLWidget
 
-import vidcutter_demo.mpv as mpv
+import mpv
 
 
 def get_proc_address(proc):
@@ -26,8 +26,8 @@ def get_proc_address(proc):
 
 
 class mpvWidget(QOpenGLWidget):
-    positionChanged = pyqtSignal(int)
-    durationChanged = pyqtSignal(int)
+    positionChanged = pyqtSignal(float, int)
+    durationChanged = pyqtSignal(float, int)
 
     def __init__(self, parent=None, **mpv_opts):
         super(mpvWidget, self).__init__(parent)
@@ -112,5 +112,5 @@ class mpvWidget(QOpenGLWidget):
         self.mpv.command('loadfile', file)
 
     @pyqtSlot(int)
-    def seek(self, pos):
-        self.mpv.command('seek', pos / 1000, 'absolute+exact')
+    def seek(self, pos, method='absolute+exact'):
+        self.mpv.command('seek', pos / 1000, method)

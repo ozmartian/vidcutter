@@ -26,3 +26,4 @@ D3DCompiler_*.dll
 d3dcompiler_*.dll
 MediaInfo.dll
 *.*.nupkg
+*.so

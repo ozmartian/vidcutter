@@ -55,6 +55,9 @@ import vidcutter.resources
 class VideoCutter(QWidget):
     errorOccurred = pyqtSignal(str)
 
+    timeformat = 'hh:mm:ss.zzz'
+    runtimeformat = 'hh:mm:ss'
+
     def __init__(self, parent: QWidget):
         super(VideoCutter, self).__init__(parent)
         self.logger = logging.getLogger(__name__)
@@ -84,8 +87,6 @@ class VideoCutter(QWidget):
 
         self.clipTimes = []
         self.inCut = False
-        self.timeformat = 'hh:mm:ss.zzz'
-        self.runtimeformat = 'hh:mm:ss'
         self.finalFilename = ''
         self.totalRuntime = 0
         self.frameRate = 0
@@ -150,9 +151,11 @@ class VideoCutter(QWidget):
         countersLayout = QHBoxLayout()
         countersLayout.setContentsMargins(0, 0, 0, 0)
         countersLayout.addStretch(1)
+        # noinspection PyArgumentList
         countersLayout.addWidget(QLabel('TIME:', objectName='tcLabel'))
         countersLayout.addWidget(self.timeCounter)
         countersLayout.addStretch(1)
+        # noinspection PyArgumentList
         countersLayout.addWidget(QLabel('FRAME:', objectName='fcLabel'))
         countersLayout.addWidget(self.frameCounter)
         countersLayout.addStretch(1)
@@ -235,7 +238,8 @@ class VideoCutter(QWidget):
         controlsLayout.addWidget(self.menuButton)
         controlsLayout.addSpacing(10)
 
-        layout = QVBoxLayout(spacing=0)
+        layout = QVBoxLayout()
+        layout.setSpacing(0)
         layout.setContentsMargins(10, 10, 10, 0)
         layout.addLayout(self.videoLayout)
         layout.addWidget(self.sliderWidget)
@@ -301,18 +305,44 @@ class VideoCutter(QWidget):
             self.logger.info(log_msg)
 
     def initMPV(self) -> None:
-        self.mpvWidget = mpvWidget(self)
-        self.mpvWidget.mpv = self.mpvWidget.mpv
-        self.mpvWidget.mpv.log_handler = self.logMPV
-        self.mpvWidget.mpv.volume = self.parent.startupvol
-        self.mpvWidget.mpv.keepaspect = self.keepRatioAction.isChecked()
-        self.mpvWidget.mpv.hwdec = ('auto' if self.hardwareDecodingAction.isChecked() else 'no')
-        self.mpvWidget.mpv.durationChanged.connect(self.on_durationChanged)
-        self.mpvWidget.mpv.durationChanged.connect(self.seekSlider.initTimeline, Qt.DirectConnection)
-        self.mpvWidget.mpv.positionChanged.connect(self.on_positionChanged)
-        self.mpvWidget.mpv.libmpvError.connect(self.on_mpvError)
+        self.mpvWidget = mpvWidget(
+            parent=self,
+            vo='opengl-cb',
+            ytdl=False,
+            pause=True,
+            keep_open=True,
+            idle=True,
+            osc=False,
+            osd_font='Futura LT',
+            osd_level=0,
+            osd_align_x='left',
+            osd_align_y='top',
+            cursor_autohide=False,
+            input_cursor=False,
+            input_default_bindings=False,
+            stop_playback_on_init_failure=False,
+            input_vo_keyboard=False,
+            sub_auto=False,
+            sid=False,
+            hr_seek=False,
+            hr_seek_framedrop=True,
+            video_sync='display-vdrop',
+            audio_file_auto=False,
+            quiet=True,
+            terminal=True,
+            ontop=self.parent.ontop,
+            volume=self.parent.startupvol,
+            keepaspect=self.keepRatioAction.isChecked(),
+            hwdec=('auto' if self.hardwareDecodingAction.isChecked() else 'no'))
+
+        self.mpvWidget.durationChanged.connect(self.on_durationChanged)
+        self.mpvWidget.positionChanged.connect(self.on_positionChanged)
+
+        # self.mpvWidget.mpv.log_handler = self.logMPV
+        # self.mpvWidget.mpv.libmpvError.connect(self.on_mpvError)
+
         if os.getenv('DEBUG', False):
-            self.mpvWidget.mpv.msg_level = 'all=v'
+            self.mpvWidget.mpv.set_property('msg-level', 'all=v')
 
     def initNoVideo(self) -> None:
         self.novideoWidget = QWidget(self)
@@ -759,10 +789,10 @@ class VideoCutter(QWidget):
             self.novideoWidget.deleteLater()
             self.videoplayerWidget.show()
             self.mediaAvailable = True
-        self.mpvWidget.mpv.play(self.currentMedia)
+        self.mpvWidget.play(self.currentMedia)
 
     def playMedia(self) -> None:
-        if self.mpvWidget.mpv.pause:
+        if self.mpvWidget.mpv.get_property('pause'):
             self.playAction.setVisible(False)
             self.pauseAction.setVisible(True)
         else:
@@ -770,13 +800,13 @@ class VideoCutter(QWidget):
             self.pauseAction.setVisible(False)
         self.timeCounter.clearFocus()
         self.frameCounter.clearFocus()
-        self.mpvWidget.mpv.pause = not self.mpvWidget.mpv.pause
+        self.mpvWidget.pause()
 
     def showText(self, text: str, duration: int = 3, override: bool = False) -> None:
         if not self.osdButton.isChecked() and not override:
             return
         if len(text.strip()) and self.mediaAvailable:
-            self.mpvWidget.mpv.show_text(text, duration * 1000, 0)
+            self.mpvWidget.showText(text, duration, 0)
 
     def initMediaControls(self, flag: bool = True) -> None:
         self.playAction.setEnabled(flag)
@@ -799,8 +829,8 @@ class VideoCutter(QWidget):
 
     @pyqtSlot(int)
     def setPosition(self, position: int) -> None:
-        if not self.mpvWidget.mpv.seeking and position >= self.seekSlider.restrictValue:
-            self.mpvWidget.mpv.seek_absolute(position)
+        if position >= self.seekSlider.restrictValue:
+            self.mpvWidget.seek(position / 1000)
 
     @pyqtSlot(float, int)
     def on_positionChanged(self, progress: float, frame: int) -> None:
@@ -816,6 +846,8 @@ class VideoCutter(QWidget):
         self.seekSlider.setRange(0, int(duration))
         self.timeCounter.setDuration(self.delta2QTime(int(duration)).toString(self.timeformat))
         self.frameCounter.setFrameCount(frames)
+        if self.thumbnailsButton.isChecked():
+            self.seekSlider.initThumbs()
 
     @pyqtSlot(QListWidgetItem)
     def positionAtClip(self, item: QListWidgetItem) -> None:
@@ -823,7 +855,7 @@ class VideoCutter(QWidget):
         self.setPosition(self.clipTimes[row][0].msecsSinceStartOfDay())
 
     def muteAudio(self) -> None:
-        if self.mpvWidget.mpv.mute:
+        if self.mpvWidget.mpv.get_property('mute'):
             self.showText('Audio enabled')
             self.muteButton.setIcon(self.unmuteIcon)
             self.muteButton.setToolTip('Mute')
@@ -831,11 +863,11 @@ class VideoCutter(QWidget):
             self.showText('Audio disabled')
             self.muteButton.setIcon(self.muteIcon)
             self.muteButton.setToolTip('Unmute')
-        self.mpvWidget.mpv.mute = not self.mpvWidget.mpv.mute
+        self.mpvWidget.mute()
 
-    def setVolume(self, vol: float) -> None:
+    def setVolume(self, vol: int) -> None:
         if self.mediaAvailable:
-            self.mpvWidget.mpv.set_volume(vol)
+            self.mpvWidget.volume(vol)
 
     @pyqtSlot(bool)
     def toggleThumbs(self, checked: bool) -> None:
@@ -845,7 +877,7 @@ class VideoCutter(QWidget):
             self.seekSlider.initStyle()
         elif self.currentMedia is not None:
             self.showText('Timeline thumbnails enabled')
-            self.seekSlider.initTimeline()
+            self.seekSlider.initThumbs()
         self.seekSlider.showThumbs = checked
 
     @pyqtSlot(bool)
@@ -863,12 +895,12 @@ class VideoCutter(QWidget):
             level = 1
         else:
             level = 0
-        self.mpvWidget.mpv.video_zoom = level
+        self.mpvWidget.mpv.set_property('video-zoom', level)
 
     def clipStart(self) -> None:
         # if os.getenv('DEBUG', False):
         #     sys.stdout.write('cut start position: %s' % self.seekSlider.value())
-        starttime = self.delta2QTime(self.mpvWidget.mpv.playback_time * 1000)
+        starttime = self.delta2QTime(self.mpvWidget.mpv.get_property('playback-time') * 1000)
         self.clipTimes.append([starttime, '', self.captureImage()])
         self.timeCounter.setMinimum(starttime.toString(self.timeformat))
         self.frameCounter.lockMinimum()
@@ -883,7 +915,7 @@ class VideoCutter(QWidget):
         # if os.getenv('DEBUG', False):
         #     sys.stdout.write('cut end position: %s' % self.seekSlider.value())
         item = self.clipTimes[len(self.clipTimes) - 1]
-        endtime = self.delta2QTime(self.mpvWidget.mpv.playback_time * 1000)
+        endtime = self.delta2QTime(self.mpvWidget.mpv.get_property('playback-time') * 1000)
         if endtime.__lt__(item[0]):
             QMessageBox.critical(self.parent, 'Invalid END Time',
                                  'The clip end time must come AFTER it\'s start time. Please try again.')
@@ -1089,7 +1121,7 @@ class VideoCutter(QWidget):
 
     @pyqtSlot(bool)
     def switchDecoding(self, checked: bool = True) -> None:
-        self.mpvWidget.mpv.hwdec = 'auto' if checked else 'no'
+        self.mpvWidget.mpv.set_property('hwdec', 'auto' if checked else 'no')
 
     @pyqtSlot(QAction)
     def switchTheme(self, action: QAction) -> None:
@@ -1175,21 +1207,21 @@ class VideoCutter(QWidget):
             return
         if self.mediaAvailable:
             if event.key() == Qt.Key_Left:
-                self.mpvWidget.mpv.frame_back_step()
+                self.mpvWidget.frameBackStep()
             elif event.key() == Qt.Key_Down:
                 if qApp.queryKeyboardModifiers() == Qt.ShiftModifier:
-                    self.mpvWidget.mpv.seek_relative(-self.level2_spinner.value())
+                    self.mpvWidget.seek(-self.level2_spinner.value(), 'relative+exact')
                 else:
-                    self.mpvWidget.mpv.seek_relative(-self.level1_spinner.value())
+                    self.mpvWidget.seek(-self.level1_spinner.value(), 'relative+exact')
             elif event.key() == Qt.Key_Right:
-                self.mpvWidget.mpv.frame_step()
+                self.mpvWidget.frameStep()
             elif event.key() == Qt.Key_Up:
                 if qApp.queryKeyboardModifiers() == Qt.ShiftModifier:
-                    self.mpvWidget.mpv.seek_relative(self.level2_spinner.value())
+                    self.mpvWidget.seek(self.level2_spinner.value(), 'relative+exact')
                 else:
-                    self.mpvWidget.mpv.seek_relative(self.level1_spinner.value())
+                    self.mpvWidget.seek(self.level1_spinner.value(), 'relative+exact')
             elif event.key() == Qt.Key_Home:
-                self.mpvWidget.mpv.time_pos = 0
+                self.mpvWidget.mpv.set_property('time-pos', 0)
             elif event.key() == Qt.Key_End:
                 self.setPosition(self.seekSlider.maximum() - 1)
             elif event.key() in (Qt.Key_Return, Qt.Key_Enter) and (

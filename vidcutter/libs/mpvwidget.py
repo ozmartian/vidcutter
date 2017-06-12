@@ -1,27 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-#######################################################################
-#
-# VidCutter - media cutter & joiner
-#
-# copyright © 2017 Pete Alexandrou
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
-#######################################################################
-
+import locale
+import os
+import sys
 from ctypes import cast, c_void_p
 
 # this is required for Ubuntu which seems to
@@ -29,95 +11,126 @@ from ctypes import cast, c_void_p
 # noinspection PyUnresolvedReferences
 from OpenGL import GL
 
-from PyQt5.QtCore import pyqtSignal, pyqtSlot
+from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt
 from PyQt5.QtOpenGL import QGLContext
 from PyQt5.QtWidgets import QOpenGLWidget
 
-from vidcutter.libs.mpv.templates import templateqt
+# noinspection PyUnresolvedReferences
+import vidcutter.libs.mpv as mpv
 
 
-def get_proc_address(ctx, name):
+def get_proc_address(proc):
     glctx = QGLContext.currentContext()
     if glctx is None:
         return None
     # noinspection PyTypeChecker
-    return int(glctx.getProcAddress(str(name, 'utf-8')))
+    return int(glctx.getProcAddress(str(proc, 'utf-8')))
 
 
 class mpvWidget(QOpenGLWidget):
-    def __init__(self, parent=None):
+    positionChanged = pyqtSignal(float, int)
+    durationChanged = pyqtSignal(float, int)
+
+    def __init__(self, parent=None, **mpv_opts):
         super(mpvWidget, self).__init__(parent)
-        self.mpv = mpv(
-            parent=self,
-            vo='opengl-cb',
-            ytdl=False,
-            pause=True,
-            keep_open=True,
-            idle=True,
-            osc=False,
-            osd_font='Futura LT',
-            osd_level=0,
-            osd_align_x='left',
-            osd_align_y='top',
-            cursor_autohide=False,
-            input_cursor=False,
-            input_default_bindings=False,
-            stop_playback_on_init_failure=False,
-            input_vo_keyboard=False,
-            sub_auto=False,
-            sid=False,
-            hr_seek=False,
-            hr_seek_framedrop=True,
-            video_sync='display-vdrop',
-            audio_file_auto=False,
-            quiet=True,
-            terminal=True,
-            observe=['time-pos', 'duration'])
-        self.mpv.get_opengl_api()
-        self.mpv.opengl_set_update_callback(self.updateHandler)
+        locale.setlocale(locale.LC_NUMERIC, 'C')
+        self.mpv = mpv.Context()
+
+        def _istr(o):
+            return ('yes' if o else 'no') if type(o) is bool else str(o)
+
+        # do not break on non-existant properties/options
+        for opt, val in mpv_opts.items():
+            try:
+                self.mpv.set_option(opt.replace('_', '-'), _istr(val))
+            except:
+                pass
+
+        self.mpv.initialize()
+        self.opengl = self.mpv.opengl_cb_api()
+        self.opengl.set_update_callback(self.updateHandler)
         # ignore expection thrown by older versions of libmpv that do not implement the option
         try:
             self.mpv.set_option('opengl-hwdec-interop', 'auto')
+            if sys.platform == 'win32':
+                self.mpv.set_option('opengl-backend', 'angle')
         except:
             pass
-        self.frameSwapped.connect(self.swapped)
+
+        self.frameSwapped.connect(self.swapped, Qt.DirectConnection)
+
+        self.mpv.observe_property('time-pos')
+        self.mpv.observe_property('duration')
+        self.mpv.set_wakeup_callback(self.eventHandler)
 
     def __del__(self):
         self.makeCurrent()
-        self.mpv.opengl_set_update_callback(cast(None, c_void_p))
-        self.mpv.opengl_uninit_gl()
+        self._event_thread.stop()
+        if hasattr(self, 'opengl'):
+            self.opengl.set_update_callback(cast(None, c_void_p))
+            self.opengl.uninit_gl()
+        self.mpv.shutdown()
 
     def initializeGL(self):
-        self.mpv.opengl_init_gl(get_proc_address)
+        if self.opengl:
+            self.opengl.init_gl(None, get_proc_address)
 
     def paintGL(self):
-        self.mpv.opengl_draw(self.defaultFramebufferObject(), self.width(), -self.height())
+        if self.opengl:
+            self.opengl.draw(self.defaultFramebufferObject(), self.width(), -self.height())
 
     @pyqtSlot()
-    def swapped(self, do_update: bool = True):
-        self.mpv.opengl_report_flip()
-        if do_update:
-            self.updateHandler()
+    def swapped(self):
+        if self.opengl:
+            self.opengl.report_flip(0)
 
     def updateHandler(self):
         if self.window().isMinimized():
             self.makeCurrent()
             self.paintGL()
             self.context().swapBuffers(self.context().surface())
-            self.swapped(False)
+            self.swapped()
             self.doneCurrent()
         else:
             self.update()
 
+    def eventHandler(self):
+        while self.mpv:
+            event = self.mpv.wait_event(.01)
+            if event.id == mpv.Events.none:
+                continue
+            elif event.id == mpv.Events.shutdown:
+                break
+            elif event.id == mpv.Events.property_change:
+                event_prop = event.data
+                if event_prop.name == 'time-pos':
+                    self.positionChanged.emit(event_prop.data, self.mpv.get_property('estimated-frame-number'))
+                elif event_prop.name == 'duration':
+                    self.durationChanged.emit(event_prop.data, self.mpv.get_property('estimated-frame-count'))
 
-class mpv(templateqt.MpvTemplatePyQt):
-    durationChanged = pyqtSignal(float, int)
-    positionChanged = pyqtSignal(float, int)
+    def showText(self, msg: str, duration: int, level: int = None):
+        self.mpv.command('show-text', msg, duration * 1000, level)
 
-    def on_property_change(self, event):
-        if event.data is None:
+    def play(self, filepath):
+        if not os.path.exists(filepath):
             return
-        if event.name == 'time-pos':
-            self.positionChanged.emit(event.data, self.estimated_frame_number)
-        elif event.name == 'duration':
-            self.durationChanged.emit(event.data, self.estimated_frame_count)
+        self.mpv.command('loadfile', filepath)
+
+    def frameStep(self):
+        self.mpv.command('frame-step')
+
+    def frameBackStep(self):
+        self.mpv.command('frame-back-step')
+
+    def seek(self, pos, method='absolute+exact'):
+        if not self.mpv.get_property('seeking'):
+            self.mpv.command('seek', pos, method)
+
+    def pause(self):
+        self.mpv.set_property('pause', not self.mpv.get_property('pause'))
+
+    def mute(self):
+        self.mpv.set_property('mute', not self.mpv.get_property('mute'))
+
+    def volume(self, vol: int):
+        self.mpv.set_property('volume', vol)

@@ -108,7 +108,6 @@ class MainWindow(QMainWindow):
                             datefmt='%Y-%m-%d %H:%M',
                             level=logging.INFO)
         logging.captureWarnings(capture=True)
-
         sys.excepthook = self.log_uncaught_exceptions
 
     def init_settings(self) -> None:
@@ -136,8 +135,6 @@ class MainWindow(QMainWindow):
         self.theme = self.settings.value('theme', 'light', type=str)
         self.startupvol = self.settings.value('volume', 100, type=int)
         self.ontop = self.settings.value('alwaysOnTop', False, type=bool)
-        if self.ontop:
-            self.set_always_on_top(self.ontop)
 
     @staticmethod
     def log_uncaught_exceptions(cls, exc, tb) -> None:
@@ -219,15 +216,16 @@ class MainWindow(QMainWindow):
 
     @pyqtSlot(bool)
     def set_always_on_top(self, flag: bool) -> None:
-        if flag:
-            self.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint)
-            if hasattr(self.cutter, 'mpvWidget.mpv'):
-                self.cutter.mpvWidget.mpv.ontop = True
-        else:
-            self.setWindowFlags(self.windowFlags() & ~Qt.WindowStaysOnTopHint)
-            if hasattr(self.cutter, 'mpvWidget.mpv'):
-                self.cutter.mpvWidget.mpv.ontop = False
-        self.show()
+        if hasattr(self, 'cutter'):
+            if flag:
+                self.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint)
+                if hasattr(self.cutter, 'mpvWidget'):
+                    self.cutter.mpvWidget.mpv.set_property('ontop', True)
+            else:
+                self.setWindowFlags(self.windowFlags() & ~Qt.WindowStaysOnTopHint)
+                if hasattr(self.cutter, 'mpvWidget'):
+                    self.cutter.mpvWidget.mpv.set_property('ontop', False)
+            self.show()
 
     @staticmethod
     def get_path(path: str = None, override: bool = False) -> str:
@@ -275,8 +273,7 @@ class MainWindow(QMainWindow):
         event.accept()
         if hasattr(self, 'cutter'):
             self.save_settings()
-            if hasattr(self.cutter, 'mpvWidget.mpv'):
-                self.cutter.mpvWidget.mpv.quit()
+            if hasattr(self.cutter, 'mpvWidget'):
                 self.cutter.mpvWidget.deleteLater()
         qApp.quit()
 
@@ -288,8 +285,8 @@ def main():
         QApplication.setAttribute(Qt.AA_Use96Dpi, True)
     if hasattr(Qt, 'AA_UseStyleSheetPropagationInWidgetStyles'):
         QApplication.setAttribute(Qt.AA_UseStyleSheetPropagationInWidgetStyles, True)
-    # if hasattr(Qt, 'AA_ShareOpenGLContexts'):
-    #     QApplication.setAttribute(Qt.AA_ShareOpenGLContexts, True)
+    if hasattr(Qt, 'AA_ShareOpenGLContexts'):
+        QApplication.setAttribute(Qt.AA_ShareOpenGLContexts, True)
     app = QApplication(sys.argv)
     app.setApplicationName('VidCutter')
     app.setApplicationVersion(MainWindow.get_version())
