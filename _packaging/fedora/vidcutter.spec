@@ -12,8 +12,8 @@ URL:            http://vidcutter.ozmartians.com
 Source0:        https://github.com/ozmartian/%{pkg_name}/archive/%{version}.tar.gz
 BuildArch:      noarch
  
-BuildRequires:  python3-devel, python3-setuptools
-Requires:       python3-qt5, mpv-libs, mediainfo, ffmpeg
+BuildRequires:  python3-devel, python3-setuptools, python3-Cython
+Requires:       python3-qt5, mpv-libs, mpv-libs-devel, mediainfo, ffmpeg
 
 %description
      The simplest & sexiest tool for cutting and joining your videos without the need for

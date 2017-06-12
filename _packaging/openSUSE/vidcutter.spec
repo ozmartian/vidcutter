@@ -10,6 +10,7 @@ BuildRequires:  desktop-file-utils
 BuildRequires:  hicolor-icon-theme
 BuildRequires:  python3-devel
 BuildRequires:  python3-setuptools
+BuildRequires:  python3-Cython
 BuildRequires:  update-desktop-files
 Requires:       ffmpeg
 Requires:       libmpv1
