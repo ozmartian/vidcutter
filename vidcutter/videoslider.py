@@ -27,8 +27,8 @@ import logging
 import sys
 
 from PyQt5.QtCore import QEvent, QObject, Qt, pyqtSlot
-from PyQt5.QtGui import (QColor, QKeyEvent, QMouseEvent, QPaintEvent, QPainter, QPainterPath, QPen, QPixmap,
-                         QResizeEvent, QTransform, QWheelEvent)
+from PyQt5.QtGui import (QColor, QKeyEvent, QMouseEvent, QPaintEvent, QPainter, QPainterPath, QPen, QResizeEvent,
+                         QTransform, QWheelEvent)
 from PyQt5.QtWidgets import (qApp, QGraphicsEffect, QHBoxLayout, QLabel, QSlider, QStyle, QStyleOptionSlider,
                              QStackedWidget, QStylePainter, QWidget, QSizePolicy, QStackedLayout)
 

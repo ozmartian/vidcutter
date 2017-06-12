@@ -195,7 +195,7 @@ class VideoCutter(QWidget):
             self.osdButton.setChecked(True)
 
         if sys.platform == 'darwin':
-            self.osdButton.setChecked(False)    
+            self.osdButton.setChecked(False)
             self.osdButton.setDisabled(True)
 
         self.thumbnailsButton.setStyle(QStyleFactory.create('fusion'))

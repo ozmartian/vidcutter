@@ -25,7 +25,6 @@
 import logging
 import os
 import re
-import subprocess
 import shlex
 import sys
 from distutils.spawn import find_executable
