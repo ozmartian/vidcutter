@@ -198,16 +198,16 @@ class MainWindow(QMainWindow):
             labels = 'none'
         else:
             labels = 'beside'
-        self.settings.setValue('nativeDialogs', self.cutter.nativeDialogsAction.isChecked())
-        self.settings.setValue('keepClips', self.cutter.keepClipsAction.isChecked())
+        self.settings.setValue('nativeDialogs', 'on' if self.cutter.nativeDialogsAction.isChecked() else 'off')
+        self.settings.setValue('keepClips', 'on' if self.cutter.keepClipsAction.isChecked() else 'off')
+        self.settings.setValue('timelineThumbs', 'on' if self.cutter.thumbnailsButton.isChecked() else 'off')
+        self.settings.setValue('enableOSD', 'on' if self.cutter.osdButton.isChecked() else 'off')
         self.settings.setValue('aspectRatio', 'keep' if self.cutter.keepRatioAction.isChecked() else 'stretch')
-        self.settings.setValue('hwdec', 'auto' if self.cutter.hardwareDecodingAction.isChecked() else 'no')
+        self.settings.setValue('hwdec', 'on' if self.cutter.hardwareDecodingAction.isChecked() else 'off')
         self.settings.setValue('volume', self.cutter.volumeSlider.value())
         self.settings.setValue('level1Seek', self.cutter.level1_spinner.value())
         self.settings.setValue('level2Seek', self.cutter.level2_spinner.value())
         self.settings.setValue('toolbarLabels', labels)
-        self.settings.setValue('timelineThumbs', self.cutter.thumbnailsButton.isChecked())
-        self.settings.setValue('enableOSD', self.cutter.osdButton.isChecked())
         self.settings.setValue('geometry', self.saveGeometry())
         self.settings.setValue('windowState', self.saveState())
         self.settings.sync()

@@ -86,18 +86,18 @@ class VideoCutter(QWidget):
         }
 
         self.clipTimes = []
-        self.inCut = False
+        self.inCut, self.newproject = False, False
         self.finalFilename = ''
         self.totalRuntime = 0
         self.frameRate = 0
         self.notifyInterval = 1000
         self.currentMedia, self.mediaAvailable, self.mpvError = None, False, False
 
-        self.nativeDialogs = self.settings.value('nativeDialogs', True, type=bool)
-        self.keepClips = self.settings.value('keepClips', False, type=bool)
-        self.timelineThumbs = self.settings.value('timelineThumbs', True, type=bool)
-        self.hardwareDecoding = self.settings.value('hwdec', 'auto', type=str) == 'auto'
-        self.enableOSD = self.settings.value('enableOSD', True, type=bool)
+        self.enableOSD = self.settings.value('enableOSD', 'on', type=str) in {'on', 'true'}
+        self.hardwareDecoding = self.settings.value('hwdec', 'on', type=str) in {'on', 'auto'}
+        self.keepClips = self.settings.value('keepClips', 'off', type=str) in {'on', 'true'}
+        self.nativeDialogs = self.settings.value('nativeDialogs', 'on', type=str) in {'on', 'true'}
+        self.timelineThumbs = self.settings.value('timelineThumbs', 'on', type=str) in {'on', 'true'}
 
         self.edlblock_re = re.compile(r'(\d+(?:\.?\d+)?)\s(\d+(?:\.?\d+)?)\s([01])')
 
@@ -647,9 +647,13 @@ class VideoCutter(QWidget):
         self.renderTimes()
         self.initMediaControls(True)
 
-    def projectFilters(self) -> str:
-        return 'VidCutter Project (*.vcp);;%sAll files (*.*)' \
-               % ('MPlayer EDL (*.edl);;' if self.mediaAvailable else '')
+    def projectFilters(self, savedialog: bool = False) -> str:
+        if savedialog:
+            return 'VidCutter Project (*.vcp);;MPlayer EDL (*.edl)'
+        elif self.mediaAvailable:
+            return 'Project files (*.vcp, *.edl);;VidCutter Project (*.vcp);;MPlayer EDL (*.edl);;All files (*.*)'
+        else:
+            return 'VidCutter Project (*.vcp);;All files (*.*)'
 
     @staticmethod
     def mediaFilters() -> str:
@@ -683,10 +687,11 @@ class VideoCutter(QWidget):
             self.loadMedia(filename)
 
     def openProject(self, checked: bool = False, project_file: str = None) -> None:
+        initialFilter = 'Project files (*.vcp, *.edl)' if self.mediaAvailable else 'VidCutter Project (*.vcp)'
         if project_file is None:
             project_file, _ = QFileDialog.getOpenFileName(self.parent, caption='Select project file',
                                                           filter=self.projectFilters(),
-                                                          initialFilter='VidCutter Project (*.vcp)',
+                                                          initialFilter=initialFilter,
                                                           directory=QDir.homePath(),
                                                           options=(QFileDialog.DontUseNativeDialog
                                                                    if not self.nativeDialogsAction.isChecked()
@@ -726,7 +731,7 @@ class VideoCutter(QWidget):
                             start, stop, action = mo.groups()
                             clip_start = self.delta2QTime(int(float(start) * 1000))
                             clip_end = self.delta2QTime(int(float(stop) * 1000))
-                            clip_image = self.captureImage(frametime=int(float(start) * 1000))
+                            clip_image = self.captureImage(clip_start)
                             self.clipTimes.append([clip_start, clip_end, clip_image])
                         else:
                             qApp.restoreOverrideCursor()
@@ -738,7 +743,7 @@ class VideoCutter(QWidget):
             self.cutEndAction.setDisabled(True)
             self.seekSlider.setRestrictValue(0, False)
             self.inCut = False
-            self.renderTimes()
+            self.newproject = True
             qApp.restoreOverrideCursor()
             self.showText('Project loaded...')
 
@@ -748,7 +753,7 @@ class VideoCutter(QWidget):
         project_file, _ = os.path.splitext(self.currentMedia)
         project_save, ptype = QFileDialog.getSaveFileName(self.parent, caption='Save project',
                                                           directory='%s.vcp' % project_file,
-                                                          filter=self.projectFilters(),
+                                                          filter=self.projectFilters(True),
                                                           initialFilter='VidCutter Project (*.vcp)',
                                                           options=(QFileDialog.DontUseNativeDialog
                                                                    if not self.nativeDialogsAction.isChecked()
@@ -871,11 +876,11 @@ class VideoCutter(QWidget):
     @pyqtSlot(bool)
     def toggleThumbs(self, checked: bool) -> None:
         if self.seekSlider.showThumbs and self.seekSlider.thumbnailsOn and not checked:
-            self.showText('Timeline thumbnails disabled')
+            self.showText('Thumbnails disabled')
             self.seekSlider.removeThumbs()
             self.seekSlider.initStyle()
         elif self.currentMedia is not None:
-            self.showText('Timeline thumbnails enabled')
+            self.showText('Thumbnails enabled')
             self.seekSlider.initThumbs()
         self.seekSlider.showThumbs = checked
 

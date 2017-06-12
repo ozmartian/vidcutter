@@ -227,6 +227,9 @@ class VideoSlider(QSlider):
         self.thumbnailsOn = True
         self.initStyle()
         self.parent.sliderWidget.setLoader(False)
+        if self.parent.newproject:
+            self.parent.renderTimes()
+            self.parent.newproject = False
 
     def removeThumbs(self) -> None:
         if self.parent.sliderWidget.count() == 2:
