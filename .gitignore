@@ -27,3 +27,5 @@ d3dcompiler_*.dll
 MediaInfo.dll
 *.*.nupkg
 *.so
+*.pyd
+*.c
