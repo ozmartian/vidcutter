@@ -14,8 +14,10 @@ BuildRequires:  python3-Cython
 BuildRequires:  update-desktop-files
 Requires:       ffmpeg
 Requires:       libmpv1
+Requires:       mpv-devel
 Requires:       mediainfo
 Requires:       python3-qt5
+Requires:       python3-opengl
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 BuildArch:      noarch
 

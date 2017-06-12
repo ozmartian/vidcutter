@@ -70,6 +70,8 @@ class VideoInfo(QDialog):
                                                         self.parent.videoService.metadata(media))
 
         content = QTextBrowser(self.parent)
+        content.setStyleSheet('QTextBrowser { border: none; background: transparent; }')
+        content.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         content.setHtml(metadata)
 
         buttons = QDialogButtonBox(QDialogButtonBox.Close)
