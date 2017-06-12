@@ -29,6 +29,7 @@ import shlex
 import subprocess
 import sys
 
+from Cython.Build import cythonize
 from distutils.spawn import find_executable
 from setuptools import setup
 from setuptools.extension import Extension
@@ -79,16 +80,6 @@ here = os.path.abspath(os.path.dirname(__file__))
 
 packager = get_value('packager')
 
-extensions = []
-if sys.platform != 'win32':
-    from Cython.Build import cythonize
-    extensions = cythonize([Extension(
-        'vidcutter.libs.mpv',
-        ['vidcutter/libs/pympv/mpv.pyx'],
-        libraries=['mpv'],
-        extra_compile_args=['-g0']
-    )])
-
 result = setup(
     name='vidcutter',
     version=get_value('version'),
@@ -101,13 +92,18 @@ result = setup(
 
     packages=['vidcutter', 'vidcutter.libs'],
 
-    setup_requires=['setuptools', 'Cython' if sys.platform != 'win32' else ''],
+    setup_requires=['setuptools', 'Cython' ],
 
     install_requires=get_install_requires(),
 
     data_files=get_data_files(),
 
-    ext_modules=extensions,
+    ext_modules=cythonize([Extension(
+        'vidcutter.libs.mpv',
+        ['vidcutter/libs/pympv/mpv.pyx'],
+        libraries=['mpv'],
+        extra_compile_args=['-g0']
+    )]),
 
     entry_points={'gui_scripts': ['vidcutter = vidcutter.__main__:main']},
 
@@ -125,11 +121,12 @@ result = setup(
     ]
 )
 
-ROOT = os.geteuid() == 0
 if not sys.platform.startswith('linux') or not os.getenv('FAKEROOTKEY') is None:
     ROOT = False
+else:
+    ROOT = os.geteuid() == 0
 
-if ROOT and not result is None:
+if ROOT and result is not None:
     try:
         sys.stdout.write('Updating shared mime-info database... ')
         exepath = find_executable('update-mime-database')

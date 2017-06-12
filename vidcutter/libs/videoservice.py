@@ -92,13 +92,17 @@ class VideoService(QObject):
             imagecap = img.fileName()
             size = thumbsize.value
             backend, _ = VideoService.initBackends()
-            args = '%s -ss %s -i "%s" -vframes 1 -s %ix%i -v 16 -y "%s"' % (backend, frametime, source, size.width(),
-                                                                            size.height(), imagecap)
-            # if os.getenv('DEBUG', False):
-            #     sys.stdout.write(args)
-            retcode = subprocess.call(shlex.split(args))
-            if retcode == 0:
-                capres = QPixmap(imagecap, 'JPG')
+            args = '-ss %s -i "%s" -vframes 1 -s %ix%i -v 16 -y "%s"' % (frametime, source, size.width(),
+                                                                         size.height(), imagecap)
+            proc = QProcess()
+            proc.setProcessEnvironment(QProcessEnvironment.systemEnvironment())
+            proc.setWorkingDirectory(VideoService.getAppPath())
+            proc.setProcessChannelMode(QProcess.MergedChannels)
+            if proc.state() == QProcess.NotRunning:
+                proc.start(backend, shlex.split(args))
+                proc.waitForFinished(-1)
+                if proc.exitStatus() == QProcess.NormalExit and proc.exitCode() == 0:
+                    capres = QPixmap(imagecap, 'JPG')
         return capres
 
     def cut(self, source: str, output: str, frametime: str, duration: str, allstreams: bool = True) -> bool:
