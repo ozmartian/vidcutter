@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import locale
+import logging
 import os
 import sys
 from ctypes import cast, c_void_p
@@ -33,8 +34,11 @@ class mpvWidget(QOpenGLWidget):
 
     def __init__(self, parent=None, **mpv_opts):
         super(mpvWidget, self).__init__(parent)
+        self.logger = logging.getLogger(__name__)
         locale.setlocale(locale.LC_NUMERIC, 'C')
         self.mpv = mpv.Context()
+        if os.getenv('DEBUG', False):
+            self.mpv.set_log_level('terminal-default')
 
         def _istr(o):
             return ('yes' if o else 'no') if type(o) is bool else str(o)
@@ -101,6 +105,9 @@ class mpvWidget(QOpenGLWidget):
                 continue
             elif event.id == mpv.Events.shutdown:
                 break
+            elif event.id == mpv.Events.log_message:
+                event_log = event.data
+                self.logger.info('[%s] %s' % (event_log.prefix, event_log.text.strip()))
             elif event.id == mpv.Events.property_change:
                 event_prop = event.data
                 if event_prop.name == 'time-pos':

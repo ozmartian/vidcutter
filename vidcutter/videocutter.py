@@ -330,7 +330,6 @@ class VideoCutter(QWidget):
             audio_file_auto=False,
             quiet=True,
             terminal=True,
-            ontop=self.parent.ontop,
             volume=self.parent.startupvol,
             keepaspect=self.keepRatioAction.isChecked(),
             hwdec=('auto' if self.hardwareDecodingAction.isChecked() else 'no'))
@@ -473,9 +472,6 @@ class VideoCutter(QWidget):
                                        statusTip='Keep window aspect ratio when resizing the window', enabled=False)
         self.nativeDialogsAction = QAction('Use native dialogs', self, checkable=True, checked=self.nativeDialogs,
                                            statusTip='Use platform-native dialogs on file open & save operations')
-        self.alwaysOnTopAction = QAction('Always on top', self, checkable=True, triggered=self.parent.set_always_on_top,
-                                         statusTip='Keep app window on top of all other windows',
-                                         checked=self.parent.ontop)
         self.keepClipsAction = QAction('Keep individual clips', self, checkable=True, checked=self.keepClips,
                                        statusTip='Keep the individual clips used to produce final media')
         self.hardwareDecodingAction = QAction('Hardware decoding', self, triggered=self.switchDecoding, checkable=True,
@@ -556,9 +552,7 @@ class VideoCutter(QWidget):
         optionsMenu.addAction(level2seekAction)
         optionsMenu.addSeparator()
         optionsMenu.addAction(self.nativeDialogsAction)
-        optionsMenu.addAction(self.alwaysOnTopAction)
         optionsMenu.addMenu(labelsMenu)
-        optionsMenu.addSeparator()
         optionsMenu.addAction(self.hardwareDecodingAction)
         optionsMenu.addAction(self.keepRatioAction)
         optionsMenu.addMenu(zoomMenu)

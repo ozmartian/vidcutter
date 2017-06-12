@@ -101,8 +101,8 @@ class MainWindow(QMainWindow):
         handlers = [logging.handlers.RotatingFileHandler(os.path.join(log_path, '%s.log'
                                                                       % qApp.applicationName().lower()),
                                                          maxBytes=1000000, backupCount=1)]
-        if os.getenv('DEBUG', False):
-            handlers.append(logging.StreamHandler())
+        # if os.getenv('DEBUG', False):
+        #     handlers.append(logging.StreamHandler())
         logging.basicConfig(handlers=handlers,
                             format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                             datefmt='%Y-%m-%d %H:%M',
@@ -134,7 +134,6 @@ class MainWindow(QMainWindow):
             self.restoreState(self.settings.value('windowState'))
         self.theme = self.settings.value('theme', 'light', type=str)
         self.startupvol = self.settings.value('volume', 100, type=int)
-        self.ontop = self.settings.value('alwaysOnTop', False, type=bool)
 
     @staticmethod
     def log_uncaught_exceptions(cls, exc, tb) -> None:
@@ -200,7 +199,6 @@ class MainWindow(QMainWindow):
         else:
             labels = 'beside'
         self.settings.setValue('nativeDialogs', self.cutter.nativeDialogsAction.isChecked())
-        self.settings.setValue('alwaysOnTop', self.cutter.alwaysOnTopAction.isChecked())
         self.settings.setValue('keepClips', self.cutter.keepClipsAction.isChecked())
         self.settings.setValue('aspectRatio', 'keep' if self.cutter.keepRatioAction.isChecked() else 'stretch')
         self.settings.setValue('hwdec', 'auto' if self.cutter.hardwareDecodingAction.isChecked() else 'no')
@@ -213,19 +211,6 @@ class MainWindow(QMainWindow):
         self.settings.setValue('geometry', self.saveGeometry())
         self.settings.setValue('windowState', self.saveState())
         self.settings.sync()
-
-    @pyqtSlot(bool)
-    def set_always_on_top(self, flag: bool) -> None:
-        if hasattr(self, 'cutter'):
-            if flag:
-                self.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint)
-                if hasattr(self.cutter, 'mpvWidget'):
-                    self.cutter.mpvWidget.mpv.set_property('ontop', True)
-            else:
-                self.setWindowFlags(self.windowFlags() & ~Qt.WindowStaysOnTopHint)
-                if hasattr(self.cutter, 'mpvWidget'):
-                    self.cutter.mpvWidget.mpv.set_property('ontop', False)
-            self.show()
 
     @staticmethod
     def get_path(path: str = None, override: bool = False) -> str:
