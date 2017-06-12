@@ -22,6 +22,8 @@
 #
 #######################################################################
 
+import sys
+
 from PyQt5.QtCore import QModelIndex, Qt, QSize
 from PyQt5.QtGui import QPainter, QColor, QIcon, QPen, QFont, QMouseEvent
 from PyQt5.QtWidgets import (QAbstractItemDelegate, QAbstractItemView, QListWidget, QSizePolicy, QStyle,
@@ -90,17 +92,17 @@ class VideoItem(QAbstractItemDelegate):
         thumb.paint(painter, r, Qt.AlignVCenter | Qt.AlignLeft)
         painter.setPen(QPen(pencolor, 1, Qt.SolidLine))
         r = option.rect.adjusted(110, 8, 0, 0)
-        painter.setFont(QFont('Open Sans', 8, QFont.Bold))
+        painter.setFont(QFont('Open Sans', 10 if sys.platform == 'darwin' else 8, QFont.Bold))
         painter.drawText(r, Qt.AlignLeft, 'START')
         r = option.rect.adjusted(110, 20, 0, 0)
-        painter.setFont(QFont('Open Sans', 9, QFont.Normal))
+        painter.setFont(QFont('Open Sans', 11 if sys.platform == 'darwin' else 9, QFont.Normal))
         painter.drawText(r, Qt.AlignLeft, starttime)
         if len(endtime) > 0:
             r = option.rect.adjusted(110, 45, 0, 0)
-            painter.setFont(QFont('Open Sans', 8, QFont.Bold))
+            painter.setFont(QFont('Open Sans', 10 if sys.platform == 'darwin' else 8, QFont.Bold))
             painter.drawText(r, Qt.AlignLeft, 'END')
             r = option.rect.adjusted(110, 60, 0, 0)
-            painter.setFont(QFont('Open Sans', 9, QFont.Normal))
+            painter.setFont(QFont('Open Sans', 11 if sys.platform == 'darwin' else 9, QFont.Normal))
             painter.drawText(r, Qt.AlignLeft, endtime)
 
     def sizeHint(self, option: QStyleOptionViewItem, index: QModelIndex) -> QSize:

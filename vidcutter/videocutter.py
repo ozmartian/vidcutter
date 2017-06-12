@@ -194,6 +194,10 @@ class VideoCutter(QWidget):
         if self.enableOSD:
             self.osdButton.setChecked(True)
 
+        if sys.platform == 'darwin':
+            self.osdButton.setChecked(False)    
+            self.osdButton.setDisabled(True)
+
         self.thumbnailsButton.setStyle(QStyleFactory.create('fusion'))
         self.osdButton.setStyle(QStyleFactory.create('fusion'))
 
@@ -542,10 +546,11 @@ class VideoCutter(QWidget):
         level2seekAction.setDefaultWidget(level2Seek)
 
         optionsMenu = QMenu('Settings...', self.appMenu)
-        optionsMenu.addSection('Theme')
-        optionsMenu.addAction(self.lightThemeAction)
-        optionsMenu.addAction(self.darkThemeAction)
-        optionsMenu.addSeparator()
+        if sys.platform != 'darwin':
+            optionsMenu.addSection('Theme')
+            optionsMenu.addAction(self.lightThemeAction)
+            optionsMenu.addAction(self.darkThemeAction)
+            optionsMenu.addSeparator()
         optionsMenu.addAction(self.keepClipsAction)
         optionsMenu.addSeparator()
         optionsMenu.addAction(level1seekAction)
