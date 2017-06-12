@@ -900,7 +900,7 @@ class VideoCutter(QWidget):
     def clipStart(self) -> None:
         # if os.getenv('DEBUG', False):
         #     sys.stdout.write('cut start position: %s' % self.seekSlider.value())
-        starttime = self.delta2QTime(self.mpvWidget.mpv.get_property('playback-time') * 1000)
+        starttime = self.delta2QTime(self.seekSlider.value())
         self.clipTimes.append([starttime, '', self.captureImage()])
         self.timeCounter.setMinimum(starttime.toString(self.timeformat))
         self.frameCounter.lockMinimum()
@@ -915,7 +915,7 @@ class VideoCutter(QWidget):
         # if os.getenv('DEBUG', False):
         #     sys.stdout.write('cut end position: %s' % self.seekSlider.value())
         item = self.clipTimes[len(self.clipTimes) - 1]
-        endtime = self.delta2QTime(self.mpvWidget.mpv.get_property('playback-time') * 1000)
+        endtime = self.delta2QTime(self.seekSlider.value())
         if endtime.__lt__(item[0]):
             QMessageBox.critical(self.parent, 'Invalid END Time',
                                  'The clip end time must come AFTER it\'s start time. Please try again.')
