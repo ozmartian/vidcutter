@@ -5,7 +5,7 @@ import locale
 import logging
 import os
 import sys
-from ctypes import cast, c_void_p
+# from ctypes import cast, c_void_p
 
 # this is required for Ubuntu which seems to
 # have a broken PyQt5 OpenGL implementation
@@ -36,6 +36,7 @@ class mpvWidget(QOpenGLWidget):
         super(mpvWidget, self).__init__(parent)
         self.logger = logging.getLogger(__name__)
         locale.setlocale(locale.LC_NUMERIC, 'C')
+        self.shuttingdown = False
         self.mpv = mpv.Context()
         if os.getenv('DEBUG', False):
             self.mpv.set_log_level('terminal-default')
@@ -67,13 +68,12 @@ class mpvWidget(QOpenGLWidget):
         self.mpv.observe_property('duration')
         self.mpv.set_wakeup_callback(self.eventHandler)
 
-    def __del__(self):
+    def shutdown(self):
         self.makeCurrent()
-        self._event_thread.stop()
-        if hasattr(self, 'opengl'):
-            self.opengl.set_update_callback(cast(None, c_void_p))
+        if self.opengl:
             self.opengl.uninit_gl()
-        self.mpv.shutdown()
+        self.shuttingdown = True
+        self.mpv.command('quit')
 
     def initializeGL(self):
         if self.opengl:
@@ -99,21 +99,22 @@ class mpvWidget(QOpenGLWidget):
             self.update()
 
     def eventHandler(self):
-        while self.mpv:
-            event = self.mpv.wait_event(.01)
-            if event.id == mpv.Events.none:
-                continue
-            elif event.id == mpv.Events.shutdown:
-                break
-            elif event.id == mpv.Events.log_message:
-                event_log = event.data
-                self.logger.info('[%s] %s' % (event_log.prefix, event_log.text.strip()))
-            elif event.id == mpv.Events.property_change:
-                event_prop = event.data
-                if event_prop.name == 'time-pos':
-                    self.positionChanged.emit(event_prop.data, self.mpv.get_property('estimated-frame-number'))
-                elif event_prop.name == 'duration':
-                    self.durationChanged.emit(event_prop.data, self.mpv.get_property('estimated-frame-count'))
+        if not self.shuttingdown:
+            while self.mpv:
+                event = self.mpv.wait_event(.01)
+                if event.id == mpv.Events.none:
+                    continue
+                elif event.id == mpv.Events.shutdown:
+                    break
+                elif event.id == mpv.Events.log_message:
+                    event_log = event.data
+                    self.logger.info('[%s] %s' % (event_log.prefix, event_log.text.strip()))
+                elif event.id == mpv.Events.property_change:
+                    event_prop = event.data
+                    if event_prop.name == 'time-pos':
+                        self.positionChanged.emit(event_prop.data, self.mpv.get_property('estimated-frame-number'))
+                    elif event_prop.name == 'duration':
+                        self.durationChanged.emit(event_prop.data, self.mpv.get_property('estimated-frame-count'))
 
     def showText(self, msg: str, duration: int, level: int = None):
         self.mpv.command('show-text', msg, duration * 1000, level)

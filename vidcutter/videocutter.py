@@ -336,7 +336,7 @@ class VideoCutter(QWidget):
             terminal=True,
             volume=self.parent.startupvol,
             keepaspect=self.keepRatioAction.isChecked(),
-            hwdec=('auto' if self.hardwareDecodingAction.isChecked() else 'no'))
+            hwdec=('auto' if self.hardwareDecoding else 'no'))
 
         self.mpvWidget.durationChanged.connect(self.on_durationChanged)
         self.mpvWidget.positionChanged.connect(self.on_positionChanged)
@@ -474,12 +474,13 @@ class VideoCutter(QWidget):
                                       checkable=True, checked=False)
         self.keepRatioAction = QAction('Keep aspect ratio', self, checkable=True, triggered=self.setAspect,
                                        statusTip='Keep window aspect ratio when resizing the window', enabled=False)
-        self.nativeDialogsAction = QAction('Use native dialogs', self, checkable=True, checked=self.nativeDialogs,
-                                           statusTip='Use platform-native dialogs on file open & save operations')
-        self.keepClipsAction = QAction('Keep individual clips', self, checkable=True, checked=self.keepClips,
-                                       statusTip='Keep the individual clips used to produce final media')
+        self.nativeDialogsAction = QAction('Use native dialogs', self, checkable=True,
+                                           statusTip='Use platform-native dialogs on file open & save operations',
+                                           triggered=(lambda checked: self.saveSetting('nativeDialogs', checked)))
+        self.keepClipsAction = QAction('Keep individual clips', self, checkable=True,
+                                       statusTip='Keep the individual clips used to produce final media',
+                                       triggered=(lambda checked: self.saveSetting('keepClips', checked)))
         self.hardwareDecodingAction = QAction('Hardware decoding', self, triggered=self.switchDecoding, checkable=True,
-                                              checked=self.hardwareDecoding,
                                               statusTip='Enable hardware based video decoding for playback ' +
                                                         '(e.g. vdpau, vaapi, dxva2, d3d11, cuda)')
         if self.theme == 'dark':
@@ -487,6 +488,12 @@ class VideoCutter(QWidget):
         else:
             self.lightThemeAction.setChecked(True)
         self.themeAction.triggered.connect(self.switchTheme)
+        if self.keepClips:
+            self.keepClipsAction.setChecked(True)
+        if self.nativeDialogs:
+            self.nativeDialogsAction.setChecked(True)
+        if self.hardwareDecoding:
+            self.hardwareDecodingAction.setChecked(True)
         if self.settings.value('aspectRatio', 'keep', type=str) == 'keep':
             self.keepRatioAction.setChecked(True)
             self.zoomAction.setEnabled(False)
@@ -590,6 +597,10 @@ class VideoCutter(QWidget):
             optionsMenu.setStyle(QStyleFactory.create('Fusion'))
             self.appMenu.setStyle(QStyleFactory.create('Fusion'))
             self.cliplistMenu.setStyle(QStyleFactory.create('Fusion'))
+
+    def saveSetting(self, setting: str, checked: bool) -> None:
+        val = 'on' if checked else 'off'
+        self.settings.setValue(setting, val)
 
     def clearSpinners(self) -> None:
         for obj in (self.level1_spinner, self.level2_spinner):
@@ -883,6 +894,7 @@ class VideoCutter(QWidget):
             self.showText('Thumbnails enabled')
             self.seekSlider.initThumbs()
         self.seekSlider.showThumbs = checked
+        self.saveSetting('timelineThumbs', checked)
 
     @pyqtSlot(bool)
     def setAspect(self, checked: bool = True) -> None:
@@ -1125,6 +1137,7 @@ class VideoCutter(QWidget):
     @pyqtSlot(bool)
     def switchDecoding(self, checked: bool = True) -> None:
         self.mpvWidget.mpv.set_property('hwdec', 'auto' if checked else 'no')
+        self.saveSetting('hwdec', checked)
 
     @pyqtSlot(QAction)
     def switchTheme(self, action: QAction) -> None:
@@ -1198,6 +1211,7 @@ class VideoCutter(QWidget):
 
     def toggleOSD(self, checked: bool) -> None:
         self.showText('On screen display %s' % ('enabled' if checked else 'disabled'), override=True)
+        self.saveSetting('enableOSD', checked)
 
     def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
         self.toggleMaximised()
