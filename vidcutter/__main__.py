@@ -255,6 +255,7 @@ class MainWindow(QMainWindow):
             if hasattr(self.cutter, 'mpvWidget'):
                 self.cutter.mpvWidget.shutdown()
         event.accept()
+        qApp.quit()
 
 
 def main():

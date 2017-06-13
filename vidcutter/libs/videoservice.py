@@ -58,8 +58,8 @@ class VideoService(QObject):
         self.backend, self.mediainfo = self.initBackends()
         if self.backend is not None:
             self.initProc()
-            if os.getenv('DEBUG', False):
-                self.logger.info('backend: "%s"  mediainfo: "%s"' % (self.backend, self.mediainfo))
+            # if os.getenv('DEBUG', False):
+            #     self.logger.info('backend: "%s"  mediainfo: "%s"' % (self.backend, self.mediainfo))
         else:
             self.parent.errorOccurred.emit()
 
