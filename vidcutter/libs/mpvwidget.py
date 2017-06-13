@@ -69,11 +69,11 @@ class mpvWidget(QOpenGLWidget):
         self.mpv.set_wakeup_callback(self.eventHandler)
 
     def shutdown(self):
+        self.shuttingdown = True
+        self.mpv.command('quit')
         self.makeCurrent()
         if self.opengl:
             self.opengl.uninit_gl()
-        self.shuttingdown = True
-        self.mpv.command('quit')
 
     def initializeGL(self):
         if self.opengl:
