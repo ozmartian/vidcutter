@@ -262,8 +262,6 @@ def main():
         QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
     if hasattr(Qt, 'AA_Use96Dpi'):
         QApplication.setAttribute(Qt.AA_Use96Dpi, True)
-    if hasattr(Qt, 'AA_UseStyleSheetPropagationInWidgetStyles'):
-        QApplication.setAttribute(Qt.AA_UseStyleSheetPropagationInWidgetStyles, True)
     if hasattr(Qt, 'AA_ShareOpenGLContexts'):
         QApplication.setAttribute(Qt.AA_ShareOpenGLContexts, True)
     app = QApplication(sys.argv)
