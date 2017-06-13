@@ -2,14 +2,13 @@ Source: vidcutter
 Maintainer: Pete Alexandrou <pete@ozmartians.com>
 Section: video
 Priority: optional
-Build-Depends: dh-python, python3-setuptools, python3-all, python3-dev, cython3, debhelper (>= 9)
+Build-Depends: dh-python, python3-setuptools, python3-all, python3-dev, cython3, libmpv-dev, debhelper (>= 9)
 Standards-Version: 3.9.6
 Homepage: http://vidcutter.ozmartians.com
 
 Package: vidcutter
 Architecture: all
-Depends: ${misc:Depends}, ${python3:Depends}, python3-pyqt5, libmpv1, libmpv-dev,
-  ffmpeg | libav-tools, mediainfo, python3-opengl
+Depends: ${misc:Depends}, ${python3:Depends}, python3-pyqt5, libmpv1, ffmpeg | libav-tools, mediainfo, python3-opengl
 Description: the simplest + fastest video cutter & joiner
  The simplest & sexiest tool for cutting and joining your videos without the need for
  re-encoding or a diploma in multimedia. VidCutter focuses on getting the job done
