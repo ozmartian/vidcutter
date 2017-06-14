@@ -35,6 +35,18 @@ from setuptools import setup
 from setuptools.extension import Extension
 
 
+def get_bitness():
+    from struct import calcsize
+    return calcsize('P') * 8
+
+
+def get_library_dirs():
+    _dirs = []
+    if sys.platform == 'win32':
+        _dirs = ['vidcutter/libs/pympv/win%s' % get_bitness()]
+    return _dirs
+
+
 def get_value(varname, filename='vidcutter/__init__.py'):
     with codecs.open(os.path.join(here, filename), encoding='utf-8') as initfile:
         for line in initfile.readlines():
@@ -85,7 +97,7 @@ result = setup(
     version=get_value('version'),
     author='Pete Alexandrou',
     author_email='pete@ozmartians.com',
-    description='the simplest + fastest video cutter & joiner',
+    description='the fast + sleek cross-platform video cutter & joiner',
     long_description=get_description(),
     url='http://vidcutter.ozmartians.com',
     license='GPLv3+',
@@ -101,8 +113,10 @@ result = setup(
     ext_modules=cythonize([Extension(
         'vidcutter.libs.mpv',
         ['vidcutter/libs/pympv/mpv.pyx'],
+        include_dirs=['vidcutter/libs/pympv/mpv'],
         libraries=['mpv'],
-        extra_compile_args=['-g0']
+        library_dirs=get_library_dirs(),
+        extra_compile_args=['-g0' if sys.platform != 'win32' else '']
     )]),
 
     entry_points={'gui_scripts': ['vidcutter = vidcutter.__main__:main']},
