@@ -38,6 +38,7 @@ class mpvWidget(QOpenGLWidget):
         locale.setlocale(locale.LC_NUMERIC, 'C')
         self.shuttingdown = False
         self.mpv = mpv.Context()
+
         if os.getenv('DEBUG', False):
             self.mpv.set_log_level('terminal-default')
 
