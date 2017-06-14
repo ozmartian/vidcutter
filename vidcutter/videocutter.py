@@ -85,6 +85,7 @@ class VideoCutter(QWidget):
             }
         }
 
+        self.mpvWidget = None
         self.clipTimes = []
         self.inCut, self.newproject = False, False
         self.finalFilename = ''
@@ -297,16 +298,16 @@ class VideoCutter(QWidget):
         VideoStyles.loadQSS(self.theme, self.parent.devmode)
         QApplication.setFont(QFont('Open Sans', 12 if sys.platform == 'darwin' else 10, 300))
 
-    def logMPV(self, loglevel, component, message):
-        log_msg = 'MPV {} - {}: {}'.format(loglevel, component, message)
-        if loglevel in ('fatal', 'error'):
-            self.logger.critical(log_msg)
-            sys.stderr.write(log_msg)
-            if loglevel == 'fatal' or 'file format' in message:
-                self.errorOccurred.emit('{0}<br/>Please try again or use a valid media file.'.format(message))
-                self.initMediaControls(False)
-        else:
-            self.logger.info(log_msg)
+    # def logMPV(self, loglevel, component, message):
+    #     log_msg = 'MPV {} - {}: {}'.format(loglevel, component, message)
+    #     if loglevel in ('fatal', 'error'):
+    #         self.logger.critical(log_msg)
+    #         sys.stderr.write(log_msg)
+    #         if loglevel == 'fatal' or 'file format' in message:
+    #             self.errorOccurred.emit('{0}<br/>Please try again or use a valid media file.'.format(message))
+    #             self.initMediaControls(False)
+    #     else:
+    #         self.logger.info(log_msg)
 
     def initMPV(self) -> None:
         self.mpvWidget = mpvWidget(
@@ -333,19 +334,13 @@ class VideoCutter(QWidget):
             video_sync='display-vdrop',
             audio_file_auto=False,
             quiet=True,
-            terminal=True,
+            # terminal=True,
+            msg_level='all=v' if os.getenv('DEBUG', False) else 'error',
             volume=self.parent.startupvol,
             keepaspect=self.keepRatioAction.isChecked(),
             hwdec=('auto' if self.hardwareDecoding else 'no'))
-
         self.mpvWidget.durationChanged.connect(self.on_durationChanged)
         self.mpvWidget.positionChanged.connect(self.on_positionChanged)
-
-        # self.mpvWidget.mpv.log_handler = self.logMPV
-        # self.mpvWidget.mpv.libmpvError.connect(self.on_mpvError)
-
-        if os.getenv('DEBUG', False):
-            self.mpvWidget.mpv.set_property('msg-level', 'all=v')
 
     def initNoVideo(self) -> None:
         self.novideoWidget = QWidget(self)
@@ -756,7 +751,7 @@ class VideoCutter(QWidget):
             self.inCut = False
             self.newproject = True
             qApp.restoreOverrideCursor()
-            self.showText('Project loaded...')
+            self.showText('Project file loaded')
 
     def saveProject(self, filepath: str) -> None:
         if self.currentMedia is None:
@@ -785,7 +780,7 @@ class VideoCutter(QWidget):
                                       milliseconds=clip[1].msec())
                 QTextStream(file) << '%s\t%s\t%d\n' % (self.delta2String(start_time), self.delta2String(stop_time), 0)
             qApp.restoreOverrideCursor()
-            self.showText('Project was successfully saved...')
+            self.showText('Project file saved')
 
     def loadMedia(self, filename: str) -> None:
         if not os.path.exists(filename):
@@ -1227,16 +1222,16 @@ class VideoCutter(QWidget):
                 self.mpvWidget.frameBackStep()
             elif event.key() == Qt.Key_Down:
                 if qApp.queryKeyboardModifiers() == Qt.ShiftModifier:
-                    self.mpvWidget.seek(-self.level2_spinner.value(), 'relative+exact')
+                    self.mpvWidget.seek(-self.level2_spinner.value(), 'relative')
                 else:
-                    self.mpvWidget.seek(-self.level1_spinner.value(), 'relative+exact')
+                    self.mpvWidget.seek(-self.level1_spinner.value(), 'relative')
             elif event.key() == Qt.Key_Right:
                 self.mpvWidget.frameStep()
             elif event.key() == Qt.Key_Up:
                 if qApp.queryKeyboardModifiers() == Qt.ShiftModifier:
-                    self.mpvWidget.seek(self.level2_spinner.value(), 'relative+exact')
+                    self.mpvWidget.seek(self.level2_spinner.value(), 'relative')
                 else:
-                    self.mpvWidget.seek(self.level1_spinner.value(), 'relative+exact')
+                    self.mpvWidget.seek(self.level1_spinner.value(), 'relative')
             elif event.key() == Qt.Key_Home:
                 self.mpvWidget.mpv.set_property('time-pos', 0)
             elif event.key() == Qt.Key_End:

@@ -72,6 +72,7 @@ class VideoInfo(QDialog):
         content = QTextBrowser(self.parent)
         content.setStyleSheet('QTextBrowser { border: none; background-color: transparent; }')
         content.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        # content.setHtml(VideoInfo.addAnchorLinks(metadata))
         content.setHtml(metadata)
 
         buttons = QDialogButtonBox(QDialogButtonBox.Close)
@@ -95,3 +96,12 @@ class VideoInfo(QDialog):
             layout.addWidget(buttons)
 
         self.setLayout(layout)
+
+    # @staticmethod
+    # def addAnchorLinks(content: str) -> str:
+    #     content = content.replace('<body>', '<body>\n<p><a href="#general">general</a> | <a href="#video">video</a> ' +
+    #                               '| <a href="#audio>audio</a></p>', 1)
+    #     content = content.replace('<h2>General</h2>', '<h2 id="general">General</h2>', 1)
+    #     content = content.replace('<h2>Video</h2>', '<h2 id="video">Video</h2>', 1)
+    #     content = content.replace('<h2>Audio</h2>', '<h2 id="audio">Audio</h2>', 1)
+    #     return content

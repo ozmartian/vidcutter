@@ -5,7 +5,6 @@ import locale
 import logging
 import os
 import sys
-# from ctypes import cast, c_void_p
 
 # this is required for Ubuntu which seems to
 # have a broken PyQt5 OpenGL implementation
@@ -34,6 +33,7 @@ class mpvWidget(QOpenGLWidget):
 
     def __init__(self, parent=None, **mpv_opts):
         super(mpvWidget, self).__init__(parent)
+        self.parent = parent
         self.logger = logging.getLogger(__name__)
         locale.setlocale(locale.LC_NUMERIC, 'C')
         self.shuttingdown = False
@@ -101,20 +101,32 @@ class mpvWidget(QOpenGLWidget):
     def eventHandler(self):
         if not self.shuttingdown:
             while self.mpv:
-                event = self.mpv.wait_event(.01)
-                if event.id == mpv.Events.none:
-                    continue
-                elif event.id == mpv.Events.shutdown:
-                    break
-                elif event.id == mpv.Events.log_message:
-                    event_log = event.data
-                    self.logger.info('[%s] %s' % (event_log.prefix, event_log.text.strip()))
-                elif event.id == mpv.Events.property_change:
-                    event_prop = event.data
-                    if event_prop.name == 'time-pos':
-                        self.positionChanged.emit(event_prop.data, self.mpv.get_property('estimated-frame-number'))
-                    elif event_prop.name == 'duration':
-                        self.durationChanged.emit(event_prop.data, self.mpv.get_property('estimated-frame-count'))
+                try:
+                    event = self.mpv.wait_event(.01)
+                    if event.id == mpv.Events.none:
+                        continue
+                    elif event.id in {mpv.Events.shutdown, mpv.Events.end_file}:
+                        break
+                    elif event.id == mpv.Events.log_message:
+                        event_log = event.data
+                        log_msg = '[%s] %s' % (event_log.prefix, event_log.text.strip())
+                        if event_log.level in (mpv.LogLevels.fatal, mpv.LogLevels.error):
+                            self.logger.critical(log_msg)
+                            sys.stderr.write(log_msg)
+                            if event_log.level == mpv.LogLevels.fatal or 'file format' in event_log.text:
+                                self.parent.errorOccurred.emit(log_msg)
+                                self.parent.initMediaControls(False)
+                        else:
+                            self.logger.debug(log_msg)
+                    elif event.id == mpv.Events.property_change:
+                        event_prop = event.data
+                        if event_prop.name == 'time-pos':
+                            self.positionChanged.emit(event_prop.data, self.mpv.get_property('estimated-frame-number'))
+                        elif event_prop.name == 'duration':
+                            self.durationChanged.emit(event_prop.data, self.mpv.get_property('estimated-frame-count'))
+                except mpv.MPVError as e:
+                    if e.code != -10:
+                        raise e
 
     def showText(self, msg: str, duration: int, level: int = None):
         self.mpv.command('show-text', msg, duration * 1000, level)
@@ -122,7 +134,7 @@ class mpvWidget(QOpenGLWidget):
     def play(self, filepath):
         if not os.path.exists(filepath):
             return
-        self.mpv.command('loadfile', filepath)
+        self.mpv.command('loadfile', filepath, 'replace')
 
     def frameStep(self):
         self.mpv.command('frame-step')
@@ -130,7 +142,7 @@ class mpvWidget(QOpenGLWidget):
     def frameBackStep(self):
         self.mpv.command('frame-back-step')
 
-    def seek(self, pos, method='absolute+exact'):
+    def seek(self, pos, method='absolute'):
         if not self.mpv.get_property('seeking'):
             self.mpv.command('seek', pos, method)
 

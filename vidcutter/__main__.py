@@ -30,11 +30,12 @@ import signal
 import sys
 import traceback
 
-from PyQt5.QtCore import (QCommandLineOption, QCommandLineParser, QDir, QFileInfo, QProcess,
-                          QSettings, QSize, QStandardPaths, Qt, pyqtSlot)
+from PyQt5.QtCore import (pyqtSlot, QCommandLineOption, QCommandLineParser, QDir, QFileInfo, QProcess, QSettings, QSize,
+                          QStandardPaths, Qt)
 from PyQt5.QtGui import QCloseEvent, QContextMenuEvent, QDragEnterEvent, QDropEvent, QIcon, QMouseEvent
 from PyQt5.QtWidgets import qApp, QApplication, QMainWindow, QMessageBox, QSizePolicy
 
+from vidcutter.videoconsole import VideoConsole
 from vidcutter.videocutter import VideoCutter
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
@@ -58,6 +59,11 @@ class MainWindow(QMainWindow):
         self.statusBar().setStyleSheet('border: none; padding: 0; margin: 0;')
         self.setAcceptDrops(True)
         self.show()
+
+        self.console = VideoConsole(self)
+        self.console.setGeometry(int(self.x() - (self.width() / 2)), self.y() + int(self.height() / 3),
+                                 int(self.width() / 1.5), int(self.height() / 3))
+        self.console.show()
         try:
             if len(self.video):
                 if QFileInfo(self.video).suffix() == 'vcp':
@@ -198,14 +204,14 @@ class MainWindow(QMainWindow):
             labels = 'none'
         else:
             labels = 'beside'
+        self.settings.setValue('toolbarLabels', labels)
         self.settings.setValue('aspectRatio', 'keep' if self.cutter.keepRatioAction.isChecked() else 'stretch')
         self.settings.setValue('volume', self.cutter.volumeSlider.value())
         self.settings.setValue('level1Seek', self.cutter.level1_spinner.value())
         self.settings.setValue('level2Seek', self.cutter.level2_spinner.value())
-        self.settings.setValue('toolbarLabels', labels)
         self.settings.setValue('geometry', self.saveGeometry())
         self.settings.setValue('windowState', self.saveState())
-        # self.settings.sync()
+        self.settings.sync()
 
     @staticmethod
     def get_path(path: str = None, override: bool = False) -> str:

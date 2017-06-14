@@ -57,7 +57,7 @@ class About(QDialog):
                         <span style="font-size:58px;">V</span>ID<span style="font-size:58px;">C</span>UTTER
                     </div>
                     &nbsp;&nbsp;
-                    <div style="padding:0; margin:0; margin-left:20px;">
+                    <div style="padding:0; margin:0; margin-left:35px;">
                         <table border="0" cellpadding="2" cellspacing="0">
                         <tr valign="bottom">
                             <td style="text-align:right;font-size:10pt;font-weight:500;color:%s;">version:</td>

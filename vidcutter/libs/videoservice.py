@@ -30,7 +30,7 @@ import sys
 from distutils.spawn import find_executable
 from enum import Enum
 
-from PyQt5.QtCore import QDir, QFileInfo, QObject, QProcess, QProcessEnvironment, QSize, QTemporaryFile, pyqtSlot
+from PyQt5.QtCore import pyqtSlot, QDir, QFileInfo, QObject, QProcess, QProcessEnvironment, QSize, QTemporaryFile
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QMessageBox
 
@@ -55,13 +55,10 @@ class VideoService(QObject):
         super(VideoService, self).__init__(parent)
         self.parent = parent
         self.logger = logging.getLogger(__name__)
-        self.backend, self.mediainfo = self.initBackends()
+        self.backend, self.mediainfo = VideoService.initBackends()
         if self.backend is not None:
-            self.initProc()
-            # if os.getenv('DEBUG', False):
-            #     self.logger.info('backend: "%s"  mediainfo: "%s"' % (self.backend, self.mediainfo))
-        else:
-            self.parent.errorOccurred.emit()
+            self.proc = VideoService.initProc()
+            self.proc.errorOccurred.connect(self.cmdError)
 
     @staticmethod
     def initBackends() -> tuple:
@@ -76,12 +73,12 @@ class VideoService(QObject):
                 break
         return backend, mediainfo
 
-    def initProc(self) -> None:
-        self.proc = QProcess(self)
-        self.proc.errorOccurred.connect(self.cmdError)
-        env = QProcessEnvironment.systemEnvironment()
-        self.proc.setProcessEnvironment(env)
-        self.proc.setWorkingDirectory(self.getAppPath())
+    @staticmethod
+    def initProc() -> QProcess:
+        p = QProcess()
+        p.setProcessEnvironment(QProcessEnvironment.systemEnvironment())
+        p.setWorkingDirectory(VideoService.getAppPath())
+        return p
 
     @staticmethod
     def capture(source: str, frametime: str, thumbsize: ThumbSize = ThumbSize.INDEX) -> QPixmap:
@@ -93,9 +90,7 @@ class VideoService(QObject):
             backend, _ = VideoService.initBackends()
             args = '-ss %s -i "%s" -vframes 1 -s %ix%i -v 16 -y "%s"' % (frametime, source, size.width(),
                                                                          size.height(), imagecap)
-            proc = QProcess()
-            proc.setProcessEnvironment(QProcessEnvironment.systemEnvironment())
-            proc.setWorkingDirectory(VideoService.getAppPath())
+            proc = VideoService.initProc()
             proc.setProcessChannelMode(QProcess.MergedChannels)
             if proc.state() == QProcess.NotRunning:
                 proc.start(backend, shlex.split(args))

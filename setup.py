@@ -26,13 +26,12 @@ import os
 import shlex
 import subprocess
 import sys
-
 from distutils.spawn import find_executable
+
 from setuptools import setup
 from setuptools.extension import Extension
 
 from videosetup import VCSetup
-
 
 setup_requires = ['setuptools']
 
@@ -49,6 +48,7 @@ extensions = [Extension(
 )]
 if USE_CYTHON:
     from Cython.Build import cythonize
+
     extensions = cythonize(extensions)
     setup_requires.append('Cython')
 
@@ -116,10 +116,8 @@ if ROOT and result is not None:
         exepath = find_executable('xdg-icon-resource')
         if exepath is None:
             raise Exception
-        args = exepath + ' ' + \
-            'install --noupdate --context mimetypes --size 128 ' + \
-            '/usr/share/icons/hicolor/128x128/apps/vidcutter.png ' + \
-            'application-x-vidcutter'
+        args = '{0} install --noupdate --context mimetypes --size 128 '.format(exepath) + \
+               '/usr/share/icons/hicolor/128x128/apps/vidcutter.png application-x-vidcutter'
         subprocess.call(shlex.split(args))
     except:
         sys.stdout.write('FAILED\n')
