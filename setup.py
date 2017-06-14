@@ -22,107 +22,53 @@
 #
 #######################################################################
 
-import codecs
 import os
-import re
 import shlex
 import subprocess
 import sys
 
-from Cython.Build import cythonize
 from distutils.spawn import find_executable
 from setuptools import setup
 from setuptools.extension import Extension
 
-
-def get_bitness():
-    from struct import calcsize
-    return calcsize('P') * 8
+from videosetup import VCSetup
 
 
-def get_library_dirs():
-    _dirs = []
-    if sys.platform == 'win32':
-        _dirs = ['vidcutter/libs/pympv/win%s' % get_bitness()]
-    return _dirs
+setup_requires = ['setuptools']
 
+# Cython override; default to building extension module from pre-Cythonized .c file
+USE_CYTHON = False
+ext = '.pyx' if USE_CYTHON else '.c'
+extensions = [Extension(
+    'vidcutter.libs.mpv',
+    ['vidcutter/libs/pympv/mpv{0}'.format(ext)],
+    include_dirs=['vidcutter/libs/pympv/mpv'],
+    libraries=['mpv'],
+    library_dirs=VCSetup.get_library_dirs(),
+    extra_compile_args=['-g0' if sys.platform != 'win32' else '']
+)]
+if USE_CYTHON:
+    from Cython.Build import cythonize
+    extensions = cythonize(extensions)
+    setup_requires.append('Cython')
 
-def get_value(varname, filename='vidcutter/__init__.py'):
-    with codecs.open(os.path.join(here, filename), encoding='utf-8') as initfile:
-        for line in initfile.readlines():
-            m = re.match('__%s__ *= *[\'](.*)[\']' % varname, line)
-            if m:
-                return m.group(1)
-
-
-def get_description(filename='README.md'):
-    with codecs.open(os.path.join(here, filename), encoding='utf-8') as f:
-        file = list(f)
-    desc = ''
-    for item in file[11: len(file)]:
-        desc += item
-    return desc
-
-
-def get_install_requires():
-    return ['PyQt5', 'PyOpenGL'] if packager == 'pypi' else []
-
-
-def get_data_files():
-    files = []
-    if sys.platform.startswith('linux'):
-        files = [
-            ('/usr/share/icons/hicolor/16x16/apps', ['data/icons/hicolor/16x16/apps/vidcutter.png']),
-            ('/usr/share/icons/hicolor/22x22/apps', ['data/icons/hicolor/22x22/apps/vidcutter.png']),
-            ('/usr/share/icons/hicolor/24x24/apps', ['data/icons/hicolor/24x24/apps/vidcutter.png']),
-            ('/usr/share/icons/hicolor/32x32/apps', ['data/icons/hicolor/32x32/apps/vidcutter.png']),
-            ('/usr/share/icons/hicolor/48x48/apps', ['data/icons/hicolor/48x48/apps/vidcutter.png']),
-            ('/usr/share/icons/hicolor/64x64/apps', ['data/icons/hicolor/64x64/apps/vidcutter.png']),
-            ('/usr/share/icons/hicolor/128x128/apps', ['data/icons/hicolor/128x128/apps/vidcutter.png']),
-            ('/usr/share/icons/hicolor/256x256/apps', ['data/icons/hicolor/256x256/apps/vidcutter.png']),
-            ('/usr/share/icons/hicolor/512x512/apps', ['data/icons/hicolor/512x512/apps/vidcutter.png']),
-            ('/usr/share/icons/hicolor/scalable/apps', ['data/icons/vidcutter.svg']),
-            ('/usr/share/pixmaps', ['data/icons/vidcutter.svg']),
-            ('/usr/share/applications', ['data/desktop/vidcutter.desktop']),
-            ('/usr/share/mime/packages', ['data/mime/x-vidcutter.xml'])
-        ]
-    return files
-
-here = os.path.abspath(os.path.dirname(__file__))
-
-packager = get_value('packager')
-
+# begin setuptools installer
 result = setup(
     name='vidcutter',
-    version=get_value('version'),
+    version=VCSetup.get_value('version'),
     author='Pete Alexandrou',
     author_email='pete@ozmartians.com',
     description='the fast + sleek cross-platform video cutter & joiner',
-    long_description=get_description(),
+    long_description=VCSetup.get_description(),
     url='http://vidcutter.ozmartians.com',
     license='GPLv3+',
-
     packages=['vidcutter', 'vidcutter.libs'],
-
-    setup_requires=['setuptools', 'Cython' ],
-
-    install_requires=get_install_requires(),
-
-    data_files=get_data_files(),
-
-    ext_modules=cythonize([Extension(
-        'vidcutter.libs.mpv',
-        ['vidcutter/libs/pympv/mpv.pyx'],
-        include_dirs=['vidcutter/libs/pympv/mpv'],
-        libraries=['mpv'],
-        library_dirs=get_library_dirs(),
-        extra_compile_args=['-g0' if sys.platform != 'win32' else '']
-    )]),
-
+    setup_requires=setup_requires,
+    install_requires=VCSetup.get_install_requires(),
+    data_files=VCSetup.get_data_files(),
+    ext_modules=extensions,
     entry_points={'gui_scripts': ['vidcutter = vidcutter.__main__:main']},
-
     keywords='vidcutter ffmpeg audiovideo mpv libmpv videoeditor video videoedit pyqt Qt5 multimedia',
-
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Environment :: X11 Applications :: Qt',
@@ -135,6 +81,8 @@ result = setup(
     ]
 )
 
+# helper functions/procedures for PyPi on Linux installations which is frowned upon
+# may get rid of this so users stick with distro packaging
 if not sys.platform.startswith('linux') or not os.getenv('FAKEROOTKEY') is None:
     ROOT = False
 else:

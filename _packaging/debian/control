@@ -2,7 +2,7 @@ Source: vidcutter
 Maintainer: Pete Alexandrou <pete@ozmartians.com>
 Section: video
 Priority: optional
-Build-Depends: dh-python, python3-setuptools, python3-all, python3-dev, cython3, libmpv-dev, debhelper (>= 9)
+Build-Depends: dh-python, python3-setuptools, python3-all, python3-dev, libmpv-dev, debhelper (>= 9)
 Standards-Version: 3.9.6
 Homepage: http://vidcutter.ozmartians.com
 

@@ -1,7 +1,7 @@
 Name:           vidcutter
-Version:        3.5.0
+Version:        4.0.0
 Release:        0
-Summary:       the simplest + fastest video cutter & joiner
+Summary:        the simplest + fastest video cutter & joiner
 License:        GPL-3.0+
 Group:          Productivity/Multimedia/Video/Editors and Convertors
 Url:            http://vidcutter.ozmartians.com/
@@ -10,11 +10,10 @@ BuildRequires:  desktop-file-utils
 BuildRequires:  hicolor-icon-theme
 BuildRequires:  python3-devel
 BuildRequires:  python3-setuptools
-BuildRequires:  python3-Cython
+BuildRequires:  mpv-devel
 BuildRequires:  update-desktop-files
 Requires:       ffmpeg
 Requires:       libmpv1
-Requires:       mpv-devel
 Requires:       mediainfo
 Requires:       python3-qt5
 Requires:       python3-opengl

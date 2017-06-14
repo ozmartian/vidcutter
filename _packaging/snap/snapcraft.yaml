@@ -1,5 +1,5 @@
 name: vidcutter
-version: 3.5.0
+version: 4.0.0
 summary: the simplest + fastest video cutter & joiner
 description: |
     The simplest & sexiest tool for cutting and
@@ -25,9 +25,11 @@ parts:
     build-packages:
         - python3-dev
         - python3-setuptools
+        - libmpv-dev
     stage-packages:
         - python3-pyqt5
         - libmpv1
         - ffmpeg
         - mediainfo
+        - python3-opengl
     prepare: sed -i "s/pypi/deb/" "vidcutter/__init__.py"

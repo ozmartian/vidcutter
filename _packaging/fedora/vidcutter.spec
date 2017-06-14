@@ -2,7 +2,7 @@
 %global pkg_name vidcutter
 
 Name:           %{pkg_name}
-Version:        3.5.0
+Version:        4.0.0
 Release:        1%{?dist}
 Summary:        the simplest + fastest video cutter & joiner
 Group:          Applications/Multimedia
@@ -12,8 +12,8 @@ URL:            http://vidcutter.ozmartians.com
 Source0:        https://github.com/ozmartian/%{pkg_name}/archive/%{version}.tar.gz
 BuildArch:      noarch
  
-BuildRequires:  python3-devel, python3-setuptools, python3-Cython
-Requires:       python3-qt5, mpv-libs, mpv-libs-devel, mediainfo, ffmpeg, python3-pyopengl
+BuildRequires:  python3-devel, python3-setuptools, mpv-libs-devel
+Requires:       python3-qt5, mpv-libs, mediainfo, ffmpeg, python3-pyopengl
 
 %description
      The simplest & sexiest tool for cutting and joining your videos without the need for
