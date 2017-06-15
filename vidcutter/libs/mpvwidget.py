@@ -38,8 +38,7 @@ class mpvWidget(QOpenGLWidget):
         self.shuttingdown = False
         self.mpv = mpv.Context()
 
-        if os.getenv('DEBUG', False):
-            self.mpv.set_log_level('terminal-default')
+        self.mpv.set_log_level('terminal-default')
 
         def _istr(o):
             return ('yes' if o else 'no') if type(o) is bool else str(o)
@@ -117,7 +116,7 @@ class mpvWidget(QOpenGLWidget):
                                 self.parent.errorOccurred.emit(log_msg)
                                 self.parent.initMediaControls(False)
                         else:
-                            self.logger.debug(log_msg)
+                            self.logger.info(log_msg)
                     elif event.id == mpv.Events.property_change:
                         event_prop = event.data
                         if event_prop.name == 'time-pos':
@@ -127,6 +126,9 @@ class mpvWidget(QOpenGLWidget):
                 except mpv.MPVError as e:
                     if e.code != -10:
                         raise e
+
+    def setLogLevel(self, loglevel: mpv.LogLevels):
+        self.mpv.set_log_level(loglevel)
 
     def showText(self, msg: str, duration: int, level: int = None):
         self.mpv.command('show-text', msg, duration * 1000, level)

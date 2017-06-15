@@ -20,7 +20,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-#################################################################s######
+#######################################################################
 
 import logging
 import os
@@ -93,6 +93,8 @@ class VideoService(QObject):
             proc = VideoService.initProc()
             proc.setProcessChannelMode(QProcess.MergedChannels)
             if proc.state() == QProcess.NotRunning:
+                if os.getenv('DEBUG', False):
+                    logging.getLogger(__name__).info('"%s %s"' % (backend, args))
                 proc.start(backend, shlex.split(args))
                 proc.waitForFinished(-1)
                 if proc.exitStatus() == QProcess.NormalExit and proc.exitCode() == 0:
@@ -126,20 +128,9 @@ class VideoService(QObject):
         result = self.cmdExec(self.mediainfo, args, True)
         return result.strip()
 
-    # @staticmethod
-    # def streams(source: str) -> dict:
-    #     mediainfo = MediaInfo.parse(source).to_data().get('tracks')
-    #     return {
-    #         'general': [general for general in mediainfo if general['track_type'] == 'General'],
-    #         'video': [video for video in mediainfo if video['track_type'] == 'Video'],
-    #         'audio': [audio for audio in mediainfo if audio['track_type'] == 'Audio'],
-    #         'text': [text for text in mediainfo if text['track_type'] == 'Text'],
-    #         'other': [other for other in mediainfo if other['track_type'] == 'Other'],
-    #     }
-
     def cmdExec(self, cmd: str, args: str = None, output: bool = False):
-        # if os.getenv('DEBUG', False):
-        #     self.logger.info('"%s %s"' % (cmd, args if args is not None else ''))
+        if os.getenv('DEBUG', False):
+            self.logger.info('"%s %s"' % (cmd, args if args is not None else ''))
         if self.proc.state() == QProcess.NotRunning:
             self.proc.setProcessChannelMode(QProcess.SeparateChannels if cmd == self.mediainfo
                                             else QProcess.MergedChannels)
@@ -164,3 +155,14 @@ class VideoService(QObject):
             # noinspection PyProtectedMember
             return sys._MEIPASS
         return QFileInfo(__file__).absolutePath()
+
+    # @staticmethod
+    # def streams(source: str) -> dict:
+    #     mediainfo = MediaInfo.parse(source).to_data().get('tracks')
+    #     return {
+    #         'general': [general for general in mediainfo if general['track_type'] == 'General'],
+    #         'video': [video for video in mediainfo if video['track_type'] == 'Video'],
+    #         'audio': [audio for audio in mediainfo if audio['track_type'] == 'Audio'],
+    #         'text': [text for text in mediainfo if text['track_type'] == 'Text'],
+    #         'other': [other for other in mediainfo if other['track_type'] == 'Other'],
+    #     }

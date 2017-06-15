@@ -208,6 +208,10 @@ class VideoCutter(QWidget):
 
         if self.hideConsole:
             self.consoleButton.setChecked(True)
+        else:
+            self.mpvWidget.setLogLevel('v')
+            os.environ['DEBUG'] = '1'
+            self.parent.console.show()
 
         self.thumbnailsButton.setStyle(QStyleFactory.create('fusion'))
         self.osdButton.setStyle(QStyleFactory.create('fusion'))
@@ -311,17 +315,6 @@ class VideoCutter(QWidget):
         VideoStyles.loadQSS(self.theme, self.parent.devmode)
         QApplication.setFont(QFont('Open Sans', 12 if sys.platform == 'darwin' else 10, 300))
 
-    # def logMPV(self, loglevel, component, message):
-    #     log_msg = 'MPV {} - {}: {}'.format(loglevel, component, message)
-    #     if loglevel in ('fatal', 'error'):
-    #         self.logger.critical(log_msg)
-    #         sys.stderr.write(log_msg)
-    #         if loglevel == 'fatal' or 'file format' in message:
-    #             self.errorOccurred.emit('{0}<br/>Please try again or use a valid media file.'.format(message))
-    #             self.initMediaControls(False)
-    #     else:
-    #         self.logger.info(log_msg)
-
     def initMPV(self) -> None:
         self.mpvWidget = mpvWidget(
             parent=self,
@@ -345,7 +338,7 @@ class VideoCutter(QWidget):
             video_sync='display-vdrop',
             audio_file_auto=False,
             quiet=True,
-            terminal=True,
+            # terminal=True,
             msg_level=('all=v' if os.getenv('DEBUG', False) else 'error'),
             volume=self.parent.startupvol,
             keepaspect=self.keepRatioAction.isChecked(),
@@ -907,6 +900,17 @@ class VideoCutter(QWidget):
 
     @pyqtSlot(bool)
     def toggleConsole(self, checked: bool):
+        if not hasattr(self, 'debugonstart'):
+            self.debugonstart = os.getenv('DEBUG', False)
+        if checked:
+            if not self.debugonstart:
+                os.environ['DEBUG'] = '0'
+                self.mpvWidget.setLogLevel('error')
+            self.parent.console.hide()
+        else:
+            self.mpvWidget.setLogLevel('v')
+            os.environ['DEBUG'] = '1'
+            self.parent.console.show()
         self.saveSetting('hideConsole', checked)
 
     @pyqtSlot(bool)

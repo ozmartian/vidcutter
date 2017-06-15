@@ -35,6 +35,7 @@ from PyQt5.QtCore import (pyqtSlot, QCommandLineOption, QCommandLineParser, QDir
 from PyQt5.QtGui import QCloseEvent, QContextMenuEvent, QDragEnterEvent, QDropEvent, QIcon, QMouseEvent
 from PyQt5.QtWidgets import qApp, QApplication, QMainWindow, QMessageBox, QSizePolicy
 
+from vidcutter.videoconsole import ConsoleHandler, ConsoleWidget
 from vidcutter.videocutter import VideoCutter
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
@@ -59,10 +60,8 @@ class MainWindow(QMainWindow):
         self.setAcceptDrops(True)
         self.show()
 
-        # self.console = VideoConsole(self)
-        # self.console.setGeometry(int(self.x() - (self.width() / 2)), self.y() + int(self.height() / 3),
-        #                          int(self.width() / 1.5), int(self.height() / 3))
-        # self.console.show()
+        self.console.setGeometry(int(self.x() - (self.width() / 2)), self.y() + int(self.height() / 3),
+                                 int(self.width() / 1.5), int(self.height() / 3))
 
         try:
             if len(self.video):
@@ -104,11 +103,11 @@ class MainWindow(QMainWindow):
             else:
                 log_path = os.path.join(QDir.homePath(), '.config', qApp.applicationName()).lower()
         os.makedirs(log_path, exist_ok=True)
+        self.console = ConsoleWidget(self)
         handlers = [logging.handlers.RotatingFileHandler(os.path.join(log_path, '%s.log'
                                                                       % qApp.applicationName().lower()),
-                                                         maxBytes=1000000, backupCount=1)]
-        # if os.getenv('DEBUG', False):
-        #     handlers.append(logging.StreamHandler())
+                                                         maxBytes=1000000, backupCount=1),
+                    ConsoleHandler(self.console)]
         logging.basicConfig(handlers=handlers,
                             format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                             datefmt='%Y-%m-%d %H:%M',

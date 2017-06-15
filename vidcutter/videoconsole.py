@@ -25,24 +25,22 @@
 import logging
 from io import StringIO
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QTextCursor
-from PyQt5.QtWidgets import qApp, QTextEdit
+from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QObject
+from PyQt5.QtGui import QCloseEvent, QTextCursor, QTextOption
+from PyQt5.QtWidgets import qApp, QDialog, QDialogButtonBox, QTextEdit, QVBoxLayout
 
 
 class VideoConsole(QTextEdit):
     def __init__(self, parent=None):
         super(VideoConsole, self).__init__(parent)
-        self.parent = parent
         self._buffer = StringIO()
         self.setReadOnly(True)
-        # self.setWindowFlags(Qt.Dialog | Qt.WindowCloseButtonHint | Qt.WindowStaysOnTopHint)
-        self.setWindowFlags(Qt.Dialog | Qt.WindowCloseButtonHint)
-        self.setWindowModality(Qt.NonModal)
-        self.setWindowTitle('{0} Console'.format(qApp.applicationName()))
+        self.setWordWrapMode(QTextOption.NoWrap)
+        self.setStyleSheet('QTextEdit { font-family:monospace; font-size:9pt; }')
 
+    @pyqtSlot(str)
     def write(self, msg):
-        self.insertPlainText(msg)
+        self.insertPlainText('%s\n' % msg)
         self.moveCursor(QTextCursor.End)
         self._buffer.write(msg)
 
@@ -50,21 +48,45 @@ class VideoConsole(QTextEdit):
         return getattr(self._buffer, item)
 
 
-# class WidgetHandler(logging.Handler):
-#     def __init__(self, widget):
-#         super(WidgetHandler, self).__init__()
-#         self._widget = widget
-#
-#     @property
-#     def widget(self):
-#         return self._widget
-#
-#     def emit(self, record):
-#         self._widget.write(self.format(record))
+class ConsoleWidget(QDialog):
+    def __init__(self, parent=None):
+        super(ConsoleWidget, self).__init__(parent)
+        self.parent = parent
+        self.edit = VideoConsole(self)
+        buttons = QDialogButtonBox()
+        buttons.setCenterButtons(True)
+        buttons.setStyleSheet('QPushButton { font-size:9pt; padding:3px; }')
+        clearButton = buttons.addButton('Clear', QDialogButtonBox.ResetRole)
+        clearButton.clicked.connect(self.edit.clear)
+        closeButton = buttons.addButton(QDialogButtonBox.Close)
+        closeButton.clicked.connect(self.close)
+        layout = QVBoxLayout()
+        layout.setSpacing(1)
+        layout.setContentsMargins(0, 0, 0, 2)
+        layout.addWidget(self.edit)
+        layout.addWidget(buttons)
+        self.setLayout(layout)
+        self.setWindowTitle('{0} Console'.format(qApp.applicationName()))
+        self.setWindowFlags(Qt.Dialog | Qt.WindowCloseButtonHint)
+        self.setWindowModality(Qt.NonModal)
+
+    def closeEvent(self, event: QCloseEvent):
+        self.parent.cutter.consoleButton.setChecked(True)
+        super(ConsoleWidget, self).closeEvent(event)
 
 
-class ConsoleLogger(logging.Handler):
-    edit = VideoConsole()
+class ConsoleHandler(QObject, logging.Handler):
+    logReceived = pyqtSignal(str)
+
+    def __init__(self, widget):
+        QObject.__init__(self)
+        logging.Handler.__init__(self)
+        self._widget = widget
+        self.logReceived.connect(self._widget.edit.write)
+
+    @property
+    def widget(self):
+        return self._widget
 
     def emit(self, record):
-        self.edit.write(msg=self.format(record))
+        self.logReceived.emit(record.message)
