@@ -102,6 +102,7 @@ class FrameCounter(QWidget):
         super(FrameCounter, self).__init__(parent)
         self.parent = parent
         self.currentframe = QSpinBox(self, objectName='frameCounter')
+        self.currentframe.setStyle(QStyleFactory.create('fusion'))
         self.currentframe.setFrame(False)
         self.currentframe.setAlignment(Qt.AlignRight)
         self.currentframe.valueChanged.connect(self.frameChangeHandler)

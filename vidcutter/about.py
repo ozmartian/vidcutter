@@ -156,12 +156,12 @@ class AboutTab(BaseTab):
                 <b>SIP:</b> %s
             </p> 
             <p style="font-size:13px;">
-                Copyright &copy; 2017 <a href="mailto:pete@ozmartians.com">Pete Alexandrou</a>
+                Copyright &copy; %s <a href="mailto:pete@ozmartians.com">Pete Alexandrou</a>
                 <br/>
                 Website: <a href="http://vidcutter.ozmartians.com">http://vidcutter.ozmartians.com</a>
             </p>
             <p style="font-size:13px;">
-                Found a bug? Then why not <a href="https://github.com/ozmartian/vidcutter/issues">REPORT IT HERE</a>
+                Found a bug? You can <a href="https://github.com/ozmartian/vidcutter/issues">REPORT IT HERE</a>.
             </p>
             <p style="font-size:11px; margin-top:15px;">
                 This program is free software; you can redistribute it and/or
@@ -177,7 +177,7 @@ class AboutTab(BaseTab):
     </tr>
 </table>''' % ('#EA95FF' if self.parent.parent.theme == 'dark' else '#441D4E',
                self.parent.parent.mpvWidget.mpv.get_property('mpv-version').replace('mpv ', ''), linebreak,
-               ffmpeg_version, sys.version.split(' ')[0], PYQT_VERSION_STR, SIP_VERSION_STR)
+               ffmpeg_version, sys.version.split(' ')[0], PYQT_VERSION_STR, SIP_VERSION_STR, datetime.now().year)
         self.setHtml(html)
 
 

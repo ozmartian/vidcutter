@@ -92,7 +92,7 @@ QToolBar#appcontrols QToolButton:pressed {
 
 QToolBar#appcontrols QToolButton:disabled,
 QToolBar#appcontrols QToolButton:disabled#saveButton {
-    color: rgba(170, 170, 170, 0.7)
+    color: rgb(170, 170, 170)
 }
 
 QToolBar#appcontrols QToolButton#saveButton {

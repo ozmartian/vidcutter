@@ -23,8 +23,7 @@ def get_proc_address(proc):
     glctx = QGLContext.currentContext()
     if glctx is None:
         return None
-    # noinspection PyTypeChecker
-    return int(glctx.getProcAddress(str(proc, 'utf-8')))
+    return glctx.getProcAddress(str(proc, 'utf-8'))
 
 
 class mpvWidget(QOpenGLWidget):
@@ -143,9 +142,8 @@ class mpvWidget(QOpenGLWidget):
     def frameBackStep(self):
         self.mpv.command('frame-back-step')
 
-    def seek(self, pos, method='absolute'):
-        if not self.mpv.get_property('seeking'):
-            self.mpv.command('seek', pos, method)
+    def seek(self, pos, method='absolute+exact'):
+        self.mpv.command('seek', pos, method)
 
     def pause(self):
         self.mpv.set_property('pause', not self.mpv.get_property('pause'))

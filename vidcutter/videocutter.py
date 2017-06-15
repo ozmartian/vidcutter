@@ -49,6 +49,7 @@ from vidcutter.libs.mpvwidget import mpvWidget
 from vidcutter.libs.videoservice import VideoService
 from vidcutter.libs.widgets import CompletionMessageBox, FrameCounter, TimeCounter, VCProgressBar
 
+# noinspection PyUnresolvedReferences
 import vidcutter.resources
 
 
@@ -99,6 +100,7 @@ class VideoCutter(QWidget):
         self.keepClips = self.settings.value('keepClips', 'off', type=str) in {'on', 'true'}
         self.nativeDialogs = self.settings.value('nativeDialogs', 'on', type=str) in {'on', 'true'}
         self.timelineThumbs = self.settings.value('timelineThumbs', 'on', type=str) in {'on', 'true'}
+        self.hideConsole = self.settings.value('hideConsole', 'on', type=str) in {'on', 'true'}
 
         self.edlblock_re = re.compile(r'(\d+(?:\.?\d+)?)\s(\d+(?:\.?\d+)?)\s([01])')
 
@@ -199,8 +201,17 @@ class VideoCutter(QWidget):
             self.osdButton.setChecked(False)
             self.osdButton.setDisabled(True)
 
+        # noinspection PyArgumentList
+        self.consoleButton = QPushButton(icon=self.consoleIcon, flat=True, iconSize=QSize(16, 16), checkable=True,
+                                         statusTip='Hide debug console window', cursor=Qt.PointingHandCursor,
+                                         toggled=self.toggleConsole, objectName='consoleButton')
+
+        if self.hideConsole:
+            self.consoleButton.setChecked(True)
+
         self.thumbnailsButton.setStyle(QStyleFactory.create('fusion'))
         self.osdButton.setStyle(QStyleFactory.create('fusion'))
+        self.consoleButton.setStyle(QStyleFactory.create('fusion'))
 
         # noinspection PyArgumentList
         self.muteButton = QPushButton(objectName='muteButton', icon=self.unmuteIcon, flat=True, toolTip='Mute',
@@ -233,6 +244,8 @@ class VideoCutter(QWidget):
         controlsLayout.addWidget(self.thumbnailsButton)
         controlsLayout.addSpacing(5)
         controlsLayout.addWidget(self.osdButton)
+        controlsLayout.addSpacing(5)
+        controlsLayout.addWidget(self.consoleButton)
         controlsLayout.addStretch(1)
         controlsLayout.addWidget(toolbarGroup)
         controlsLayout.addStretch(1)
@@ -329,13 +342,11 @@ class VideoCutter(QWidget):
             input_vo_keyboard=False,
             sub_auto=False,
             sid=False,
-            hr_seek=False,
-            hr_seek_framedrop=True,
             video_sync='display-vdrop',
             audio_file_auto=False,
             quiet=True,
-            # terminal=True,
-            msg_level='all=v' if os.getenv('DEBUG', False) else 'error',
+            terminal=True,
+            msg_level=('all=v' if os.getenv('DEBUG', False) else 'error'),
             volume=self.parent.startupvol,
             keepaspect=self.keepRatioAction.isChecked(),
             hwdec=('auto' if self.hardwareDecoding else 'no'))
@@ -406,6 +417,9 @@ class VideoCutter(QWidget):
         self.osdIcon = QIcon()
         self.osdIcon.addFile(':/images/%s/osd-on.png' % self.theme, QSize(16, 16), QIcon.Normal, QIcon.On)
         self.osdIcon.addFile(':/images/%s/osd-off.png' % self.theme, QSize(16, 16), QIcon.Normal, QIcon.Off)
+        self.consoleIcon = QIcon()
+        self.consoleIcon.addFile(':/images/%s/console-on.png' % self.theme, QSize(16, 16), QIcon.Normal, QIcon.On)
+        self.consoleIcon.addFile(':/images/%s/console-off.png' % self.theme, QSize(16, 16), QIcon.Normal, QIcon.Off)
 
     # noinspection PyArgumentList
     def initActions(self) -> None:
@@ -892,6 +906,10 @@ class VideoCutter(QWidget):
         self.saveSetting('timelineThumbs', checked)
 
     @pyqtSlot(bool)
+    def toggleConsole(self, checked: bool):
+        self.saveSetting('hideConsole', checked)
+
+    @pyqtSlot(bool)
     def setAspect(self, checked: bool = True) -> None:
         self.mpvWidget.mpv.set_option('keepaspect', checked)
         self.zoomAction.setEnabled(checked)
@@ -1222,16 +1240,16 @@ class VideoCutter(QWidget):
                 self.mpvWidget.frameBackStep()
             elif event.key() == Qt.Key_Down:
                 if qApp.queryKeyboardModifiers() == Qt.ShiftModifier:
-                    self.mpvWidget.seek(-self.level2_spinner.value(), 'relative')
+                    self.mpvWidget.seek(-self.level2_spinner.value(), 'relative+exact')
                 else:
-                    self.mpvWidget.seek(-self.level1_spinner.value(), 'relative')
+                    self.mpvWidget.seek(-self.level1_spinner.value(), 'relative+exact')
             elif event.key() == Qt.Key_Right:
                 self.mpvWidget.frameStep()
             elif event.key() == Qt.Key_Up:
                 if qApp.queryKeyboardModifiers() == Qt.ShiftModifier:
-                    self.mpvWidget.seek(self.level2_spinner.value(), 'relative')
+                    self.mpvWidget.seek(self.level2_spinner.value(), 'relative+exact')
                 else:
-                    self.mpvWidget.seek(self.level1_spinner.value(), 'relative')
+                    self.mpvWidget.seek(self.level1_spinner.value(), 'relative+exact')
             elif event.key() == Qt.Key_Home:
                 self.mpvWidget.mpv.set_property('time-pos', 0)
             elif event.key() == Qt.Key_End:

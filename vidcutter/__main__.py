@@ -35,7 +35,6 @@ from PyQt5.QtCore import (pyqtSlot, QCommandLineOption, QCommandLineParser, QDir
 from PyQt5.QtGui import QCloseEvent, QContextMenuEvent, QDragEnterEvent, QDropEvent, QIcon, QMouseEvent
 from PyQt5.QtWidgets import qApp, QApplication, QMainWindow, QMessageBox, QSizePolicy
 
-from vidcutter.videoconsole import VideoConsole
 from vidcutter.videocutter import VideoCutter
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
@@ -60,10 +59,11 @@ class MainWindow(QMainWindow):
         self.setAcceptDrops(True)
         self.show()
 
-        self.console = VideoConsole(self)
-        self.console.setGeometry(int(self.x() - (self.width() / 2)), self.y() + int(self.height() / 3),
-                                 int(self.width() / 1.5), int(self.height() / 3))
-        self.console.show()
+        # self.console = VideoConsole(self)
+        # self.console.setGeometry(int(self.x() - (self.width() / 2)), self.y() + int(self.height() / 3),
+        #                          int(self.width() / 1.5), int(self.height() / 3))
+        # self.console.show()
+
         try:
             if len(self.video):
                 if QFileInfo(self.video).suffix() == 'vcp':
@@ -260,7 +260,6 @@ class MainWindow(QMainWindow):
             self.save_settings()
             if hasattr(self.cutter, 'mpvWidget'):
                 self.cutter.mpvWidget.shutdown()
-        event.accept()
         qApp.quit()
 
 

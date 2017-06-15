@@ -37,6 +37,8 @@
         <file>images/dark/complete-open.png</file>
         <file>images/dark/complete-play.png</file>
         <file>images/dark/complete-restart.png</file>
+        <file>images/dark/console-off.png</file>
+        <file>images/dark/console-on.png</file>
         <file>images/dark/mediainfo-heading.png</file>
         <file>images/dark/menu.png</file>
         <file>images/dark/menu-active.png</file>
@@ -73,6 +75,8 @@
         <file>images/light/complete-open.png</file>
         <file>images/light/complete-play.png</file>
         <file>images/light/complete-restart.png</file>
+        <file>images/light/console-off.png</file>
+        <file>images/light/console-on.png</file>
         <file>images/light/mediainfo-heading.png</file>
         <file>images/light/menu.png</file>
         <file>images/light/menu-active.png</file>

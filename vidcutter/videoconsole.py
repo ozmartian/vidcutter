@@ -22,6 +22,7 @@
 #
 #######################################################################
 
+import logging
 from io import StringIO
 
 from PyQt5.QtCore import Qt
@@ -60,3 +61,10 @@ class VideoConsole(QTextEdit):
 #
 #     def emit(self, record):
 #         self._widget.write(self.format(record))
+
+
+class ConsoleLogger(logging.Handler):
+    edit = VideoConsole()
+
+    def emit(self, record):
+        self.edit.write(msg=self.format(record))
