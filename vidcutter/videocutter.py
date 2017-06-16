@@ -101,6 +101,7 @@ class VideoCutter(QWidget):
         self.nativeDialogs = self.settings.value('nativeDialogs', 'on', type=str) in {'on', 'true'}
         self.timelineThumbs = self.settings.value('timelineThumbs', 'on', type=str) in {'on', 'true'}
         self.hideConsole = self.settings.value('hideConsole', 'on', type=str) in {'on', 'true'}
+        self.showConfirm = self.settings.value('showConfirm', 'on', type=str) in {'on', 'true'}
 
         self.edlblock_re = re.compile(r'(\d+(?:\.?\d+)?)\s(\d+(?:\.?\d+)?)\s([01])')
 
@@ -485,6 +486,9 @@ class VideoCutter(QWidget):
         self.hardwareDecodingAction = QAction('Hardware decoding', self, triggered=self.switchDecoding, checkable=True,
                                               statusTip='Enable hardware based video decoding for playback ' +
                                                         '(e.g. vdpau, vaapi, dxva2, d3d11, cuda)')
+        self.showConfirmAction = QAction('Show confirmation dialog', self, checkable=True,
+                                         statusTip='Show confirmation dialog when media edits complete',
+                                         triggered=(lambda checked: self.saveSetting('showConfirm', checked)))
         if self.theme == 'dark':
             self.darkThemeAction.setChecked(True)
         else:
@@ -500,6 +504,8 @@ class VideoCutter(QWidget):
             self.keepRatioAction.setChecked(True)
             self.zoomAction.setEnabled(False)
         self.zoomAction.triggered.connect(self.setZoom)
+        if self.showConfirm:
+            self.showConfirmAction.setChecked(True)
 
     def initToolbar(self) -> None:
         self.toolbar.addAction(self.openAction)
@@ -561,6 +567,7 @@ class VideoCutter(QWidget):
             optionsMenu.addAction(self.darkThemeAction)
             optionsMenu.addSeparator()
         optionsMenu.addAction(self.keepClipsAction)
+        optionsMenu.addAction(self.showConfirmAction)
         optionsMenu.addSeparator()
         optionsMenu.addAction(level1seekAction)
         optionsMenu.addAction(level2seekAction)
@@ -1073,8 +1080,9 @@ class VideoCutter(QWidget):
             self.progress.close()
             self.progress.deleteLater()
             qApp.restoreOverrideCursor()
-            completed = CompletionMessageBox(self)
-            completed.exec_()
+            if self.showConfirmAction.isChecked():
+                completed = CompletionMessageBox(self)
+                completed.exec_()
             return True
         return False
 

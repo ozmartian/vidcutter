@@ -26,8 +26,8 @@ import os
 
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, QFileInfo, Qt, QTime, QUrl
 from PyQt5.QtGui import QDesktopServices, QIcon
-from PyQt5.QtWidgets import (QAbstractSpinBox, QDialog, QGridLayout, QHBoxLayout, QLabel, QMessageBox, QProgressBar,
-                             QSpinBox, QStyle, QStyleFactory, QTimeEdit, QWidget)
+from PyQt5.QtWidgets import (QAbstractSpinBox, QCheckBox, QDialog, QGridLayout, QHBoxLayout, QLabel, QMessageBox,
+                             QProgressBar, QSpinBox, QStyle, QStyleFactory, QTimeEdit, QWidget)
 
 
 class TimeCounter(QWidget):
@@ -258,6 +258,12 @@ class CompletionMessageBox(QMessageBox):
         btn_continue.clicked.connect(self.close)
         self.setDefaultButton(btn_continue)
         self.setEscapeButton(btn_continue)
+        checkbox = QCheckBox('Always show this confirmation box when edits complete', self)
+        checkbox.setChecked(self.parent.showConfirmAction.isChecked())
+        checkbox.toggled.connect(lambda checked: self.parent.saveSetting('showConfirm', checked))
+        checkbox.setStyleSheet('font-size: 9pt;')
+        checkbox.setCursor(Qt.PointingHandCursor)
+        self.setCheckBox(checkbox)
 
     def initIcons(self) -> None:
         self.icon_play = QIcon(':/images/%s/complete-play.png' % self.theme)

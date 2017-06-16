@@ -59,8 +59,7 @@ class MainWindow(QMainWindow):
         self.statusBar().setStyleSheet('border: none; padding: 0; margin: 0;')
         self.setAcceptDrops(True)
         self.show()
-        self.console.setGeometry(int(self.x() - (self.width() / 2)), self.y() + int(self.height() / 3),
-                                 int(self.width() / 1.5), int(self.height() / 3))
+        self.console.setGeometry(int(self.x() - (self.width() / 2)), self.y() + int(self.height() / 3), 750, 300)
         try:
             if len(self.video):
                 if QFileInfo(self.video).suffix() == 'vcp':
@@ -102,10 +101,11 @@ class MainWindow(QMainWindow):
                 log_path = os.path.join(QDir.homePath(), '.config', qApp.applicationName()).lower()
         os.makedirs(log_path, exist_ok=True)
         self.console = ConsoleWidget(self)
+        self.consoleLogger = ConsoleHandler(self.console)
         handlers = [logging.handlers.RotatingFileHandler(os.path.join(log_path, '%s.log'
                                                                       % qApp.applicationName().lower()),
                                                          maxBytes=1000000, backupCount=1),
-                    ConsoleHandler(self.console)]
+                    self.consoleLogger]
         if self.parser.isSet(self.debug_option):
             handlers.append(logging.StreamHandler())
         logging.basicConfig(handlers=handlers,

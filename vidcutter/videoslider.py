@@ -274,7 +274,7 @@ class VideoSlider(QSlider):
 
     def eventFilter(self, obj: QObject, event: QMouseEvent) -> bool:
         if event.type() == QEvent.MouseButtonRelease:
-            if self.parent.mediaAvailable:
+            if self.parent.mediaAvailable and self.isEnabled():
                 self.setValue(QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.x(), self.width()))
                 self.parent.setPosition(self.sliderPosition())
         return super(VideoSlider, self).eventFilter(obj, event)
@@ -283,15 +283,17 @@ class VideoSlider(QSlider):
 class VideoSliderWidget(QStackedWidget):
     def __init__(self, parent, slider: VideoSlider):
         super(VideoSliderWidget, self).__init__(parent)
+        self.slider = slider
         self.loaderEffect = self.LoaderEffect()
         self.loaderEffect.setEnabled(False)
         self.setGraphicsEffect(self.loaderEffect)
         self.setContentsMargins(0, 0, 0, 0)
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         self.layout().setStackingMode(QStackedLayout.StackAll)
-        self.addWidget(slider)
+        self.addWidget(self.slider)
 
     def setLoader(self, enabled: bool = False):
+        self.slider.setEnabled(not enabled)
         self.loaderEffect.setEnabled(enabled)
 
     class LoaderEffect(QGraphicsEffect):

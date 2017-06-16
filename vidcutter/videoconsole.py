@@ -26,7 +26,7 @@ import logging
 from io import StringIO
 
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QObject
-from PyQt5.QtGui import QCloseEvent, QTextCursor, QTextOption
+from PyQt5.QtGui import QCloseEvent, QShowEvent, QTextCursor, QTextOption
 from PyQt5.QtWidgets import qApp, QDialog, QDialogButtonBox, QTextEdit, QVBoxLayout
 
 
@@ -55,11 +55,12 @@ class ConsoleWidget(QDialog):
         self.edit = VideoConsole(self)
         buttons = QDialogButtonBox()
         buttons.setCenterButtons(True)
-        buttons.setStyleSheet('QPushButton { font-size:9pt; padding:3px; }')
+        buttons.setStyleSheet('QPushButton { padding:5px 8px; }')
         clearButton = buttons.addButton('Clear', QDialogButtonBox.ResetRole)
         clearButton.clicked.connect(self.edit.clear)
         closeButton = buttons.addButton(QDialogButtonBox.Close)
         closeButton.clicked.connect(self.close)
+        closeButton.setDefault(True)
         layout = QVBoxLayout()
         layout.setSpacing(1)
         layout.setContentsMargins(0, 0, 0, 2)
@@ -69,6 +70,10 @@ class ConsoleWidget(QDialog):
         self.setWindowTitle('{0} Console'.format(qApp.applicationName()))
         self.setWindowFlags(Qt.Dialog | Qt.WindowCloseButtonHint)
         self.setWindowModality(Qt.NonModal)
+
+    def showEvent(self, event: QShowEvent):
+        self.parent.consoleLogger.flush()
+        super(ConsoleWidget, self).showEvent(event)
 
     def closeEvent(self, event: QCloseEvent):
         self.parent.cutter.consoleButton.setChecked(True)
