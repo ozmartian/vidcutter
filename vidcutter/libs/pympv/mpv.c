@@ -4,20 +4,17 @@
 {
     "distutils": {
         "depends": [
-            "vidcutter\\libs\\pympv\\mpv\\client.h",
-            "vidcutter\\libs\\pympv\\mpv\\opengl_cb.h"
+            "vidcutter/libs/pympv/mpv/client.h",
+            "vidcutter/libs/pympv/mpv/opengl_cb.h"
         ],
         "extra_compile_args": [
-            ""
+            "-g0"
         ],
         "include_dirs": [
             "vidcutter/libs/pympv/mpv"
         ],
         "libraries": [
             "mpv"
-        ],
-        "library_dirs": [
-            "vidcutter/libs/pympv/win64"
         ]
     },
     "module_name": "vidcutter.libs.mpv"
@@ -652,7 +649,7 @@ static const char *__pyx_filename;
 
 
 static const char *__pyx_f[] = {
-  "vidcutter\\libs\\pympv\\mpv.pyx",
+  "vidcutter/libs/pympv/mpv.pyx",
 };
 
 /*--- Type declarations ---*/
@@ -1564,8 +1561,8 @@ static const char __pyx_k_CallbackThread_shutdown[] = "CallbackThread.shutdown";
 static const char __pyx_k_OpenGL_API_not_available[] = "OpenGL API not available";
 static const char __pyx_k_CallbackThread_mpv_callback[] = "CallbackThread.mpv_callback";
 static const char __pyx_k_pympv_error_during_callback_s[] = "pympv error during callback: %s\n";
+static const char __pyx_k_home_ozmartian_Projects_vidcutt[] = "/home/ozmartian/Projects/vidcutter/vidcutter/libs/pympv/mpv.pyx";
 static const char __pyx_k_pympv_Python_wrapper_for_libmpv[] = "pympv - Python wrapper for libmpv\n\nlibmpv is a client library for the media player mpv\n\nFor more info see: https://github.com/mpv-player/mpv/blob/master/libmpv/client.h\n";
-static const char __pyx_k_C_DEV_vidcutter_vidcutter_libs_p[] = "C:\\DEV\\vidcutter\\vidcutter\\libs\\pympv\\mpv.pyx";
 static const char __pyx_k_Known_possible_values_for_EndOfF[] = "Known possible values for EndOfFileReached reason.\n\n    You should handle the possibility that the reason may not be any of these values.\n    ";
 static const char __pyx_k_Set_of_known_error_codes_from_Mp[] = "Set of known error codes from MpvError and Event responses.\n\n    Mostly wraps the enum mpv_error.\n    Values might not always be integers in the future.\n    You should handle the possibility that error codes may not be any of these values.\n    ";
 static const char __pyx_k_Set_of_known_values_for_Event_id[] = "Set of known values for Event ids.\n\n    Mostly wraps the enum mpv_event_id.\n    Values might not always be integers in the future.\n    You should handle the possibility that event ids may not be any of these values.\n    ";
@@ -1574,7 +1571,6 @@ static PyObject *__pyx_kp_s_0_3_0;
 static PyObject *__pyx_kp_s_Andre_D;
 static PyObject *__pyx_n_s_CAPI_MAJOR;
 static PyObject *__pyx_n_s_CAPI_MINOR;
-static PyObject *__pyx_kp_s_C_DEV_vidcutter_vidcutter_libs_p;
 static PyObject *__pyx_n_s_CallbackThread;
 static PyObject *__pyx_n_s_CallbackThread___init;
 static PyObject *__pyx_n_s_CallbackThread_call;
@@ -1650,6 +1646,7 @@ static PyObject *__pyx_n_s_get_property;
 static PyObject *__pyx_n_s_get_property_async;
 static PyObject *__pyx_n_s_get_property_reply;
 static PyObject *__pyx_n_s_h;
+static PyObject *__pyx_kp_s_home_ozmartian_Projects_vidcutt;
 static PyObject *__pyx_n_s_id;
 static PyObject *__pyx_n_s_idle;
 static PyObject *__pyx_n_s_import;
@@ -18453,7 +18450,6 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_kp_s_Andre_D, __pyx_k_Andre_D, sizeof(__pyx_k_Andre_D), 0, 0, 1, 0},
   {&__pyx_n_s_CAPI_MAJOR, __pyx_k_CAPI_MAJOR, sizeof(__pyx_k_CAPI_MAJOR), 0, 0, 1, 1},
   {&__pyx_n_s_CAPI_MINOR, __pyx_k_CAPI_MINOR, sizeof(__pyx_k_CAPI_MINOR), 0, 0, 1, 1},
-  {&__pyx_kp_s_C_DEV_vidcutter_vidcutter_libs_p, __pyx_k_C_DEV_vidcutter_vidcutter_libs_p, sizeof(__pyx_k_C_DEV_vidcutter_vidcutter_libs_p), 0, 0, 1, 0},
   {&__pyx_n_s_CallbackThread, __pyx_k_CallbackThread, sizeof(__pyx_k_CallbackThread), 0, 0, 1, 1},
   {&__pyx_n_s_CallbackThread___init, __pyx_k_CallbackThread___init, sizeof(__pyx_k_CallbackThread___init), 0, 0, 1, 1},
   {&__pyx_n_s_CallbackThread_call, __pyx_k_CallbackThread_call, sizeof(__pyx_k_CallbackThread_call), 0, 0, 1, 1},
@@ -18529,6 +18525,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_get_property_async, __pyx_k_get_property_async, sizeof(__pyx_k_get_property_async), 0, 0, 1, 1},
   {&__pyx_n_s_get_property_reply, __pyx_k_get_property_reply, sizeof(__pyx_k_get_property_reply), 0, 0, 1, 1},
   {&__pyx_n_s_h, __pyx_k_h, sizeof(__pyx_k_h), 0, 0, 1, 1},
+  {&__pyx_kp_s_home_ozmartian_Projects_vidcutt, __pyx_k_home_ozmartian_Projects_vidcutt, sizeof(__pyx_k_home_ozmartian_Projects_vidcutt), 0, 0, 1, 0},
   {&__pyx_n_s_id, __pyx_k_id, sizeof(__pyx_k_id), 0, 0, 1, 1},
   {&__pyx_n_s_idle, __pyx_k_idle, sizeof(__pyx_k_idle), 0, 0, 1, 1},
   {&__pyx_n_s_import, __pyx_k_import, sizeof(__pyx_k_import), 0, 0, 1, 1},
@@ -18655,7 +18652,7 @@ static int __Pyx_InitCachedConstants(void) {
   __pyx_tuple_ = PyTuple_Pack(3, __pyx_n_s_k, __pyx_n_s_kw, __pyx_n_s_v); if (unlikely(!__pyx_tuple_)) __PYX_ERR(0, 610, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple_);
   __Pyx_GIVEREF(__pyx_tuple_);
-  __pyx_codeobj__2 = (PyObject*)__Pyx_PyCode_New(0, 0, 3, 0, CO_VARARGS|CO_VARKEYWORDS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple_, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_C_DEV_vidcutter_vidcutter_libs_p, __pyx_n_s_wrapped, 610, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__2)) __PYX_ERR(0, 610, __pyx_L1_error)
+  __pyx_codeobj__2 = (PyObject*)__Pyx_PyCode_New(0, 0, 3, 0, CO_VARARGS|CO_VARKEYWORDS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple_, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_ozmartian_Projects_vidcutt, __pyx_n_s_wrapped, 610, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__2)) __PYX_ERR(0, 610, __pyx_L1_error)
 
   /* "mpv.pyx":1025
  *             self._ctx = mpv_create()
@@ -18722,7 +18719,7 @@ static int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__8 = PyTuple_Pack(1, __pyx_n_s_s); if (unlikely(!__pyx_tuple__8)) __PYX_ERR(0, 346, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__8);
   __Pyx_GIVEREF(__pyx_tuple__8);
-  __pyx_codeobj__9 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__8, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_C_DEV_vidcutter_vidcutter_libs_p, __pyx_n_s_strdec, 346, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__9)) __PYX_ERR(0, 346, __pyx_L1_error)
+  __pyx_codeobj__9 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__8, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_ozmartian_Projects_vidcutt, __pyx_n_s_strdec, 346, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__9)) __PYX_ERR(0, 346, __pyx_L1_error)
 
   /* "mpv.pyx":354
  * 
@@ -18734,7 +18731,7 @@ static int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__10 = PyTuple_Pack(1, __pyx_n_s_s); if (unlikely(!__pyx_tuple__10)) __PYX_ERR(0, 354, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__10);
   __Pyx_GIVEREF(__pyx_tuple__10);
-  __pyx_codeobj__11 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__10, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_C_DEV_vidcutter_vidcutter_libs_p, __pyx_n_s_strenc, 354, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__11)) __PYX_ERR(0, 354, __pyx_L1_error)
+  __pyx_codeobj__11 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__10, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_ozmartian_Projects_vidcutt, __pyx_n_s_strenc, 354, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__11)) __PYX_ERR(0, 354, __pyx_L1_error)
 
   /* "mpv.pyx":609
  * 
@@ -18746,7 +18743,7 @@ static int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__12 = PyTuple_Pack(3, __pyx_n_s_fn, __pyx_n_s_wrapped, __pyx_n_s_wrapped); if (unlikely(!__pyx_tuple__12)) __PYX_ERR(0, 609, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__12);
   __Pyx_GIVEREF(__pyx_tuple__12);
-  __pyx_codeobj__13 = (PyObject*)__Pyx_PyCode_New(1, 0, 3, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__12, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_C_DEV_vidcutter_vidcutter_libs_p, __pyx_n_s_errors, 609, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__13)) __PYX_ERR(0, 609, __pyx_L1_error)
+  __pyx_codeobj__13 = (PyObject*)__Pyx_PyCode_New(1, 0, 3, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__12, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_ozmartian_Projects_vidcutt, __pyx_n_s_errors, 609, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__13)) __PYX_ERR(0, 609, __pyx_L1_error)
 
   /* "mpv.pyx":620
  *     code = None
@@ -18758,7 +18755,7 @@ static int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__14 = PyTuple_Pack(4, __pyx_n_s_self, __pyx_n_s_e, __pyx_n_s_err_c, __pyx_n_s_e_i); if (unlikely(!__pyx_tuple__14)) __PYX_ERR(0, 620, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__14);
   __Pyx_GIVEREF(__pyx_tuple__14);
-  __pyx_codeobj__15 = (PyObject*)__Pyx_PyCode_New(2, 0, 4, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__14, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_C_DEV_vidcutter_vidcutter_libs_p, __pyx_n_s_init, 620, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__15)) __PYX_ERR(0, 620, __pyx_L1_error)
+  __pyx_codeobj__15 = (PyObject*)__Pyx_PyCode_New(2, 0, 4, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__14, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_ozmartian_Projects_vidcutt, __pyx_n_s_init, 620, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__15)) __PYX_ERR(0, 620, __pyx_L1_error)
 
   /* "mpv.pyx":635
  * 
@@ -18770,7 +18767,7 @@ static int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__16 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_data); if (unlikely(!__pyx_tuple__16)) __PYX_ERR(0, 635, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__16);
   __Pyx_GIVEREF(__pyx_tuple__16);
-  __pyx_codeobj__17 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__16, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_C_DEV_vidcutter_vidcutter_libs_p, __pyx_n_s_init, 635, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__17)) __PYX_ERR(0, 635, __pyx_L1_error)
+  __pyx_codeobj__17 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__16, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_ozmartian_Projects_vidcutt, __pyx_n_s_init, 635, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__17)) __PYX_ERR(0, 635, __pyx_L1_error)
 
   /* "mpv.pyx":640
  *         self.observed = False
@@ -18782,7 +18779,7 @@ static int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__18 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__18)) __PYX_ERR(0, 640, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__18);
   __Pyx_GIVEREF(__pyx_tuple__18);
-  __pyx_codeobj__19 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__18, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_C_DEV_vidcutter_vidcutter_libs_p, __pyx_n_s_add, 640, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__19)) __PYX_ERR(0, 640, __pyx_L1_error)
+  __pyx_codeobj__19 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__18, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_ozmartian_Projects_vidcutt, __pyx_n_s_add, 640, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__19)) __PYX_ERR(0, 640, __pyx_L1_error)
 
   /* "mpv.pyx":643
  *         self.counter += 1
@@ -18794,7 +18791,7 @@ static int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__20 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__20)) __PYX_ERR(0, 643, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__20);
   __Pyx_GIVEREF(__pyx_tuple__20);
-  __pyx_codeobj__21 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__20, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_C_DEV_vidcutter_vidcutter_libs_p, __pyx_n_s_remove, 643, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__21)) __PYX_ERR(0, 643, __pyx_L1_error)
+  __pyx_codeobj__21 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__20, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_ozmartian_Projects_vidcutt, __pyx_n_s_remove, 643, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__21)) __PYX_ERR(0, 643, __pyx_L1_error)
 
   /* "mpv.pyx":1165
  * 
@@ -18806,7 +18803,7 @@ static int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__22 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__22)) __PYX_ERR(0, 1165, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__22);
   __Pyx_GIVEREF(__pyx_tuple__22);
-  __pyx_codeobj__23 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__22, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_C_DEV_vidcutter_vidcutter_libs_p, __pyx_n_s_init, 1165, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__23)) __PYX_ERR(0, 1165, __pyx_L1_error)
+  __pyx_codeobj__23 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__22, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_ozmartian_Projects_vidcutt, __pyx_n_s_init, 1165, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__23)) __PYX_ERR(0, 1165, __pyx_L1_error)
 
   /* "mpv.pyx":1173
  *         self.isshutdown = False
@@ -18818,7 +18815,7 @@ static int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__24 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__24)) __PYX_ERR(0, 1173, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__24);
   __Pyx_GIVEREF(__pyx_tuple__24);
-  __pyx_codeobj__25 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__24, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_C_DEV_vidcutter_vidcutter_libs_p, __pyx_n_s_shutdown, 1173, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__25)) __PYX_ERR(0, 1173, __pyx_L1_error)
+  __pyx_codeobj__25 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__24, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_ozmartian_Projects_vidcutt, __pyx_n_s_shutdown, 1173, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__25)) __PYX_ERR(0, 1173, __pyx_L1_error)
 
   /* "mpv.pyx":1178
  *         self.lock.release()
@@ -18830,7 +18827,7 @@ static int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__26 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__26)) __PYX_ERR(0, 1178, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__26);
   __Pyx_GIVEREF(__pyx_tuple__26);
-  __pyx_codeobj__27 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__26, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_C_DEV_vidcutter_vidcutter_libs_p, __pyx_n_s_call, 1178, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__27)) __PYX_ERR(0, 1178, __pyx_L1_error)
+  __pyx_codeobj__27 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__26, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_ozmartian_Projects_vidcutt, __pyx_n_s_call, 1178, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__27)) __PYX_ERR(0, 1178, __pyx_L1_error)
 
   /* "mpv.pyx":1181
  *         self.lock.release()
@@ -18842,7 +18839,7 @@ static int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__28 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_callback); if (unlikely(!__pyx_tuple__28)) __PYX_ERR(0, 1181, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__28);
   __Pyx_GIVEREF(__pyx_tuple__28);
-  __pyx_codeobj__29 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__28, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_C_DEV_vidcutter_vidcutter_libs_p, __pyx_n_s_set, 1181, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__29)) __PYX_ERR(0, 1181, __pyx_L1_error)
+  __pyx_codeobj__29 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__28, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_ozmartian_Projects_vidcutt, __pyx_n_s_set, 1181, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__29)) __PYX_ERR(0, 1181, __pyx_L1_error)
 
   /* "mpv.pyx":1184
  *         self.callback = callback
@@ -18854,7 +18851,7 @@ static int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__30 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__30)) __PYX_ERR(0, 1184, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__30);
   __Pyx_GIVEREF(__pyx_tuple__30);
-  __pyx_codeobj__31 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__30, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_C_DEV_vidcutter_vidcutter_libs_p, __pyx_n_s_run, 1184, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__31)) __PYX_ERR(0, 1184, __pyx_L1_error)
+  __pyx_codeobj__31 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__30, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_ozmartian_Projects_vidcutt, __pyx_n_s_run, 1184, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__31)) __PYX_ERR(0, 1184, __pyx_L1_error)
 
   /* "mpv.pyx":1189
  *             self.mpv_callback(self.callback) if self.callback else None
@@ -18866,7 +18863,7 @@ static int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__32 = PyTuple_Pack(3, __pyx_n_s_self, __pyx_n_s_callback, __pyx_n_s_e); if (unlikely(!__pyx_tuple__32)) __PYX_ERR(0, 1189, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__32);
   __Pyx_GIVEREF(__pyx_tuple__32);
-  __pyx_codeobj__33 = (PyObject*)__Pyx_PyCode_New(2, 0, 3, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__32, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_C_DEV_vidcutter_vidcutter_libs_p, __pyx_n_s_mpv_callback, 1189, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__33)) __PYX_ERR(0, 1189, __pyx_L1_error)
+  __pyx_codeobj__33 = (PyObject*)__Pyx_PyCode_New(2, 0, 3, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__32, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_ozmartian_Projects_vidcutt, __pyx_n_s_mpv_callback, 1189, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__33)) __PYX_ERR(0, 1189, __pyx_L1_error)
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
