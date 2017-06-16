@@ -35,7 +35,6 @@ class mpvWidget(QOpenGLWidget):
         self.parent = parent
         self.logger = logging.getLogger(__name__)
         locale.setlocale(locale.LC_NUMERIC, 'C')
-        self.shuttingdown = False
         self.mpv = mpv.Context()
 
         self.mpv.set_log_level('terminal-default')
@@ -68,11 +67,12 @@ class mpvWidget(QOpenGLWidget):
         self.mpv.set_wakeup_callback(self.eventHandler)
 
     def shutdown(self):
-        self.shuttingdown = True
-        self.mpv.command('quit')
         self.makeCurrent()
         if self.opengl:
-            self.opengl.uninit_gl()
+            self.opengl.set_update_callback(None)
+        self.opengl.uninit_gl()
+        self.mpv.command('quit')
+        self.deleteLater()
 
     def initializeGL(self):
         if self.opengl:
@@ -98,34 +98,31 @@ class mpvWidget(QOpenGLWidget):
             self.update()
 
     def eventHandler(self):
-        if not self.shuttingdown:
-            while self.mpv:
-                try:
-                    event = self.mpv.wait_event(.01)
-                    if event.id == mpv.Events.none:
-                        continue
-                    elif event.id in {mpv.Events.shutdown, mpv.Events.end_file}:
-                        break
-                    elif event.id == mpv.Events.log_message:
-                        event_log = event.data
-                        log_msg = '[%s] %s' % (event_log.prefix, event_log.text.strip())
-                        if event_log.level in (mpv.LogLevels.fatal, mpv.LogLevels.error):
-                            self.logger.critical(log_msg)
-                            sys.stderr.write(log_msg)
-                            if event_log.level == mpv.LogLevels.fatal or 'file format' in event_log.text:
-                                self.parent.errorOccurred.emit(log_msg)
-                                self.parent.initMediaControls(False)
-                        else:
-                            self.logger.info(log_msg)
-                    elif event.id == mpv.Events.property_change:
-                        event_prop = event.data
-                        if event_prop.name == 'time-pos':
-                            self.positionChanged.emit(event_prop.data, self.mpv.get_property('estimated-frame-number'))
-                        elif event_prop.name == 'duration':
-                            self.durationChanged.emit(event_prop.data, self.mpv.get_property('estimated-frame-count'))
-                except mpv.MPVError as e:
-                    if e.code != -10:
-                        raise e
+        while self.mpv:
+            try:
+                event = self.mpv.wait_event(.01)
+                if event.id in {mpv.Events.none, mpv.Events.shutdown, mpv.Events.end_file}:
+                    break
+                elif event.id == mpv.Events.log_message:
+                    event_log = event.data
+                    log_msg = '[%s] %s' % (event_log.prefix, event_log.text.strip())
+                    if event_log.level in (mpv.LogLevels.fatal, mpv.LogLevels.error):
+                        self.logger.critical(log_msg)
+                        sys.stderr.write(log_msg)
+                        if event_log.level == mpv.LogLevels.fatal or 'file format' in event_log.text:
+                            self.parent.errorOccurred.emit(log_msg)
+                            self.parent.initMediaControls(False)
+                    else:
+                        self.logger.info(log_msg)
+                elif event.id == mpv.Events.property_change:
+                    event_prop = event.data
+                    if event_prop.name == 'time-pos':
+                        self.positionChanged.emit(event_prop.data, self.mpv.get_property('estimated-frame-number'))
+                    elif event_prop.name == 'duration':
+                        self.durationChanged.emit(event_prop.data, self.mpv.get_property('estimated-frame-count'))
+            except mpv.MPVError as e:
+                if e.code != -10:
+                    raise e
 
     def setLogLevel(self, loglevel: mpv.LogLevels):
         self.mpv.set_log_level(loglevel)

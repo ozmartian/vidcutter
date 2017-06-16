@@ -59,10 +59,8 @@ class MainWindow(QMainWindow):
         self.statusBar().setStyleSheet('border: none; padding: 0; margin: 0;')
         self.setAcceptDrops(True)
         self.show()
-
         self.console.setGeometry(int(self.x() - (self.width() / 2)), self.y() + int(self.height() / 3),
                                  int(self.width() / 1.5), int(self.height() / 3))
-
         try:
             if len(self.video):
                 if QFileInfo(self.video).suffix() == 'vcp':
@@ -108,6 +106,8 @@ class MainWindow(QMainWindow):
                                                                       % qApp.applicationName().lower()),
                                                          maxBytes=1000000, backupCount=1),
                     ConsoleHandler(self.console)]
+        if self.parser.isSet(self.debug_option):
+            handlers.append(logging.StreamHandler())
         logging.basicConfig(handlers=handlers,
                             format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                             datefmt='%Y-%m-%d %H:%M',
@@ -255,6 +255,7 @@ class MainWindow(QMainWindow):
         event.accept()
 
     def closeEvent(self, event: QCloseEvent) -> None:
+        event.accept()
         if hasattr(self, 'cutter'):
             self.save_settings()
             if hasattr(self.cutter, 'mpvWidget'):
@@ -279,6 +280,8 @@ def main():
     exit_code = app.exec_()
     if exit_code == MainWindow.EXIT_CODE_REBOOT:
         if sys.platform == 'win32':
+            if hasattr(win.cutter, 'mpvWidget'):
+                win.cutter.mpvWidget.shutdown()
             QProcess.startDetached('"%s"' % qApp.applicationFilePath())
         else:
             os.execl(sys.executable, sys.executable, *sys.argv)

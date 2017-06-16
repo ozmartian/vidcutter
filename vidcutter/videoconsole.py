@@ -75,7 +75,7 @@ class ConsoleWidget(QDialog):
         super(ConsoleWidget, self).closeEvent(event)
 
 
-class ConsoleHandler(QObject, logging.Handler):
+class ConsoleHandler(QObject, logging.StreamHandler):
     logReceived = pyqtSignal(str)
 
     def __init__(self, widget):
