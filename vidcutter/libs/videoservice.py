@@ -36,6 +36,8 @@ from PyQt5.QtWidgets import QMessageBox
 
 
 class VideoService(QObject):
+    frozen = getattr(sys, 'frozen', False)
+
     utils = {
         'nt': {
             'ffmpeg': ['ffmpeg.exe'],
@@ -63,14 +65,20 @@ class VideoService(QObject):
     @staticmethod
     def initBackends() -> tuple:
         backend, mediainfo = None, None
-        for exe in VideoService.utils.get(os.name).get('ffmpeg'):
-            backend = find_executable(exe)
-            if backend is not None:
-                break
-        for exe in VideoService.utils.get(os.name).get('mediainfo'):
-            mediainfo = find_executable(exe)
-            if mediainfo is not None:
-                break
+        if VideoService.frozen:
+            if sys.platform == 'win32':
+                return os.path.join(VideoService.getAppPath(), 'bin', 'ffmpeg.exe'), os.path.join(VideoService.getAppPath(), 'bin', 'MediaInfo.exe')
+            else:
+                return os.path.join(VideoService.getAppPath(), 'bin', 'ffmpeg'), os.path.join(VideoService.getAppPath(), 'bin', 'mediainfo')
+        else:
+            for exe in VideoService.utils.get(os.name).get('ffmpeg'):
+                backend = find_executable(exe)
+                if backend is not None:
+                    break
+            for exe in VideoService.utils.get(os.name).get('mediainfo'):
+                mediainfo = find_executable(exe)
+                if mediainfo is not None:
+                    break
         return backend, mediainfo
 
     @staticmethod
@@ -151,7 +159,7 @@ class VideoService(QObject):
 
     @staticmethod
     def getAppPath() -> str:
-        if getattr(sys, 'frozen', False):
+        if VideoService.frozen:
             # noinspection PyProtectedMember
             return sys._MEIPASS
         return QFileInfo(__file__).absolutePath()

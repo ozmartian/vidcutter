@@ -23,6 +23,7 @@
 #######################################################################
 
 import logging
+import sys
 from io import StringIO
 
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QObject
@@ -36,7 +37,7 @@ class VideoConsole(QTextEdit):
         self._buffer = StringIO()
         self.setReadOnly(True)
         self.setWordWrapMode(QTextOption.NoWrap)
-        self.setStyleSheet('QTextEdit { font-family:monospace; font-size:9pt; }')
+        self.setStyleSheet('QTextEdit { font-family:monospace; font-size:%s; }' % '11pt' if sys.platform == 'darwin' else '9pt')
 
     @pyqtSlot(str)
     def write(self, msg):
@@ -47,7 +48,7 @@ class VideoConsole(QTextEdit):
     def __getattr__(self, item):
         return getattr(self._buffer, item)
 
-
+    
 class ConsoleWidget(QDialog):
     def __init__(self, parent=None):
         super(ConsoleWidget, self).__init__(parent)
@@ -55,7 +56,7 @@ class ConsoleWidget(QDialog):
         self.edit = VideoConsole(self)
         buttons = QDialogButtonBox()
         buttons.setCenterButtons(True)
-        buttons.setStyleSheet('QPushButton { padding:5px 8px; }')
+        buttons.setStyleSheet('QPushButton { padding:5px 8px;%s }' % ' margin:3px;' if sys.platform == 'darwin' else '')
         clearButton = buttons.addButton('Clear', QDialogButtonBox.ResetRole)
         clearButton.clicked.connect(self.edit.clear)
         closeButton = buttons.addButton(QDialogButtonBox.Close)

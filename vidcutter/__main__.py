@@ -277,6 +277,9 @@ def main():
     app.setOrganizationDomain('ozmartians.com')
     app.setQuitOnLastWindowClosed(True)
 
+    if sys.platform == 'darwin':
+        app.setStyle('Fusion')
+
     win = MainWindow()
     exit_code = app.exec_()
     if exit_code == MainWindow.EXIT_CODE_REBOOT:

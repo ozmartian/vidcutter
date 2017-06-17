@@ -200,7 +200,7 @@ class VideoCutter(QWidget):
 
         if sys.platform == 'darwin':
             self.osdButton.setChecked(False)
-            self.osdButton.setDisabled(True)
+            self.osdButton.hide()
 
         # noinspection PyArgumentList
         self.consoleButton = QPushButton(icon=self.consoleIcon, flat=True, iconSize=QSize(16, 16), checkable=True,
@@ -227,6 +227,9 @@ class VideoCutter(QWidget):
         self.volumeSlider = QSlider(Qt.Horizontal, toolTip='Volume', statusTip='Adjust volume level',
                                     cursor=Qt.PointingHandCursor, value=self.parent.startupvol, minimum=0,
                                     maximum=130, sliderMoved=self.setVolume, objectName='volumeSlider')
+
+        if sys.platform == 'darwin':
+            self.volumeSlider.setStyle(QStyleFactory.create('Macintosh'))
 
         # noinspection PyArgumentList
         self.menuButton = QPushButton(self, toolTip='Menu', cursor=Qt.PointingHandCursor, flat=True,
