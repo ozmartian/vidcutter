@@ -43,8 +43,6 @@ class VideoStyles(QObject):
             qssfile = QFile(filename)
             qssfile.open(QFile.ReadOnly | QFile.Text)
             content = QTextStream(qssfile).readAll()
-            if sys.platform in ('win32', 'darwin'):
-                content += 'QPushButton { color: #444; }'
             if sys.platform == 'darwin' and theme == 'dark':
                 content += '''
                     QMenu::item { color: #444; }

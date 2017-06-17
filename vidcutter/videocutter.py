@@ -214,9 +214,9 @@ class VideoCutter(QWidget):
             os.environ['DEBUG'] = '1'
             self.parent.console.show()
 
-        self.thumbnailsButton.setStyle(QStyleFactory.create('fusion'))
-        self.osdButton.setStyle(QStyleFactory.create('fusion'))
-        self.consoleButton.setStyle(QStyleFactory.create('fusion'))
+        self.thumbnailsButton.setStyle(QStyleFactory.create('Fusion'))
+        self.osdButton.setStyle(QStyleFactory.create('Fusion'))
+        self.consoleButton.setStyle(QStyleFactory.create('Fusion'))
 
         # noinspection PyArgumentList
         self.muteButton = QPushButton(objectName='muteButton', icon=self.unmuteIcon, flat=True, toolTip='Mute',
@@ -250,13 +250,13 @@ class VideoCutter(QWidget):
         controlsLayout = QHBoxLayout()
         controlsLayout.addSpacing(10)
         controlsLayout.addWidget(self.thumbnailsButton)
-        controlsLayout.addSpacing(5)
+        controlsLayout.addSpacing(4)
         controlsLayout.addWidget(self.osdButton)
-        controlsLayout.addSpacing(5)
+        controlsLayout.addSpacing(4)
         controlsLayout.addWidget(self.consoleButton)
-        controlsLayout.addStretch(1)
+        controlsLayout.addStretch(10)
         controlsLayout.addWidget(toolbarGroup)
-        controlsLayout.addStretch(1)
+        controlsLayout.addStretch(10)
         controlsLayout.addWidget(self.muteButton)
         controlsLayout.addSpacing(5)
         controlsLayout.addWidget(self.volumeSlider)

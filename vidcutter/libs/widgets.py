@@ -22,6 +22,7 @@
 #
 #######################################################################
 
+import sys
 import os
 
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, QFileInfo, Qt, QTime, QUrl
@@ -211,6 +212,9 @@ class CompletionMessageBox(QMessageBox):
             font-family: "Futura LT", sans-serif;
             font-weight: 400;
         }
+        table {
+            min-width: 350px;
+        }
         table.info {
             margin: 6px;
             margin-top: 15px;
@@ -225,7 +229,7 @@ class CompletionMessageBox(QMessageBox):
         td.value { font-size: 15px; }
     </style>
     <h1>Your media is ready!</h1>
-    <table class="info" cellpadding="2" cellspacing="0" width="400">
+    <table class="info" cellpadding="2" cellspacing="0">
         <tr>
             <td class="label"><b>File:</b></td>
             <td class="value" nowrap>%s</td>
@@ -240,7 +244,7 @@ class CompletionMessageBox(QMessageBox):
         </tr>
     </table><br/>''' % (self.pencolor, self.pencolor, os.path.basename(self.parent.finalFilename),
                         self.parent.sizeof_fmt(int(QFileInfo(self.parent.finalFilename).size())),
-                        self.parent.delta2QTime(self.parent.totalRuntime).toString(self.parent.timeformat)))
+                        self.parent.delta2QTime(self.parent.totalRuntime).toString(self.parent.runtimeformat)))
         self.btn_play = self.addButton('Play', self.ResetRole)
         self.btn_play.setIcon(self.icon_play)
         self.btn_play.clicked.connect(lambda: self.openResult(False))
@@ -261,7 +265,7 @@ class CompletionMessageBox(QMessageBox):
         checkbox = QCheckBox('Always show a confirmation when edits complete', self)
         checkbox.setChecked(self.parent.showConfirmAction.isChecked())
         checkbox.toggled.connect(self.showConfirm)
-        checkbox.setStyleSheet('font-size: 9pt;')
+        checkbox.setStyleSheet('margin-top: 5px; font-size: %s;' % '11pt' if sys.platform == 'darwin' else '9pt')
         checkbox.setCursor(Qt.PointingHandCursor)
         self.setCheckBox(checkbox)
 

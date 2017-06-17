@@ -176,6 +176,29 @@ QMessageBox {
 
 /* -------------------------------------------------------------------------- */
 
+QDialogButtonBox QPushButton {
+    color: #eff0f1;
+    background-color: #31363b;
+    border-width: 1px;
+    border-color: #76797C;
+    border-style: solid;
+    border-radius: 2px;
+    padding: 5px 8px;
+    outline: none;
+    min-width: 50px;
+}
+
+QDialogButtonBox QPushButton:pressed {
+    background-color: #3daee9;
+    padding-top: -15px;
+    padding-bottom: -17px;
+}
+
+QDialogButtonBox QPushButton:hover {
+    border: 1px solid #3daee9;
+    color: #eff0f1;
+}
+
 QPushButton#menuButton {
     border-image: url(:/images/dark/menu.png);
     width: 40px;
