@@ -260,7 +260,7 @@ class CompletionMessageBox(QMessageBox):
         self.setEscapeButton(btn_continue)
         checkbox = QCheckBox('Always show a confirmation when edits complete', self)
         checkbox.setChecked(self.parent.showConfirmAction.isChecked())
-        checkbox.toggled.connect(self.showCon)
+        checkbox.toggled.connect(self.showConfirm)
         checkbox.setStyleSheet('font-size: 9pt;')
         checkbox.setCursor(Qt.PointingHandCursor)
         self.setCheckBox(checkbox)
