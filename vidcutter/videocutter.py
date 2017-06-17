@@ -487,7 +487,7 @@ class VideoCutter(QWidget):
                                               statusTip='Enable hardware based video decoding for playback ' +
                                                         '(e.g. vdpau, vaapi, dxva2, d3d11, cuda)')
         self.showConfirmAction = QAction('Show confirmation dialog', self, checkable=True,
-                                         statusTip='Show confirmation dialog when media edits complete',
+                                         statusTip='Show confirmation dialog when media is ready/complete',
                                          triggered=(lambda checked: self.saveSetting('showConfirm', checked)))
         if self.theme == 'dark':
             self.darkThemeAction.setChecked(True)
@@ -698,25 +698,25 @@ class VideoCutter(QWidget):
         return '%s;;%s;;%s;;%s;;All files (*.*)' % (all_types, video_types, audio_types, specific_types)
 
     def openMedia(self) -> None:
-        filename, _ = QFileDialog.getOpenFileName(self.parent, caption='Select media file', filter=self.mediaFilters(),
+        filename, _ = QFileDialog.getOpenFileName(self, caption='Select media file', filter=self.mediaFilters(),
                                                   directory=QDir.homePath(),
                                                   options=(QFileDialog.DontUseNativeDialog
                                                            if not self.nativeDialogsAction.isChecked()
                                                            else QFileDialog.Options()))
-        if filename != '':
+        if len(filename.strip()):
             self.loadMedia(filename)
 
     def openProject(self, checked: bool = False, project_file: str = None) -> None:
         initialFilter = 'Project files (*.vcp, *.edl)' if self.mediaAvailable else 'VidCutter Project (*.vcp)'
         if project_file is None:
-            project_file, _ = QFileDialog.getOpenFileName(self.parent, caption='Select project file',
+            project_file, _ = QFileDialog.getOpenFileName(self, caption='Select project file',
                                                           filter=self.projectFilters(),
                                                           initialFilter=initialFilter,
                                                           directory=QDir.homePath(),
                                                           options=(QFileDialog.DontUseNativeDialog
                                                                    if not self.nativeDialogsAction.isChecked()
                                                                    else QFileDialog.Options()))
-        if project_file.strip():
+        if len(project_file.strip()):
             file = QFile(project_file)
             info = QFileInfo(file)
             project_type = info.suffix()
@@ -771,14 +771,14 @@ class VideoCutter(QWidget):
         if self.currentMedia is None:
             return
         project_file, _ = os.path.splitext(self.currentMedia)
-        project_save, ptype = QFileDialog.getSaveFileName(self.parent, caption='Save project',
+        project_save, ptype = QFileDialog.getSaveFileName(self, caption='Save project',
                                                           directory='%s.vcp' % project_file,
                                                           filter=self.projectFilters(True),
                                                           initialFilter='VidCutter Project (*.vcp)',
                                                           options=(QFileDialog.DontUseNativeDialog
                                                                    if not self.nativeDialogsAction.isChecked()
                                                                    else QFileDialog.Options()))
-        if project_save.strip():
+        if len(project_save.strip()):
             file = QFile(project_save)
             if not file.open(QFile.WriteOnly | QFile.Text):
                 QMessageBox.critical(self.parent, 'Save project',
@@ -1031,13 +1031,13 @@ class VideoCutter(QWidget):
         filename, filelist = '', []
         source_file, source_ext = os.path.splitext(self.currentMedia)
         if clips > 0:
-            self.finalFilename, _ = QFileDialog.getSaveFileName(parent=self.parent, caption='Save video',
+            self.finalFilename, _ = QFileDialog.getSaveFileName(parent=self, caption='Save video',
                                                                 directory='%s_EDIT%s' % (source_file, source_ext),
                                                                 filter='Video files (*%s)' % source_ext,
                                                                 options=(QFileDialog.DontUseNativeDialog
                                                                          if not self.nativeDialogsAction.isChecked()
                                                                          else QFileDialog.Options()))
-            if self.finalFilename == '':
+            if not len(self.finalFilename.strip()):
                 return False
             file, ext = os.path.splitext(self.finalFilename)
             if len(ext) == 0:

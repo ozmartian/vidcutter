@@ -27,16 +27,16 @@ import shlex
 import subprocess
 import sys
 from distutils.spawn import find_executable
-
 from setuptools import setup
 from setuptools.extension import Extension
 
 from videosetup import VCSetup
 
+
 setup_requires = ['setuptools']
 
 # Cython override; default to building extension module from pre-Cythonized .c file
-USE_CYTHON = False
+USE_CYTHON = os.getenv('CYTHON', False)
 ext = '.pyx' if USE_CYTHON else '.c'
 extensions = [Extension(
     'vidcutter.libs.mpv',

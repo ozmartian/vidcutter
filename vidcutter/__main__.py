@@ -270,6 +270,7 @@ def main():
         QApplication.setAttribute(Qt.AA_Use96Dpi, True)
     if hasattr(Qt, 'AA_ShareOpenGLContexts'):
         QApplication.setAttribute(Qt.AA_ShareOpenGLContexts, True)
+
     app = QApplication(sys.argv)
     app.setApplicationName('VidCutter')
     app.setApplicationVersion(MainWindow.get_version())
@@ -281,7 +282,7 @@ def main():
     if exit_code == MainWindow.EXIT_CODE_REBOOT:
         if sys.platform == 'win32':
             if hasattr(win.cutter, 'mpvWidget'):
-                win.cutter.mpvWidget.shutdown()
+                win.close()
             QProcess.startDetached('"%s"' % qApp.applicationFilePath())
         else:
             os.execl(sys.executable, sys.executable, *sys.argv)

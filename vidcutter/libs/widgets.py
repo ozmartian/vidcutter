@@ -258,9 +258,9 @@ class CompletionMessageBox(QMessageBox):
         btn_continue.clicked.connect(self.close)
         self.setDefaultButton(btn_continue)
         self.setEscapeButton(btn_continue)
-        checkbox = QCheckBox('Always show this confirmation box when edits complete', self)
+        checkbox = QCheckBox('Always show a confirmation when edits complete', self)
         checkbox.setChecked(self.parent.showConfirmAction.isChecked())
-        checkbox.toggled.connect(lambda checked: self.parent.saveSetting('showConfirm', checked))
+        checkbox.toggled.connect(self.showCon)
         checkbox.setStyleSheet('font-size: 9pt;')
         checkbox.setCursor(Qt.PointingHandCursor)
         self.setCheckBox(checkbox)
@@ -271,6 +271,11 @@ class CompletionMessageBox(QMessageBox):
         self.icon_restart = QIcon(':/images/%s/complete-restart.png' % self.theme)
         self.icon_exit = QIcon(':/images/%s/complete-exit.png' % self.theme)
         self.icon_continue = QIcon(':/images/%s/complete-continue.png' % self.theme)
+
+    @pyqtSlot(bool)
+    def showConfirm(self, checked: bool) -> None:
+        self.parent.saveSetting('showConfirm', checked)
+        self.parent.showConfirmAction.setChecked(checked)
 
     @pyqtSlot(bool)
     def openResult(self, pathonly: bool = False) -> None:

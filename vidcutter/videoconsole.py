@@ -85,7 +85,7 @@ class ConsoleHandler(QObject, logging.StreamHandler):
 
     def __init__(self, widget):
         QObject.__init__(self)
-        logging.Handler.__init__(self)
+        logging.StreamHandler.__init__(self)
         self._widget = widget
         self.logReceived.connect(self._widget.edit.write)
 
