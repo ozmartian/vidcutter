@@ -261,7 +261,7 @@ QTextBrowser {
 }
 
 #aboutwidget QTextBrowser {
-    border: no  ne;
+    border: none;
 }
 
 /* -------------------------------------------------------------------------- */

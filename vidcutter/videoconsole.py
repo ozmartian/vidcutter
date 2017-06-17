@@ -37,7 +37,7 @@ class VideoConsole(QTextEdit):
         self._buffer = StringIO()
         self.setReadOnly(True)
         self.setWordWrapMode(QTextOption.NoWrap)
-        self.setStyleSheet('QTextEdit { font-family:monospace; font-size:%s; }' % '11pt' if sys.platform == 'darwin' else '9pt')
+        self.setStyleSheet('QTextEdit { font-family:monospace; font-size:%s; }' % ('10pt' if sys.platform == 'darwin' else '8pt'))
 
     @pyqtSlot(str)
     def write(self, msg):
@@ -66,7 +66,7 @@ class ConsoleWidget(QDialog):
         layout.addWidget(buttons)
         self.setLayout(layout)
         self.setWindowTitle('{0} Console'.format(qApp.applicationName()))
-        self.setWindowFlags(Qt.Dialog | Qt.WindowCloseButtonHint)
+        self.setWindowFlags(Qt.Window | Qt.WindowCloseButtonHint)
         self.setWindowModality(Qt.NonModal)
 
     def showEvent(self, event: QShowEvent):
