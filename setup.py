@@ -36,7 +36,7 @@ from videosetup import VCSetup
 setup_requires = ['setuptools']
 
 # Cython override; default to building extension module from pre-Cythonized .c file
-USE_CYTHON = os.getenv('CYTHON', False)
+USE_CYTHON = False
 ext = '.pyx' if USE_CYTHON else '.c'
 extensions = [Extension(
     'vidcutter.libs.mpv',
