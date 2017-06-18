@@ -61,10 +61,6 @@ class VCSetup:
         return desc
 
     @staticmethod
-    def get_install_requires():
-        return ['PyQt5', 'PyOpenGL'] if VCSetup.get_value('packager') == 'pypi' else []
-
-    @staticmethod
     def get_data_files():
         files = []
         if sys.platform.startswith('linux'):
@@ -84,3 +80,23 @@ class VCSetup:
                 ('/usr/share/mime/packages', ['data/mime/x-vidcutter.xml'])
             ]
         return files
+
+    @staticmethod
+    def setuptoolsMsg():
+        msg = '''
+*****************************************************************************
+
+    VidCutter depends on the following to run on a typical Linux install:
+    
+        - libmpv w/ development files
+            
+            [ DISTRO PACKAGES ]
+            
+            * Ubuntu/Debian/Mint/etc. = libmpv1 & limpv-dev
+            * Fedora = mpv-libs
+            * openSUSE = libmpv1
+
+*****************************************************************************
+        
+'''
+        return msg

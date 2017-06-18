@@ -64,7 +64,13 @@ result = setup(
     license='GPLv3+',
     packages=['vidcutter', 'vidcutter.libs'],
     setup_requires=setup_requires,
-    install_requires=VCSetup.get_install_requires(),
+    
+    install_requires=[],
+    # no longer enforcing dependencies via setuptools
+    # a notifcation msg is now displayed detailing requirements so users from PyPi,
+    # Conda or obscure distros can get them installed however they like.
+    # Distro targetted packages will always be the recommended approach
+
     data_files=VCSetup.get_data_files(),
     ext_modules=extensions,
     entry_points={'gui_scripts': ['vidcutter = vidcutter.__main__:main']},

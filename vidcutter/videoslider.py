@@ -42,11 +42,11 @@ class VideoSlider(QSlider):
         self.parent = parent
         self.logger = logging.getLogger(__name__)
         self.theme = self.parent.theme
-        self._styles = '''QSlider:horizontal { margin: 16px 4px 22px; height: 40px; }
+        self._styles = '''QSlider:horizontal { margin: 16px 4px 22px; height: 60px; }
         QSlider::groove:horizontal {
             border-bottom: 1px solid #444;
             border-top: 1px solid #444;
-            height: 38px;
+            height: 58px;
             background: %s url(:images/%s.png) repeat-x left;
             position: absolute;
             left: 4px;
@@ -71,11 +71,11 @@ class VideoSlider(QSlider):
             border: none;
             background: url(:images/handle.png) no-repeat top center;
             width: 18px;
-            height: 65px;
+            height: 85px;
             margin: -12px -10px -22px;
         }'''
         self._regions = list()
-        self._regionHeight = 22
+        self._regionHeight = 32
         self._regionSelected = -1
         self.showThumbs = True
         self.thumbnailsOn = False

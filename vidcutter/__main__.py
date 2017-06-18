@@ -205,7 +205,7 @@ class MainWindow(QMainWindow):
             labels = 'beside'
         self.settings.setValue('toolbarLabels', labels)
         self.settings.setValue('aspectRatio', 'keep' if self.cutter.keepRatioAction.isChecked() else 'stretch')
-        self.settings.setValue('volume', self.cutter.volumeSlider.value())
+        self.settings.setValue('volume', self.cutter.volSlider.value())
         self.settings.setValue('level1Seek', self.cutter.level1_spinner.value())
         self.settings.setValue('level2Seek', self.cutter.level2_spinner.value())
         self.settings.setValue('geometry', self.saveGeometry())

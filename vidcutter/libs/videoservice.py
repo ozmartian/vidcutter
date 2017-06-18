@@ -51,7 +51,7 @@ class VideoService(QObject):
 
     class ThumbSize(Enum):
         INDEX = QSize(100, 70)
-        TIMELINE = QSize(50, 38)
+        TIMELINE = QSize(80, 60)
 
     def __init__(self, parent=None):
         super(VideoService, self).__init__(parent)

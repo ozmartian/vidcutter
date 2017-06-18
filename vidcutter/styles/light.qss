@@ -178,25 +178,23 @@ QMessageBox {
 QDialogButtonBox QPushButton {
     color: #222;
     background-color: #E1E1E1;
-    border-width: 1px;
-    border-color: #999;
-    border-style: solid;
+    border: 1px solid #999;
     border-radius: 2px;
     padding: 5px 8px;
     outline: none;
     min-width: 50px;
 }
 
-QDialogButtonBox QPushButton:pressed {
-    background-color: #3daee9;
-    padding-top: -15px;
-    padding-bottom: -17px;
+QDialogButtonBox QPushButton:hover {
+    border: 1px solid #694471;
+    color: #222;
 }
 
-QDialogButtonBox QPushButton:hover {
-    border: 1px solid #666;
-    background-color: #999;
-    color: #FFF;
+QDialogButtonBox QPushButton:pressed {
+    background-color: #694471;
+    padding-top: -15px;
+    padding-bottom: -17px;
+    color: #EFF0F1;
 }
 
 QPushButton#menuButton {

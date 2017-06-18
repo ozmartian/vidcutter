@@ -47,7 +47,7 @@ from vidcutter.videotoolbar import VideoToolBar
 
 from vidcutter.libs.mpvwidget import mpvWidget
 from vidcutter.libs.videoservice import VideoService
-from vidcutter.libs.widgets import CompletionMessageBox, FrameCounter, TimeCounter, VCProgressBar
+from vidcutter.libs.widgets import CompletionMessageBox, FrameCounter, TimeCounter, VCProgressBar, VolumeSlider
 
 # noinspection PyUnresolvedReferences
 import vidcutter.resources
@@ -224,12 +224,12 @@ class VideoCutter(QWidget):
                                       cursor=Qt.PointingHandCursor)
 
         # noinspection PyArgumentList
-        self.volumeSlider = QSlider(Qt.Horizontal, toolTip='Volume', statusTip='Adjust volume level',
+        self.volSlider = VolumeSlider(orientation=Qt.Horizontal, toolTip='Volume', statusTip='Adjust volume level',
                                     cursor=Qt.PointingHandCursor, value=self.parent.startupvol, minimum=0,
                                     maximum=130, sliderMoved=self.setVolume, objectName='volumeSlider')
 
         if sys.platform == 'darwin':
-            self.volumeSlider.setStyle(QStyleFactory.create('Macintosh'))
+            self.volSlider.setStyle(QStyleFactory.create('Macintosh'))
 
         # noinspection PyArgumentList
         self.menuButton = QPushButton(self, toolTip='Menu', cursor=Qt.PointingHandCursor, flat=True,
@@ -259,7 +259,7 @@ class VideoCutter(QWidget):
         controlsLayout.addStretch(10)
         controlsLayout.addWidget(self.muteButton)
         controlsLayout.addSpacing(5)
-        controlsLayout.addWidget(self.volumeSlider)
+        controlsLayout.addWidget(self.volSlider)
         controlsLayout.addSpacing(20)
         controlsLayout.addWidget(self.menuButton)
         controlsLayout.addSpacing(10)

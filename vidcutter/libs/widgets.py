@@ -25,10 +25,10 @@
 import sys
 import os
 
-from PyQt5.QtCore import pyqtSignal, pyqtSlot, QFileInfo, Qt, QTime, QUrl
+from PyQt5.QtCore import pyqtSignal, pyqtSlot, QFileInfo, QPoint, Qt, QTime, QUrl
 from PyQt5.QtGui import QDesktopServices, QIcon
-from PyQt5.QtWidgets import (QAbstractSpinBox, QCheckBox, QDialog, QGridLayout, QHBoxLayout, QLabel, QMessageBox,
-                             QProgressBar, QSpinBox, QStyle, QStyleFactory, QTimeEdit, QWidget)
+from PyQt5.QtWidgets import (qApp, QAbstractSpinBox, QCheckBox, QDialog, QGridLayout, QHBoxLayout, QLabel, QMessageBox,
+                             QProgressBar, QSlider, QSpinBox, QStyle, QStyleFactory, QStyleOptionSlider, QTimeEdit, QToolTip, QWidget)
 
 
 class TimeCounter(QWidget):
@@ -190,6 +190,21 @@ class VCProgressBar(QDialog):
 
     def setValue(self, val: int) -> None:
         self._progress.setValue(val)
+
+
+class VolumeSlider(QSlider):
+    def __init__(self, parent=None, **kwargs):
+        super(VolumeSlider, self).__init__(parent, **kwargs)
+        self.valueChanged.connect(self.showTooltip)
+        self.offset = QPoint(0, -45)
+
+    @pyqtSlot(int)
+    def showTooltip(self, value: int):
+        opt = QStyleOptionSlider()
+        self.initStyleOption(opt)
+        handle = self.style().subControlRect(QStyle.CC_Slider, opt, QStyle.SC_SliderHandle, self)
+        globalPos = self.mapToGlobal(handle.topLeft() + self.offset)
+        QToolTip.showText(globalPos, str('{0}%'.format(value)), self)
 
 
 class CompletionMessageBox(QMessageBox):
