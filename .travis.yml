@@ -28,7 +28,6 @@ git:
   depth: 3
 
 before_install:
-  - s
   - sudo rm -f /var/lib/dpkg/lock >/dev/null 2>&1
   - sudo add-apt-repository ppa:mc3man/testing6 -y
   - sudo apt-get -qq update
