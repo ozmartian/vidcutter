@@ -38,6 +38,7 @@ class mpvWidget(QOpenGLWidget):
         self.mpv = mpv.Context()
 
         self.mpv.set_log_level('terminal-default')
+        self.mpv.set_option('config', False)
 
         def _istr(o):
             return ('yes' if o else 'no') if type(o) is bool else str(o)

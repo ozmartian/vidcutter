@@ -28,17 +28,21 @@ git:
   depth: 3
 
 before_install:
+  - s
   - sudo rm -f /var/lib/dpkg/lock >/dev/null 2>&1
   - sudo add-apt-repository ppa:mc3man/testing6 -y
   - sudo apt-get -qq update
+  - sudo apt-get install build-essential
+  - python -m sysconfig
   - sudo apt-get install -y libmpv-dev libmpv1 python3-dev python3-setuptools
   - sudo pip install --upgrade pip
-  - sudo pip install -qq pyqt5 pyopengl pyopengl_accelerate
+  - sudo pip install https://files.pythonhosted.org/packages/4f/52/428af82f860dae1e08f8cb7f03399a9cc0f3756f2bd1b3e31ee749e126e4/PyQt5-5.8.2-5.8.0-cp35.cp36.cp37-abi3-manylinux1_x86_64.whl
+  - sudo pip install -qq pyopengl pyopengl_accelerate
 
 install:
-  - python3 setup.py install
+  - python setup.py install
 
-script: echo "Build complete.."
+script: echo "Done!"
 
 notifications:
   email: false

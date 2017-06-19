@@ -22,15 +22,14 @@
         <file>images/save.png</file>
         <file>images/startup-backdrop.png</file>
         <file>images/thumbs-up.png</file>
-        <file>images/toolbar-style.png</file>
         <file>images/up.png</file>
         <file>images/update.png</file>
-        <file>images/video-settings.png</file>
         <file>images/vidcutter.png</file>
         <file>images/vidcutter-small.png</file>
         <file>images/viewlogs.png</file>
         <file>images/watermark.png</file>
         <file>images/dark/about-background.png</file>
+        <file>images/dark/background_complete.png</file>
         <file>images/dark/clipindex.png</file>
         <file>images/dark/complete-continue.png</file>
         <file>images/dark/complete-exit.png</file>
@@ -69,6 +68,7 @@
         <file>images/dark/toolbar-start-on.png</file>
         <file>images/dark/unmuted.png</file>
         <file>images/light/about-background.png</file>
+        <file>images/light/background_complete.png</file>
         <file>images/light/clipindex.png</file>
         <file>images/light/complete-continue.png</file>
         <file>images/light/complete-exit.png</file>

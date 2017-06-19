@@ -30,7 +30,7 @@ import signal
 import sys
 import traceback
 
-from PyQt5.QtCore import (pyqtSlot, QCommandLineOption, QCommandLineParser, QDir, QFileInfo, QProcess, QSettings, QSize,
+from PyQt5.QtCore import (pyqtSlot, QCommandLineOption, QCommandLineParser, QCoreApplication, QDir, QFileInfo, QProcess, QSettings, QSize,
                           QStandardPaths, Qt)
 from PyQt5.QtGui import QCloseEvent, QContextMenuEvent, QDragEnterEvent, QDropEvent, QIcon, QMouseEvent
 from PyQt5.QtWidgets import qApp, QApplication, QMainWindow, QMessageBox, QSizePolicy
@@ -265,11 +265,11 @@ class MainWindow(QMainWindow):
 
 def main():
     if hasattr(Qt, 'AA_EnableHighDpiScaling'):
-        QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
+        QCoreApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
     if hasattr(Qt, 'AA_Use96Dpi'):
-        QApplication.setAttribute(Qt.AA_Use96Dpi, True)
+        QCoreApplication.setAttribute(Qt.AA_Use96Dpi, True)
     if hasattr(Qt, 'AA_ShareOpenGLContexts'):
-        QApplication.setAttribute(Qt.AA_ShareOpenGLContexts, True)
+        QCoreApplication.setAttribute(Qt.AA_ShareOpenGLContexts, True)
 
     app = QApplication(sys.argv)
     app.setApplicationName('VidCutter')

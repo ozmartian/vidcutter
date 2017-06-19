@@ -81,22 +81,89 @@ class VCSetup:
             ]
         return files
 
+
     @staticmethod
-    def setuptoolsMsg():
+    def yesno(question: str) -> bool:
+        _yesno = {'Y': True, 'y': True, 'n': False, 'N': False, 'yes': True, 'no': False}
+        choice = input(question).lower().strip
+
+    @staticmethod
+    def install_notes():
         msg = '''
 *****************************************************************************
 
-    VidCutter depends on the following to run on a typical Linux install:
+    VidCutter depends on the following in order to run on a typical
+    Linux installation. The corresponding 
     
-        - libmpv w/ development files
-            
-            [ DISTRO PACKAGES ]
-            
-            * Ubuntu/Debian/Mint/etc. = libmpv1 & limpv-dev
-            * Fedora = mpv-libs
-            * openSUSE = libmpv1
-
-*****************************************************************************
+        - Python 3 w/ development headers
         
+            * Ubuntu/Debian/Mint/etc:   python3-dev
+            * Fedora:                   python3-devel
+            * openSUSE:                 python3-devel
+            * Arch Linux:               python
+    
+        - libmpv & mpv development headers
+
+            * Ubuntu/Debian/Mint/etc:   libmpv1 limpv-dev
+            * Fedora:                   mpv-libs mpv-libs-devel
+            * openSUSE:                 libmpv1 mpv-devel
+            * Arch Linux:               mpv
+
+        - PyQt5 w/ OpenGL module
+         
+            * Ubuntu/Debian/Mint/etc:   python3-pyqt5 python3-pyqt5.qtopengl
+            * Fedora:                   python3-qt5
+            * openSUSE:                 python3-qt5
+            * Arch Linux:               python-pyqt5
+            
+        - PyOpenGL python module
+        
+            * Ubuntu/Debian/Mint/etc:   python3-opengl
+            * Fedora:                   python3-pyopengl
+            * openSUSE:                 python3-opengl
+            * Arch Linux                python-opengl
+        
+        - FFmpeg
+
+            * Ubuntu/Debian/Mint/etc:   ffmpeg
+            * Fedora:                   ffmpeg
+            * openSUSE:                 ffmpeg
+            * Arch Linux                ffmpeg
+            
+        - MediaInfo
+        
+            * Ubuntu/Debian/Mint/etc:   mediainfo
+            * Fedora:                   mediainfo
+            * openSUSE:                 mediainfo
+            * Arch Linux:               mediainfo
+            
+    You need to build a Python extension module before you can run the
+    app directly from the source code. This is all handled automatically
+    by the package installers by the setuptools install script. If you
+    wish to simply run the app direct from source without having to 
+    install it (i.e. python3 setup.py install) you can do so by building
+    the extension module with the following setuptools command, run from
+    the root source folder:
+    
+        $ python3 setup.py build_ext -i
+        
+    Make sure you build the extension module AFTER installing the
+    dependencies covered above, in particular libmpv and the mpv + python3
+    dev headers are all needed for it to compile successfully. Upon success
+    you should have a new file under vidcutter/libs named something like:
+    
+        mpv.cpython-<python version + platform>.so (Linux/macOS)
+        mpv.cp-<python version + platform>.pyd     (Windows)
+        
+    Windows users can also build for themselves as long as you run 
+    the Python command from a Visual Studio 2015/2017 Native x64/x86
+    Developer Command Prompt terminal but you will need mvp libs for
+    Windows plus other things, trust me when I say you're best off simply
+    downloading the Windows setup from the releases page.
+    
+        https://github.com/ozmartian/vidcutter/releases/latest
+    
+*****************************************************************************
 '''
+        input('Would you like to see the install notes (recommended)? [y/n]r')
         return msg
