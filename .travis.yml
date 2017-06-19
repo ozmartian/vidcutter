@@ -28,6 +28,7 @@ git:
   depth: 3
 
 before_install:
+  - sudo rm -f /var/lib/dpkg/lock >/dev/null 2>&1
   - sudo add-apt-repository ppa:mc3man/testing6 -y
   - sudo apt-get -qq update
   - sudo apt-get install -y libmpv-dev libmpv1 python3-dev python3-setuptools
