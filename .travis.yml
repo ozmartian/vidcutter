@@ -30,8 +30,8 @@ git:
 before_install:
   - sudo rm -f /var/lib/dpkg/lock >/dev/null 2>&1
   - sudo apt-get install python3-pyqt5 python3-pyqt5.qtopengl -y
-  - sudo pip install --upgrade pip
-  - sudo pip install -qq pyqt5 pyopengl pyopengl_accelerate
+  - sudo python -m pip install --upgrade pip
+  - sudo python -m pip install -qq pyqt5 pyopengl pyopengl_accelerate
 
   - sudo add-apt-repository ppa:mc3man/testing6 -y
   - sudo add-apt-repository ppa:fkrull/deadsnakes -y
