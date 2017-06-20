@@ -22,26 +22,29 @@
 language: python
 os: linux
 dist: trusty
+group: edge
 sudo: required
 python: '3.5'
 git:
   depth: 3
 
 before_install:
-  - sudo rm -f /var/lib/dpkg/lock >/dev/null 2>&1
-  - sudo apt-get install python-dev libffi-dev libssl-dev
-  - sudo pip install requests[security]
+  # - sudo rm -f /var/lib/dpkg/lock >/dev/null 2>&1
+  # - sudo apt-get install python-dev libffi-dev libssl-dev
+  # - sudo pip install requests[security]
   - sudo apt-get install libncurses5 libgcc1 libstdc++6 libc6 libx11-6 libxext6 libxrender1 libice6 libsm6 libgl1-mesa-glx libglib2.0-0 -y
-  - sudo pip install pyqt5 pyopengl pyopengl_accelerate
-  - sudo add-apt-repository ppa:mc3man/testing6 -y
-  - sudo add-apt-repository ppa:fkrull/deadsnakes -y
-  - sudo add-apt-repository ppa:beineri/opt-qt58-trusty -y
-  - sudo apt-get -qq update
-  - sudo apt-get install build-essential -y
-  - sudo python -m easy_install pyqt5
-  - sudo apt-get install -y libmpv-dev libmpv1 python3-dev python3-setuptools
-  - sudo pip install --upgrade pip
-  - sudo pip install -qq pyqt5 pyopengl pyopengl_accelerate
+  - cd ./_build/travis && sudo run.sh
+
+#  - sudo pip install pyqt5 pyopengl pyopengl_accelerate
+#  - sudo add-apt-repository ppa:mc3man/testing6 -y
+#  - sudo add-apt-repository ppa:fkrull/deadsnakes -y
+#  - sudo add-apt-repository ppa:beineri/opt-qt58-trusty -y
+#  - sudo apt-get -qq update
+#  - sudo apt-get install build-essential -y
+#  - sudo python -m easy_install pyqt5
+#  - sudo apt-get install -y libmpv-dev libmpv1 python3-dev python3-setuptools
+#  - sudo pip install --upgrade pip
+#  - sudo pip install -qq pyqt5 pyopengl pyopengl_accelerate
 
 install:
   - python setup.py install
