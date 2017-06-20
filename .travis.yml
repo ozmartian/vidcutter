@@ -34,7 +34,7 @@ before_install:
   # - sudo pip install requests[security]
   - sudo apt-get install libncurses5 libgcc1 libstdc++6 libc6 libx11-6 libxext6 libxrender1 libice6 libsm6 libgl1-mesa-glx libglib2.0-0 -y
   - cd ./_build/travis && sudo ./run.sh
-
+  - sudo pip install -qq pyqt5
 #  - sudo pip install pyqt5 pyopengl pyopengl_accelerate
 #  - sudo add-apt-repository ppa:mc3man/testing6 -y
 #  - sudo add-apt-repository ppa:fkrull/deadsnakes -y
