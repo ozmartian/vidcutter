@@ -28,6 +28,11 @@ python: '3.5'
 git:
   depth: 3
 
+cache:
+  directories:
+    - sip-4.19.2
+    - PyQt5_gpl-5.8.2
+
 before_install:
   - sudo rm -f /var/lib/dpkg/lock >/dev/null 2>&1
   - sudo apt-get install python-dev libffi-dev libssl-dev
@@ -53,7 +58,8 @@ before_install:
 
 install:
   - sed -i "s/pypi/deb/" "vidcutter/__init__.py"
-  - sudo python setup.py install
+  - python setup.py build_ext -i
+  - sudo pip install .
 
 script: echo "Done!"
 
