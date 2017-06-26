@@ -39,6 +39,7 @@ before_install:
   - sudo apt-get -qq update
   - echo "Installing Qt5.8 libs..."
   - sudo apt-get install -y qt58-meta-full
+  - echo "Installing multimedia runtime libs + python OpenGL bindings..."
   - sudo apt-get install -y libmpv-dev libmpv1 python3-dev python3-setuptools ffmpeg mediainfo
   - sudo pip install -qq pyopengl pyopengl_accelerate
   - echo "Building sip..."
@@ -48,7 +49,7 @@ before_install:
   - echo "Building PyQt5..."
   - wget https://sourceforge.net/projects/pyqt/files/PyQt5/PyQt-5.8.2/PyQt5_gpl-5.8.2.tar.gz
   - tar -xzvf PyQt5_gpl-5.8.2.tar.gz
-  - pushd PyQt5_gpl-5.8.2 && python ./configure.py --confirm-license && make && sudo make install && popd
+  - pushd PyQt5_gpl-5.8.2 && source /opt/qt58/bin/qt58-env.sh && python ./configure.py --confirm-license && make && sudo make install && popd
 
 install:
   - sed -i "s/pypi/deb/" "vidcutter/__init__.py"
