@@ -46,6 +46,10 @@ QWidget#genericdialog2 {
     border-image: url(':/images/dialog-backdrop-02.png') 0 0 0 0 stretch stretch;
 }
 
+QWidget#genericdialog3 {
+    border-image: url(':/images/dark/background_complete.png') 0 0 0 0 stretch stretch;
+}
+
 /* -------------------------------------------------------------------------- */
 
 QDialog#aboutwidget {
@@ -176,7 +180,7 @@ QMessageBox {
 
 /* -------------------------------------------------------------------------- */
 
-QDialogButtonBox QPushButton {
+QDialogButtonBox QPushButton, #clipindextools QPushButton {
     color: #EFF0F1;
     background-color: #31363B;
     border: 1px solid #76797C;
@@ -186,15 +190,17 @@ QDialogButtonBox QPushButton {
     min-width: 50px;
 }
 
-QDialogButtonBox QPushButton:pressed {
-    background-color: #642C68;
-    padding-top: -15px;
-    padding-bottom: -17px;
-}
-
-QDialogButtonBox QPushButton:hover {
+QDialogButtonBox QPushButton:hover, #clipindextools QPushButton:hover {
     border: 1px solid #642C68;
     color: #EFF0F1;
+}
+
+QDialogButtonBox QPushButton:focus,
+QDialogButtonBox QPushButton:pressed,
+#clipindextools QPushButton:focus,
+#clipindextools QPushButton:pressed {
+    background-color: #642C68;
+    border: 1px solid #EFF0F1;
 }
 
 QPushButton#menuButton {
@@ -215,6 +221,12 @@ QPushButton#muteButton, QPushButton#menuButton {
     background-color: transparent;
     border: none;
     outline: none;
+}
+
+#clipindextools QPushButton {
+    padding: 4px;
+    font-size: 10px;
+    border-radius: 0;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -322,4 +334,10 @@ VCProgressBar QLabel {
     font-size: 15px;
     font-weight: 500;
     color: #FFF;
+}
+
+/* -------------------------------------------------------------------------- */
+
+QToolTip {
+    border: 1px solid #101517;
 }

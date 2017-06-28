@@ -35,14 +35,14 @@ from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QFont, QFontDatabase, QI
                          QPixmap)
 from PyQt5.QtWidgets import (QAction, QActionGroup, qApp, QApplication, QDialogButtonBox, QDoubleSpinBox, QFileDialog,
                              QGroupBox, QHBoxLayout, QLabel, QListWidgetItem, QMenu, QMessageBox, QPushButton,
-                             QSizePolicy, QSlider, QStyleFactory, QVBoxLayout, QWidget, QWidgetAction)
+                             QSizePolicy, QStyleFactory, QVBoxLayout, QWidget, QWidgetAction)
 
 from vidcutter.about import About
 from vidcutter.updater import Updater
 from vidcutter.videoinfo import VideoInfo
 from vidcutter.videolist import VideoList
 from vidcutter.videoslider import VideoSlider, VideoSliderWidget
-from vidcutter.videostyles import VideoStyles
+from vidcutter.videostyle import VideoStyleDark, VideoStyleLight
 from vidcutter.videotoolbar import VideoToolBar
 
 from vidcutter.libs.mpvwidget import mpvWidget
@@ -112,7 +112,7 @@ class VideoCutter(QWidget):
         self.toolbar = VideoToolBar(self)
         self.initToolbar()
 
-        self.appMenu, self.cliplistMenu = QMenu(self), QMenu(self)
+        self.appMenu, self.clipindex_clearmenu, self.clipindex_contextmenu = QMenu(self), QMenu(self), QMenu(self)
         self.initMenus()
 
         self.seekSlider = VideoSlider(self)
@@ -134,12 +134,33 @@ class VideoCutter(QWidget):
         self.runtimeLabel = QLabel('<div align="right">00:00:00</div>', self)
         self.runtimeLabel.setObjectName('runtimeLabel')
 
+        self.clipindex_add = QPushButton('ADD', self)
+        self.clipindex_add.setCursor(Qt.PointingHandCursor)
+        self.clipindex_clear = QPushButton('CLEAR', self)
+        self.clipindex_clear.setMenu(self.clipindex_clearmenu)
+        self.clipindex_clear.setCursor(Qt.PointingHandCursor)
+        if sys.platform == 'win32':
+            self.clipindex_add.setStyle(QStyleFactory.create('Fusion'))
+            self.clipindex_clear.setStyle(QStyleFactory.create('Fusion'))
+
+        clipindex_layout = QHBoxLayout()
+        clipindex_layout.setSpacing(0)
+        clipindex_layout.setContentsMargins(0, 0, 0, 0)
+        clipindex_layout.addWidget(self.clipindex_add)
+        clipindex_layout.addSpacing(3)
+        clipindex_layout.addWidget(self.clipindex_clear)
+        clipindexTools = QWidget(self)
+        clipindexTools.setObjectName('clipindextools')
+        clipindexTools.setLayout(clipindex_layout)
+
         self.clipindexLayout = QVBoxLayout()
         self.clipindexLayout.setSpacing(0)
         self.clipindexLayout.setContentsMargins(0, 0, 0, 0)
         self.clipindexLayout.addWidget(listHeader)
         self.clipindexLayout.addWidget(self.cliplist)
         self.clipindexLayout.addWidget(self.runtimeLabel)
+        self.clipindexLayout.addSpacing(3)
+        self.clipindexLayout.addWidget(clipindexTools)
 
         self.videoLayout = QHBoxLayout()
         self.videoLayout.setContentsMargins(0, 0, 0, 0)
@@ -312,11 +333,11 @@ class VideoCutter(QWidget):
         sys.exit(mbox.exec_())
 
     def init_theme(self) -> None:
-        VideoStyles.dark() if self.theme == 'dark' else VideoStyles.light()
+        qApp.setStyle(VideoStyleDark() if self.theme == 'dark' else VideoStyleLight())
         QFontDatabase.addApplicationFont(':/fonts/FuturaLT.ttf')
         QFontDatabase.addApplicationFont(':/fonts/OpenSans.ttf')
         QFontDatabase.addApplicationFont(':/fonts/OpenSansBold.ttf')
-        VideoStyles.loadQSS(self.theme, self.parent.devmode)
+        self.style().loadQSS(self.theme, self.parent.devmode)
         QApplication.setFont(QFont('Open Sans', 12 if sys.platform == 'darwin' else 10, 300))
 
     def initMPV(self) -> None:
@@ -439,9 +460,9 @@ class VideoCutter(QWidget):
                                         triggered=self.moveItemUp, enabled=False)
         self.moveItemDownAction = QAction(self.downIcon, 'Move down', self, statusTip='Move clip position down in list',
                                           triggered=self.moveItemDown, enabled=False)
-        self.removeItemAction = QAction(self.removeIcon, 'Remove clip', self, triggered=self.removeItem,
+        self.removeItemAction = QAction(self.removeIcon, 'Remove selected', self, triggered=self.removeItem,
                                         statusTip='Remove selected clip from list', enabled=False)
-        self.removeAllAction = QAction(self.removeAllIcon, 'Clear list', self, statusTip='Clear all clips from list',
+        self.removeAllAction = QAction(self.removeAllIcon, 'Remove all', self, statusTip='Remove all clips from list',
                                        triggered=self.clearList, enabled=False)
         self.mediaInfoAction = QAction(self.mediaInfoIcon, 'Media information', self, triggered=self.mediaInfo,
                                        statusTip='View current media file\'s technical properties', enabled=False)
@@ -455,9 +476,9 @@ class VideoCutter(QWidget):
                                       statusTip='View the application\'s log file')
         self.updateCheckAction = QAction(self.updateCheckIcon, 'Check for updates...', self,
                                          statusTip='Check for application updates', triggered=self.updater.check)
-        self.aboutQtAction = QAction('About Qt', self, statusTip='About Qt', triggered=qApp.aboutQt)
+        self.aboutQtAction = QAction('About Qt', self, statusTip='About Qt', triggered=qApp.aboutQt, shortcut=0)
         self.aboutAction = QAction('About %s' % qApp.applicationName(), self, triggered=self.aboutApp,
-                                   statusTip='About %s' % qApp.applicationName())
+                                   statusTip='About %s' % qApp.applicationName(), shortcut=0)
         self.keyRefAction = QAction(self.keyRefIcon, 'Keyboard shortcuts', self, triggered=self.showKeyRef,
                                     statusTip='View shortcut key bindings')
         self.lightThemeAction = QAction('Light', self.themeAction, checkable=True, checked=True,
@@ -582,7 +603,6 @@ class VideoCutter(QWidget):
         optionsMenu.addMenu(zoomMenu)
         optionsMenu.aboutToShow.connect(self.clearSpinners)
 
-        self.appMenu.setSeparatorsCollapsible(True)
         self.appMenu.addAction(self.openProjectAction)
         self.appMenu.addAction(self.saveProjectAction)
         self.appMenu.addSeparator()
@@ -597,18 +617,22 @@ class VideoCutter(QWidget):
         self.appMenu.addAction(self.aboutQtAction)
         self.appMenu.addAction(self.aboutAction)
 
-        self.cliplistMenu.addAction(self.moveItemUpAction)
-        self.cliplistMenu.addAction(self.moveItemDownAction)
-        self.cliplistMenu.addSeparator()
-        self.cliplistMenu.addAction(self.removeItemAction)
-        self.cliplistMenu.addAction(self.removeAllAction)
+        self.clipindex_contextmenu.addAction(self.moveItemUpAction)
+        self.clipindex_contextmenu.addAction(self.moveItemDownAction)
+        self.clipindex_contextmenu.addSeparator()
+        self.clipindex_contextmenu.addAction(self.removeItemAction)
+        self.clipindex_contextmenu.addAction(self.removeAllAction)
+
+        self.clipindex_clearmenu.addActions([self.removeItemAction, self.removeAllAction])
+        self.clipindex_clearmenu.aboutToShow.connect(self.initClearMenu)
 
         if sys.platform == 'win32':
             labelsMenu.setStyle(QStyleFactory.create('Fusion'))
             zoomMenu.setStyle(QStyleFactory.create('Fusion'))
             optionsMenu.setStyle(QStyleFactory.create('Fusion'))
             self.appMenu.setStyle(QStyleFactory.create('Fusion'))
-            self.cliplistMenu.setStyle(QStyleFactory.create('Fusion'))
+            self.clipindex_contextmenu.setStyle(QStyleFactory.create('Fusion'))
+            self.clipindex_clearmenu.setStyle(QStyleFactory.create('Fusion'))
 
     def saveSetting(self, setting: str, checked: bool) -> None:
         val = 'on' if checked else 'off'
@@ -622,12 +646,20 @@ class VideoCutter(QWidget):
     def setRunningTime(self, runtime: str) -> None:
         self.runtimeLabel.setText('<div align="right">%s</div>' % runtime)
 
-    def itemMenu(self, pos: QPoint) -> None:
-        globalPos = self.cliplist.mapToGlobal(pos)
-        self.moveItemUpAction.setEnabled(False)
-        self.moveItemDownAction.setEnabled(False)
+    @pyqtSlot()
+    def initClearMenu(self):
         self.removeItemAction.setEnabled(False)
         self.removeAllAction.setEnabled(False)
+        if self.cliplist.count() > 0:
+            self.removeAllAction.setEnabled(True)
+            if len(self.cliplist.selectedItems()) > 0:
+                self.removeItemAction.setEnabled(True)
+
+    def itemMenu(self, pos: QPoint) -> None:
+        globalPos = self.cliplist.mapToGlobal(pos)
+        self.initClearMenu()
+        self.moveItemUpAction.setEnabled(False)
+        self.moveItemDownAction.setEnabled(False)
         index = self.cliplist.currentRow()
         if index != -1:
             if not self.inCut:
@@ -635,11 +667,7 @@ class VideoCutter(QWidget):
                     self.moveItemUpAction.setEnabled(True)
                 if index < self.cliplist.count() - 1:
                     self.moveItemDownAction.setEnabled(True)
-            if self.cliplist.count() > 0:
-                self.removeItemAction.setEnabled(True)
-        if self.cliplist.count() > 0:
-            self.removeAllAction.setEnabled(True)
-        self.cliplistMenu.exec_(globalPos)
+        self.clipindex_contextmenu.exec_(globalPos)
 
     def moveItemUp(self) -> None:
         index = self.cliplist.currentRow()
@@ -830,10 +858,11 @@ class VideoCutter(QWidget):
         self.mpvWidget.pause()
 
     def showText(self, text: str, duration: int = 3, override: bool = False) -> None:
-        if not self.osdButton.isChecked() and not override:
-            return
-        if len(text.strip()) and self.mediaAvailable:
-            self.mpvWidget.showText(text, duration, 0)
+        if self.mediaAvailable:
+            if not self.osdButton.isChecked() and not override:
+                return
+            if len(text.strip()):
+                self.mpvWidget.showText(text, duration, 0)
 
     def initMediaControls(self, flag: bool = True) -> None:
         self.playAction.setEnabled(flag)
@@ -898,15 +927,19 @@ class VideoCutter(QWidget):
 
     @pyqtSlot(bool)
     def toggleThumbs(self, checked: bool) -> None:
-        if self.seekSlider.showThumbs and self.seekSlider.thumbnailsOn and not checked:
+        if checked:
+            self.seekSlider.initStyle()
+            self.showText('Thumbnails enabled')
+            if self.mediaAvailable:
+                self.seekSlider.initThumbs()
+        else:
             self.showText('Thumbnails disabled')
             self.seekSlider.removeThumbs()
             self.seekSlider.initStyle()
-        elif self.currentMedia is not None:
-            self.showText('Thumbnails enabled')
-            self.seekSlider.initThumbs()
+
         self.seekSlider.showThumbs = checked
         self.saveSetting('timelineThumbs', checked)
+        self.seekSlider.update()
 
     @pyqtSlot(bool)
     def toggleConsole(self, checked: bool):
@@ -1120,7 +1153,7 @@ class VideoCutter(QWidget):
         shortcuts = QWidget(self)
         shortcuts.setWindowFlags(Qt.Dialog | Qt.WindowCloseButtonHint)
         shortcuts.setObjectName('shortcuts')
-        buttons = QDialogButtonBox(QDialogButtonBox.Ok, parent=shortcuts)
+        buttons = QDialogButtonBox(QDialogButtonBox.Ok)
         buttons.accepted.connect(shortcuts.hide)
         layout = QVBoxLayout()
         layout.addWidget(QLabel(pixmap=QPixmap(':/images/%s/shortcuts.png' % self.theme)))

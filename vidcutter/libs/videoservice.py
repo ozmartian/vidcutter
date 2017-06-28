@@ -67,15 +67,17 @@ class VideoService(QObject):
         backend, mediainfo = None, None
         if VideoService.frozen:
             if sys.platform == 'win32':
-                return os.path.join(VideoService.getAppPath(), 'bin', 'ffmpeg.exe'), os.path.join(VideoService.getAppPath(), 'bin', 'MediaInfo.exe')
+                return os.path.join(VideoService.getAppPath(), 'bin', 'ffmpeg.exe'), \
+                       os.path.join(VideoService.getAppPath(), 'bin', 'MediaInfo.exe')
             else:
-                return os.path.join(VideoService.getAppPath(), 'bin', 'ffmpeg'), os.path.join(VideoService.getAppPath(), 'bin', 'mediainfo')
+                return os.path.join(VideoService.getAppPath(), 'bin', 'ffmpeg'), \
+                       os.path.join(VideoService.getAppPath(), 'bin', 'mediainfo')
         else:
-            for exe in VideoService.utils.get(os.name).get('ffmpeg'):
+            for exe in VideoService.utils[os.name]['ffmpeg']:
                 backend = find_executable(exe)
                 if backend is not None:
                     break
-            for exe in VideoService.utils.get(os.name).get('mediainfo'):
+            for exe in VideoService.utils[os.name]['mediainfo']:
                 mediainfo = find_executable(exe)
                 if mediainfo is not None:
                     break

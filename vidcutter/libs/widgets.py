@@ -197,6 +197,10 @@ class VolumeSlider(QSlider):
         super(VolumeSlider, self).__init__(parent, **kwargs)
         self.valueChanged.connect(self.showTooltip)
         self.offset = QPoint(0, -45)
+        if sys.platform == 'win32':
+            self.setStyleSheet('''QSlider::handle { background: #694471; }
+                QSlider::handle:hover { background: #A286A8; }
+                QSlider::handle:pressed { background: #3D1546; }''')
 
     @pyqtSlot(int)
     def showTooltip(self, value: int):
@@ -215,10 +219,9 @@ class CompletionMessageBox(QMessageBox):
         self.initIcons()
         self.setWindowFlags(Qt.Dialog | Qt.WindowCloseButtonHint)
         self.setWindowTitle('Operation complete')
-        self.setMinimumWidth(600)
         self.setTextFormat(Qt.RichText)
-        self.setObjectName('genericdialog2')
-        self.setIconPixmap(self.parent.thumbsupIcon.pixmap(150, 144))
+        self.setObjectName('genericdialog3')
+        # self.setIconPixmap(self.parent.thumbsupIcon.pixmap(150, 144))
         self.pencolor = '#C681D5' if self.theme == 'dark' else '#642C68'
         self.setText('''
     <style>
@@ -227,24 +230,24 @@ class CompletionMessageBox(QMessageBox):
             font-family: "Futura LT", sans-serif;
             font-weight: 400;
         }
-        table {
-            min-width: 350px;
-        }
         table.info {
             margin: 6px;
-            margin-top: 15px;
-            padding: 4px 15px;
+            margin-top: 13px;
+            padding: 4px 2px;
         }
-        td.label {
-            font-size: 15px;
-            font-weight: bold;
-            text-align: right;
+        td.value {
+            font-size: 13px;
             color: %s;
         }
-        td.value { font-size: 15px; }
+        td.label {
+            font-size: 11px;
+            color: %s;
+            padding-top: 5px;
+            text-transform: lowercase;
+        }
     </style>
     <h1>Your media is ready!</h1>
-    <table class="info" cellpadding="2" cellspacing="0">
+    <table class="info" cellpadding="2" cellspacing="0" align="left" width="485">
         <tr>
             <td class="label"><b>File:</b></td>
             <td class="value" nowrap>%s</td>
@@ -257,37 +260,38 @@ class CompletionMessageBox(QMessageBox):
             <td class="label"><b>Length:</b></td>
             <td class="value">%s</td>
         </tr>
-    </table><br/>''' % (self.pencolor, self.pencolor, os.path.basename(self.parent.finalFilename),
+    </table><br/>''' % (self.pencolor, ('#EFF0F1' if self.theme == 'dark' else '#222'),
+                        self.pencolor, os.path.basename(self.parent.finalFilename),
                         self.parent.sizeof_fmt(int(QFileInfo(self.parent.finalFilename).size())),
                         self.parent.delta2QTime(self.parent.totalRuntime).toString(self.parent.runtimeformat)))
+        # self.btn_open = self.addButton('Open', self.ResetRole)
+        # self.btn_open.setIcon(self.icon_open)
+        # self.btn_open.clicked.connect(lambda: self.openResult(True))
+        # btn_restart = self.addButton('Restart', self.AcceptRole)
+        # btn_restart.setIcon(self.icon_restart)
+        # btn_restart.clicked.connect(self.parent.parent.reboot)
         self.btn_play = self.addButton('Play', self.ResetRole)
         self.btn_play.setIcon(self.icon_play)
         self.btn_play.clicked.connect(lambda: self.openResult(False))
-        self.btn_open = self.addButton('Open', self.ResetRole)
-        self.btn_open.setIcon(self.icon_open)
-        self.btn_open.clicked.connect(lambda: self.openResult(True))
         self.btn_exit = self.addButton('Exit', self.AcceptRole)
         self.btn_exit.setIcon(self.icon_exit)
         self.btn_exit.clicked.connect(self.parent.close)
-        btn_restart = self.addButton('Restart', self.AcceptRole)
-        btn_restart.setIcon(self.icon_restart)
-        btn_restart.clicked.connect(self.parent.parent.reboot)
         btn_continue = self.addButton('Continue', self.AcceptRole)
         btn_continue.setIcon(self.icon_continue)
         btn_continue.clicked.connect(self.close)
         self.setDefaultButton(btn_continue)
         self.setEscapeButton(btn_continue)
-        checkbox = QCheckBox('Always show a confirmation when edits complete', self)
+        checkbox = QCheckBox('Always show this confirmation box', self)
         checkbox.setChecked(self.parent.showConfirmAction.isChecked())
         checkbox.toggled.connect(self.showConfirm)
-        checkbox.setStyleSheet('margin-top: 5px; font-size: %s;' % '11pt' if sys.platform == 'darwin' else '9pt')
+        checkbox.setStyleSheet('margin-top:6px; font-size:%s;' % ('11pt' if sys.platform == 'darwin' else '9pt'))
         checkbox.setCursor(Qt.PointingHandCursor)
         self.setCheckBox(checkbox)
 
     def initIcons(self) -> None:
         self.icon_play = QIcon(':/images/%s/complete-play.png' % self.theme)
         self.icon_open = QIcon(':/images/%s/complete-open.png' % self.theme)
-        self.icon_restart = QIcon(':/images/%s/complete-restart.png' % self.theme)
+        # self.icon_restart = QIcon(':/images/%s/complete-restart.png' % self.theme)
         self.icon_exit = QIcon(':/images/%s/complete-exit.png' % self.theme)
         self.icon_continue = QIcon(':/images/%s/complete-continue.png' % self.theme)
 

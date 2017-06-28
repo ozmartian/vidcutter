@@ -30,9 +30,9 @@ import signal
 import sys
 import traceback
 
-from PyQt5.QtCore import (pyqtSlot, QCommandLineOption, QCommandLineParser, QCoreApplication, QDir, QFileInfo, QProcess, QSettings, QSize,
-                          QStandardPaths, Qt)
-from PyQt5.QtGui import QCloseEvent, QContextMenuEvent, QDragEnterEvent, QDropEvent, QIcon, QMouseEvent
+from PyQt5.QtCore import (pyqtSlot, QCommandLineOption, QCommandLineParser, QCoreApplication, QDir, QFileInfo,
+                          QProcess, QSettings, QSize, QStandardPaths, Qt)
+from PyQt5.QtGui import QCloseEvent, QContextMenuEvent, QDragEnterEvent, QDropEvent, QIcon, QMouseEvent, QResizeEvent
 from PyQt5.QtWidgets import qApp, QApplication, QMainWindow, QMessageBox, QSizePolicy
 
 from vidcutter.videoconsole import ConsoleHandler, ConsoleWidget
@@ -254,6 +254,14 @@ class MainWindow(QMainWindow):
         self.cutter.loadMedia(filename)
         event.accept()
 
+    def resizeEvent(self, event: QResizeEvent) -> None:
+        print('*** RESIZE EVENT ***')
+        try:
+            if self.cutter.mediaAvailable and self.cutter.thumbnailsButton.isChecked():
+                self.cutter.seekSlider.reloadThumbs()
+        except AttributeError:
+            pass
+
     def closeEvent(self, event: QCloseEvent) -> None:
         event.accept()
         if hasattr(self, 'cutter'):
@@ -271,14 +279,14 @@ def main():
     if hasattr(Qt, 'AA_ShareOpenGLContexts'):
         QCoreApplication.setAttribute(Qt.AA_ShareOpenGLContexts, True)
 
+    if sys.platform == 'darwin':
+        QApplication.setStyle('Fusion')
+
     app = QApplication(sys.argv)
     app.setApplicationName('VidCutter')
     app.setApplicationVersion(MainWindow.get_version())
     app.setOrganizationDomain('ozmartians.com')
     app.setQuitOnLastWindowClosed(True)
-
-    if sys.platform == 'darwin':
-        app.setStyle('Fusion')
 
     win = MainWindow()
     exit_code = app.exec_()

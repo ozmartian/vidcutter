@@ -24,7 +24,7 @@ QMainWindow {
 /* -------------------------------------------------------------------------- */
 
 QWidget#shortcuts {
-    border-image: url(':/images/watermark.png') 0 0 0 0 stretch stretch;
+    border-image: url(':/images/watermark.png') 5 5 5 5 stretch stretch;
     background-color: #EFF0F1;
 }
 
@@ -175,7 +175,7 @@ QMessageBox {
 
 /* -------------------------------------------------------------------------- */
 
-QDialogButtonBox QPushButton {
+QDialogButtonBox QPushButton, #clipindextools QPushButton {
     color: #222;
     background-color: #E1E1E1;
     border: 1px solid #999;
@@ -185,16 +185,18 @@ QDialogButtonBox QPushButton {
     min-width: 50px;
 }
 
-QDialogButtonBox QPushButton:hover {
+QDialogButtonBox QPushButton:hover, #clipindextools QPushButton:hover {
     border: 1px solid #694471;
     color: #222;
 }
 
-QDialogButtonBox QPushButton:pressed {
+QDialogButtonBox QPushButton:focus,
+QDialogButtonBox QPushButton:pressed,
+#clipindextools QPushButton:focus,
+#clipindextools QPushButton:pressed {
     background-color: #694471;
-    padding-top: -15px;
-    padding-bottom: -17px;
     color: #EFF0F1;
+    border: 1px solid #EFF0F1;
 }
 
 QPushButton#menuButton {
@@ -215,6 +217,12 @@ QPushButton#muteButton, QPushButton#menuButton {
     background-color: transparent;
     border: none;
     outline: none;
+}
+
+#clipindextools QPushButton {
+    padding: 4px;
+    font-size: 10px;
+    border-radius: 0;
 }
 
 /* -------------------------------------------------------------------------- */

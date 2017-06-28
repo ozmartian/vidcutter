@@ -10,7 +10,7 @@
 VidCutter4 is nearly ready for release. Just a few bugs and features to straighten out. This release sees OpenGL-callback rendering to a native OpenGL window so no dependeny of window
 to keep things sane anymore. This change brings full macOS support back finally! This is not to be confused with mpv's standard
 oipengl video output option that you may already be familiar with, this is to do with how VidCutter gets video from mpv and presents it which is now via an OpenGL widget. This will not 
-be too noticeable a change to most users who have no issues with the app, except for MUCH MUCH better stability and quaiity playback. The big deal comes with those who have had problems
+be too noticeable a change to most users who have no issues with the app, except for MUCH MUCH better stability and quality playback. The big deal comes with those who have had problems
 due to old graphics hardware w/ no hardward acceleration etc. Basically, all the problem systems I've tested with problems in the past all work flawlessly now, including macOS. This has been 
 a personal goal of mine in cracking the opengl w/ mpv on python qt challenge.
 

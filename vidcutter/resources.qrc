@@ -3,13 +3,16 @@
         <file>fonts/FuturaLT.ttf</file>
         <file>fonts/OpenSans.ttf</file>
         <file>fonts/OpenSansBold.ttf</file>
-        <file>images/cliplist-watermark.png</file>
         <file>images/dialog-backdrop.png</file>
         <file>images/dialog-backdrop-02.png</file>
         <file>images/down.png</file>
         <file>images/filmstrip.png</file>
-        <file>images/filmstrip_thumbs.png</file>
+        <file>images/filmstrip-thumbs.png</file>
+        <file>images/filmstrip-nothumbs.png</file>
         <file>images/handle.png</file>
+        <file>images/handle-select.png</file>
+        <file>images/handle-nothumbs.png</file>
+        <file>images/handle-nothumbs-select.png</file>
         <file>images/info.png</file>
         <file>images/keymap.png</file>
         <file>images/mpv.png</file>

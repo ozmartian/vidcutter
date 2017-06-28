@@ -22,17 +22,16 @@
 #
 #######################################################################
 
-
 import logging
+import os
 import sys
 
-from PyQt5.QtCore import QEvent, QObject, Qt, pyqtSlot
-from PyQt5.QtGui import (QColor, QKeyEvent, QMouseEvent, QPaintEvent, QPainter, QPainterPath, QPen, QResizeEvent,
-                         QTransform, QWheelEvent)
+from PyQt5.QtCore import QEvent, QObject, QThread, Qt, pyqtSignal, pyqtSlot
+from PyQt5.QtGui import (QColor, QKeyEvent, QMouseEvent, QPaintEvent, QPainter, QPainterPath, QPen, QTransform,
+                         QWheelEvent)
 from PyQt5.QtWidgets import (qApp, QGraphicsEffect, QHBoxLayout, QLabel, QSlider, QStyle, QStyleOptionSlider,
                              QStackedWidget, QStylePainter, QWidget, QSizePolicy, QStackedLayout)
 
-from vidcutter.videothreads import TimelineThumbsThread
 from vidcutter.libs.videoservice import VideoService
 
 
@@ -42,12 +41,12 @@ class VideoSlider(QSlider):
         self.parent = parent
         self.logger = logging.getLogger(__name__)
         self.theme = self.parent.theme
-        self._styles = '''QSlider:horizontal { margin: 16px 4px 22px; height: 60px; }
+        self._styles = '''QSlider:horizontal { margin: 16px 4px 20px; height: %ipx; }
         QSlider::groove:horizontal {
             border-bottom: 1px solid #444;
             border-top: 1px solid #444;
-            height: 58px;
-            background: %s url(:images/%s.png) repeat-x left;
+            height: %ipx;
+            background: %s url(:images/%s) repeat-x left;
             position: absolute;
             left: 4px;
             right: 4px;
@@ -56,7 +55,7 @@ class VideoSlider(QSlider):
         QSlider::sub-page:horizontal {
             border: none;
             background: %s;
-            height: 20px;
+            height: %ipx;
             position: absolute;
             left: 0;
             right: 0;
@@ -69,14 +68,15 @@ class VideoSlider(QSlider):
         }
         QSlider::handle:horizontal {
             border: none;
-            background: url(:images/handle.png) no-repeat top center;
-            width: 18px;
+            background: url(:images/%s) no-repeat top center;
+            width: 15px;
             height: 85px;
-            margin: -12px -10px -22px;
+            margin: -12px -8px -22px;
         }'''
         self._regions = list()
         self._regionHeight = 32
         self._regionSelected = -1
+        self._cutStarted = False
         self.showThumbs = True
         self.thumbnailsOn = False
         self.offset = 8
@@ -95,25 +95,37 @@ class VideoSlider(QSlider):
         self.valueChanged.connect(self.restrictMove)
         self.installEventFilter(self)
 
-    def initStyle(self, selected: bool = False, margin: str = '0') -> None:
-        bground = 'rgba(200, 213, 236, 0.85)' if selected else 'transparent'
+    def initStyle(self) -> None:
+        bground = 'rgba(200, 213, 236, 0.85)' if self._cutStarted else 'transparent'
+        height = 58
+        handle = 'handle.png'
+        margin = 0
+        self._regionHeight = 32
+        print('*** initStyle() ***')
         if self.thumbnailsOn:
             timeline_bground = 'transparent'
-            timeline_image = 'filmstrip_thumbs'
+            timeline_image = 'filmstrip-thumbs.png'
         else:
-            timeline_bground = '#444'
-            timeline_image = 'filmstrip'
-        self.setStyleSheet(self._styles % (timeline_bground, timeline_image, bground, margin))
+            timeline_bground = 'rgba(63, 63, 63, 0.6)'
+            timeline_image = 'filmstrip.png' if self.parent.thumbnailsButton.isChecked() else 'filmstrip-nothumbs.png'
+            height = 38 if not self.parent.thumbnailsButton.isChecked() else height
+            handle = 'handle-nothumbs.png' if not self.parent.thumbnailsButton.isChecked() else handle
+            self._regionHeight = 32 if self.parent.thumbnailsButton.isChecked() else 22
+        if self._cutStarted:
+            _file, _ext = os.path.splitext(handle)
+            handle = '%s-select%s' % (_file, _ext)
+            margin = '%ipx' % (QStyle.sliderPositionFromValue(self.minimum(), self.maximum(),
+                                                              self.restrictValue, self.width()) - self.offset)
+        self.setStyleSheet(self._styles % (height, height, timeline_bground, timeline_image, bground,
+                                           height + 2, margin, handle))
 
     def setRestrictValue(self, value: int, force: bool = False) -> None:
         self.restrictValue = value
         if value > 0 or force:
-            opt = QStyleOptionSlider()
-            self.initStyleOption(opt)
-            handle = self.style().subControlRect(QStyle.CC_Slider, opt, QStyle.SC_SliderHandle, self)
-            self.initStyle(True, '%ipx' % handle.x())
+            self._cutStarted = True
         else:
-            self.initStyle()
+            self._cutStarted = False
+        self.initStyle()
 
     @pyqtSlot(int)
     def restrictMove(self, value: int) -> None:
@@ -151,8 +163,8 @@ class VideoSlider(QSlider):
                     if i % 30 == 0:
                         painter.setPen(Qt.white if self.theme == 'dark' else Qt.black)
                         if self.parent.currentMedia is not None:
-                            timecode = QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), x - self.offset,
-                                                                      self.width())
+                            timecode = QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), x, self.width())
+                            # -self.offset,
                             timecode= self.parent.delta2QTime(timecode).toString(self.parent.runtimeformat)
                         else:
                             timecode = '00:00:00'
@@ -203,9 +215,30 @@ class VideoSlider(QSlider):
         frametimes = list()
         for msec in index:
             frametimes.append(self.parent.delta2QTime(msec).toString(self.parent.timeformat))
-        self.parent.sliderWidget.setLoader(True)
-        self.thumbsThread = TimelineThumbsThread(self.parent.currentMedia, frametimes)
-        self.thumbsThread.completed.connect(self.buildTimeline)
+
+        class ThumbWorker(QObject):
+            completed = pyqtSignal(list)
+
+            def __init__(self, media: str, frames: list):
+                super(ThumbWorker, self).__init__()
+                self.media = media
+                self.frames = frames
+
+            def generate(self):
+                thumbs = list()
+                for frame in self.frames:
+                    thumbs.append(VideoService.capture(self.media, frame, VideoService.ThumbSize.TIMELINE))
+                self.completed.emit(thumbs)
+
+        self.thumbsThread = QThread(self)
+        self.thumbsWorker = ThumbWorker(self.parent.currentMedia, frametimes)
+        self.thumbsWorker.moveToThread(self.thumbsThread)
+        self.thumbsThread.started.connect(lambda: self.parent.sliderWidget.setLoader(True))
+        self.thumbsThread.started.connect(self.thumbsWorker.generate)
+        self.thumbsThread.finished.connect(self.thumbsThread.deleteLater, Qt.DirectConnection)
+        self.thumbsWorker.completed.connect(self.buildTimeline)
+        self.thumbsWorker.completed.connect(self.thumbsWorker.deleteLater, Qt.DirectConnection)
+        self.thumbsWorker.completed.connect(self.thumbsThread.quit, Qt.DirectConnection)
         self.thumbsThread.start()
 
     @pyqtSlot(list)
@@ -215,11 +248,11 @@ class VideoSlider(QSlider):
         layout.setContentsMargins(0, 0, 0, 0)
         for thumb in thumbs:
             label = QLabel()
-            label.setStyleSheet('padding: 0; margin: -5px 0 0 0; background: transparent;')
+            label.setStyleSheet('padding: 0; margin: 0 0 0 0; background: transparent;')
             label.setPixmap(thumb)
             layout.addWidget(label)
         thumbnails = QWidget(self)
-        thumbnails.setContentsMargins(8, 16, 8, 22)
+        thumbnails.setContentsMargins(8, 16, 8, 20)
         thumbnails.setFixedSize(self.width(), self.height())
         thumbnails.setLayout(layout)
         self.removeThumbs()
@@ -236,20 +269,22 @@ class VideoSlider(QSlider):
             thumbWidget = self.parent.sliderWidget.widget(1)
             self.parent.sliderWidget.removeWidget(thumbWidget)
             thumbWidget.deleteLater()
+            self.initStyle()
             self.thumbnailsOn = False
 
     def errorHandler(self, error: str) -> None:
         self.logger.error(error)
         sys.stderr.write(error)
 
-    def resizeEvent(self, event: QResizeEvent) -> None:
-        if self.thumbnailsOn:
-            if self.parent.sliderWidget.count() == 2:
-                thumbWidget = self.parent.sliderWidget.widget(1)
-                thumbWidget.hide()
-            self.setStyleSheet(self._styles % ('#444', 'filmstrip', 'transparent', 0))
+    def reloadThumbs(self) -> None:
+        if self.parent.mediaAvailable and self.parent.thumbnailsButton.isChecked():
+            if self.thumbnailsOn:
+                if self.parent.sliderWidget.count() == 2:
+                    self.parent.sliderWidget.widget(1).hide()
+                self.thumbnailsOn = False
+            self.initStyle()
             self.initThumbs()
-        self.parent.renderTimes()
+            self.parent.renderTimes()
 
     def wheelEvent(self, event: QWheelEvent) -> None:
         if self.parent.mediaAvailable:
@@ -283,6 +318,7 @@ class VideoSlider(QSlider):
 class VideoSliderWidget(QStackedWidget):
     def __init__(self, parent, slider: VideoSlider):
         super(VideoSliderWidget, self).__init__(parent)
+        self.parent = parent
         self.slider = slider
         self.loaderEffect = self.LoaderEffect()
         self.loaderEffect.setEnabled(False)
@@ -293,6 +329,8 @@ class VideoSliderWidget(QStackedWidget):
         self.addWidget(self.slider)
 
     def setLoader(self, enabled: bool = False):
+        if hasattr(self.parent, 'toolbar'):
+            self.parent.toolbar.setEnabled(not enabled)
         self.slider.setEnabled(not enabled)
         self.loaderEffect.setEnabled(enabled)
 

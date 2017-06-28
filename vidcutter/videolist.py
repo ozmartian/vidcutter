@@ -62,6 +62,7 @@ class VideoList(QListWidget):
 
     def clearSelection(self) -> None:
         self.parent.seekSlider.selectRegion(-1)
+        self.parent.removeItemAction.setEnabled(False)
         super(VideoList, self).clearSelection()
 
 

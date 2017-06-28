@@ -26,11 +26,12 @@ import os
 import shlex
 import subprocess
 import sys
+
 from distutils.spawn import find_executable
 from setuptools import setup
 from setuptools.extension import Extension
 
-from videosetup import VCSetup
+from vidcutter.videosetup import VCSetup
 
 
 setup_requires = ['setuptools']
@@ -48,44 +49,48 @@ extensions = [Extension(
 )]
 if USE_CYTHON:
     from Cython.Build import cythonize
-
     extensions = cythonize(extensions)
     setup_requires.append('Cython')
 
-# begin setuptools installer
-result = setup(
-    name='vidcutter',
-    version=VCSetup.get_value('version'),
-    author='Pete Alexandrou',
-    author_email='pete@ozmartians.com',
-    description='the fast + sleek cross-platform video cutter & joiner',
-    long_description=VCSetup.get_description(),
-    url='http://vidcutter.ozmartians.com',
-    license='GPLv3+',
-    packages=['vidcutter', 'vidcutter.libs'],
-    setup_requires=setup_requires,
-    
-    install_requires=[],
-    # no longer enforcing dependencies via setuptools
-    # a notifcation msg is now displayed detailing requirements so users from PyPi,
-    # Conda or obscure distros can get them installed however they like.
-    # Distro targetted packages will always be the recommended approach
+try:
+    # begin setuptools installer
+    result = setup(
+        name='vidcutter',
+        version=VCSetup.get_value('version'),
+        author='Pete Alexandrou',
+        author_email='pete@ozmartians.com',
+        description='the simplest + fastest video cutter & joiner',
+        long_description=VCSetup.get_description(),
+        url='http://vidcutter.ozmartians.com',
+        license='GPLv3+',
+        packages=['vidcutter', 'vidcutter.libs'],
+        setup_requires=setup_requires,
+        
+        install_requires=[],
+        # no longer enforcing dependencies via setuptools
+        # a notifcation msg is now displayed detailing requirements so users from PyPi,
+        # Conda or obscure distros can get them installed however they like.
+        # Distro targetted packages will always be the recommended approach
 
-    data_files=VCSetup.get_data_files(),
-    ext_modules=extensions,
-    entry_points={'gui_scripts': ['vidcutter = vidcutter.__main__:main']},
-    keywords='vidcutter ffmpeg audiovideo mpv libmpv videoeditor video videoedit pyqt Qt5 multimedia',
-    classifiers=[
-        'Development Status :: 5 - Production/Stable',
-        'Environment :: X11 Applications :: Qt',
-        'Intended Audience :: End Users/Desktop',
-        'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
-        'Natural Language :: English',
-        'Operating System :: POSIX',
-        'Topic :: Multimedia :: Video :: Non-Linear Editor',
-        'Programming Language :: Python :: 3 :: Only'
-    ]
-)
+        cmdclass={'install': PostInstallCommand},
+        data_files=VCSetup.get_data_files(),
+        ext_modules=extensions,
+        entry_points={'gui_scripts': ['vidcutter = vidcutter.__main__:main']},
+        keywords='vidcutter ffmpeg audiovideo mpv libmpv videoeditor video videoedit pyqt Qt5 multimedia',
+        classifiers=[
+            'Development Status :: 5 - Production/Stable',
+            'Environment :: X11 Applications :: Qt',
+            'Intended Audience :: End Users/Desktop',
+            'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
+            'Natural Language :: English',
+            'Operating System :: POSIX',
+            'Topic :: Multimedia :: Video :: Non-Linear Editor',
+            'Programming Language :: Python :: 3 :: Only'
+        ]
+    )
+except Exception:
+    VCSetup.display_install_notes()
+    raise
 
 # helper functions/procedures for PyPi on Linux installations which is frowned upon
 # may get rid of this so users stick with distro packaging
