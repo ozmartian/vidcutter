@@ -2,5 +2,4 @@
 
 export PYBUILD_NAME=vidcutter
 %:
-	dh $@ --with python3 --buildsystem=pybuild
-
+	dh $@ --with python3 --buildsystem=pybuild --before-build "sed -i \"s/pypi/deb/\" {dir}/vidcutter/__init__.py"

@@ -46,6 +46,11 @@ QWidget#genericdialog2 {
     border-image: url(':/images/dialog-backdrop-02.png') 0 0 0 0 stretch stretch;
 }
 
+QWidget#genericdialog3 {
+    border-image: url(':/images/light/background_complete.png') 0 0 0 0 stretch stretch;
+    background-color: #FFF;
+}
+
 /* -------------------------------------------------------------------------- */
 
 QDialog#aboutwidget {
@@ -220,10 +225,12 @@ QPushButton#muteButton, QPushButton#menuButton {
 }
 
 #clipindextools QPushButton {
+    color: #EFF0F1;
     padding: 4px;
-    font-size: 11px;
+    font-size: 12px;
     font-family: 'FutureLT', sans-serif;
     border-radius: 0;
+    background-color: #694471;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -320,6 +327,18 @@ QTabBar::tab:top:only-one {
 
 /* -------------------------------------------------------------------------- */
 
+QSlider::handle#volumeslider {
+    border: 1px solid #616161;
+    border-radius: 7px;
+    background: #A286A8;
+}
+
+QSlider::handle:hover#volumeslider { background: #642C68; }
+
+QSlider::handle:pressed#volumeslider { background: #3D1546; }
+
+/* -------------------------------------------------------------------------- */
+
 VCProgressBar {
     background-color: #EFF0F1;
     border: 2px solid #FFF;
@@ -331,3 +350,5 @@ VCProgressBar QLabel {
     font-weight: 500;
     color: #000;
 }
+
+/* -------------------------------------------------------------------------- */

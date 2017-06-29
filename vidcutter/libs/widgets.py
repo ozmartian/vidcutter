@@ -195,12 +195,10 @@ class VCProgressBar(QDialog):
 class VolumeSlider(QSlider):
     def __init__(self, parent=None, **kwargs):
         super(VolumeSlider, self).__init__(parent, **kwargs)
+        self.setObjectName('volumeslider')
         self.valueChanged.connect(self.showTooltip)
         self.offset = QPoint(0, -45)
-        if sys.platform == 'win32':
-            self.setStyleSheet('''QSlider::handle { background: #694471; }
-                QSlider::handle:hover { background: #A286A8; }
-                QSlider::handle:pressed { background: #3D1546; }''')
+        self.setStyle(QStyleFactory.create('Fusion'))
 
     @pyqtSlot(int)
     def showTooltip(self, value: int):
@@ -229,10 +227,10 @@ class CompletionMessageBox(QMessageBox):
             color: %s;
             font-family: "Futura LT", sans-serif;
             font-weight: 400;
+            text-align: center;
         }
         table.info {
             margin: 6px;
-            margin-top: 13px;
             padding: 4px 2px;
         }
         td.value {
@@ -240,25 +238,27 @@ class CompletionMessageBox(QMessageBox):
             color: %s;
         }
         td.label {
-            font-size: 11px;
+            font-size: 12px;
             color: %s;
             padding-top: 5px;
             text-transform: lowercase;
+            text-align: right;
+            padding-right: 5px;
         }
     </style>
     <h1>Your media is ready!</h1>
-    <table class="info" cellpadding="2" cellspacing="0" align="left" width="485">
+    <table class="info" cellpadding="2" cellspacing="0" align="left" width="350">
         <tr>
-            <td class="label"><b>File:</b></td>
-            <td class="value" nowrap>%s</td>
+            <td width="20%%" class="label"><b>File:</b></td>
+            <td width="80%%" class="value" nowrap>%s</td>
         </tr>
         <tr>
-            <td class="label"><b>Size:</b></td>
-            <td class="value">%s</td>
+            <td width="20%%" class="label"><b>Size:</b></td>
+            <td width="80%%" class="value">%s</td>
         </tr>
         <tr>
-            <td class="label"><b>Length:</b></td>
-            <td class="value">%s</td>
+            <td width="20%%" class="label"><b>Length:</b></td>
+            <td width="80%%" class="value">%s</td>
         </tr>
     </table><br/>''' % (self.pencolor, ('#EFF0F1' if self.theme == 'dark' else '#222'),
                         self.pencolor, os.path.basename(self.parent.finalFilename),
@@ -273,7 +273,7 @@ class CompletionMessageBox(QMessageBox):
         self.btn_play = self.addButton('Play', self.ResetRole)
         self.btn_play.setIcon(self.icon_play)
         self.btn_play.clicked.connect(lambda: self.openResult(False))
-        self.btn_exit = self.addButton('Exit', self.AcceptRole)
+        self.btn_exit = self.addButton('Exit', self.ResetRole)
         self.btn_exit.setIcon(self.icon_exit)
         self.btn_exit.clicked.connect(self.parent.close)
         btn_continue = self.addButton('Continue', self.AcceptRole)
@@ -281,10 +281,15 @@ class CompletionMessageBox(QMessageBox):
         btn_continue.clicked.connect(self.close)
         self.setDefaultButton(btn_continue)
         self.setEscapeButton(btn_continue)
-        checkbox = QCheckBox('Always show this confirmation box', self)
+        checkbox = QCheckBox('Always show confirmation', self)
         checkbox.setChecked(self.parent.showConfirmAction.isChecked())
         checkbox.toggled.connect(self.showConfirm)
-        checkbox.setStyleSheet('margin-top:6px; font-size:%s;' % ('11pt' if sys.platform == 'darwin' else '9pt'))
+        checkbox.setStyleSheet('''
+            QCheckBox {
+                margin: 6px;
+                padding-left: 75px;
+                font-size: %s;
+            }''' % ('14px' if sys.platform == 'darwin' else '12px'))
         checkbox.setCursor(Qt.PointingHandCursor)
         self.setCheckBox(checkbox)
 

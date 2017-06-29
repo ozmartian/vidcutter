@@ -255,7 +255,6 @@ class MainWindow(QMainWindow):
         event.accept()
 
     def resizeEvent(self, event: QResizeEvent) -> None:
-        print('*** RESIZE EVENT ***')
         try:
             if self.cutter.mediaAvailable and self.cutter.thumbnailsButton.isChecked():
                 self.cutter.seekSlider.reloadThumbs()

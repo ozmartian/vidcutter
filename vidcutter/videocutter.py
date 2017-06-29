@@ -32,7 +32,7 @@ from datetime import timedelta
 from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTextStream,
                           QTime, QUrl)
 from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMouseEvent, QMovie,
-                         QPixmap)
+                         QPixmap, QOpenGLWindow)
 from PyQt5.QtWidgets import (QAction, QActionGroup, qApp, QApplication, QDialogButtonBox, QDoubleSpinBox, QFileDialog,
                              QGroupBox, QHBoxLayout, QLabel, QListWidgetItem, QMenu, QMessageBox, QPushButton,
                              QSizePolicy, QStyleFactory, QVBoxLayout, QWidget, QWidgetAction)
@@ -61,6 +61,7 @@ class VideoCutter(QWidget):
 
     def __init__(self, parent: QWidget):
         super(VideoCutter, self).__init__(parent)
+        self.setObjectName('videocutter')
         self.logger = logging.getLogger(__name__)
         self.parent = parent
         self.theme = self.parent.theme
@@ -112,12 +113,20 @@ class VideoCutter(QWidget):
         self.toolbar = VideoToolBar(self)
         self.initToolbar()
 
-        self.appMenu, self.clipindex_clearmenu, self.clipindex_contextmenu = QMenu(self), QMenu(self), QMenu(self)
+        self.appMenu, self.clipindex_removemenu, self.clipindex_contextmenu = QMenu(self), QMenu(self), QMenu(self)
         self.initMenus()
 
         self.seekSlider = VideoSlider(self)
         self.seekSlider.sliderMoved.connect(self.setPosition)
         self.sliderWidget = VideoSliderWidget(self, self.seekSlider)
+
+        sliderLayout = QHBoxLayout()
+        sliderLayout.setContentsMargins(0, 0, 0, 0)
+        sliderLayout.addSpacing(10)
+        sliderLayout.addWidget(self.sliderWidget)
+        sliderLayout.addSpacing(10)
+
+        self.sliderWidget.raise_()
 
         self.initNoVideo()
 
@@ -135,20 +144,24 @@ class VideoCutter(QWidget):
         self.runtimeLabel.setObjectName('runtimeLabel')
 
         self.clipindex_add = QPushButton('ADD', self)
+        self.clipindex_add.setToolTip('Add')
+        self.clipindex_add.setStatusTip('Add external clips to the clip index')
         self.clipindex_add.setCursor(Qt.PointingHandCursor)
-        self.clipindex_clear = QPushButton('CLEAR', self)
-        self.clipindex_clear.setMenu(self.clipindex_clearmenu)
-        self.clipindex_clear.setCursor(Qt.PointingHandCursor)
+        self.clipindex_remove = QPushButton('REMOVE', self)
+        self.clipindex_remove.setToolTip('Remove')
+        self.clipindex_remove.setStatusTip('Remove a selected clip or all of them from the clip index')
+        self.clipindex_remove.setMenu(self.clipindex_removemenu)
+        self.clipindex_remove.setCursor(Qt.PointingHandCursor)
         if sys.platform == 'win32':
             self.clipindex_add.setStyle(QStyleFactory.create('Fusion'))
-            self.clipindex_clear.setStyle(QStyleFactory.create('Fusion'))
+            self.clipindex_remove.setStyle(QStyleFactory.create('Fusion'))
 
         clipindex_layout = QHBoxLayout()
         clipindex_layout.setSpacing(0)
         clipindex_layout.setContentsMargins(0, 0, 0, 0)
         clipindex_layout.addWidget(self.clipindex_add)
         clipindex_layout.addSpacing(3)
-        clipindex_layout.addWidget(self.clipindex_clear)
+        clipindex_layout.addWidget(self.clipindex_remove)
         clipindexTools = QWidget(self)
         clipindexTools.setObjectName('clipindextools')
         clipindexTools.setLayout(clipindex_layout)
@@ -193,16 +206,16 @@ class VideoCutter(QWidget):
 
         self.initMPV()
 
-        videoplayerLayout = QVBoxLayout()
-        videoplayerLayout.setSpacing(0)
-        videoplayerLayout.setContentsMargins(0, 0, 0, 0)
-        videoplayerLayout.addWidget(self.mpvWidget)
-        videoplayerLayout.addWidget(countersWidget)
+        self.videoplayerLayout = QVBoxLayout()
+        self.videoplayerLayout.setSpacing(0)
+        self.videoplayerLayout.setContentsMargins(0, 0, 0, 0)
+        self.videoplayerLayout.addWidget(self.mpvWidget)
+        self.videoplayerLayout.addWidget(countersWidget)
 
         self.videoplayerWidget = QWidget(self)
         self.videoplayerWidget.setVisible(False)
         self.videoplayerWidget.setObjectName('videoplayer')
-        self.videoplayerWidget.setLayout(videoplayerLayout)
+        self.videoplayerWidget.setLayout(self.videoplayerLayout)
 
         # noinspection PyArgumentList
         self.thumbnailsButton = QPushButton(icon=self.thumbnailsIcon, flat=True, iconSize=QSize(16, 16),
@@ -270,11 +283,11 @@ class VideoCutter(QWidget):
 
         controlsLayout = QHBoxLayout()
         controlsLayout.addSpacing(10)
-        controlsLayout.addWidget(self.thumbnailsButton)
+        controlsLayout.addWidget(self.consoleButton)
         controlsLayout.addSpacing(4)
         controlsLayout.addWidget(self.osdButton)
         controlsLayout.addSpacing(4)
-        controlsLayout.addWidget(self.consoleButton)
+        controlsLayout.addWidget(self.thumbnailsButton)
         controlsLayout.addStretch(10)
         controlsLayout.addWidget(toolbarGroup)
         controlsLayout.addStretch(10)
@@ -289,7 +302,7 @@ class VideoCutter(QWidget):
         layout.setSpacing(0)
         layout.setContentsMargins(10, 10, 10, 0)
         layout.addLayout(self.videoLayout)
-        layout.addWidget(self.sliderWidget)
+        layout.addLayout(sliderLayout)
         layout.addSpacing(12)
         layout.addLayout(controlsLayout)
 
@@ -623,8 +636,8 @@ class VideoCutter(QWidget):
         self.clipindex_contextmenu.addAction(self.removeItemAction)
         self.clipindex_contextmenu.addAction(self.removeAllAction)
 
-        self.clipindex_clearmenu.addActions([self.removeItemAction, self.removeAllAction])
-        self.clipindex_clearmenu.aboutToShow.connect(self.initClearMenu)
+        self.clipindex_removemenu.addActions([self.removeItemAction, self.removeAllAction])
+        self.clipindex_removemenu.aboutToShow.connect(self.initRemoveMenu)
 
         if sys.platform == 'win32':
             labelsMenu.setStyle(QStyleFactory.create('Fusion'))
@@ -632,7 +645,7 @@ class VideoCutter(QWidget):
             optionsMenu.setStyle(QStyleFactory.create('Fusion'))
             self.appMenu.setStyle(QStyleFactory.create('Fusion'))
             self.clipindex_contextmenu.setStyle(QStyleFactory.create('Fusion'))
-            self.clipindex_clearmenu.setStyle(QStyleFactory.create('Fusion'))
+            self.clipindex_removemenu.setStyle(QStyleFactory.create('Fusion'))
 
     def saveSetting(self, setting: str, checked: bool) -> None:
         val = 'on' if checked else 'off'
@@ -647,7 +660,7 @@ class VideoCutter(QWidget):
         self.runtimeLabel.setText('<div align="right">%s</div>' % runtime)
 
     @pyqtSlot()
-    def initClearMenu(self):
+    def initRemoveMenu(self):
         self.removeItemAction.setEnabled(False)
         self.removeAllAction.setEnabled(False)
         if self.cliplist.count() > 0:
@@ -657,7 +670,7 @@ class VideoCutter(QWidget):
 
     def itemMenu(self, pos: QPoint) -> None:
         globalPos = self.cliplist.mapToGlobal(pos)
-        self.initClearMenu()
+        self.initRemoveMenu()
         self.moveItemUpAction.setEnabled(False)
         self.moveItemDownAction.setEnabled(False)
         index = self.cliplist.currentRow()
@@ -885,6 +898,7 @@ class VideoCutter(QWidget):
 
     @pyqtSlot(int)
     def setPosition(self, position: int) -> None:
+        print('set position: %i' % position)
         if position >= self.seekSlider.restrictValue:
             self.mpvWidget.seek(position / 1000)
 
@@ -936,7 +950,6 @@ class VideoCutter(QWidget):
             self.showText('Thumbnails disabled')
             self.seekSlider.removeThumbs()
             self.seekSlider.initStyle()
-
         self.seekSlider.showThumbs = checked
         self.saveSetting('timelineThumbs', checked)
         self.seekSlider.update()
@@ -1264,27 +1277,29 @@ class VideoCutter(QWidget):
                                  'root access (Linux/Mac) in order to do this.</p>')
         return valid
 
-    def toggleMaximised(self) -> None:
-        if self.parent.isMaximized():
-            self.parent.showNormal()
-        else:
-            self.parent.showMaximized()
+    def toggleFullscreen(self) -> None:
+        if self.mediaAvailable:
+            if self.mpvWidget.originalParent is not None:
+                self.videoplayerLayout.insertWidget(0, self.mpvWidget)
+                self.mpvWidget.originalParent = None
+                self.parent.show()
+            elif self.mpvWidget.parentWidget() != 0:
+                self.parent.hide()
+                self.videoplayerLayout.removeWidget(self.mpvWidget)
+                self.mpvWidget.originalParent = self
+                self.mpvWidget.setGeometry(qApp.desktop().screenGeometry(self))
+                self.mpvWidget.setParent(None)
+                self.mpvWidget.showFullScreen()
 
     def toggleOSD(self, checked: bool) -> None:
         self.showText('On screen display %s' % ('enabled' if checked else 'disabled'), override=True)
         self.saveSetting('enableOSD', checked)
 
-    def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
-        self.toggleMaximised()
-        event.accept()
-
     def keyPressEvent(self, event: QKeyEvent) -> None:
-        if event.key() == Qt.Key_F:
-            self.toggleMaximised()
-            event.accept()
-            return
         if self.mediaAvailable:
-            if event.key() == Qt.Key_Left:
+            if event.key() == Qt.Key_F:
+                self.toggleFullscreen()
+            elif event.key() == Qt.Key_Left:
                 self.mpvWidget.frameBackStep()
             elif event.key() == Qt.Key_Down:
                 if qApp.queryKeyboardModifiers() == Qt.ShiftModifier:

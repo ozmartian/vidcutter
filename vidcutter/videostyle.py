@@ -31,6 +31,7 @@ from PyQt5.QtWidgets import qApp, QProxyStyle, QStyle
 
 
 class VideoStyle(QProxyStyle):
+    # noinspection PyMethodOverriding
     def styleHint(self, hint, option, widget, returnData) -> int:
         if hint == QStyle.SH_UnderlineShortcut:
             return 0

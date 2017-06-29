@@ -5,6 +5,7 @@ import locale
 import logging
 import os
 import sys
+from typing import Optional
 
 # this is required for Ubuntu which seems to
 # have a broken PyQt5 OpenGL implementation
@@ -12,14 +13,16 @@ import sys
 from OpenGL import GL
 
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt
+from PyQt5.QtGui import QKeyEvent, QMouseEvent
 from PyQt5.QtOpenGL import QGLContext
 from PyQt5.QtWidgets import QOpenGLWidget
+import sip
 
 # noinspection PyUnresolvedReferences
 import vidcutter.libs.mpv as mpv
 
 
-def get_proc_address(proc):
+def get_proc_address(proc) -> Optional[sip.voidptr]:
     glctx = QGLContext.currentContext()
     if glctx is None:
         return None
@@ -33,6 +36,7 @@ class mpvWidget(QOpenGLWidget):
     def __init__(self, parent=None, **mpv_opts):
         super(mpvWidget, self).__init__(parent)
         self.parent = parent
+        self.originalParent = None
         self.logger = logging.getLogger(__name__)
         locale.setlocale(locale.LC_NUMERIC, 'C')
         self.mpv = mpv.Context()
@@ -132,25 +136,45 @@ class mpvWidget(QOpenGLWidget):
     def showText(self, msg: str, duration: int, level: int = None):
         self.mpv.command('show-text', msg, duration * 1000, level)
 
-    def play(self, filepath):
+    def play(self, filepath) -> None:
         if not os.path.exists(filepath):
             return
         self.mpv.command('loadfile', filepath, 'replace')
 
-    def frameStep(self):
+    def frameStep(self) -> None:
         self.mpv.command('frame-step')
 
-    def frameBackStep(self):
+    def frameBackStep(self) -> None:
         self.mpv.command('frame-back-step')
 
-    def seek(self, pos, method='absolute+exact'):
+    def seek(self, pos, method='absolute+exact') -> None:
         self.mpv.command('seek', pos, method)
 
-    def pause(self):
+    def pause(self) -> None:
         self.mpv.set_property('pause', not self.mpv.get_property('pause'))
 
-    def mute(self):
+    def mute(self) -> None:
         self.mpv.set_property('mute', not self.mpv.get_property('mute'))
 
-    def volume(self, vol: int):
+    def volume(self, vol: int) -> None:
         self.mpv.set_property('volume', vol)
+
+    def _exitFullScreen(self) -> None:
+        self.showNormal()
+        self.setParent(self.originalParent)
+
+    def keyPressEvent(self, event: QKeyEvent) -> None:
+        if self.isFullScreen():
+            if event.key() == Qt.Key_F:
+                self._exitFullScreen()
+                event.accept()
+            else:
+                self.originalParent.keyPressEvent(event)
+        super(mpvWidget, self).keyPressEvent(event)
+
+    def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
+        if self.isFullScreen():
+            self._exitFullScreen()
+        self.parent.toggleFullscreen()
+        event.accept()
+        super(mpvWidget, self).mouseDoubleClickEvent(event)

@@ -224,8 +224,9 @@ QPushButton#muteButton, QPushButton#menuButton {
 }
 
 #clipindextools QPushButton {
+    color: #EFF0F1;
     padding: 4px;
-    font-size: 11px;
+    font-size: 12px;
     font-family: 'FutureLT', sans-serif;
     border-radius: 0;
 }
@@ -322,6 +323,18 @@ QTabBar::tab:top:last,
 QTabBar::tab:top:only-one {
     margin-right: 0;
 }
+
+/* -------------------------------------------------------------------------- */
+
+QSlider::handle#volumeslider {
+    border: 1px solid #13191B;
+    border-radius: 7px;
+    background: #642C68;
+}
+
+QSlider::handle:hover#volumeslider { background: #A286A8; }
+
+QSlider::handle:pressed#volumeslider { background: #3D1546; }
 
 /* -------------------------------------------------------------------------- */
 
