@@ -173,8 +173,10 @@ class VideoSlider(QSlider):
         opt.subControls = QStyle.SC_SliderGroove
         painter.drawComplexControl(QStyle.CC_Slider, opt)
         for path in self._regions:
-            brushcolor = QColor(150, 190, 78, 185) if self._regions.index(path) == self._regionSelected \
-                else QColor(237, 242, 255, 185)
+            if self._regions.index(path) == self._regionSelected:
+                brushcolor = QColor(150, 190, 78, 185)
+            else:
+                brushcolor = QColor(237, 242, 255, 185)
             painter.setBrush(brushcolor)
             painter.setPen(Qt.NoPen)
             painter.drawPath(path)
@@ -182,14 +184,14 @@ class VideoSlider(QSlider):
         painter.drawComplexControl(QStyle.CC_Slider, opt)
 
     def addRegion(self, start: int, end: int) -> None:
-        x = QStyle.sliderPositionFromValue(self.minimum(), self.maximum(), start - self.offset,
-                                           self.width() - (self.offset * 2))
+        x = self.style().sliderPositionFromValue(self.minimum(), self.maximum(), start - self.offset,
+                                                 self.width() - (self.offset * 2))
         y = (self.height() - self._regionHeight) / 2
-        width = QStyle.sliderPositionFromValue(self.minimum(), self.maximum(), end - self.offset,
-                                               self.width() - (self.offset * 2)) - x
+        width = self.style().sliderPositionFromValue(self.minimum(), self.maximum(), end - self.offset,
+                                                     self.width() - (self.offset * 2)) - x
         height = self._regionHeight
         path = QPainterPath()
-        path.addRect(x, y - 3, width, height)
+        path.addRect(x + self.offset, y - 4, width, height)
         self._regions.append(path)
         self.update()
 
