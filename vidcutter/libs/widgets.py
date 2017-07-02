@@ -25,8 +25,8 @@
 import sys
 import os
 
-from PyQt5.QtCore import pyqtSignal, pyqtSlot, QDir, QFileInfo, QObject, QPoint, Qt, QTime, QUrl
-from PyQt5.QtGui import QPixmap, QDesktopServices, QIcon
+from PyQt5.QtCore import pyqtSignal, pyqtSlot, QDir, QFileInfo, QPoint, Qt, QTime
+from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import (qApp, QAbstractSpinBox, QDialog, QGridLayout, QHBoxLayout, QLabel, QProgressBar,
                              QSlider, QSpinBox, QStyle, QStyleFactory, QStyleOptionSlider, QTimeEdit, QToolTip, QWidget)
 
@@ -211,140 +211,29 @@ class VolumeSlider(QSlider):
         QToolTip.showText(globalPos, str('{0}%'.format(value)), self)
 
 
-class CompletionMessage(QObject):
+class CompletionMessage:
     def __init__(self, parent=None):
-        super(CompletionMessage, self).__init__(parent)
+        super(CompletionMessage, self).__init__()
         self.parent = parent
-        self.icon_path = os.path.join(QDir.tempPath(), qApp.applicationName(), '.png')
+        self.icon_path = os.path.join(QDir.tempPath(), '%s.png' % qApp.applicationName().lower())
+
+    def cleanup_icon(self, nobj):
+        if os.path.exists(self.icon_path):
+            os.remove(self.icon_path)
 
     def show(self):
         if not notify2.is_initted():
-            notify2.init(qApp.applicationName(), 'qt')
-        msg = '''
-        <table class="info" cellpadding="2" cellspacing="0" align="left" width="350">
-            <tr>
-                <td width="20%%" class="label"><b>File:</b></td>
-                <td width="80%%" class="value" nowrap>%s</td>
-            </tr>
-            <tr>
-                <td width="20%%" class="label"><b>Size:</b></td>
-                <td width="80%%" class="value">%s</td>
-            </tr>
-            <tr>
-                <td width="20%%" class="label"><b>Length:</b></td>
-                <td width="80%%" class="value">%s</td>
-            </tr>
-        </table>
-        ''' % (os.path.basename(self.parent.finalFilename),
-               self.parent.sizeof_fmt(int(QFileInfo(self.parent.finalFilename).size())),
-               self.parent.delta2QTime(self.parent.totalRuntime).toString(self.parent.runtimeformat))
-        icon_pixmap = QPixmap(':images/vidcutter-small.png', 'PNG')
-        if not icon_pixmap.save(self.icon_path, 'PNG'):
-            return
-        notice = notify2.Notification('Your media is ready!', msg,
-                                      self.icon_path if os.path.exists(self.icon_path) else '')
+            notify2.init(qApp.applicationName())
+        msg = '<p><br/><b>File:</b> %s</p><p><b>Size:</b> %s</p><p><b>Length:</b> %s</p>' \
+              % (os.path.basename(self.parent.finalFilename),
+                 self.parent.sizeof_fmt(int(QFileInfo(self.parent.finalFilename).size())),
+                 self.parent.delta2QTime(self.parent.totalRuntime).toString(self.parent.runtimeformat))
+        if not os.path.exists(self.icon_path):
+            icon_pixmap = QPixmap(':images/vidcutter-small.png', 'PNG')
+            if not icon_pixmap.save(self.icon_path, 'PNG'):
+                self.icon_path = ''
+        notice = notify2.Notification('Your media is ready!', msg, self.icon_path)
         notice.set_timeout(notify2.EXPIRES_NEVER)
         notice.set_urgency(notify2.URGENCY_NORMAL)
-        # notice.connect('closed', lambda: os.remove(self.icon_path))
+        notice.connect('closed', self.cleanup_icon)
         notice.show()
-
-    # def __init__(self, parent=None):
-    #     super(CompletionMessage, self).__init__(parent)
-    #     self.parent = parent
-    #     self.theme = self.parent.theme
-    #     self.initIcons()
-    #     self.setWindowFlags(Qt.Dialog | Qt.WindowCloseButtonHint)
-    #     self.setWindowTitle('Operation complete')
-    #     self.setTextFormat(Qt.RichText)
-    #     self.setObjectName('genericdialog3')
-    #     # self.setIconPixmap(self.parent.thumbsupIcon.pixmap(150, 144))
-    #     self.pencolor = '#C681D5' if self.theme == 'dark' else '#642C68'
-    #     self.setText('''
-    # <style>
-    #     h1 {
-    #         color: %s;
-    #         font-family: "Futura LT", sans-serif;
-    #         font-weight: 400;
-    #         text-align: center;
-    #     }
-    #     table.info {
-    #         margin: 6px;
-    #         padding: 4px 2px;
-    #     }
-    #     td.value {
-    #         font-size: 13px;
-    #         color: %s;
-    #     }
-    #     td.label {
-    #         font-size: 12px;
-    #         color: %s;
-    #         padding-top: 5px;
-    #         text-transform: lowercase;
-    #         text-align: right;
-    #         padding-right: 5px;
-    #     }
-    # </style>
-    # <h1>Your media is ready!</h1>
-    # <table class="info" cellpadding="2" cellspacing="0" align="left" width="350">
-    #     <tr>
-    #         <td width="20%%" class="label"><b>File:</b></td>
-    #         <td width="80%%" class="value" nowrap>%s</td>
-    #     </tr>
-    #     <tr>
-    #         <td width="20%%" class="label"><b>Size:</b></td>
-    #         <td width="80%%" class="value">%s</td>
-    #     </tr>
-    #     <tr>
-    #         <td width="20%%" class="label"><b>Length:</b></td>
-    #         <td width="80%%" class="value">%s</td>
-    #     </tr>
-    # </table><br/>''' % (self.pencolor, ('#EFF0F1' if self.theme == 'dark' else '#222'),
-    #                     self.pencolor, os.path.basename(self.parent.finalFilename),
-    #                     self.parent.sizeof_fmt(int(QFileInfo(self.parent.finalFilename).size())),
-    #                     self.parent.delta2QTime(self.parent.totalRuntime).toString(self.parent.runtimeformat)))
-    #     # self.btn_open = self.addButton('Open', self.ResetRole)
-    #     # self.btn_open.setIcon(self.icon_open)
-    #     # self.btn_open.clicked.connect(lambda: self.openResult(True))
-    #     # btn_restart = self.addButton('Restart', self.AcceptRole)
-    #     # btn_restart.setIcon(self.icon_restart)
-    #     # btn_restart.clicked.connect(self.parent.parent.reboot)
-    #     self.btn_play = self.addButton('Play', self.ResetRole)
-    #     self.btn_play.setIcon(self.icon_play)
-    #     self.btn_play.clicked.connect(lambda: self.openResult(False))
-    #     self.btn_exit = self.addButton('Exit', self.ResetRole)
-    #     self.btn_exit.setIcon(self.icon_exit)
-    #     self.btn_exit.clicked.connect(self.parent.close)
-    #     btn_continue = self.addButton('Continue', self.AcceptRole)
-    #     btn_continue.setIcon(self.icon_continue)
-    #     btn_continue.clicked.connect(self.close)
-    #     self.setDefaultButton(btn_continue)
-    #     self.setEscapeButton(btn_continue)
-    #     checkbox = QCheckBox('Always show confirmation', self)
-    #     checkbox.setChecked(self.parent.showConfirmAction.isChecked())
-    #     checkbox.toggled.connect(self.showConfirm)
-    #     checkbox.setStyleSheet('''
-    #         QCheckBox {
-    #             margin: 6px;
-    #             padding-left: 75px;
-    #             font-size: %s;
-    #         }''' % ('14px' if sys.platform == 'darwin' else '12px'))
-    #     checkbox.setCursor(Qt.PointingHandCursor)
-    #     self.setCheckBox(checkbox)
-    #
-    # def initIcons(self) -> None:
-    #     self.icon_play = QIcon(':/images/%s/complete-play.png' % self.theme)
-    #     self.icon_open = QIcon(':/images/%s/complete-open.png' % self.theme)
-    #     # self.icon_restart = QIcon(':/images/%s/complete-restart.png' % self.theme)
-    #     self.icon_exit = QIcon(':/images/%s/complete-exit.png' % self.theme)
-    #     self.icon_continue = QIcon(':/images/%s/complete-continue.png' % self.theme)
-    #
-    # @pyqtSlot(bool)
-    # def showConfirm(self, checked: bool) -> None:
-    #     self.parent.saveSetting('showConfirm', checked)
-    #     self.parent.showConfirmAction.setChecked(checked)
-    #
-    # @pyqtSlot(bool)
-    # def openResult(self, pathonly: bool = False) -> None:
-    #     if len(self.parent.finalFilename) and os.path.exists(self.parent.finalFilename):
-    #         target = self.parent.finalFilename if not pathonly else os.path.dirname(self.parent.finalFilename)
-    #         QDesktopServices.openUrl(QUrl.fromLocalFile(target))

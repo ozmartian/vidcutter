@@ -515,8 +515,8 @@ class VideoCutter(QWidget):
         self.hardwareDecodingAction = QAction('Hardware decoding', self, triggered=self.switchDecoding, checkable=True,
                                               statusTip='Enable hardware based video decoding for playback ' +
                                                         '(e.g. vdpau, vaapi, dxva2, d3d11, cuda)')
-        self.showConfirmAction = QAction('Show confirmation dialog', self, checkable=True,
-                                         statusTip='Show confirmation dialog when media is ready/complete',
+        self.showConfirmAction = QAction('Notify when complete', self, checkable=True,
+                                         statusTip='Show notification when editing process completes',
                                          triggered=(lambda checked: self.saveSetting('showConfirm', checked)))
         if self.theme == 'dark':
             self.darkThemeAction.setChecked(True)

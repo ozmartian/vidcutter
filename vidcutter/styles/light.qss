@@ -225,8 +225,9 @@ QPushButton#muteButton, QPushButton#menuButton {
 }
 
 #clipindextools QPushButton {
+    color: #444;
     font-size: 11px;
-    font-family: 'FutureLT', sans-serif;
+    font-family: 'Futura LT', sans-serif;
     border-radius: 0;
 }
 
