@@ -41,7 +41,7 @@ before_install:
 install:
   - sed -i "s/pypi/deb/" "vidcutter/__init__.py"
   - python setup.py build_ext -i
-  - sudo pip3 install .
+  - sudo python -m pip install .
 
 script: echo "Done!"
 
