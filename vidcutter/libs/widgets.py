@@ -30,7 +30,7 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import (qApp, QAbstractSpinBox, QDialog, QGridLayout, QHBoxLayout, QLabel, QProgressBar,
                              QSlider, QSpinBox, QStyle, QStyleFactory, QStyleOptionSlider, QTimeEdit, QToolTip, QWidget)
 
-import notify2
+import vidcutter.libs.notify2 as notify2
 
 
 class TimeCounter(QWidget):
