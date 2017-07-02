@@ -83,7 +83,7 @@ class SetupHelpers:
         return files
 
     @staticmethod
-    def pip_notes() -> None:
+    def pip_notes():
         os.system('cls') if sys.platform == 'win32' else os.system('clear')
         pydoc.pager('''
     If installing via PyPi (Python Pip) then you need to know that VidCutter
