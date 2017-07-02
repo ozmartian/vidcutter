@@ -22,17 +22,24 @@
 #
 #######################################################################
 
+# *** IMPORTANT IF YOU ARE INSTALLING VIA PyPi (Python Pip) ***
+#
+# no longer enforcing dependencies via setuptools
+# a notifcation msg is now displayed detailing requirements so users from PyPi,
+# Conda or obscure distros can get them installed however they like.
+# Distro targetted packages will always be the recommended approach
+
+
 import os
 import shlex
 import subprocess
 import sys
-
 from distutils.spawn import find_executable
+
 from setuptools import setup
 from setuptools.extension import Extension
 
-from vidcutter.videosetup import VCSetup
-
+from helpers import SetupHelpers
 
 setup_requires = ['setuptools']
 
@@ -44,7 +51,7 @@ extensions = [Extension(
     ['vidcutter/libs/pympv/mpv{0}'.format(ext)],
     include_dirs=['vidcutter/libs/pympv/mpv'],
     libraries=['mpv'],
-    library_dirs=VCSetup.get_library_dirs(),
+    library_dirs=SetupHelpers.get_library_dirs(),
     extra_compile_args=['-g0' if sys.platform != 'win32' else '']
 )]
 if USE_CYTHON:
@@ -56,24 +63,19 @@ try:
     # begin setuptools installer
     result = setup(
         name='vidcutter',
-        version=VCSetup.get_value('version'),
+        version=SetupHelpers.get_value('version'),
         author='Pete Alexandrou',
         author_email='pete@ozmartians.com',
         description='the simplest + fastest video cutter & joiner',
-        long_description=VCSetup.get_description(),
+        long_description=SetupHelpers.get_description(),
         url='http://vidcutter.ozmartians.com',
         license='GPLv3+',
         packages=['vidcutter', 'vidcutter.libs'],
         setup_requires=setup_requires,
-        
-        install_requires=[],
-        # no longer enforcing dependencies via setuptools
-        # a notifcation msg is now displayed detailing requirements so users from PyPi,
-        # Conda or obscure distros can get them installed however they like.
-        # Distro targetted packages will always be the recommended approach
 
-        cmdclass={'install': PostInstallCommand},
-        data_files=VCSetup.get_data_files(),
+        install_requires=[],
+
+        data_files=SetupHelpers.get_data_files(),
         ext_modules=extensions,
         entry_points={'gui_scripts': ['vidcutter = vidcutter.__main__:main']},
         keywords='vidcutter ffmpeg audiovideo mpv libmpv videoeditor video videoedit pyqt Qt5 multimedia',
@@ -88,9 +90,10 @@ try:
             'Programming Language :: Python :: 3 :: Only'
         ]
     )
-except Exception:
-    VCSetup.display_install_notes()
-    raise
+except Exception as e:
+    if SetupHelpers.get_value('packager') == 'pypi':
+        SetupHelpers.pip_notes()
+    raise e
 
 # helper functions/procedures for PyPi on Linux installations which is frowned upon
 # may get rid of this so users stick with distro packaging

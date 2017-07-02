@@ -47,7 +47,7 @@ from vidcutter.videotoolbar import VideoToolBar
 
 from vidcutter.libs.mpvwidget import mpvWidget
 from vidcutter.libs.videoservice import VideoService
-from vidcutter.libs.widgets import CompletionMessageBox, FrameCounter, TimeCounter, VCProgressBar, VolumeSlider
+from vidcutter.libs.widgets import CompletionMessage, FrameCounter, TimeCounter, VCProgressBar, VolumeSlider
 
 # noinspection PyUnresolvedReferences
 import vidcutter.resources
@@ -119,14 +119,6 @@ class VideoCutter(QWidget):
         self.seekSlider = VideoSlider(self)
         self.seekSlider.sliderMoved.connect(self.setPosition)
         self.sliderWidget = VideoSliderWidget(self, self.seekSlider)
-
-        sliderLayout = QHBoxLayout()
-        sliderLayout.setContentsMargins(0, 0, 0, 0)
-        sliderLayout.addSpacing(10)
-        sliderLayout.addWidget(self.sliderWidget)
-        sliderLayout.addSpacing(10)
-
-        self.sliderWidget.raise_()
 
         self.initNoVideo()
 
@@ -302,7 +294,7 @@ class VideoCutter(QWidget):
         layout.setSpacing(0)
         layout.setContentsMargins(10, 10, 10, 0)
         layout.addLayout(self.videoLayout)
-        layout.addLayout(sliderLayout)
+        layout.addWidget(self.sliderWidget)
         layout.addSpacing(12)
         layout.addLayout(controlsLayout)
 
@@ -467,7 +459,7 @@ class VideoCutter(QWidget):
                                       statusTip='Set the start position of a new clip')
         self.cutEndAction = QAction(self.cutEndIcon, 'Clip\nEnd', self, triggered=self.clipEnd,
                                     enabled=False, statusTip='Set the end position of a new clip')
-        self.saveAction = QAction(self.saveIcon, 'Save\nMedia', self, triggered=self.cutVideo, enabled=False,
+        self.saveAction = QAction(self.saveIcon, 'Save\nMedia', self, triggered=self.cutMedia, enabled=False,
                                   statusTip='Save clips to a new media file')
         self.moveItemUpAction = QAction(self.upIcon, 'Move up', self, statusTip='Move clip position up in list',
                                         triggered=self.moveItemUp, enabled=False)
@@ -898,7 +890,6 @@ class VideoCutter(QWidget):
 
     @pyqtSlot(int)
     def setPosition(self, position: int) -> None:
-        print('set position: %i' % position)
         if position >= self.seekSlider.restrictValue:
             self.mpvWidget.seek(position / 1000)
 
@@ -1075,7 +1066,7 @@ class VideoCutter(QWidget):
     def captureImage(self, frametime: QTime) -> QPixmap:
         return VideoService.capture(self.currentMedia, frametime.toString(self.timeformat))
 
-    def cutVideo(self) -> bool:
+    def cutMedia(self) -> bool:
         clips = len(self.clipTimes)
         filename, filelist = '', []
         source_file, source_ext = os.path.splitext(self.currentMedia)
@@ -1112,10 +1103,10 @@ class VideoCutter(QWidget):
                                           allstreams=False)
                 index += 1
             if len(filelist) > 1:
-                rc = self.joinVideos(filelist, self.finalFilename, True)
+                rc = self.joinMedia(filelist, self.finalFilename, True)
                 if not rc or not QFile(self.finalFilename).size():
                     self.logger.info('join() resulted in 0 length file, trying again without all stream mapping')
-                    self.joinVideos(filelist, self.finalFilename, False)
+                    self.joinMedia(filelist, self.finalFilename, False)
                 if not self.keepClipsAction.isChecked():
                     for f in filelist:
                         if os.path.isfile(f):
@@ -1130,12 +1121,12 @@ class VideoCutter(QWidget):
             self.progress.deleteLater()
             qApp.restoreOverrideCursor()
             if self.showConfirmAction.isChecked():
-                completed = CompletionMessageBox(self)
-                completed.exec_()
+                completed = CompletionMessage(self)
+                completed.show()
             return True
         return False
 
-    def joinVideos(self, joinlist: list, filename: str, allstreams: bool = True) -> bool:
+    def joinMedia(self, joinlist: list, filename: str, allstreams: bool = True) -> bool:
         listfile = os.path.normpath(os.path.join(os.path.dirname(joinlist[0]), '.vidcutter.list'))
         fobj = open(listfile, 'w')
         for file in joinlist:

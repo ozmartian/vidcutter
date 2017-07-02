@@ -73,7 +73,7 @@ class About(QDialog):
                         </table>
                     </div>
                 </td>
-                <td align="right" style="padding:30px 15px 15px 15px;">
+                <td valign="bottom" align="right" style="padding:30px 15px 15px 15px;">
                     <div style="padding:20px 0 10px 0;">
                         <img src=":/images/%s/python.png"/>
                     </div>
