@@ -22,15 +22,9 @@
 #
 #######################################################################
 
-import sys
-import os
-
-from PyQt5.QtCore import pyqtSignal, pyqtSlot, QDir, QFileInfo, QPoint, Qt, QTime
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import (qApp, QAbstractSpinBox, QDialog, QGridLayout, QHBoxLayout, QLabel, QProgressBar,
-                             QSlider, QSpinBox, QStyle, QStyleFactory, QStyleOptionSlider, QTimeEdit, QToolTip, QWidget)
-
-import vidcutter.libs.notify2 as notify2
+from PyQt5.QtCore import pyqtSignal, pyqtSlot, QPoint, Qt, QTime
+from PyQt5.QtWidgets import (QAbstractSpinBox, QDialog, QGridLayout, QHBoxLayout, QLabel, QProgressBar, QSlider,
+                             QSpinBox, QStyle, QStyleFactory, QStyleOptionSlider, QTimeEdit, QToolTip, QWidget)
 
 
 class TimeCounter(QWidget):
@@ -39,13 +33,16 @@ class TimeCounter(QWidget):
     def __init__(self, parent=None):
         super(TimeCounter, self).__init__(parent)
         self.parent = parent
-        self.timeedit = QTimeEdit(QTime(0, 0), self, objectName='timeCounter')
+        self.timeedit = QTimeEdit(QTime(0, 0))
+        self.timeedit.setObjectName('timeCounter')
         self.timeedit.setStyle(QStyleFactory.create('fusion'))
         self.timeedit.setFrame(False)
         self.timeedit.setDisplayFormat('hh:mm:ss.zzz')
         self.timeedit.timeChanged.connect(self.timeChangeHandler)
-        separator = QLabel('/', objectName='timeSeparator')
-        self.duration = QLabel('00:00:00.000', objectName='timeDuration')
+        separator = QLabel('/')
+        separator.setObjectName('timeSeparator')
+        self.duration = QLabel('00:00:00.000')
+        self.duration.setObjectName('timeDuration')
         layout = QHBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(self.timeedit)
@@ -104,13 +101,16 @@ class FrameCounter(QWidget):
     def __init__(self, parent=None):
         super(FrameCounter, self).__init__(parent)
         self.parent = parent
-        self.currentframe = QSpinBox(self, objectName='frameCounter')
+        self.currentframe = QSpinBox(self)
+        self.currentframe.setObjectName('frameCounter')
         self.currentframe.setStyle(QStyleFactory.create('fusion'))
         self.currentframe.setFrame(False)
         self.currentframe.setAlignment(Qt.AlignRight)
         self.currentframe.valueChanged.connect(self.frameChangeHandler)
-        separator = QLabel('/', objectName='frameSeparator')
-        self.framecount = QLabel('0000', objectName='frameCount')
+        separator = QLabel('/')
+        separator.setObjectName('frameSeparator')
+        self.framecount = QLabel('0000')
+        self.framecount.setObjectName('frameCount')
         layout = QHBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(self.currentframe)
@@ -207,33 +207,7 @@ class VolumeSlider(QSlider):
         opt = QStyleOptionSlider()
         self.initStyleOption(opt)
         handle = self.style().subControlRect(QStyle.CC_Slider, opt, QStyle.SC_SliderHandle, self)
-        globalPos = self.mapToGlobal(handle.topLeft() + self.offset)
+        pos = handle.topLeft()
+        pos += self.offset
+        globalPos = self.mapToGlobal(pos)
         QToolTip.showText(globalPos, str('{0}%'.format(value)), self)
-
-
-class CompletionMessage:
-    def __init__(self, parent=None):
-        super(CompletionMessage, self).__init__()
-        self.parent = parent
-        self.icon_path = os.path.join(QDir.tempPath(), '%s.png' % qApp.applicationName().lower())
-
-    def cleanup_icon(self, nobj):
-        if os.path.exists(self.icon_path):
-            os.remove(self.icon_path)
-
-    def show(self):
-        if not notify2.is_initted():
-            notify2.init(qApp.applicationName())
-        msg = '<p><br/><b>File:</b> %s</p><p><b>Size:</b> %s</p><p><b>Length:</b> %s</p>' \
-              % (os.path.basename(self.parent.finalFilename),
-                 self.parent.sizeof_fmt(int(QFileInfo(self.parent.finalFilename).size())),
-                 self.parent.delta2QTime(self.parent.totalRuntime).toString(self.parent.runtimeformat))
-        if not os.path.exists(self.icon_path):
-            icon_pixmap = QPixmap(':images/vidcutter-small.png', 'PNG')
-            if not icon_pixmap.save(self.icon_path, 'PNG'):
-                self.icon_path = ''
-        notice = notify2.Notification('Your media is ready!', msg, self.icon_path)
-        notice.set_timeout(notify2.EXPIRES_NEVER)
-        notice.set_urgency(notify2.URGENCY_NORMAL)
-        notice.connect('closed', self.cleanup_icon)
-        notice.show()

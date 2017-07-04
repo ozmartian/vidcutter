@@ -26,7 +26,7 @@ import logging
 import os
 import sys
 
-from PyQt5.QtCore import QEvent, QObject, QThread, Qt, pyqtSignal, pyqtSlot
+from PyQt5.QtCore import QEvent, QObject, QSize, QThread, Qt, pyqtSignal, pyqtSlot
 from PyQt5.QtGui import (QColor, QKeyEvent, QMouseEvent, QPaintEvent, QPainter, QPainterPath, QPen, QTransform,
                          QWheelEvent)
 from PyQt5.QtWidgets import (qApp, QGraphicsEffect, QHBoxLayout, QLabel, QSizePolicy, QSlider, QStackedLayout,
@@ -41,11 +41,14 @@ class VideoSlider(QSlider):
         self.parent = parent
         self.logger = logging.getLogger(__name__)
         self.theme = self.parent.theme
-        self._styles = '''QSlider:horizontal { margin: 16px 8px 24px; height: %ipx; }
+        self._styles = '''QSlider:horizontal { margin: 16px 8px 32px; height: %ipx; }
         QSlider::groove:horizontal {
-            border: 1px solid #444;
+            border-top: 1px inset #444;
+            border-bottom: 1px inset #444;
+            border-left: 1px inset #666;
+            border-right: 1px inset #666;
             height: %ipx;
-            background: %s url(:images/%s) repeat-x left;
+            %s
             margin: 0;
         }
         QSlider::sub-page:horizontal {
@@ -65,7 +68,7 @@ class VideoSlider(QSlider):
         QSlider::handle:horizontal {
             border: none;
             background: url(:images/%s) no-repeat top center;
-            width: 15px;
+            width: 15px;e
             height: 85px;
             margin: -12px -8px -20px;
         }'''
@@ -99,12 +102,13 @@ class VideoSlider(QSlider):
         margin = 0
         self._regionHeight = 32
         if self.thumbnailsOn:
-            timeline_bground = 'transparent'
-            timeline_image = 'filmstrip-thumbs.png'
+            timeline = 'background: transparent url(:images/filmstrip-thumbs.png) repeat-x left;'
         else:
-            timeline_bground = 'rgba(63, 63, 63, 0.6)'
-            timeline_image = 'filmstrip.png' if self.parent.thumbnailsButton.isChecked() else 'filmstrip-nothumbs.png'
-            height = 40 if not self.parent.thumbnailsButton.isChecked() else height
+            if self.parent.thumbnailsButton.isChecked():
+                timeline = 'background: #000 url(:images/filmstrip.png) repeat-x left;'
+            else:
+                timeline = 'background: rgba(63, 63, 63, 0.4);'
+            height = 10 if not self.parent.thumbnailsButton.isChecked() else height
             handle = 'handle-nothumbs.png' if not self.parent.thumbnailsButton.isChecked() else handle
             self._regionHeight = 32 if self.parent.thumbnailsButton.isChecked() else 22
         if self._cutStarted:
@@ -114,8 +118,7 @@ class VideoSlider(QSlider):
             self.initStyleOption(opt)
             control = self.style().subControlRect(QStyle.CC_Slider, opt, QStyle.SC_SliderHandle, self)
             margin = '%ipx' % control.x()
-        self.setStyleSheet(self._styles % (height, height, timeline_bground, timeline_image, bground,
-                                           height + 2, margin, handle))
+        self.setStyleSheet(self._styles % (height, height, timeline, bground, height + 2, margin, handle))
 
     def setRestrictValue(self, value: int, force: bool = False) -> None:
         self.restrictValue = value
@@ -141,13 +144,13 @@ class VideoSlider(QSlider):
             x = 8
             for i in range(self.minimum(), self.width(), 8):
                 if i % 5 == 0:
-                    h = 14
+                    h = 18
                     w = 1
-                    z = 8
+                    z = 13
                 else:
-                    h = 7
+                    h = 8
                     w = 1
-                    z = 16
+                    z = 23
                 tickcolor = '#8F8F8F' if self.theme == 'dark' else '#444'
                 pen = QPen(QColor(tickcolor))
                 pen.setWidthF(w)
@@ -158,7 +161,7 @@ class VideoSlider(QSlider):
                 if self.tickPosition() in (QSlider.TicksBothSides, QSlider.TicksBelow):
                     y = self.rect().bottom() - z
                     painter.drawLine(x, y, x, y - h)
-                    if i % 30 == 0:
+                    if i % 15 == 0:
                         painter.setPen(Qt.white if self.theme == 'dark' else Qt.black)
                         if self.parent.mediaAvailable:
                             timecode = QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), x - self.offset,
@@ -166,10 +169,11 @@ class VideoSlider(QSlider):
                             timecode = self.parent.delta2QTime(timecode).toString(self.parent.runtimeformat)
                         else:
                             timecode = '00:00:00'
-                        painter.drawText(x + 4, y + 8, timecode)
+                        painter.drawText(x + 6, y + 6, timecode)
                 if x + 30 > self.width():
                     break
                 x += 15
+        self.update()
         opt.subControls = QStyle.SC_SliderGroove
         painter.drawComplexControl(QStyle.CC_Slider, opt)
         for path in self._regions:
@@ -178,7 +182,7 @@ class VideoSlider(QSlider):
             else:
                 brushcolor = QColor(237, 242, 255, 185)
             painter.setBrush(brushcolor)
-            painter.setPen(Qt.NoPen)
+            painter.setPen(QColor(255, 255, 255, 170))
             painter.drawPath(path)
         opt.subControls = QStyle.SC_SliderHandle
         painter.drawComplexControl(QStyle.CC_Slider, opt)
@@ -191,7 +195,7 @@ class VideoSlider(QSlider):
                                                      self.width() - (self.offset * 2)) - x
         height = self._regionHeight
         path = QPainterPath()
-        path.addRect(x + self.offset, y - 4, width, height)
+        path.addRect(x + self.offset, y - 8, width, height)
         self._regions.append(path)
         self.update()
 
@@ -255,11 +259,12 @@ class VideoSlider(QSlider):
             layout.addWidget(label)
         layout.addSpacing(8)
         thumbnails = QWidget(self)
-        thumbnails.setContentsMargins(0, 0, 0, 8)
+        thumbnails.setContentsMargins(0, 0, 0, 16)
         thumbnails.setLayout(layout)
         self.removeThumbs()
         self.parent.sliderWidget.addWidget(thumbnails)
         self.thumbnailsOn = True
+        self.setObjectName('videoslider')
         self.initStyle()
         self.parent.sliderWidget.setLoader(False)
         if self.parent.newproject:
@@ -271,6 +276,7 @@ class VideoSlider(QSlider):
             thumbWidget = self.parent.sliderWidget.widget(1)
             self.parent.sliderWidget.removeWidget(thumbWidget)
             thumbWidget.deleteLater()
+            self.setObjectName('nothumbs')
             self.initStyle()
             self.thumbnailsOn = False
 

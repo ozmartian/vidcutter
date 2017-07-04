@@ -31,8 +31,7 @@ from datetime import timedelta
 
 from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTextStream,
                           QTime, QUrl)
-from PyQt5.QtGui import (QCloseEvent, QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMouseEvent, QMovie,
-                         QPixmap, QOpenGLWindow)
+from PyQt5.QtGui import QCloseEvent, QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMovie, QPixmap
 from PyQt5.QtWidgets import (QAction, QActionGroup, qApp, QApplication, QDialogButtonBox, QDoubleSpinBox, QFileDialog,
                              QGroupBox, QHBoxLayout, QLabel, QListWidgetItem, QMenu, QMessageBox, QPushButton,
                              QSizePolicy, QStyleFactory, QVBoxLayout, QWidget, QWidgetAction)
@@ -46,8 +45,9 @@ from vidcutter.videostyle import VideoStyleDark, VideoStyleLight
 from vidcutter.videotoolbar import VideoToolBar
 
 from vidcutter.libs.mpvwidget import mpvWidget
+from vidcutter.libs.notifications import JobCompleteNotification
 from vidcutter.libs.videoservice import VideoService
-from vidcutter.libs.widgets import CompletionMessage, FrameCounter, TimeCounter, VCProgressBar, VolumeSlider
+from vidcutter.libs.widgets import FrameCounter, TimeCounter, VCProgressBar, VolumeSlider
 
 # noinspection PyUnresolvedReferences
 import vidcutter.resources
@@ -102,7 +102,6 @@ class VideoCutter(QWidget):
         self.nativeDialogs = self.settings.value('nativeDialogs', 'on', type=str) in {'on', 'true'}
         self.timelineThumbs = self.settings.value('timelineThumbs', 'on', type=str) in {'on', 'true'}
         self.hideConsole = self.settings.value('hideConsole', 'on', type=str) in {'on', 'true'}
-        self.showConfirm = self.settings.value('showConfirm', 'on', type=str) in {'on', 'true'}
 
         self.edlblock_re = re.compile(r'(\d+(?:\.?\d+)?)\s(\d+(?:\.?\d+)?)\s([01])')
 
@@ -119,6 +118,7 @@ class VideoCutter(QWidget):
         self.seekSlider = VideoSlider(self)
         self.seekSlider.sliderMoved.connect(self.setPosition)
         self.sliderWidget = VideoSliderWidget(self, self.seekSlider)
+        self.sliderWidget
 
         self.initNoVideo()
 
@@ -216,6 +216,8 @@ class VideoCutter(QWidget):
                                             objectName='thumbnailsButton')
         if self.timelineThumbs:
             self.thumbnailsButton.setChecked(True)
+        else:
+            self.seekSlider.setObjectName('nothumbs')
 
         # noinspection PyArgumentList
         self.osdButton = QPushButton(icon=self.osdIcon, flat=True, iconSize=QSize(16, 16), checkable=True,
@@ -258,6 +260,12 @@ class VideoCutter(QWidget):
             self.volSlider.setStyle(QStyleFactory.create('Macintosh'))
 
         # noinspection PyArgumentList
+        self.fullscreenButton = QPushButton(objectName='fullscreenButton', icon=self.fullscreenIcon, flat=True,
+                                            toolTip='Fullscreen', statusTip='Switch to fullscreen video',
+                                            iconSize=QSize(16, 16), clicked=self.toggleFullscreen,
+                                            cursor=Qt.PointingHandCursor)
+
+        # noinspection PyArgumentList
         self.menuButton = QPushButton(self, toolTip='Menu', cursor=Qt.PointingHandCursor, flat=True,
                                       objectName='menuButton', statusTip='Click to view menu options')
         self.menuButton.setFixedSize(QSize(40, 42))
@@ -275,18 +283,20 @@ class VideoCutter(QWidget):
 
         controlsLayout = QHBoxLayout()
         controlsLayout.addSpacing(10)
-        controlsLayout.addWidget(self.consoleButton)
+        controlsLayout.addWidget(self.thumbnailsButton)
         controlsLayout.addSpacing(4)
         controlsLayout.addWidget(self.osdButton)
         controlsLayout.addSpacing(4)
-        controlsLayout.addWidget(self.thumbnailsButton)
+        controlsLayout.addWidget(self.consoleButton)
         controlsLayout.addStretch(10)
         controlsLayout.addWidget(toolbarGroup)
         controlsLayout.addStretch(10)
         controlsLayout.addWidget(self.muteButton)
         controlsLayout.addSpacing(5)
         controlsLayout.addWidget(self.volSlider)
-        controlsLayout.addSpacing(20)
+        controlsLayout.addSpacing(5)
+        controlsLayout.addWidget(self.fullscreenButton)
+        controlsLayout.addSpacing(10)
         controlsLayout.addWidget(self.menuButton)
         controlsLayout.addSpacing(10)
 
@@ -295,7 +305,7 @@ class VideoCutter(QWidget):
         layout.setContentsMargins(10, 10, 10, 0)
         layout.addLayout(self.videoLayout)
         layout.addWidget(self.sliderWidget)
-        layout.addSpacing(12)
+        layout.addSpacing(5)
         layout.addLayout(controlsLayout)
 
         self.setLayout(layout)
@@ -443,6 +453,7 @@ class VideoCutter(QWidget):
         self.consoleIcon = QIcon()
         self.consoleIcon.addFile(':/images/%s/console-on.png' % self.theme, QSize(16, 16), QIcon.Normal, QIcon.On)
         self.consoleIcon.addFile(':/images/%s/console-off.png' % self.theme, QSize(16, 16), QIcon.Normal, QIcon.Off)
+        self.fullscreenIcon = QIcon(':/images/%s/fullscreen.png' % self.theme)
 
     # noinspection PyArgumentList
     def initActions(self) -> None:
@@ -515,9 +526,7 @@ class VideoCutter(QWidget):
         self.hardwareDecodingAction = QAction('Hardware decoding', self, triggered=self.switchDecoding, checkable=True,
                                               statusTip='Enable hardware based video decoding for playback ' +
                                                         '(e.g. vdpau, vaapi, dxva2, d3d11, cuda)')
-        self.showConfirmAction = QAction('Notify when complete', self, checkable=True,
-                                         statusTip='Show notification when editing process completes',
-                                         triggered=(lambda checked: self.saveSetting('showConfirm', checked)))
+
         if self.theme == 'dark':
             self.darkThemeAction.setChecked(True)
         else:
@@ -533,8 +542,6 @@ class VideoCutter(QWidget):
             self.keepRatioAction.setChecked(True)
             self.zoomAction.setEnabled(False)
         self.zoomAction.triggered.connect(self.setZoom)
-        if self.showConfirm:
-            self.showConfirmAction.setChecked(True)
 
     def initToolbar(self) -> None:
         self.toolbar.addAction(self.openAction)
@@ -596,7 +603,6 @@ class VideoCutter(QWidget):
             optionsMenu.addAction(self.darkThemeAction)
             optionsMenu.addSeparator()
         optionsMenu.addAction(self.keepClipsAction)
-        optionsMenu.addAction(self.showConfirmAction)
         optionsMenu.addSeparator()
         optionsMenu.addAction(level1seekAction)
         optionsMenu.addAction(level2seekAction)
@@ -1120,9 +1126,7 @@ class VideoCutter(QWidget):
             self.progress.close()
             self.progress.deleteLater()
             qApp.restoreOverrideCursor()
-            if self.showConfirmAction.isChecked():
-                completed = CompletionMessage(self)
-                completed.show()
+            notify = JobCompleteNotification(self)
             return True
         return False
 
@@ -1268,6 +1272,7 @@ class VideoCutter(QWidget):
                                  'root access (Linux/Mac) in order to do this.</p>')
         return valid
 
+    @pyqtSlot()
     def toggleFullscreen(self) -> None:
         if self.mediaAvailable:
             if self.mpvWidget.originalParent is not None:
@@ -1288,7 +1293,7 @@ class VideoCutter(QWidget):
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
         if self.mediaAvailable:
-            if event.key() == Qt.Key_F:
+            if event.key() in {Qt.Key_Escape, Qt.Key_F}:
                 self.toggleFullscreen()
             elif event.key() == Qt.Key_Left:
                 self.mpvWidget.frameBackStep()

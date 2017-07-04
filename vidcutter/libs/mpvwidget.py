@@ -165,7 +165,7 @@ class mpvWidget(QOpenGLWidget):
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
         if self.isFullScreen():
-            if event.key() == Qt.Key_F:
+            if event.key() in {Qt.Key_Escape, Qt.Key_F}:
                 self._exitFullScreen()
                 event.accept()
             else:

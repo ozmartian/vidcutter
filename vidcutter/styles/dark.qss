@@ -217,7 +217,7 @@ QPushButton::menu-indicator#menuButton {
     left: -2000px;
 }
 
-QPushButton#muteButton, QPushButton#menuButton {
+QPushButton#muteButton, QPushButton#menuButton, QPushButton#fullscreenButton {
     background-color: transparent;
     border: none;
     outline: none;
@@ -325,15 +325,15 @@ QTabBar::tab:top:only-one {
 
 /* -------------------------------------------------------------------------- */
 
-QSlider::handle#volumeslider {
+QSlider::handle#volumeslider, QSlider::handle#nothumbs {
     border: 1px solid #13191B;
     border-radius: 7px;
     background: #642C68;
 }
 
-QSlider::handle:hover#volumeslider { background: #A286A8; }
+QSlider::handle:hover#volumeslider, QSlider::handle#nothumbs { background: #A286A8; }
 
-QSlider::handle:pressed#volumeslider { background: #3D1546; }
+QSlider::handle:pressed#volumeslider, QSlider::handle#nothumbs { background: #3D1546; }
 
 /* -------------------------------------------------------------------------- */
 
