@@ -30,7 +30,7 @@ import time
 from datetime import timedelta
 
 from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTextStream,
-                          QTime, QUrl)
+                          QTime, QTimer, QUrl)
 from PyQt5.QtGui import QCloseEvent, QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMovie, QPixmap
 from PyQt5.QtWidgets import (QAction, QActionGroup, qApp, QApplication, QDialogButtonBox, QDoubleSpinBox, QFileDialog,
                              QGroupBox, QHBoxLayout, QLabel, QListWidgetItem, QMenu, QMessageBox, QPushButton,
@@ -118,7 +118,7 @@ class VideoCutter(QWidget):
         self.seekSlider = VideoSlider(self)
         self.seekSlider.sliderMoved.connect(self.setPosition)
         self.sliderWidget = VideoSliderWidget(self, self.seekSlider)
-        self.sliderWidget
+        self.sliderWidget.setLoader(True)
 
         self.initNoVideo()
 
@@ -262,7 +262,7 @@ class VideoCutter(QWidget):
         # noinspection PyArgumentList
         self.fullscreenButton = QPushButton(objectName='fullscreenButton', icon=self.fullscreenIcon, flat=True,
                                             toolTip='Fullscreen', statusTip='Switch to fullscreen video',
-                                            iconSize=QSize(16, 16), clicked=self.toggleFullscreen,
+                                            iconSize=QSize(14, 14), clicked=self.toggleFullscreen,
                                             cursor=Qt.PointingHandCursor)
 
         # noinspection PyArgumentList
@@ -1127,6 +1127,7 @@ class VideoCutter(QWidget):
             self.progress.deleteLater()
             qApp.restoreOverrideCursor()
             notify = JobCompleteNotification(self)
+            notify.show()
             return True
         return False
 
@@ -1286,6 +1287,7 @@ class VideoCutter(QWidget):
                 self.mpvWidget.setGeometry(qApp.desktop().screenGeometry(self))
                 self.mpvWidget.setParent(None)
                 self.mpvWidget.showFullScreen()
+                self
 
     def toggleOSD(self, checked: bool) -> None:
         self.showText('On screen display %s' % ('enabled' if checked else 'disabled'), override=True)

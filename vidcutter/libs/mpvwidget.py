@@ -12,7 +12,7 @@ from typing import Optional
 # noinspection PyUnresolvedReferences
 from OpenGL import GL
 
-from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt
+from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QEvent
 from PyQt5.QtGui import QKeyEvent, QMouseEvent
 from PyQt5.QtOpenGL import QGLContext
 from PyQt5.QtWidgets import QOpenGLWidget
@@ -162,6 +162,10 @@ class mpvWidget(QOpenGLWidget):
     def _exitFullScreen(self) -> None:
         self.showNormal()
         self.setParent(self.originalParent)
+
+    def changeEvent(self, event: QEvent) -> None:
+        if event.type() == QEvent.WindowStateChange and self.isFullScreen():
+            fullscreen_note = QDialog
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
         if self.isFullScreen():

@@ -238,7 +238,7 @@ class VideoSlider(QSlider):
         self.thumbsThread = QThread(self)
         self.thumbsWorker = ThumbWorker(self.parent.currentMedia, frametimes)
         self.thumbsWorker.moveToThread(self.thumbsThread)
-        self.thumbsThread.started.connect(lambda: self.parent.sliderWidget.setLoader(True))
+        self.thumbsThread.started.connect(self.parent.sliderWidget.setLoader)
         self.thumbsThread.started.connect(self.thumbsWorker.generate)
         self.thumbsThread.finished.connect(self.thumbsThread.deleteLater, Qt.DirectConnection)
         self.thumbsWorker.completed.connect(self.buildTimeline)
@@ -338,8 +338,8 @@ class VideoSliderWidget(QStackedWidget):
         self.layout().setStackingMode(QStackedLayout.StackAll)
         self.addWidget(self.slider)
 
-    def setLoader(self, enabled: bool = False):
-        if hasattr(self.parent, 'toolbar'):
+    def setLoader(self, enabled: bool=True):
+        if hasattr(self.parent, 'toolbar') and self.parent.mediaAvailable:
             self.parent.toolbar.setEnabled(not enabled)
         self.slider.setEnabled(not enabled)
         self.loaderEffect.setEnabled(enabled)
