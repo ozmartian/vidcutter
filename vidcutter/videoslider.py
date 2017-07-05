@@ -107,10 +107,11 @@ class VideoSlider(QSlider):
             if self.parent.thumbnailsButton.isChecked():
                 timeline = 'background: #000 url(:images/filmstrip.png) repeat-x left;'
             else:
-                timeline = 'background: rgba(63, 63, 63, 0.4);'
-            height = 10 if not self.parent.thumbnailsButton.isChecked() else height
+                timeline = ''
+                # timeline = 'background: %s;' % ('#8F8F8F' if self.theme == 'dark' else '#444')
+            height = 15 if not self.parent.thumbnailsButton.isChecked() else height
             handle = 'handle-nothumbs.png' if not self.parent.thumbnailsButton.isChecked() else handle
-            self._regionHeight = 32 if self.parent.thumbnailsButton.isChecked() else 22
+            self._regionHeight = 32 if self.parent.thumbnailsButton.isChecked() else 13
         if self._cutStarted:
             _file, _ext = os.path.splitext(handle)
             handle = '%s-select%s' % (_file, _ext)
@@ -331,7 +332,7 @@ class VideoSliderWidget(QStackedWidget):
         self.parent = parent
         self.slider = slider
         self.loaderEffect = self.LoaderEffect()
-        self.loaderEffect.setEnabled(False)
+        # self.loaderEffect.setEnabled(False)
         self.setGraphicsEffect(self.loaderEffect)
         self.setContentsMargins(0, 0, 0, 0)
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)

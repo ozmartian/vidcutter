@@ -27,7 +27,7 @@ import time
 
 from PyQt5.QtCore import pyqtSlot, Qt, QFileInfo, QTimer, QUrl
 from PyQt5.QtGui import QDesktopServices, QIcon
-from PyQt5.QtWidgets import qApp, QDialog, QPushButton
+from PyQt5.QtWidgets import qApp, QDialog, QHBoxLayout, QLabel, QPushButton, QVBoxLayout
 
 
 class Notification(QDialog):
@@ -43,6 +43,16 @@ class Notification(QDialog):
         self._title, self._message = '', ''
         self._icons = dict()
         self._buttons = list()
+
+        self.titleLabel, self.msgLabel = QLabel(self), QLabel(self)
+        self.msgLabel.setWordWrap(True)
+        self.buttonLayout = QHBoxLayout()
+        self.buttonLayout.setAlignment(Qt.AlignCenter)
+        self.gridlayout = QVBoxLayout()
+        self.gridlayout.addWidget(self.titleLabel)
+        self.gridlayout.addWidget(self.msgLabel)
+        self.gridlayout.addLayout(self.buttonLayout)
+        self.setLayout(self.gridlayout)
 
     @property
     def title(self):
@@ -81,16 +91,22 @@ class Notification(QDialog):
 
     # noinspection PyTypeChecker
     def showEvent(self, event):
-        for step in range(0, 100, 5):
+        self.titleLabel.setText(self._title)
+        self.msgLabel.setText((self._message))
+        for button in self._buttons:
+            self.buttonLayout.addWidget(button)
+        bottomright = qApp.desktop().availableGeometry(self).bottomRight()
+        self.setGeometry(bottomright.x() - 300 - 5, bottomright.y(), 400, 150)
+        self.setFixedSize(400, 150)
+        QTimer.singleShot(self.duration * 1000, self.close)
+        for step in range(0, 100, 10):
             self.setWindowOpacity(step / 100)
             qApp.processEvents()
             time.sleep(0.05)
-        self.deleteLater()
-        QTimer.singleShot(self.duration * 1000, self.close)
         super(Notification, self).showEvent(event)
 
     def closeEvent(self, event):
-        for step in range(100, 0, -5):
+        for step in range(100, 0, -10):
             self.setWindowOpacity(step / 100)
             qApp.processEvents()
             time.sleep(0.05)

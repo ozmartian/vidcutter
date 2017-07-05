@@ -46,6 +46,7 @@ from vidcutter.videotoolbar import VideoToolBar
 
 from vidcutter.libs.mpvwidget import mpvWidget
 from vidcutter.libs.notifications import JobCompleteNotification
+from vidcutter.libs.taskbarprogress import TaskbarProgress
 from vidcutter.libs.videoservice import VideoService
 from vidcutter.libs.widgets import FrameCounter, TimeCounter, VCProgressBar, VolumeSlider
 
@@ -310,6 +311,10 @@ class VideoCutter(QWidget):
 
         self.setLayout(layout)
 
+        self.taskbarControl = TaskbarProgress(self)
+        self.taskbarControl.setProgress(0.5)
+        self.taskbarControl.setProgress(0.8)
+
     @pyqtSlot(Exception)
     def on_mpvError(self, error: Exception = None) -> None:
         pencolor1 = '#C681D5' if self.theme == 'dark' else '#642C68'
@@ -392,14 +397,14 @@ class VideoCutter(QWidget):
         self.novideoWidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.MinimumExpanding)
         self.novideoLabel = QLabel(self)
         self.novideoLabel.setAlignment(Qt.AlignCenter)
-        self.novideoLabel.setStyleSheet('margin-top:160px;')
-        self.novideoMovie = QMovie(':/images/novideotext.gif')
+        self.novideoLabel.setStyleSheet('position:absolute; bottom:50px;')
+        self.novideoMovie = QMovie(':/images/novideotext.gif', b'GIF', self)
         self.novideoMovie.frameChanged.connect(lambda: self.novideoLabel.setPixmap(self.novideoMovie.currentPixmap()))
         self.novideoMovie.start()
         novideoLayout = QVBoxLayout()
         novideoLayout.addStretch(1)
         novideoLayout.addWidget(self.novideoLabel)
-        novideoLayout.addStretch(1)
+        novideoLayout.addSpacing(85)
         self.novideoWidget.setLayout(novideoLayout)
 
     def initIcons(self) -> None:
@@ -915,6 +920,8 @@ class VideoCutter(QWidget):
         self.frameCounter.setFrameCount(frames)
         if self.thumbnailsButton.isChecked():
             self.seekSlider.initThumbs()
+        else:
+            self.sliderWidget.setLoader(False)
 
     @pyqtSlot(QListWidgetItem)
     def positionAtClip(self, item: QListWidgetItem) -> None:

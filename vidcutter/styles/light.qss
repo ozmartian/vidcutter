@@ -35,7 +35,7 @@ QWidget#videoplayer {
 
 QWidget#novideoWidget {
     border: 1px solid #999;
-    background: #000 url(:/images/startup-backdrop.png) no-repeat center center;
+    border-image: url(':/images/startup-backdrop.png') 0 0 0 0 stretch stretch;
 }
 
 QWidget#genericdialog {
