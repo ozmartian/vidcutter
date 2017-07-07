@@ -26,8 +26,8 @@ import logging
 import os
 import sys
 
-from PyQt5.QtCore import QEvent, QObject, QThread, Qt, pyqtSignal, pyqtSlot
-from PyQt5.QtGui import (QColor, QKeyEvent, QMouseEvent, QPaintEvent, QPainter, QPainterPath, QPen, QTransform,
+from PyQt5.QtCore import QEvent, QObject, QRect, QThread, Qt, pyqtSignal, pyqtSlot
+from PyQt5.QtGui import (QColor, QKeyEvent, QMouseEvent, QPaintEvent, QPainter, QPen, QTransform,
                          QWheelEvent)
 from PyQt5.QtWidgets import (qApp, QGraphicsEffect, QHBoxLayout, QLabel, QSizePolicy, QSlider, QStackedLayout,
                              QStackedWidget, QStyle, QStyleOptionSlider, QStylePainter, QWidget)
@@ -177,30 +177,30 @@ class VideoSlider(QSlider):
                 if x + 30 > self.width():
                     break
                 x += 15
-        self.update()
         opt.subControls = QStyle.SC_SliderGroove
         painter.drawComplexControl(QStyle.CC_Slider, opt)
-        for path in self._regions:
-            if self._regions.index(path) == self._regionSelected:
+        for rect in self._regions:
+            rect.setY(int((self.height() - self._regionHeight) / 2) - 8)
+            rect.setHeight(self._regionHeight)
+            if self._regions.index(rect) == self._regionSelected:
                 brushcolor = QColor(150, 190, 78, 185)
             else:
                 brushcolor = QColor(237, 242, 255, 185)
             painter.setBrush(brushcolor)
             painter.setPen(QColor(255, 255, 255, 170))
-            painter.drawPath(path)
+            painter.drawRect(rect)
         opt.subControls = QStyle.SC_SliderHandle
         painter.drawComplexControl(QStyle.CC_Slider, opt)
 
     def addRegion(self, start: int, end: int) -> None:
         x = self.style().sliderPositionFromValue(self.minimum(), self.maximum(), start - self.offset,
                                                  self.width() - (self.offset * 2))
-        y = (self.height() - self._regionHeight) / 2
+        y = int((self.height() - self._regionHeight) / 2)
         width = self.style().sliderPositionFromValue(self.minimum(), self.maximum(), end - self.offset,
                                                      self.width() - (self.offset * 2)) - x
         height = self._regionHeight
-        path = QPainterPath()
-        path.addRect(x + self.offset, y - 8, width, height)
-        self._regions.append(path)
+        rect = QRect(x + self.offset, y - 8, width, height)
+        self._regions.append(rect)
         self.update()
 
     def switchRegions(self, index1: int, index2: int) -> None:
