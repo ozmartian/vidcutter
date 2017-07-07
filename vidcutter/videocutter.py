@@ -942,18 +942,17 @@ class VideoCutter(QWidget):
 
     @pyqtSlot(bool)
     def toggleThumbs(self, checked: bool) -> None:
+        self.seekSlider.showThumbs = checked
+        self.saveSetting('timelineThumbs', checked)
         if checked:
-            self.seekSlider.initStyle()
             self.showText('Thumbnails enabled')
+            self.seekSlider.initStyle()
             if self.mediaAvailable:
-                self.seekSlider.initThumbs()
+                self.seekSlider.reloadThumbs()
         else:
             self.showText('Thumbnails disabled')
             self.seekSlider.removeThumbs()
             self.seekSlider.initStyle()
-        self.seekSlider.showThumbs = checked
-        self.saveSetting('timelineThumbs', checked)
-        self.seekSlider.update()
 
     @pyqtSlot(bool)
     def toggleConsole(self, checked: bool):
@@ -1293,7 +1292,6 @@ class VideoCutter(QWidget):
                 self.mpvWidget.setGeometry(qApp.desktop().screenGeometry(self))
                 self.mpvWidget.setParent(None)
                 self.mpvWidget.showFullScreen()
-                self
 
     def toggleOSD(self, checked: bool) -> None:
         self.showText('On screen display %s' % ('enabled' if checked else 'disabled'), override=True)
@@ -1301,7 +1299,7 @@ class VideoCutter(QWidget):
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
         if self.mediaAvailable:
-            if event.key() in {Qt.Key_Escape, Qt.Key_F}:
+            if event.key() in {Qt.Key_F}:
                 self.toggleFullscreen()
             elif event.key() == Qt.Key_Left:
                 self.mpvWidget.frameBackStep()

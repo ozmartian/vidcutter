@@ -58,6 +58,7 @@ class VideoSlider(QSlider):
             position: absolute;
             left: 0;
             right: 0;
+
             margin: 0;
             margin-left: %s;
         }
@@ -67,8 +68,10 @@ class VideoSlider(QSlider):
         }
         QSlider::handle:horizontal {
             border: none;
-            background: url(:images/%s) no-repeat top center;
+            border-radius: 0;
+            background: transparent url(:images/%s) no-repeat top center;
             width: 15px;
+            height: %spx;
             margin: -12px -8px -20px;
         }'''
         self._regions = list()
@@ -119,7 +122,7 @@ class VideoSlider(QSlider):
             self.initStyleOption(opt)
             control = self.style().subControlRect(QStyle.CC_Slider, opt, QStyle.SC_SliderHandle, self)
             margin = '%ipx' % control.x()
-        self.setStyleSheet(self._styles % (height, height, timeline, bground, height + 2, margin, handle))
+        self.setStyleSheet(self._styles % (height, height, timeline, bground, height + 2, margin, handle, handleHeight))
 
     def setRestrictValue(self, value: int, force: bool = False) -> None:
         self.restrictValue = value
@@ -278,7 +281,6 @@ class VideoSlider(QSlider):
             self.parent.sliderWidget.removeWidget(thumbWidget)
             thumbWidget.deleteLater()
             self.setObjectName('nothumbs')
-            self.initStyle()
             self.thumbnailsOn = False
 
     def errorHandler(self, error: str) -> None:

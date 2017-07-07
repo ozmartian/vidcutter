@@ -162,6 +162,7 @@ class mpvWidget(QOpenGLWidget):
     def _exitFullScreen(self) -> None:
         self.showNormal()
         self.setParent(self.originalParent)
+        self.parent.toggleFullscreen()
 
     # def changeEvent(self, event: QEvent) -> None:
     #     if event.type() == QEvent.WindowStateChange and self.isFullScreen():
@@ -197,6 +198,7 @@ class mpvWidget(QOpenGLWidget):
     def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
         if self.isFullScreen():
             self._exitFullScreen()
-        self.parent.toggleFullscreen()
+        else:
+            self.parent.toggleFullscreen()
         event.accept()
         super(mpvWidget, self).mouseDoubleClickEvent(event)
