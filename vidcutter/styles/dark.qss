@@ -29,12 +29,11 @@ QWidget#shortcuts {
 }
 
 QWidget#videoplayer {
-    border: none;
+    border: 1px solid #76797C;
     background: #000;
 }
 
 QWidget#novideoWidget {
-    border: 1px solid #999;
     border-image: url(':/images/startup-backdrop.png') 0 0 0 0 stretch stretch;
 }
 

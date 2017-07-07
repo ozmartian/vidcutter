@@ -27,7 +27,7 @@ import time
 
 from PyQt5.QtCore import pyqtSlot, Qt, QFileInfo, QTimer, QUrl
 from PyQt5.QtGui import QDesktopServices, QIcon
-from PyQt5.QtWidgets import qApp, QDialog, QHBoxLayout, QLabel, QPushButton, QVBoxLayout
+from PyQt5.QtWidgets import qApp, QDialog, QDialogButtonBox, QLabel, QPushButton, QVBoxLayout
 
 
 class Notification(QDialog):
@@ -42,16 +42,13 @@ class Notification(QDialog):
         self.setWindowOpacity(0.0)
         self._title, self._message = '', ''
         self._icons = dict()
-        self._buttons = list()
-
         self.titleLabel, self.msgLabel = QLabel(self), QLabel(self)
         self.msgLabel.setWordWrap(True)
-        self.buttonLayout = QHBoxLayout()
-        self.buttonLayout.setAlignment(Qt.AlignCenter)
+        self.dialogButtonBox = QDialogButtonBox(self)
         self.gridlayout = QVBoxLayout()
         self.gridlayout.addWidget(self.titleLabel)
         self.gridlayout.addWidget(self.msgLabel)
-        self.gridlayout.addLayout(self.buttonLayout)
+        self.gridlayout.addWidget(self.dialogButtonBox)
         self.setLayout(self.gridlayout)
 
     @property
@@ -78,26 +75,15 @@ class Notification(QDialog):
     def icons(self, value):
         self._icons = value
 
-    @property
-    def buttons(self):
-        return self._buttons
-
-    @buttons.setter
-    def buttons(self, value):
-        self._buttons = value
-
     def mousePressEvent(self, event):
         self.close()
 
     # noinspection PyTypeChecker
     def showEvent(self, event):
         self.titleLabel.setText(self._title)
-        self.msgLabel.setText((self._message))
-        for button in self._buttons:
-            self.buttonLayout.addWidget(button)
+        self.msgLabel.setText(self._message)
         bottomright = qApp.desktop().availableGeometry(self).bottomRight()
-        self.setGeometry(bottomright.x() - 300 - 5, bottomright.y(), 400, 150)
-        self.setFixedSize(400, 150)
+        self.setGeometry(bottomright.x() - 405, bottomright.y() - 205 - 5, 400, 200)
         QTimer.singleShot(self.duration * 1000, self.close)
         for step in range(0, 100, 10):
             self.setWindowOpacity(step / 100)
@@ -133,17 +119,17 @@ class JobCompleteNotification(Notification):
             margin: 6px;
             padding: 4px 2px;
         }
-        td.value {
-            font-size: 13px;
-            color: %s;
-        }
         td.label {
-            font-size: 12px;
+            font-size: 11px;
             color: %s;
             padding-top: 5px;
             text-transform: lowercase;
             text-align: right;
             padding-right: 5px;
+        }
+        td.value {
+            font-size: 13px;
+            color: %s;
         }
     </style>
     <table class="info" cellpadding="2" cellspacing="0" align="left" width="350">
@@ -168,7 +154,7 @@ class JobCompleteNotification(Notification):
         }
         playButton = QPushButton(self.icons['play'], 'Play', self)
         playButton.clicked.connect(self.playMedia)
-        self.buttons.append(playButton)
+        self.dialogButtonBox.addButton(playButton, QDialogButtonBox.ActionRole)
 
     @pyqtSlot()
     def playMedia(self) -> None:

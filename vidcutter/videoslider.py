@@ -26,7 +26,7 @@ import logging
 import os
 import sys
 
-from PyQt5.QtCore import QEvent, QObject, QSize, QThread, Qt, pyqtSignal, pyqtSlot
+from PyQt5.QtCore import QEvent, QObject, QThread, Qt, pyqtSignal, pyqtSlot
 from PyQt5.QtGui import (QColor, QKeyEvent, QMouseEvent, QPaintEvent, QPainter, QPainterPath, QPen, QTransform,
                          QWheelEvent)
 from PyQt5.QtWidgets import (qApp, QGraphicsEffect, QHBoxLayout, QLabel, QSizePolicy, QSlider, QStackedLayout,
@@ -68,8 +68,7 @@ class VideoSlider(QSlider):
         QSlider::handle:horizontal {
             border: none;
             background: url(:images/%s) no-repeat top center;
-            width: 15px;e
-            height: 85px;
+            width: 15px;
             margin: -12px -8px -20px;
         }'''
         self._regions = list()
@@ -99,6 +98,7 @@ class VideoSlider(QSlider):
         bground = 'rgba(200, 213, 236, 0.85)' if self._cutStarted else 'transparent'
         height = 60
         handle = 'handle.png'
+        handleHeight = 85
         margin = 0
         self._regionHeight = 32
         if self.thumbnailsOn:
@@ -107,11 +107,11 @@ class VideoSlider(QSlider):
             if self.parent.thumbnailsButton.isChecked():
                 timeline = 'background: #000 url(:images/filmstrip.png) repeat-x left;'
             else:
-                timeline = ''
-                # timeline = 'background: %s;' % ('#8F8F8F' if self.theme == 'dark' else '#444')
+                timeline = 'background: #000 url(:images/filmstrip-nothumbs.png) repeat-x left;'
+                handleHeight = 42
             height = 15 if not self.parent.thumbnailsButton.isChecked() else height
             handle = 'handle-nothumbs.png' if not self.parent.thumbnailsButton.isChecked() else handle
-            self._regionHeight = 32 if self.parent.thumbnailsButton.isChecked() else 13
+            self._regionHeight = 32 if self.parent.thumbnailsButton.isChecked() else 12
         if self._cutStarted:
             _file, _ext = os.path.splitext(handle)
             handle = '%s-select%s' % (_file, _ext)

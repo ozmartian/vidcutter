@@ -162,7 +162,8 @@ class FrameCounter(QWidget):
 class VCProgressBar(QDialog):
     def __init__(self, parent=None, flags=Qt.FramelessWindowHint):
         super(VCProgressBar, self).__init__(parent, flags)
-        self._progress = QProgressBar(parent)
+        self.parent = parent
+        self._progress = QProgressBar(self.parent)
         self._progress.setRange(0, 0)
         self._progress.setTextVisible(False)
         self._progress.setStyle(QStyleFactory.create('fusion'))
@@ -172,7 +173,7 @@ class VCProgressBar(QDialog):
         layout.addWidget(self._progress, 0, 0)
         layout.addWidget(self._label, 0, 0)
         self.setWindowModality(Qt.ApplicationModal)
-        self.setMinimumWidth(400)
+        self.setMinimumWidth(500)
         self.setLayout(layout)
 
     def setStyle(self, style: QStyle) -> None:
@@ -192,6 +193,10 @@ class VCProgressBar(QDialog):
 
     def setValue(self, val: int) -> None:
         self._progress.setValue(val)
+
+    def updateProgress(self, value: int, text: str):
+        self.setValue(value)
+        self.setText(text)
 
 
 class VolumeSlider(QSlider):

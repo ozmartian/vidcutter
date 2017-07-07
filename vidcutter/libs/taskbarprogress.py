@@ -22,10 +22,7 @@
 #
 #######################################################################
 
-import atexit
-import sys
-
-from PyQt5.QtCore import QDir, QFile, QFileInfo, QStandardPaths, QUuid
+from PyQt5.QtCore import pyqtSlot, QFile, QFileInfo
 from PyQt5.QtDBus import QDBusConnection, QDBusMessage
 from PyQt5.QtWidgets import qApp, QWidget
 
@@ -33,29 +30,19 @@ from PyQt5.QtWidgets import qApp, QWidget
 class TaskbarProgress(QWidget):
     def __init__(self, parent=None):
         super(TaskbarProgress, self).__init__(parent)
-        atexit.register(self._doCleanup)
         self._desktopFile = QFile('{0}.desktop'.format(qApp.applicationName().lower()))
         self._desktopFileContent = '[Desktop Entry]\nType=Application\nVersion=1.1\nName=%s\nExec=%s\n'
         self._dbusMessage = QDBusMessage.createSignal('/com/ozmartians/VidCutter',
                                                       'com.canonical.Unity.LauncherEntry', 'Update')
         self._dbusConnection = QDBusConnection.sessionBus()
+        self._reset()
 
+    @pyqtSlot(float)
     def setProgress(self, value: float):
         self._sendMessage({
             'progress-visible': False if value <= 0 else True,
             'progress': value
         })
-
-    def _createDesktopFile(self):
-        name = '{0}.desktop'.format(QUuid.createUuid().toString())
-        appsdir = QDir(QStandardPaths.writableLocation(QStandardPaths.ApplicationsLocation))
-        self._desktopFile.setFileName(appsdir.absoluteFilePath(name))
-        if not self._desktopFile.exists():
-            content = self._desktopFileContent % (qApp.applicationName(), QFileInfo(sys.argv[0]).absoluteFilePath())
-            self._desktopFile.open(QFile.WriteOnly)
-            self._desktopFile.write(content.encode('utf-8'))
-            self._desktopFile.close()
-        self._reset()
 
     def _reset(self):
         self._sendMessage({
@@ -69,11 +56,3 @@ class TaskbarProgress(QWidget):
     def _sendMessage(self, params: dict):
         message = self._dbusMessage << 'application://{0}'.format(QFileInfo(self._desktopFile).fileName()) << params
         self._dbusConnection.send(message)
-
-    def __del__(self):
-        self._doCleanup()
-
-    def _doCleanup(self):
-        if hasattr(self, '_desktopFile'):
-            if self._desktopFile.exists():
-                self._desktopFile.remove()

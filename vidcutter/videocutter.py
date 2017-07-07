@@ -30,7 +30,7 @@ import time
 from datetime import timedelta
 
 from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTextStream,
-                          QTime, QTimer, QUrl)
+                          QTime, QUrl)
 from PyQt5.QtGui import QCloseEvent, QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMovie, QPixmap
 from PyQt5.QtWidgets import (QAction, QActionGroup, qApp, QApplication, QDialogButtonBox, QDoubleSpinBox, QFileDialog,
                              QGroupBox, QHBoxLayout, QLabel, QListWidgetItem, QMenu, QMessageBox, QPushButton,
@@ -71,6 +71,7 @@ class VideoCutter(QWidget):
 
         self.videoService = VideoService(self)
         self.updater = Updater(self)
+        self.taskbarControl = TaskbarProgress(self)
 
         self.latest_release_url = 'https://github.com/ozmartian/vidcutter/releases/latest'
         self.ffmpeg_installer = {
@@ -310,10 +311,6 @@ class VideoCutter(QWidget):
         layout.addLayout(controlsLayout)
 
         self.setLayout(layout)
-
-        self.taskbarControl = TaskbarProgress(self)
-        self.taskbarControl.setProgress(0.5)
-        self.taskbarControl.setProgress(0.8)
 
     @pyqtSlot(Exception)
     def on_mpvError(self, error: Exception = None) -> None:
@@ -1100,9 +1097,13 @@ class VideoCutter(QWidget):
             self.saveAction.setDisabled(True)
             self.showProgress(clips)
             index = 1
-            self.progress.setText('Cutting media files...')
-            qApp.processEvents()
+            progval = 0
             for clip in self.clipTimes:
+                index = self.clipTimes.index(clip)
+                progval += int(100 / len(self.clipTimes))
+                self.progress.updateProgress(progval, 'Cutting media files [%s / %s]...'
+                                             % ('{0:0>2}'.format(index), '{0:0>2}'.format(len(self.clipTimes))))
+                qApp.processEvents()
                 duration = self.delta2QTime(clip[0].msecsTo(clip[1])).toString(self.timeformat)
                 filename = '%s_%s%s' % (file, '{0:0>2}'.format(index), ext)
                 filelist.append(filename)
@@ -1127,9 +1128,9 @@ class VideoCutter(QWidget):
             else:
                 QFile.remove(self.finalFilename)
                 QFile.rename(filename, self.finalFilename)
-            self.progress.setText('Complete...')
-            self.progress.setValue(100)
+            self.progress.updateProgress(100, 'Complete...')
             qApp.processEvents()
+            time.sleep(1)
             self.progress.close()
             self.progress.deleteLater()
             qApp.restoreOverrideCursor()
@@ -1187,16 +1188,14 @@ class VideoCutter(QWidget):
         appInfo = About(self)
         appInfo.exec_()
 
-    def showProgress(self, steps: int, label: str = 'Analyzing media...') -> None:
+    def showProgress(self, steps: int) -> None:
         self.progress = VCProgressBar(self)
-        self.progress.setText(label)
-        self.progress.setMinimumWidth(500)
-        self.progress.setRange(0, steps)
+        self.progress.setRange(0, steps * 100)
         self.progress.show()
-        for i in range(steps):
-            self.progress.setValue(i)
-            qApp.processEvents()
-            time.sleep(1)
+        # for i in range(steps):
+        #     self.progress.setValue(i)
+        #     qApp.processEvents()
+        #     time.sleep(5)
 
     @staticmethod
     def sizeof_fmt(num: float, suffix: chr = 'B') -> str:

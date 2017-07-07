@@ -15,7 +15,7 @@ from OpenGL import GL
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QEvent, QTimer
 from PyQt5.QtGui import QKeyEvent, QMouseEvent
 from PyQt5.QtOpenGL import QGLContext
-from PyQt5.QtWidgets import qApp, QHBoxLayout, QLabel, QOpenGLWidget
+from PyQt5.QtWidgets import qApp, QDialog, QHBoxLayout, QLabel, QOpenGLWidget
 import sip
 
 # noinspection PyUnresolvedReferences
@@ -163,24 +163,27 @@ class mpvWidget(QOpenGLWidget):
         self.showNormal()
         self.setParent(self.originalParent)
 
-    def changeEvent(self, event: QEvent) -> None:
-        if event.type() == QEvent.WindowStateChange and self.isFullScreen():
-            fullscreen_note = QDialog(None, f=Qt.FramelessWindowHint | Qt.WindowStaysOnBottomHint)
-            fullscreen_note.setStyleSheet('''
-                background: rgba(0, 0, 0, 100);
-                color: #EEFF01;
-                font-size: 72px;
-                font-family: "Futura Hv", sans-serif;
-            ''')
-            fullscreen_layout = QHBoxLayout()
-            fullscreen_layout.addStretch(1)
-            fullscreen_layout.addWidget(QLabel('Press ESC, F or doubleclick the mouse to exit fullscreen', fullscreen_note))
-            fullscreen_layout.addStretch(1)
-            fullscreen_note.setGeometry(qApp.desktop().screenGeometry().topLeft(), qApp.desktop().screenGeometry().topRight(),
-                                       qApp.desktop().screenGeometry().topRight(), 200)
-            fullscreen_note.show()
-            fullscreen_note.raise_()
-            QTimer.singleShot(self.duration * 1000, self.close)
+    # def changeEvent(self, event: QEvent) -> None:
+    #     if event.type() == QEvent.WindowStateChange and self.isFullScreen():
+    #         fullscreen_note = QDialog(None, flags=Qt.FramelessWindowHint | Qt.WindowStaysOnBottomHint)
+    #         fullscreen_note.setStyleSheet('''
+    #             background: rgba(0, 0, 0, 100);
+    #             color: #EEFF01;
+    #             font-size: 72px;
+    #             font-family: "Futura Hv", sans-serif;
+    #         ''')
+    #         fullscreen_layout = QHBoxLayout()
+    #         fullscreen_layout.addStretch(1)
+    #         fullscreen_layout.addWidget(QLabel('Press ESC, F or doubleclick the mouse to exit fullscreen',
+    #                                            fullscreen_note))
+    #         fullscreen_layout.addStretch(1)
+    #         width = qApp.screens()[qApp.desktop().screenNumber(self.parent)].geometry().width()
+    #         fullscreen_note.setGeometry(qApp.desktop().screenGeometry().topLeft().x(),
+    #                                     qApp.desktop().screenGeometry().topRight().y(), width, 200)
+    #         fullscreen_note.setLayout(fullscreen_layout)
+    #         fullscreen_note.show()
+    #         fullscreen_note.raise_()
+    #         QTimer.singleShot(5000, self.close)
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
         if self.isFullScreen():
