@@ -1130,6 +1130,7 @@ class VideoCutter(QWidget):
             self.progress.updateProgress(100, 'Complete...')
             qApp.processEvents()
             qApp.restoreOverrideCursor()
+            self.saveAction.setEnabled(True)
             notify = JobCompleteNotification(self)
             notify.finished.connect(lambda: self.progress.done(0))
             notify.exec_()
