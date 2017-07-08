@@ -27,13 +27,13 @@ import time
 
 from PyQt5.QtCore import pyqtSlot, Qt, QFileInfo, QTimer, QUrl
 from PyQt5.QtGui import QDesktopServices, QIcon
-from PyQt5.QtWidgets import qApp, QDialog, QDialogButtonBox, QLabel, QPushButton, QVBoxLayout
+from PyQt5.QtWidgets import qApp, QDialog, QDialogButtonBox, QGraphicsDropShadowEffect, QLabel, QPushButton, QVBoxLayout
 
 
 class Notification(QDialog):
     duration = 10
 
-    def __init__(self, parent=None, f=Qt.Tool | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint):
+    def __init__(self, parent=None, f=Qt.Tool | Qt.WindowCloseButtonHint | Qt.WindowStaysOnTopHint):
         super(Notification, self).__init__(parent, f)
         self.parent = parent
         self.theme = self.parent.theme
@@ -42,14 +42,19 @@ class Notification(QDialog):
         self.setWindowOpacity(0.0)
         self._title, self._message = '', ''
         self._icons = dict()
-        self.titleLabel, self.msgLabel = QLabel(self), QLabel(self)
+        self.msgLabel = QLabel(self)
         self.msgLabel.setWordWrap(True)
         self.dialogButtonBox = QDialogButtonBox(self)
-        self.gridlayout = QVBoxLayout()
-        self.gridlayout.addWidget(self.titleLabel)
-        self.gridlayout.addWidget(self.msgLabel)
-        self.gridlayout.addWidget(self.dialogButtonBox)
-        self.setLayout(self.gridlayout)
+        layout = QVBoxLayout()
+        layout.setSpacing(2)
+        layout.addWidget(self.msgLabel)
+        layout.addWidget(self.dialogButtonBox)
+        shadow = QGraphicsDropShadowEffect(self)
+        shadow.setColor(Qt.gray)
+        shadow.setBlurRadius(10)
+        shadow.setOffset(2, 2)
+        self.setGraphicsEffect(shadow)
+        self.setLayout(layout)
 
     @property
     def title(self):
@@ -80,10 +85,10 @@ class Notification(QDialog):
 
     # noinspection PyTypeChecker
     def showEvent(self, event):
-        self.titleLabel.setText(self._title)
         self.msgLabel.setText(self._message)
-        bottomright = qApp.desktop().availableGeometry(self).bottomRight()
-        self.setGeometry(bottomright.x() - 405, bottomright.y() - 205 - 5, 400, 200)
+        screen = qApp.desktop().screenNumber(self.parent)
+        bottomright = qApp.screens()[screen].availableGeometry().bottomRight()
+        self.setGeometry(bottomright.x() - 405, bottomright.y() - 205, 400, 200)
         QTimer.singleShot(self.duration * 1000, self.close)
         for step in range(0, 100, 10):
             self.setWindowOpacity(step / 100)
@@ -96,7 +101,7 @@ class Notification(QDialog):
             self.setWindowOpacity(step / 100)
             qApp.processEvents()
             time.sleep(0.05)
-        self.deleteLater()
+        self.done(0)
         super(Notification, self).closeEvent(event)
 
 
@@ -126,12 +131,14 @@ class JobCompleteNotification(Notification):
             text-transform: lowercase;
             text-align: right;
             padding-right: 5px;
+            font-family: "Futura LT", sans-serif;
         }
         td.value {
             font-size: 13px;
             color: %s;
         }
     </style>
+    <h1>%s</h1>
     <table class="info" cellpadding="2" cellspacing="0" align="left" width="350">
         <tr>
             <td width="20%%" class="label"><b>File:</b></td>
@@ -145,10 +152,10 @@ class JobCompleteNotification(Notification):
             <td width="20%%" class="label"><b>Length:</b></td>
             <td width="80%%" class="value">%s</td>
         </tr>
-    </table>''' % (pencolor, ('#EFF0F1' if self.theme == 'dark' else '#222'),
-                        pencolor, os.path.basename(self.parent.finalFilename),
-                        self.parent.sizeof_fmt(int(QFileInfo(self.parent.finalFilename).size())),
-                        self.parent.delta2QTime(self.parent.totalRuntime).toString(self.parent.runtimeformat))
+    </table>''' % (pencolor, pencolor, ('#EFF0F1' if self.theme == 'dark' else '#222'), self._title,
+                   os.path.basename(self.parent.finalFilename),
+                   self.parent.sizeof_fmt(int(QFileInfo(self.parent.finalFilename).size())),
+                   self.parent.delta2QTime(self.parent.totalRuntime).toString(self.parent.runtimeformat))
         self.icons = {
             'play': QIcon(':/images/%s/complete-play.png' % self.theme)
         }

@@ -29,7 +29,7 @@ QWidget#shortcuts {
 }
 
 QWidget#videoplayer {
-    border: 1px solid #76797C;
+    border: none;
     background: #000;
 }
 

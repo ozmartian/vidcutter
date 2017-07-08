@@ -43,10 +43,7 @@ class VideoSlider(QSlider):
         self.theme = self.parent.theme
         self._styles = '''QSlider:horizontal { margin: 16px 8px 32px; height: %ipx; }
         QSlider::groove:horizontal {
-            border-top: 1px inset #444;
-            border-bottom: 1px inset #444;
-            border-left: 1px inset #666;
-            border-right: 1px inset #666;
+            border: 1px ridge #444;
             height: %ipx;
             %s
             margin: 0;
@@ -58,7 +55,6 @@ class VideoSlider(QSlider):
             position: absolute;
             left: 0;
             right: 0;
-
             margin: 0;
             margin-left: %s;
         }
@@ -334,7 +330,7 @@ class VideoSliderWidget(QStackedWidget):
         self.parent = parent
         self.slider = slider
         self.loaderEffect = self.LoaderEffect()
-        # self.loaderEffect.setEnabled(False)
+        self.loaderEffect.setEnabled(False)
         self.setGraphicsEffect(self.loaderEffect)
         self.setContentsMargins(0, 0, 0, 0)
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)

@@ -176,6 +176,9 @@ class VCProgressBar(QDialog):
         self.setMinimumWidth(500)
         self.setLayout(layout)
 
+    def value(self) -> int:
+        return self._progress.value()
+
     def setStyle(self, style: QStyle) -> None:
         self._progress.setStyle(style)
 
@@ -194,7 +197,7 @@ class VCProgressBar(QDialog):
     def setValue(self, val: int) -> None:
         self._progress.setValue(val)
 
-    def updateProgress(self, value: int, text: str):
+    def updateProgress(self, value: int, text: str) -> None:
         self.setValue(value)
         self.setText(text)
 
@@ -208,7 +211,7 @@ class VolumeSlider(QSlider):
         self.setStyle(QStyleFactory.create('Fusion'))
 
     @pyqtSlot(int)
-    def showTooltip(self, value: int):
+    def showTooltip(self, value: int) -> None:
         opt = QStyleOptionSlider()
         self.initStyleOption(opt)
         handle = self.style().subControlRect(QStyle.CC_Slider, opt, QStyle.SC_SliderHandle, self)

@@ -394,14 +394,14 @@ class VideoCutter(QWidget):
         self.novideoWidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.MinimumExpanding)
         self.novideoLabel = QLabel(self)
         self.novideoLabel.setAlignment(Qt.AlignCenter)
-        self.novideoLabel.setStyleSheet('position:absolute; bottom:50px;')
         self.novideoMovie = QMovie(':/images/novideotext.gif', b'GIF', self)
+        self.novideoMovie.setScaledSize(QSize(250, 30))
         self.novideoMovie.frameChanged.connect(lambda: self.novideoLabel.setPixmap(self.novideoMovie.currentPixmap()))
         self.novideoMovie.start()
         novideoLayout = QVBoxLayout()
         novideoLayout.addStretch(1)
         novideoLayout.addWidget(self.novideoLabel)
-        novideoLayout.addSpacing(85)
+        novideoLayout.addSpacing(50)
         self.novideoWidget.setLayout(novideoLayout)
 
     def initIcons(self) -> None:
@@ -1095,13 +1095,13 @@ class VideoCutter(QWidget):
             qApp.setOverrideCursor(Qt.WaitCursor)
             self.saveAction.setDisabled(True)
             self.showProgress(clips)
-            index = 1
-            progval = 0
+            progval = self.progress.value()
+            interval = (75 - progval) / clips
             for clip in self.clipTimes:
                 index = self.clipTimes.index(clip)
-                progval += int(100 / len(self.clipTimes))
-                self.progress.updateProgress(progval, 'Cutting media files [%s / %s]...'
-                                             % ('{0:0>2}'.format(index), '{0:0>2}'.format(len(self.clipTimes))))
+                progval += interval
+                self.progress.updateProgress(progval, 'Cutting media clips [%s / %s]...'
+                                             % ('{0:0>2}'.format(index), '{0:0>2}'.format(clips)))
                 qApp.processEvents()
                 duration = self.delta2QTime(clip[0].msecsTo(clip[1])).toString(self.timeformat)
                 filename = '%s_%s%s' % (file, '{0:0>2}'.format(index), ext)
@@ -1109,7 +1109,7 @@ class VideoCutter(QWidget):
                 self.videoService.cut(source='%s%s' % (source_file, source_ext), output=filename,
                                       frametime=clip[0].toString(self.timeformat), duration=duration,
                                       allstreams=True)
-                if not QFile(filename).size():
+                if QFile(filename).size() < 1000:
                     self.logger.info('cut resulted in 0 length file, trying again without all stream mapping')
                     self.videoService.cut(source='%s%s' % (source_file, source_ext), output=filename,
                                           frametime=clip[0].toString(self.timeformat), duration=duration,
@@ -1130,11 +1130,10 @@ class VideoCutter(QWidget):
             self.progress.updateProgress(100, 'Complete...')
             qApp.processEvents()
             time.sleep(1)
-            self.progress.close()
-            self.progress.deleteLater()
             qApp.restoreOverrideCursor()
             notify = JobCompleteNotification(self)
-            notify.show()
+            notify.finished.connect(lambda: self.progress.done(0))
+            notify.exec_()
             return True
         return False
 
@@ -1189,8 +1188,9 @@ class VideoCutter(QWidget):
 
     def showProgress(self, steps: int) -> None:
         self.progress = VCProgressBar(self)
-        self.progress.setRange(0, steps * 100)
+        self.progress.setRange(0, 100)
         self.progress.show()
+        self.progress.updateProgress(25, 'Analyzing source video...')
         # for i in range(steps):
         #     self.progress.setValue(i)
         #     qApp.processEvents()
