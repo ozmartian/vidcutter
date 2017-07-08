@@ -29,7 +29,7 @@ QWidget#shortcuts {
 }
 
 QWidget#videoplayer {
-    border: none;
+    border: non;
     background: #000;
 }
 
@@ -47,6 +47,7 @@ QWidget#genericdialog2 {
 
 QWidget#genericdialog3 {
     border-image: url(':/images/dark/background_complete.png') 0 0 0 0 stretch stretch;
+    background-color: transparent;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -69,14 +70,14 @@ QDialog#updaterdialog {
 /* -------------------------------------------------------------------------- */
 
 QToolBar#appcontrols {
-    spacing: 15px;
+    spacing: 8px;
 }
 
 QToolBar#appcontrols QToolButton {
     padding: 1px 2px;
     margin: 0;
     color: #EAEAEA;
-    font-size: 10pt;
+    font-size: 13px;
     font-weight: 400;
     font-family: "Open Sans", sans-serif;
     line-height: 80%;

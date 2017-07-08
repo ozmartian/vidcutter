@@ -70,8 +70,11 @@ class VideoToolBar(QToolBar):
         elif label_type == 'under':
             self.parent.underLabelsAction.setChecked(True)
             self.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
+            labels = ['Open', 'Play', 'Start', 'End', 'Save', 'n/a', 'n/a']
+            i = 0
             for button in self.findChildren(QToolButton):
-                button.setText(button.text().replace('\n', ' '))
+                button.setText(labels[i])
+                i += 1
         elif label_type == 'none':
             self.parent.noLabelsAction.setChecked(True)
             self.setToolButtonStyle(Qt.ToolButtonIconOnly)

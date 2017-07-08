@@ -26,34 +26,35 @@ import os
 import time
 
 from PyQt5.QtCore import pyqtSlot, Qt, QFileInfo, QTimer, QUrl
-from PyQt5.QtGui import QDesktopServices, QIcon
-from PyQt5.QtWidgets import qApp, QDialog, QDialogButtonBox, QGraphicsDropShadowEffect, QLabel, QPushButton, QVBoxLayout
+from PyQt5.QtGui import QDesktopServices, QIcon, QPixmap
+from PyQt5.QtWidgets import qApp, QDialog, QHBoxLayout, QLabel, QPushButton, QVBoxLayout
 
 
 class Notification(QDialog):
     duration = 10
 
-    def __init__(self, parent=None, f=Qt.Tool | Qt.WindowCloseButtonHint | Qt.WindowStaysOnTopHint):
+    def __init__(self, parent=None, f=Qt.Widget | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint):
         super(Notification, self).__init__(parent, f)
         self.parent = parent
         self.theme = self.parent.theme
-        self.setStyleSheet('QDialog { border: 1px solid #999; }')
-        self.setWindowModality(Qt.NonModal)
-        self.setWindowOpacity(0.0)
         self._title, self._message = '', ''
         self._icons = dict()
+        self.buttons = list()
         self.msgLabel = QLabel(self)
         self.msgLabel.setWordWrap(True)
-        self.dialogButtonBox = QDialogButtonBox(self)
-        layout = QVBoxLayout()
-        layout.setSpacing(2)
-        layout.addWidget(self.msgLabel)
-        layout.addWidget(self.dialogButtonBox)
-        shadow = QGraphicsDropShadowEffect(self)
-        shadow.setColor(Qt.gray)
-        shadow.setBlurRadius(10)
-        shadow.setOffset(2, 2)
-        self.setGraphicsEffect(shadow)
+        logo = QPixmap(82, 82)
+        logo.load(':/images/vidcutter-small.png', 'PNG')
+        logo_label = QLabel(self)
+        logo_label.setPixmap(logo)
+        logo_label.setStyleSheet('margin-left:5px;')
+        self.left_layout = QVBoxLayout()
+        self.left_layout.addWidget(logo_label)
+        self.right_layout = QVBoxLayout()
+        self.right_layout.addWidget(self.msgLabel)
+        layout = QHBoxLayout()
+        layout.setSpacing(5)
+        layout.addLayout(self.left_layout)
+        layout.addLayout(self.right_layout)
         self.setLayout(layout)
 
     @property
@@ -86,21 +87,19 @@ class Notification(QDialog):
     # noinspection PyTypeChecker
     def showEvent(self, event):
         self.msgLabel.setText(self._message)
+        [self.left_layout.addWidget(btn) for btn in self.buttons]
         screen = qApp.desktop().screenNumber(self.parent)
         bottomright = qApp.screens()[screen].availableGeometry().bottomRight()
-        self.setGeometry(bottomright.x() - 405, bottomright.y() - 205, 400, 200)
+        self.setGeometry(bottomright.x() - (459 - 5), bottomright.y() - (156 - 5), 459, 156)
+        print('size: %s' % self.layout().sizeHint())
         QTimer.singleShot(self.duration * 1000, self.close)
-        for step in range(0, 100, 10):
-            self.setWindowOpacity(step / 100)
-            qApp.processEvents()
-            time.sleep(0.05)
         super(Notification, self).showEvent(event)
 
     def closeEvent(self, event):
         for step in range(100, 0, -10):
             self.setWindowOpacity(step / 100)
             qApp.processEvents()
-            time.sleep(0.05)
+            time.sleep(0.1)
         self.done(0)
         super(Notification, self).closeEvent(event)
 
@@ -111,13 +110,13 @@ class JobCompleteNotification(Notification):
         self.setObjectName('genericdialog3')
         # self.setIconPixmap(self.parent.thumbsupIcon.pixmap(150, 144))
         pencolor = '#C681D5' if self.theme == 'dark' else '#642C68'
-        self.title = 'Your new media file is ready!'
+        self.title = 'Your media file is ready!'
         self.message = '''
     <style>
-        h1 {
+        h2 {
             color: %s;
             font-family: "Futura LT", sans-serif;
-            font-weight: 400;
+            font-weight: 500;
             text-align: center;
         }
         table.info {
@@ -138,30 +137,32 @@ class JobCompleteNotification(Notification):
             color: %s;
         }
     </style>
-    <h1>%s</h1>
-    <table class="info" cellpadding="2" cellspacing="0" align="left" width="350">
-        <tr>
-            <td width="20%%" class="label"><b>File:</b></td>
-            <td width="80%%" class="value" nowrap>%s</td>
-        </tr>
-        <tr>
-            <td width="20%%" class="label"><b>Size:</b></td>
-            <td width="80%%" class="value">%s</td>
-        </tr>
-        <tr>
-            <td width="20%%" class="label"><b>Length:</b></td>
-            <td width="80%%" class="value">%s</td>
-        </tr>
-    </table>''' % (pencolor, pencolor, ('#EFF0F1' if self.theme == 'dark' else '#222'), self._title,
-                   os.path.basename(self.parent.finalFilename),
-                   self.parent.sizeof_fmt(int(QFileInfo(self.parent.finalFilename).size())),
-                   self.parent.delta2QTime(self.parent.totalRuntime).toString(self.parent.runtimeformat))
+    <div style="margin:20px 10px 0;">
+        <h2>%s</h2>
+        <table class="info" cellpadding="2" cellspacing="0" align="left">
+            <tr>
+                <td width="20%%" class="label"><b>File:</b></td>
+                <td width="80%%" class="value" nowrap>%s</td>
+            </tr>
+            <tr>
+                <td width="20%%" class="label"><b>Size:</b></td>
+                <td width="80%%" class="value">%s</td>
+            </tr>
+            <tr>
+                <td width="20%%" class="label"><b>Length:</b></td>
+                <td width="80%%" class="value">%s</td>
+            </tr>
+        </table>
+    </div>''' % (pencolor, pencolor, ('#EFF0F1' if self.theme == 'dark' else '#222'), self._title,
+                 os.path.basename(self.parent.finalFilename),
+                 self.parent.sizeof_fmt(int(QFileInfo(self.parent.finalFilename).size())),
+                 self.parent.delta2QTime(self.parent.totalRuntime).toString(self.parent.runtimeformat))
         self.icons = {
             'play': QIcon(':/images/%s/complete-play.png' % self.theme)
         }
         playButton = QPushButton(self.icons['play'], 'Play', self)
         playButton.clicked.connect(self.playMedia)
-        self.dialogButtonBox.addButton(playButton, QDialogButtonBox.ActionRole)
+        self.buttons.append(playButton)
 
     @pyqtSlot()
     def playMedia(self) -> None:

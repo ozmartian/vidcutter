@@ -1101,7 +1101,7 @@ class VideoCutter(QWidget):
                 index = self.clipTimes.index(clip)
                 progval += interval
                 self.progress.updateProgress(progval, 'Cutting media clips [%s / %s]...'
-                                             % ('{0:0>2}'.format(index), '{0:0>2}'.format(clips)))
+                                             % ('{0:0>2}'.format(index + 1), '{0:0>2}'.format(clips)))
                 qApp.processEvents()
                 duration = self.delta2QTime(clip[0].msecsTo(clip[1])).toString(self.timeformat)
                 filename = '%s_%s%s' % (file, '{0:0>2}'.format(index), ext)
@@ -1129,7 +1129,6 @@ class VideoCutter(QWidget):
                 QFile.rename(filename, self.finalFilename)
             self.progress.updateProgress(100, 'Complete...')
             qApp.processEvents()
-            time.sleep(1)
             qApp.restoreOverrideCursor()
             notify = JobCompleteNotification(self)
             notify.finished.connect(lambda: self.progress.done(0))
@@ -1190,11 +1189,7 @@ class VideoCutter(QWidget):
         self.progress = VCProgressBar(self)
         self.progress.setRange(0, 100)
         self.progress.show()
-        self.progress.updateProgress(25, 'Analyzing source video...')
-        # for i in range(steps):
-        #     self.progress.setValue(i)
-        #     qApp.processEvents()
-        #     time.sleep(5)
+        self.progress.updateProgress(20, 'Analyzing source video...')
 
     @staticmethod
     def sizeof_fmt(num: float, suffix: chr = 'B') -> str:
