@@ -5,7 +5,6 @@ Priority: optional
 Build-Depends: dh-python, python3-setuptools, python3-all, python3-dev, libmpv-dev, debhelper (>= 9)
 Standards-Version: 3.9.8
 Homepage: http://vidcutter.ozmartians.com
-X-Python3-Version: >= 3.2
 
 Package: vidcutter
 Architecture: all
