@@ -48,7 +48,7 @@ class VideoConsole(QTextEdit):
     def __getattr__(self, item):
         return getattr(self._buffer, item)
 
-    
+
 class ConsoleWidget(QDialog):
     def __init__(self, parent=None):
         super(ConsoleWidget, self).__init__(parent)

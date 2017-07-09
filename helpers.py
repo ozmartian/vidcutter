@@ -84,7 +84,7 @@ class SetupHelpers:
 
     @staticmethod
     def pip_notes():
-        os.system('cls') if sys.platform == 'win32' else os.system('clear')
+        os.system('cls' if sys.platform == 'win32' else 'clear')
         pydoc.pager('''
     If installing via PyPi (Python Pip) then you need to know that VidCutter
     depends on the following packages, grouped by distro. Install using your
