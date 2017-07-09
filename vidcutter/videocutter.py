@@ -401,7 +401,7 @@ class VideoCutter(QWidget):
         novideoLayout = QVBoxLayout()
         novideoLayout.addStretch(1)
         novideoLayout.addWidget(self.novideoLabel)
-        novideoLayout.addSpacing(50)
+        novideoLayout.addSpacing(95)
         self.novideoWidget.setLayout(novideoLayout)
 
     def initIcons(self) -> None:
