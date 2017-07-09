@@ -201,6 +201,10 @@ class VCProgressBar(QDialog):
         self.setValue(value)
         self.setText(text)
 
+    @pyqtSlot()
+    def close(self):
+        super(VCProgressBar, self).close()
+
 
 class VolumeSlider(QSlider):
     def __init__(self, parent=None, **kwargs):

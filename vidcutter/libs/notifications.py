@@ -33,10 +33,12 @@ from PyQt5.QtWidgets import qApp, QDialog, QHBoxLayout, QLabel, QPushButton, QVB
 class Notification(QDialog):
     duration = 10
 
-    def __init__(self, parent=None, f=Qt.Widget | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint):
+    def __init__(self, parent=None, f=Qt.ToolTip | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint):
         super(Notification, self).__init__(parent, f)
         self.parent = parent
         self.theme = self.parent.theme
+        self.setObjectName('notification')
+        self.setMinimumWidth(450)
         self._title, self._message = '', ''
         self._icons = dict()
         self.buttons = list()
@@ -46,15 +48,16 @@ class Notification(QDialog):
         logo.load(':/images/vidcutter-small.png', 'PNG')
         logo_label = QLabel(self)
         logo_label.setPixmap(logo)
-        logo_label.setStyleSheet('margin-left:5px;')
         self.left_layout = QVBoxLayout()
         self.left_layout.addWidget(logo_label)
         self.right_layout = QVBoxLayout()
         self.right_layout.addWidget(self.msgLabel)
         layout = QHBoxLayout()
-        layout.setSpacing(5)
+        layout.addStretch(1)
         layout.addLayout(self.left_layout)
+        layout.addSpacing(10)
         layout.addLayout(self.right_layout)
+        layout.addStretch(1)
         self.setLayout(layout)
 
     @property
@@ -90,8 +93,7 @@ class Notification(QDialog):
         [self.left_layout.addWidget(btn) for btn in self.buttons]
         screen = qApp.desktop().screenNumber(self.parent)
         bottomright = qApp.screens()[screen].availableGeometry().bottomRight()
-        self.setGeometry(bottomright.x() - (459 - 5), bottomright.y() - (156 - 5), 459, 156)
-        print('size: %s' % self.layout().sizeHint())
+        self.setGeometry(bottomright.x() - (459 + 5), bottomright.y() - (156 + 10), 459, 156)
         QTimer.singleShot(self.duration * 1000, self.close)
         super(Notification, self).showEvent(event)
 
@@ -99,7 +101,7 @@ class Notification(QDialog):
         for step in range(100, 0, -10):
             self.setWindowOpacity(step / 100)
             qApp.processEvents()
-            time.sleep(0.1)
+            time.sleep(0.2)
         self.done(0)
         super(Notification, self).closeEvent(event)
 
@@ -107,7 +109,6 @@ class Notification(QDialog):
 class JobCompleteNotification(Notification):
     def __init__(self, parent=None):
         super(JobCompleteNotification, self).__init__(parent)
-        self.setObjectName('genericdialog3')
         # self.setIconPixmap(self.parent.thumbsupIcon.pixmap(150, 144))
         pencolor = '#C681D5' if self.theme == 'dark' else '#642C68'
         self.title = 'Your media file is ready!'
@@ -139,7 +140,7 @@ class JobCompleteNotification(Notification):
     </style>
     <div style="margin:20px 10px 0;">
         <h2>%s</h2>
-        <table class="info" cellpadding="2" cellspacing="0" align="left">
+        <table class="info" cellpadding="2" cellspacing="0" align="left" width="315">
             <tr>
                 <td width="20%%" class="label"><b>File:</b></td>
                 <td width="80%%" class="value" nowrap>%s</td>
@@ -161,7 +162,9 @@ class JobCompleteNotification(Notification):
             'play': QIcon(':/images/%s/complete-play.png' % self.theme)
         }
         playButton = QPushButton(self.icons['play'], 'Play', self)
+        playButton.setFixedWidth(82)
         playButton.clicked.connect(self.playMedia)
+        playButton.setIcon(self.icons['play'])
         self.buttons.append(playButton)
 
     @pyqtSlot()

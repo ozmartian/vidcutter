@@ -95,3 +95,5 @@ class VideoInfo(QDialog):
             layout.addWidget(buttons)
 
         self.setLayout(layout)
+
+        print('%s\n%s' % (self.parent.mpvWidget.property('video-codec'), self.parent.mpvWidget.property('video-format')))

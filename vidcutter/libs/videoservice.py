@@ -111,6 +111,10 @@ class VideoService(QObject):
                     capres = QPixmap(imagecap, 'JPG')
         return capres
 
+    def validate(self, source: str) -> bool:
+        isValid = False
+        return isValid
+
     def cut(self, source: str, output: str, frametime: str, duration: str, allstreams: bool = True) -> bool:
         if allstreams:
             args = '-i "%s" -ss %s -t %s -vcodec copy -acodec copy -scodec copy -map 0 -v 16 -y "%s"' \

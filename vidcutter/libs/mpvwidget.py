@@ -133,7 +133,7 @@ class mpvWidget(QOpenGLWidget):
     def setLogLevel(self, loglevel: mpv.LogLevels):
         self.mpv.set_log_level(loglevel)
 
-    def showText(self, msg: str, duration: int, level: int = None):
+    def showText(self, msg: str, duration: int=5, level: int=0):
         self.mpv.command('show-text', msg, duration * 1000, level)
 
     def play(self, filepath) -> None:
@@ -159,32 +159,19 @@ class mpvWidget(QOpenGLWidget):
     def volume(self, vol: int) -> None:
         self.mpv.set_property('volume', vol)
 
+    def property(self, prop: str):
+        return self.mpv.get_property(prop)
+
     def _exitFullScreen(self) -> None:
         self.showNormal()
         self.setParent(self.originalParent)
         self.parent.toggleFullscreen()
 
-    # def changeEvent(self, event: QEvent) -> None:
-    #     if event.type() == QEvent.WindowStateChange and self.isFullScreen():
-    #         fullscreen_note = QDialog(None, flags=Qt.FramelessWindowHint | Qt.WindowStaysOnBottomHint)
-    #         fullscreen_note.setStyleSheet('''
-    #             background: rgba(0, 0, 0, 100);
-    #             color: #EEFF01;
-    #             font-size: 72px;
-    #             font-family: "Futura Hv", sans-serif;
-    #         ''')
-    #         fullscreen_layout = QHBoxLayout()
-    #         fullscreen_layout.addStretch(1)
-    #         fullscreen_layout.addWidget(QLabel('Press ESC, F or doubleclick the mouse to exit fullscreen',
-    #                                            fullscreen_note))
-    #         fullscreen_layout.addStretch(1)
-    #         width = qApp.screens()[qApp.desktop().screenNumber(self.parent)].geometry().width()
-    #         fullscreen_note.setGeometry(qApp.desktop().screenGeometry().topLeft().x(),
-    #                                     qApp.desktop().screenGeometry().topRight().y(), width, 200)
-    #         fullscreen_note.setLayout(fullscreen_layout)
-    #         fullscreen_note.show()
-    #         fullscreen_note.raise_()
-    #         QTimer.singleShot(5000, self.close)
+    def changeEvent(self, event: QEvent) -> None:
+        if event.type() == QEvent.WindowStateChange and self.isFullScreen():
+            self.mpv.set_option('osd-align-x', 'center')
+            self.showText('Press ESC key to exit full screen')
+            QTimer.singleShot(6500, lambda: self.mpv.set_option('osd-align-x', 'left'))
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
         if self.isFullScreen():

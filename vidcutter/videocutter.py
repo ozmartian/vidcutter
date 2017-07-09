@@ -30,7 +30,7 @@ import time
 from datetime import timedelta
 
 from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTextStream,
-                          QTime, QUrl)
+                          QTime, QTimer, QUrl)
 from PyQt5.QtGui import QCloseEvent, QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMovie, QPixmap
 from PyQt5.QtWidgets import (QAction, QActionGroup, qApp, QApplication, QDialogButtonBox, QDoubleSpinBox, QFileDialog,
                              QGroupBox, QHBoxLayout, QLabel, QListWidgetItem, QMenu, QMessageBox, QPushButton,
@@ -468,9 +468,9 @@ class VideoCutter(QWidget):
                                   statusTip='Play media file', enabled=False)
         self.pauseAction = QAction(self.pauseIcon, 'Pause\nMedia', self, visible=False, triggered=self.playMedia,
                                    statusTip='Pause currently playing media')
-        self.cutStartAction = QAction(self.cutStartIcon, 'Clip\nStart', self, triggered=self.clipStart, enabled=False,
+        self.cutStartAction = QAction(self.cutStartIcon, 'Start\nClip', self, triggered=self.clipStart, enabled=False,
                                       statusTip='Set the start position of a new clip')
-        self.cutEndAction = QAction(self.cutEndIcon, 'Clip\nEnd', self, triggered=self.clipEnd,
+        self.cutEndAction = QAction(self.cutEndIcon, 'End\nClip', self, triggered=self.clipEnd,
                                     enabled=False, statusTip='Set the end position of a new clip')
         self.saveAction = QAction(self.saveIcon, 'Save\nMedia', self, triggered=self.cutMedia, enabled=False,
                                   statusTip='Save clips to a new media file')
@@ -1094,9 +1094,9 @@ class VideoCutter(QWidget):
                 self.finalFilename += ext
             qApp.setOverrideCursor(Qt.WaitCursor)
             self.saveAction.setDisabled(True)
-            self.showProgress(clips)
+            interval = round(100 / (clips + (2 if clips == 1 else 3)))  # analysis + clipcount + joining + complete
+            self.showProgress(interval)
             progval = self.progress.value()
-            interval = (75 - progval) / clips
             for clip in self.clipTimes:
                 index = self.clipTimes.index(clip)
                 progval += interval
@@ -1128,11 +1128,11 @@ class VideoCutter(QWidget):
                 QFile.remove(self.finalFilename)
                 QFile.rename(filename, self.finalFilename)
             self.progress.updateProgress(100, 'Complete...')
+            QTimer.singleShot(1000, self.progress.close)
             qApp.processEvents()
             qApp.restoreOverrideCursor()
             self.saveAction.setEnabled(True)
             notify = JobCompleteNotification(self)
-            notify.finished.connect(lambda: self.progress.done(0))
             notify.exec_()
             return True
         return False
@@ -1186,11 +1186,11 @@ class VideoCutter(QWidget):
         appInfo = About(self)
         appInfo.exec_()
 
-    def showProgress(self, steps: int) -> None:
+    def showProgress(self, interval: int) -> None:
         self.progress = VCProgressBar(self)
         self.progress.setRange(0, 100)
         self.progress.show()
-        self.progress.updateProgress(20, 'Analyzing source video...')
+        self.progress.updateProgress(interval, 'Analyzing source video...')
 
     @staticmethod
     def sizeof_fmt(num: float, suffix: chr = 'B') -> str:
