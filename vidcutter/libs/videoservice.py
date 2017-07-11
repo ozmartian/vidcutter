@@ -30,7 +30,7 @@ import sys
 from distutils.spawn import find_executable
 from enum import Enum
 
-from PyQt5.QtCore import pyqtSlot, QDir, QFileInfo, QObject, QProcess, QProcessEnvironment, QSize, QTemporaryFile
+from PyQt5.QtCore import pyqtSlot, QDir, QFile, QFileInfo, QObject, QProcess, QProcessEnvironment, QSize, QTemporaryFile
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QMessageBox
 
@@ -91,7 +91,7 @@ class VideoService(QObject):
         return p
 
     @staticmethod
-    def capture(source: str, frametime: str, thumbsize: ThumbSize = ThumbSize.INDEX) -> QPixmap:
+    def capture(source: str, frametime: str, thumbsize: ThumbSize=ThumbSize.INDEX) -> QPixmap:
         capres = QPixmap()
         img = QTemporaryFile(os.path.join(QDir.tempPath(), 'XXXXXX.jpg'))
         if img.open():
@@ -111,11 +111,11 @@ class VideoService(QObject):
                     capres = QPixmap(imagecap, 'JPG')
         return capres
 
-    def validate(self, source: str) -> bool:
-        isValid = False
-        return isValid
+    # def validate(self, source: str) -> bool:
+    #     isValid = False
+    #     return isValid
 
-    def cut(self, source: str, output: str, frametime: str, duration: str, allstreams: bool = True) -> bool:
+    def cut(self, source: str, output: str, frametime: str, duration: str, allstreams: bool=True) -> bool:
         if allstreams:
             args = '-i "%s" -ss %s -t %s -vcodec copy -acodec copy -scodec copy -map 0 -v 16 -y "%s"' \
                    % (source, frametime, duration, QDir.fromNativeSeparators(output))
@@ -124,7 +124,7 @@ class VideoService(QObject):
                    % (source, frametime, duration, QDir.fromNativeSeparators(output))
         return self.cmdExec(self.backend, args)
 
-    def join(self, filelist: str, output: str, allstreams: bool = True) -> bool:
+    def join(self, filelist: str, output: str, allstreams: bool=True) -> bool:
         if allstreams:
             args = '-f concat -safe 0 -i "%s" -c copy -map 0 -v 16 -y "%s"' % (filelist,
                                                                                QDir.fromNativeSeparators(output))
@@ -133,16 +133,56 @@ class VideoService(QObject):
                                                                         QDir.fromNativeSeparators(output))
         return self.cmdExec(self.backend, args)
 
-    def streamcount(self, source: str, stream_type: str = 'audio') -> int:
+    def getBSF(self, mediatype: str) -> str:
+        media_format = self.parent.mpvWidget.format(mediatype)
+        if mediatype == 'video':
+            prefix = '-bsf:v'
+            if media_format == 'hevc':
+                return '%s hevc_mp4toannexb' % prefix
+            elif media_format == 'h264':
+                return '%s h264_mp4toannexb' % prefix
+            elif media_format == 'mpeg4':
+                return '%s mpeg4_unpack_bframes' % prefix
+            elif media_format in {'webm', 'ivf', 'vp9'}:
+                return '%s vp9_superframe' % prefix
+        elif mediatype == 'audio':
+            prefix = '-bsf:a'
+            if media_format == 'aac':
+                return '%s aac_adtstoasc' % prefix
+            elif media_format == 'mp3':
+                return '%s mp3decomp' % prefix
+        return ''
+
+    def mpegtsJoin(self, inputs: list, output: str) -> bool:
+        result = False
+        outfiles = list()
+        # 1. transcode to mpeg transport streams
+        for file in inputs:
+            name, ext = os.path.splitext(file)
+            outfile = '%s.ts' % name
+            outfiles.append(outfile)
+            args = '-i "%s" -c copy -map 0 %s -f mpegts "%s"' % (file, self.getBSF('video'), outfile)
+            if not self.cmdExec(self.backend, args):
+                return result
+        # 2. losslessly concatenate at the file level
+        if len(outfiles):
+            args = '-i "concat:%s" -c copy %s "%s"' % ('|'.join(map(str, outfiles)),
+                                                       self.getBSF('audio'), QDir.fromNativeSeparators(output))
+            result = self.cmdExec(self.backend, args)
+            # 3. cleanup mpegts files
+            [QFile.remove(file) for file in outfiles]
+        return result
+
+    def streamcount(self, source: str, stream_type: str='audio') -> int:
         m = re.findall('\n^%s' % stream_type.title(), self.metadata(source, stream_type), re.MULTILINE)
         return len(m)
 
-    def metadata(self, source: str, output: str = 'HTML') -> str:
+    def metadata(self, source: str, output: str='HTML') -> str:
         args = '--output=%s "%s"' % (output, source)
         result = self.cmdExec(self.mediainfo, args, True)
         return result.strip()
 
-    def cmdExec(self, cmd: str, args: str = None, output: bool = False):
+    def cmdExec(self, cmd: str, args: str=None, output: bool=False):
         if os.getenv('DEBUG', False):
             self.logger.info('"%s %s"' % (cmd, args if args is not None else ''))
         if self.proc.state() == QProcess.NotRunning:
@@ -163,20 +203,9 @@ class VideoService(QObject):
                                  '<h4>%s Error:</h4>' % self.backend +
                                  '<p>%s</p>' % self.proc.errorString(), buttons=QMessageBox.Close)
 
+    # noinspection PyUnresolvedReferences, PyProtectedMember
     @staticmethod
     def getAppPath() -> str:
         if VideoService.frozen:
-            # noinspection PyProtectedMember
             return sys._MEIPASS
         return QFileInfo(__file__).absolutePath()
-
-    # @staticmethod
-    # def streams(source: str) -> dict:
-    #     mediainfo = MediaInfo.parse(source).to_data().get('tracks')
-    #     return {
-    #         'general': [general for general in mediainfo if general['track_type'] == 'General'],
-    #         'video': [video for video in mediainfo if video['track_type'] == 'Video'],
-    #         'audio': [audio for audio in mediainfo if audio['track_type'] == 'Audio'],
-    #         'text': [text for text in mediainfo if text['track_type'] == 'Text'],
-    #         'other': [other for other in mediainfo if other['track_type'] == 'Other'],
-    #     }

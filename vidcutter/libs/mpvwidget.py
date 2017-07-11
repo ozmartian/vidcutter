@@ -159,6 +159,12 @@ class mpvWidget(QOpenGLWidget):
     def volume(self, vol: int) -> None:
         self.mpv.set_property('volume', vol)
 
+    def codec(self, type: str='video') -> str:
+        return self.mpv.get_property('audio-codec' if type == 'audio' else 'video-codec')
+
+    def format(self, type: str='video') -> str:
+        return self.mpv.get_property('audio-codec-name' if type == 'audio' else 'video-format')
+
     def property(self, prop: str):
         return self.mpv.get_property(prop)
 

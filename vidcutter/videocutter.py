@@ -1116,7 +1116,12 @@ class VideoCutter(QWidget):
                                           allstreams=False)
                 index += 1
             if len(filelist) > 1:
-                rc = self.joinMedia(filelist, self.finalFilename, True)
+                rc = False
+                if self.isMPEGcodec():
+                    self.logger.info('file is MPEG based thus join() via mpegts file based protocol')
+                    rc = self.videoService.mpegtsJoin(filelist, self.finalFilename)
+                if not rc or not QFile(self.finalFilename).size():
+                    rc = self.joinMedia(filelist, self.finalFilename, True)
                 if not rc or not QFile(self.finalFilename).size():
                     self.logger.info('join() resulted in 0 length file, trying again without all stream mapping')
                     self.joinMedia(filelist, self.finalFilename, False)
@@ -1146,6 +1151,10 @@ class VideoCutter(QWidget):
         result = self.videoService.join(listfile, filename, allstreams)
         QFile.remove(listfile)
         return result
+
+    def isMPEGcodec(self) -> bool:
+        mpegCodecList = ['h264', 'hevc', 'mpeg4', 'divx', 'xvid', 'mpeg2video', 'mpg2', 'mp2', 'mp3', 'aac']
+        return self.mpvWidget.format().lower() in mpegCodecList
 
     @pyqtSlot()
     def mediaInfo(self) -> None:
