@@ -27,6 +27,10 @@ sudo: required
 python: '3.5'
 git:
   depth: 3
+branches:
+  only:
+  - master
+  - /^feature\/.*$/
 
 before_install:
   - sudo add-apt-repository ppa:mc3man/testing6 -y
