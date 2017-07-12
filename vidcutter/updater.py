@@ -77,14 +77,14 @@ class Updater(QWidget):
 
 
 class UpdaterMsgBox(QDialog):
-    def __init__(self, parent=None, theme: str='light', title: str='Application updates', f=Qt.WindowCloseButtonHint):
+    def __init__(self, parent=None, theme: str='light', title: str='Checking for updates', f=Qt.WindowCloseButtonHint):
         super(UpdaterMsgBox, self).__init__(parent, f)
         self.parent = parent
         self.theme = theme
         self.setWindowTitle(title)
         self.setObjectName('updaterdialog')
         self.loading = VCProgressBar(self.parent)
-        self.loading.setText('contacting server...')
+        self.loading.setText('contacting server')
         self.loading.setMinimumWidth(485)
         self.loading.show()
 
@@ -104,29 +104,43 @@ class UpdaterMsgBox(QDialog):
             h1 {
                 text-align: center;
                 color: %s;
-                font-family: 'Futura LT', sans-serif;
+                font-family: "Futura LT", sans-serif;
                 font-weight: 400;
             }
             div {
                 border: 1px solid #999;
                 color: %s;
             }
-            p {
+            table {
                 color: %s;
                 font-size: 15px;
+                margin: 10px 0 0 0;
             }
-            b { color: %s; }
+            td.label {
+                font-family: "Futura LT", san-serif;
+                text-align: right;
+            }
+            td.value {
+                font-family: "Open Sans", sans-serif;
+                color: %s;
+                font-weight: 500;
+            }
         </style>''' % (pencolor1, pencolor2, pencolor2, pencolor1)
         if update_available:
             content += '<h1>A new version is available!</h1>'
         else:
             content += '<h1>You are already running the latest version</h1>'
         content += '''
-            <p align="center">
-                latest: <b>%s</b>
-                <br/>
-                installed: <b>%s</b>
-            </p>''' % (str(latest), str(current))
+            <table border="0" cellpadding="2" cellspacing="0" align="center">
+                <tr>
+                    <td class="label">latest:</td>
+                    <td class="value">%s</td>
+                </tr>
+                <tr>
+                    <td class="label">installed:</td>
+                    <td class="value">%s</td>
+                </tr>
+            </table>''' % (str(latest), str(current))
         if update_available and sys.platform.startswith('linux'):
             content += '''<div style="font-size: 12px; padding: 2px 10px; margin:10px 5px;">
                 Linux users should always install via their distribution's package manager.

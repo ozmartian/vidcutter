@@ -35,7 +35,6 @@ class VideoList(QListWidget):
         super(VideoList, self).__init__(parent)
         self.parent = parent
         self.theme = self.parent.theme
-        self.itemPressed.connect(lambda item: self.parent.seekSlider.selectRegion(self.row(item)))
         self.setMouseTracking(True)
         self.setDropIndicatorShown(True)
         self.setFixedWidth(190)

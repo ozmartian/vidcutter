@@ -86,7 +86,7 @@ class SetupHelpers:
     def pip_notes():
         os.system('cls' if sys.platform == 'win32' else 'clear')
         pydoc.pager('''
-    If installing via PyPi (Python Pip) then you need to know that VidCutter
+    If installing via PyPi (Python Pip) on Linux then you need to know that VidCutter
     depends on the following packages, grouped by distro. Install using your
     Linux software packager for a noticeably better integrated experience. 
     
@@ -112,14 +112,18 @@ class SetupHelpers:
             python3-opengl ffmpeg mediainfo 
 
     You need to build a Python extension module before you can run the
-    app directly from the source code. This is all handled automatically
-    by the package installers by the setuptools install script. If you
-    wish to simply run the app direct from source without having to 
-    install it (i.e. python3 setup.py install) you can do so by building
-    the extension module with the following setuptools command, run from
-    the root source folder:
+    app directly from source code. This is done for you automatically by
+    the package installers but if you wish to simply run the app direct
+    from source without having to install it (i.e. python3 setup.py install)
+    you can do so by building the extension module with the following
+    setuptools command, run from the top-most extracted source code folder:
 
         $ python3 setup.py build_ext -i
+        
+    And to then run the app directly from source, from the same top-most
+    source code folder:
+    
+        $ python3 -m vidcutter (append --debug if needed)
         
     Make sure you build the extension module AFTER installing the
     dependencies covered above, in particular libmpv and the mpv + python3

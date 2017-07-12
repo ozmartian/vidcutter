@@ -29,8 +29,8 @@ import sys
 import time
 from datetime import timedelta
 
-from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTextStream,
-                          QTime, QTimer, QUrl)
+from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, QStandardPaths, Qt,
+                          QTextStream, QTime, QTimer, QUrl)
 from PyQt5.QtGui import QCloseEvent, QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMovie, QPixmap
 from PyQt5.QtWidgets import (QAction, QActionGroup, qApp, QApplication, QDialogButtonBox, QDoubleSpinBox, QFileDialog,
                              QGroupBox, QHBoxLayout, QLabel, QListWidgetItem, QMenu, QMessageBox, QPushButton,
@@ -46,7 +46,7 @@ from vidcutter.videotoolbar import VideoToolBar
 
 from vidcutter.libs.mpvwidget import mpvWidget
 from vidcutter.libs.notifications import JobCompleteNotification
-from vidcutter.libs.taskbarprogress import TaskbarProgress
+# from vidcutter.libs.taskbarprogress import TaskbarProgress
 from vidcutter.libs.videoservice import VideoService
 from vidcutter.libs.widgets import FrameCounter, TimeCounter, VCProgressBar, VolumeSlider
 
@@ -67,11 +67,11 @@ class VideoCutter(QWidget):
         self.parent = parent
         self.theme = self.parent.theme
         self.settings = self.parent.settings
-        self.init_theme()
+        self.initTheme()
 
         self.videoService = VideoService(self)
         self.updater = Updater(self)
-        self.taskbarControl = TaskbarProgress(self)
+        # self.taskbarControl = TaskbarProgress(self)
 
         self.latest_release_url = 'https://github.com/ozmartian/vidcutter/releases/latest'
         self.ffmpeg_installer = {
@@ -126,7 +126,7 @@ class VideoCutter(QWidget):
 
         self.cliplist = VideoList(self)
         self.cliplist.customContextMenuRequested.connect(self.itemMenu)
-        self.cliplist.itemClicked.connect(self.positionAtClip)
+        self.cliplist.itemClicked.connect(self.selectClip)
         self.cliplist.model().rowsMoved.connect(self.syncClipList)
 
         listHeader = QLabel(self)
@@ -138,8 +138,9 @@ class VideoCutter(QWidget):
         self.runtimeLabel.setObjectName('runtimeLabel')
 
         self.clipindex_add = QPushButton('ADD', self)
-        self.clipindex_add.setToolTip('Add')
-        self.clipindex_add.setStatusTip('Add external clips to the clip index')
+        self.clipindex_add.clicked.connect(self.addExternalClip)
+        self.clipindex_add.setToolTip('Add external media')
+        self.clipindex_add.setStatusTip('Add external media to the clip index')
         self.clipindex_add.setCursor(Qt.PointingHandCursor)
         self.clipindex_remove = QPushButton('REMOVE', self)
         self.clipindex_remove.setToolTip('Remove')
@@ -349,13 +350,26 @@ class VideoCutter(QWidget):
         mbox.addButton(QMessageBox.Ok)
         sys.exit(mbox.exec_())
 
-    def init_theme(self) -> None:
+    def initTheme(self) -> None:
         qApp.setStyle(VideoStyleDark() if self.theme == 'dark' else VideoStyleLight())
         QFontDatabase.addApplicationFont(':/fonts/FuturaLT.ttf')
         QFontDatabase.addApplicationFont(':/fonts/OpenSans.ttf')
         QFontDatabase.addApplicationFont(':/fonts/OpenSansBold.ttf')
         self.style().loadQSS(self.theme, self.parent.devmode)
         QApplication.setFont(QFont('Open Sans', 12 if sys.platform == 'darwin' else 10, 300))
+        if sys.platform.startswith('linux'):
+            try:
+                fontsdir = QStandardPaths.writableLocation(QStandardPaths.FontsLocation)
+                for font in {'FuturaLT.ttf', 'OpenSans.ttf', 'OpenSansBold.ttf'}:
+                    if not QStandardPaths.locate(QStandardPaths.FontsLocation, font):
+                        fontfile = QFile(':/fonts/%s' % font)
+                        copiedfile = os.path.join(fontsdir, font)
+                        fontfile.copy(copiedfile)
+                        if os.name == 'posix':
+                            QFile.setPermissions(copiedfile, QFile.WriteOwner | QFile.ReadOwner |
+                                                 QFile.ReadGroup | QFile.ReadOther)
+            except:
+                pass
 
     def initMPV(self) -> None:
         self.mpvWidget = mpvWidget(
@@ -380,7 +394,6 @@ class VideoCutter(QWidget):
             video_sync='display-vdrop',
             audio_file_auto=False,
             quiet=True,
-            # terminal=True,
             msg_level=('all=v' if os.getenv('DEBUG', False) else 'error'),
             volume=self.parent.startupvol,
             keepaspect=self.keepRatioAction.isChecked(),
@@ -399,9 +412,9 @@ class VideoCutter(QWidget):
         self.novideoMovie.frameChanged.connect(lambda: self.novideoLabel.setPixmap(self.novideoMovie.currentPixmap()))
         self.novideoMovie.start()
         novideoLayout = QVBoxLayout()
-        novideoLayout.addStretch(1)
+        novideoLayout.addStretch(3)
         novideoLayout.addWidget(self.novideoLabel)
-        novideoLayout.addSpacing(95)
+        novideoLayout.addStretch(1)
         self.novideoWidget.setLayout(novideoLayout)
 
     def initIcons(self) -> None:
@@ -472,7 +485,7 @@ class VideoCutter(QWidget):
                                       statusTip='Set the start position of a new clip')
         self.cutEndAction = QAction(self.cutEndIcon, 'End\nClip', self, triggered=self.clipEnd,
                                     enabled=False, statusTip='Set the end position of a new clip')
-        self.saveAction = QAction(self.saveIcon, 'Save\nMedia', self, triggered=self.cutMedia, enabled=False,
+        self.saveAction = QAction(self.saveIcon, 'Save\nMedia', self, triggered=self.saveMedia, enabled=False,
                                   statusTip='Save clips to a new media file')
         self.moveItemUpAction = QAction(self.upIcon, 'Move up', self, statusTip='Move clip position up in list',
                                         triggered=self.moveItemUp, enabled=False)
@@ -720,7 +733,7 @@ class VideoCutter(QWidget):
             return 'VidCutter Project (*.vcp);;All files (*.*)'
 
     @staticmethod
-    def mediaFilters() -> str:
+    def mediaFilters(mediatype: str=None) -> str:
         all_types = 'All media files (*.3gp, *.3g2, *.amv, * .avi, *.divx, *.div, *.flv, *.f4v, *.webm, *.mkv, ' + \
                     '*.mp3, *.mpa, *.mp1, *.mpeg, *.mpg, *.mpe, *.m1v, *.tod, *.mpv, *.m2v, *.ts, *.m2t, *.m2ts, ' + \
                     '*.mp4, *.m4v, *.mpv4, *.mod, *.mjpg, *.mjpeg, *.mov, *.qt, *.rm, *.rmvb, *.dat, *.bin, *.vob, ' + \
@@ -739,10 +752,13 @@ class VideoCutter(QWidget):
                          'RealMedia files (*.rm, *.rmvb);;VCD DAT files (*.dat);;VCD SVCD BIN/CUE images (*.bin);;' + \
                          'VOB files (*.vob);;Wave Audio files (*.wav);;Windows Media Audio files (*.wma);;' + \
                          'Windows Media files (*.wmv, *.asf, *.asx);;Xvid files (*.xvid)'
-        return '%s;;%s;;%s;;%s;;All files (*.*)' % (all_types, video_types, audio_types, specific_types)
+        if mediatype is None:
+            return '%s;;%s;;%s;;%s;;All files (*.*)' % (all_types, video_types, audio_types, specific_types)
+        elif mediatype == 'video':
+            return '%s;;All files (*.*)' % video_types
 
     def openMedia(self) -> None:
-        filename, _ = QFileDialog.getOpenFileName(self, caption='Select media file', filter=self.mediaFilters(),
+        filename, _ = QFileDialog.getOpenFileName(self, caption='Open media file', filter=self.mediaFilters(),
                                                   directory=QDir.homePath(),
                                                   options=(QFileDialog.DontUseNativeDialog
                                                            if not self.nativeDialogsAction.isChecked()
@@ -753,7 +769,7 @@ class VideoCutter(QWidget):
     def openProject(self, checked: bool = False, project_file: str = None) -> None:
         initialFilter = 'Project files (*.vcp, *.edl)' if self.mediaAvailable else 'VidCutter Project (*.vcp)'
         if project_file is None:
-            project_file, _ = QFileDialog.getOpenFileName(self, caption='Select project file',
+            project_file, _ = QFileDialog.getOpenFileName(self, caption='Open project file',
                                                           filter=self.projectFilters(),
                                                           initialFilter=initialFilter,
                                                           directory=QDir.homePath(),
@@ -796,7 +812,7 @@ class VideoCutter(QWidget):
                             clip_start = self.delta2QTime(int(float(start) * 1000))
                             clip_end = self.delta2QTime(int(float(stop) * 1000))
                             clip_image = self.captureImage(clip_start)
-                            self.clipTimes.append([clip_start, clip_end, clip_image])
+                            self.clipTimes.append([clip_start, clip_end, clip_image, ''])
                         else:
                             qApp.restoreOverrideCursor()
                             QMessageBox.critical(self.parent, 'Invalid project file',
@@ -814,6 +830,13 @@ class VideoCutter(QWidget):
     def saveProject(self, filepath: str) -> None:
         if self.currentMedia is None:
             return
+        for item in self.clipTimes:
+            if len(item[3]):
+                QMessageBox.critical(self.parent, 'Cannot save project',
+                                     'The clip index currently contains at least one external media file which is ' +
+                                     'not supported by current project file standards.\n\nSupport for external media ' +
+                                     'may be added to the VCP (VidCutter Project file) format in the near future.')
+                return
         project_file, _ = os.path.splitext(self.currentMedia)
         project_save, ptype = QFileDialog.getSaveFileName(self, caption='Save project',
                                                           directory='%s.vcp' % project_file,
@@ -825,7 +848,7 @@ class VideoCutter(QWidget):
         if len(project_save.strip()):
             file = QFile(project_save)
             if not file.open(QFile.WriteOnly | QFile.Text):
-                QMessageBox.critical(self.parent, 'Save project',
+                QMessageBox.critical(self.parent, 'Cannot save project',
                                      'Cannot save project file at %s:\n\n%s' % (project_save, file.errorString()))
                 return
             qApp.setOverrideCursor(Qt.WaitCursor)
@@ -870,14 +893,14 @@ class VideoCutter(QWidget):
         self.frameCounter.clearFocus()
         self.mpvWidget.pause()
 
-    def showText(self, text: str, duration: int = 3, override: bool = False) -> None:
+    def showText(self, text: str, duration: int=3, override: bool=False) -> None:
         if self.mediaAvailable:
             if not self.osdButton.isChecked() and not override:
                 return
             if len(text.strip()):
                 self.mpvWidget.showText(text, duration, 0)
 
-    def initMediaControls(self, flag: bool = True) -> None:
+    def initMediaControls(self, flag: bool=True) -> None:
         self.playAction.setEnabled(flag)
         self.saveAction.setEnabled(False)
         self.cutStartAction.setEnabled(flag)
@@ -921,9 +944,11 @@ class VideoCutter(QWidget):
             self.sliderWidget.setLoader(False)
 
     @pyqtSlot(QListWidgetItem)
-    def positionAtClip(self, item: QListWidgetItem) -> None:
-        row = self.cliplist.indexFromItem(item).row()
-        self.setPosition(self.clipTimes[row][0].msecsSinceStartOfDay())
+    def selectClip(self, item: QListWidgetItem) -> None:
+        row = self.cliplist.row(item)
+        if not len(self.clipTimes[row][3]):
+            self.seekSlider.selectRegion(row)
+            self.setPosition(self.clipTimes[row][0].msecsSinceStartOfDay())
 
     def muteAudio(self) -> None:
         if self.mpvWidget.mpv.get_property('mute'):
@@ -986,11 +1011,39 @@ class VideoCutter(QWidget):
             level = 0
         self.mpvWidget.mpv.set_property('video-zoom', level)
 
+    @pyqtSlot()
+    def addExternalClip(self):
+        filename, _ = QFileDialog.getOpenFileName(self, caption='Add external media file', filter=self.mediaFilters(),
+                                                  directory=QDir.homePath(),
+                                                  options=(QFileDialog.DontUseNativeDialog
+                                                           if not self.nativeDialogsAction.isChecked()
+                                                           else QFileDialog.Options()))
+        if len(filename.strip()):
+            if len(self.clipTimes) > 0:
+                lastItem = self.clipTimes[len(self.clipTimes) - 1]
+                file4Test = lastItem[3] if len(lastItem[3]) else self.currentMedia
+                if not self.videoService.testJoin(file4Test, filename):
+                    QMessageBox.critical(self.parent, 'Cannot add media file', 'This media file is not compatible ' +
+                                         'with media already in your clip index.\n\nExternal media files must ' +
+                                         'already be set in the same format as your clip index media files. Audio ' +
+                                         'and video codecs as well as frame sizing, or video dimensions, are the ' +
+                                         'main properties used here. And more obviously, different file extensions ' +
+                                         'to your source media is a dead giveaway as to being incompatible.\n\nYou' +
+                                         'can still achieve this type of join using traditional video editors ' +
+                                         'like OpenShot, Kdenlive, ShotCut, or Adobe Premiere, that will re-encode ' +
+                                         'all media to be compatible. This is a lengthy process that VidCutter will ' +
+                                         'never likely support, the tools for that are already out there in numbers.')
+                    return
+            self.clipTimes.append([QTime(0, 0), self.videoService.duration(filename),
+                                   VideoService.capture(filename, '00:00:00.000', external=True), filename])
+            self.showText('external media added to clip index')
+            self.renderTimes()
+
     def clipStart(self) -> None:
         # if os.getenv('DEBUG', False):
         #     sys.stdout.write('cut start position: %s' % self.seekSlider.value())
         starttime = self.delta2QTime(self.seekSlider.value())
-        self.clipTimes.append([starttime, '', self.captureImage(starttime)])
+        self.clipTimes.append([starttime, '', self.captureImage(starttime), ''])
         self.timeCounter.setMinimum(starttime.toString(self.timeformat))
         self.frameCounter.lockMinimum()
         self.cutStartAction.setDisabled(True)
@@ -1075,77 +1128,81 @@ class VideoCutter(QWidget):
     def captureImage(self, frametime: QTime) -> QPixmap:
         return VideoService.capture(self.currentMedia, frametime.toString(self.timeformat))
 
-    def cutMedia(self) -> bool:
+    def saveMedia(self) -> bool:
         clips = len(self.clipTimes)
         filename, filelist = '', []
-        source_file, source_ext = os.path.splitext(self.currentMedia)
+        suggestedFilename, source_ext = '', ''
+        if self.currentMedia is not None:
+            source_file, source_ext = os.path.splitext(self.currentMedia)
+            suggestedFilename = '%s_EDIT%s' % (source_file, source_ext)
+            filefilter = 'Video files (*%s)' % source_ext
+        else:
+            firstitem = self.clipTimes[0]
+            if len(firstitem[3]):
+                _, source_ext = os.path.splitext(firstitem[3])
+            filefilter = self.mediaFilters('video')
         if clips > 0:
             self.finalFilename, _ = QFileDialog.getSaveFileName(parent=self, caption='Save video',
-                                                                directory='%s_EDIT%s' % (source_file, source_ext),
-                                                                filter='Video files (*%s)' % source_ext,
+                                                                directory=suggestedFilename, filter=filefilter,
                                                                 options=(QFileDialog.DontUseNativeDialog
                                                                          if not self.nativeDialogsAction.isChecked()
                                                                          else QFileDialog.Options()))
             if not len(self.finalFilename.strip()):
                 return False
             file, ext = os.path.splitext(self.finalFilename)
-            if len(ext) == 0:
-                ext = source_ext
-                self.finalFilename += ext
+            if len(ext) == 0 and len(source_ext):
+                self.finalFilename += source_ext
             qApp.setOverrideCursor(Qt.WaitCursor)
             self.saveAction.setDisabled(True)
-            interval = round(100 / (clips + (2 if clips == 1 else 3)))  # analysis + clipcount + joining + complete
-            self.showProgress(interval)
-            progval = self.progress.value()
+            steps = clips + (1 if clips == 1 else 2)
+            self.showProgress(steps)
             for clip in self.clipTimes:
                 index = self.clipTimes.index(clip)
-                progval += interval
-                self.progress.updateProgress(progval, 'Cutting media clips [%s / %s]...'
-                                             % ('{0:0>2}'.format(index + 1), '{0:0>2}'.format(clips)))
-                qApp.processEvents()
-                duration = self.delta2QTime(clip[0].msecsTo(clip[1])).toString(self.timeformat)
-                filename = '%s_%s%s' % (file, '{0:0>2}'.format(index), ext)
-                filelist.append(filename)
-                self.videoService.cut(source='%s%s' % (source_file, source_ext), output=filename,
-                                      frametime=clip[0].toString(self.timeformat), duration=duration,
-                                      allstreams=True)
-                if QFile(filename).size() < 1000:
-                    self.logger.info('cut resulted in 0 length file, trying again without all stream mapping')
+                if len(clip[3]):
+                    filelist.append(clip[3])
+                else:
+                    self.progress.updateProgress(self.progress.value() + 1, 'Cutting media clips [%s / %s]'
+                                                 % ('{0:0>2}'.format(index + 1), '{0:0>2}'.format(clips)))
+                    duration = self.delta2QTime(clip[0].msecsTo(clip[1])).toString(self.timeformat)
+                    filename = '%s_%s%s' % (file, '{0:0>2}'.format(index), source_ext)
+                    filelist.append(filename)
                     self.videoService.cut(source='%s%s' % (source_file, source_ext), output=filename,
                                           frametime=clip[0].toString(self.timeformat), duration=duration,
-                                          allstreams=False)
-                index += 1
+                                          allstreams=True)
+                    if QFile(filename).size() < 1000:
+                        self.logger.info('cut resulted in 0 length file, trying again without all stream mapping')
+                        self.videoService.cut(source='%s%s' % (source_file, source_ext), output=filename,
+                                              frametime=clip[0].toString(self.timeformat), duration=duration,
+                                              allstreams=False)
             if len(filelist) > 1:
-                rc = self.joinMedia(filelist, self.finalFilename, True)
-                if not rc or not QFile(self.finalFilename).size():
+                self.progress.updateProgress(self.progress.value() + 1, 'Joining media clips')
+                rc = False
+                if self.videoService.isMPEGcodec(filelist[0]):
+                    self.logger.info('file is MPEG based thus join() via mpegts file protocol method')
+                    rc = self.videoService.mpegtsJoin(filelist, self.finalFilename)
+                    if not rc:
+                        self.logger.info('mpegts file protocol join() failed, will retry using standard concat')
+                if not rc or QFile(self.finalFilename).size() < 1000:
+                    rc = self.videoService.join(filelist, self.finalFilename, True)
+                if not rc or QFile(self.finalFilename).size() < 1000:
                     self.logger.info('join() resulted in 0 length file, trying again without all stream mapping')
-                    self.joinMedia(filelist, self.finalFilename, False)
+                    self.videoService.join(filelist, self.finalFilename, False)
                 if not self.keepClipsAction.isChecked():
                     for f in filelist:
-                        if os.path.isfile(f):
+                        clip = self.clipTimes[filelist.index(f)]
+                        if not len(clip[3]) and os.path.isfile(f):
                             QFile.remove(f)
             else:
                 QFile.remove(self.finalFilename)
                 QFile.rename(filename, self.finalFilename)
-            self.progress.updateProgress(100, 'Complete...')
+            self.progress.updateProgress(self.progress.value() + 1, 'Complete')
             QTimer.singleShot(1000, self.progress.close)
-            qApp.processEvents()
             qApp.restoreOverrideCursor()
             self.saveAction.setEnabled(True)
             notify = JobCompleteNotification(self)
-            notify.exec_()
+            notify.show()
             return True
         return False
-
-    def joinMedia(self, joinlist: list, filename: str, allstreams: bool = True) -> bool:
-        listfile = os.path.normpath(os.path.join(os.path.dirname(joinlist[0]), '.vidcutter.list'))
-        fobj = open(listfile, 'w')
-        for file in joinlist:
-            fobj.write('file \'%s\'\n' % file.replace("'", "\\'"))
-        fobj.close()
-        result = self.videoService.join(listfile, filename, allstreams)
-        QFile.remove(listfile)
-        return result
 
     @pyqtSlot()
     def mediaInfo(self) -> None:
@@ -1186,11 +1243,11 @@ class VideoCutter(QWidget):
         appInfo = About(self)
         appInfo.exec_()
 
-    def showProgress(self, interval: int) -> None:
+    def showProgress(self, steps: int) -> None:
         self.progress = VCProgressBar(self)
-        self.progress.setRange(0, 100)
+        self.progress.setRange(0, steps)
         self.progress.show()
-        self.progress.updateProgress(interval, 'Analyzing source video...')
+        self.progress.updateProgress(0, 'Analyzing video source')
 
     @staticmethod
     def sizeof_fmt(num: float, suffix: chr = 'B') -> str:

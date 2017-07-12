@@ -347,8 +347,13 @@ VCProgressBar {
 VCProgressBar QLabel {
     font-family: "Futura LT", sans-serif;
     font-size: 15px;
-    font-weight: 500;
+    font-weight: 400;
     color: #FFF;
+}
+
+VCProgressBar QProgressBar::chunk {
+    background-color: #642C68;
+    margin: 1px;
 }
 
 /* -------------------------------------------------------------------------- */

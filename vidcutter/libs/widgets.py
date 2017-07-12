@@ -23,7 +23,7 @@
 #######################################################################
 
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, QPoint, Qt, QTime
-from PyQt5.QtWidgets import (QAbstractSpinBox, QDialog, QGridLayout, QHBoxLayout, QLabel, QProgressBar, QSlider,
+from PyQt5.QtWidgets import (qApp, QAbstractSpinBox, QDialog, QGridLayout, QHBoxLayout, QLabel, QProgressBar, QSlider,
                              QSpinBox, QStyle, QStyleFactory, QStyleOptionSlider, QTimeEdit, QToolTip, QWidget)
 
 
@@ -200,6 +200,7 @@ class VCProgressBar(QDialog):
     def updateProgress(self, value: int, text: str) -> None:
         self.setValue(value)
         self.setText(text)
+        qApp.processEvents()
 
     @pyqtSlot()
     def close(self):

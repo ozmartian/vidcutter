@@ -30,13 +30,17 @@ import sys
 from distutils.spawn import find_executable
 from enum import Enum
 
-from PyQt5.QtCore import pyqtSlot, QDir, QFileInfo, QObject, QProcess, QProcessEnvironment, QSize, QTemporaryFile
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtCore import (pyqtSlot, QDir, QFile, QFileInfo, QObject, QProcess, QProcessEnvironment, QSize,
+                          QTemporaryFile, QTime)
+from PyQt5.QtGui import QPainter, QPixmap
 from PyQt5.QtWidgets import QMessageBox
 
 
 class VideoService(QObject):
     frozen = getattr(sys, 'frozen', False)
+
+    mpegCodecs = {'h264', 'hevc', 'mpeg4', 'divx', 'xvid', 'webm', 'ivf', 'vp9', 'mpeg2video', 'mpg2',
+                     'mp2', 'mp3', 'aac'}
 
     utils = {
         'nt': {
@@ -52,6 +56,11 @@ class VideoService(QObject):
     class ThumbSize(Enum):
         INDEX = QSize(100, 70)
         TIMELINE = QSize(80, 60)
+
+    class Stream(Enum):
+        AUDIO = 0
+        VIDEO = 1
+        SUBTITLE = 2
 
     def __init__(self, parent=None):
         super(VideoService, self).__init__(parent)
@@ -91,7 +100,7 @@ class VideoService(QObject):
         return p
 
     @staticmethod
-    def capture(source: str, frametime: str, thumbsize: ThumbSize = ThumbSize.INDEX) -> QPixmap:
+    def capture(source: str, frametime: str, thumbsize: ThumbSize=ThumbSize.INDEX, external: bool=False) -> QPixmap:
         capres = QPixmap()
         img = QTemporaryFile(os.path.join(QDir.tempPath(), 'XXXXXX.jpg'))
         if img.open():
@@ -109,13 +118,54 @@ class VideoService(QObject):
                 proc.waitForFinished(-1)
                 if proc.exitStatus() == QProcess.NormalExit and proc.exitCode() == 0:
                     capres = QPixmap(imagecap, 'JPG')
+                if external:
+                    painter = QPainter(capres)
+                    painter.drawPixmap(0, 0, QPixmap(':/images/external.png', 'PNG'))
+                    painter.end()
         return capres
 
-    def validate(self, source: str) -> bool:
-        isValid = False
-        return isValid
+    def testJoin(self, file1: str, file2: str) -> bool:
+        result = False
+        # try:
+        # 1. generate temporary file handles
+        _, ext = os.path.splitext(file1)
+        file1_cut = QTemporaryFile(os.path.join(QDir.tempPath(), 'XXXXXX%s' % ext))
+        file2_cut = QTemporaryFile(os.path.join(QDir.tempPath(), 'XXXXXX%s' % ext))
+        final_join = QTemporaryFile(os.path.join(QDir.tempPath(), 'XXXXXX%s' % ext))
+        # 2. produce 2 sec long clips from input files
+        if file1_cut.open() and file2_cut.open() and final_join.open():
+            result1 = self.cut(file1, file1_cut.fileName(), '00:00:00.000', '00:00:02.00', False)
+            result2 = self.cut(file2, file2_cut.fileName(), '00:00:00.000', '00:00:02.00', False)
+            if result1 and result2:
+                # 3. attempt join using two supported methods
+                if self.isMPEGcodec(file1_cut.fileName()) and self.isMPEGcodec(file2_cut.fileName()):
+                    result = self.mpegtsJoin([file1_cut.fileName(), file2_cut.fileName()], final_join.fileName())
+                    if not result:
+                        result = self.join([file1_cut.fileName(), file2_cut.fileName()],
+                                           final_join.fileName(), False)
+        file1_cut.remove()
+        file2_cut.remove()
+        final_join.remove()
+        # except:
+        #     pass
+        return result
 
-    def cut(self, source: str, output: str, frametime: str, duration: str, allstreams: bool = True) -> bool:
+    def duration(self, source: str) -> QTime:
+        args = '-i "%s" -hide_banner' % source
+        result = self.cmdExec(self.backend, args, True)
+        matches = re.search(r'Duration:\s{1}(?P<hrs>\d+?):(?P<mins>\d+?):(?P<secs>\d+\.\d+?),',
+                            result, re.DOTALL).groupdict()
+        secs, msecs = matches['secs'].split('.')
+        return QTime(int(matches['hrs']), int(matches['mins']), int(secs), int(msecs))
+
+    def codecs(self, source: str) -> tuple:
+        args = '-i "%s" -hide_banner' % source
+        result = self.cmdExec(self.backend, args, True)
+        vcodec = re.search(r'Stream.*Video: (\w+)', result).group(1)
+        acodec = re.search(r'Stream.*Audio: (\w+)', result).group(1)
+        return vcodec, acodec
+
+    def cut(self, source: str, output: str, frametime: str, duration: str, allstreams: bool=True) -> bool:
         if allstreams:
             args = '-i "%s" -ss %s -t %s -vcodec copy -acodec copy -scodec copy -map 0 -v 16 -y "%s"' \
                    % (source, frametime, duration, QDir.fromNativeSeparators(output))
@@ -124,25 +174,76 @@ class VideoService(QObject):
                    % (source, frametime, duration, QDir.fromNativeSeparators(output))
         return self.cmdExec(self.backend, args)
 
-    def join(self, filelist: str, output: str, allstreams: bool = True) -> bool:
+    def join(self, inputs: list, output: str, allstreams: bool=True) -> bool:
+        filelist = os.path.normpath(os.path.join(os.path.dirname(inputs[0]), '_vidcutter.list'))
+        fobj = open(filelist, 'w')
+        [fobj.write('file \'%s\'\n' % file.replace("'", "\\'")) for file in inputs]
+        fobj.close()
         if allstreams:
             args = '-f concat -safe 0 -i "%s" -c copy -map 0 -v 16 -y "%s"' % (filelist,
                                                                                QDir.fromNativeSeparators(output))
         else:
             args = '-f concat -safe 0 -i "%s" -c copy -v 16 -y "%s"' % (filelist,
                                                                         QDir.fromNativeSeparators(output))
-        return self.cmdExec(self.backend, args)
+        result = self.cmdExec(self.backend, args)
+        os.remove(filelist)
+        return result
 
-    def streamcount(self, source: str, stream_type: str = 'audio') -> int:
-        m = re.findall('\n^%s' % stream_type.title(), self.metadata(source, stream_type), re.MULTILINE)
-        return len(m)
+    def getBSF(self, source: str) -> tuple:
+        vbsf, absf = '', ''
+        vcodec, acodec = self.codecs(source)
+        if vcodec:
+            prefix = '-bsf:v'
+            if vcodec == 'hevc':
+                vbsf = '%s hevc_mp4toannexb' % prefix
+            elif vcodec == 'h264':
+                vbsf = '%s h264_mp4toannexb' % prefix
+            elif vcodec == 'mpeg4':
+                vbsf = '%s mpeg4_unpack_bframes' % prefix
+            elif vcodec in {'webm', 'ivf', 'vp9'}:
+                vbsf = '%s vp9_superframe' % prefix
+        if acodec:
+            prefix = '-bsf:a'
+            if acodec == 'aac':
+                absf = '%s aac_adtstoasc' % prefix
+            elif acodec == 'mp3':
+                absf = '%s mp3decomp' % prefix
+        return vbsf, absf
 
-    def metadata(self, source: str, output: str = 'HTML') -> str:
+    def isMPEGcodec(self, source: str) -> bool:
+        return self.codecs(source)[0].lower() in self.mpegCodecs
+
+    def mpegtsJoin(self, inputs: list, output: str) -> bool:
+        result = False
+        outfiles = list()
+        video_bsf, audio_bsf = self.getBSF(inputs[0])
+        # 1. transcode to mpeg transport streams
+        for file in inputs:
+            name, _ = os.path.splitext(file)
+            outfile = '%s.ts' % name
+            outfiles.append(outfile)
+            if os.path.isfile(outfile):
+                os.remove(outfile)
+            args = '-i "%s" -c copy -map 0 %s -f mpegts -v 16 "%s"' % (file, video_bsf, outfile)
+            if not self.cmdExec(self.backend, args):
+                return result
+        # 2. losslessly concatenate at the file level
+        if len(outfiles):
+            if os.path.isfile(output):
+                os.remove(output)
+            args = '-i "concat:%s" -c copy %s -v 16 "%s"' % ('|'.join(map(str, outfiles)), audio_bsf,
+                                                             QDir.fromNativeSeparators(output))
+            result = self.cmdExec(self.backend, args)
+            # 3. cleanup mpegts files
+            [QFile.remove(file) for file in outfiles]
+        return result
+
+    def metadata(self, source: str, output: str='HTML') -> str:
         args = '--output=%s "%s"' % (output, source)
         result = self.cmdExec(self.mediainfo, args, True)
         return result.strip()
 
-    def cmdExec(self, cmd: str, args: str = None, output: bool = False):
+    def cmdExec(self, cmd: str, args: str=None, output: bool=False):
         if os.getenv('DEBUG', False):
             self.logger.info('"%s %s"' % (cmd, args if args is not None else ''))
         if self.proc.state() == QProcess.NotRunning:
@@ -163,20 +264,13 @@ class VideoService(QObject):
                                  '<h4>%s Error:</h4>' % self.backend +
                                  '<p>%s</p>' % self.proc.errorString(), buttons=QMessageBox.Close)
 
+    # noinspection PyUnresolvedReferences, PyProtectedMember
     @staticmethod
     def getAppPath() -> str:
         if VideoService.frozen:
-            # noinspection PyProtectedMember
             return sys._MEIPASS
         return QFileInfo(__file__).absolutePath()
 
-    # @staticmethod
-    # def streams(source: str) -> dict:
-    #     mediainfo = MediaInfo.parse(source).to_data().get('tracks')
-    #     return {
-    #         'general': [general for general in mediainfo if general['track_type'] == 'General'],
-    #         'video': [video for video in mediainfo if video['track_type'] == 'Video'],
-    #         'audio': [audio for audio in mediainfo if audio['track_type'] == 'Audio'],
-    #         'text': [text for text in mediainfo if text['track_type'] == 'Text'],
-    #         'other': [other for other in mediainfo if other['track_type'] == 'Other'],
-    #     }
+    # def streamcount(self, source: str, stream: Stream=Stream.AUDIO) -> int:
+    #     m = re.findall('\n^%s' % stream_type.title(), self.metadata(source, stream_type), re.MULTILINE)
+    #     return len(m)
