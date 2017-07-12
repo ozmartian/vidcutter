@@ -156,12 +156,6 @@ QLabel#logowidget {
 
 /* -------------------------------------------------------------------------- */
 
-QMenu::item:disabled {
-    color: rgba(125, 125, 125, 0.5)
-}
-
-/* -------------------------------------------------------------------------- */
-
 QGroupBox#counterwidgets {
     border: none;
     background-color: #000;
@@ -230,6 +224,12 @@ QPushButton#muteButton, QPushButton#menuButton, QPushButton#fullscreenButton {
     font-size: 11px;
     font-family: 'Futura LT', sans-serif;
     border-radius: 0;
+}
+
+/* -------------------------------------------------------------------------- */
+
+QMenu::item:disabled, #clipindextools QPushButton:disabled {
+    color: rgba(125, 125, 125, 0.5);
 }
 
 /* -------------------------------------------------------------------------- */

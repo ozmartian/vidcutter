@@ -905,6 +905,7 @@ class VideoCutter(QWidget):
         self.saveAction.setEnabled(False)
         self.cutStartAction.setEnabled(flag)
         self.cutEndAction.setEnabled(False)
+        self.clipindex_add.setEnabled(flag)
         self.mediaInfoAction.setEnabled(flag)
         self.keepRatioAction.setEnabled(flag)
         self.zoomAction.setEnabled(flag)
@@ -1048,6 +1049,7 @@ class VideoCutter(QWidget):
         self.frameCounter.lockMinimum()
         self.cutStartAction.setDisabled(True)
         self.cutEndAction.setEnabled(True)
+        self.clipindex_add.setDisabled(True)
         self.seekSlider.setRestrictValue(self.seekSlider.value(), True)
         self.inCut = True
         self.showText('start clip at %s' % starttime.toString(self.timeformat))
@@ -1065,6 +1067,7 @@ class VideoCutter(QWidget):
         item[1] = endtime
         self.cutStartAction.setEnabled(True)
         self.cutEndAction.setDisabled(True)
+        self.clipindex_add.setEnabled(True)
         self.timeCounter.setMinimum()
         self.seekSlider.setRestrictValue(0, False)
         self.inCut = False
@@ -1356,6 +1359,8 @@ class VideoCutter(QWidget):
                 self.toggleFullscreen()
             elif event.key() == Qt.Key_Left:
                 self.mpvWidget.frameBackStep()
+                self.playAction.setVisible(True)
+                self.pauseAction.setVisible(False)
             elif event.key() == Qt.Key_Down:
                 if qApp.queryKeyboardModifiers() == Qt.ShiftModifier:
                     self.mpvWidget.seek(-self.level2_spinner.value(), 'relative+exact')
@@ -1363,6 +1368,8 @@ class VideoCutter(QWidget):
                     self.mpvWidget.seek(-self.level1_spinner.value(), 'relative+exact')
             elif event.key() == Qt.Key_Right:
                 self.mpvWidget.frameStep()
+                self.playAction.setVisible(True)
+                self.pauseAction.setVisible(False)
             elif event.key() == Qt.Key_Up:
                 if qApp.queryKeyboardModifiers() == Qt.ShiftModifier:
                     self.mpvWidget.seek(self.level2_spinner.value(), 'relative+exact')
