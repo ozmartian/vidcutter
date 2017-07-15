@@ -105,6 +105,10 @@ class VideoCutter(QWidget):
         self.timelineThumbs = self.settings.value('timelineThumbs', 'on', type=str) in {'on', 'true'}
         self.hideConsole = self.settings.value('hideConsole', 'on', type=str) in {'on', 'true'}
 
+        self.lastFolder = self.settings.value('lastFolder', QDir.homePath(), type=str)
+        if not os.path.exists(self.lastFolder):
+            self.lastFolder = QDir.homePath()
+
         self.edlblock_re = re.compile(r'(\d+(?:\.?\d+)?)\s(\d+(?:\.?\d+)?)\s([01])')
 
         self.level1_spinner, self.level2_spinner = QDoubleSpinBox(self), QDoubleSpinBox(self)
@@ -759,11 +763,13 @@ class VideoCutter(QWidget):
 
     def openMedia(self) -> None:
         filename, _ = QFileDialog.getOpenFileName(self, caption='Open media file', filter=self.mediaFilters(),
-                                                  directory=QDir.homePath(),
+                                                  directory=(self.lastFolder if os.path.exists(self.lastFolder)
+                                                             else QDir.homePath()),
                                                   options=(QFileDialog.DontUseNativeDialog
                                                            if not self.nativeDialogsAction.isChecked()
                                                            else QFileDialog.Options()))
         if len(filename.strip()):
+            self.lastFolder = QFileInfo(filename).absolutePath()
             self.loadMedia(filename)
 
     def openProject(self, checked: bool = False, project_file: str = None) -> None:
@@ -772,11 +778,13 @@ class VideoCutter(QWidget):
             project_file, _ = QFileDialog.getOpenFileName(self, caption='Open project file',
                                                           filter=self.projectFilters(),
                                                           initialFilter=initialFilter,
-                                                          directory=QDir.homePath(),
+                                                          directory=(self.lastFolder if os.path.exists(self.lastFolder)
+                                                                     else QDir.homePath()),
                                                           options=(QFileDialog.DontUseNativeDialog
                                                                    if not self.nativeDialogsAction.isChecked()
                                                                    else QFileDialog.Options()))
         if len(project_file.strip()):
+            self.lastFolder = QFileInfo(project_file).absolutePath()
             file = QFile(project_file)
             info = QFileInfo(file)
             project_type = info.suffix()
@@ -1015,7 +1023,8 @@ class VideoCutter(QWidget):
     @pyqtSlot()
     def addExternalClip(self):
         filename, _ = QFileDialog.getOpenFileName(self, caption='Add external media file', filter=self.mediaFilters(),
-                                                  directory=QDir.homePath(),
+                                                  directory=(self.lastFolder if os.path.exists(self.lastFolder)
+                                                             else QDir.homePath()),
                                                   options=(QFileDialog.DontUseNativeDialog
                                                            if not self.nativeDialogsAction.isChecked()
                                                            else QFileDialog.Options()))
@@ -1025,6 +1034,7 @@ class VideoCutter(QWidget):
                                 'out now.\n\nUse the ADD button to add other media, in the same video format, to ' +
                                 'your clip index.')
         elif len(filename.strip()):
+            self.lastFolder = QFileInfo(filename).absolutePath()
             if len(self.clipTimes) > 0:
                 lastItem = self.clipTimes[len(self.clipTimes) - 1]
                 file4Test = lastItem[3] if len(lastItem[3]) else self.currentMedia
@@ -1157,6 +1167,7 @@ class VideoCutter(QWidget):
             file, ext = os.path.splitext(self.finalFilename)
             if len(ext) == 0 and len(source_ext):
                 self.finalFilename += source_ext
+            self.lastFolder = QFileInfo(self.finalFilename).absoluteFilePath()
             qApp.setOverrideCursor(Qt.WaitCursor)
             self.saveAction.setDisabled(True)
             steps = clips + (1 if clips == 1 else 2)
