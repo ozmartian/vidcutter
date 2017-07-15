@@ -1170,7 +1170,7 @@ class VideoCutter(QWidget):
             file, ext = os.path.splitext(self.finalFilename)
             if len(ext) == 0 and len(source_ext):
                 self.finalFilename += source_ext
-            self.lastFolder = QFileInfo(self.finalFilename).absoluteFilePath()
+            self.lastFolder = QFileInfo(self.finalFilename).absolutePath()
             qApp.setOverrideCursor(Qt.WaitCursor)
             self.saveAction.setDisabled(True)
             steps = clips + (1 if clips == 1 else 2)
