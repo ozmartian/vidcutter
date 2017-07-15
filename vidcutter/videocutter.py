@@ -1039,16 +1039,19 @@ class VideoCutter(QWidget):
                 lastItem = self.clipTimes[len(self.clipTimes) - 1]
                 file4Test = lastItem[3] if len(lastItem[3]) else self.currentMedia
                 if not self.videoService.testJoin(file4Test, filename):
-                    QMessageBox.critical(self.parent, 'Cannot add media file', 'This media file is not compatible ' +
-                                         'with media already in your clip index.\n\nExternal media files must ' +
-                                         'already be set in the same format as your clip index media files. Audio ' +
-                                         'and video codecs as well as frame sizing, or video dimensions, are the ' +
-                                         'main properties used here. And more obviously, different file extensions ' +
-                                         'to your source media is a dead giveaway as to being incompatible.\n\nYou' +
-                                         'can still achieve this type of join using traditional video editors ' +
-                                         'like OpenShot, Kdenlive, ShotCut, or Adobe Premiere, that will re-encode ' +
-                                         'all media to be compatible. This is a lengthy process that VidCutter will ' +
-                                         'never likely support, the tools for that are already out there in numbers.')
+                    if len(self.videoService.lastError):
+                        QMessageBox.critical(self.parent, 'Cannot add media file', self.videoService.lastError)
+                        self.videoService.lastError = ''
+                    else:
+                        errormsg = 'This media file is not compatible with media already in your clip index.\n\n' + \
+                                   'External media files must already be set to the same frame size and audio + ' + \
+                                   'video format as files already in your clip index. An obvious first check is ' + \
+                                   'checking file extensions and media properties.\n\nYou can still achieve this ' + \
+                                   'type of join using traditional video editors like OpenShot, Kdenlive, ShotCut, ' + \
+                                   'or Adobe Premiere, that will re-encode all files so that they are compatible ' + \
+                                   'to join. This can be a time consuming process that VidCutter was not designed ' + \
+                                   'to support since the tools for that are already available for you.'
+                        QMessageBox.critical(self.parent, 'Cannot add media file', errormsg)
                     return
             self.clipTimes.append([QTime(0, 0), self.videoService.duration(filename),
                                    VideoService.capture(filename, '00:00:00.000', external=True), filename])
@@ -1109,13 +1112,13 @@ class VideoCutter(QWidget):
                 endItem = clip[1].toString(self.timeformat)
                 self.totalRuntime += clip[0].msecsTo(clip[1])
             listitem = QListWidgetItem()
-            listitem.setToolTip('Drag clip to reorder')
+            listitem.setToolTip('Drag to reorder clips' if not len(clip[3]) else clip[3])
             listitem.setStatusTip('Reorder clips with drag and drop or right-click menu')
             listitem.setTextAlignment(Qt.AlignVCenter)
             listitem.setData(Qt.DecorationRole + 1, clip[2])
             listitem.setData(Qt.DisplayRole + 1, clip[0].toString(self.timeformat))
             listitem.setData(Qt.UserRole + 1, endItem)
-            listitem.setData(Qt.EditRole + 1, clip[3])
+            listitem.setData(Qt.UserRole + 2, clip[3])
             listitem.setFlags(Qt.ItemIsSelectable | Qt.ItemIsDragEnabled | Qt.ItemIsEnabled)
             self.cliplist.addItem(listitem)
             if isinstance(clip[1], QTime) and not len(clip[3]):
@@ -1157,7 +1160,7 @@ class VideoCutter(QWidget):
                 _, source_ext = os.path.splitext(firstitem[3])
             filefilter = self.mediaFilters('video')
         if clips > 0:
-            self.finalFilename, _ = QFileDialog.getSaveFileName(parent=self, caption='Save video',
+            self.finalFilename, _ = QFileDialog.getSaveFileName(parent=self, caption='Save media',
                                                                 directory=suggestedFilename, filter=filefilter,
                                                                 options=(QFileDialog.DontUseNativeDialog
                                                                          if not self.nativeDialogsAction.isChecked()
@@ -1194,10 +1197,10 @@ class VideoCutter(QWidget):
                 self.progress.updateProgress(self.progress.value() + 1, 'Joining media clips')
                 rc = False
                 if self.videoService.isMPEGcodec(filelist[0]):
-                    self.logger.info('file is MPEG based thus join() via mpegts file protocol method')
+                    self.logger.info('file is MPEG based thus join via mpegts file protocol method')
                     rc = self.videoService.mpegtsJoin(filelist, self.finalFilename)
                     if not rc:
-                        self.logger.info('mpegts file protocol join() failed, will retry using standard concat')
+                        self.logger.info('mpegts based join failed, will retry using standard concat')
                 if not rc or QFile(self.finalFilename).size() < 1000:
                     rc = self.videoService.join(filelist, self.finalFilename, True)
                 if not rc or QFile(self.finalFilename).size() < 1000:
@@ -1304,8 +1307,8 @@ class VideoCutter(QWidget):
                     p { font-size: 15px; }
                 </style>
                 <h1>Warning</h1>
-                <p>The application needs to be restarted in order to switch the theme. Ensure you have saved
-                your project and no tasks are still in progress.</p>
+                <p>The application needs to be restarted in order to switch themes. Ensure you have saved
+                your project or finished any cut ror join tasks in progress.</p>
                 <p>Would you like to restart and switch themes now?</p>'''
                          % ('#C681D5' if self.theme == 'dark' else '#642C68'))
             mbox.setStandardButtons(QMessageBox.Yes | QMessageBox.No)

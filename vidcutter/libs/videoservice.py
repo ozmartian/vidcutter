@@ -70,6 +70,7 @@ class VideoService(QObject):
         if self.backend is not None:
             self.proc = VideoService.initProc()
             self.proc.errorOccurred.connect(self.cmdError)
+            self.lastError = ''
 
     @staticmethod
     def initBackends() -> tuple:
@@ -128,17 +129,25 @@ class VideoService(QObject):
         result = False
         self.logger.info('attempting to test joining of "%s" + "%s"' % (file1, file2))
         try:
-            # 1. generate temporary file handles
+            # 1. check frame sizes are equal before attempting any further testing
+            size1 = self.framesize(file1)
+            size2 = self.framesize(file2)
+            if size1 != size2:
+                self.lastError = '<p>The frame size of this media file differs to the files in your clip index.</p>' + \
+                                 '<ul><li>Current files are <b>%sx%s</b><li><li>New file is <b>%sx%s</b></li></ul>' \
+                                 % (size1.width(), size1.height(), size2.width(), size2.height())
+                return result
+            # 2. generate temporary file handles
             _, ext = os.path.splitext(file1)
             file1_cut = QTemporaryFile(os.path.join(QDir.tempPath(), 'XXXXXX%s' % ext))
             file2_cut = QTemporaryFile(os.path.join(QDir.tempPath(), 'XXXXXX%s' % ext))
             final_join = QTemporaryFile(os.path.join(QDir.tempPath(), 'XXXXXX%s' % ext))
-            # 2. produce 2 sec long clips from input files
+            # 3. produce 2 sec long clips from input files
             if file1_cut.open() and file2_cut.open() and final_join.open():
                 result1 = self.cut(file1, file1_cut.fileName(), '00:00:00.000', '00:00:02.00', False)
                 result2 = self.cut(file2, file2_cut.fileName(), '00:00:00.000', '00:00:02.00', False)
                 if result1 and result2:
-                    # 3. attempt join using two supported methods
+                    # 4. attempt join using two supported methods
                     if self.isMPEGcodec(file1_cut.fileName()) and self.isMPEGcodec(file2_cut.fileName()):
                         result = self.mpegtsJoin([file1_cut.fileName(), file2_cut.fileName()], final_join.fileName())
                         if not result:
@@ -151,6 +160,13 @@ class VideoService(QObject):
             self.logger.exception('Exception in VideoService.testJoin()', exc_info=True)
             result = False
         return result
+
+    def framesize(self, source: str) -> QSize:
+        args = '-i "%s" -hide_banner' % source
+        result = self.cmdExec(self.backend, args, True)
+        matches = re.search(r'Stream.*Video:.*[,\s](?P<width>\d+?)x(?P<height>\d+?)[,\s]',
+                            result, re.DOTALL).groupdict()
+        return QSize(int(matches['width']), int(matches['height']))
 
     def duration(self, source: str) -> QTime:
         args = '-i "%s" -hide_banner' % source

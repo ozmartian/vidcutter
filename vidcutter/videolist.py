@@ -25,7 +25,7 @@
 import os
 import sys
 
-from PyQt5.QtCore import pyqtSlot, QModelIndex, Qt, QSize
+from PyQt5.QtCore import QModelIndex, Qt, QSize
 from PyQt5.QtGui import QPainter, QColor, QIcon, QPen, QFont, QMouseEvent
 from PyQt5.QtWidgets import (QAbstractItemDelegate, QAbstractItemView, QListWidget, QSizePolicy, QStyle,
                              QStyleOptionViewItem)
@@ -89,7 +89,7 @@ class VideoItem(QAbstractItemDelegate):
         thumb = QIcon(index.data(Qt.DecorationRole + 1))
         starttime = index.data(Qt.DisplayRole + 1)
         endtime = index.data(Qt.UserRole + 1)
-        externalPath = index.data(Qt.EditRole + 1)
+        externalPath = index.data(Qt.UserRole + 2)
         r = option.rect.adjusted(5, 0, 0, 0)
         thumb.paint(painter, r, Qt.AlignVCenter | Qt.AlignLeft)
         painter.setPen(QPen(pencolor, 1, Qt.SolidLine))
@@ -116,7 +116,7 @@ class VideoItem(QAbstractItemDelegate):
 
     def clipText(self, text: str, painter: QPainter) -> str:
         metrics = painter.fontMetrics()
-        return metrics.elidedText(text, Qt.ElideRight, self.parent.width())
+        return metrics.elidedText(text, Qt.ElideRight, (self.parent.width() - 100 - 10))
 
     def sizeHint(self, option: QStyleOptionViewItem, index: QModelIndex) -> QSize:
         return QSize(185, 85)
