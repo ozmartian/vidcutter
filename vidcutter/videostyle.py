@@ -28,41 +28,68 @@ import sys
 
 from PyQt5.QtCore import QFile, QFileInfo, Qt, QTextStream
 from PyQt5.QtGui import QColor, QPalette
-from PyQt5.QtWidgets import qApp, QCommonStyle, QStyle, QStyleFactory
+from PyQt5.QtWidgets import qApp, QStyle
 
+try:
+    from PyQt5.QtWidgets import QProxyStyle
 
-class VideoStyle(QCommonStyle):
-    # workaround for earlier version of PyQt5 when QProxyStyle did not exist
-    def __init__(self):
-        self._style = QStyleFactory.create(qApp.style().objectName())
-        for method in ['drawComplexControl', 'drawControl', 'drawPrimitive', 'drawItemPixmap', 'generatedIconPixmap',
-                       'hitTestComplexControl', 'layoutSpacing', 'pixelMetric', 'polish', 'sizeFromContents',
-                       'standardPixmap', 'subControlRect', 'subElementRect', 'unpolish', 'itemPixmapRect',
-                       'itemTextRect', 'styleHint', 'drawItemText']:
-            target = getattr(self._style, method)
-            setattr(self, method, functools.partial(target))
-        super().__init__()
+    class VideoStyle(QProxyStyle):
+        # noinspection PyMethodOverriding
+        def styleHint(self, hint, option, widget, returnData) -> int:
+            if hint == QStyle.SH_UnderlineShortcut:
+                return 0
+            return super(VideoStyle, self).styleHint(hint, option, widget, returnData)
 
-    # noinspection PyMethodOverriding
-    def styleHint(self, hint, option, widget, returnData) -> int:
-        if hint == QStyle.SH_UnderlineShortcut:
-            return 0
-        return super(VideoStyle, self).styleHint(hint, option, widget, returnData)
+        @staticmethod
+        def loadQSS(theme, devmode: bool = False) -> str:
+            if devmode:
+                filename = os.path.join(QFileInfo(__file__).absolutePath(), 'vidcutter/styles/%s.qss' % theme)
+            else:
+                filename = ':/styles/%s.qss' % theme
+            if QFileInfo(filename).exists():
+                qssfile = QFile(filename)
+                qssfile.open(QFile.ReadOnly | QFile.Text)
+                content = QTextStream(qssfile).readAll()
+                if sys.platform == 'darwin' and theme == 'dark':
+                    content += 'QComboBox, QHeaderView::section, QMenu::item, QMenu::item:selected { color: #444; }'
+                qApp.setStyleSheet(content)
+                return content
 
-    @staticmethod
-    def loadQSS(theme, devmode: bool = False) -> str:
-        if devmode:
-            filename = os.path.join(QFileInfo(__file__).absolutePath(), 'vidcutter/styles/%s.qss' % theme)
-        else:
-            filename = ':/styles/%s.qss' % theme
-        if QFileInfo(filename).exists():
-            qssfile = QFile(filename)
-            qssfile.open(QFile.ReadOnly | QFile.Text)
-            content = QTextStream(qssfile).readAll()
-            if sys.platform == 'darwin' and theme == 'dark':
-                content += 'QComboBox, QHeaderView::section, QMenu::item, QMenu::item:selected { color: #444; }'
-            qApp.setStyleSheet(content)
-            return content
+except ImportError:
+    from PyQt5.QtWidgets import QCommonStyle, QStyleFactory
+
+    class VideoStyle(QCommonStyle):
+        # workaround for earlier version of PyQt5 when QProxyStyle did not exist
+        def __init__(self):
+            self._style = QStyleFactory.create(qApp.style().objectName())
+            for method in ['drawComplexControl', 'drawControl', 'drawPrimitive', 'drawItemPixmap', 'generatedIconPixmap',
+                           'hitTestComplexControl', 'layoutSpacing', 'pixelMetric', 'polish', 'sizeFromContents',
+                           'standardPixmap', 'subControlRect', 'subElementRect', 'unpolish', 'itemPixmapRect',
+                           'itemTextRect', 'styleHint', 'drawItemText']:
+                target = getattr(self._style, method)
+                setattr(self, method, functools.partial(target))
+            super().__init__()
+
+        # noinspection PyMethodOverriding
+        def styleHint(self, hint, option, widget, returnData) -> int:
+            if hint == QStyle.SH_UnderlineShortcut:
+                return 0
+            return super(VideoStyle, self).styleHint(hint, option, widget, returnData)
+
+        @staticmethod
+        def loadQSS(theme, devmode: bool = False) -> str:
+            if devmode:
+                filename = os.path.join(QFileInfo(__file__).absolutePath(), 'vidcutter/styles/%s.qss' % theme)
+            else:
+                filename = ':/styles/%s.qss' % theme
+            if QFileInfo(filename).exists():
+                qssfile = QFile(filename)
+                qssfile.open(QFile.ReadOnly | QFile.Text)
+                content = QTextStream(qssfile).readAll()
+                if sys.platform == 'darwin' and theme == 'dark':
+                    content += 'QComboBox, QHeaderView::section, QMenu::item, QMenu::item:selected { color: #444; }'
+                qApp.setStyleSheet(content)
+                return content
 
 
 class VideoStyleLight(VideoStyle):

@@ -69,7 +69,8 @@ class VideoService(QObject):
         self.backend, self.mediainfo = VideoService.initBackends()
         if self.backend is not None:
             self.proc = VideoService.initProc()
-            self.proc.errorOccurred.connect(self.cmdError)
+            if hasattr(self.proc, 'errorOccurred'):
+                self.proc.errorOccurred.connect(self.cmdError)
             self.lastError = ''
 
     @staticmethod

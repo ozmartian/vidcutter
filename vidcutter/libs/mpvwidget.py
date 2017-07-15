@@ -5,7 +5,6 @@ import locale
 import logging
 import os
 import sys
-from typing import Optional
 
 # this is required for Ubuntu which seems to
 # have a broken PyQt5 OpenGL implementation
@@ -21,12 +20,21 @@ import sip
 # noinspection PyUnresolvedReferences
 import vidcutter.libs.mpv as mpv
 
+try:
+    from typing import Optional
 
-def get_proc_address(proc) -> Optional[sip.voidptr]:
-    glctx = QGLContext.currentContext()
-    if glctx is None:
-        return None
-    return glctx.getProcAddress(str(proc, 'utf-8'))
+    def get_proc_address(proc) -> Optional[sip.voidptr]:
+        glctx = QGLContext.currentContext()
+        if glctx is None:
+            return None
+        return glctx.getProcAddress(str(proc, 'utf-8'))
+
+except ImportError:
+    def get_proc_address(proc):
+        glctx = QGLContext.currentContext()
+        if glctx is None:
+            return None
+        return glctx.getProcAddress(str(proc, 'utf-8'))
 
 
 class mpvWidget(QOpenGLWidget):
