@@ -126,28 +126,30 @@ class VideoService(QObject):
 
     def testJoin(self, file1: str, file2: str) -> bool:
         result = False
-        # try:
-        # 1. generate temporary file handles
-        _, ext = os.path.splitext(file1)
-        file1_cut = QTemporaryFile(os.path.join(QDir.tempPath(), 'XXXXXX%s' % ext))
-        file2_cut = QTemporaryFile(os.path.join(QDir.tempPath(), 'XXXXXX%s' % ext))
-        final_join = QTemporaryFile(os.path.join(QDir.tempPath(), 'XXXXXX%s' % ext))
-        # 2. produce 2 sec long clips from input files
-        if file1_cut.open() and file2_cut.open() and final_join.open():
-            result1 = self.cut(file1, file1_cut.fileName(), '00:00:00.000', '00:00:02.00', False)
-            result2 = self.cut(file2, file2_cut.fileName(), '00:00:00.000', '00:00:02.00', False)
-            if result1 and result2:
-                # 3. attempt join using two supported methods
-                if self.isMPEGcodec(file1_cut.fileName()) and self.isMPEGcodec(file2_cut.fileName()):
-                    result = self.mpegtsJoin([file1_cut.fileName(), file2_cut.fileName()], final_join.fileName())
-                    if not result:
-                        result = self.join([file1_cut.fileName(), file2_cut.fileName()],
-                                           final_join.fileName(), False)
-        file1_cut.remove()
-        file2_cut.remove()
-        final_join.remove()
-        # except:
-        #     pass
+        self.logger.info('attempting to test joining of "%s" + "%s"' % (file1, file2))
+        try:
+            # 1. generate temporary file handles
+            _, ext = os.path.splitext(file1)
+            file1_cut = QTemporaryFile(os.path.join(QDir.tempPath(), 'XXXXXX%s' % ext))
+            file2_cut = QTemporaryFile(os.path.join(QDir.tempPath(), 'XXXXXX%s' % ext))
+            final_join = QTemporaryFile(os.path.join(QDir.tempPath(), 'XXXXXX%s' % ext))
+            # 2. produce 2 sec long clips from input files
+            if file1_cut.open() and file2_cut.open() and final_join.open():
+                result1 = self.cut(file1, file1_cut.fileName(), '00:00:00.000', '00:00:02.00', False)
+                result2 = self.cut(file2, file2_cut.fileName(), '00:00:00.000', '00:00:02.00', False)
+                if result1 and result2:
+                    # 3. attempt join using two supported methods
+                    if self.isMPEGcodec(file1_cut.fileName()) and self.isMPEGcodec(file2_cut.fileName()):
+                        result = self.mpegtsJoin([file1_cut.fileName(), file2_cut.fileName()], final_join.fileName())
+                        if not result:
+                            result = self.join([file1_cut.fileName(), file2_cut.fileName()],
+                                               final_join.fileName(), False)
+            file1_cut.remove()
+            file2_cut.remove()
+            final_join.remove()
+        except:
+            self.logger.exception('Exception in VideoService.testJoin()', exc_info=True)
+            result = False
         return result
 
     def duration(self, source: str) -> QTime:
@@ -215,27 +217,31 @@ class VideoService(QObject):
 
     def mpegtsJoin(self, inputs: list, output: str) -> bool:
         result = False
-        outfiles = list()
-        video_bsf, audio_bsf = self.getBSF(inputs[0])
-        # 1. transcode to mpeg transport streams
-        for file in inputs:
-            name, _ = os.path.splitext(file)
-            outfile = '%s.ts' % name
-            outfiles.append(outfile)
-            if os.path.isfile(outfile):
-                os.remove(outfile)
-            args = '-i "%s" -c copy -map 0 %s -f mpegts -v 16 "%s"' % (file, video_bsf, outfile)
-            if not self.cmdExec(self.backend, args):
-                return result
-        # 2. losslessly concatenate at the file level
-        if len(outfiles):
-            if os.path.isfile(output):
-                os.remove(output)
-            args = '-i "concat:%s" -c copy %s -v 16 "%s"' % ('|'.join(map(str, outfiles)), audio_bsf,
-                                                             QDir.fromNativeSeparators(output))
-            result = self.cmdExec(self.backend, args)
-            # 3. cleanup mpegts files
-            [QFile.remove(file) for file in outfiles]
+        try:
+            outfiles = list()
+            video_bsf, audio_bsf = self.getBSF(inputs[0])
+            # 1. transcode to mpeg transport streams
+            for file in inputs:
+                name, _ = os.path.splitext(file)
+                outfile = '%s.ts' % name
+                outfiles.append(outfile)
+                if os.path.isfile(outfile):
+                    os.remove(outfile)
+                args = '-i "%s" -c copy -map 0 %s -f mpegts -v 16 "%s"' % (file, video_bsf, outfile)
+                if not self.cmdExec(self.backend, args):
+                    return result
+            # 2. losslessly concatenate at the file level
+            if len(outfiles):
+                if os.path.isfile(output):
+                    os.remove(output)
+                args = '-i "concat:%s" -c copy %s -v 16 "%s"' % ('|'.join(map(str, outfiles)), audio_bsf,
+                                                                 QDir.fromNativeSeparators(output))
+                result = self.cmdExec(self.backend, args)
+                # 3. cleanup mpegts files
+                [QFile.remove(file) for file in outfiles]
+        except:
+            self.logger.exception('Exception in VideoService.mpegtsJoin()', exc_info=True)
+            result = False
         return result
 
     def metadata(self, source: str, output: str='HTML') -> str:

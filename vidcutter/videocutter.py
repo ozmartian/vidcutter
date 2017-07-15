@@ -1019,7 +1019,12 @@ class VideoCutter(QWidget):
                                                   options=(QFileDialog.DontUseNativeDialog
                                                            if not self.nativeDialogsAction.isChecked()
                                                            else QFileDialog.Options()))
-        if len(filename.strip()):
+        if self.currentMedia == filename:
+            QMessageBox.warning(self.parent, 'Media already loaded', 'The selected media file is already open in the ' +
+                                'app. You can use the start and end clip toolbar buttons to mark your clip segments ' +
+                                'out now.\n\nUse the ADD button to add other media, in the same video format, to ' +
+                                'your clip index.')
+        elif len(filename.strip()):
             if len(self.clipTimes) > 0:
                 lastItem = self.clipTimes[len(self.clipTimes) - 1]
                 file4Test = lastItem[3] if len(lastItem[3]) else self.currentMedia
@@ -1087,10 +1092,6 @@ class VideoCutter(QWidget):
     def renderTimes(self) -> None:
         self.cliplist.clear()
         self.seekSlider.clearRegions()
-        if len(self.clipTimes) > 4:
-            self.cliplist.setFixedWidth(210)
-        else:
-            self.cliplist.setFixedWidth(190)
         self.totalRuntime = 0
         for clip in self.clipTimes:
             endItem = ''
@@ -1101,12 +1102,13 @@ class VideoCutter(QWidget):
             listitem.setToolTip('Drag clip to reorder')
             listitem.setStatusTip('Reorder clips with drag and drop or right-click menu')
             listitem.setTextAlignment(Qt.AlignVCenter)
-            listitem.setData(Qt.DecorationRole, clip[2])
-            listitem.setData(Qt.DisplayRole, clip[0].toString(self.timeformat))
+            listitem.setData(Qt.DecorationRole + 1, clip[2])
+            listitem.setData(Qt.DisplayRole + 1, clip[0].toString(self.timeformat))
             listitem.setData(Qt.UserRole + 1, endItem)
+            listitem.setData(Qt.EditRole + 1, clip[3])
             listitem.setFlags(Qt.ItemIsSelectable | Qt.ItemIsDragEnabled | Qt.ItemIsEnabled)
             self.cliplist.addItem(listitem)
-            if isinstance(clip[1], QTime):
+            if isinstance(clip[1], QTime) and not len(clip[3]):
                 self.seekSlider.addRegion(clip[0].msecsSinceStartOfDay(), clip[1].msecsSinceStartOfDay())
         if len(self.clipTimes) and not self.inCut:
             self.saveAction.setEnabled(True)
