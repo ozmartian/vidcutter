@@ -1028,11 +1028,11 @@ class VideoCutter(QWidget):
     @pyqtSlot()
     def addExternalClip(self):
         filename, _ = QFileDialog.getOpenFileName(self, caption='Add external media file', filter=self.mediaFilters(),
-                                                  directory=(self.lastFolder if os.path.exists(self.lastFolder)
-                                                             else QDir.homePath()),
-                                                  options=(QFileDialog.DontUseNativeDialog
-                                                           if not self.nativeDialogsAction.isChecked()
-                                                           else QFileDialog.Options()))
+                                                   directory=(self.lastFolder if os.path.exists(self.lastFolder)
+                                                              else QDir.homePath()),
+                                                   options=(QFileDialog.DontUseNativeDialog
+                                                            if not self.nativeDialogsAction.isChecked()
+                                                            else QFileDialog.Options()))
         if self.currentMedia == filename:
             QMessageBox.warning(self.parent, 'Media already loaded', 'The selected media file is already open in the ' +
                                 'app. You can use the start and end clip toolbar buttons to mark your clip segments ' +
@@ -1224,7 +1224,7 @@ class VideoCutter(QWidget):
             qApp.restoreOverrideCursor()
             self.saveAction.setEnabled(True)
             notify = JobCompleteNotification(self)
-            notify.show()
+            notify.exec_()
             return True
         return False
 

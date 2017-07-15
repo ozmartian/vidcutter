@@ -185,13 +185,13 @@ QDialogButtonBox QPushButton, #clipindextools QPushButton, QDialog#notification 
 
 QDialogButtonBox QPushButton:hover, #clipindextools QPushButton:hover, QDialog#notification QPushButton:hover {
     border: 1px solid #694471;
-    color: #222;
 }
 
 QDialogButtonBox QPushButton:focus,
 QDialogButtonBox QPushButton:pressed,
 #clipindextools QPushButton:focus,
 #clipindextools QPushButton:pressed,
+QDialog#notification QPushButton,
 QDialog#notification QPushButton:focus,
 QDialog#notification QPushButton:pressed {
     background-color: #694471;

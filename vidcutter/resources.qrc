@@ -3,6 +3,11 @@
         <file>fonts/FuturaLT.ttf</file>
         <file>fonts/OpenSans.ttf</file>
         <file>fonts/OpenSansBold.ttf</file>
+        <file>images/complete-continue.png</file>
+        <file>images/complete-exit.png</file>
+        <file>images/complete-open.png</file>
+        <file>images/complete-play.png</file>
+        <file>images/complete-restart.png</file>
         <file>images/dialog-backdrop.png</file>
         <file>images/dialog-backdrop-02.png</file>
         <file>images/down.png</file>
@@ -35,11 +40,6 @@
         <file>images/dark/about-background.png</file>
         <file>images/dark/background_complete.png</file>
         <file>images/dark/clipindex.png</file>
-        <file>images/dark/complete-continue.png</file>
-        <file>images/dark/complete-exit.png</file>
-        <file>images/dark/complete-open.png</file>
-        <file>images/dark/complete-play.png</file>
-        <file>images/dark/complete-restart.png</file>
         <file>images/dark/console-off.png</file>
         <file>images/dark/console-on.png</file>
         <file>images/dark/fullscreen.png</file>
@@ -75,11 +75,6 @@
         <file>images/light/about-background.png</file>
         <file>images/light/background_complete.png</file>
         <file>images/light/clipindex.png</file>
-        <file>images/light/complete-continue.png</file>
-        <file>images/light/complete-exit.png</file>
-        <file>images/light/complete-open.png</file>
-        <file>images/light/complete-play.png</file>
-        <file>images/light/complete-restart.png</file>
         <file>images/light/console-off.png</file>
         <file>images/light/console-on.png</file>
         <file>images/light/fullscreen.png</file>
