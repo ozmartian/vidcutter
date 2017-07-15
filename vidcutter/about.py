@@ -132,9 +132,11 @@ class AboutTab(BaseTab):
         super(AboutTab, self).__init__(parent)
         self.parent = parent
         linebreak = '<br/>' if sys.platform == 'win32' else '&nbsp;&nbsp;&nbsp;'
+        # noinspection PyBroadException
         try:
-            ffmpeg_version = self.parent.parent.mpvWidget.mpv.get_property('ffmpeg-version')
-        except AttributeError:
+            ffmpeg_version = self.parent.parent.videoService.version()
+            # ffmpeg_version = self.parent.parent.mpvWidget.mpv.get_property('ffmpeg-version')
+        except:
             ffmpeg_version = '2.8.10'
         html = '''
 <style>

@@ -272,6 +272,11 @@ class VideoService(QObject):
             result = False
         return result
 
+    def version(self) -> str:
+        args = '-version'
+        result = self.cmdExec(self.backend, args, True)
+        return re.search(r'ffmpeg\sversion\s([\d.]+)\s', result).group(1)
+
     def metadata(self, source: str, output: str='HTML') -> str:
         args = '--output=%s "%s"' % (output, source)
         result = self.cmdExec(self.mediainfo, args, True)
