@@ -40,7 +40,7 @@ class VideoService(QObject):
     frozen = getattr(sys, 'frozen', False)
 
     mpegCodecs = {'h264', 'hevc', 'mpeg4', 'divx', 'xvid', 'webm', 'ivf', 'vp9', 'mpeg2video', 'mpg2',
-                     'mp2', 'mp3', 'aac'}
+                  'mp2', 'mp3', 'aac'}
 
     utils = {
         'nt': {
@@ -123,8 +123,10 @@ class VideoService(QObject):
                     painter = QPainter(capres)
                     painter.drawPixmap(0, 0, QPixmap(':/images/external.png', 'PNG'))
                     painter.end()
+        img.remove()
         return capres
 
+    # noinspection PyBroadException
     def testJoin(self, file1: str, file2: str) -> bool:
         result = False
         self.logger.info('attempting to test joining of "%s" + "%s"' % (file1, file2))
@@ -154,22 +156,18 @@ class VideoService(QObject):
             file1_cut = QTemporaryFile(os.path.join(QDir.tempPath(), 'XXXXXX%s' % ext))
             file2_cut = QTemporaryFile(os.path.join(QDir.tempPath(), 'XXXXXX%s' % ext))
             final_join = QTemporaryFile(os.path.join(QDir.tempPath(), 'XXXXXX%s' % ext))
-            # 3. produce 2 sec long clips from input files
+            # 3. produce 2 seconds long clips from input files for join test
             if file1_cut.open() and file2_cut.open() and final_join.open():
                 result1 = self.cut(file1, file1_cut.fileName(), '00:00:00.000', '00:00:02.00', False)
                 result2 = self.cut(file2, file2_cut.fileName(), '00:00:00.000', '00:00:02.00', False)
                 if result1 and result2:
-                    # 4. attempt join using two supported methods
-                    if self.isMPEGcodec(file1_cut.fileName()) and self.isMPEGcodec(file2_cut.fileName()):
-                        result = self.mpegtsJoin([file1_cut.fileName(), file2_cut.fileName()], final_join.fileName())
-                        if not result:
-                            result = self.join([file1_cut.fileName(), file2_cut.fileName()],
-                                               final_join.fileName(), False)
+                    # 4. attempt join of temp 2 second clips
+                    result = self.join([file1_cut.fileName(), file2_cut.fileName()], final_join.fileName(), False)
             file1_cut.remove()
             file2_cut.remove()
             final_join.remove()
         except:
-            self.logger.exception('Exception in VideoService.testJoin()', exc_info=True)
+            self.logger.exception('Exception in VideoService.testJoin', exc_info=True)
             result = False
         return result
 
@@ -183,7 +181,7 @@ class VideoService(QObject):
     def duration(self, source: str) -> QTime:
         args = '-i "%s" -hide_banner' % source
         result = self.cmdExec(self.backend, args, True)
-        matches = re.search(r'Duration:\s{1}(?P<hrs>\d+?):(?P<mins>\d+?):(?P<secs>\d+\.\d+?),',
+        matches = re.search(r'Duration:\s(?P<hrs>\d+?):(?P<mins>\d+?):(?P<secs>\d+\.\d+?),',
                             result, re.DOTALL).groupdict()
         secs, msecs = matches['secs'].split('.')
         return QTime(int(matches['hrs']), int(matches['mins']), int(secs), int(msecs))
@@ -191,8 +189,8 @@ class VideoService(QObject):
     def codecs(self, source: str) -> tuple:
         args = '-i "%s" -hide_banner' % source
         result = self.cmdExec(self.backend, args, True)
-        vcodec = re.search(r'Stream.*Video: (\w+)', result).group(1)
-        acodec = re.search(r'Stream.*Audio: (\w+)', result).group(1)
+        vcodec = re.search(r'Stream.*Video:\s(\w+)', result).group(1)
+        acodec = re.search(r'Stream.*Audio:\s(\w+)', result).group(1)
         return vcodec, acodec
 
     def cut(self, source: str, output: str, frametime: str, duration: str, allstreams: bool=True) -> bool:
@@ -243,6 +241,7 @@ class VideoService(QObject):
     def isMPEGcodec(self, source: str) -> bool:
         return self.codecs(source)[0].lower() in self.mpegCodecs
 
+    # noinspection PyBroadException
     def mpegtsJoin(self, inputs: list, output: str) -> bool:
         result = False
         try:

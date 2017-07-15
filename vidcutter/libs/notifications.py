@@ -165,31 +165,10 @@ class JobCompleteNotification(Notification):
         playButton.setFixedWidth(82)
         playButton.clicked.connect(self.playMedia)
         playButton.setIcon(self.icons['play'])
+        playButton.setDefault(True)
         self.buttons.append(playButton)
 
     @pyqtSlot()
     def playMedia(self) -> None:
         if len(self.parent.finalFilename) and os.path.exists(self.parent.finalFilename):
             QDesktopServices.openUrl(QUrl.fromLocalFile(self.parent.finalFilename))
-
-    # self.btn_open = self.addButton('Open', self.ResetRole)
-    # self.btn_open.setIcon(self.icon_open)
-    # self.btn_open.clicked.connect(lambda: self.playMedia(True))
-    # btn_restart = self.addButton('Restart', self.AcceptRole)
-    # btn_restart.setIcon(self.icon_restart)
-    # btn_restart.clicked.connect(self.parent.parent.reboot)
-    # self.btn_play = self.addButton('Play', self.ResetRole)
-    # self.btn_play.setIcon(self.icon_play)
-    # self.btn_play.clicked.connect(self.playMedia)
-    # self.btn_exit = self.addButton('Exit', self.ResetRole)
-    # self.btn_exit.setIcon(self.icon_exit)
-    # self.btn_exit.clicked.connect(self.parent.close)
-    # btn_continue = self.addButton('Continue', self.AcceptRole)
-    # btn_continue.setIcon(self.icon_continue)
-    # btn_continue.clicked.connect(self.close)
-
-# def initIcons(self) -> None:
-    # self.icon_exit = QIcon(':/images/%s/complete-exit.png' % self.theme)
-    # self.icon_open = QIcon(':/images/%s/complete-open.png' % self.theme)
-    # self.icon_restart = QIcon(':/images/%s/complete-restart.png' % self.theme)
-    # self.icon_continue = QIcon(':/images/%s/complete-continue.png' % self.theme)

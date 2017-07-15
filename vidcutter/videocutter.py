@@ -1031,8 +1031,8 @@ class VideoCutter(QWidget):
         if self.currentMedia == filename:
             QMessageBox.warning(self.parent, 'Media already loaded', 'The selected media file is already open in the ' +
                                 'app. You can use the start and end clip toolbar buttons to mark your clip segments ' +
-                                'out now.\n\nUse the ADD button to add other media, in the same video format, to ' +
-                                'your clip index.')
+                                'out now.\n\nUse the ADD button to add other external media, in the same video ' +
+                                'format, to your clip index.')
         elif len(filename.strip()):
             self.lastFolder = QFileInfo(filename).absolutePath()
             if len(self.clipTimes) > 0:
