@@ -716,17 +716,19 @@ class VideoCutter(QWidget):
     def removeItem(self) -> None:
         index = self.cliplist.currentRow()
         del self.clipTimes[index]
-        if self.inCut and index == self.cliplist.count() - 1:
-            self.inCut = False
-            self.initMediaControls()
-        self.renderTimes()
+        if self.mediaAvailable:
+            if self.inCut and index == self.cliplist.count() - 1:
+                self.inCut = False
+                self.initMediaControls()
+            self.renderTimes()
 
     def clearList(self) -> None:
         self.clipTimes.clear()
         self.cliplist.clear()
-        self.inCut = False
-        self.renderTimes()
-        self.initMediaControls(True)
+        if self.mediaAvailable:
+            self.inCut = False
+            self.renderTimes()
+            self.initMediaControls(True)
 
     def projectFilters(self, savedialog: bool = False) -> str:
         if savedialog:
