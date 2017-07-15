@@ -34,7 +34,7 @@ from PyQt5.QtWidgets import qApp, QCommonStyle, QStyle, QStyleFactory
 class VideoStyle(QCommonStyle):
     # workaround for earlier version of PyQt5 when QProxyStyle did not exist
     def __init__(self):
-        self._style = QStyleFactory.create(qApp.style().metaObject().className().replace('::Style', ''))
+        self._style = QStyleFactory.create(qApp.style().objectName())
         for method in ['drawComplexControl', 'drawControl', 'drawPrimitive', 'drawItemPixmap', 'generatedIconPixmap',
                        'hitTestComplexControl', 'layoutSpacing', 'pixelMetric', 'polish', 'sizeFromContents',
                        'standardPixmap', 'subControlRect', 'subElementRect', 'unpolish', 'itemPixmapRect',

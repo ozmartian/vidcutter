@@ -721,6 +721,8 @@ class VideoCutter(QWidget):
                 self.inCut = False
                 self.initMediaControls()
             self.renderTimes()
+        elif len(self.clipTimes) == 0:
+            self.initMediaControls(False)
 
     def clearList(self) -> None:
         self.clipTimes.clear()
@@ -729,6 +731,8 @@ class VideoCutter(QWidget):
             self.inCut = False
             self.renderTimes()
             self.initMediaControls(True)
+        else:
+            self.initMediaControls(False)
 
     def projectFilters(self, savedialog: bool = False) -> str:
         if savedialog:
