@@ -204,6 +204,7 @@ class VCProgressBar(QDialog):
 
     @pyqtSlot()
     def close(self):
+        self.deleteLater()
         super(VCProgressBar, self).close()
 
 
