@@ -22,15 +22,27 @@
 #
 #######################################################################
 
+import functools
 import os
 import sys
 
 from PyQt5.QtCore import QFile, QFileInfo, Qt, QTextStream
 from PyQt5.QtGui import QColor, QPalette
-from PyQt5.QtWidgets import qApp, QProxyStyle, QStyle
+from PyQt5.QtWidgets import qApp, QCommonStyle, QStyle, QStyleFactory
 
 
-class VideoStyle(QProxyStyle):
+class VideoStyle(QCommonStyle):
+    # workaround for earlier version of PyQt5 when QProxyStyle did not exist
+    def __init__(self):
+        self._style = QStyleFactory.create(qApp.style().metaObject().className().replace('::Style', ''))
+        for method in ['drawComplexControl', 'drawControl', 'drawPrimitive', 'drawItemPixmap', 'generatedIconPixmap',
+                       'hitTestComplexControl', 'layoutSpacing', 'pixelMetric', 'polish', 'sizeFromContents',
+                       'standardPixmap', 'subControlRect', 'subElementRect', 'unpolish', 'itemPixmapRect',
+                       'itemTextRect', 'styleHint', 'drawItemText']:
+            target = getattr(self._style, method)
+            setattr(self, method, functools.partial(target))
+        super().__init__()
+
     # noinspection PyMethodOverriding
     def styleHint(self, hint, option, widget, returnData) -> int:
         if hint == QStyle.SH_UnderlineShortcut:
