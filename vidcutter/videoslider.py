@@ -268,7 +268,7 @@ class VideoSlider(QSlider):
         self.initStyle()
         self.parent.sliderWidget.setLoader(False)
         if self.parent.newproject:
-            self.parent.renderTimes()
+            self.parent.renderClipIndex()
             self.parent.newproject = False
 
     def removeThumbs(self) -> None:
@@ -291,7 +291,7 @@ class VideoSlider(QSlider):
                 self.thumbnailsOn = False
             self.initStyle()
             self.initThumbs()
-            self.parent.renderTimes()
+            self.parent.renderClipIndex()
 
     def wheelEvent(self, event: QWheelEvent) -> None:
         if self.parent.mediaAvailable:
