@@ -129,11 +129,23 @@ class VideoService(QObject):
         result = False
         self.logger.info('attempting to test joining of "%s" + "%s"' % (file1, file2))
         try:
-            # 1. check frame sizes are equal before attempting any further testing
+            # 1. check audio + video codecs
+            file1_codecs = self.codecs(file1)
+            file2_codecs = self.codecs(file2)
+            if file1_codecs != file2_codecs:
+                self.lastError = '<p>The audio + video format of this media file is not the same as the files ' + \
+                                 'already in your clip index.</p>' + \
+                                 '<ul><li>Current files are <b>{0}</b> (video) and <b>{1}</b> (audio)</li>' + \
+                                 '<li>New file is <b>{2}</b> (video) and <b>{3}</b> (audio)</li></ul>'
+                self.lastError = self.lastError.format(file1_codecs[0], file1_codecs[1],
+                                                       file2_codecs[0], file2_codecs[1])
+                return result
+            # 2. check frame sizes
             size1 = self.framesize(file1)
             size2 = self.framesize(file2)
             if size1 != size2:
-                self.lastError = '<p>The frame size of this media file differs to the files in your clip index.</p>' + \
+                self.lastError = '<p>The frame size of this media file is not the same as the files already in ' + \
+                                 'your clip index.</p>' + \
                                  '<ul><li>Current files are <b>%sx%s</b><li><li>New file is <b>%sx%s</b></li></ul>' \
                                  % (size1.width(), size1.height(), size2.width(), size2.height())
                 return result
