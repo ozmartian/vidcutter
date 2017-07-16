@@ -23,6 +23,7 @@
 #######################################################################
 
 import os
+import sys
 import time
 
 from PyQt5.QtCore import (pyqtSignal, pyqtSlot, Qt, QEasingCurve, QFileInfo, QPropertyAnimation,
@@ -33,7 +34,7 @@ from PyQt5.QtWidgets import qApp, QDialog, QGraphicsOpacityEffect, QHBoxLayout, 
 
 class Notification(QDialog):
     shown = pyqtSignal()
-    duration = 10
+    duration = 8
 
     def __init__(self, parent=None, f=Qt.ToolTip | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint):
         super(Notification, self).__init__(parent, f)
@@ -54,19 +55,22 @@ class Notification(QDialog):
         self.left_layout.addWidget(logo_label)
         self.right_layout = QVBoxLayout()
         self.right_layout.addWidget(self.msgLabel)
-        effect = QGraphicsOpacityEffect()
-        effect.setOpacity(1)
-        self.setGraphicsEffect(effect)
-        self.animations = QSequentialAnimationGroup(self)
-        self.pauseAnimation = self.animations.addPause(5000)
-        opacityAnimation = QPropertyAnimation(effect, b'opacity', self.animations)
-        opacityAnimation.setDuration(2000)
-        opacityAnimation.setStartValue(1.0)
-        opacityAnimation.setEndValue(0.0)
-        opacityAnimation.setEasingCurve(QEasingCurve.OutQuad)
-        self.animations.addAnimation(opacityAnimation)
-        self.shown.connect(lambda: self.animations.start(QSequentialAnimationGroup.DeleteWhenStopped))
-        self.animations.finished.connect(self.close)
+        if sys.platform != 'win32':
+            effect = QGraphicsOpacityEffect()
+            effect.setOpacity(1)
+            self.window().setGraphicsEffect(effect)
+            self.animations = QSequentialAnimationGroup(self)
+            self.pauseAnimation = self.animations.addPause(self.duration / 2 * 1000)
+            opacityAnimation = QPropertyAnimation(effect, b'opacity', self.animations)
+            opacityAnimation.setDuration(2000)
+            opacityAnimation.setStartValue(1.0)
+            opacityAnimation.setEndValue(0.0)
+            opacityAnimation.setEasingCurve(QEasingCurve.OutQuad)
+            self.animations.addAnimation(opacityAnimation)
+            self.animations.finished.connect(self.close)
+            self.shown.connect(self.fadeOut)
+        else:
+            self.shown.connect(lambda: QTimer.singleShot(self.duration * 1000, self.fadeOut))
         layout = QHBoxLayout()
         layout.addStretch(1)
         layout.addLayout(self.left_layout)
@@ -98,6 +102,17 @@ class Notification(QDialog):
     @icons.setter
     def icons(self, value):
         self._icons = value
+
+    @pyqtSlot()
+    def fadeOut(self):
+        if sys.platform == 'win32':
+            for step in range(100, 0, -10):
+                self.setWindowOpacity(step / 100)
+                qApp.processEvents()
+                time.sleep(0.05)
+            self.close()
+        else:
+            self.animations.start(QSequentialAnimationGroup.DeleteWhenStopped)
 
     def mousePressEvent(self, event: QMouseEvent):
         if event.button() == Qt.LeftButton:
