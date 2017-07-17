@@ -1,0 +1,108 @@
+version: 1.0.{build}
+
+pull_requests:
+  do_not_increment_build_number: true
+
+branches:
+  only:
+  - master
+  - feature/add-externals
+
+image: Visual Studio 2015
+
+shallow_clone: true
+
+clone_folder: C:\projects\vidcutter
+
+init:
+- ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+
+environment:
+  APPVEYOR_RDP_PASSWORD:
+    secure: uzV46p3oDwpGYncy5y+ysw==
+  PYTHONUNBUFFERED: 1
+  PYTHON: C:\Python36\python.exe
+
+install:
+- cmd: >-
+    set PATH=%PATH%;C:\Python36
+    
+    echo Installing latest pip + setuptools...
+    echo.
+    %PYTHON% -m pip install -U pip setuptools
+
+    echo Installing PyQt5 and PyOpenGL python wheels via pip...
+    echo.
+    %PYTHON% -m pip install PyQt5 PyOpenGL PyOpenGL-accelerate
+
+    echo Installing latest git checkout of PyInstaller...
+    echo.
+    %PYTHON% -m pip install git+https://github.com/pyinstaller/pyinstaller.git
+
+    echo Setting up libmpv build subfolders...
+    echo.
+    mkdir "_build\pyinstaller\temp"
+    mkdir "_build\pyinstaller\libmpv"
+    mkdir "_build\pyinstaller\libmpv\32"
+    mkdir "_build\pyinstaller\libmpv\64"
+
+    echo Downloading latest libmpv 32-bit build...
+    echo.
+    appveyor DownloadFile https://downloads.sourceforge.net/project/mpv-player-windows/libmpv/mpv-dev-i686-20170715-git-18c74f7.7z -FileName "_build\pyinstaller\temp\libmpv32.7z"
+    7z e "_build\pyinstaller\temp\libmpv32.7z" mpv-1.dll -o"_build\pyinstaller\temp"
+    move "_build\pyinstaller\temp\mpv-1.dll" "_build\pyinstaller\libmpv\32"
+
+    echo Downloading latest libmpv 64-bit build...
+    echo.
+    appveyor DownloadFile https://downloads.sourceforge.net/project/mpv-player-windows/libmpv/mpv-dev-x86_64-20170715-git-18c74f7.7z -FileName "_build\pyinstaller\temp\libmpv64.7z"
+    7z e "_build\pyinstaller\temp\libmpv64.7z" mpv-1.dll -o"_build\pyinstaller\temp"
+    move "_build\pyinstaller\temp\mpv-1.dll" "_build\pyinstaller\libmpv\64"
+
+    echo Copy DLLs from Windows for ANGLE Direct3D engine support..
+    echo.
+    copy "C:\Windows\SysWOW64\d3dcompiler_43.dll" "_build\pyinstaller\libmpv\32"
+    copy "C:\Windows\SysWOW64\d3dcompiler_47.dll" "_build\pyinstaller\libmpv\32"
+    copy "C:\Windows\System32\d3dcompiler_43.dll" "_build\pyinstaller\libmpv\64"
+    copy "C:\Windows\System32\d3dcompiler_47.dll" "_build\pyinstaller\libmpv\64"
+
+    echo Verify libmpv folder is correct...
+    echo.
+    dir /S "_build\pyinstaller\libmpv"
+
+nuget:
+  disable_publish_on_pr: true
+
+build_script:
+- cmd: >-
+    echo Build Cython/C extension for libmpv binding...
+
+    echo.
+
+    %PYTHON% setup.py build_ext -i
+
+    echo.
+
+    echo Listing "mpv.*.pyd" files from libs folder to double check it was built via logs...
+
+    echo.
+
+    dir vidcutter\libs\mpv.*.pyd
+
+    echo.
+
+    echo.
+
+    echo All building complete!
+
+    echo SUCCESS
+
+test: off
+
+deploy: off
+
+on_finish:
+- ps: >-
+    $blockRdp = $true
+
+
+    iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
