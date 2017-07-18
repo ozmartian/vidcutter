@@ -143,6 +143,7 @@ class VideoCutter(QWidget):
 
         self.clipindex_add = QPushButton('ADD', self)
         self.clipindex_add.setObjectName('clipadd')
+        self.clipindex_add.setFont(QFont('Futura LT', 9, QFont.Medium, False))
         self.clipindex_add.setIcon(self.clipindexAddIcon)
         self.clipindex_add.clicked.connect(self.addExternalClip)
         self.clipindex_add.setToolTip('Add clips')
@@ -151,6 +152,7 @@ class VideoCutter(QWidget):
         self.clipindex_add.setCursor(Qt.PointingHandCursor)
         self.clipindex_remove = QPushButton('REMOVE', self)
         self.clipindex_remove.setObjectName('clipremove')
+        self.clipindex_remove.setFont(QFont('Futura LT', 9, QFont.Medium, False))
         self.clipindex_remove.setIcon(self.clipindexRemoveIcon)
         self.clipindex_remove.setLayoutDirection(Qt.RightToLeft)
         self.clipindex_remove.setToolTip('Remove clips')
@@ -896,8 +898,16 @@ class VideoCutter(QWidget):
             return
         self.currentMedia = filename
         self.initMediaControls(True)
+        # save externally added clips, clear lists and readd them; common use will not be with externally added clips
+        # so we take this approach as its most optimal given most common user behaviour
+        savedclips = list()
+        for clip in self.clipTimes:
+            if len(clip[3]):
+                savedclips.append(clip)
         self.cliplist.clear()
         self.clipTimes.clear()
+        [self.clipTimes.append(clip) for clip in savedclips]
+        del savedclips
         self.seekSlider.clearRegions()
         self.parent.setWindowTitle('%s - %s' % (qApp.applicationName(), os.path.basename(self.currentMedia)))
         if not self.mediaAvailable:
@@ -909,6 +919,8 @@ class VideoCutter(QWidget):
             self.videoplayerWidget.show()
             self.mediaAvailable = True
         self.mpvWidget.play(self.currentMedia)
+        if len(self.clipTimes):
+            self.renderClipIndex()
 
     def playMedia(self) -> None:
         if self.mpvWidget.mpv.get_property('pause'):

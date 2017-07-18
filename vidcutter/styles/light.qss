@@ -189,8 +189,6 @@ QDialogButtonBox QPushButton, QDialog#notification QPushButton, #clipindextools 
 #clipindextools QPushButton {
     color: #444;
     border: 1px solid #B9B9B9;
-    font-size: 12px;
-    font-family: "Futura LT", sans-serif;
     border-radius: 0;
     text-align: left;
     width: 50%;
@@ -211,7 +209,7 @@ QDialog#notification QPushButton:focus,
 QDialog#notification QPushButton:pressed {
     background-color: #642C68;
     color: #EFF0F1;
-    border: 1px solid #EFF0F1;
+    border: 1px solid #FFF;
 }
 
 QPushButton#menuButton {
