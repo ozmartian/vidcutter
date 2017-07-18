@@ -173,18 +173,33 @@ QMessageBox {
 
 /* -------------------------------------------------------------------------- */
 
-QDialogButtonBox QPushButton, #clipindextools QPushButton, QDialog#notification QPushButton {
+QDialogButtonBox QPushButton, QDialog#notification QPushButton {
+    padding: 5px 8px;
+}
+
+QDialogButtonBox QPushButton, QDialog#notification QPushButton, #clipindextools QPushButton {
     color: #222;
     background-color: #E1E1E1;
     border: 1px solid #999;
     border-radius: 2px;
-    padding: 5px 8px;
     outline: none;
     min-width: 50px;
 }
 
+#clipindextools QPushButton {
+    color: #444;
+    border: 1px solid #B9B9B9;
+    font-size: 12px;
+    font-family: "Futura LT", sans-serif;
+    border-radius: 0;
+    text-align: left;
+    width: 50%;
+    height: 26px;
+    padding-left: 5px;
+}
+
 QDialogButtonBox QPushButton:hover, #clipindextools QPushButton:hover, QDialog#notification QPushButton:hover {
-    border: 1px solid #694471;
+    border: 1px solid #642C68;
 }
 
 QDialogButtonBox QPushButton:focus,
@@ -194,7 +209,7 @@ QDialogButtonBox QPushButton:pressed,
 QDialog#notification QPushButton,
 QDialog#notification QPushButton:focus,
 QDialog#notification QPushButton:pressed {
-    background-color: #694471;
+    background-color: #642C68;
     color: #EFF0F1;
     border: 1px solid #EFF0F1;
 }
@@ -209,21 +224,14 @@ QPushButton:hover#menuButton, QPushButton:pressed#menuButton {
     border-image: url(:/images/light/menu-active.png);
 }
 
-QPushButton::menu-indicator#menuButton {
-    left: -2000px;
+QPushButton::menu-indicator#menuButton, #clipindextools QPushButton::menu-indicator {
+    left: -4000px;
 }
 
 QPushButton#muteButton, QPushButton#menuButton, QPushButton#fullscreenButton {
     background-color: transparent;
     border: none;
     outline: none;
-}
-
-#clipindextools QPushButton {
-    color: #444;
-    font-size: 11px;
-    font-family: 'Futura LT', sans-serif;
-    border-radius: 0;
 }
 
 /* -------------------------------------------------------------------------- */

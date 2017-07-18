@@ -142,13 +142,19 @@ class VideoCutter(QWidget):
         self.runtimeLabel.setObjectName('runtimeLabel')
 
         self.clipindex_add = QPushButton('ADD', self)
+        self.clipindex_add.setObjectName('clipadd')
+        self.clipindex_add.setIcon(self.clipindexAddIcon)
         self.clipindex_add.clicked.connect(self.addExternalClip)
-        self.clipindex_add.setToolTip('Add external media')
-        self.clipindex_add.setStatusTip('Add external media to the clip index')
+        self.clipindex_add.setToolTip('Add clips')
+        self.clipindex_add.setStatusTip('Append media files to existing clips in your index or add to an empty list ' +
+                                        'to perform a stand-alone join if compatible')
         self.clipindex_add.setCursor(Qt.PointingHandCursor)
         self.clipindex_remove = QPushButton('REMOVE', self)
-        self.clipindex_remove.setToolTip('Remove')
-        self.clipindex_remove.setStatusTip('Remove a selected clip or all of them from the clip index')
+        self.clipindex_remove.setObjectName('clipremove')
+        self.clipindex_remove.setIcon(self.clipindexRemoveIcon)
+        self.clipindex_remove.setLayoutDirection(Qt.RightToLeft)
+        self.clipindex_remove.setToolTip('Remove clips')
+        self.clipindex_remove.setStatusTip('Remove clips from your index')
         self.clipindex_remove.setMenu(self.clipindex_removemenu)
         self.clipindex_remove.setCursor(Qt.PointingHandCursor)
         if sys.platform == 'win32':
@@ -156,10 +162,10 @@ class VideoCutter(QWidget):
             self.clipindex_remove.setStyle(QStyleFactory.create('Fusion'))
 
         clipindex_layout = QHBoxLayout()
-        clipindex_layout.setSpacing(0)
+        clipindex_layout.setSpacing(1)
         clipindex_layout.setContentsMargins(0, 0, 0, 0)
         clipindex_layout.addWidget(self.clipindex_add)
-        clipindex_layout.addSpacing(3)
+        clipindex_layout.addSpacing(1)
         clipindex_layout.addWidget(self.clipindex_remove)
         clipindexTools = QWidget(self)
         clipindexTools.setObjectName('clipindextools')
@@ -276,6 +282,7 @@ class VideoCutter(QWidget):
         self.menuButton = QPushButton(self, toolTip='Menu', cursor=Qt.PointingHandCursor, flat=True,
                                       objectName='menuButton', statusTip='Click to view menu options')
         self.menuButton.setFixedSize(QSize(40, 42))
+        self.menuButton.setLayoutDirection(Qt.RightToLeft)
         self.menuButton.setMenu(self.appMenu)
 
         self.seekSlider.initStyle()
@@ -473,6 +480,12 @@ class VideoCutter(QWidget):
         self.consoleIcon.addFile(':/images/%s/console-on.png' % self.theme, QSize(16, 16), QIcon.Normal, QIcon.On)
         self.consoleIcon.addFile(':/images/%s/console-off.png' % self.theme, QSize(16, 16), QIcon.Normal, QIcon.Off)
         self.fullscreenIcon = QIcon(':/images/%s/fullscreen.png' % self.theme)
+        self.clipindexAddIcon = QIcon()
+        self.clipindexAddIcon.addFile(':/images/%s/clipindex-add.png' % self.theme, QSize(20, 20), QIcon.Normal)
+        self.clipindexAddIcon.addFile(':/images/%s/clipindex-add-on.png' % self.theme, QSize(20, 20), QIcon.Active)
+        self.clipindexRemoveIcon = QIcon()
+        self.clipindexRemoveIcon.addFile(':/images/%s/clipindex-remove.png' % self.theme, QSize(20, 20), QIcon.Normal)
+        self.clipindexRemoveIcon.addFile(':/images/%s/clipindex-remove-on.png' % self.theme, QSize(20, 20), QIcon.Active)
 
     # noinspection PyArgumentList
     def initActions(self) -> None:
@@ -633,6 +646,7 @@ class VideoCutter(QWidget):
         optionsMenu.addMenu(zoomMenu)
         optionsMenu.aboutToShow.connect(self.clearSpinners)
 
+        self.appMenu.setLayoutDirection(Qt.LeftToRight)
         self.appMenu.addAction(self.openProjectAction)
         self.appMenu.addAction(self.saveProjectAction)
         self.appMenu.addSeparator()
@@ -1027,12 +1041,12 @@ class VideoCutter(QWidget):
 
     @pyqtSlot()
     def addExternalClip(self):
-        filename, _ = QFileDialog.getOpenFileName(self, caption='Add external media file', filter=self.mediaFilters(),
-                                                   directory=(self.lastFolder if os.path.exists(self.lastFolder)
-                                                              else QDir.homePath()),
-                                                   options=(QFileDialog.DontUseNativeDialog
-                                                            if not self.nativeDialogsAction.isChecked()
-                                                            else QFileDialog.Options()))
+        filename, _ = QFileDialog.getOpenFileName(self, caption='Add external media files', filter=self.mediaFilters(),
+                                             directory=(self.lastFolder if os.path.exists(self.lastFolder)
+                                                        else QDir.homePath()),
+                                             options=(QFileDialog.DontUseNativeDialog
+                                                      if not self.nativeDialogsAction.isChecked()
+                                                      else QFileDialog.Options()))
         if self.currentMedia == filename:
             QMessageBox.warning(self.parent, 'Media already loaded', 'The selected media file is already open in the ' +
                                 'app. You can use the start and end clip toolbar buttons to mark your clip segments ' +

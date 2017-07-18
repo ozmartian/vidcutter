@@ -40,6 +40,10 @@
         <file>images/dark/about-background.png</file>
         <file>images/dark/background_complete.png</file>
         <file>images/dark/clipindex.png</file>
+        <file>images/dark/clipindex-add.png</file>
+        <file>images/dark/clipindex-add-on.png</file>
+        <file>images/dark/clipindex-remove.png</file>
+        <file>images/dark/clipindex-remove-on.png</file>
         <file>images/dark/console-off.png</file>
         <file>images/dark/console-on.png</file>
         <file>images/dark/fullscreen.png</file>
@@ -75,6 +79,10 @@
         <file>images/light/about-background.png</file>
         <file>images/light/background_complete.png</file>
         <file>images/light/clipindex.png</file>
+        <file>images/light/clipindex-add.png</file>
+        <file>images/light/clipindex-add-on.png</file>
+        <file>images/light/clipindex-remove.png</file>
+        <file>images/light/clipindex-remove-on.png</file>
         <file>images/light/console-off.png</file>
         <file>images/light/console-on.png</file>
         <file>images/light/fullscreen.png</file>

@@ -11,14 +11,14 @@ if [%1]==[] (
 if ["%ARCH%"]==["64"] (
     SET BINARCH=x64
     SET FFMPEG=https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-latest-win64-static.7z
-    SET MEDIAINFO_URL=https://mediaarea.net/download/binary/mediainfo/0.7.95/MediaInfo_CLI_0.7.95_Windows_x64.zip
-    SET MEDIAINFO=MediaInfo_CLI_0.7.95_Windows_x64.zip
+    SET MEDIAINFO_URL=https://mediaarea.net/download/binary/mediainfo/0.7.97/MediaInfo_CLI_0.7.97_Windows_x64.zip
+    SET MEDIAINFO=MediaInfo_CLI_0.7.97_Windows_x64.zip
 )
 if ["%ARCH%"]==["32"] (
     SET BINARCH=x86
     SET FFMPEG=https://ffmpeg.zeranoe.com/builds/win32/static/ffmpeg-latest-win32-static.7z
-    SET MEDIAINFO_URL=https://mediaarea.net/download/binary/mediainfo/0.7.95/MediaInfo_CLI_0.7.95_Windows_i386.zip
-    SET MEDIAINFO=MediaInfo_CLI_0.7.95_Windows_i386.zip
+    SET MEDIAINFO_URL=https://mediaarea.net/download/binary/mediainfo/0.7.97/MediaInfo_CLI_0.7.97_Windows_i386.zip
+    SET MEDIAINFO=MediaInfo_CLI_0.7.97_Windows_i386.zip
 )
 
 REM ......................get latest version number......................
