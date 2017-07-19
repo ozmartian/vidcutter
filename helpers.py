@@ -41,7 +41,7 @@ class SetupHelpers:
     def get_library_dirs():
         _dirs = []
         if sys.platform == 'win32':
-            _dirs = ['libs/pympv/win%s' % SetupHelpers.get_bitness()]
+            _dirs = ['vidcutter/libs/pympv/win%s' % SetupHelpers.get_bitness()]
         return _dirs
 
     @staticmethod
