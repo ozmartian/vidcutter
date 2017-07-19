@@ -33,6 +33,8 @@ from PyQt5.QtGui import QCloseEvent
 from PyQt5.QtWidgets import qApp, QDialog, QDialogButtonBox, QLabel, QTabWidget, QTextBrowser, QVBoxLayout
 from sip import SIP_VERSION_STR
 
+import vidcutter.libs.mpv as mpv
+
 
 class About(QDialog):
     def __init__(self, parent=None, f=Qt.WindowCloseButtonHint):
@@ -41,8 +43,7 @@ class About(QDialog):
         self.setObjectName('aboutwidget')
         self.setContentsMargins(0, 0, 0, 0)
         self.setWindowModality(Qt.ApplicationModal)
-        builddate = datetime.fromtimestamp(os.path.getmtime(
-            self.parent.parent.get_path('__init__.py',override=True))).strftime('%d %b %Y')
+        builddate = datetime.fromtimestamp(os.path.getmtime(mpv.__file__)).strftime('%d %b %Y')
         pencolor1 = '#9A45A2' if self.parent.theme == 'dark' else '#642C68'
         pencolor2 = '#FFF' if self.parent.theme == 'dark' else '#000'
         header = QLabel('''
@@ -89,7 +90,6 @@ class About(QDialog):
         self.tab_credits = CreditsTab(self)
         self.tab_license = LicenseTab(self)
         tabs = QTabWidget()
-        tabs.setFocusPolicy(Qt.NoFocus)
         tabs.addTab(self.tab_about, 'About')
         tabs.addTab(self.tab_credits, 'Credits')
         tabs.addTab(self.tab_license, 'License')
