@@ -60,12 +60,12 @@ class Notification(QDialog):
             effect.setOpacity(1)
             self.window().setGraphicsEffect(effect)
             self.animations = QSequentialAnimationGroup(self)
-            self.pauseAnimation = self.animations.addPause(self.duration / 2 * 1000)
+            self.pauseAnimation = self.animations.addPause(int(self.duration / 2 * 1000))
             opacityAnimation = QPropertyAnimation(effect, b'opacity', self.animations)
             opacityAnimation.setDuration(2000)
             opacityAnimation.setStartValue(1.0)
             opacityAnimation.setEndValue(0.0)
-            opacityAnimation.setEasingCurve(QEasingCurve.OutQuad)
+            opacityAnimation.setEasingCurve(QEasingCurve.InOutQuad)
             self.animations.addAnimation(opacityAnimation)
             self.animations.finished.connect(self.close)
             self.shown.connect(self.fadeOut)
@@ -142,7 +142,7 @@ class JobCompleteNotification(Notification):
     <style>
         h2 {
             color: %s;
-            font-family: "Futura LT", sans-serif;
+            font-family: "Futura-Light", sans-serif;
             font-weight: 400;
             text-align: center;
         }
@@ -157,7 +157,7 @@ class JobCompleteNotification(Notification):
             text-transform: lowercase;
             text-align: right;
             padding-right: 5px;
-            font-family: "Futura LT", sans-serif;
+            font-family: "Futura-Light", sans-serif;
         }
         td.value {
             font-size: 13px;

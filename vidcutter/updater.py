@@ -104,7 +104,7 @@ class UpdaterMsgBox(QDialog):
             h1 {
                 text-align: center;
                 color: %s;
-                font-family: "Futura LT", sans-serif;
+                font-family: "Futura-Light", sans-serif;
                 font-weight: 400;
             }
             div {
@@ -117,7 +117,7 @@ class UpdaterMsgBox(QDialog):
                 margin: 10px 0 0 0;
             }
             td.label {
-                font-family: "Futura LT", san-serif;
+                font-family: "Futura-Light", san-serif;
                 text-align: right;
             }
             td.value {

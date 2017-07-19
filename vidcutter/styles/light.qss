@@ -187,13 +187,31 @@ QDialogButtonBox QPushButton, QDialog#notification QPushButton, #clipindextools 
 }
 
 #clipindextools QPushButton {
-    color: #444;
     border: 1px solid #B9B9B9;
     border-radius: 0;
-    text-align: left;
     width: 50%;
     height: 26px;
     padding-left: 5px;
+}
+
+#clipindextools QPushButton#clipadd {
+    background: #E1E1E1 url(:images/light/clipindex-add.png) no-repeat left center;
+}
+
+#clipindextools QPushButton:hover#clipadd,
+#clipindextools QPushButton:focus#clipadd,
+#clipindextools QPushButton:pressed#clipadd {
+    background: #642C68 url(:images/light/clipindex-add-on.png) no-repeat left center;
+}
+
+#clipindextools QPushButton#clipremove {
+    background: #E1E1E1 url(:images/light/clipindex-remove.png) no-repeat right center;
+}
+
+#clipindextools QPushButton:hover#clipremove,
+#clipindextools QPushButton:focus#clipremove,
+#clipindextools QPushButton:pressed#clipremove {
+    background: #642C68 url(:images/light/clipindex-remove-on.png) no-repeat right center;
 }
 
 QDialogButtonBox QPushButton:hover, #clipindextools QPushButton:hover, QDialog#notification QPushButton:hover {
@@ -274,11 +292,6 @@ QStatusBar::item {
 
 /* -------------------------------------------------------------------------- */
 
-QTextBrowser {
-    background-color: rgba(255, 255, 255, 0.8);
-    color: #000;
-}
-
 #aboutwidget QTextBrowser {
     border: none;
 }
@@ -350,7 +363,7 @@ VCProgressBar {
 }
 
 VCProgressBar QLabel {
-    font-family: "Futura LT", sans-serif;
+    font-family: "Futura-Light", sans-serif;
     font-size: 15px;
     font-weight: 400;
     color: #FFF;

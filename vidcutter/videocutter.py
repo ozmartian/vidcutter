@@ -141,20 +141,15 @@ class VideoCutter(QWidget):
         self.runtimeLabel = QLabel('<div align="right">00:00:00</div>', self)
         self.runtimeLabel.setObjectName('runtimeLabel')
 
-        self.clipindex_add = QPushButton('ADD', self)
+        self.clipindex_add = QPushButton(self)
         self.clipindex_add.setObjectName('clipadd')
-        self.clipindex_add.setFont(QFont('Futura LT', 9, QFont.Medium, False))
-        self.clipindex_add.setIcon(self.clipindexAddIcon)
-        self.clipindex_add.clicked.connect(self.addExternalClip)
+        self.clipindex_add.clicked.connect(self.addExternalClips)
         self.clipindex_add.setToolTip('Add clips')
         self.clipindex_add.setStatusTip('Append media files to existing clips in your index or add to an empty list ' +
                                         'to perform a stand-alone join if compatible')
         self.clipindex_add.setCursor(Qt.PointingHandCursor)
-        self.clipindex_remove = QPushButton('REMOVE', self)
+        self.clipindex_remove = QPushButton(self)
         self.clipindex_remove.setObjectName('clipremove')
-        self.clipindex_remove.setFont(QFont('Futura LT', 9, QFont.Medium, False))
-        self.clipindex_remove.setIcon(self.clipindexRemoveIcon)
-        self.clipindex_remove.setLayoutDirection(Qt.RightToLeft)
         self.clipindex_remove.setToolTip('Remove clips')
         self.clipindex_remove.setStatusTip('Remove clips from your index')
         self.clipindex_remove.setMenu(self.clipindex_removemenu)
@@ -340,7 +335,7 @@ class VideoCutter(QWidget):
         <style>
             h1 {
                 color: %s;
-                font-family: 'Futura LT', sans-serif;
+                font-family: 'Futura-Light', sans-serif;
                 font-weight: 400;
             }
             p, li { font-size: 15px; }
@@ -393,7 +388,7 @@ class VideoCutter(QWidget):
             keep_open=True,
             idle=True,
             osc=False,
-            osd_font='Futura LT',
+            osd_font='Futura-Light',
             osd_level=0,
             osd_align_x='left',
             osd_align_y='top',
@@ -482,12 +477,6 @@ class VideoCutter(QWidget):
         self.consoleIcon.addFile(':/images/%s/console-on.png' % self.theme, QSize(16, 16), QIcon.Normal, QIcon.On)
         self.consoleIcon.addFile(':/images/%s/console-off.png' % self.theme, QSize(16, 16), QIcon.Normal, QIcon.Off)
         self.fullscreenIcon = QIcon(':/images/%s/fullscreen.png' % self.theme)
-        self.clipindexAddIcon = QIcon()
-        self.clipindexAddIcon.addFile(':/images/%s/clipindex-add.png' % self.theme, QSize(20, 20), QIcon.Normal)
-        self.clipindexAddIcon.addFile(':/images/%s/clipindex-add-on.png' % self.theme, QSize(20, 20), QIcon.Active)
-        self.clipindexRemoveIcon = QIcon()
-        self.clipindexRemoveIcon.addFile(':/images/%s/clipindex-remove.png' % self.theme, QSize(20, 20), QIcon.Normal)
-        self.clipindexRemoveIcon.addFile(':/images/%s/clipindex-remove-on.png' % self.theme, QSize(20, 20), QIcon.Active)
 
     # noinspection PyArgumentList
     def initActions(self) -> None:
@@ -818,6 +807,7 @@ class VideoCutter(QWidget):
             self.clipTimes.clear()
             linenum = 1
             while not file.atEnd():
+                # noinspection PyUnresolvedReferences
                 line = file.readLine().trimmed()
                 if line.length() > 0:
                     try:
@@ -883,12 +873,14 @@ class VideoCutter(QWidget):
                 return
             qApp.setOverrideCursor(Qt.WaitCursor)
             if ptype == 'VidCutter Project (*.vcp)':
+                # noinspection PyUnresolvedReferences
                 QTextStream(file) << '%s\n' % self.currentMedia
             for clip in self.clipTimes:
                 start_time = timedelta(hours=clip[0].hour(), minutes=clip[0].minute(), seconds=clip[0].second(),
                                        milliseconds=clip[0].msec())
                 stop_time = timedelta(hours=clip[1].hour(), minutes=clip[1].minute(), seconds=clip[1].second(),
                                       milliseconds=clip[1].msec())
+                # noinspection PyUnresolvedReferences
                 QTextStream(file) << '%s\t%s\t%d\n' % (self.delta2String(start_time), self.delta2String(stop_time), 0)
             qApp.restoreOverrideCursor()
             self.showText('Project file saved')
@@ -898,16 +890,24 @@ class VideoCutter(QWidget):
             return
         self.currentMedia = filename
         self.initMediaControls(True)
+        """
         # save externally added clips, clear lists and readd them; common use will not be with externally added clips
         # so we take this approach as its most optimal given most common user behaviour
         savedclips = list()
         for clip in self.clipTimes:
             if len(clip[3]):
                 savedclips.append(clip)
+        """
         self.cliplist.clear()
         self.clipTimes.clear()
+        self.totalRuntime = 0
+        self.setRunningTime(self.delta2QTime(self.totalRuntime).toString(self.runtimeformat))
+        """
         [self.clipTimes.append(clip) for clip in savedclips]
         del savedclips
+        if len(self.clipTimes):
+            self.renderClipIndex()
+        """
         self.seekSlider.clearRegions()
         self.parent.setWindowTitle('%s - %s' % (qApp.applicationName(), os.path.basename(self.currentMedia)))
         if not self.mediaAvailable:
@@ -919,8 +919,6 @@ class VideoCutter(QWidget):
             self.videoplayerWidget.show()
             self.mediaAvailable = True
         self.mpvWidget.play(self.currentMedia)
-        if len(self.clipTimes):
-            self.renderClipIndex()
 
     def playMedia(self) -> None:
         if self.mpvWidget.mpv.get_property('pause'):
@@ -1052,42 +1050,53 @@ class VideoCutter(QWidget):
         self.mpvWidget.mpv.set_property('video-zoom', level)
 
     @pyqtSlot()
-    def addExternalClip(self):
-        filename, _ = QFileDialog.getOpenFileName(self, caption='Add external media files', filter=self.mediaFilters(),
-                                             directory=(self.lastFolder if os.path.exists(self.lastFolder)
-                                                        else QDir.homePath()),
-                                             options=(QFileDialog.DontUseNativeDialog
-                                                      if not self.nativeDialogsAction.isChecked()
-                                                      else QFileDialog.Options()))
-        if self.currentMedia == filename:
-            QMessageBox.warning(self.parent, 'Media already loaded', 'The selected media file is already open in the ' +
-                                'app. You can use the start and end clip toolbar buttons to mark your clip segments ' +
-                                'out now.\n\nUse the ADD button to add other external media, in the same video ' +
-                                'format, to your clip index.')
-        elif len(filename.strip()):
-            self.lastFolder = QFileInfo(filename).absolutePath()
-            if len(self.clipTimes) > 0:
-                lastItem = self.clipTimes[len(self.clipTimes) - 1]
-                file4Test = lastItem[3] if len(lastItem[3]) else self.currentMedia
-                if not self.videoService.testJoin(file4Test, filename):
-                    if len(self.videoService.lastError):
-                        QMessageBox.critical(self.parent, 'Cannot add media file', self.videoService.lastError)
-                        self.videoService.lastError = ''
+    def addExternalClips(self):
+        clips, _ = QFileDialog.getOpenFileNames(self, caption='Add external media files', filter=self.mediaFilters(),
+                                                directory=(self.lastFolder if os.path.exists(self.lastFolder)
+                                                           else QDir.homePath()),
+                                                options=(QFileDialog.DontUseNativeDialog
+                                                         if not self.nativeDialogsAction.isChecked()
+                                                         else QFileDialog.Options()))
+        if self.currentMedia in clips:
+            QMessageBox.warning(self.parent, 'Media already loaded', 'One of the files selected is already open for ' +
+                                'cutting.\n\n  %s\n\nThis file will not be added as a result but any other files '
+                                % os.path.basename(self.currentMedia) +
+                                'should be in your clip index if they passed compatibility tests.')
+        elif len(clips):
+            self.lastFolder = QFileInfo(clips[0]).absolutePath()
+            filesadded = False
+            cliperrors = list()
+            for file in clips:
+                if len(self.clipTimes) > 0:
+                    lastItem = self.clipTimes[len(self.clipTimes) - 1]
+                    file4Test = lastItem[3] if len(lastItem[3]) else self.currentMedia
+                    if self.videoService.testJoin(file4Test, file):
+                        self.clipTimes.append([QTime(0, 0), self.videoService.duration(file),
+                                               VideoService.capture(file, '00:00:00.000', external=True), file])
+                        filesadded = True
                     else:
-                        errormsg = 'This media file is not compatible with media already in your clip index.\n\n' + \
-                                   'External media files must already be set to the same frame size and audio + ' + \
-                                   'video format as files already in your clip index. An obvious first check is ' + \
-                                   'checking file extensions and media properties.\n\nYou can still achieve this ' + \
-                                   'type of join using traditional video editors like OpenShot, Kdenlive, ShotCut, ' + \
-                                   'or Adobe Premiere, that will re-encode all files so that they are compatible ' + \
-                                   'to join. This can be a time consuming process that VidCutter was not designed ' + \
-                                   'to support since the tools for that are already available for you.'
-                        QMessageBox.critical(self.parent, 'Cannot add media file', errormsg)
-                    return
-            self.clipTimes.append([QTime(0, 0), self.videoService.duration(filename),
-                                   VideoService.capture(filename, '00:00:00.000', external=True), filename])
-            self.showText('external media added to clip index')
-            self.renderClipIndex()
+                        cliperrors.append((file,
+                                           (self.videoService.lastError if len(self.videoService.lastError) else '')))
+                        self.videoService.lastError = ''
+            if len(cliperrors):
+                detailedmsg = '''The file(s) listed were found to be incompatible for inclusion to the clip index as 
+                                 they failed to join in simple tests used to ensure their compatibility. This is
+                                 commonly due to differences in frame size, audio/video formats (codecs), or both.\n\n
+                                 You can join these files as they currently are using traditional video editors like
+                                 OpenShot, Kdenlive, ShotCut, Final Cut Pro or Adobe Premiere. They can re-encode media
+                                 files with mixed properties so that they are then matching and able to be joined but
+                                 be aware that this can be a time consuming process and almost always results in
+                                 degraded video quality.\n\nRe-encoding video is not going to be supported by VidCutter,
+                                 EVER, since the tools are out there are already available for you both free and
+                                 commercially.'''
+                errormsg = ''
+                if filesadded:
+                    QMessageBox.warning(self.parent, 'Could not add all files', errormsg)
+                else:
+                    QMessageBox.critical(self.parent, 'Could not add files', errormsg)
+            if filesadded:
+                self.showText('media file(s) added to index')
+                self.renderClipIndex()
 
     def clipStart(self) -> None:
         # if os.getenv('DEBUG', False):
@@ -1278,6 +1287,7 @@ class VideoCutter(QWidget):
         buttons = QDialogButtonBox(QDialogButtonBox.Ok)
         buttons.accepted.connect(shortcuts.hide)
         layout = QVBoxLayout()
+        # noinspection PyArgumentList
         layout.addWidget(QLabel(pixmap=QPixmap(':/images/%s/shortcuts.png' % self.theme)))
         layout.addWidget(buttons)
         shortcuts.setLayout(layout)
@@ -1332,7 +1342,7 @@ class VideoCutter(QWidget):
                 <style>
                     h1 {
                         color: %s;
-                        font-family: "Futura LT", sans-serif;
+                        font-family: "Futura-Light", sans-serif;
                         font-weight: 400;
                     }
                     p { font-size: 15px; }

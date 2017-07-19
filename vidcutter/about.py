@@ -53,7 +53,7 @@ class About(QDialog):
                     <img src=":/images/vidcutter-small.png" width="82" />
                 </td>
                 <td style="padding:4px;">
-                    <div style="font-family:'Futura LT', sans-serif;font-size:40px;font-weight:400;color:%s;">
+                    <div style="font-family:'Futura-Light', sans-serif;font-size:40px;font-weight:400;color:%s;">
                         <span style="font-size:58px;">V</span>ID<span style="font-size:58px;">C</span>UTTER
                     </div>
                     &nbsp;&nbsp;
@@ -87,7 +87,7 @@ class About(QDialog):
         header.setStyleSheet('border:none;')
         self.tab_about = AboutTab(self)
         self.tab_credits = CreditsTab(self)
-        self.tab_license = LicenseTab()
+        self.tab_license = LicenseTab(self)
         tabs = QTabWidget()
         tabs.setFocusPolicy(Qt.NoFocus)
         tabs.addTab(self.tab_about, 'About')
@@ -125,6 +125,10 @@ class BaseTab(QTextBrowser):
     def __init__(self, parent=None):
         super(BaseTab, self).__init__(parent)
         self.setOpenExternalLinks(True)
+        if parent.parent.theme == 'dark':
+            self.setStyleSheet('QTextBrowser { background-color: rgba(12, 15, 16, 210); color: #FFF; }')
+        else:
+            self.setStyleSheet('QTextBrowser { background-color: rgba(255, 255, 255, 200); color: #000; }')
 
 
 class AboutTab(BaseTab):
@@ -236,7 +240,7 @@ class CreditsTab(BaseTab):
 
 
 class LicenseTab(BaseTab):
-    def __init__(self):
-        super(LicenseTab, self).__init__()
+    def __init__(self, parent=None):
+        super(LicenseTab, self).__init__(parent)
         self.setObjectName('license')
         self.setSource(QUrl('qrc:/license.html'))
