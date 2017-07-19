@@ -33,6 +33,8 @@ from PyQt5.QtGui import QCloseEvent
 from PyQt5.QtWidgets import qApp, QDialog, QDialogButtonBox, QLabel, QTabWidget, QTextBrowser, QVBoxLayout
 from sip import SIP_VERSION_STR
 
+import vidcutter.libs.mpv as mpv
+
 
 class About(QDialog):
     def __init__(self, parent=None, f=Qt.WindowCloseButtonHint):
@@ -41,8 +43,7 @@ class About(QDialog):
         self.setObjectName('aboutwidget')
         self.setContentsMargins(0, 0, 0, 0)
         self.setWindowModality(Qt.ApplicationModal)
-        builddate = datetime.fromtimestamp(os.path.getmtime(
-            self.parent.parent.get_path('__init__.py',override=True))).strftime('%d %b %Y')
+        builddate = datetime.fromtimestamp(os.path.getmtime(mpv.__file__)).strftime('%d %b %Y')
         pencolor1 = '#9A45A2' if self.parent.theme == 'dark' else '#642C68'
         pencolor2 = '#FFF' if self.parent.theme == 'dark' else '#000'
         header = QLabel('''
@@ -53,7 +54,7 @@ class About(QDialog):
                     <img src=":/images/vidcutter-small.png" width="82" />
                 </td>
                 <td style="padding:4px;">
-                    <div style="font-family:'Futura LT', sans-serif;font-size:40px;font-weight:400;color:%s;">
+                    <div style="font-family:'Futura-Light', sans-serif;font-size:40px;font-weight:400;color:%s;">
                         <span style="font-size:58px;">V</span>ID<span style="font-size:58px;">C</span>UTTER
                     </div>
                     &nbsp;&nbsp;
@@ -87,9 +88,8 @@ class About(QDialog):
         header.setStyleSheet('border:none;')
         self.tab_about = AboutTab(self)
         self.tab_credits = CreditsTab(self)
-        self.tab_license = LicenseTab()
+        self.tab_license = LicenseTab(self)
         tabs = QTabWidget()
-        tabs.setFocusPolicy(Qt.NoFocus)
         tabs.addTab(self.tab_about, 'About')
         tabs.addTab(self.tab_credits, 'Credits')
         tabs.addTab(self.tab_license, 'License')
@@ -125,6 +125,10 @@ class BaseTab(QTextBrowser):
     def __init__(self, parent=None):
         super(BaseTab, self).__init__(parent)
         self.setOpenExternalLinks(True)
+        if parent.parent.theme == 'dark':
+            self.setStyleSheet('QTextBrowser { background-color: rgba(12, 15, 16, 210); color: #FFF; }')
+        else:
+            self.setStyleSheet('QTextBrowser { background-color: rgba(255, 255, 255, 200); color: #000; }')
 
 
 class AboutTab(BaseTab):
@@ -132,9 +136,11 @@ class AboutTab(BaseTab):
         super(AboutTab, self).__init__(parent)
         self.parent = parent
         linebreak = '<br/>' if sys.platform == 'win32' else '&nbsp;&nbsp;&nbsp;'
+        # noinspection PyBroadException
         try:
-            ffmpeg_version = self.parent.parent.mpvWidget.mpv.get_property('ffmpeg-version')
-        except AttributeError:
+            ffmpeg_version = self.parent.parent.videoService.version()
+            # ffmpeg_version = self.parent.parent.mpvWidget.mpv.get_property('ffmpeg-version')
+        except:
             ffmpeg_version = '2.8.10'
         html = '''
 <style>
@@ -234,7 +240,7 @@ class CreditsTab(BaseTab):
 
 
 class LicenseTab(BaseTab):
-    def __init__(self):
-        super(LicenseTab, self).__init__()
+    def __init__(self, parent=None):
+        super(LicenseTab, self).__init__(parent)
         self.setObjectName('license')
         self.setSource(QUrl('qrc:/license.html'))
