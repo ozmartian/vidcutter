@@ -140,6 +140,8 @@ class VideoCutter(QWidget):
 
         self.runtimeLabel = QLabel('<div align="right">00:00:00</div>', self)
         self.runtimeLabel.setObjectName('runtimeLabel')
+        self.runtimeLabel.setToolTip('total runtime: 00:00:00')
+        self.runtimeLabel.setStatusTip('total running time: 00:00:00')
 
         self.clipindex_add = QPushButton(self)
         self.clipindex_add.setObjectName('clipadd')
@@ -152,6 +154,7 @@ class VideoCutter(QWidget):
         self.clipindex_remove.setObjectName('clipremove')
         self.clipindex_remove.setToolTip('Remove clips')
         self.clipindex_remove.setStatusTip('Remove clips from your index')
+        self.clipindex_remove.setLayoutDirection(Qt.RightToLeft)
         self.clipindex_remove.setMenu(self.clipindex_removemenu)
         self.clipindex_remove.setCursor(Qt.PointingHandCursor)
         if sys.platform == 'win32':
@@ -680,6 +683,8 @@ class VideoCutter(QWidget):
 
     def setRunningTime(self, runtime: str) -> None:
         self.runtimeLabel.setText('<div align="right">%s</div>' % runtime)
+        self.runtimeLabel.setToolTip('total runtime: %s' % runtime)
+        self.runtimeLabel.setStatusTip('total running time: %s' % runtime)
 
     @pyqtSlot()
     def initRemoveMenu(self):
@@ -1078,6 +1083,9 @@ class VideoCutter(QWidget):
                         cliperrors.append((file,
                                            (self.videoService.lastError if len(self.videoService.lastError) else '')))
                         self.videoService.lastError = ''
+                else:
+                    self.clipTimes.append([QTime(0, 0), self.videoService.duration(file),
+                                           VideoService.capture(file, '00:00:00.000', external=True), file])
             if len(cliperrors):
                 detailedmsg = '''The file(s) listed were found to be incompatible for inclusion to the clip index as 
                                  they failed to join in simple tests used to ensure their compatibility. This is
@@ -1140,7 +1148,8 @@ class VideoCutter(QWidget):
             index = row
         clip = self.clipTimes.pop(start)
         self.clipTimes.insert(index, clip)
-        self.seekSlider.switchRegions(start, index)
+        if not len(clip[3]):
+            self.seekSlider.switchRegions(start, index)
 
     def renderClipIndex(self) -> None:
         self.cliplist.clear()
