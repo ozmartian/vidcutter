@@ -23,59 +23,52 @@ environment:
   APPVEYOR_RDP_PASSWORD:
     secure: uzV46p3oDwpGYncy5y+ysw==
   PYTHONUNBUFFERED: 1
-  PYTHON: C:\Python36\python.exe
+  PYTHONHOME: C:\Python36-x64
+  PYTHON: C:\Python36-x64\python.exe
 
 install:
-- cmd: >-
-    set PATH=%PATH%;C:\Python36
-    
-    rem Installing latest pip + setuptools...
-    %PYTHON% -m pip install -U pip setuptools
-
-    rem Installing PyQt5 and PyOpenGL python wheels via pip...
-    %PYTHON% -m pip install PyQt5 PyOpenGL PyOpenGL-accelerate
-
-    rem Installing latest git checkout of PyInstaller...
-    %PYTHON% -m pip install git+https://github.com/pyinstaller/pyinstaller.git
-
-    rem Setting up libmpv build subfolders...
-    mkdir "_build\pyinstaller\temp"
-    mkdir "_build\pyinstaller\libmpv"
-    mkdir "_build\pyinstaller\libmpv\32"
-    mkdir "_build\pyinstaller\libmpv\64"
-
-    rem Downloading latest libmpv 32-bit build...
-    @powershell Invoke-WebRequest "https://downloads.sourceforge.net/project/mpv-player-windows/libmpv/mpv-dev-i686-20170715-git-18c74f7.7z" -OutFile "_build\pyinstaller\temp\libmpv32.7z"
-    7z e "_build\pyinstaller\temp\libmpv32.7z" mpv-1.dll -o"_build\pyinstaller\temp"
-    move "_build\pyinstaller\temp\mpv-1.dll" "_build\pyinstaller\libmpv\32"
-
-    rem Downloading latest libmpv 64-bit build...
-    @powershell Invoke-WebRequest "https://downloads.sourceforge.net/project/mpv-player-windows/libmpv/mpv-dev-x86_64-20170715-git-18c74f7.7z" -OutFile "_build\pyinstaller\temp\libmpv64.7z"
-    7z e "_build\pyinstaller\temp\libmpv64.7z" mpv-1.dll -o"_build\pyinstaller\temp"
-    move "_build\pyinstaller\temp\mpv-1.dll" "_build\pyinstaller\libmpv\64"
-
-    rem Copy DLLs from Windows for ANGLE Direct3D engine support..
-    copy "C:\Windows\SysWOW64\d3dcompiler_43.dll" "_build\pyinstaller\libmpv\32"
-    copy "C:\Windows\SysWOW64\d3dcompiler_47.dll" "_build\pyinstaller\libmpv\32"
-    copy "C:\Windows\System32\d3dcompiler_43.dll" "_build\pyinstaller\libmpv\64"
-    copy "C:\Windows\System32\d3dcompiler_47.dll" "_build\pyinstaller\libmpv\64"
-
-    rem Verify libmpv folder is correct...
-    dir /S "_build\pyinstaller\libmpv"
+  - set PATH=%PYTHONHOME%;%PYTHONHOME%\scripts;%PYTHONHOME%\tools\scripts;%PATH%
+  - echo Installing latest pip + setuptools...
+  - %PYTHON% -m pip install -U pip setuptools
+  - echo Installing PyQt5 and PyOpenGL python wheels via pip...
+  - %PYTHON% -m pip install PyQt5 PyOpenGL PyOpenGL-accelerate
+  - echo Installing latest git checkout of PyInstaller...
+  - %PYTHON% -m pip install git+https://github.com/pyinstaller/pyinstaller.git
+  - echo Setting up libmpv build subfolders...
+  - mkdir "_build\pyinstaller\temp"
+  - mkdir "_build\pyinstaller\libmpv"
+  # - mkdir "_build\pyinstaller\libmpv\32"
+  - mkdir "_build\pyinstaller\libmpv\64"
+  # - echo Downloading latest libmpv 32-bit build...
+  # - curl -L -fsS -o _build\pyinstaller\temp\libmpv32.7z "https://downloads.sourceforge.net/project/mpv-player-windows/libmpv/mpv-dev-i686-20170715-git-18c74f7.7z"
+  # - 7z e "_build\pyinstaller\temp\libmpv32.7z" mpv-1.dll -o"_build\pyinstaller\temp"
+  # - move "_build\pyinstaller\temp\mpv-1.dll" "_build\pyinstaller\libmpv\32"
+  - echo Downloading latest libmpv 64-bit build...
+  - curl -L -fsS -o _build\pyinstaller\temp\libmpv64.7z "https://downloads.sourceforge.net/project/mpv-player-windows/libmpv/mpv-dev-x86_64-20170715-git-18c74f7.7z"
+  - 7z e "_build\pyinstaller\temp\libmpv64.7z" mpv-1.dll -o"_build\pyinstaller\temp"
+  - move "_build\pyinstaller\temp\mpv-1.dll" "_build\pyinstaller\libmpv\64"
+  - echo Copy DLLs from Windows for ANGLE Direct3D engine support..
+  # - copy "C:\Windows\SysWOW64\d3dcompiler_43.dll" "_build\pyinstaller\libmpv\32"
+  # - copy "C:\Windows\SysWOW64\d3dcompiler_47.dll" "_build\pyinstaller\libmpv\32"
+  - copy "C:\Windows\System32\d3dcompiler_43.dll" "_build\pyinstaller\libmpv\64"
+  - copy "C:\Windows\System32\d3dcompiler_47.dll" "_build\pyinstaller\libmpv\64"
+  - echo Verify libmpv folder is correct...
+  - dir /S "_build\pyinstaller\libmpv"
 
 nuget:
   disable_publish_on_pr: true
 
 build_script:
-- cmd: >-
-    rem Build Cython/C extension for libmpv binding...
-    %PYTHON% setup.py build_ext -i
-
-    rem Listing "mpv.*.pyd" files from libs folder to double check it was built via logs...
-    dir vidcutter\libs\mpv.*.pyd
-
-    rem All building complete!
-    rem SUCCESS
+  - echo Setup build environment for MSVC++
+  - call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x64
+  - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
+  - echo Build Cython/C extension for libmpv binding...
+  - %PYTHON% setup.py build_ext -i
+  - echo Listing "mpv.*.pyd" files from libs folder to double check it was built via logs...
+  - dir vidcutter\libs\mpv.*.pyd
+  - echo.
+  - echo All building complete!
+  - echo SUCCESS
 
 test: off
 
