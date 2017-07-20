@@ -48,7 +48,7 @@ from vidcutter.libs.mpvwidget import mpvWidget
 from vidcutter.libs.notifications import JobCompleteNotification
 # from vidcutter.libs.taskbarprogress import TaskbarProgress
 from vidcutter.libs.videoservice import VideoService
-from vidcutter.libs.widgets import FrameCounter, TimeCounter, VCProgressBar, VolumeSlider
+from vidcutter.libs.widgets import ClipErrorsDialog, FrameCounter, TimeCounter, VCProgressBar, VolumeSlider
 
 # noinspection PyUnresolvedReferences
 import vidcutter.resources
@@ -1086,22 +1086,22 @@ class VideoCutter(QWidget):
                 else:
                     self.clipTimes.append([QTime(0, 0), self.videoService.duration(file),
                                            VideoService.capture(file, '00:00:00.000', external=True), file])
+                    filesadded = True
             if len(cliperrors):
-                detailedmsg = '''The file(s) listed were found to be incompatible for inclusion to the clip index as 
+                detailedmsg = '''<p>The file(s) listed were found to be incompatible for inclusion to the clip index as 
                                  they failed to join in simple tests used to ensure their compatibility. This is
-                                 commonly due to differences in frame size, audio/video formats (codecs), or both.\n\n
-                                 You can join these files as they currently are using traditional video editors like
+                                 commonly due to differences in frame size, audio/video formats (codecs), or both.</p>
+                                 <p>You can join these files as they currently are using traditional video editors like
                                  OpenShot, Kdenlive, ShotCut, Final Cut Pro or Adobe Premiere. They can re-encode media
                                  files with mixed properties so that they are then matching and able to be joined but
                                  be aware that this can be a time consuming process and almost always results in
-                                 degraded video quality.\n\nRe-encoding video is not going to be supported by VidCutter,
+                                 degraded video quality.</p>
+                                 <p>Re-encoding video is not going to be supported by VidCutter,
                                  EVER, since the tools are out there are already available for you both free and
-                                 commercially.'''
-                errormsg = ''
-                if filesadded:
-                    QMessageBox.warning(self.parent, 'Could not add all files', errormsg)
-                else:
-                    QMessageBox.critical(self.parent, 'Could not add files', errormsg)
+                                 commercially.</p>'''
+                errordialog = ClipErrorsDialog(cliperrors, self)
+                errordialog.setDetailedMessage(detailedmsg)
+                errordialog.show()
             if filesadded:
                 self.showText('media file(s) added to index')
                 self.renderClipIndex()

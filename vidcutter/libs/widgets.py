@@ -22,9 +22,12 @@
 #
 #######################################################################
 
+import os
+
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, QPoint, Qt, QTime
-from PyQt5.QtWidgets import (qApp, QAbstractSpinBox, QDialog, QGridLayout, QHBoxLayout, QLabel, QProgressBar, QSlider,
-                             QSpinBox, QStyle, QStyleFactory, QStyleOptionSlider, QTimeEdit, QToolTip, QWidget)
+from PyQt5.QtWidgets import (qApp, QAbstractSpinBox, QDialog, QDialogButtonBox, QGridLayout, QHBoxLayout, QLabel,
+                             QMessageBox, QProgressBar, QSlider, QSpinBox, QStyle, QStyleFactory, QStyleOptionSlider,
+                             QTimeEdit, QToolBox, QToolTip, QVBoxLayout, QWidget)
 
 
 class TimeCounter(QWidget):
@@ -203,7 +206,7 @@ class VCProgressBar(QDialog):
         qApp.processEvents()
 
     @pyqtSlot()
-    def close(self):
+    def close(self) -> None:
         self.deleteLater()
         super(VCProgressBar, self).close()
 
@@ -225,3 +228,37 @@ class VolumeSlider(QSlider):
         pos += self.offset
         globalPos = self.mapToGlobal(pos)
         QToolTip.showText(globalPos, str('{0}%'.format(value)), self)
+
+
+class ClipErrorsDialog(QDialog):
+    def __init__(self, errors: list, parent=None, flags=Qt.WindowCloseButtonHint):
+        super(ClipErrorsDialog, self).__init__(parent, flags)
+        self.errors = errors
+        self.parent = parent
+        self.setWindowModality(Qt.ApplicationModal)
+        self.setWindowTitle('Cannot add media file(s)')
+        self.setStyleSheet('')
+        self.toolbox = QToolBox(self)
+        self.detailedLabel = QLabel(self)
+        self.buttons = QDialogButtonBox(self)
+        closebutton = self.buttons.addButton(QDialogButtonBox.Close)
+        closebutton.clicked.connect(self.close)
+        closebutton.setDefault(True)
+        closebutton.setAutoDefault(True)
+        closebutton.setFocus()
+        layout = QVBoxLayout()
+        layout.addWidget(self.toolbox)
+        layout.addSpacing(10)
+        layout.addWidget(self.buttons)
+        self.setLayout(layout)
+        self.parseErrors()
+
+    def parseErrors(self) -> None:
+        for file, error in self.errors:
+            index = self.toolbox.addItem(QLabel(error, self), os.path.basename(file))
+            self.toolbox.setItemToolTip(index, file)
+
+    def setDetailedMessage(self, msg: str) -> None:
+        helpbutton = self.buttons.addButton('Help', QDialogButtonBox.HelpRole)
+        helpbutton.clicked.connect(lambda: QMessageBox.information(self, 'Help :: Adding Media Files', msg,
+                                                                   QMessageBox.Ok))

@@ -138,8 +138,9 @@ class VideoService(QObject):
             if file1_codecs != file2_codecs:
                 self.lastError = '<p>The audio + video format of this media file is not the same as the files ' + \
                                  'already in your clip index.</p>' + \
-                                 '<ul><li>Current files are <b>{0}</b> (video) and <b>{1}</b> (audio)</li>' + \
-                                 '<li>New file is <b>{2}</b> (video) and <b>{3}</b> (audio)</li></ul>'
+                                 '<div align="center"> - Current files are <b>{0}</b> (video) and ' + \
+                                 '<b>{1}</b> (audio)<br/>' + \
+                                 '- New file is <b>{2}</b> (video) and <b>{3}</b> (audio)</div>'
                 self.lastError = self.lastError.format(file1_codecs[0], file1_codecs[1],
                                                        file2_codecs[0], file2_codecs[1])
                 return result

@@ -14,13 +14,14 @@ from OpenGL import GL
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QEvent, QTimer
 from PyQt5.QtGui import QKeyEvent, QMouseEvent
 from PyQt5.QtOpenGL import QGLContext
-from PyQt5.QtWidgets import qApp, QDialog, QHBoxLayout, QLabel, QOpenGLWidget
+from PyQt5.QtWidgets import QOpenGLWidget
 import sip
 
 # noinspection PyUnresolvedReferences
 import vidcutter.libs.mpv as mpv
 
 try:
+    # noinspection PyUnresolvedReferences
     from typing import Optional
 
     def get_proc_address(proc) -> Optional[sip.voidptr]:
@@ -28,7 +29,6 @@ try:
         if glctx is None:
             return None
         return glctx.getProcAddress(str(proc, 'utf-8'))
-
 except ImportError:
     def get_proc_address(proc):
         glctx = QGLContext.currentContext()
@@ -59,7 +59,7 @@ class mpvWidget(QOpenGLWidget):
         for opt, val in mpv_opts.items():
             try:
                 self.mpv.set_option(opt.replace('_', '-'), _istr(val))
-            except:
+            except mpv.MPVError:
                 pass
 
         self.mpv.initialize()
@@ -70,7 +70,7 @@ class mpvWidget(QOpenGLWidget):
             self.mpv.set_option('opengl-hwdec-interop', 'auto')
             if sys.platform == 'win32':
                 self.mpv.set_option('opengl-backend', 'angle')
-        except:
+        except mpv.MPVError:
             pass
 
         self.frameSwapped.connect(self.swapped, Qt.DirectConnection)
@@ -167,11 +167,11 @@ class mpvWidget(QOpenGLWidget):
     def volume(self, vol: int) -> None:
         self.mpv.set_property('volume', vol)
 
-    def codec(self, type: str='video') -> str:
-        return self.mpv.get_property('audio-codec' if type == 'audio' else 'video-codec')
+    def codec(self, stream: str= 'video') -> str:
+        return self.mpv.get_property('audio-codec' if stream == 'audio' else 'video-codec')
 
-    def format(self, type: str='video') -> str:
-        return self.mpv.get_property('audio-codec-name' if type == 'audio' else 'video-format')
+    def format(self, stream: str= 'video') -> str:
+        return self.mpv.get_property('audio-codec-name' if stream == 'audio' else 'video-format')
 
     def property(self, prop: str):
         return self.mpv.get_property(prop)
