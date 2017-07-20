@@ -24,7 +24,8 @@
 
 import os
 
-from PyQt5.QtCore import pyqtSignal, pyqtSlot, QPoint, Qt, QTime
+from PyQt5.QtCore import pyqtSignal, pyqtSlot, QEvent, QObject, QPoint, Qt, QTime
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import (qApp, QAbstractSpinBox, QDialog, QDialogButtonBox, QGridLayout, QHBoxLayout, QLabel,
                              QMessageBox, QProgressBar, QSlider, QSpinBox, QStyle, QStyleFactory, QStyleOptionSlider,
                              QTimeEdit, QToolBox, QToolTip, QVBoxLayout, QWidget)
@@ -231,27 +232,67 @@ class VolumeSlider(QSlider):
 
 
 class ClipErrorsDialog(QDialog):
+
+    class VCToolBox(QToolBox):
+        def __init__(self, parent=None, **kwargs):
+            super(ClipErrorsDialog.VCToolBox, self).__init__(parent, **kwargs)
+            self.installEventFilter(self)
+
+        def eventFilter(self, obj: QObject, event: QEvent) -> bool:
+            if event.type() == QEvent.Enter:
+                qApp.setOverrideCursor(Qt.PointingHandCursor)
+            elif event.type() == QEvent.Leave:
+                qApp.restoreOverrideCursor()
+            return super(ClipErrorsDialog.VCToolBox, self).eventFilter(obj, event)
+
     def __init__(self, errors: list, parent=None, flags=Qt.WindowCloseButtonHint):
         super(ClipErrorsDialog, self).__init__(parent, flags)
         self.errors = errors
         self.parent = parent
         self.setWindowModality(Qt.ApplicationModal)
         self.setWindowTitle('Cannot add media file(s)')
-        self.setStyleSheet('')
-        self.toolbox = QToolBox(self)
+        self.headingcolor = '#C681D5' if self.parent.theme == 'dark' else '#642C68'
+        self.pencolor = '#FFF' if self.parent.theme == 'dark' else '#222'
+        self.toolbox = ClipErrorsDialog.VCToolBox(self)
         self.detailedLabel = QLabel(self)
         self.buttons = QDialogButtonBox(self)
         closebutton = self.buttons.addButton(QDialogButtonBox.Close)
         closebutton.clicked.connect(self.close)
         closebutton.setDefault(True)
         closebutton.setAutoDefault(True)
+        closebutton.setCursor(Qt.PointingHandCursor)
         closebutton.setFocus()
+        introLabel = self.intro()
+        introLabel.setWordWrap(True)
         layout = QVBoxLayout()
+        layout.addWidget(introLabel)
+        layout.addSpacing(10)
         layout.addWidget(self.toolbox)
         layout.addSpacing(10)
         layout.addWidget(self.buttons)
         self.setLayout(layout)
         self.parseErrors()
+
+    def intro(self) -> QLabel:
+        return QLabel('''
+        <style>
+            h1 {
+                text-align: center;
+                color: %s;
+                font-family: "Futura-Light", sans-serif;
+                font-weight: 400;
+            }
+            p {
+                font-family: "Open Sans", sans-serif;
+                color: %s;
+            }
+        </style>
+        <h1>Invalid media files detected</h1>
+        <p>
+            lorem ipum lorem ipum lorem ipum lorem ipum lorem ipum lorem ipum lorem ipum
+            lorem ipum lorem ipum lorem ipum lorem ipum lorem ipum lorem ipum lorem ipum.
+        </p>
+        ''' % (self.headingcolor, self.pencolor))
 
     def parseErrors(self) -> None:
         for file, error in self.errors:
@@ -259,6 +300,23 @@ class ClipErrorsDialog(QDialog):
             self.toolbox.setItemToolTip(index, file)
 
     def setDetailedMessage(self, msg: str) -> None:
+        msg = '''
+        <style>
+            h1 {
+                text-align: center;
+                color: %s;
+                font-family: "Futura-Light", sans-serif;
+                font-weight: 400;
+            }
+            p {
+                font-family: "Open Sans", sans-serif;
+                font-weight: 300;
+                color: %s;
+            }
+        </style>
+        <h1>Help :: Adding media files</h1>
+        %s''' % (self.headingcolor, self.pencolor, msg)
         helpbutton = self.buttons.addButton('Help', QDialogButtonBox.HelpRole)
+        helpbutton.setCursor(Qt.PointingHandCursor)
         helpbutton.clicked.connect(lambda: QMessageBox.information(self, 'Help :: Adding Media Files', msg,
                                                                    QMessageBox.Ok))

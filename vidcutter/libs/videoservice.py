@@ -150,7 +150,7 @@ class VideoService(QObject):
             if size1 != size2:
                 self.lastError = '<p>The frame size of this media file is not the same as the files already in ' + \
                                  'your clip index.</p>' + \
-                                 '<ul><li>Current files are <b>%sx%s</b><li><li>New file is <b>%sx%s</b></li></ul>' \
+                                 '<div align="center">Current media clips are <b>%sx%s</b><br/>Attempted media file is <b>%sx%s</b></div>' \
                                  % (size1.width(), size1.height(), size2.width(), size2.height())
                 return result
             # 2. generate temporary file handles

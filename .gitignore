@@ -19,6 +19,8 @@ vidcutter/bin/
 bin/
 .DS_Store
 _packaging/appimage/*/
+_packaging/pyqtdeploy/
+_pyqtdeploy
 testing
 _build/pyinstaller/libmpv
 mpv-1.dll

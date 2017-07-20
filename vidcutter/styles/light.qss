@@ -306,20 +306,20 @@ QTabWidget::tab-bar:top {
     top: 1px;
 }
 
-QTabBar::tab {
+QTabBar::tab, QToolBox::tab {
     border: 1px solid #999;
 }
 
-QTabBar::tab:selected {
+QTabBar::tab:selected, QToolBox::tab:selected {
     background: #642C68;
     color: #FFF;
 }
 
-QTabBar::tab:!selected {
+QTabBar::tab:!selected, QToolBox::tab:!selected {
     background: silver;
 }
 
-QTabBar::tab:!selected:hover {
+QTabBar::tab:!selected:hover, QToolBox::tab:!selected:hover {
     background: #642C68;
     color: #FFF;
 }
