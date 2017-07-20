@@ -23,16 +23,16 @@ environment:
   APPVEYOR_RDP_PASSWORD:
     secure: uzV46p3oDwpGYncy5y+ysw==
   PYTHONUNBUFFERED: 1
-  PYTHONHOME: C:\Python36-64
+  PYTHONHOME: C:\Python36-x64
 
 install:
   - set PATH=%PYTHONHOME%;%PYTHONHOME%\scripts;%PYTHONHOME%\tools\scripts;%PATH%
   - echo Installing latest pip + setuptools...
-  - C:\Python36-64\python.exe -m pip install -U pip setuptools
-  - echo Installing PyQt5 and PyOpenGL C:\Python36-64\python.exe wheels via pip...
-  - C:\Python36-64\python.exe -m pip install PyQt5 PyOpenGL PyOpenGL-accelerate
+  - C:\Python36-x64\python.exe -m pip install -U pip setuptools
+  - echo Installing PyQt5 and PyOpenGL C:\Python36-x64\python.exe wheels via pip...
+  - C:\Python36-x64\python.exe -m pip install PyQt5 PyOpenGL PyOpenGL-accelerate
   - echo Installing latest git checkout of PyInstaller...
-  - C:\Python36-64\python.exe -m pip install git+https://github.com/pyinstaller/pyinstaller.git
+  - C:\Python36-x64\python.exe -m pip install git+https://github.com/pyinstaller/pyinstaller.git
   - echo Setting up libmpv build subfolders...
   - mkdir "_build\pyinstaller\temp"
   - mkdir "_build\pyinstaller\libmpv"
@@ -62,7 +62,7 @@ build_script:
   - call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x64
   - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
   - echo Build Cython/C extension for libmpv binding...
-  - C:\Python36-64\python.exe setup.py build_ext -i
+  - C:\Python36-x64\python.exe setup.py build_ext -i
   - echo Listing "mpv.*.pyd" files from libs folder to double check it was built via logs...
   - dir vidcutter\libs\mpv.*.pyd
   - echo.
