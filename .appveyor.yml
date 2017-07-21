@@ -87,7 +87,8 @@ on_finish:
   - git add -A
   - git commit -am "AppVeyor automated artifacts deployment"
   - git push
-# - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+  - echo.
+  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 # - path: C:\projects\vidcutter\_build\InnoSetup\Output\VidCutter-*-setup-x86.exe
 
