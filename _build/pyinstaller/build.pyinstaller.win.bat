@@ -25,7 +25,7 @@ if ["%ARCH%"]==["32"] (
 
 REM ......................get latest version number......................
 
-for /f "delims=" %%a in ('python version.py') do @set VERSION=%%a
+for /f "delims=" %%a in ('C:\Python36-x64\python.exe version.py') do @set VERSION=%%a
 
 REM ......................cleanup previous build scraps......................
 
@@ -52,11 +52,11 @@ cd ..
 
 REM ......................run pyinstaller......................
 
-python -m pyinstaller --clean vidcutter.win%ARCH%.spec
+C:\Python36-x64\scripts\pyinstaller.exe --clean vidcutter.win%ARCH%.spec
 
 REM ......................add metadata to built Windows binary......................
 
-verpatch dist\vidcutter.exe /va %VERSION%.0 /pv %VERSION%.0 /s desc "VidCutter" /s name "VidCutter" /s copyright "(c) 2017 Pete Alexandrou" /s product "VidCutter %BINARCH%" /s company "ozmartians.com"
+.\verpatch.exe dist\vidcutter.exe /va %VERSION%.0 /pv %VERSION%.0 /s desc "VidCutter" /s name "VidCutter" /s copyright "(c) 2017 Pete Alexandrou" /s product "VidCutter %BINARCH%" /s company "ozmartians.com"
 
 REM ......................call Inno Setup installer build script......................
 
