@@ -37,8 +37,8 @@ del /q ..\..\bin\*.*
 REM ......................download latest FFmpeg static binary......................
 
 if not exist ".\temp\" mkdir temp
-if not exist "temp\ffmpeg-latest-win%ARCH%-static.7z" ( curl -L -fsS -o %FFMPEG% "%FFMPEG_URL%" )
-if not exist "temp\%MEDIAINFO%" ( curl -L -fsS -o %MEDIAINFO% "%MEDIAINFO_URL%" )
+if not exist "temp\ffmpeg-latest-win%ARCH%-static.7z" ( curl -L -fsS -o temp\%FFMPEG% "%FFMPEG_URL%" )
+if not exist "temp\%MEDIAINFO%" ( curl -L -fsS -o temp\%MEDIAINFO% "%MEDIAINFO_URL%" )
 
 REM ......................extract ffmpeg.exe to its expected location......................
 
