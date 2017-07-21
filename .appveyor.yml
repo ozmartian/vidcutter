@@ -60,7 +60,6 @@ install:
   - cd ..\InnoSetup\Output
   - if exist %OUTFILE% (ren %OUTFILE% VidCutter-%APPVER%-dev-setup-x64.exe; appveyor PushArtifact VidCutter-%APPVER%-dev-setup-x64.exe")
   - echo.
-  - echo SUCCESS
   - appveyor exit
 
 nuget:
@@ -80,13 +79,14 @@ on_finish:
   - ps: Add-Content "$env:USERPROFILE\.git-credentials" "https://$($env:ACCESS_TOKEN):x-oauth-basic@github.com`n"
   - git config --global user.email "pete@ozmartians.com"
   - git config --global user.name "AppVeyor Build Agent"
-  - git clone -b gh-pages https://github.com/ozmartian/vidcutter-builds.git
-  - cd vidcutter-builds
+  - git clone --depth 1 https://github.com/ozmartian/vidcutter-builds.git builds
+  - cd builds
   - copy C:\projects\vidcutter\_build\InnoSetup\Output\VidCutter-*-dev-setup-*.exe .
   - git add -A
   - git commit -am "AppVeyor automated artifacts deployment"
   - git push
   - echo.
+  - echo SUCCESS
   # - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
   # - echo.
