@@ -1,0 +1,3 @@
+[submodule "builds"]
+	path = builds
+	url = git@github.com:ozmartian/vidcutter-builds.git
