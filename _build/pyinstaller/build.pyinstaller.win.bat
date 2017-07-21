@@ -25,7 +25,7 @@ if ["%ARCH%"]==["32"] (
 
 REM ......................get latest version number......................
 
-for /f "delims=" %%a in ('C:\Python36-x64\python.exe version.py') do @set VERSION=%%a
+for /f "delims=" %%a in ('C:\Python36-x64\python.exe version.py') do @set APPVER=%%a
 
 REM ......................cleanup previous build scraps......................
 
@@ -56,7 +56,7 @@ C:\Python36-x64\scripts\pyinstaller.exe --clean vidcutter.win%ARCH%.spec
 
 REM ......................add metadata to built Windows binary......................
 
-.\verpatch.exe dist\vidcutter.exe /va %VERSION%.0 /pv %VERSION%.0 /s desc "VidCutter" /s name "VidCutter" /s copyright "(c) 2017 Pete Alexandrou" /s product "VidCutter %BINARCH%" /s company "ozmartians.com"
+.\verpatch.exe dist\vidcutter.exe /va %APPVER%.0 /pv %APPVER%.0 /s desc "VidCutter" /s name "VidCutter" /s copyright "(c) 2017 Pete Alexandrou" /s product "VidCutter %BINARCH%" /s company "ozmartians.com"
 
 REM ......................call Inno Setup installer build script......................
 
@@ -64,3 +64,9 @@ cd ..\InnoSetup
 "C:\Program Files (x86)\Inno Setup 5\iscc.exe" installer_%BINARCH%.iss
 
 cd ..\pyinstaller
+
+set OUTFILE=VidCutter-%APPVER%-setup-%BINARCH%.exe
+
+echo.
+echo Installer successfully created: %OUTFILE%
+echo.
