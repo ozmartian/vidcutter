@@ -68,7 +68,18 @@ test: off
 deploy: off
 
 on_finish:
-  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+  - cd C:\projects
+  - git clone https://github.com/ozmartian/vidcutter-builds.git builds
+  - cd builds
+  - git config --global credential.helper store
+  - ps: Add-Content "$env:USERPROFILE\.git-credentials" "https://$($env:ACCESS_TOKEN):x-oauth-basic@github.com`n"
+  - git config --global user.email "pete@ozmartians.com"
+  - git config --global user.name "AppVeyor Build Agent"
+  - copy C:\projects\vidcutter\_build\InnoSetup\Output\VidCutter-*-setup-*.exe .
+  - git add -A
+  - git commit -am "AppVeyor automated artifacts deployment"
+  - git push
+  # - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 artifacts:
  - path: C:\projects\vidcutter\_build\InnoSetup\Output\VidCutter-*-setup-*.exe
