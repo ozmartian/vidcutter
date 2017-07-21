@@ -50,7 +50,7 @@ cd ..
 
 REM ......................run pyinstaller......................
 
-pyinstaller --clean vidcutter.win%ARCH%.spec
+python -m pyinstaller --clean vidcutter.win%ARCH%.spec
 
 REM ......................add metadata to built Windows binary......................
 
