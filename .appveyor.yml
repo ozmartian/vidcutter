@@ -36,23 +36,30 @@ install:
   - echo Setting up libmpv build subfolders...
   - mkdir "_build\pyinstaller\temp"
   - mkdir "_build\pyinstaller\libmpv"
-  # - mkdir "_build\pyinstaller\libmpv\32"
+  - echo.
+  - echo *** Building 64bit installer ***
+  - echo.
   - mkdir "_build\pyinstaller\libmpv\64"
-  # - echo Downloading latest libmpv 32-bit build...
-  # - curl -L -fsS -o _build\pyinstaller\temp\libmpv32.7z "https://downloads.sourceforge.net/project/mpv-player-windows/libmpv/mpv-dev-i686-20170715-git-18c74f7.7z"
-  # - 7z e "_build\pyinstaller\temp\libmpv32.7z" mpv-1.dll -o"_build\pyinstaller\temp"
-  # - move "_build\pyinstaller\temp\mpv-1.dll" "_build\pyinstaller\libmpv\32"
   - echo Downloading latest libmpv 64-bit build...
   - curl -L -fsS -o _build\pyinstaller\temp\libmpv64.7z "https://downloads.sourceforge.net/project/mpv-player-windows/libmpv/mpv-dev-x86_64-20170715-git-18c74f7.7z"
   - 7z e "_build\pyinstaller\temp\libmpv64.7z" mpv-1.dll -o"_build\pyinstaller\temp"
   - move "_build\pyinstaller\temp\mpv-1.dll" "_build\pyinstaller\libmpv\64"
   - echo Copy DLLs from Windows for ANGLE Direct3D engine support..
-  # - copy "C:\Windows\SysWOW64\d3dcompiler_43.dll" "_build\pyinstaller\libmpv\32"
-  # - copy "C:\Windows\SysWOW64\d3dcompiler_47.dll" "_build\pyinstaller\libmpv\32"
   - copy "C:\Windows\System32\d3dcompiler_43.dll" "_build\pyinstaller\libmpv\64"
   - copy "C:\Windows\System32\d3dcompiler_47.dll" "_build\pyinstaller\libmpv\64"
-  - echo Verify libmpv folder is correct...
-  - dir /S "_build\pyinstaller\libmpv"
+  - echo Freezing app w/ PyInstaller
+  - cd "_build\pyinstaller"
+  - call build.pyinstaller.win.bat 64
+  # - echo.
+  # - echo *** Building 32bit installer ***
+  # - echo.
+  # - mkdir "_build\pyinstaller\libmpv\32"
+  # - echo Downloading latest libmpv 32-bit build...
+  # - curl -L -fsS -o _build\pyinstaller\temp\libmpv32.7z "https://downloads.sourceforge.net/project/mpv-player-windows/libmpv/mpv-dev-i686-20170715-git-18c74f7.7z"
+  # - 7z e "_build\pyinstaller\temp\libmpv32.7z" mpv-1.dll -o"_build\pyinstaller\temp"
+  # - move "_build\pyinstaller\temp\mpv-1.dll" "_build\pyinstaller\libmpv\32"
+  # - copy "C:\Windows\SysWOW64\d3dcompiler_43.dll" "_build\pyinstaller\libmpv\32"
+  # - copy "C:\Windows\SysWOW64\d3dcompiler_47.dll" "_build\pyinstaller\libmpv\32"
 
 nuget:
   disable_publish_on_pr: true
@@ -75,3 +82,6 @@ deploy: off
 
 on_finish:
   - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+
+# artifacts:
+#   - path

@@ -147,8 +147,8 @@ class VideoCutter(QWidget):
         self.clipindex_add.setObjectName('clipadd')
         self.clipindex_add.clicked.connect(self.addExternalClips)
         self.clipindex_add.setToolTip('Add clips')
-        self.clipindex_add.setStatusTip('Append media files to existing clips in your index or add to an empty list ' +
-                                        'to perform a stand-alone join if compatible')
+        self.clipindex_add.setStatusTip('Add one or more files to an existing project or to an empty list if ' +
+                                        'in order to join them')
         self.clipindex_add.setCursor(Qt.PointingHandCursor)
         self.clipindex_remove = QPushButton(self)
         self.clipindex_remove.setObjectName('clipremove')
@@ -486,7 +486,7 @@ class VideoCutter(QWidget):
         self.themeAction = QActionGroup(self)
         self.zoomAction = QActionGroup(self)
         self.labelAction = QActionGroup(self)
-        self.openAction = QAction(self.openIcon, 'Open\nMedia', self, statusTip='Open a media file',
+        self.openAction = QAction(self.openIcon, 'Open\nMedia', self, statusTip='Open a media file for a cut & join',
                                   triggered=self.openMedia)
         self.playAction = QAction(self.playIcon, 'Play\nMedia', self, triggered=self.playMedia,
                                   statusTip='Play media file', enabled=False)
@@ -726,6 +726,7 @@ class VideoCutter(QWidget):
     def removeItem(self) -> None:
         index = self.cliplist.currentRow()
         del self.clipTimes[index]
+        self.showText('clip removed from clip index')
         if self.mediaAvailable:
             if self.inCut and index == self.cliplist.count() - 1:
                 self.inCut = False
@@ -737,6 +738,7 @@ class VideoCutter(QWidget):
     def clearList(self) -> None:
         self.clipTimes.clear()
         self.cliplist.clear()
+        self.showText('clip index cleared')
         if self.mediaAvailable:
             self.inCut = False
             self.initMediaControls(True)
@@ -1056,7 +1058,7 @@ class VideoCutter(QWidget):
 
     @pyqtSlot()
     def addExternalClips(self):
-        clips, _ = QFileDialog.getOpenFileNames(self, caption='Add external media files', filter=self.mediaFilters(),
+        clips, _ = QFileDialog.getOpenFileNames(self, caption='Add media files', filter=self.mediaFilters(),
                                                 directory=(self.lastFolder if os.path.exists(self.lastFolder)
                                                            else QDir.homePath()),
                                                 options=(QFileDialog.DontUseNativeDialog

@@ -289,13 +289,15 @@ class ClipErrorsDialog(QDialog):
         </style>
         <h1>Invalid media files detected</h1>
         <p>
-            lorem ipum lorem ipum lorem ipum lorem ipum lorem ipum lorem ipum lorem ipum
-            lorem ipum lorem ipum lorem ipum lorem ipum lorem ipum lorem ipum lorem ipum.
+            One or more media files were prevented from being added to your project. Each rejected file is listed below.
+            Clicking on filenames will reveal error information explaining why it was not added. 
         </p>
         ''' % (self.headingcolor, self.pencolor))
 
     def parseErrors(self) -> None:
         for file, error in self.errors:
+            if not len(error):
+                error = 'Invalid media file.<br/><br/>This is not a media file or the file is irreversibly corrupt.'
             index = self.toolbox.addItem(QLabel(error, self), os.path.basename(file))
             self.toolbox.setItemToolTip(index, file)
 
@@ -318,5 +320,6 @@ class ClipErrorsDialog(QDialog):
         %s''' % (self.headingcolor, self.pencolor, msg)
         helpbutton = self.buttons.addButton('Help', QDialogButtonBox.HelpRole)
         helpbutton.setCursor(Qt.PointingHandCursor)
+        helpbutton.setIcon(QStyle.SP_DialogHelpButton)
         helpbutton.clicked.connect(lambda: QMessageBox.information(self, 'Help :: Adding Media Files', msg,
                                                                    QMessageBox.Ok))
