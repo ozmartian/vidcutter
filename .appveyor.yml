@@ -59,6 +59,7 @@ install:
   - if exist "C:\projects\vidcutter\_build\InnoSetup\Output\%OUTFILE%" ( appveyor PushArtifact "C:\projects\vidcutter\_build\InnoSetup\Output\%OUTFILE%" )
   - echo.
   - echo SUCCESS
+  - appveyor exit
 
 nuget:
   disable_publish_on_pr: true
