@@ -54,12 +54,11 @@ install:
   - copy "C:\Windows\System32\d3dcompiler_47.dll" "_build\pyinstaller\libmpv\64"
   - echo Freezing app w/ PyInstaller
   - cd "_build\pyinstaller"
+  - for /f "delims=" %a in ('C:\Python36-x64\python.exe version.py') do @set APPVER=%a
   - call build.pyinstaller.win.bat 64
   - echo.
-  - if exist "C:\projects\vidcutter\_build\InnoSetup\Output\%OUTFILE%" (
-      ren "C:\projects\vidcutter\_build\InnoSetup\Output\%OUTFILE%" "C:\projects\vidcutter\_build\InnoSetup\Output\VidCutter-%APPVER%-dev-setup-%BINARCH%.exe"
-      appveyor PushArtifact "C:\projects\vidcutter\_build\InnoSetup\Output\VidCutter-%APPVER%-dev-setup-%BINARCH%.exe"
-    )
+  - cd ..\InnoSetup\Output
+  - if exist %OUTFILE% (ren %OUTFILE% VidCutter-%APPVER%-dev-setup-x64.exe; appveyor PushArtifact VidCutter-%APPVER%-dev-setup-x64.exe")
   - echo.
   - echo SUCCESS
   - appveyor exit
@@ -83,16 +82,12 @@ on_finish:
   - git config --global user.name "AppVeyor Build Agent"
   - git clone -b gh-pages https://github.com/ozmartian/vidcutter-builds.git
   - cd vidcutter-builds
-  - git submodule update --init --recursive
-  - cd builds
-  - copy C:\projects\vidcutter\_build\InnoSetup\Output\VidCutter-*-setup-*.exe .
+  - copy C:\projects\vidcutter\_build\InnoSetup\Output\VidCutter-*-dev-setup-*.exe .
   - git add -A
   - git commit -am "AppVeyor automated artifacts deployment"
   - git push
   - echo.
-  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
-
-# - path: C:\projects\vidcutter\_build\InnoSetup\Output\VidCutter-*-setup-x86.exe
+  # - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
   # - echo.
   # - echo *** Building 32bit installer ***
