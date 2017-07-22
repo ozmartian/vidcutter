@@ -64,9 +64,3 @@ cd ..\InnoSetup
 "C:\Program Files (x86)\Inno Setup 5\iscc.exe" installer_%BINARCH%.iss
 
 cd ..\pyinstaller
-
-set OUTFILE=VidCutter-%APPVER%-setup-%BINARCH%.exe
-
-echo.
-echo Installer successfully created: %OUTFILE%
-echo.

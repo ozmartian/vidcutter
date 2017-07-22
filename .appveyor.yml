@@ -17,7 +17,14 @@ clone_depth: 1
 clone_folder: C:\projects\vidcutter
 
 init:
-- ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+  - cd C:\projects
+  - git config --global credential.helper cache
+  - git config --global credential.helper 'cache --timeout=3600'
+  - ps: Add-Content "$env:USERPROFILE\.git-credentials" "https://$($env:ACCESS_TOKEN):x-oauth-basic@github.com`n"
+  - git config --global user.email "pete@ozmartians.com"
+  - git config --global user.name "AppVeyor Build Agent"
+  - git clone --depth 1 https://github.com/ozmartian/vidcutter-builds.git builds
 
 environment:
   ACCESS_TOKEN:
@@ -58,7 +65,6 @@ install:
   - call build.pyinstaller.win.bat 64
   - echo.
   - cd ..\InnoSetup\Output
-  - ren VidCutter-4.0.0-setup-x64.exe VidCutter-4.0.0.DEV-setup-x64.exe
   - appveyor PushArtifact VidCutter-4.0.0.DEV-setup-x64.exe
   - echo.
   - appveyor exit
@@ -75,14 +81,7 @@ artifacts:
 
 on_finish:
   - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
-  - cd C:\projects
-  - git config --global credential.helper cache
-  - git config --global credential.helper 'cache --timeout=3600'
-  - ps: Add-Content "$env:USERPROFILE\.git-credentials" "https://$($env:ACCESS_TOKEN):x-oauth-basic@github.com`n"
-  - git config --global user.email "pete@ozmartians.com"
-  - git config --global user.name "AppVeyor Build Agent"
-  - git clone --depth 1 https://github.com/ozmartian/vidcutter-builds.git builds
-  - cd builds
+  - cd C:\projects\builds\
   - copy C:\projects\vidcutter\_build\InnoSetup\Output\VidCutter-4.0.0.DEV-setup-x64.exe
   - git add -A
   - git commit -am "AppVeyor Build Agent commit"
