@@ -22,11 +22,9 @@ init:
 environment:
   ACCESS_TOKEN:
     secure: BGOn0wh7fYK/ztm14NBHgTIRp/wF0ttXs44OGgHSUlVVMu5iQ/US9LZnGzX/VWau
-  APPVER: 4.0.0
   APPVEYOR_RDP_PASSWORD:
     secure: uzV46p3oDwpGYncy5y+ysw==
   APPVEYOR_SKIP_FINALIZE_ON_EXIT: false
-  OUTFILE: VidCutter-4.0.0-setup-x64.exe
   PYTHONUNBUFFERED: 1
   PYTHONHOME: C:\Python36-x64
 
@@ -60,7 +58,10 @@ install:
   - call build.pyinstaller.win.bat 64
   - echo.
   - cd ..\InnoSetup\Output
-  - if exist  (ren $env:OUTFILE VidCutter-$env:APPVER-dev-setup-x64.exe; appveyor PushArtifact VidCutter-$env:APPVER-dev-setup-x64.exe")
+  - if exist VidCutter-4.0.0-setup-x64.exe (
+      ren VidCutter-4.0.0-setup-x64.exe VidCutter-4.0.0.DEV-setup-x64.exe
+      appveyor PushArtifact VidCutter-4.0.0.DEV-setup-x64.exe
+    )
   - echo.
   - appveyor exit
 
@@ -70,7 +71,7 @@ nuget:
 test: off
 
 artifacts:
- - path: C:\projects\vidcutter\_build\InnoSetup\Output\VidCutter-$env:APPVER-dev-setup-x64.exe
+ - path: C:\projects\vidcutter\_build\InnoSetup\Output\VidCutter-4.0.0.DEV-setup-x64.exe
    name: Windows Installers
    type: File
 
@@ -83,12 +84,13 @@ on_finish:
   - git config --global user.name "AppVeyor Build Agent"
   - git clone --depth 1 https://github.com/ozmartian/vidcutter-builds.git builds
   - cd builds
-  - copy C:\projects\vidcutter\_build\InnoSetup\Output\VidCutter-$env:APPVER-dev-setup-x64.exe
+  - copy C:\projects\vidcutter\_build\InnoSetup\Output\VidCutter-4.0.0.DEV-setup-x64.exe
   - git add -A
-  - git commit -am "AppVeyor Build Agent automated deployment"
+  - git commit -am "AppVeyor Build Agent commit"
   - git push
   - echo.
   - echo SUCCESS
+  - echo.
   - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
   # - echo.
