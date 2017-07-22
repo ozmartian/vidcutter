@@ -76,6 +76,7 @@ artifacts:
    type: File
 
 on_finish:
+  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
   - cd C:\projects
   - git config --global credential.helper cache
   - git config --global credential.helper 'cache --timeout=3600'
@@ -90,8 +91,6 @@ on_finish:
   - git push
   - echo.
   - echo SUCCESS
-  - echo.
-  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
   # - echo.
   # - echo *** Building 32bit installer ***
