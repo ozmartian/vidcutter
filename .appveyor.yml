@@ -37,6 +37,7 @@ environment:
 
 install:
   - set PATH=%PYTHONHOME%;%PYTHONHOME%\scripts;%PYTHONHOME%\tools\scripts;%PATH%
+  - cd C:\projects\vidcutter
   - echo Installing latest pip + setuptools...
   - C:\Python36-x64\python.exe -m pip install -U pip setuptools
   - echo Installing PyQt5 and PyOpenGL C:\Python36-x64\python.exe wheels via pip...
