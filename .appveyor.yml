@@ -62,7 +62,7 @@ install:
   - copy "C:\Windows\System32\d3dcompiler_43.dll" "..\libmpv\64\"
   - copy "C:\Windows\System32\d3dcompiler_47.dll" "..\libmpv\64\"
   - echo Freezing app w/ PyInstaller
-  - cd "_build\pyinstaller"
+  - cd ..
   # - for /f "delims=" %%a in ('C:\Python36-x64\python.exe version.py') do @set APPVER=%%a
   - call build.pyinstaller.win.bat 64
   - echo.
