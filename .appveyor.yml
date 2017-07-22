@@ -58,7 +58,7 @@ install:
   - call build.pyinstaller.win.bat 64
   - echo.
   - cd ..\InnoSetup\Output
-  - if exist %OUTFILE% (ren %OUTFILE% VidCutter-%APPVER%-dev-setup-x64.exe; appveyor PushArtifact VidCutter-%APPVER%-dev-setup-x64.exe")
+  - if exist  (ren %OUTFILE% VidCutter-%APPVER%-dev-setup-x64.exe; appveyor PushArtifact VidCutter-%APPVER%-dev-setup-x64.exe")
   - echo.
   - appveyor exit
 
@@ -68,7 +68,7 @@ nuget:
 test: off
 
 artifacts:
- - path: C:\projects\vidcutter\_build\InnoSetup\Output\VidCutter-*-dev-setup-*.exe
+ - path: C:\projects\vidcutter\_build\InnoSetup\Output\VidCutter-%APPVER%-dev-setup-x64.exe
    name: Windows Installers
    type: File
 
@@ -81,9 +81,9 @@ on_finish:
   - git config --global user.name "AppVeyor Build Agent"
   - git clone --depth 1 https://github.com/ozmartian/vidcutter-builds.git builds
   - cd builds
-  - copy C:\projects\vidcutter\_build\InnoSetup\Output\VidCutter-*-dev-setup-*.exe .
+  - copy C:\projects\vidcutter\_build\InnoSetup\Output\VidCutter-%APPVER%-dev-setup-x64.exe
   - git add -A
-  - git commit -am "AppVeyor automated artifacts deployment"
+  - git commit -am "AppVeyor Build Agent automated deployment"
   - git push
   - echo.
   - echo SUCCESS
