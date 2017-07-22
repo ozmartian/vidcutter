@@ -22,9 +22,11 @@ init:
 environment:
   ACCESS_TOKEN:
     secure: BGOn0wh7fYK/ztm14NBHgTIRp/wF0ttXs44OGgHSUlVVMu5iQ/US9LZnGzX/VWau
+  APPVER: 4.0.0
   APPVEYOR_RDP_PASSWORD:
     secure: uzV46p3oDwpGYncy5y+ysw==
   APPVEYOR_SKIP_FINALIZE_ON_EXIT: false
+  OUTFILE: VidCutter-4.0.0-setup-x64.exe
   PYTHONUNBUFFERED: 1
   PYTHONHOME: C:\Python36-x64
 
