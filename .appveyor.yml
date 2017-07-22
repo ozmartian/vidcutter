@@ -54,7 +54,7 @@ install:
   - copy "C:\Windows\System32\d3dcompiler_47.dll" "_build\pyinstaller\libmpv\64"
   - echo Freezing app w/ PyInstaller
   - cd "_build\pyinstaller"
-  - for /f "delims=" %a in ('C:\Python36-x64\python.exe version.py') do @set APPVER=%a
+  - for /f "delims=" %%a in ('C:\Python36-x64\python.exe version.py') do @set APPVER=%%a
   - call build.pyinstaller.win.bat 64
   - echo.
   - cd ..\InnoSetup\Output
@@ -87,7 +87,7 @@ on_finish:
   - git push
   - echo.
   - echo SUCCESS
-  # - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
   # - echo.
   # - echo *** Building 32bit installer ***
