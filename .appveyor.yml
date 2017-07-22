@@ -16,24 +16,23 @@ clone_depth: 1
 
 clone_folder: C:\projects\vidcutter
 
-init:
-  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
-  - cd C:\projects
-  - git config --global credential.helper cache
-  - git config --global credential.helper 'cache --timeout=3600'
-  - ps: Add-Content "$env:USERPROFILE\.git-credentials" "https://$($env:ACCESS_TOKEN):x-oauth-basic@github.com`n"
-  - git config --global user.email "pete@ozmartians.com"
-  - git config --global user.name "AppVeyor Build Agent"
-  - git clone --depth 1 https://github.com/ozmartian/vidcutter-builds.git builds
-
 environment:
-  ACCESS_TOKEN:
-    secure: BGOn0wh7fYK/ztm14NBHgTIRp/wF0ttXs44OGgHSUlVVMu5iQ/US9LZnGzX/VWau
+  access_token:
+    secure: 6k97vMBNf3QBnPPkkvBiABRgtxZZvoKC+8kFF68DuCLRMaLBn8OcbfJnLF/diqS1
   APPVEYOR_RDP_PASSWORD:
     secure: uzV46p3oDwpGYncy5y+ysw==
   APPVEYOR_SKIP_FINALIZE_ON_EXIT: false
   PYTHONUNBUFFERED: 1
   PYTHONHOME: C:\Python36-x64
+
+init:
+  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+  - cd C:\projects
+  - git config --global credential.helper store
+  - ps: Add-Content "$env:USERPROFILE\.git-credentials" "https://$($env:access_token):x-oauth-basic@github.com`n"
+  - git config --global user.email "pete@ozmartians.com"
+  - git config --global user.name "AppVeyor Build Agent"
+  - git clone https://github.com/ozmartian/vidcutter-builds.git builds
 
 install:
   - set PATH=%PYTHONHOME%;%PYTHONHOME%\scripts;%PYTHONHOME%\tools\scripts;%PATH%
