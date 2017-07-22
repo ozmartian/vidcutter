@@ -46,9 +46,10 @@ install:
   - echo Build Cython/C extension for libmpv binding...
   - C:\Python36-x64\python.exe setup.py build_ext -i
   - echo Downloading latest libmpv 64-bit build...
-  - curl -L -fsS -o _build\pyinstaller\temp\libmpv64.7z "https://downloads.sourceforge.net/project/mpv-player-windows/libmpv/mpv-dev-x86_64-20170715-git-18c74f7.7z"
-  - 7z e "_build\pyinstaller\temp\libmpv64.7z" mpv-1.dll -o"_build\pyinstaller\temp"
-  - move "_build\pyinstaller\temp\mpv-1.dll" "_build\pyinstaller\libmpv\64"
+  - curl -L -fsS -o _build\pyinstaller\temp\mpv-dev.7z https://mpv.srsfckn.biz/mpv-dev-20170718.7z
+  - cd _build/pyinstaller/temp
+  - 7z e mpv-dev.7z 64/mpv-1.dll -o64/
+  - move 64 ..\libmpv
   - echo Copy DLLs from Windows for ANGLE Direct3D engine support..
   - copy "C:\Windows\System32\d3dcompiler_43.dll" "_build\pyinstaller\libmpv\64"
   - copy "C:\Windows\System32\d3dcompiler_47.dll" "_build\pyinstaller\libmpv\64"
@@ -58,10 +59,8 @@ install:
   - call build.pyinstaller.win.bat 64
   - echo.
   - cd ..\InnoSetup\Output
-  - if exist VidCutter-4.0.0-setup-x64.exe (
-      ren VidCutter-4.0.0-setup-x64.exe VidCutter-4.0.0.DEV-setup-x64.exe
-      appveyor PushArtifact VidCutter-4.0.0.DEV-setup-x64.exe
-    )
+  - ren VidCutter-4.0.0-setup-x64.exe VidCutter-4.0.0.DEV-setup-x64.exe
+  - appveyor PushArtifact VidCutter-4.0.0.DEV-setup-x64.exe
   - echo.
   - appveyor exit
 
@@ -95,6 +94,7 @@ on_finish:
   # - echo.
   # - echo *** Building 32bit installer ***
   # - echo.
+  # - 7z e mpv-dev.7z 32/mpv-1.dll -o"_build\pyinstaller\libmpv\32"
   # - mkdir "_build\pyinstaller\libmpv\32"
   # - echo Downloading latest libmpv 32-bit build...
   # - curl -L -fsS -o _build\pyinstaller\temp\libmpv32.7z "https://downloads.sourceforge.net/project/mpv-player-windows/libmpv/mpv-dev-i686-20170715-git-18c74f7.7z"
