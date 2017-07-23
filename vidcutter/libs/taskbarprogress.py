@@ -41,8 +41,7 @@ class TaskbarProgress(QWidget):
         if sys.platform == 'win32':
             self.taskbarButton = QWinTaskbarButton(self)
             self.taskbarButton.setWindow(self.parent.parent.windowHandle())
-            self.taskbarProgress = self.taskbarButton.progress()
-            self.taskbarProgress.setRange(0, 100)
+            self.taskbarButton.progress().setRange(0, 100)
         elif sys.platform.startswith('linux'):
             self._desktopFileName = '%s.desktop' % qApp.applicationName().lower()
             self._signal = QDBusMessage.createSignal('/com/canonical/unity/launcherentry/337963624',
@@ -53,11 +52,11 @@ class TaskbarProgress(QWidget):
     def clear(self):
         self.setProgress(0.0, False)
 
-    @pyqtSlot(float)
+    @pyqtSlot(float, bool)
     def setProgress(self, value: float, visible: bool=True):
         if sys.platform == 'win32':
-            self.taskbarProgress.setVisible(True if value > 0.0 else False)
-            self.taskbarProgress.setValue(value * 100)
+            self.taskbarButton.progress().setVisible(True if value > 0.0 else False)
+            self.taskbarButton.progress().setValue(value * 100)
         elif sys.platform.startswith('linux'):
             message = self._signal << 'application://{0}'.format(self._desktopFileName) << {
                 'progress-visible': visible,
