@@ -1,0 +1,103 @@
+version: 4.0.{build}
+
+pull_requests:
+  do_not_increment_build_number: true
+
+branches:
+  only:
+  - master
+  - feature/add-externals
+
+image: Visual Studio 2015
+
+shallow_clone: true
+
+clone_depth: 1
+
+clone_folder: C:\projects\vidcutter
+
+environment:
+  access_token:
+    secure: 6k97vMBNf3QBnPPkkvBiABRgtxZZvoKC+8kFF68DuCLRMaLBn8OcbfJnLF/diqS1
+  APPVEYOR_RDP_PASSWORD:
+    secure: uzV46p3oDwpGYncy5y+ysw==
+  APPVEYOR_SKIP_FINALIZE_ON_EXIT: false
+  PYTHONUNBUFFERED: 1
+  PYTHONHOME: C:\Python36-x64
+
+init:
+  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+  - cd C:\projects
+  - git config --global credential.helper store
+  - ps: Add-Content "$env:USERPROFILE\.git-credentials" "https://$($env:access_token):x-oauth-basic@github.com`n"
+  - git config --global user.email "pete@ozmartians.com"
+  - git config --global user.name "AppVeyor Build Agent"
+  - git clone https://github.com/ozmartian/vidcutter-builds.git builds
+
+install:
+  - set PATH=%PYTHONHOME%;%PYTHONHOME%\scripts;%PYTHONHOME%\tools\scripts;%PATH%
+  - cd C:\projects\vidcutter
+  - echo Installing latest pip + setuptools...
+  - C:\Python36-x64\python.exe -m pip install -U pip setuptools
+  - echo Installing PyQt5 and PyOpenGL C:\Python36-x64\python.exe wheels via pip...
+  - C:\Python36-x64\python.exe -m pip install PyQt5 PyOpenGL PyOpenGL-accelerate
+  - echo Installing latest git checkout of PyInstaller...
+  - C:\Python36-x64\python.exe -m pip install git+https://github.com/pyinstaller/pyinstaller.git@develop
+  - echo Setting up libmpv build subfolders...
+  - mkdir "_build\pyinstaller\temp"
+  - mkdir "_build\pyinstaller\libmpv"
+  - mkdir "_build\pyinstaller\libmpv\64"
+  - echo Setup build environment for MSVC++
+  - call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x64
+  - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
+  - echo Build Cython/C extension for libmpv binding...
+  - C:\Python36-x64\python.exe setup.py build_ext -i
+  - echo Downloading latest libmpv 64-bit build...
+  # - curl -L -fsS -o _build\pyinstaller\temp\mpv-dev.7z https://mpv.srsfckn.biz/mpv-dev-20170718.7z
+  - curl -L -fsS -o _build\pyinstaller\temp\mpv-dev.7z https://downloads.sourceforge.net/project/mpv-player-windows/libmpv/mpv-dev-x86_64-20170722-git-2378acc.7z
+  - cd _build/pyinstaller/temp
+  - 7z e mpv-dev.7z mpv-1.dll -o"..\libmpv\64\"
+  - echo Copy DLLs from Windows for ANGLE Direct3D engine support..
+  - copy "C:\Windows\System32\d3dcompiler_43.dll" "..\libmpv\64\"
+  - copy "C:\Windows\System32\d3dcompiler_47.dll" "..\libmpv\64\"
+  - echo Freezing app w/ PyInstaller
+  - cd ..
+  # - for /f "delims=" %%a in ('C:\Python36-x64\python.exe version.py') do @set APPVER=%%a
+  - call build.pyinstaller.win.bat 64
+  - echo.
+  - cd ..\InnoSetup\Output
+  - appveyor PushArtifact VidCutter-4.0.0.DEV-setup-x64.exe
+  - copy VidCutter-4.0.0.DEV-setup-x64.exe C:\projects\builds\
+  - echo.
+  - appveyor exit
+
+nuget:
+  disable_publish_on_pr: true
+
+test: off
+
+artifacts:
+ - path: C:\projects\vidcutter\_build\InnoSetup\Output\VidCutter-4.0.0.DEV-setup-x64.exe
+   name: Windows Installers
+   type: File
+
+on_finish:
+  # - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+  - cd C:\projects\builds\
+  - git add -A
+  - git commit -am "AppVeyor Build Agent commit"
+  - git push
+  - echo.
+  - echo SUCCESS
+
+  # - echo.
+  # - echo *** Building 32bit installer ***
+  # - echo.
+  # - 7z e mpv-dev.7z 32/mpv-1.dll -o"_build\pyinstaller\libmpv\32"
+  # - mkdir "_build\pyinstaller\libmpv\32"
+  # - echo Downloading latest libmpv 32-bit build...
+  # - curl -L -fsS -o _build\pyinstaller\temp\libmpv32.7z "https://downloads.sourceforge.net/project/mpv-player-windows/libmpv/mpv-dev-i686-20170715-git-18c74f7.7z"
+  # - 7z e "_build\pyinstaller\temp\libmpv32.7z" mpv-1.dll -o"_build\pyinstaller\temp"
+  # - move "_build\pyinstaller\temp\mpv-1.dll" "_build\pyinstaller\libmpv\32"
+  # - copy "C:\Windows\SysWOW64\d3dcompiler_43.dll" "_build\pyinstaller\libmpv\32"
+  # - copy "C:\Windows\SysWOW64\d3dcompiler_47.dll" "_build\pyinstaller\libmpv\32"

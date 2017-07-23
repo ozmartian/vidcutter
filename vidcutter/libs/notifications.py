@@ -23,15 +23,18 @@
 #######################################################################
 
 import os
+import sys
 import time
 
-from PyQt5.QtCore import pyqtSlot, Qt, QFileInfo, QTimer, QUrl
-from PyQt5.QtGui import QDesktopServices, QIcon, QPixmap
-from PyQt5.QtWidgets import qApp, QDialog, QHBoxLayout, QLabel, QPushButton, QVBoxLayout
+from PyQt5.QtCore import (pyqtSignal, pyqtSlot, Qt, QEasingCurve, QFileInfo, QPropertyAnimation,
+                          QSequentialAnimationGroup, QTimer, QUrl)
+from PyQt5.QtGui import QDesktopServices, QIcon, QMouseEvent, QPixmap
+from PyQt5.QtWidgets import qApp, QDialog, QGraphicsOpacityEffect, QHBoxLayout, QLabel, QPushButton, QVBoxLayout
 
 
 class Notification(QDialog):
-    duration = 10
+    shown = pyqtSignal()
+    duration = 8
 
     def __init__(self, parent=None, f=Qt.ToolTip | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint):
         super(Notification, self).__init__(parent, f)
@@ -52,6 +55,22 @@ class Notification(QDialog):
         self.left_layout.addWidget(logo_label)
         self.right_layout = QVBoxLayout()
         self.right_layout.addWidget(self.msgLabel)
+        if sys.platform != 'win32':
+            effect = QGraphicsOpacityEffect()
+            effect.setOpacity(1)
+            self.window().setGraphicsEffect(effect)
+            self.animations = QSequentialAnimationGroup(self)
+            self.pauseAnimation = self.animations.addPause(int(self.duration / 2 * 1000))
+            opacityAnimation = QPropertyAnimation(effect, b'opacity', self.animations)
+            opacityAnimation.setDuration(2000)
+            opacityAnimation.setStartValue(1.0)
+            opacityAnimation.setEndValue(0.0)
+            opacityAnimation.setEasingCurve(QEasingCurve.InOutQuad)
+            self.animations.addAnimation(opacityAnimation)
+            self.animations.finished.connect(self.close)
+            self.shown.connect(self.fadeOut)
+        else:
+            self.shown.connect(lambda: QTimer.singleShot(self.duration * 1000, self.fadeOut))
         layout = QHBoxLayout()
         layout.addStretch(1)
         layout.addLayout(self.left_layout)
@@ -84,40 +103,47 @@ class Notification(QDialog):
     def icons(self, value):
         self._icons = value
 
-    def mousePressEvent(self, event):
-        self.close()
+    @pyqtSlot()
+    def fadeOut(self):
+        if sys.platform == 'win32':
+            for step in range(100, 0, -10):
+                self.setWindowOpacity(step / 100)
+                qApp.processEvents()
+                time.sleep(0.05)
+            self.close()
+        else:
+            self.animations.start(QSequentialAnimationGroup.DeleteWhenStopped)
+
+    def mousePressEvent(self, event: QMouseEvent):
+        if event.button() == Qt.LeftButton:
+            self.close()
 
     # noinspection PyTypeChecker
     def showEvent(self, event):
+        if self.isVisible():
+            self.shown.emit()
         self.msgLabel.setText(self._message)
         [self.left_layout.addWidget(btn) for btn in self.buttons]
         screen = qApp.desktop().screenNumber(self.parent)
         bottomright = qApp.screens()[screen].availableGeometry().bottomRight()
         self.setGeometry(bottomright.x() - (459 + 5), bottomright.y() - (156 + 10), 459, 156)
-        QTimer.singleShot(self.duration * 1000, self.close)
         super(Notification, self).showEvent(event)
 
     def closeEvent(self, event):
-        for step in range(100, 0, -10):
-            self.setWindowOpacity(step / 100)
-            qApp.processEvents()
-            time.sleep(0.2)
-        self.done(0)
-        super(Notification, self).closeEvent(event)
+        self.deleteLater()
 
 
 class JobCompleteNotification(Notification):
     def __init__(self, parent=None):
         super(JobCompleteNotification, self).__init__(parent)
-        # self.setIconPixmap(self.parent.thumbsupIcon.pixmap(150, 144))
         pencolor = '#C681D5' if self.theme == 'dark' else '#642C68'
         self.title = 'Your media file is ready!'
         self.message = '''
     <style>
         h2 {
             color: %s;
-            font-family: "Futura LT", sans-serif;
-            font-weight: 500;
+            font-family: "Futura-Light", sans-serif;
+            font-weight: 400;
             text-align: center;
         }
         table.info {
@@ -131,7 +157,7 @@ class JobCompleteNotification(Notification):
             text-transform: lowercase;
             text-align: right;
             padding-right: 5px;
-            font-family: "Futura LT", sans-serif;
+            font-family: "Futura-Light", sans-serif;
         }
         td.value {
             font-size: 13px;
@@ -159,37 +185,16 @@ class JobCompleteNotification(Notification):
                  self.parent.sizeof_fmt(int(QFileInfo(self.parent.finalFilename).size())),
                  self.parent.delta2QTime(self.parent.totalRuntime).toString(self.parent.runtimeformat))
         self.icons = {
-            'play': QIcon(':/images/%s/complete-play.png' % self.theme)
+            'play': QIcon(':/images/complete-play.png')
         }
         playButton = QPushButton(self.icons['play'], 'Play', self)
         playButton.setFixedWidth(82)
         playButton.clicked.connect(self.playMedia)
         playButton.setIcon(self.icons['play'])
+        playButton.setCursor(Qt.PointingHandCursor)
         self.buttons.append(playButton)
 
     @pyqtSlot()
     def playMedia(self) -> None:
         if len(self.parent.finalFilename) and os.path.exists(self.parent.finalFilename):
             QDesktopServices.openUrl(QUrl.fromLocalFile(self.parent.finalFilename))
-
-    # self.btn_open = self.addButton('Open', self.ResetRole)
-    # self.btn_open.setIcon(self.icon_open)
-    # self.btn_open.clicked.connect(lambda: self.playMedia(True))
-    # btn_restart = self.addButton('Restart', self.AcceptRole)
-    # btn_restart.setIcon(self.icon_restart)
-    # btn_restart.clicked.connect(self.parent.parent.reboot)
-    # self.btn_play = self.addButton('Play', self.ResetRole)
-    # self.btn_play.setIcon(self.icon_play)
-    # self.btn_play.clicked.connect(self.playMedia)
-    # self.btn_exit = self.addButton('Exit', self.ResetRole)
-    # self.btn_exit.setIcon(self.icon_exit)
-    # self.btn_exit.clicked.connect(self.parent.close)
-    # btn_continue = self.addButton('Continue', self.AcceptRole)
-    # btn_continue.setIcon(self.icon_continue)
-    # btn_continue.clicked.connect(self.close)
-
-# def initIcons(self) -> None:
-    # self.icon_exit = QIcon(':/images/%s/complete-exit.png' % self.theme)
-    # self.icon_open = QIcon(':/images/%s/complete-open.png' % self.theme)
-    # self.icon_restart = QIcon(':/images/%s/complete-restart.png' % self.theme)
-    # self.icon_continue = QIcon(':/images/%s/complete-continue.png' % self.theme)

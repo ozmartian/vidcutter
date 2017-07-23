@@ -157,12 +157,6 @@ QLabel#logowidget {
 
 /* -------------------------------------------------------------------------- */
 
-QMenu::item:disabled {
-    color: rgba(102, 102, 102, 0.5)
-}
-
-/* -------------------------------------------------------------------------- */
-
 QGroupBox#counterwidgets {
     border: none;
     background-color: #000;
@@ -180,25 +174,55 @@ QMessageBox {
 
 /* -------------------------------------------------------------------------- */
 
+QDialogButtonBox QPushButton, QDialog#notification QPushButton {
+    padding: 5px 8px;
+}
+
 QDialogButtonBox QPushButton, #clipindextools QPushButton, QDialog#notification QPushButton {
     color: #EFF0F1;
     background-color: #31363B;
     border: 1px solid #76797C;
     border-radius: 2px;
-    padding: 5px 8px;
     outline: none;
     min-width: 50px;
 }
 
+#clipindextools QPushButton {
+    border-radius: 0;
+    width: 50%;
+    height: 26px;
+    padding-left: 5px;
+}
+
+#clipindextools QPushButton#clipadd {
+    background: #31363B url(:images/dark/clipindex-add.png) no-repeat left center;
+}
+
+#clipindextools QPushButton:hover#clipadd,
+#clipindextools QPushButton:focus#clipadd,
+#clipindextools QPushButton:pressed#clipadd {
+    background: #642C68 url(:images/dark/clipindex-add-on.png) no-repeat left center;
+}
+
+#clipindextools QPushButton#clipremove {
+    background: #31363B url(:images/dark/clipindex-remove.png) no-repeat right center;
+}
+
+#clipindextools QPushButton:hover#clipremove,
+#clipindextools QPushButton:focus#clipremove,
+#clipindextools QPushButton:pressed#clipremove {
+    background: #642C68 url(:images/dark/clipindex-remove-on.png) no-repeat right center;
+}
+
 QDialogButtonBox QPushButton:hover, #clipindextools QPushButton:hover, QDialog#notification QPushButton:hover {
     border: 1px solid #642C68;
-    color: #EFF0F1;
 }
 
 QDialogButtonBox QPushButton:focus,
 QDialogButtonBox QPushButton:pressed,
 #clipindextools QPushButton:focus,
 #clipindextools QPushButton:pressed,
+QDialog#notification QPushButton,
 QDialog#notification QPushButton:focus,
 QDialog#notification QPushButton:pressed {
     background-color: #642C68;
@@ -215,8 +239,8 @@ QPushButton:hover#menuButton, QPushButton:pressed#menuButton {
     border-image: url(:/images/dark/menu-active.png);
 }
 
-QPushButton::menu-indicator#menuButton {
-    left: -2000px;
+QPushButton::menu-indicator#menuButton, #clipindextools QPushButton::menu-indicator {
+    left: -4000px;
 }
 
 QPushButton#muteButton, QPushButton#menuButton, QPushButton#fullscreenButton {
@@ -225,11 +249,10 @@ QPushButton#muteButton, QPushButton#menuButton, QPushButton#fullscreenButton {
     outline: none;
 }
 
-#clipindextools QPushButton {
-    color: #EFF0F1;
-    font-size: 11px;
-    font-family: 'Futura LT', sans-serif;
-    border-radius: 0;
+/* -------------------------------------------------------------------------- */
+
+QMenu::item:disabled, #clipindextools QPushButton:disabled {
+    color: rgba(102, 102, 102, 0.5);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -268,11 +291,6 @@ QStatusBar::item {
 
 /* -------------------------------------------------------------------------- */
 
-QTextBrowser {
-    background-color: rgba(12, 15, 16, 0.9);
-    color: #FFF;
-}
-
 #aboutwidget QTextBrowser {
     border: none;
 }
@@ -287,21 +305,21 @@ QTabWidget::tab-bar:top {
     top: 1px;
 }
 
-QTabBar::tab {
+QTabBar::tab, QToolBox::tab {
     border: 1px solid #999;
 }
 
-QTabBar::tab:selected {
+QTabBar::tab:selected, QToolBox::tab:selected {
     background: #642C68;
     color: #FFF;
 }
 
-QTabBar::tab:!selected {
+QTabBar::tab:!selected, QToolBox::tab:!selected {
     background: silver;
     color: #444;
 }
 
-QTabBar::tab:!selected:hover {
+QTabBar::tab:!selected:hover, QToolBox::tab:!selected:hover {
     background: #642C68;
     color: #FFF;
 }
@@ -345,10 +363,15 @@ VCProgressBar {
 }
 
 VCProgressBar QLabel {
-    font-family: "Futura LT", sans-serif;
+    font-family: "Futura-Light", sans-serif;
     font-size: 15px;
-    font-weight: 500;
+    font-weight: 400;
     color: #FFF;
+}
+
+VCProgressBar QProgressBar::chunk {
+    background-color: #642C68;
+    margin: 1px;
 }
 
 /* -------------------------------------------------------------------------- */

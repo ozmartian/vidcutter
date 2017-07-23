@@ -30,13 +30,17 @@ import sys
 from distutils.spawn import find_executable
 from enum import Enum
 
-from PyQt5.QtCore import pyqtSlot, QDir, QFile, QFileInfo, QObject, QProcess, QProcessEnvironment, QSize, QTemporaryFile
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtCore import (pyqtSlot, QDir, QFile, QFileInfo, QObject, QProcess, QProcessEnvironment, QSize,
+                          QTemporaryFile, QTime)
+from PyQt5.QtGui import QPainter, QPixmap
 from PyQt5.QtWidgets import QMessageBox
 
 
 class VideoService(QObject):
     frozen = getattr(sys, 'frozen', False)
+
+    mpegCodecs = {'h264', 'hevc', 'mpeg4', 'divx', 'xvid', 'webm', 'ivf', 'vp9', 'mpeg2video', 'mpg2',
+                  'mp2', 'mp3', 'aac'}
 
     utils = {
         'nt': {
@@ -53,6 +57,11 @@ class VideoService(QObject):
         INDEX = QSize(100, 70)
         TIMELINE = QSize(80, 60)
 
+    class Stream(Enum):
+        AUDIO = 0
+        VIDEO = 1
+        SUBTITLE = 2
+
     def __init__(self, parent=None):
         super(VideoService, self).__init__(parent)
         self.parent = parent
@@ -60,7 +69,9 @@ class VideoService(QObject):
         self.backend, self.mediainfo = VideoService.initBackends()
         if self.backend is not None:
             self.proc = VideoService.initProc()
-            self.proc.errorOccurred.connect(self.cmdError)
+            if hasattr(self.proc, 'errorOccurred'):
+                self.proc.errorOccurred.connect(self.cmdError)
+            self.lastError = ''
 
     @staticmethod
     def initBackends() -> tuple:
@@ -91,7 +102,7 @@ class VideoService(QObject):
         return p
 
     @staticmethod
-    def capture(source: str, frametime: str, thumbsize: ThumbSize=ThumbSize.INDEX) -> QPixmap:
+    def capture(source: str, frametime: str, thumbsize: ThumbSize=ThumbSize.INDEX, external: bool=False) -> QPixmap:
         capres = QPixmap()
         img = QTemporaryFile(os.path.join(QDir.tempPath(), 'XXXXXX.jpg'))
         if img.open():
@@ -109,11 +120,80 @@ class VideoService(QObject):
                 proc.waitForFinished(-1)
                 if proc.exitStatus() == QProcess.NormalExit and proc.exitCode() == 0:
                     capres = QPixmap(imagecap, 'JPG')
+                if external:
+                    painter = QPainter(capres)
+                    painter.drawPixmap(0, 0, QPixmap(':/images/external.png', 'PNG'))
+                    painter.end()
+        img.remove()
         return capres
 
-    # def validate(self, source: str) -> bool:
-    #     isValid = False
-    #     return isValid
+    # noinspection PyBroadException
+    def testJoin(self, file1: str, file2: str) -> bool:
+        result = False
+        self.logger.info('attempting to test joining of "%s" + "%s"' % (file1, file2))
+        try:
+            # 1. check audio + video codecs
+            file1_codecs = self.codecs(file1)
+            file2_codecs = self.codecs(file2)
+            if file1_codecs != file2_codecs:
+                self.lastError = '<p>The audio + video format of this media file is not the same as the files ' + \
+                                 'already in your clip index.</p>' + \
+                                 '<div align="center"> - Current files are <b>{0}</b> (video) and ' + \
+                                 '<b>{1}</b> (audio)<br/>' + \
+                                 '- Failed media is <b>{2}</b> (video) and <b>{3}</b> (audio)</div>'
+                self.lastError = self.lastError.format(file1_codecs[0], file1_codecs[1],
+                                                       file2_codecs[0], file2_codecs[1])
+                return result
+            # 2. check frame sizes
+            size1 = self.framesize(file1)
+            size2 = self.framesize(file2)
+            if size1 != size2:
+                self.lastError = '<p>The frame size of this media file is not the same as the files already in ' + \
+                                 'your clip index.</p>' + \
+                                 '<div align="center">Current media clips are <b>%sx%s</b><br/>Failed media file is <b>%sx%s</b></div>' \
+                                 % (size1.width(), size1.height(), size2.width(), size2.height())
+                return result
+            # 2. generate temporary file handles
+            _, ext = os.path.splitext(file1)
+            file1_cut = QTemporaryFile(os.path.join(QDir.tempPath(), 'XXXXXX%s' % ext))
+            file2_cut = QTemporaryFile(os.path.join(QDir.tempPath(), 'XXXXXX%s' % ext))
+            final_join = QTemporaryFile(os.path.join(QDir.tempPath(), 'XXXXXX%s' % ext))
+            # 3. produce 2 seconds long clips from input files for join test
+            if file1_cut.open() and file2_cut.open() and final_join.open():
+                result1 = self.cut(file1, file1_cut.fileName(), '00:00:00.000', '00:00:02.00', False)
+                result2 = self.cut(file2, file2_cut.fileName(), '00:00:00.000', '00:00:02.00', False)
+                if result1 and result2:
+                    # 4. attempt join of temp 2 second clips
+                    result = self.join([file1_cut.fileName(), file2_cut.fileName()], final_join.fileName(), False)
+            file1_cut.remove()
+            file2_cut.remove()
+            final_join.remove()
+        except:
+            self.logger.exception('Exception in VideoService.testJoin', exc_info=True)
+            result = False
+        return result
+
+    def framesize(self, source: str) -> QSize:
+        args = '-i "%s" -hide_banner' % source
+        result = self.cmdExec(self.backend, args, True)
+        matches = re.search(r'Stream.*Video:.*[,\s](?P<width>\d+?)x(?P<height>\d+?)[,\s]',
+                            result, re.DOTALL).groupdict()
+        return QSize(int(matches['width']), int(matches['height']))
+
+    def duration(self, source: str) -> QTime:
+        args = '-i "%s" -hide_banner' % source
+        result = self.cmdExec(self.backend, args, True)
+        matches = re.search(r'Duration:\s(?P<hrs>\d+?):(?P<mins>\d+?):(?P<secs>\d+\.\d+?),',
+                            result, re.DOTALL).groupdict()
+        secs, msecs = matches['secs'].split('.')
+        return QTime(int(matches['hrs']), int(matches['mins']), int(secs), int(msecs))
+
+    def codecs(self, source: str) -> tuple:
+        args = '-i "%s" -hide_banner' % source
+        result = self.cmdExec(self.backend, args, True)
+        vcodec = re.search(r'Stream.*Video:\s(\w+)', result).group(1)
+        acodec = re.search(r'Stream.*Audio:\s(\w+)', result).group(1)
+        return vcodec, acodec
 
     def cut(self, source: str, output: str, frametime: str, duration: str, allstreams: bool=True) -> bool:
         if allstreams:
@@ -124,58 +204,79 @@ class VideoService(QObject):
                    % (source, frametime, duration, QDir.fromNativeSeparators(output))
         return self.cmdExec(self.backend, args)
 
-    def join(self, filelist: str, output: str, allstreams: bool=True) -> bool:
+    def join(self, inputs: list, output: str, allstreams: bool=True) -> bool:
+        filelist = os.path.normpath(os.path.join(os.path.dirname(inputs[0]), '_vidcutter.list'))
+        fobj = open(filelist, 'w')
+        [fobj.write('file \'%s\'\n' % file.replace("'", "\\'")) for file in inputs]
+        fobj.close()
         if allstreams:
             args = '-f concat -safe 0 -i "%s" -c copy -map 0 -v 16 -y "%s"' % (filelist,
                                                                                QDir.fromNativeSeparators(output))
         else:
             args = '-f concat -safe 0 -i "%s" -c copy -v 16 -y "%s"' % (filelist,
                                                                         QDir.fromNativeSeparators(output))
-        return self.cmdExec(self.backend, args)
-
-    def getBSF(self, mediatype: str) -> str:
-        media_format = self.parent.mpvWidget.format(mediatype)
-        if mediatype == 'video':
-            prefix = '-bsf:v'
-            if media_format == 'hevc':
-                return '%s hevc_mp4toannexb' % prefix
-            elif media_format == 'h264':
-                return '%s h264_mp4toannexb' % prefix
-            elif media_format == 'mpeg4':
-                return '%s mpeg4_unpack_bframes' % prefix
-            elif media_format in {'webm', 'ivf', 'vp9'}:
-                return '%s vp9_superframe' % prefix
-        elif mediatype == 'audio':
-            prefix = '-bsf:a'
-            if media_format == 'aac':
-                return '%s aac_adtstoasc' % prefix
-            elif media_format == 'mp3':
-                return '%s mp3decomp' % prefix
-        return ''
-
-    def mpegtsJoin(self, inputs: list, output: str) -> bool:
-        result = False
-        outfiles = list()
-        # 1. transcode to mpeg transport streams
-        for file in inputs:
-            name, ext = os.path.splitext(file)
-            outfile = '%s.ts' % name
-            outfiles.append(outfile)
-            args = '-i "%s" -c copy -map 0 %s -f mpegts "%s"' % (file, self.getBSF('video'), outfile)
-            if not self.cmdExec(self.backend, args):
-                return result
-        # 2. losslessly concatenate at the file level
-        if len(outfiles):
-            args = '-i "concat:%s" -c copy %s "%s"' % ('|'.join(map(str, outfiles)),
-                                                       self.getBSF('audio'), QDir.fromNativeSeparators(output))
-            result = self.cmdExec(self.backend, args)
-            # 3. cleanup mpegts files
-            [QFile.remove(file) for file in outfiles]
+        result = self.cmdExec(self.backend, args)
+        os.remove(filelist)
         return result
 
-    def streamcount(self, source: str, stream_type: str='audio') -> int:
-        m = re.findall('\n^%s' % stream_type.title(), self.metadata(source, stream_type), re.MULTILINE)
-        return len(m)
+    def getBSF(self, source: str) -> tuple:
+        vbsf, absf = '', ''
+        vcodec, acodec = self.codecs(source)
+        if vcodec:
+            prefix = '-bsf:v'
+            if vcodec == 'hevc':
+                vbsf = '%s hevc_mp4toannexb' % prefix
+            elif vcodec == 'h264':
+                vbsf = '%s h264_mp4toannexb' % prefix
+            elif vcodec == 'mpeg4':
+                vbsf = '%s mpeg4_unpack_bframes' % prefix
+            elif vcodec in {'webm', 'ivf', 'vp9'}:
+                vbsf = '%s vp9_superframe' % prefix
+        if acodec:
+            prefix = '-bsf:a'
+            if acodec == 'aac':
+                absf = '%s aac_adtstoasc' % prefix
+            elif acodec == 'mp3':
+                absf = '%s mp3decomp' % prefix
+        return vbsf, absf
+
+    def isMPEGcodec(self, source: str) -> bool:
+        return self.codecs(source)[0].lower() in self.mpegCodecs
+
+    # noinspection PyBroadException
+    def mpegtsJoin(self, inputs: list, output: str) -> bool:
+        result = False
+        try:
+            outfiles = list()
+            video_bsf, audio_bsf = self.getBSF(inputs[0])
+            # 1. transcode to mpeg transport streams
+            for file in inputs:
+                name, _ = os.path.splitext(file)
+                outfile = '%s.ts' % name
+                outfiles.append(outfile)
+                if os.path.isfile(outfile):
+                    os.remove(outfile)
+                args = '-i "%s" -c copy -map 0 %s -f mpegts -v 16 "%s"' % (file, video_bsf, outfile)
+                if not self.cmdExec(self.backend, args):
+                    return result
+            # 2. losslessly concatenate at the file level
+            if len(outfiles):
+                if os.path.isfile(output):
+                    os.remove(output)
+                args = '-i "concat:%s" -c copy %s -v 16 "%s"' % ('|'.join(map(str, outfiles)), audio_bsf,
+                                                                 QDir.fromNativeSeparators(output))
+                result = self.cmdExec(self.backend, args)
+                # 3. cleanup mpegts files
+                [QFile.remove(file) for file in outfiles]
+        except:
+            self.logger.exception('Exception in VideoService.mpegtsJoin()', exc_info=True)
+            result = False
+        return result
+
+    def version(self) -> str:
+        args = '-version'
+        result = self.cmdExec(self.backend, args, True)
+        return re.search(r'ffmpeg\sversion\s([\S]+)\s', result).group(1)
 
     def metadata(self, source: str, output: str='HTML') -> str:
         args = '--output=%s "%s"' % (output, source)

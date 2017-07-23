@@ -161,14 +161,11 @@ class VideoSlider(QSlider):
                 if self.tickPosition() in (QSlider.TicksBothSides, QSlider.TicksBelow):
                     y = self.rect().bottom() - z
                     painter.drawLine(x, y, x, y - h)
-                    if i % 15 == 0:
+                    if self.parent.mediaAvailable and i % 15 == 0:
                         painter.setPen(Qt.white if self.theme == 'dark' else Qt.black)
-                        if self.parent.mediaAvailable:
-                            timecode = QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), x - self.offset,
-                                                                      self.width() - (self.offset * 2))
-                            timecode = self.parent.delta2QTime(timecode).toString(self.parent.runtimeformat)
-                        else:
-                            timecode = '00:00:00'
+                        timecode = QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), x - self.offset,
+                                                                  self.width() - (self.offset * 2))
+                        timecode = self.parent.delta2QTime(timecode).toString(self.parent.runtimeformat)
                         painter.drawText(x + 6, y + 6, timecode)
                 if x + 30 > self.width():
                     break
@@ -268,7 +265,7 @@ class VideoSlider(QSlider):
         self.initStyle()
         self.parent.sliderWidget.setLoader(False)
         if self.parent.newproject:
-            self.parent.renderTimes()
+            self.parent.renderClipIndex()
             self.parent.newproject = False
 
     def removeThumbs(self) -> None:
@@ -291,7 +288,7 @@ class VideoSlider(QSlider):
                 self.thumbnailsOn = False
             self.initStyle()
             self.initThumbs()
-            self.parent.renderTimes()
+            self.parent.renderClipIndex()
 
     def wheelEvent(self, event: QWheelEvent) -> None:
         if self.parent.mediaAvailable:

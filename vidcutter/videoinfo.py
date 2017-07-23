@@ -55,9 +55,9 @@ class VideoInfo(QDialog):
         margin-top: -10px;
     }
     td i {
-        font-family: "Futura LT", sans-serif;
+        font-family: "Futura-Light", sans-serif;
         font-weight: 500;
-        font-style: normal;f
+        font-style: normal;
         text-align: right;
         color: %s;
         white-space: nowrap;
