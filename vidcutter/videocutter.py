@@ -1098,9 +1098,8 @@ class VideoCutter(QWidget):
                                  files with mixed properties so that they are then matching and able to be joined but
                                  be aware that this can be a time consuming process and almost always results in
                                  degraded video quality.</p>
-                                 <p>Re-encoding video is not going to be supported by VidCutter,
-                                 EVER, since the tools are out there are already available for you both free and
-                                 commercially.</p>'''
+                                 <p>Re-encoding video is not going to ever be supported by VidCutter because those tools
+                                 are already available for you both free and commercially.</p>'''
                 errordialog = ClipErrorsDialog(cliperrors, self)
                 errordialog.setDetailedMessage(detailedmsg)
                 errordialog.show()

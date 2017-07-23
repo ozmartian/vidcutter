@@ -322,8 +322,7 @@ class ClipErrorsDialog(QDialog):
         </style>
         <h1>Help :: Adding media files</h1>
         %s''' % (self.headingcolor, self.pencolor, msg)
-        helpbutton = self.buttons.addButton('Help', QDialogButtonBox.HelpRole)
+        helpbutton = self.buttons.addButton('Help', QDialogButtonBox.ResetRole)
         helpbutton.setCursor(Qt.PointingHandCursor)
-        helpbutton.setIcon(QStyle.SP_DialogHelpButton)
         helpbutton.clicked.connect(lambda: QMessageBox.information(self, 'Help :: Adding Media Files', msg,
                                                                    QMessageBox.Ok))
