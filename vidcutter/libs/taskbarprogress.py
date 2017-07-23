@@ -22,37 +22,45 @@
 #
 #######################################################################
 
-from PyQt5.QtCore import pyqtSlot, QFile, QFileInfo
-from PyQt5.QtDBus import QDBusConnection, QDBusMessage
+import sys
+
+from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import qApp, QWidget
+
+if sys.platform == 'win32':
+    # noinspection PyUnresolvedReferences
+    from PyQt5.QtWinExtras import QWinTaskbarButton
+elif sys.platform.startswith('linux'):
+    from PyQt5.QtDBus import QDBusConnection, QDBusMessage
 
 
 class TaskbarProgress(QWidget):
     def __init__(self, parent=None):
         super(TaskbarProgress, self).__init__(parent)
-        self._desktopFile = QFile('{0}.desktop'.format(qApp.applicationName().lower()))
-        self._desktopFileContent = '[Desktop Entry]\nType=Application\nVersion=1.1\nName=%s\nExec=%s\n'
-        self._dbusMessage = QDBusMessage.createSignal('/com/ozmartians/VidCutter',
-                                                      'com.canonical.Unity.LauncherEntry', 'Update')
-        self._dbusConnection = QDBusConnection.sessionBus()
-        self._reset()
+        self.parent = parent
+        if sys.platform == 'win32':
+            self.taskbarButton = QWinTaskbarButton(self)
+            self.taskbarButton.setWindow(self.parent.parent.windowHandle())
+            self.taskbarProgress = self.taskbarButton.progress()
+            self.taskbarProgress.setRange(0, 100)
+        elif sys.platform.startswith('linux'):
+            self._desktopFileName = '%s.desktop' % qApp.applicationName().lower()
+            self._signal = QDBusMessage.createSignal('/com/canonical/unity/launcherentry/337963624',
+                                                     'com.canonical.Unity.LauncherEntry', 'Update')
+            self._sessionbus = QDBusConnection.sessionBus()
+
+    @pyqtSlot()
+    def clear(self):
+        self.setProgress(0.0, False)
 
     @pyqtSlot(float)
-    def setProgress(self, value: float):
-        self._sendMessage({
-            'progress-visible': False if value <= 0 else True,
-            'progress': value
-        })
-
-    def _reset(self):
-        self._sendMessage({
-            'progress-visible': False,
-            'progress': 0.0,
-            'count-visible': False,
-            'count': 0
-        })
-
-    # noinspection PyUnresolvedReferences
-    def _sendMessage(self, params: dict):
-        message = self._dbusMessage << 'application://{0}'.format(QFileInfo(self._desktopFile).fileName()) << params
-        self._dbusConnection.send(message)
+    def setProgress(self, value: float, visible: bool=True):
+        if sys.platform == 'win32':
+            self.taskbarProgress.setVisible(True if value > 0.0 else False)
+            self.taskbarProgress.setValue(value * 100)
+        elif sys.platform.startswith('linux'):
+            message = self._signal << 'application://{0}'.format(self._desktopFileName) << {
+                'progress-visible': visible,
+                'progress': value
+            }
+            self._sessionbus.send(message)

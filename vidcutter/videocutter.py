@@ -46,7 +46,7 @@ from vidcutter.videotoolbar import VideoToolBar
 
 from vidcutter.libs.mpvwidget import mpvWidget
 from vidcutter.libs.notifications import JobCompleteNotification
-# from vidcutter.libs.taskbarprogress import TaskbarProgress
+from vidcutter.libs.taskbarprogress import TaskbarProgress
 from vidcutter.libs.videoservice import VideoService
 from vidcutter.libs.widgets import ClipErrorsDialog, FrameCounter, TimeCounter, VCProgressBar, VolumeSlider
 
@@ -71,7 +71,7 @@ class VideoCutter(QWidget):
 
         self.videoService = VideoService(self)
         self.updater = Updater(self)
-        # self.taskbarControl = TaskbarProgress(self)
+        self.taskbar = TaskbarProgress(self)
 
         self.latest_release_url = 'https://github.com/ozmartian/vidcutter/releases/latest'
         self.ffmpeg_installer = {
