@@ -968,6 +968,7 @@ class VideoCutter(QWidget):
     def setPosition(self, position: int) -> None:
         if position >= self.seekSlider.restrictValue:
             self.mpvWidget.seek(position / 1000)
+            self.taskbar.setProgress(float(position / self.seekSlider.maximum()))
 
     @pyqtSlot(float, int)
     def on_positionChanged(self, progress: float, frame: int) -> None:
@@ -1266,6 +1267,8 @@ class VideoCutter(QWidget):
                 QFile.rename(filename, self.finalFilename)
             self.progress.updateProgress(self.progress.value() + 1, 'Complete')
             QTimer.singleShot(1000, self.progress.close)
+            QTimer.singleShot(1200, lambda: self.taskbar.setProgress(
+                float(self.seekSlider.value() / self.seekSlider.maximum())))
             qApp.restoreOverrideCursor()
             self.saveAction.setEnabled(True)
             notify = JobCompleteNotification(self)
