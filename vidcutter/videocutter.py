@@ -368,19 +368,6 @@ class VideoCutter(QWidget):
         QFontDatabase.addApplicationFont(':/fonts/OpenSansBold.ttf')
         self.style().loadQSS(self.theme, self.parent.devmode)
         QApplication.setFont(QFont('Open Sans', 12 if sys.platform == 'darwin' else 10, 300))
-        if sys.platform.startswith('linux'):
-            try:
-                fontsdir = QStandardPaths.writableLocation(QStandardPaths.FontsLocation)
-                for font in {'FuturaLT.ttf', 'OpenSans.ttf', 'OpenSansBold.ttf'}:
-                    if not QStandardPaths.locate(QStandardPaths.FontsLocation, font):
-                        fontfile = QFile(':/fonts/%s' % font)
-                        copiedfile = os.path.join(fontsdir, font)
-                        fontfile.copy(copiedfile)
-                        if os.name == 'posix':
-                            QFile.setPermissions(copiedfile, QFile.WriteOwner | QFile.ReadOwner |
-                                                 QFile.ReadGroup | QFile.ReadOther)
-            except:
-                pass
 
     def initMPV(self) -> None:
         self.mpvWidget = mpvWidget(
@@ -897,24 +884,10 @@ class VideoCutter(QWidget):
             return
         self.currentMedia = filename
         self.initMediaControls(True)
-        """
-        # save externally added clips, clear lists and readd them; common use will not be with externally added clips
-        # so we take this approach as its most optimal given most common user behaviour
-        savedclips = list()
-        for clip in self.clipTimes:
-            if len(clip[3]):
-                savedclips.append(clip)
-        """
         self.cliplist.clear()
         self.clipTimes.clear()
         self.totalRuntime = 0
         self.setRunningTime(self.delta2QTime(self.totalRuntime).toString(self.runtimeformat))
-        """
-        [self.clipTimes.append(clip) for clip in savedclips]
-        del savedclips
-        if len(self.clipTimes):
-            self.renderClipIndex()
-        """
         self.seekSlider.clearRegions()
         self.taskbar.clear()
         self.parent.setWindowTitle('%s - %s' % (qApp.applicationName(), os.path.basename(self.currentMedia)))
@@ -1092,7 +1065,7 @@ class VideoCutter(QWidget):
                                            VideoService.capture(file, '00:00:00.000', external=True), file])
                     filesadded = True
             if len(cliperrors):
-                detailedmsg = '''<p>The file(s) listed were found to be incompatible for inclusion to the clip index as 
+                detailedmsg = '''<p>The file(s) listed were found to be incompatible for inclusion to the clip index as
                                  they failed to join in simple tests used to ensure their compatibility. This is
                                  commonly due to differences in frame size, audio/video formats (codecs), or both.</p>
                                  <p>You can join these files as they currently are using traditional video editors like
