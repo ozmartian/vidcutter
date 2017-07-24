@@ -197,11 +197,11 @@ class VideoService(QObject):
 
     def cut(self, source: str, output: str, frametime: str, duration: str, allstreams: bool=True) -> bool:
         if allstreams:
-            args = '-i "%s" -ss %s -t %s -vcodec copy -acodec copy -scodec copy -map 0 -v 16 -y "%s"' \
-                   % (source, frametime, duration, QDir.fromNativeSeparators(output))
+            args = '-i "{0}" -ss {1} -t {2} -vcodec copy -acodec copy -scodec copy -copyinkf -map 0 -v 16 -y "{3}"' \
+                   .format(source, frametime, duration, QDir.fromNativeSeparators(output))
         else:
-            args = '-i "%s" -ss %s -t %s -vcodec copy -acodec copy -v 16 -y "%s"' \
-                   % (source, frametime, duration, QDir.fromNativeSeparators(output))
+            args = '-i "{0}" -ss {1} -t {2} -vcodec copy -acodec copy -scodec copy -copyinkf -v 16 -y "{3}"' \
+                   .format(source, frametime, duration, QDir.fromNativeSeparators(output))
         return self.cmdExec(self.backend, args)
 
     def join(self, inputs: list, output: str, allstreams: bool=True) -> bool:
@@ -210,11 +210,11 @@ class VideoService(QObject):
         [fobj.write('file \'%s\'\n' % file.replace("'", "\\'")) for file in inputs]
         fobj.close()
         if allstreams:
-            args = '-f concat -safe 0 -i "%s" -c copy -map 0 -v 16 -y "%s"' % (filelist,
-                                                                               QDir.fromNativeSeparators(output))
+            args = '-f concat -safe 0 -i "%s" -c copy -map -copyinkf 0 -v 16 -y "%s"' \
+                   % (filelist, QDir.fromNativeSeparators(output))
         else:
-            args = '-f concat -safe 0 -i "%s" -c copy -v 16 -y "%s"' % (filelist,
-                                                                        QDir.fromNativeSeparators(output))
+            args = '-f concat -safe 0 -i "%s" -c copy -copyinkf -v 16 -y "%s"' \
+                   % (filelist, QDir.fromNativeSeparators(output))
         result = self.cmdExec(self.backend, args)
         os.remove(filelist)
         return result

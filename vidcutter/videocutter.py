@@ -916,6 +916,7 @@ class VideoCutter(QWidget):
             self.renderClipIndex()
         """
         self.seekSlider.clearRegions()
+        self.taskbar.clear()
         self.parent.setWindowTitle('%s - %s' % (qApp.applicationName(), os.path.basename(self.currentMedia)))
         if not self.mediaAvailable:
             self.videoLayout.replaceWidget(self.novideoWidget, self.videoplayerWidget)
@@ -1446,7 +1447,7 @@ class VideoCutter(QWidget):
                 else:
                     self.mpvWidget.seek(self.level1_spinner.value(), 'relative+exact')
             elif event.key() == Qt.Key_Home:
-                self.mpvWidget.mpv.set_property('time-pos', 0)
+                self.setPosition(self.seekSlider.minimum())
             elif event.key() == Qt.Key_End:
                 self.setPosition(self.seekSlider.maximum() - 1)
             elif event.key() in (Qt.Key_Return, Qt.Key_Enter) and (

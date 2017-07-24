@@ -59,7 +59,7 @@ class TaskbarProgress(QWidget):
             self.taskbarButton.progress().setVisible(True if value > 0.0 else False)
             self.taskbarButton.progress().setValue(value * 100)
         elif sys.platform.startswith('linux'):
-            self.logger.info('taskbar progress - value; %s    visible: %s' % (value, visible))
+            self.logger.info('setprogress - value; %s    visible: %s' % (value, visible))
             signal = QDBusMessage.createSignal('/com/canonical/unity/launcherentry/337963624',
                                                'com.canonical.Unity.LauncherEntry', 'Update')
             message = signal << 'application://{0}'.format(self._desktopFileName) << {
