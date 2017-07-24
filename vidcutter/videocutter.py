@@ -1039,12 +1039,7 @@ class VideoCutter(QWidget):
                                                 options=(QFileDialog.DontUseNativeDialog
                                                          if not self.nativeDialogsAction.isChecked()
                                                          else QFileDialog.Options()))
-        if self.currentMedia in clips:
-            QMessageBox.warning(self.parent, 'Media already loaded', 'One of the files selected is already open for ' +
-                                'cutting.\n\n  %s\n\nThis file will not be added as a result but any other files '
-                                % os.path.basename(self.currentMedia) +
-                                'should be in your clip index if they passed compatibility tests.')
-        elif len(clips):
+        if len(clips):
             self.lastFolder = QFileInfo(clips[0]).absolutePath()
             filesadded = False
             cliperrors = list()

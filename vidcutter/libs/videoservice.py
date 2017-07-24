@@ -138,9 +138,9 @@ class VideoService(QObject):
             if file1_codecs != file2_codecs:
                 self.lastError = '<p>The audio + video format of this media file is not the same as the files ' + \
                                  'already in your clip index.</p>' + \
-                                 '<div align="center"> - Current files are <b>{0}</b> (video) and ' + \
+                                 '<div align="center">Current files are <b>{0}</b> (video) and ' + \
                                  '<b>{1}</b> (audio)<br/>' + \
-                                 '- Failed media is <b>{2}</b> (video) and <b>{3}</b> (audio)</div>'
+                                 'Failed media is <b>{2}</b> (video) and <b>{3}</b> (audio)</div>'
                 self.lastError = self.lastError.format(file1_codecs[0], file1_codecs[1],
                                                        file2_codecs[0], file2_codecs[1])
                 return result
@@ -150,8 +150,9 @@ class VideoService(QObject):
             if size1 != size2:
                 self.lastError = '<p>The frame size of this media file is not the same as the files already in ' + \
                                  'your clip index.</p>' + \
-                                 '<div align="center">Current media clips are <b>%sx%s</b><br/>Failed media file is <b>%sx%s</b></div>' \
-                                 % (size1.width(), size1.height(), size2.width(), size2.height())
+                                 '<div align="center">Current media clips are <b>{0}x{1}</b>' + \
+                                 '<br/>Failed media file is <b>{2}x{3}</b></div>'
+                self.lastError = self.lastError.format(size1.width(), size1.height(), size2.width(), size2.height())
                 return result
             # 2. generate temporary file handles
             _, ext = os.path.splitext(file1)

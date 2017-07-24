@@ -3,11 +3,6 @@
         <file>fonts/FuturaLT.ttf</file>
         <file>fonts/OpenSans.ttf</file>
         <file>fonts/OpenSansBold.ttf</file>
-        <file>images/complete-continue.png</file>
-        <file>images/complete-exit.png</file>
-        <file>images/complete-open.png</file>
-        <file>images/complete-play.png</file>
-        <file>images/complete-restart.png</file>
         <file>images/dialog-backdrop.png</file>
         <file>images/dialog-backdrop-02.png</file>
         <file>images/down.png</file>
@@ -30,6 +25,8 @@
         <file>images/runtime.png</file>
         <file>images/save.png</file>
         <file>images/startup-backdrop.png</file>
+        <file>images/tab-closed.png</file>
+        <file>images/tab-opened.png</file>
         <file>images/thumbs-up.png</file>
         <file>images/up.png</file>
         <file>images/update.png</file>

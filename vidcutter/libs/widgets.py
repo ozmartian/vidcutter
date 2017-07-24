@@ -24,7 +24,8 @@
 
 import os
 
-from PyQt5.QtCore import pyqtSignal, pyqtSlot, QEvent, QObject, QPoint, Qt, QTime
+from PyQt5.QtCore import pyqtSignal, pyqtSlot, QEvent, QObject, QPoint, QSize, Qt, QTime
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import (qApp, QAbstractSpinBox, QDialog, QDialogButtonBox, QGridLayout, QHBoxLayout, QLabel,
                              QMessageBox, QProgressBar, QSlider, QSpinBox, QStyle, QStyleFactory, QStyleOptionSlider,
                              QTimeEdit, QToolBox, QToolTip, QVBoxLayout, QWidget)
@@ -260,6 +261,7 @@ class ClipErrorsDialog(QDialog):
         self.toolbox = ClipErrorsDialog.VCToolBox(self)
         self.detailedLabel = QLabel(self)
         self.buttons = QDialogButtonBox(self)
+        self.toolbox.currentChanged.connect(self.selectItem)
         closebutton = self.buttons.addButton(QDialogButtonBox.Close)
         closebutton.clicked.connect(self.close)
         closebutton.setDefault(True)
@@ -275,6 +277,7 @@ class ClipErrorsDialog(QDialog):
         layout.addSpacing(10)
         layout.addWidget(self.buttons)
         self.setLayout(layout)
+        self.setMinimumWidth(415)
         self.parseErrors()
 
     def intro(self) -> QLabel:
@@ -298,11 +301,18 @@ class ClipErrorsDialog(QDialog):
         </p>
         ''' % (self.headingcolor, self.pencolor))
 
+    @pyqtSlot(int)
+    def selectItem(self, index: int) -> None:
+        [self.toolbox.setItemIcon(i, QIcon(':/images/tab-closed.png')) for i in range(self.toolbox.count())]
+        self.toolbox.setItemIcon(index, QIcon(':/images/tab-opened.png'))
+
     def parseErrors(self) -> None:
         for file, error in self.errors:
             if not len(error):
                 error = 'Invalid media file.<br/><br/>This is not a media file or the file is irreversibly corrupt.'
-            index = self.toolbox.addItem(QLabel(error, self), os.path.basename(file))
+            errorLabel = QLabel(error, self)
+            errorLabel.setWordWrap(True)
+            index = self.toolbox.addItem(errorLabel, QIcon(':/images/tab-closed.png'), os.path.basename(file))
             self.toolbox.setItemToolTip(index, file)
 
     def setDetailedMessage(self, msg: str) -> None:
