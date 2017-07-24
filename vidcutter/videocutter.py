@@ -1158,13 +1158,18 @@ class VideoCutter(QWidget):
         self.cliplist.clear()
         self.seekSlider.clearRegions()
         self.totalRuntime = 0
+        externalCount = 0
         for clip in self.clipTimes:
             endItem = ''
             if isinstance(clip[1], QTime):
                 endItem = clip[1].toString(self.timeformat)
                 self.totalRuntime += clip[0].msecsTo(clip[1])
             listitem = QListWidgetItem()
-            listitem.setToolTip('Drag to reorder clips' if not len(clip[3]) else clip[3])
+            if len(clip[3]):
+                listitem.setToolTip(clip[3])
+                externalCount += 1
+            else:
+                listitem.setToolTip('Drag to reorder clips')
             listitem.setStatusTip('Reorder clips with drag and drop or right-click menu')
             listitem.setTextAlignment(Qt.AlignVCenter)
             listitem.setData(Qt.DecorationRole + 1, clip[2])
@@ -1175,7 +1180,7 @@ class VideoCutter(QWidget):
             self.cliplist.addItem(listitem)
             if isinstance(clip[1], QTime) and not len(clip[3]):
                 self.seekSlider.addRegion(clip[0].msecsSinceStartOfDay(), clip[1].msecsSinceStartOfDay())
-        if len(self.clipTimes) and not self.inCut:
+        if len(self.clipTimes) and not self.inCut and (externalCount == 0 or externalCount > 1):
             self.saveAction.setEnabled(True)
             self.saveProjectAction.setEnabled(True)
         if self.inCut or len(self.clipTimes) == 0 or not isinstance(self.clipTimes[0][1], QTime):
@@ -1268,8 +1273,9 @@ class VideoCutter(QWidget):
                 QFile.rename(filename, self.finalFilename)
             self.progress.updateProgress(self.progress.value() + 1, 'Complete')
             QTimer.singleShot(1000, self.progress.close)
-            QTimer.singleShot(1200, lambda: self.taskbar.setProgress(
-                float(self.seekSlider.value() / self.seekSlider.maximum())))
+            if self.mediaAvailable:
+                QTimer.singleShot(1200, lambda: self.taskbar.setProgress(
+                    float(self.seekSlider.value() / self.seekSlider.maximum())))
             qApp.restoreOverrideCursor()
             self.saveAction.setEnabled(True)
             notify = JobCompleteNotification(self)
