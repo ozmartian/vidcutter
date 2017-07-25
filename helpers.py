@@ -28,6 +28,8 @@ import pydoc
 import re
 import sys
 
+from distutils.spawn import find_executable
+
 
 class SetupHelpers:
     here = os.path.abspath(os.path.dirname(__file__))
@@ -140,3 +142,13 @@ class SetupHelpers:
 
         https://github.com/ozmartian/vidcutter/releases/latest       
 ''')
+
+if __name__ == '__main__':
+    print('\nRebuilding resource file...\n')
+    exe = find_executable('pyrcc5')
+    if exe is None:
+        sys.stderr.write('Could not find pyrcc5 executable')
+        sys.exit(1)
+    os.execl(exe, exe, '-compress', '9', '-o',
+             os.path.join(os.path.dirname(os.path.abspath(__file__)), 'vidcutter', 'resources.py'),
+             os.path.join(os.path.dirname(os.path.abspath(__file__)), 'vidcutter', 'resources.qrc'))
