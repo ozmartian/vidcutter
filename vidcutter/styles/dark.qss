@@ -297,10 +297,6 @@ QStatusBar::item {
 
 /* -------------------------------------------------------------------------- */
 
-QToolBox::tab {
-    text-align: left;
-}
-
 QTabWidget::pane {
     border: 1px solid #FFF;
 }

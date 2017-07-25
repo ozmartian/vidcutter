@@ -25,7 +25,7 @@
 import os
 
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, QEvent, QObject, QPoint, QSize, Qt, QTime
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QShowEvent
 from PyQt5.QtWidgets import (qApp, QAbstractSpinBox, QDialog, QDialogButtonBox, QGridLayout, QHBoxLayout, QLabel,
                              QMessageBox, QProgressBar, QSlider, QSpinBox, QStyle, QStyleFactory, QStyleOptionSlider,
                              QTimeEdit, QToolBox, QToolTip, QVBoxLayout, QWidget)
@@ -201,7 +201,8 @@ class VCProgressBar(QDialog):
     def setRange(self, minval: int, maxval: int) -> None:
         self._progress.setRange(minval, maxval)
 
-    def setValue(self, val: int) -> None:
+    def \
+            setValue(self, val: int) -> None:
         self.taskbar.setProgress(float(val / self._progress.maximum()), True)
         self._progress.setValue(val)
 
@@ -241,7 +242,12 @@ class ClipErrorsDialog(QDialog):
     class VCToolBox(QToolBox):
         def __init__(self, parent=None, **kwargs):
             super(ClipErrorsDialog.VCToolBox, self).__init__(parent, **kwargs)
+            self.parent = parent
             self.installEventFilter(self)
+
+        def showEvent(self, event: QShowEvent):
+            self.adjustSize()
+            self.parent.adjustSize()
 
         def eventFilter(self, obj: QObject, event: QEvent) -> bool:
             if event.type() == QEvent.Enter:
@@ -259,9 +265,9 @@ class ClipErrorsDialog(QDialog):
         self.headingcolor = '#C681D5' if self.parent.theme == 'dark' else '#642C68'
         self.pencolor = '#FFF' if self.parent.theme == 'dark' else '#222'
         self.toolbox = ClipErrorsDialog.VCToolBox(self)
+        self.toolbox.currentChanged.connect(self.selectItem)
         self.detailedLabel = QLabel(self)
         self.buttons = QDialogButtonBox(self)
-        self.toolbox.currentChanged.connect(self.selectItem)
         closebutton = self.buttons.addButton(QDialogButtonBox.Close)
         closebutton.clicked.connect(self.close)
         closebutton.setDefault(True)
@@ -277,7 +283,6 @@ class ClipErrorsDialog(QDialog):
         layout.addSpacing(10)
         layout.addWidget(self.buttons)
         self.setLayout(layout)
-        self.setMinimumWidth(415)
         self.parseErrors()
 
     def intro(self) -> QLabel:
@@ -301,18 +306,18 @@ class ClipErrorsDialog(QDialog):
         </p>
         ''' % (self.headingcolor, self.pencolor))
 
-    @pyqtSlot(int)
     def selectItem(self, index: int) -> None:
-        [self.toolbox.setItemIcon(i, QIcon(':/images/tab-closed.png')) for i in range(self.toolbox.count())]
-        self.toolbox.setItemIcon(index, QIcon(':/images/tab-opened.png'))
+        self.toolbox.adjustSize()
+        self.adjustSize()
 
     def parseErrors(self) -> None:
         for file, error in self.errors:
             if not len(error):
-                error = 'Invalid media file.<br/><br/>This is not a media file or the file is irreversibly corrupt.'
+                error = '<div align="center">Invalid media file.<br/><br/>This is not a media file or the file ' + \
+                        'is irreversibly corrupt.</div>'
             errorLabel = QLabel(error, self)
-            errorLabel.setWordWrap(True)
-            index = self.toolbox.addItem(errorLabel, QIcon(':/images/tab-closed.png'), os.path.basename(file))
+            # errorLabel.setWordWrap(True)
+            index = self.toolbox.addItem(errorLabel, os.path.basename(file))
             self.toolbox.setItemToolTip(index, file)
 
     def setDetailedMessage(self, msg: str) -> None:
