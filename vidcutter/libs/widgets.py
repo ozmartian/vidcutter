@@ -23,14 +23,16 @@
 #######################################################################
 
 import os
+import sys
 
-from PyQt5.QtCore import pyqtSignal, pyqtSlot, QEvent, QObject, QPoint, QSize, Qt, QTime
+from PyQt5.QtCore import pyqtSignal, pyqtSlot, QEvent, QObject, QPoint, Qt, QTime
 from PyQt5.QtGui import QShowEvent
 from PyQt5.QtWidgets import (qApp, QAbstractSpinBox, QDialog, QDialogButtonBox, QGridLayout, QHBoxLayout, QLabel,
                              QMessageBox, QProgressBar, QSlider, QSpinBox, QStyle, QStyleFactory, QStyleOptionSlider,
                              QTimeEdit, QToolBox, QToolTip, QVBoxLayout, QWidget)
 
-from vidcutter.libs.taskbarprogress import TaskbarProgress
+if sys.platform.startswith('linux'):
+    from vidcutter.libs.taskbarprogress import TaskbarProgress
 
 
 class TimeCounter(QWidget):
@@ -169,7 +171,8 @@ class VCProgressBar(QDialog):
     def __init__(self, parent=None, flags=Qt.FramelessWindowHint):
         super(VCProgressBar, self).__init__(parent, flags)
         self.parent = parent
-        self.taskbar = TaskbarProgress(self)
+        if sys.platform.startswith('linux'):
+            self.taskbar = TaskbarProgress(self)
         self._progress = QProgressBar(self.parent)
         self._progress.setRange(0, 0)
         self._progress.setTextVisible(False)
@@ -201,9 +204,9 @@ class VCProgressBar(QDialog):
     def setRange(self, minval: int, maxval: int) -> None:
         self._progress.setRange(minval, maxval)
 
-    def \
-            setValue(self, val: int) -> None:
-        self.taskbar.setProgress(float(val / self._progress.maximum()), True)
+    def setValue(self, val: int) -> None:
+        if sys.platform.startswith('linux'):
+            self.taskbar.setProgress(float(val / self._progress.maximum()), True)
         self._progress.setValue(val)
 
     def updateProgress(self, value: int, text: str) -> None:
@@ -213,7 +216,8 @@ class VCProgressBar(QDialog):
 
     @pyqtSlot()
     def close(self) -> None:
-        self.taskbar.clear()
+        if sys.platform.startswith('linux'):
+            self.taskbar.clear()
         self.deleteLater()
         super(VCProgressBar, self).close()
 

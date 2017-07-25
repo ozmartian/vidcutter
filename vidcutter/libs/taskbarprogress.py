@@ -23,16 +23,11 @@
 #######################################################################
 
 import logging
-import sys
 
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import qApp, QWidget
 
-if sys.platform == 'win32':
-    # noinspection PyUnresolvedReferences
-    from PyQt5.QtWinExtras import QWinTaskbarButton
-elif sys.platform.startswith('linux'):
-    from PyQt5.QtDBus import QDBusConnection, QDBusMessage
+from PyQt5.QtDBus import QDBusConnection, QDBusMessage
 
 
 class TaskbarProgress(QWidget):
@@ -40,14 +35,9 @@ class TaskbarProgress(QWidget):
         super(TaskbarProgress, self).__init__(parent)
         self.parent = parent
         self.logger = logging.getLogger(__name__)
-        if sys.platform == 'win32':
-            self.taskbarButton = QWinTaskbarButton(self)
-            self.taskbarButton.setWindow(self.parent.parent.windowHandle())
-            self.taskbarButton.progress().setRange(0, 100)
-        elif sys.platform.startswith('linux'):
-            self._desktopFileName = '%s.desktop' % qApp.applicationName().lower()
-            self._sessionbus = QDBusConnection.sessionBus()
-            self.clear()
+        self._desktopFileName = '%s.desktop' % qApp.applicationName().lower()
+        self._sessionbus = QDBusConnection.sessionBus()
+        self.clear()
 
     @pyqtSlot()
     def clear(self):
@@ -55,15 +45,11 @@ class TaskbarProgress(QWidget):
 
     @pyqtSlot(float, bool)
     def setProgress(self, value: float, visible: bool=True):
-        if sys.platform == 'win32':
-            self.taskbarButton.progress().setVisible(True if value > 0.0 else False)
-            self.taskbarButton.progress().setValue(value * 100)
-        elif sys.platform.startswith('linux'):
-            self.logger.info('setprogress - value; %s    visible: %s' % (value, visible))
-            signal = QDBusMessage.createSignal('/com/canonical/unity/launcherentry/337963624',
-                                               'com.canonical.Unity.LauncherEntry', 'Update')
-            message = signal << 'application://{0}'.format(self._desktopFileName) << {
-                'progress-visible': visible,
-                'progress': value
-            }
-            self._sessionbus.send(message)
+        self.logger.info('setprogress - value; %s    visible: %s' % (value, visible))
+        signal = QDBusMessage.createSignal('/com/canonical/unity/launcherentry/337963624',
+                                           'com.canonical.Unity.LauncherEntry', 'Update')
+        message = signal << 'application://{0}'.format(self._desktopFileName) << {
+            'progress-visible': visible,
+            'progress': value
+        }
+        self._sessionbus.send(message)

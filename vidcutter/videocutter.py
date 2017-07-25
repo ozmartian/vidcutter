@@ -46,9 +46,11 @@ from vidcutter.videotoolbar import VideoToolBar
 
 from vidcutter.libs.mpvwidget import mpvWidget
 from vidcutter.libs.notifications import JobCompleteNotification
-from vidcutter.libs.taskbarprogress import TaskbarProgress
 from vidcutter.libs.videoservice import VideoService
 from vidcutter.libs.widgets import ClipErrorsDialog, FrameCounter, TimeCounter, VCProgressBar, VolumeSlider
+
+if sys.platform.startswith('linux'):
+    from vidcutter.libs.taskbarprogress import TaskbarProgress
 
 # noinspection PyUnresolvedReferences
 import vidcutter.resources
@@ -71,7 +73,9 @@ class VideoCutter(QWidget):
 
         self.videoService = VideoService(self)
         self.updater = Updater(self)
-        self.taskbar = TaskbarProgress(self)
+
+        if sys.platform.startswith('linux'):
+            self.taskbar = TaskbarProgress(self)
 
         self.latest_release_url = 'https://github.com/ozmartian/vidcutter/releases/latest'
         self.ffmpeg_installer = {
@@ -889,7 +893,8 @@ class VideoCutter(QWidget):
         self.totalRuntime = 0
         self.setRunningTime(self.delta2QTime(self.totalRuntime).toString(self.runtimeformat))
         self.seekSlider.clearRegions()
-        self.taskbar.clear()
+        if sys.platform.startswith('linux'):
+            self.taskbar.clear()
         self.parent.setWindowTitle('%s - %s' % (qApp.applicationName(), os.path.basename(self.currentMedia)))
         if not self.mediaAvailable:
             self.videoLayout.replaceWidget(self.novideoWidget, self.videoplayerWidget)
@@ -942,7 +947,8 @@ class VideoCutter(QWidget):
     def setPosition(self, position: int) -> None:
         if position >= self.seekSlider.restrictValue:
             self.mpvWidget.seek(position / 1000)
-            self.taskbar.setProgress(float(position / self.seekSlider.maximum()))
+            if sys.platform.startswith('linux'):
+                self.taskbar.setProgress(float(position / self.seekSlider.maximum()))
 
     @pyqtSlot(float, int)
     def on_positionChanged(self, progress: float, frame: int) -> None:
@@ -1241,7 +1247,7 @@ class VideoCutter(QWidget):
                 QFile.rename(filename, self.finalFilename)
             self.progress.updateProgress(self.progress.value() + 1, 'Complete')
             QTimer.singleShot(1000, self.progress.close)
-            if self.mediaAvailable:
+            if sys.platform.startswith('linux') and self.mediaAvailable:
                 QTimer.singleShot(1200, lambda: self.taskbar.setProgress(
                     float(self.seekSlider.value() / self.seekSlider.maximum())))
             qApp.restoreOverrideCursor()
