@@ -1182,7 +1182,7 @@ class VideoCutter(QWidget):
         else:
             firstitem = self.clipTimes[0]
             if len(firstitem[3]):
-                _, source_ext = os.path.splitext(firstitem[3])
+                _, suggestedFilename = os.path.splitext(firstitem[3])
             filefilter = self.mediaFilters('video')
         if clips > 0:
             self.finalFilename, _ = QFileDialog.getSaveFileName(parent=self, caption='Save media',

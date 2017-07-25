@@ -136,6 +136,7 @@ class VideoService(QObject):
             file1_codecs = self.codecs(file1)
             file2_codecs = self.codecs(file2)
             if file1_codecs != file2_codecs:
+                self.logger.info('join test failed for %s and %s: codecs mismatched' % (file1, file2))
                 self.lastError = '<p>The audio + video format of this media file is not the same as the files ' + \
                                  'already in your clip index.</p>' + \
                                  '<div align="center">Current files are <b>{0}</b> (video) and ' + \
@@ -148,6 +149,7 @@ class VideoService(QObject):
             size1 = self.framesize(file1)
             size2 = self.framesize(file2)
             if size1 != size2:
+                self.logger.info('join test failed for %s and %s: frame size mismatched' % (file1, file2))
                 self.lastError = '<p>The frame size of this media file is not the same as the files already in ' + \
                                  'your clip index.</p>' + \
                                  '<div align="center">Current media clips are <b>{0}x{1}</b>' + \
@@ -161,8 +163,8 @@ class VideoService(QObject):
             final_join = QTemporaryFile(os.path.join(QDir.tempPath(), 'XXXXXX%s' % ext))
             # 3. produce 2 seconds long clips from input files for join test
             if file1_cut.open() and file2_cut.open() and final_join.open():
-                result1 = self.cut(file1, file1_cut.fileName(), '00:00:00.000', '00:00:02.00', False)
-                result2 = self.cut(file2, file2_cut.fileName(), '00:00:00.000', '00:00:02.00', False)
+                result1 = self.cut(file1, file1_cut.fileName(), '00:00:00.000', '00:00:04.00', False)
+                result2 = self.cut(file2, file2_cut.fileName(), '00:00:00.000', '00:00:04.00', False)
                 if result1 and result2:
                     # 4. attempt join of temp 2 second clips
                     result = self.join([file1_cut.fileName(), file2_cut.fileName()], final_join.fileName(), False)
