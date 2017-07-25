@@ -36,11 +36,12 @@ class Notification(QDialog):
     shown = pyqtSignal()
     duration = 8
 
-    def __init__(self, parent=None, f=Qt.ToolTip | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint):
+    def __init__(self, parent=None, f=Qt.ToolTip | Qt.FramelessWindowHint):
         super(Notification, self).__init__(parent, f)
         self.parent = parent
         self.theme = self.parent.theme
         self.setObjectName('notification')
+        self.setWindowModality(Qt.NonModal)
         self.setMinimumWidth(450)
         self._title, self._message = '', ''
         self._icons = dict()
