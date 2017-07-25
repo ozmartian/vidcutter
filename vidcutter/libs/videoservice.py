@@ -31,13 +31,16 @@ from distutils.spawn import find_executable
 from enum import Enum
 
 from PyQt5.QtCore import (pyqtSlot, QDir, QFile, QFileInfo, QObject, QProcess, QProcessEnvironment, QSize,
-                          QTemporaryFile, QTime)
+                          QStorageInfo, QTemporaryFile, QTime)
 from PyQt5.QtGui import QPainter, QPixmap
 from PyQt5.QtWidgets import QMessageBox
 
 
 class VideoService(QObject):
     frozen = getattr(sys, 'frozen', False)
+
+    diskSpaceWarningThreshold = 200
+    diskSpaceWarningDelivered = False
 
     mpegCodecs = {'h264', 'hevc', 'mpeg4', 'divx', 'xvid', 'webm', 'ivf', 'vp9', 'mpeg2video', 'mpg2',
                   'mp2', 'mp3', 'aac'}
@@ -101,6 +104,19 @@ class VideoService(QObject):
         p.setWorkingDirectory(VideoService.getAppPath())
         return p
 
+    def checkDiskSpace(self, path: str):
+        # noinspection PyCallByClass
+        if self.diskSpaceWarningDelivered or not QFileInfo.exists(path):
+            return
+        info = QStorageInfo(path)
+        available = info.bytesAvailable() / 1000 / 1000
+        if available < VideoService.diskSpaceWarningThreshold:
+            QMessageBox.warning(self.parent, 'Disk space is low!', 'There is less than {0} MB of free disk space at ' +
+                                'the target folder selected to save your media. VidCutter WILL FAIL to produce ' +
+                                'your media if you run out of space during operations.'
+                                .format(VideoService.diskSpaceWarningThreshold))
+            self.diskSpaceWarningDelivered = True
+
     @staticmethod
     def capture(source: str, frametime: str, thumbsize: ThumbSize=ThumbSize.INDEX, external: bool=False) -> QPixmap:
         capres = QPixmap()
@@ -109,8 +125,8 @@ class VideoService(QObject):
             imagecap = img.fileName()
             size = thumbsize.value
             backend, _ = VideoService.initBackends()
-            args = '-ss %s -i "%s" -vframes 1 -s %ix%i -v 16 -y "%s"' % (frametime, source, size.width(),
-                                                                         size.height(), imagecap)
+            args = '-hide_banner -ss %s -i "%s" -vframes 1 -s %ix%i -v 16 -y "%s"' % (frametime, source, size.width(),
+                                                                                      size.height(), imagecap)
             proc = VideoService.initProc()
             proc.setProcessChannelMode(QProcess.MergedChannels)
             if proc.state() == QProcess.NotRunning:
@@ -177,14 +193,14 @@ class VideoService(QObject):
         return result
 
     def framesize(self, source: str) -> QSize:
-        args = '-i "%s" -hide_banner' % source
+        args = '-i "%s"' % source
         result = self.cmdExec(self.backend, args, True)
         matches = re.search(r'Stream.*Video:.*[,\s](?P<width>\d+?)x(?P<height>\d+?)[,\s]',
                             result, re.DOTALL).groupdict()
         return QSize(int(matches['width']), int(matches['height']))
 
     def duration(self, source: str) -> QTime:
-        args = '-i "%s" -hide_banner' % source
+        args = '-i "%s"' % source
         result = self.cmdExec(self.backend, args, True)
         matches = re.search(r'Duration:\s(?P<hrs>\d+?):(?P<mins>\d+?):(?P<secs>\d+\.\d+?),',
                             result, re.DOTALL).groupdict()
@@ -192,33 +208,33 @@ class VideoService(QObject):
         return QTime(int(matches['hrs']), int(matches['mins']), int(secs), int(msecs))
 
     def codecs(self, source: str) -> tuple:
-        args = '-i "%s" -hide_banner' % source
+        args = '-i "%s"' % source
         result = self.cmdExec(self.backend, args, True)
         vcodec = re.search(r'Stream.*Video:\s(\w+)', result).group(1)
         acodec = re.search(r'Stream.*Audio:\s(\w+)', result).group(1)
         return vcodec, acodec
 
     def cut(self, source: str, output: str, frametime: str, duration: str, allstreams: bool=True) -> bool:
+        self.checkDiskSpace(output)
         if allstreams:
-            args = '-ss {0} -i "{1}" -t {2} -vcodec copy -acodec copy -scodec copy -copyinkf -map 0 -v 16 -y "{3}"' \
-                   .format(frametime, source, duration, QDir.fromNativeSeparators(output))
+            args = '-ss {0} -i "{1}" -t {2} -vcodec copy -acodec copy -scodec copy -avoid_negative_ts 1 -copyinkf ' + \
+                   '-map 0 -v 16 -y "{3}"'
         else:
-            args = '-ss {0} -i "{1}" -t {2} -vcodec copy -acodec copy -scodec copy -copyinkf -v 16 -y "{3}"' \
-                   .format(frametime, source, duration, QDir.fromNativeSeparators(output))
-        return self.cmdExec(self.backend, args)
+            args = '-ss {0} -i "{1}" -t {2} -vcodec copy -acodec copy -scodec copy -avoid_negative_ts 1 -copyinkf ' + \
+                   '-v 16 -y "{3}"'
+        return self.cmdExec(self.backend, args.format(frametime, source, duration, QDir.fromNativeSeparators(output)))
 
     def join(self, inputs: list, output: str, allstreams: bool=True) -> bool:
+        self.checkDiskSpace(output)
         filelist = os.path.normpath(os.path.join(os.path.dirname(inputs[0]), '_vidcutter.list'))
         fobj = open(filelist, 'w')
         [fobj.write('file \'%s\'\n' % file.replace("'", "\\'")) for file in inputs]
         fobj.close()
         if allstreams:
-            args = '-f concat -safe 0 -i "{0}" -c copy -copyinkf -map 0 -v 16 -y "{1}"' \
-                   .format(filelist, QDir.fromNativeSeparators(output))
+            args = '-f concat -safe 0 -i "{0}" -c copy -copyinkf -map 0 -v 16 -y "{1}"'
         else:
-            args = '-f concat -safe 0 -i "{0}" -c copy -copyinkf -v 16 -y "{1}"' \
-                   .format(filelist, QDir.fromNativeSeparators(output))
-        result = self.cmdExec(self.backend, args)
+            args = '-f concat -safe 0 -i "{0}" -c copy -copyinkf -v 16 -y "{1}"'
+        result = self.cmdExec(self.backend, args.format(filelist, QDir.fromNativeSeparators(output)))
         os.remove(filelist)
         return result
 
@@ -250,6 +266,7 @@ class VideoService(QObject):
     def mpegtsJoin(self, inputs: list, output: str) -> bool:
         result = False
         try:
+            self.checkDiskSpace(output)
             outfiles = list()
             video_bsf, audio_bsf = self.getBSF(inputs[0])
             # 1. transcode to mpeg transport streams
@@ -292,6 +309,8 @@ class VideoService(QObject):
         if self.proc.state() == QProcess.NotRunning:
             self.proc.setProcessChannelMode(QProcess.SeparateChannels if cmd == self.mediainfo
                                             else QProcess.MergedChannels)
+            if cmd == self.backend:
+                args = '-hide_banner {0}'.format(args)
             self.proc.start(cmd, shlex.split(args))
             self.proc.waitForFinished(-1)
             if output:
