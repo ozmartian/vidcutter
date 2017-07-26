@@ -25,6 +25,8 @@
         <file>images/runtime.png</file>
         <file>images/save.png</file>
         <file>images/startup-backdrop.png</file>
+        <file>images/theme-dark-large.jpg</file>
+        <file>images/theme-light-large.jpg</file>
         <file>images/thumbs-up.png</file>
         <file>images/up.png</file>
         <file>images/update.png</file>
@@ -49,7 +51,11 @@
         <file>images/dark/osd-off.png</file>
         <file>images/dark/osd-on.png</file>
         <file>images/dark/python.png</file>
+        <file>images/dark/settings.png</file>
+        <file>images/dark/settings-active.png</file>
         <file>images/dark/shortcuts.png</file>
+        <file>images/dark/theme-dark.png</file>
+        <file>images/dark/theme-light.png</file>
         <file>images/dark/thumbnails-off.png</file>
         <file>images/dark/thumbnails-on.png</file>
         <file>images/dark/toolbar-end.png</file>
@@ -88,7 +94,14 @@
         <file>images/light/osd-off.png</file>
         <file>images/light/osd-on.png</file>
         <file>images/light/python.png</file>
+        <file>images/light/settings.png</file>
+        <file>images/light/settings-active.png</file>
+        <file>images/light/settings-general.png</file>
+        <file>images/light/settings-theme.png</file>
+        <file>images/light/settings-video.png</file>
         <file>images/light/shortcuts.png</file>
+        <file>images/light/theme-dark.png</file>
+        <file>images/light/theme-light.png</file>
         <file>images/light/thumbnails-off.png</file>
         <file>images/light/thumbnails-on.png</file>
         <file>images/light/toolbar-end.png</file>

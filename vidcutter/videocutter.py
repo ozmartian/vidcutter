@@ -37,6 +37,7 @@ from PyQt5.QtWidgets import (QAction, QActionGroup, qApp, QApplication, QDialogB
                              QSizePolicy, QStyleFactory, QVBoxLayout, QWidget, QWidgetAction)
 
 from vidcutter.about import About
+from vidcutter.settings import SettingsDialog
 from vidcutter.updater import Updater
 from vidcutter.videoinfo import VideoInfo
 from vidcutter.videolist import VideoList
@@ -270,8 +271,8 @@ class VideoCutter(QWidget):
 
         # noinspection PyArgumentList
         self.volSlider = VolumeSlider(orientation=Qt.Horizontal, toolTip='Volume', statusTip='Adjust volume level',
-                                    cursor=Qt.PointingHandCursor, value=self.parent.startupvol, minimum=0,
-                                    maximum=130, sliderMoved=self.setVolume, objectName='volumeSlider')
+                                      cursor=Qt.PointingHandCursor, value=self.parent.startupvol, minimum=0,
+                                      maximum=130, sliderMoved=self.setVolume, objectName='volumeSlider')
 
         if sys.platform == 'darwin':
             self.volSlider.setStyle(QStyleFactory.create('Macintosh'))
@@ -283,9 +284,15 @@ class VideoCutter(QWidget):
                                             cursor=Qt.PointingHandCursor)
 
         # noinspection PyArgumentList
+        self.settingsButton = QPushButton(self, toolTip='Settings', cursor=Qt.PointingHandCursor, flat=True,
+                                          statusTip='Configure settings', objectName='settingsButton',
+                                          clicked=self.showSettings)
+        self.settingsButton.setFixedSize(QSize(32, 33))
+
+        # noinspection PyArgumentList
         self.menuButton = QPushButton(self, toolTip='Menu', cursor=Qt.PointingHandCursor, flat=True,
                                       objectName='menuButton', statusTip='Click to view menu options')
-        self.menuButton.setFixedSize(QSize(40, 42))
+        self.menuButton.setFixedSize(QSize(32, 33))
         self.menuButton.setLayoutDirection(Qt.RightToLeft)
         self.menuButton.setMenu(self.appMenu)
 
@@ -299,6 +306,26 @@ class VideoCutter(QWidget):
         toolbarGroup.setLayout(toolbarLayout)
         toolbarGroup.setStyleSheet('border: 0;')
 
+        audioLayout = QHBoxLayout()
+        audioLayout.addWidget(self.muteButton)
+        audioLayout.addSpacing(5)
+        audioLayout.addWidget(self.volSlider)
+        audioLayout.addSpacing(5)
+        audioLayout.addWidget(self.fullscreenButton)
+        audioLayout.addSpacing(10)
+
+        settingsLayout = QHBoxLayout()
+        settingsLayout.addStretch(1)
+        settingsLayout.addWidget(self.menuButton)
+        settingsLayout.addSpacing(10)
+        settingsLayout.addWidget(self.settingsButton)
+        settingsLayout.addSpacing(10)
+
+        groupLayout = QVBoxLayout()
+        groupLayout.addLayout(settingsLayout)
+        groupLayout.addSpacing(8)
+        groupLayout.addLayout(audioLayout)
+
         controlsLayout = QHBoxLayout()
         controlsLayout.addSpacing(10)
         controlsLayout.addWidget(self.thumbnailsButton)
@@ -306,17 +333,10 @@ class VideoCutter(QWidget):
         controlsLayout.addWidget(self.osdButton)
         controlsLayout.addSpacing(4)
         controlsLayout.addWidget(self.consoleButton)
-        controlsLayout.addStretch(10)
+        controlsLayout.addStretch(1)
         controlsLayout.addWidget(toolbarGroup)
-        controlsLayout.addStretch(10)
-        controlsLayout.addWidget(self.muteButton)
-        controlsLayout.addSpacing(5)
-        controlsLayout.addWidget(self.volSlider)
-        controlsLayout.addSpacing(5)
-        controlsLayout.addWidget(self.fullscreenButton)
-        controlsLayout.addSpacing(10)
-        controlsLayout.addWidget(self.menuButton)
-        controlsLayout.addSpacing(10)
+        controlsLayout.addStretch(1)
+        controlsLayout.addLayout(groupLayout)
 
         layout = QVBoxLayout()
         layout.setSpacing(0)
@@ -676,6 +696,11 @@ class VideoCutter(QWidget):
         self.runtimeLabel.setText('<div align="right">%s</div>' % runtime)
         self.runtimeLabel.setToolTip('total runtime: %s' % runtime)
         self.runtimeLabel.setStatusTip('total running time: %s' % runtime)
+
+    @pyqtSlot()
+    def showSettings(self):
+        settingsDialog = SettingsDialog(self)
+        settingsDialog.exec_()
 
     @pyqtSlot()
     def initRemoveMenu(self):

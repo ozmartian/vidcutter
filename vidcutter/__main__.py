@@ -83,9 +83,9 @@ class MainWindow(QMainWindow):
     @staticmethod
     def get_size(mode: str = 'NORMAL') -> QSize:
         modes = {
-            'LOW': QSize(750, 425),
-            'NORMAL': QSize(900, 660),
-            'HIGH': QSize(1800, 1300)
+            'LOW': QSize(800, 425),
+            'NORMAL': QSize(915, 660),
+            'HIGH': QSize(1850, 1300)
         }
         return modes[mode]
 

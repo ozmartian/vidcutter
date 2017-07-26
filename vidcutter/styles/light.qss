@@ -118,6 +118,26 @@ QListView::item#cliplist {
     padding: 10px;
 }
 
+QListView#settingsmenu {
+    show-decoration-selected: 1;
+    outline: 0;
+}
+
+QListView::item#settingsmenu {
+    width: 100%;
+    padding-bottom: 5px;
+}
+
+QListView::item:hover#settingsmenu {
+    color: #FFF;
+    background: #888;
+}
+
+QListView::item:selected#settingsmenu {
+    color: #FFF;
+    background: rgba(136, 136, 136, 175);
+}
+
 /* -------------------------------------------------------------------------- */
 
 QLabel#listHeader {
@@ -162,6 +182,10 @@ QGroupBox#counterwidgets {
     color: #FFF;
     margin: 0;
     padding: 0;
+}
+
+QGroupBox::title {
+    font-weight: bold;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -230,13 +254,23 @@ QDialog#notification QPushButton:pressed {
     border: 1px solid #FFF;
 }
 
-QPushButton#menuButton {
-    border-image: url(:/images/light/menu.png);
-    width: 40px;
-    height: 42px;
+QPushButton#settingsButton {
+    border-image: url(:/images/light/settings.png);
+    width: 33px;
+    height: 35px;
 }
 
-QPushButton:hover#menuButton, QPushButton:pressed#menuButton {
+QPushButton:pressed#settingsButton {
+    border-image: url(:/images/light/settings-active.png);
+}
+
+QPushButton#menuButton {
+    border-image: url(:/images/light/menu.png);
+    width: 33px;
+    height: 35px;
+}
+
+QPushButton:pressed#menuButton {
     border-image: url(:/images/light/menu-active.png);
 }
 
@@ -244,10 +278,14 @@ QPushButton::menu-indicator#menuButton, #clipindextools QPushButton::menu-indica
     left: -4000px;
 }
 
-QPushButton#muteButton, QPushButton#menuButton, QPushButton#fullscreenButton {
+QPushButton#muteButton, QPushButton#settingsButton, QPushButton#menuButton, QPushButton#fullscreenButton {
     background-color: transparent;
     border: none;
     outline: none;
+}
+
+QPushButton#thumbnailsButton, QPushButton#osdButton, QPushButton#consoleButton {
+    border-radius: 0;
 }
 
 /* -------------------------------------------------------------------------- */

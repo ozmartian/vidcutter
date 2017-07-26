@@ -320,7 +320,6 @@ class ClipErrorsDialog(QDialog):
                 error = '<div align="center">Invalid media file.<br/><br/>This is not a media file or the file ' + \
                         'is irreversibly corrupt.</div>'
             errorLabel = QLabel(error, self)
-            # errorLabel.setWordWrap(True)
             index = self.toolbox.addItem(errorLabel, os.path.basename(file))
             self.toolbox.setItemToolTip(index, file)
 

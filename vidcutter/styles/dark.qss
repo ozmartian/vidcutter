@@ -229,6 +229,16 @@ QDialog#notification QPushButton:pressed {
     border: 1px solid #EFF0F1;
 }
 
+QPushButton#settingsButton {
+    border-image: url(:/images/dark/settings.png);
+    width: 40px;
+    height: 42px;
+}
+
+QPushButton:hover#settingsButton, QPushButton:pressed#settingsButton {
+    border-image: url(:/images/dark/settings-active.png);
+}
+
 QPushButton#menuButton {
     border-image: url(:/images/dark/menu.png);
     width: 40px;
@@ -243,7 +253,7 @@ QPushButton::menu-indicator#menuButton, #clipindextools QPushButton::menu-indica
     left: -4000px;
 }
 
-QPushButton#muteButton, QPushButton#menuButton, QPushButton#fullscreenButton {
+QPushButton#muteButton, QPushButton#settingsButton, QPushButton#menuButton, QPushButton#fullscreenButton {
     background-color: transparent;
     border: none;
     outline: none;
