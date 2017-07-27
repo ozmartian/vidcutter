@@ -1,3 +1,7 @@
+### 4.0.0 Pre-Release available. Check [Releases](https://github.com/ozmartian/vidcutter/releases) page for the details. 4.0.0 official release will be this weekend July 29/30 
+
+---------
+
 [![Latest Release](http://tvlinker.ozmartians.com/images/button-latest-release.png)](https://github.com/ozmartian/vidcutter/releases/latest)
 
 ![VidCutter](https://raw.githubusercontent.com/ozmartian/vidcutter/gh-pages/vidcutter-banner.png)
