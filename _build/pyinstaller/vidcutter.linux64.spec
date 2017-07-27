@@ -17,15 +17,17 @@ a = Analysis(['../../vidcutter/__main__.py'],
              # ],
              binaries=[],
              datas=[
-               ('../../vidcutter/__init__.py', '.'),
-               ('../../bin/ffmpeg', './bin'),
-               ('../../LICENSE', '.'),
-               ('../../README.md', '.')
+              ('../../vidcutter/__init__.py', '.'),
+              ('../../vidcutter/libs/mpv.*.so', '.'),
+              ('../../bin/ffmpeg', './bin'),
+              ('../../bin/mediainfo', './bin'),
+              ('../../LICENSE', '.'),
+              ('../../README.md', '.')
              ],
              hiddenimports=[],
              hookspath=[],
              runtime_hooks=[],
-             excludes=['*.dll'],
+             excludes=[],
              win_no_prefer_redirects=False,
              win_private_assemblies=False,
              cipher=block_cipher)

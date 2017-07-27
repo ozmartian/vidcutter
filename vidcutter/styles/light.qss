@@ -129,13 +129,12 @@ QListView::item#settingsmenu {
 }
 
 QListView::item:hover#settingsmenu {
-    color: #FFF;
-    background: #888;
+    background: rgba(136, 136, 136, 0.4);
 }
 
 QListView::item:selected#settingsmenu {
     color: #FFF;
-    background: rgba(136, 136, 136, 175);
+    background: #888;    
 }
 
 /* -------------------------------------------------------------------------- */
@@ -256,8 +255,12 @@ QDialog#notification QPushButton:pressed {
 
 QPushButton#settingsButton {
     border-image: url(:/images/light/settings.png);
-    width: 33px;
-    height: 35px;
+    width: 28px;
+    height: 28px;
+}
+
+QPushButton:hover#settingsButton {
+    border-image: url(:/images/light/settings-hover.png);
 }
 
 QPushButton:pressed#settingsButton {
@@ -266,8 +269,8 @@ QPushButton:pressed#settingsButton {
 
 QPushButton#menuButton {
     border-image: url(:/images/light/menu.png);
-    width: 33px;
-    height: 35px;
+    width: 28px;
+    height: 28px;
 }
 
 QPushButton:pressed#menuButton {
@@ -384,9 +387,9 @@ QTabBar::tab:top:only-one {
 /* -------------------------------------------------------------------------- */
 
 QSlider::handle#volumeslider, QSlider::handle#nothumbs {
-    border: 1px solid #616161;
+    border: 1px solid #999;
     border-radius: 7px;
-    background: #A286A8;
+    background: #E7E7E7;
 }
 
 QSlider::handle:hover#volumeslider, QSlider::handle#nothumbs { background: #642C68; }

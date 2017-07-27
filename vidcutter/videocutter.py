@@ -287,12 +287,12 @@ class VideoCutter(QWidget):
         self.settingsButton = QPushButton(self, toolTip='Settings', cursor=Qt.PointingHandCursor, flat=True,
                                           statusTip='Configure settings', objectName='settingsButton',
                                           clicked=self.showSettings)
-        self.settingsButton.setFixedSize(QSize(32, 33))
+        self.settingsButton.setFixedSize(QSize(28, 28))
 
         # noinspection PyArgumentList
         self.menuButton = QPushButton(self, toolTip='Menu', cursor=Qt.PointingHandCursor, flat=True,
                                       objectName='menuButton', statusTip='Click to view menu options')
-        self.menuButton.setFixedSize(QSize(32, 33))
+        self.menuButton.setFixedSize(QSize(28, 28))
         self.menuButton.setLayoutDirection(Qt.RightToLeft)
         self.menuButton.setMenu(self.appMenu)
 

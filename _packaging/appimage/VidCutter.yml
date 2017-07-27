@@ -1,12 +1,15 @@
-app: VidCutter
+app: VidCutter-unstable
 union: true
 
 ingredients:
   dist: trusty
   sources: 
-    - deb http://archive.ubuntu.com/ubuntu/ trusty main universe
+    - deb http://mirrors.cn99.com/ubuntu trusty main restricted universe multiverse
   ppas:
-    - ozmartian/apps
+    # - ozmartian/apps
+    - ozmartian/unstable
+    - mc3man/testing6
+    - mc3man/trusty-media
 
 script:
   - cat > usr/bin/vidcutter <<\EOF
