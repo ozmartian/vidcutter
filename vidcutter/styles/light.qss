@@ -259,10 +259,6 @@ QPushButton#settingsButton {
     height: 31px;
 }
 
-QPushButton:hover#settingsButton {
-    border-image: url(:/images/light/settings-hover.png);
-}
-
 QPushButton:pressed#settingsButton {
     border-image: url(:/images/light/settings-active.png);
 }
