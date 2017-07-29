@@ -231,8 +231,8 @@ QDialog#notification QPushButton:pressed {
 
 QPushButton#settingsButton {
     border-image: url(:/images/dark/settings.png);
-    width: 40px;
-    height: 42px;
+    width: 73px;
+    height: 31px;
 }
 
 QPushButton:hover#settingsButton, QPushButton:pressed#settingsButton {
@@ -241,8 +241,8 @@ QPushButton:hover#settingsButton, QPushButton:pressed#settingsButton {
 
 QPushButton#menuButton {
     border-image: url(:/images/dark/menu.png);
-    width: 40px;
-    height: 42px;
+    width: 63px;
+    height: 31px;
 }
 
 QPushButton:hover#menuButton, QPushButton:pressed#menuButton {

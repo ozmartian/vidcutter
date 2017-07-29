@@ -259,7 +259,7 @@ QPushButton#settingsButton {
     height: 31px;
 }
 
-QPushButton:pressed#settingsButton {
+QPushButton:pressed#settingsButton, QPushButton:hover#settingsButton {
     border-image: url(:/images/light/settings-active.png);
 }
 
@@ -269,7 +269,7 @@ QPushButton#menuButton {
     height: 31px;
 }
 
-QPushButton:pressed#menuButton {
+QPushButton:pressed#menuButton, QPushButton:hover#menuButton {
     border-image: url(:/images/light/menu-active.png);
 }
 
