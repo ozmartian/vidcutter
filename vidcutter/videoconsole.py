@@ -74,7 +74,7 @@ class ConsoleWidget(QDialog):
         super(ConsoleWidget, self).showEvent(event)
 
     def closeEvent(self, event: QCloseEvent):
-        self.parent.cutter.consoleButton.setChecked(True)
+        self.parent.cutter.consoleButton.setChecked(False)
         super(ConsoleWidget, self).closeEvent(event)
 
 

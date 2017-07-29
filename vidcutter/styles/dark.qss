@@ -29,7 +29,7 @@ QWidget#shortcuts {
 }
 
 QWidget#videoplayer {
-    border: non;
+    border: none;
     background: #000;
 }
 
@@ -253,10 +253,46 @@ QPushButton::menu-indicator#menuButton, #clipindextools QPushButton::menu-indica
     left: -4000px;
 }
 
+QPushButton#thumbnailsButton, QPushButton#osdButton, QPushButton#consoleButton,
 QPushButton#muteButton, QPushButton#settingsButton, QPushButton#menuButton, QPushButton#fullscreenButton {
     background-color: transparent;
     border: none;
     outline: none;
+}
+
+QPushButton#thumbnailsButton, QPushButton#osdButton, QPushButton#consoleButton {
+    margin: 0;
+    padding: 0;
+}
+
+QPushButton#thumbnailsButton {
+    border-image: url(:/images/dark/thumbnails-off.png);
+    width: 32px;
+    height: 29px;
+}
+
+QPushButton#thumbnailsButton:pressed, QPushButton#thumbnailsButton:checked {
+    border-image: url(:/images/dark/thumbnails-on.png);
+}
+
+QPushButton#osdButton {
+    border-image: url(:/images/dark/osd-off.png);
+    width: 31px;
+    height: 29px;
+}
+
+QPushButton#osdButton:pressed, QPushButton#osdButton:checked {
+    border-image: url(:/images/dark/osd-on.png);
+}
+
+QPushButton#consoleButton {
+    border-image: url(:/images/dark/console-off.png);
+    width: 32px;
+    height: 29px;
+}
+
+QPushButton#consoleButton:pressed, QPushButton#consoleButton:checked {
+    border-image: url(:/images/dark/console-on.png);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -352,18 +388,17 @@ QTabBar::tab:top:last,
 QTabBar::tab:top:only-one {
     margin-right: 0;
 }
-
 /* -------------------------------------------------------------------------- */
 
-QSlider::handle#volumeslider, QSlider::handle#nothumbs {
-    border: 1px solid #13191B;
-    border-radius: 7px;
-    background: #642C68;
+QSlider::handle#volumeslider {
+    background: transparent url(:/images/slider-knob.png) no-repeat center center;
+    width: 18px;
+    height: 18px;
 }
 
-QSlider::handle:hover#volumeslider, QSlider::handle#nothumbs { background: #A286A8; }
-
-QSlider::handle:pressed#volumeslider, QSlider::handle#nothumbs { background: #3D1546; }
+QSlider::handle:hover#volumeslider, QSlider::handle:pressed#volumeslider {
+    background: transparent url(:/images/slider-knob-active.png) no-repeat center center;
+}
 
 /* -------------------------------------------------------------------------- */
 

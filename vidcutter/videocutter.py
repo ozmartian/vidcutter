@@ -108,7 +108,7 @@ class VideoCutter(QWidget):
         self.keepClips = self.settings.value('keepClips', 'off', type=str) in {'on', 'true'}
         self.nativeDialogs = self.settings.value('nativeDialogs', 'on', type=str) in {'on', 'true'}
         self.timelineThumbs = self.settings.value('timelineThumbs', 'on', type=str) in {'on', 'true'}
-        self.hideConsole = self.settings.value('hideConsole', 'on', type=str) in {'on', 'true'}
+        self.showConsole = self.settings.value('showConsole', 'on', type=str) in {'on', 'true'}
 
         self.lastFolder = self.settings.value('lastFolder', QDir.homePath(), type=str)
         if not os.path.exists(self.lastFolder):
@@ -228,19 +228,20 @@ class VideoCutter(QWidget):
         self.videoplayerWidget.setLayout(self.videoplayerLayout)
 
         # noinspection PyArgumentList
-        self.thumbnailsButton = QPushButton(icon=self.thumbnailsIcon, flat=True, iconSize=QSize(16, 16),
-                                            statusTip='Show timeline thumbnails', cursor=Qt.PointingHandCursor,
-                                            toggled=self.toggleThumbs, checkable=True,
-                                            objectName='thumbnailsButton')
+        self.thumbnailsButton = QPushButton(self, flat=True, checkable=True, objectName='thumbnailsButton',
+                                            statusTip='Toggle timeline thumbnails', cursor=Qt.PointingHandCursor,
+                                            toolTip='Toggle thumbnails', toggled=self.toggleThumbs)
+        self.thumbnailsButton.setFixedSize(32, 29 if self.theme == 'dark' else 31)
         if self.timelineThumbs:
             self.thumbnailsButton.setChecked(True)
         else:
             self.seekSlider.setObjectName('nothumbs')
 
         # noinspection PyArgumentList
-        self.osdButton = QPushButton(icon=self.osdIcon, flat=True, iconSize=QSize(16, 16), checkable=True,
-                                     statusTip='Toggle on-screen-display', cursor=Qt.PointingHandCursor,
-                                     toggled=self.toggleOSD, objectName='osdButton')
+        self.osdButton = QPushButton(self, flat=True, checkable=True, objectName='osdButton', toolTip='Toggle OSD',
+                                     statusTip='Toggle on-screen display', cursor=Qt.PointingHandCursor,
+                                     toggled=self.toggleOSD)
+        self.osdButton.setFixedSize(31, 29 if self.theme == 'dark' else 31)
         if self.enableOSD:
             self.osdButton.setChecked(True)
 
@@ -249,20 +250,15 @@ class VideoCutter(QWidget):
             self.osdButton.hide()
 
         # noinspection PyArgumentList
-        self.consoleButton = QPushButton(icon=self.consoleIcon, flat=True, iconSize=QSize(16, 16), checkable=True,
-                                         statusTip='Hide debug console window', cursor=Qt.PointingHandCursor,
-                                         toggled=self.toggleConsole, objectName='consoleButton')
-
-        if self.hideConsole:
+        self.consoleButton = QPushButton(self, flat=True, checkable=True, objectName='consoleButton',
+                                         statusTip='Toggle console window', toolTip='Toggle console',
+                                         cursor=Qt.PointingHandCursor, toggled=self.toggleConsole)
+        self.consoleButton.setFixedSize(32, 29 if self.theme == 'dark' else 31)
+        if self.showConsole:
             self.consoleButton.setChecked(True)
-        else:
             self.mpvWidget.setLogLevel('v')
             os.environ['DEBUG'] = '1'
             self.parent.console.show()
-
-        self.thumbnailsButton.setStyle(QStyleFactory.create('Fusion'))
-        self.osdButton.setStyle(QStyleFactory.create('Fusion'))
-        self.consoleButton.setStyle(QStyleFactory.create('Fusion'))
 
         # noinspection PyArgumentList
         self.muteButton = QPushButton(objectName='muteButton', icon=self.unmuteIcon, flat=True, toolTip='Mute',
@@ -272,14 +268,15 @@ class VideoCutter(QWidget):
         # noinspection PyArgumentList
         self.volSlider = VolumeSlider(orientation=Qt.Horizontal, toolTip='Volume', statusTip='Adjust volume level',
                                       cursor=Qt.PointingHandCursor, value=self.parent.startupvol, minimum=0,
-                                      maximum=130, sliderMoved=self.setVolume, objectName='volumeSlider')
+                                      maximum=130, sliderMoved=self.setVolume)
 
+        self.volSlider.setMinimumHeight(22)
         if sys.platform == 'darwin':
             self.volSlider.setStyle(QStyleFactory.create('Macintosh'))
 
         # noinspection PyArgumentList
         self.fullscreenButton = QPushButton(objectName='fullscreenButton', icon=self.fullscreenIcon, flat=True,
-                                            toolTip='Fullscreen', statusTip='Switch to fullscreen video',
+                                            toolTip='Toggle fullscreen', statusTip='Switch to fullscreen video',
                                             iconSize=QSize(14, 14), clicked=self.toggleFullscreen,
                                             cursor=Qt.PointingHandCursor)
 
@@ -287,16 +284,29 @@ class VideoCutter(QWidget):
         self.settingsButton = QPushButton(self, toolTip='Settings', cursor=Qt.PointingHandCursor, flat=True,
                                           statusTip='Configure settings', objectName='settingsButton',
                                           clicked=self.showSettings)
-        self.settingsButton.setFixedSize(QSize(28, 28))
+        self.settingsButton.setFixedSize(QSize(73, 31))
 
         # noinspection PyArgumentList
         self.menuButton = QPushButton(self, toolTip='Menu', cursor=Qt.PointingHandCursor, flat=True,
                                       objectName='menuButton', statusTip='Click to view menu options')
-        self.menuButton.setFixedSize(QSize(28, 28))
+        self.menuButton.setFixedSize(QSize(63, 31))
         self.menuButton.setLayoutDirection(Qt.RightToLeft)
         self.menuButton.setMenu(self.appMenu)
 
         self.seekSlider.initStyle()
+
+        togglesLayout = QHBoxLayout()
+        togglesLayout.setContentsMargins(0, 0, 0, 0)
+        togglesLayout.setSpacing(0)
+        togglesLayout.addWidget(self.thumbnailsButton, Qt.AlignLeft)
+        togglesLayout.addWidget(self.osdButton, Qt.AlignLeft)
+        togglesLayout.addWidget(self.consoleButton, Qt.AlignLeft)
+
+        togglesWidget = QGroupBox()
+        togglesWidget.setContentsMargins(0, 0, 0, 0)
+        togglesWidget.setLayout(togglesLayout)
+        togglesWidget.setFixedWidth(95)
+        togglesWidget.setStyleSheet('border: 0;')
 
         toolbarLayout = QHBoxLayout()
         toolbarLayout.addWidget(self.toolbar)
@@ -307,6 +317,7 @@ class VideoCutter(QWidget):
         toolbarGroup.setStyleSheet('border: 0;')
 
         audioLayout = QHBoxLayout()
+        audioLayout.setContentsMargins(0, 0, 0, 0)
         audioLayout.addWidget(self.muteButton)
         audioLayout.addSpacing(5)
         audioLayout.addWidget(self.volSlider)
@@ -315,32 +326,36 @@ class VideoCutter(QWidget):
         audioLayout.addSpacing(10)
 
         settingsLayout = QHBoxLayout()
-        settingsLayout.addStretch(1)
+        settingsLayout.setSpacing(0)
+        settingsLayout.setContentsMargins(0, 0, 0, 0)
         settingsLayout.addWidget(self.menuButton)
-        settingsLayout.addSpacing(10)
         settingsLayout.addWidget(self.settingsButton)
-        settingsLayout.addSpacing(10)
+
+        settingsWidget = QGroupBox()
+        settingsWidget.setContentsMargins(0, 0, 0, 0)
+        settingsWidget.setLayout(settingsLayout)
+        settingsWidget.setFixedWidth(136)
+        settingsWidget.setStyleSheet('border: 0;')
 
         groupLayout = QVBoxLayout()
-        groupLayout.addLayout(settingsLayout)
-        groupLayout.addSpacing(8)
         groupLayout.addLayout(audioLayout)
+        groupLayout.addSpacing(10)
+        groupLayout.addWidget(settingsWidget)
 
         controlsLayout = QHBoxLayout()
         controlsLayout.addSpacing(10)
-        controlsLayout.addWidget(self.thumbnailsButton)
-        controlsLayout.addSpacing(4)
-        controlsLayout.addWidget(self.osdButton)
-        controlsLayout.addSpacing(4)
-        controlsLayout.addWidget(self.consoleButton)
+        controlsLayout.addWidget(togglesWidget)
+        controlsLayout.addSpacing(10)
         controlsLayout.addStretch(1)
         controlsLayout.addWidget(toolbarGroup)
         controlsLayout.addStretch(1)
+        controlsLayout.addSpacing(10)
         controlsLayout.addLayout(groupLayout)
+        controlsLayout.addSpacing(10)
 
         layout = QVBoxLayout()
         layout.setSpacing(0)
-        layout.setContentsMargins(10, 10, 10, 0)
+        layout.setContentsMargins(10, 10, 0, 0)
         layout.addLayout(self.videoLayout)
         layout.addWidget(self.sliderWidget)
         layout.addSpacing(5)
@@ -479,22 +494,10 @@ class VideoCutter(QWidget):
         self.updateCheckIcon = QIcon(':/images/update.png')
         self.thumbsupIcon = QIcon(':/images/thumbs-up.png')
         self.keyRefIcon = QIcon(':/images/keymap.png')
-        self.thumbnailsIcon = QIcon()
-        self.thumbnailsIcon.addFile(':/images/%s/thumbnails-on.png' % self.theme, QSize(16, 16),
-                                    QIcon.Normal, QIcon.On)
-        self.thumbnailsIcon.addFile(':/images/%s/thumbnails-off.png' % self.theme, QSize(16, 16),
-                                    QIcon.Normal, QIcon.Off)
-        self.osdIcon = QIcon()
-        self.osdIcon.addFile(':/images/%s/osd-on.png' % self.theme, QSize(16, 16), QIcon.Normal, QIcon.On)
-        self.osdIcon.addFile(':/images/%s/osd-off.png' % self.theme, QSize(16, 16), QIcon.Normal, QIcon.Off)
-        self.consoleIcon = QIcon()
-        self.consoleIcon.addFile(':/images/%s/console-on.png' % self.theme, QSize(16, 16), QIcon.Normal, QIcon.On)
-        self.consoleIcon.addFile(':/images/%s/console-off.png' % self.theme, QSize(16, 16), QIcon.Normal, QIcon.Off)
         self.fullscreenIcon = QIcon(':/images/%s/fullscreen.png' % self.theme)
 
     # noinspection PyArgumentList
     def initActions(self) -> None:
-        self.themeAction = QActionGroup(self)
         self.zoomAction = QActionGroup(self)
         self.labelAction = QActionGroup(self)
         self.openAction = QAction(self.openIcon, 'Open\nMedia', self, statusTip='Open a media file for a cut & join',
@@ -534,10 +537,6 @@ class VideoCutter(QWidget):
                                    statusTip='About %s' % qApp.applicationName(), shortcut=0)
         self.keyRefAction = QAction(self.keyRefIcon, 'Keyboard shortcuts', self, triggered=self.showKeyRef,
                                     statusTip='View shortcut key bindings')
-        self.lightThemeAction = QAction('Light', self.themeAction, checkable=True, checked=True,
-                                        statusTip='Use a light colored theme to match your desktop')
-        self.darkThemeAction = QAction('Dark', self.themeAction, checkable=True, checked=False,
-                                       statusTip='Use a dark colored theme to match your desktop')
         self.qtrZoomAction = QAction('1:4 Quarter', self.zoomAction, checkable=True, checked=False,
                                      statusTip='Zoom to a quarter of the source video size')
         self.halfZoomAction = QAction('1:2 Half', self.zoomAction, statusTip='Zoom to half of the source video size',
@@ -564,11 +563,6 @@ class VideoCutter(QWidget):
                                               statusTip='Enable hardware based video decoding for playback ' +
                                                         '(e.g. vdpau, vaapi, dxva2, d3d11, cuda)')
 
-        if self.theme == 'dark':
-            self.darkThemeAction.setChecked(True)
-        else:
-            self.lightThemeAction.setChecked(True)
-        self.themeAction.triggered.connect(self.switchTheme)
         if self.keepClips:
             self.keepClipsAction.setChecked(True)
         if self.nativeDialogs:
@@ -634,11 +628,6 @@ class VideoCutter(QWidget):
         level2seekAction.setDefaultWidget(level2Seek)
 
         optionsMenu = QMenu('Settings...', self.appMenu)
-        if sys.platform != 'darwin':
-            optionsMenu.addSection('Theme')
-            optionsMenu.addAction(self.lightThemeAction)
-            optionsMenu.addAction(self.darkThemeAction)
-            optionsMenu.addSeparator()
         optionsMenu.addAction(self.keepClipsAction)
         optionsMenu.addSeparator()
         optionsMenu.addAction(level1seekAction)
@@ -1035,15 +1024,15 @@ class VideoCutter(QWidget):
         if not hasattr(self, 'debugonstart'):
             self.debugonstart = os.getenv('DEBUG', False)
         if checked:
+            self.mpvWidget.setLogLevel('v')
+            os.environ['DEBUG'] = '1'
+            self.parent.console.show()
+        else:
             if not self.debugonstart:
                 os.environ['DEBUG'] = '0'
                 self.mpvWidget.setLogLevel('error')
             self.parent.console.hide()
-        else:
-            self.mpvWidget.setLogLevel('v')
-            os.environ['DEBUG'] = '1'
-            self.parent.console.show()
-        self.saveSetting('hideConsole', checked)
+        self.saveSetting('showConsole', checked)
 
     @pyqtSlot(bool)
     def setAspect(self, checked: bool = True) -> None:
@@ -1345,42 +1334,6 @@ class VideoCutter(QWidget):
     def switchDecoding(self, checked: bool = True) -> None:
         self.mpvWidget.mpv.set_property('hwdec', 'auto' if checked else 'no')
         self.saveSetting('hwdec', checked)
-
-    @pyqtSlot(QAction)
-    def switchTheme(self, action: QAction) -> None:
-        if action == self.darkThemeAction:
-            newtheme = 'dark'
-        else:
-            newtheme = 'light'
-        if newtheme != self.theme:
-            # noinspection PyArgumentList
-            mbox = QMessageBox(icon=QMessageBox.NoIcon, windowTitle='Restart required', minimumWidth=500,
-                               textFormat=Qt.RichText, objectName='genericdialog')
-            mbox.setWindowFlags(Qt.Dialog | Qt.WindowCloseButtonHint)
-            mbox.setText('''
-                <style>
-                    h1 {
-                        color: %s;
-                        font-family: "Futura-Light", sans-serif;
-                        font-weight: 400;
-                    }
-                    p { font-size: 15px; }
-                </style>
-                <h1>Warning</h1>
-                <p>The application needs to be restarted in order to switch themes. Ensure you have saved
-                your project or finished any cut ror join tasks in progress.</p>
-                <p>Would you like to restart and switch themes now?</p>'''
-                         % ('#C681D5' if self.theme == 'dark' else '#642C68'))
-            mbox.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-            mbox.setDefaultButton(QMessageBox.Yes)
-            response = mbox.exec_()
-            if response == QMessageBox.Yes:
-                self.parent.reboot()
-            else:
-                if action == self.darkThemeAction:
-                    self.lightThemeAction.setChecked(True)
-                else:
-                    self.darkThemeAction.setChecked(True)
 
     def ffmpeg_check(self) -> bool:
         valid = os.path.exists(self.videoService.backend) if self.videoService.backend is not None else False

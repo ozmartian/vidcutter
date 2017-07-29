@@ -84,7 +84,7 @@ class MainWindow(QMainWindow):
     def get_size(mode: str = 'NORMAL') -> QSize:
         modes = {
             'LOW': QSize(800, 425),
-            'NORMAL': QSize(915, 660),
+            'NORMAL': QSize(915, 680),
             'HIGH': QSize(1850, 1300)
         }
         return modes[mode]
@@ -195,7 +195,7 @@ class MainWindow(QMainWindow):
         qApp.exit(MainWindow.EXIT_CODE_REBOOT)
 
     def save_settings(self) -> None:
-        theme = 'dark' if self.cutter.darkThemeAction.isChecked() else 'light'
+        theme = self.cutter.theme
         self.settings.setValue('theme', theme)
         if self.cutter.underLabelsAction.isChecked():
             labels = 'under'

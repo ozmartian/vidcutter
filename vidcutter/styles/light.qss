@@ -255,8 +255,8 @@ QDialog#notification QPushButton:pressed {
 
 QPushButton#settingsButton {
     border-image: url(:/images/light/settings.png);
-    width: 28px;
-    height: 28px;
+    width: 73px;
+    height: 31px;
 }
 
 QPushButton:hover#settingsButton {
@@ -269,8 +269,8 @@ QPushButton:pressed#settingsButton {
 
 QPushButton#menuButton {
     border-image: url(:/images/light/menu.png);
-    width: 28px;
-    height: 28px;
+    width: 63px;
+    height: 31px;
 }
 
 QPushButton:pressed#menuButton {
@@ -281,6 +281,7 @@ QPushButton::menu-indicator#menuButton, #clipindextools QPushButton::menu-indica
     left: -4000px;
 }
 
+QPushButton#thumbnailsButton, QPushButton#osdButton, QPushButton#consoleButton,
 QPushButton#muteButton, QPushButton#settingsButton, QPushButton#menuButton, QPushButton#fullscreenButton {
     background-color: transparent;
     border: none;
@@ -288,7 +289,38 @@ QPushButton#muteButton, QPushButton#settingsButton, QPushButton#menuButton, QPus
 }
 
 QPushButton#thumbnailsButton, QPushButton#osdButton, QPushButton#consoleButton {
-    border-radius: 0;
+    margin: 0;
+    padding: 0;
+}
+
+QPushButton#thumbnailsButton {
+    border-image: url(:/images/light/thumbnails-off.png);
+    width: 32px;
+    height: 31px;
+}
+
+QPushButton#thumbnailsButton:pressed, QPushButton#thumbnailsButton:checked {
+    border-image: url(:/images/light/thumbnails-on.png);
+}
+
+QPushButton#osdButton {
+    border-image: url(:/images/light/osd-off.png);
+    width: 31px;
+    height: 31px;
+}
+
+QPushButton#osdButton:pressed, QPushButton#osdButton:checked {
+    border-image: url(:/images/light/osd-on.png);
+}
+
+QPushButton#consoleButton {
+    border-image: url(:/images/light/console-off.png);
+    width: 32px;
+    height: 31px;
+}
+
+QPushButton#consoleButton:pressed, QPushButton#consoleButton:checked {
+    border-image: url(:/images/light/console-on.png);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -386,15 +418,15 @@ QTabBar::tab:top:only-one {
 
 /* -------------------------------------------------------------------------- */
 
-QSlider::handle#volumeslider, QSlider::handle#nothumbs {
-    border: 1px solid #999;
-    border-radius: 7px;
-    background: #E7E7E7;
+QSlider::handle#volumeslider {
+    background: transparent url(:/images/slider-knob.png) no-repeat center center;
+    width: 18px;
+    height: 18px;
 }
 
-QSlider::handle:hover#volumeslider, QSlider::handle#nothumbs { background: #642C68; }
-
-QSlider::handle:pressed#volumeslider, QSlider::handle#nothumbs { background: #3D1546; }
+QSlider::handle:hover#volumeslider, QSlider::handle:pressed#volumeslider {
+    background: transparent url(:/images/slider-knob-active.png) no-repeat center center;
+}
 
 /* -------------------------------------------------------------------------- */
 
