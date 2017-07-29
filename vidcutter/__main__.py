@@ -197,13 +197,6 @@ class MainWindow(QMainWindow):
     def save_settings(self) -> None:
         theme = self.cutter.theme
         self.settings.setValue('theme', theme)
-        if self.cutter.underLabelsAction.isChecked():
-            labels = 'under'
-        elif self.cutter.noLabelsAction.isChecked():
-            labels = 'none'
-        else:
-            labels = 'beside'
-        self.settings.setValue('toolbarLabels', labels)
         self.settings.setValue('aspectRatio', 'keep' if self.cutter.keepRatioAction.isChecked() else 'stretch')
         self.settings.setValue('volume', self.cutter.volSlider.value())
         self.settings.setValue('level1Seek', self.cutter.level1_spinner.value())

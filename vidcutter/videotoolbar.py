@@ -48,31 +48,25 @@ class VideoToolBar(QToolBar):
             if button == buttonlist[len(buttonlist)-1]:
                 button.setObjectName('saveButton')
 
-    @pyqtSlot(QAction)
-    def setLabels(self, action: QAction) -> None:
-        if action == self.parent.besideLabelsAction:
-            self.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-            for button in self.findChildren(QToolButton):
-                button.setText(button.text().replace(' ', '\n'))
-        elif action == self.parent.underLabelsAction:
-            self.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
-            for button in self.findChildren(QToolButton):
-                button.setText(button.text().replace('\n', ' '))
-        elif action == self.parent.noLabelsAction:
-            self.setToolButtonStyle(Qt.ToolButtonIconOnly)
+    @pyqtSlot(int)
+    def setLabels(self, id: int) -> None:
+        if id == 3:
+            self.setLabelByType('beside')
+        elif id == 2:
+            self.setLabelByType('under')
+        elif id == 1:
+            self.setLabelByType('none')
 
     def setLabelByType(self, label_type: str) -> None:
         if label_type == 'beside':
-            self.parent.besideLabelsAction.setChecked(True)
             self.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
             [button.setText(button.text().replace(' ', '\n')) for button in self.findChildren(QToolButton)]
         elif label_type == 'under':
-            self.parent.underLabelsAction.setChecked(True)
             self.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
             [button.setText(button.text().replace('\n', ' ')) for button in self.findChildren(QToolButton)]
         elif label_type == 'none':
-            self.parent.noLabelsAction.setChecked(True)
             self.setToolButtonStyle(Qt.ToolButtonIconOnly)
+        self.parent.settings.setValue('toolbarLabels', label_type)
 
     def eventFilter(self, obj: QObject, event: QEvent) -> bool:
         if event.type() == QEvent.ToolTip:

@@ -499,7 +499,6 @@ class VideoCutter(QWidget):
     # noinspection PyArgumentList
     def initActions(self) -> None:
         self.zoomAction = QActionGroup(self)
-        self.labelAction = QActionGroup(self)
         self.openAction = QAction(self.openIcon, 'Open\nMedia', self, statusTip='Open a media file for a cut & join',
                                   triggered=self.openMedia)
         self.playAction = QAction(self.playIcon, 'Play\nMedia', self, triggered=self.playMedia,
@@ -545,12 +544,6 @@ class VideoCutter(QWidget):
                                       statusTip='Set to original source video zoom level')
         self.dblZoomAction = QAction('2:1 Double', self.zoomAction, checkable=True, checked=False,
                                      statusTip='Zoom to double the original source video size')
-        self.besideLabelsAction = QAction('Labels next to buttons', self.labelAction, checkable=True,
-                                          statusTip='Show labels on right side of toolbar buttons', checked=True)
-        self.underLabelsAction = QAction('Labels under buttons', self.labelAction, checkable=True,
-                                         statusTip='Show labels under toolbar buttons', checked=False)
-        self.noLabelsAction = QAction('No labels', self.labelAction, statusTip='Do not show labels on toolbar',
-                                      checkable=True, checked=False)
         self.keepRatioAction = QAction('Keep aspect ratio', self, checkable=True, triggered=self.setAspect,
                                        statusTip='Keep window aspect ratio when resizing the window', enabled=False)
         self.nativeDialogsAction = QAction('Use native dialogs', self, checkable=True,
@@ -582,15 +575,9 @@ class VideoCutter(QWidget):
         self.toolbar.addAction(self.cutEndAction)
         self.toolbar.addAction(self.saveAction)
         self.toolbar.disableTooltips()
-        self.labelAction.triggered.connect(self.toolbar.setLabels)
         self.toolbar.setLabelByType(self.settings.value('toolbarLabels', 'beside', type=str))
 
     def initMenus(self) -> None:
-        labelsMenu = QMenu('Toolbar labels', self.appMenu)
-        labelsMenu.addAction(self.besideLabelsAction)
-        labelsMenu.addAction(self.underLabelsAction)
-        labelsMenu.addAction(self.noLabelsAction)
-
         zoomMenu = QMenu('Zoom', self.appMenu)
         zoomMenu.addAction(self.qtrZoomAction)
         zoomMenu.addAction(self.halfZoomAction)
@@ -634,7 +621,6 @@ class VideoCutter(QWidget):
         optionsMenu.addAction(level2seekAction)
         optionsMenu.addSeparator()
         optionsMenu.addAction(self.nativeDialogsAction)
-        optionsMenu.addMenu(labelsMenu)
         optionsMenu.addAction(self.hardwareDecodingAction)
         optionsMenu.addAction(self.keepRatioAction)
         optionsMenu.addMenu(zoomMenu)
