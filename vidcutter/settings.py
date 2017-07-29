@@ -81,9 +81,9 @@ class ThemePage(QWidget):
         toolbar_buttonGroup.addButton(toolbar_besideRadio, 3)
         toolbar_buttonGroup.buttonClicked[int].connect(self.parent.parent.toolbar.setLabels)
         toolbarLayout = QGridLayout()
-        toolbarLayout.addWidget(toolbar_iconsRadio, 0, 0)
+        toolbarLayout.addWidget(toolbar_besideRadio, 0, 0)
         toolbarLayout.addWidget(toolbar_underRadio, 0, 1)
-        toolbarLayout.addWidget(toolbar_besideRadio, 1, 0)
+        toolbarLayout.addWidget(toolbar_iconsRadio, 1, 0)
         toolbarGroup = QGroupBox('Toolbar labels')
         toolbarGroup.setLayout(toolbarLayout)
         mainLayout.addWidget(toolbarGroup)
@@ -121,6 +121,8 @@ class ThemePage(QWidget):
             if response == QMessageBox.Yes:
                 self.parent.parent.theme = newtheme
                 self.parent.parent.parent.reboot()
+            else:
+                self.darkRadio.setChecked(True) if newtheme == 'light' else self.lightRadio.setChecked(True)
 
 
 class VideoPage(QWidget):
@@ -128,6 +130,85 @@ class VideoPage(QWidget):
         super(VideoPage, self).__init__(parent)
         self.parent = parent
         self.setObjectName('settingsvideopage')
+        decodingCheckbox = QCheckBox('Hardware decoding', self)
+        decodingCheckbox.setToolTip('Enable hardware based video decoding')
+        decodingCheckbox.setStatusTip('Enable hardware based video decoding for playback (e.g. vdpau, vaapi, dxva2, ' +
+                                      'd3d11, cuda)')
+        decodingCheckbox.setCursor(Qt.PointingHandCursor)
+        decodingCheckbox.setChecked(self.parent.parent.hardwareDecoding)
+        decodingCheckbox.stateChanged.connect(self.switchDecoding)
+        ratioCheckbox = QCheckBox('Keep aspect ratio', self)
+        ratioCheckbox.setToolTip('Keep source video aspect ratio')
+        ratioCheckbox.setStatusTip('Keep source video aspect ratio or fit video to player dimensions')
+        ratioCheckbox.setCursor(Qt.PointingHandCursor)
+        ratioCheckbox.setChecked(self.parent.parent.keepRatio)
+        ratioCheckbox.stateChanged.connect(self.keepAspectRatio)
+        videoLayout = QVBoxLayout()
+        videoLayout.addWidget(decodingCheckbox)
+        videoLayout.addWidget(ratioCheckbox)
+        videoGroup = QGroupBox('Video playback')
+        videoGroup.setLayout(videoLayout)
+        zoomLevel = self.parent.settings.value('videoZoom', 0, type=int)
+        zoom_qtrRadio = QRadioButton('1:4 Quarter', self)
+        zoom_qtrRadio.setToolTip('1/4 Zoom')
+        zoom_qtrRadio.setCursor(Qt.PointingHandCursor)
+        zoom_qtrRadio.setChecked(zoomLevel == -2)
+        zoom_halfRadio = QRadioButton('1:2 Half', self)
+        zoom_halfRadio.setToolTip('1/2 Half')
+        zoom_halfRadio.setCursor(Qt.PointingHandCursor)
+        zoom_halfRadio.setChecked(zoomLevel == -1)
+        zoom_originalRadio = QRadioButton('1:1 No Zoom', self)
+        zoom_originalRadio.setToolTip('1/1 No zoom')
+        zoom_originalRadio.setCursor(Qt.PointingHandCursor)
+        zoom_originalRadio.setChecked(zoomLevel == 0)
+        zoom_doubleRadio = QRadioButton('2:1 Double', self)
+        zoom_doubleRadio.setToolTip('2/1 Double')
+        zoom_doubleRadio.setCursor(Qt.PointingHandCursor)
+        zoom_doubleRadio.setChecked(zoomLevel == 1)
+        zoom_buttonGroup = QButtonGroup(self)
+        zoom_buttonGroup.addButton(zoom_qtrRadio, 1)
+        zoom_buttonGroup.addButton(zoom_halfRadio, 2)
+        zoom_buttonGroup.addButton(zoom_originalRadio, 3)
+        zoom_buttonGroup.addButton(zoom_doubleRadio, 4)
+        zoom_buttonGroup.buttonClicked[int].connect(self.setZoom)
+        zoomLayout = QGridLayout()
+        zoomLayout.addWidget(zoom_qtrRadio, 0, 0)
+        zoomLayout.addWidget(zoom_halfRadio, 0, 1)
+        zoomLayout.addWidget(zoom_originalRadio, 1, 0)
+        zoomLayout.addWidget(zoom_doubleRadio, 1, 1)
+        zoomGroup = QGroupBox('Zoom level')
+        zoomGroup.setLayout(zoomLayout)
+        mainLayout = QVBoxLayout()
+        mainLayout.setSpacing(10)
+        mainLayout.addWidget(videoGroup)
+        mainLayout.addWidget(zoomGroup)
+        mainLayout.addStretch(1)
+        self.setLayout(mainLayout)
+
+    @pyqtSlot(int)
+    def switchDecoding(self, state: int) -> None:
+        self.parent.parent.mpvWidget.mpv.set_property('hwdec', 'auto' if state == Qt.Checked else 'no')
+        self.parent.parent.saveSetting('hwdec', state == Qt.Checked)
+        self.parent.parent.hardwareDecoding = (state == Qt.Checked)
+
+    @pyqtSlot(int)
+    def keepAspectRatio(self, state: int) -> None:
+        self.parent.parent.mpvWidget.mpv.set_option('keepaspect', state == Qt.Checked)
+        self.parent.settings.setValue('aspectRatio', 'keep' if state == Qt.Checked else 'stretch')
+        self.parent.parent.keepRatio = (state == Qt.Checked)
+        
+    @pyqtSlot(int)
+    def setZoom(self, id: int) -> None:
+        if id == 1:
+            level = -2
+        elif id == 2:
+            level = -1
+        elif id == 4:
+            level = 1
+        else:
+            level = 0
+        self.parent.parent.mpvWidget.mpv.set_property('video-zoom', level)
+        self.parent.settings.setValue('videoZoom', level)
 
 
 class GeneralPage(QWidget):

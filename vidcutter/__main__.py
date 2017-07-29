@@ -173,7 +173,7 @@ class MainWindow(QMainWindow):
         if len(self.args) > 0:
             file_path = QFileInfo(self.args[0]).absoluteFilePath()
             if not os.path.exists(file_path):
-                sys.stderr.write('\nERROR: File not found: %s\n\n' % file_path)
+                sys.stderr.write('\nERROR: File not found: %s\n' % file_path)
                 self.close()
                 sys.exit(1)
             self.video = file_path
@@ -197,7 +197,6 @@ class MainWindow(QMainWindow):
     def save_settings(self) -> None:
         theme = self.cutter.theme
         self.settings.setValue('theme', theme)
-        self.settings.setValue('aspectRatio', 'keep' if self.cutter.keepRatioAction.isChecked() else 'stretch')
         self.settings.setValue('volume', self.cutter.volSlider.value())
         self.settings.setValue('level1Seek', self.cutter.level1_spinner.value())
         self.settings.setValue('level2Seek', self.cutter.level2_spinner.value())

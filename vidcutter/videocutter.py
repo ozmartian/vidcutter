@@ -105,6 +105,7 @@ class VideoCutter(QWidget):
 
         self.enableOSD = self.settings.value('enableOSD', 'on', type=str) in {'on', 'true'}
         self.hardwareDecoding = self.settings.value('hwdec', 'on', type=str) in {'on', 'auto'}
+        self.keepRatio = self.settings.value('aspectRatio', 'keep', type=str) == 'keep'
         self.keepClips = self.settings.value('keepClips', 'off', type=str) in {'on', 'true'}
         self.nativeDialogs = self.settings.value('nativeDialogs', 'on', type=str) in {'on', 'true'}
         self.timelineThumbs = self.settings.value('timelineThumbs', 'on', type=str) in {'on', 'true'}
@@ -323,7 +324,6 @@ class VideoCutter(QWidget):
         audioLayout.addWidget(self.volSlider)
         audioLayout.addSpacing(5)
         audioLayout.addWidget(self.fullscreenButton)
-        audioLayout.addSpacing(10)
 
         settingsLayout = QHBoxLayout()
         settingsLayout.setSpacing(0)
@@ -339,7 +339,7 @@ class VideoCutter(QWidget):
 
         groupLayout = QVBoxLayout()
         groupLayout.addLayout(audioLayout)
-        groupLayout.addSpacing(10)
+        groupLayout.addSpacing(15)
         groupLayout.addWidget(settingsWidget)
 
         controlsLayout = QHBoxLayout()
@@ -433,7 +433,7 @@ class VideoCutter(QWidget):
             quiet=True,
             msg_level=('all=v' if os.getenv('DEBUG', False) else 'error'),
             volume=self.parent.startupvol,
-            keepaspect=self.keepRatioAction.isChecked(),
+            keepaspect=self.keepRatio,
             hwdec=('auto' if self.hardwareDecoding else 'no'))
         self.mpvWidget.durationChanged.connect(self.on_durationChanged)
         self.mpvWidget.positionChanged.connect(self.on_positionChanged)
@@ -486,19 +486,16 @@ class VideoCutter(QWidget):
         self.downIcon = QIcon(':/images/down.png')
         self.removeIcon = QIcon(':/images/remove.png')
         self.removeAllIcon = QIcon(':/images/remove-all.png')
-        self.successIcon = QIcon(':/images/thumbsup.png')
         self.openProjectIcon = QIcon(':/images/open.png')
         self.saveProjectIcon = QIcon(':/images/save.png')
         self.mediaInfoIcon = QIcon(':/images/info.png')
         self.viewLogsIcon = QIcon(':/images/viewlogs.png')
         self.updateCheckIcon = QIcon(':/images/update.png')
-        self.thumbsupIcon = QIcon(':/images/thumbs-up.png')
         self.keyRefIcon = QIcon(':/images/keymap.png')
         self.fullscreenIcon = QIcon(':/images/%s/fullscreen.png' % self.theme)
 
     # noinspection PyArgumentList
     def initActions(self) -> None:
-        self.zoomAction = QActionGroup(self)
         self.openAction = QAction(self.openIcon, 'Open\nMedia', self, statusTip='Open a media file for a cut & join',
                                   triggered=self.openMedia)
         self.playAction = QAction(self.playIcon, 'Play\nMedia', self, triggered=self.playMedia,
@@ -536,36 +533,16 @@ class VideoCutter(QWidget):
                                    statusTip='About %s' % qApp.applicationName(), shortcut=0)
         self.keyRefAction = QAction(self.keyRefIcon, 'Keyboard shortcuts', self, triggered=self.showKeyRef,
                                     statusTip='View shortcut key bindings')
-        self.qtrZoomAction = QAction('1:4 Quarter', self.zoomAction, checkable=True, checked=False,
-                                     statusTip='Zoom to a quarter of the source video size')
-        self.halfZoomAction = QAction('1:2 Half', self.zoomAction, statusTip='Zoom to half of the source video size',
-                                      checkable=True, checked=False)
-        self.origZoomAction = QAction('1:1 Original', self.zoomAction, checkable=True, checked=True,
-                                      statusTip='Set to original source video zoom level')
-        self.dblZoomAction = QAction('2:1 Double', self.zoomAction, checkable=True, checked=False,
-                                     statusTip='Zoom to double the original source video size')
-        self.keepRatioAction = QAction('Keep aspect ratio', self, checkable=True, triggered=self.setAspect,
-                                       statusTip='Keep window aspect ratio when resizing the window', enabled=False)
         self.nativeDialogsAction = QAction('Use native dialogs', self, checkable=True,
                                            statusTip='Use platform-native dialogs on file open & save operations',
                                            triggered=(lambda checked: self.saveSetting('nativeDialogs', checked)))
         self.keepClipsAction = QAction('Keep individual clips', self, checkable=True,
                                        statusTip='Keep the individual clips used to produce final media',
                                        triggered=(lambda checked: self.saveSetting('keepClips', checked)))
-        self.hardwareDecodingAction = QAction('Hardware decoding', self, triggered=self.switchDecoding, checkable=True,
-                                              statusTip='Enable hardware based video decoding for playback ' +
-                                                        '(e.g. vdpau, vaapi, dxva2, d3d11, cuda)')
-
         if self.keepClips:
             self.keepClipsAction.setChecked(True)
         if self.nativeDialogs:
             self.nativeDialogsAction.setChecked(True)
-        if self.hardwareDecoding:
-            self.hardwareDecodingAction.setChecked(True)
-        if self.settings.value('aspectRatio', 'keep', type=str) == 'keep':
-            self.keepRatioAction.setChecked(True)
-            self.zoomAction.setEnabled(False)
-        self.zoomAction.triggered.connect(self.setZoom)
 
     def initToolbar(self) -> None:
         self.toolbar.addAction(self.openAction)
@@ -578,12 +555,6 @@ class VideoCutter(QWidget):
         self.toolbar.setLabelByType(self.settings.value('toolbarLabels', 'beside', type=str))
 
     def initMenus(self) -> None:
-        zoomMenu = QMenu('Zoom', self.appMenu)
-        zoomMenu.addAction(self.qtrZoomAction)
-        zoomMenu.addAction(self.halfZoomAction)
-        zoomMenu.addAction(self.origZoomAction)
-        zoomMenu.addAction(self.dblZoomAction)
-
         self.level1_spinner.setDecimals(1)
         self.level1_spinner.setRange(0.1, 999.9)
         self.level1_spinner.setSingleStep(0.1)
@@ -621,9 +592,6 @@ class VideoCutter(QWidget):
         optionsMenu.addAction(level2seekAction)
         optionsMenu.addSeparator()
         optionsMenu.addAction(self.nativeDialogsAction)
-        optionsMenu.addAction(self.hardwareDecodingAction)
-        optionsMenu.addAction(self.keepRatioAction)
-        optionsMenu.addMenu(zoomMenu)
         optionsMenu.aboutToShow.connect(self.clearSpinners)
 
         self.appMenu.setLayoutDirection(Qt.LeftToRight)
@@ -651,15 +619,10 @@ class VideoCutter(QWidget):
         self.clipindex_removemenu.aboutToShow.connect(self.initRemoveMenu)
 
         if sys.platform == 'win32':
-            zoomMenu.setStyle(QStyleFactory.create('Fusion'))
             optionsMenu.setStyle(QStyleFactory.create('Fusion'))
             self.appMenu.setStyle(QStyleFactory.create('Fusion'))
             self.clipindex_contextmenu.setStyle(QStyleFactory.create('Fusion'))
             self.clipindex_removemenu.setStyle(QStyleFactory.create('Fusion'))
-
-    def saveSetting(self, setting: str, checked: bool) -> None:
-        val = 'on' if checked else 'off'
-        self.settings.setValue(setting, val)
 
     def clearSpinners(self) -> None:
         for obj in (self.level1_spinner, self.level2_spinner):
@@ -929,8 +892,6 @@ class VideoCutter(QWidget):
         self.cutStartAction.setEnabled(flag)
         self.cutEndAction.setEnabled(False)
         self.mediaInfoAction.setEnabled(flag)
-        self.keepRatioAction.setEnabled(flag)
-        self.zoomAction.setEnabled(flag)
         self.seekSlider.clearRegions()
         if flag:
             self.seekSlider.setRestrictValue(0)
@@ -1018,23 +979,6 @@ class VideoCutter(QWidget):
                 self.mpvWidget.setLogLevel('error')
             self.parent.console.hide()
         self.saveSetting('showConsole', checked)
-
-    @pyqtSlot(bool)
-    def setAspect(self, checked: bool = True) -> None:
-        self.mpvWidget.mpv.set_option('keepaspect', checked)
-        self.zoomAction.setEnabled(checked)
-
-    @pyqtSlot(QAction)
-    def setZoom(self, action: QAction) -> None:
-        if action == self.qtrZoomAction:
-            level = -2
-        elif action == self.halfZoomAction:
-            level = -1
-        elif action == self.dblZoomAction:
-            level = 1
-        else:
-            level = 0
-        self.mpvWidget.mpv.set_property('video-zoom', level)
 
     @pyqtSlot()
     def addExternalClips(self):
@@ -1256,6 +1200,10 @@ class VideoCutter(QWidget):
             return True
         return False
 
+    def saveSetting(self, setting: str, checked: bool) -> None:
+        val = 'on' if checked else 'off'
+        self.settings.setValue(setting, val)
+
     @pyqtSlot()
     def mediaInfo(self) -> None:
         if self.mediaAvailable:
@@ -1314,11 +1262,6 @@ class VideoCutter(QWidget):
     @pyqtSlot()
     def viewLogs() -> None:
         QDesktopServices.openUrl(QUrl.fromLocalFile(logging.getLoggerClass().root.handlers[0].baseFilename))
-
-    @pyqtSlot(bool)
-    def switchDecoding(self, checked: bool = True) -> None:
-        self.mpvWidget.mpv.set_property('hwdec', 'auto' if checked else 'no')
-        self.saveSetting('hwdec', checked)
 
     def ffmpeg_check(self) -> bool:
         valid = os.path.exists(self.videoService.backend) if self.videoService.backend is not None else False
