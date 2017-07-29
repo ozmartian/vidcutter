@@ -119,6 +119,25 @@ QListView::item#cliplist {
     color: #EAEAEA;
 }
 
+QListView#settingsmenu {
+    show-decoration-selected: 1;
+    outline: 0;
+}
+
+QListView::item#settingsmenu {
+    width: 100%;
+    padding-bottom: 5px;
+}
+
+QListView::item:hover#settingsmenu {
+    background: rgba(136, 136, 136, 0.4);
+}
+
+QListView::item:selected#settingsmenu {
+    color: #FFF;
+    background: #888;
+}
+
 /* -------------------------------------------------------------------------- */
 
 QLabel#listHeader {

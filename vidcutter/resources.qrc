@@ -54,6 +54,9 @@
         <file>images/dark/python.png</file>
         <file>images/dark/settings.png</file>
         <file>images/dark/settings-active.png</file>
+        <file>images/dark/settings-general.png</file>
+        <file>images/dark/settings-theme.png</file>
+        <file>images/dark/settings-video.png</file>
         <file>images/dark/shortcuts.png</file>
         <file>images/dark/theme-dark.png</file>
         <file>images/dark/theme-light.png</file>

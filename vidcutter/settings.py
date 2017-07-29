@@ -24,9 +24,11 @@
 
 import sys
 
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
+from PyQt5.QtCore import pyqtSlot, QSize, Qt
+from PyQt5.QtGui import QCloseEvent, QIcon
+from PyQt5.QtWidgets import (qApp, QButtonGroup, QCheckBox, QDialog, QDialogButtonBox, QGridLayout, QGroupBox,
+                             QHBoxLayout, QLabel, QListView, QListWidget, QListWidgetItem, QMessageBox, QRadioButton,
+                             QStackedWidget, QVBoxLayout, QWidget)
 
 
 class ThemePage(QWidget):
@@ -79,6 +81,7 @@ class ThemePage(QWidget):
         toolbar_buttonGroup.addButton(toolbar_iconsRadio, 1)
         toolbar_buttonGroup.addButton(toolbar_underRadio, 2)
         toolbar_buttonGroup.addButton(toolbar_besideRadio, 3)
+        # noinspection PyUnresolvedReferences
         toolbar_buttonGroup.buttonClicked[int].connect(self.parent.parent.toolbar.setLabels)
         toolbarLayout = QGridLayout()
         toolbarLayout.addWidget(toolbar_besideRadio, 0, 0)
@@ -91,7 +94,7 @@ class ThemePage(QWidget):
         self.setLayout(mainLayout)
 
     @pyqtSlot(bool)
-    def switchTheme(self, checked: bool) -> None:
+    def switchTheme(self) -> None:
         if self.darkRadio.isChecked():
             newtheme = 'dark'
         else:
@@ -170,6 +173,7 @@ class VideoPage(QWidget):
         zoom_buttonGroup.addButton(zoom_halfRadio, 2)
         zoom_buttonGroup.addButton(zoom_originalRadio, 3)
         zoom_buttonGroup.addButton(zoom_doubleRadio, 4)
+        # noinspection PyUnresolvedReferences
         zoom_buttonGroup.buttonClicked[int].connect(self.setZoom)
         zoomLayout = QGridLayout()
         zoomLayout.addWidget(zoom_qtrRadio, 0, 0)
@@ -198,12 +202,12 @@ class VideoPage(QWidget):
         self.parent.parent.keepRatio = (state == Qt.Checked)
         
     @pyqtSlot(int)
-    def setZoom(self, id: int) -> None:
-        if id == 1:
+    def setZoom(self, button_id: int) -> None:
+        if button_id == 1:
             level = -2
-        elif id == 2:
+        elif button_id == 2:
             level = -1
-        elif id == 4:
+        elif button_id == 4:
             level = 1
         else:
             level = 0
@@ -235,7 +239,6 @@ class SettingsDialog(QDialog):
         self.categories.setIconSize(QSize(90, 50))
         self.categories.setMovement(QListView.Static)
         self.categories.setFixedWidth(105)
-        self.categories.setCurrentRow(0)
         self.pages = QStackedWidget(self)
         self.pages.addWidget(ThemePage(self))
         self.pages.addWidget(VideoPage(self))
@@ -256,24 +259,25 @@ class SettingsDialog(QDialog):
 
     def initCategories(self):
         themeButton = QListWidgetItem(self.categories)
-        themeButton.setIcon(QIcon(':/images/{0}/settings-theme.png'.format(self.parent.theme)))
+        themeButton.setIcon(QIcon(':/images/{0}/settings-theme.png'.format(self.theme)))
         themeButton.setText('Theme')
         themeButton.setToolTip('Theme settings')
         themeButton.setTextAlignment(Qt.AlignHCenter)
         themeButton.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
         videoButton = QListWidgetItem(self.categories)
-        videoButton.setIcon(QIcon(':/images/{0}/settings-video.png'.format(self.parent.theme)))
+        videoButton.setIcon(QIcon(':/images/{0}/settings-video.png'.format(self.theme)))
         videoButton.setText('Video')
         videoButton.setToolTip('Video settings')
         videoButton.setTextAlignment(Qt.AlignHCenter)
         videoButton.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
         generalButton = QListWidgetItem(self.categories)
-        generalButton.setIcon(QIcon(':/images/{0}/settings-general.png'.format(self.parent.theme)))
+        generalButton.setIcon(QIcon(':/images/{0}/settings-general.png'.format(self.theme)))
         generalButton.setText('General')
         generalButton.setToolTip('General settings')
         generalButton.setTextAlignment(Qt.AlignHCenter)
         generalButton.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
         self.categories.currentItemChanged.connect(self.changePage)
+        self.categories.setCurrentRow(0)
         self.categories.adjustSize()
 
     @pyqtSlot(QListWidgetItem, QListWidgetItem)
