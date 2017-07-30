@@ -32,9 +32,9 @@ from datetime import timedelta
 from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTextStream,
                           QTime, QTimer, QUrl)
 from PyQt5.QtGui import QCloseEvent, QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMovie, QPixmap
-from PyQt5.QtWidgets import (QAction, qApp, QApplication, QDialogButtonBox, QDoubleSpinBox, QFileDialog, QGroupBox,
-                             QHBoxLayout, QLabel, QListWidgetItem, QMenu, QMessageBox, QPushButton, QSizePolicy,
-                             QStyleFactory, QVBoxLayout, QWidget, QWidgetAction)
+from PyQt5.QtWidgets import (QAction, qApp, QApplication, QDialogButtonBox, QFileDialog, QGroupBox, QHBoxLayout,
+                             QLabel, QListWidgetItem, QMenu, QMessageBox, QPushButton, QSizePolicy, QStyleFactory,
+                             QVBoxLayout, QWidget)
 
 from vidcutter.about import About
 from vidcutter.settings import SettingsDialog
@@ -110,14 +110,14 @@ class VideoCutter(QWidget):
         self.nativeDialogs = self.settings.value('nativeDialogs', 'on', type=str) in {'on', 'true'}
         self.timelineThumbs = self.settings.value('timelineThumbs', 'on', type=str) in {'on', 'true'}
         self.showConsole = self.settings.value('showConsole', 'on', type=str) in {'on', 'true'}
+        self.level1Seek = self.settings.value('level1Seek', 2, type=float)
+        self.level2Seek = self.settings.value('level2Seek', 5, type=float)
 
         self.lastFolder = self.settings.value('lastFolder', QDir.homePath(), type=str)
         if not os.path.exists(self.lastFolder):
             self.lastFolder = QDir.homePath()
 
         self.edlblock_re = re.compile(r'(\d+(?:\.?\d+)?)\s(\d+(?:\.?\d+)?)\s([01])')
-
-        self.level1_spinner, self.level2_spinner = QDoubleSpinBox(self), QDoubleSpinBox(self)
 
         self.initIcons()
         self.initActions()
@@ -493,6 +493,7 @@ class VideoCutter(QWidget):
         self.updateCheckIcon = QIcon(':/images/update.png')
         self.keyRefIcon = QIcon(':/images/keymap.png')
         self.fullscreenIcon = QIcon(':/images/%s/fullscreen.png' % self.theme)
+        self.settingsIcon = QIcon(':/images/settings.png')
 
     # noinspection PyArgumentList
     def initActions(self) -> None:
@@ -533,6 +534,8 @@ class VideoCutter(QWidget):
                                    statusTip='About %s' % qApp.applicationName(), shortcut=0)
         self.keyRefAction = QAction(self.keyRefIcon, 'Keyboard shortcuts', self, triggered=self.showKeyRef,
                                     statusTip='View shortcut key bindings')
+        self.settingsAction = QAction(self.settingsIcon, 'Settings', self, triggered=self.showSettings,
+                                      statusTip='Configure application settings')
 
     def initToolbar(self) -> None:
         self.toolbar.addAction(self.openAction)
@@ -545,46 +548,11 @@ class VideoCutter(QWidget):
         self.toolbar.setLabelByType(self.settings.value('toolbarLabels', 'beside', type=str))
 
     def initMenus(self) -> None:
-        self.level1_spinner.setDecimals(1)
-        self.level1_spinner.setRange(0.1, 999.9)
-        self.level1_spinner.setSingleStep(0.1)
-        self.level1_spinner.setSuffix(' secs')
-        self.level1_spinner.setValue(self.settings.value('level1Seek', 2, type=float))
-        level1_layout = QHBoxLayout()
-        level1_layout.addStretch(1)
-        level1_layout.addWidget(QLabel('Seek #1'))
-        level1_layout.addWidget(self.level1_spinner)
-        level1_layout.addStretch(1)
-        level1Seek = QWidget(self)
-        level1Seek.setLayout(level1_layout)
-        level1seekAction = QWidgetAction(self)
-        level1seekAction.setDefaultWidget(level1Seek)
-
-        self.level2_spinner.setDecimals(1)
-        self.level2_spinner.setRange(0.1, 999.9)
-        self.level2_spinner.setSingleStep(0.1)
-        self.level2_spinner.setSuffix(' secs')
-        self.level2_spinner.setValue(self.settings.value('level2Seek', 5, type=float))
-        level2_layout = QHBoxLayout()
-        level2_layout.addStretch(1)
-        level2_layout.addWidget(QLabel('Seek #2'))
-        level2_layout.addWidget(self.level2_spinner)
-        level2_layout.addStretch(1)
-        level2Seek = QWidget(self)
-        level2Seek.setLayout(level2_layout)
-        level2seekAction = QWidgetAction(self)
-        level2seekAction.setDefaultWidget(level2Seek)
-
-        optionsMenu = QMenu('Settings...', self.appMenu)
-        optionsMenu.addAction(level1seekAction)
-        optionsMenu.addAction(level2seekAction)
-        optionsMenu.aboutToShow.connect(self.clearSpinners)
-
         self.appMenu.setLayoutDirection(Qt.LeftToRight)
         self.appMenu.addAction(self.openProjectAction)
         self.appMenu.addAction(self.saveProjectAction)
         self.appMenu.addSeparator()
-        self.appMenu.addMenu(optionsMenu)
+        self.appMenu.addAction(self.settingsAction)
         self.appMenu.addSeparator()
         self.appMenu.addAction(self.mediaInfoAction)
         self.appMenu.addAction(self.keyRefAction)
@@ -605,15 +573,9 @@ class VideoCutter(QWidget):
         self.clipindex_removemenu.aboutToShow.connect(self.initRemoveMenu)
 
         if sys.platform == 'win32':
-            optionsMenu.setStyle(QStyleFactory.create('Fusion'))
             self.appMenu.setStyle(QStyleFactory.create('Fusion'))
             self.clipindex_contextmenu.setStyle(QStyleFactory.create('Fusion'))
             self.clipindex_removemenu.setStyle(QStyleFactory.create('Fusion'))
-
-    def clearSpinners(self) -> None:
-        for obj in (self.level1_spinner, self.level2_spinner):
-            obj.clearFocus()
-            obj.lineEdit().deselect()
 
     def setRunningTime(self, runtime: str) -> None:
         self.runtimeLabel.setText('<div align="right">%s</div>' % runtime)
@@ -934,6 +896,7 @@ class VideoCutter(QWidget):
         self.mpvWidget.mute()
 
     def setVolume(self, vol: int) -> None:
+        self.settings.setValue('volume', vol)
         if self.mediaAvailable:
             self.mpvWidget.volume(vol)
 
@@ -1306,18 +1269,18 @@ class VideoCutter(QWidget):
                 self.pauseAction.setVisible(False)
             elif event.key() == Qt.Key_Down:
                 if qApp.queryKeyboardModifiers() == Qt.ShiftModifier:
-                    self.mpvWidget.seek(-self.level2_spinner.value(), 'relative+exact')
+                    self.mpvWidget.seek(-self.level2Seek, 'relative+exact')
                 else:
-                    self.mpvWidget.seek(-self.level1_spinner.value(), 'relative+exact')
+                    self.mpvWidget.seek(-self.level1Seek, 'relative+exact')
             elif event.key() == Qt.Key_Right:
                 self.mpvWidget.frameStep()
                 self.playAction.setVisible(True)
                 self.pauseAction.setVisible(False)
             elif event.key() == Qt.Key_Up:
                 if qApp.queryKeyboardModifiers() == Qt.ShiftModifier:
-                    self.mpvWidget.seek(self.level2_spinner.value(), 'relative+exact')
+                    self.mpvWidget.seek(self.level2Seek, 'relative+exact')
                 else:
-                    self.mpvWidget.seek(self.level1_spinner.value(), 'relative+exact')
+                    self.mpvWidget.seek(self.level1Seek, 'relative+exact')
             elif event.key() == Qt.Key_Home:
                 self.setPosition(self.seekSlider.minimum())
             elif event.key() == Qt.Key_End:

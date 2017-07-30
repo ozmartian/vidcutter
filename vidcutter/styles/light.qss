@@ -173,11 +173,20 @@ QLabel#logowidget {
     outline: none;
 }
 
-QLabel#decodinglabel, QLabel#ratiolabel, QLabel#keepclipslabel, QLabel#nativedialogslabel {
+QLabel#decodinglabel, QLabel#ratiolabel, QLabel#keepclipslabel,
+QLabel#nativedialogslabel, QLabel#seeksettingslabel {
     font-family: "Open Sans", sans-serif;
     font-size: 11px;
     color: #444;
+}
+
+QLabel#decodinglabel, QLabel#ratiolabel, QLabel#keepclipslabel,
+QLabel#nativedialogslabel {
     margin: 2px 5px 10px 22px;
+}
+
+QLabel#seeksettingslabel {
+    margin: 15px 5px 10px 5px;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -190,8 +199,19 @@ QGroupBox#counterwidgets {
     padding: 0;
 }
 
-QGroupBox::title {
+#settingsdialog QGroupBox {
     font-weight: bold;
+    border: 1px solid #C0C2C3;
+    border-radius: 3px;
+    margin-top: 1ex;
+    padding-top: 15px;
+    background-color: #F7F8F9;
+}
+
+#settingsdialog QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    padding: 0 3px;
 }
 
 /* -------------------------------------------------------------------------- */

@@ -195,11 +195,6 @@ class MainWindow(QMainWindow):
         qApp.exit(MainWindow.EXIT_CODE_REBOOT)
 
     def save_settings(self) -> None:
-        theme = self.cutter.theme
-        self.settings.setValue('theme', theme)
-        self.settings.setValue('volume', self.cutter.volSlider.value())
-        self.settings.setValue('level1Seek', self.cutter.level1_spinner.value())
-        self.settings.setValue('level2Seek', self.cutter.level2_spinner.value())
         self.settings.setValue('lastFolder', self.cutter.lastFolder)
         self.settings.setValue('geometry', self.saveGeometry())
         self.settings.setValue('windowState', self.saveState())

@@ -25,10 +25,10 @@
 import sys
 
 from PyQt5.QtCore import pyqtSlot, QSize, Qt
-from PyQt5.QtGui import QCloseEvent, QIcon
-from PyQt5.QtWidgets import (qApp, QButtonGroup, QCheckBox, QDialog, QDialogButtonBox, QFrame, QGridLayout, QGroupBox,
-                             QHBoxLayout, QLabel, QListView, QListWidget, QListWidgetItem, QMessageBox, QRadioButton,
-                             QStackedWidget, QVBoxLayout, QWidget)
+from PyQt5.QtGui import QCloseEvent, QIcon, QShowEvent
+from PyQt5.QtWidgets import (qApp, QButtonGroup, QCheckBox, QDialog, QDialogButtonBox, QDoubleSpinBox, QFrame,
+                             QGridLayout, QGroupBox, QHBoxLayout, QLabel, QListView, QListWidget, QListWidgetItem,
+                             QMessageBox, QRadioButton, QStackedWidget, QVBoxLayout, QWidget)
 
 
 class ThemePage(QWidget):
@@ -61,7 +61,7 @@ class ThemePage(QWidget):
             themeLayout.setColumnStretch(2, 1)
             themeLayout.addWidget(QLabel('Dark', self), 1, 3, Qt.AlignHCenter)
             themeLayout.setColumnStretch(4, 1)
-            themeGroup = QGroupBox('Theme selection')
+            themeGroup = QGroupBox('Theme')
             themeGroup.setLayout(themeLayout)
             mainLayout.addWidget(themeGroup)
         toolbar_labels = self.parent.settings.value('toolbarLabels', 'beside', type=str)
@@ -87,7 +87,7 @@ class ThemePage(QWidget):
         toolbarLayout.addWidget(toolbar_besideRadio, 0, 0)
         toolbarLayout.addWidget(toolbar_underRadio, 0, 1)
         toolbarLayout.addWidget(toolbar_iconsRadio, 1, 0)
-        toolbarGroup = QGroupBox('Toolbar labels')
+        toolbarGroup = QGroupBox('Toolbar')
         toolbarGroup.setLayout(toolbarLayout)
         mainLayout.addWidget(toolbarGroup)
         mainLayout.addStretch(1)
@@ -122,6 +122,7 @@ class ThemePage(QWidget):
             mbox.setDefaultButton(QMessageBox.Yes)
             response = mbox.exec_()
             if response == QMessageBox.Yes:
+                self.parent.settings.setValue('theme', newtheme)
                 self.parent.parent.theme = newtheme
                 self.parent.parent.parent.reboot()
             else:
@@ -138,24 +139,26 @@ class VideoPage(QWidget):
         decodingCheckbox.setCursor(Qt.PointingHandCursor)
         decodingCheckbox.setChecked(self.parent.parent.hardwareDecoding)
         decodingCheckbox.stateChanged.connect(self.switchDecoding)
-        decodingLabel = QLabel('''<p>
-            <b>on:</b> attempt to use best hardware decoder, fall back to software decoding on error
+        decodingLabel = QLabel('''
+            <b>ON:</b> attempt to use best hardware decoder, fall back to software decoding on error
             <br/>
-            <b>off:</b> always use software decoding
-        </p>''', self)
+            <b>OFF:</b> always use software decoding
+        ''', self)
         decodingLabel.setObjectName('decodinglabel')
+        decodingLabel.setTextFormat(Qt.RichText)
         decodingLabel.setWordWrap(True)
         ratioCheckbox = QCheckBox('Keep aspect ratio', self)
         ratioCheckbox.setToolTip('Keep source video aspect ratio')
         ratioCheckbox.setCursor(Qt.PointingHandCursor)
         ratioCheckbox.setChecked(self.parent.parent.keepRatio)
         ratioCheckbox.stateChanged.connect(self.keepAspectRatio)
-        ratioLabel = QLabel('''<p>
-            <b>on:</b> lock video to its defined video aspect, black bars added to compensate 
+        ratioLabel = QLabel('''
+            <b>OFF:</b> stretch video to application window size, ignored in fullscreen
             <br/>
-            <b>off:</b> will always stretch video to window size (ignored in fullscreen mode)
-        </p>''', self)
+            <b>ON:</b> lock video to its set video aspect, black bars added to compensate
+        ''', self)
         ratioLabel.setObjectName('ratiolabel')
+        ratioLabel.setTextFormat(Qt.RichText)
         ratioLabel.setWordWrap(True)
         videoLayout = QVBoxLayout()
         videoLayout.addWidget(decodingCheckbox)
@@ -163,7 +166,7 @@ class VideoPage(QWidget):
         videoLayout.addWidget(SettingsDialog.lineSeparator())
         videoLayout.addWidget(ratioCheckbox)
         videoLayout.addWidget(ratioLabel)
-        videoGroup = QGroupBox('Video playback')
+        videoGroup = QGroupBox('Playback')
         videoGroup.setLayout(videoLayout)
         zoomLevel = self.parent.settings.value('videoZoom', 0, type=int)
         zoom_qtrRadio = QRadioButton('Quarter [1:4]', self)
@@ -194,7 +197,7 @@ class VideoPage(QWidget):
         zoomLayout.addWidget(zoom_halfRadio, 0, 1)
         zoomLayout.addWidget(zoom_originalRadio, 1, 0)
         zoomLayout.addWidget(zoom_doubleRadio, 1, 1)
-        zoomGroup = QGroupBox('Video zoom level')
+        zoomGroup = QGroupBox('Zoom')
         zoomGroup.setLayout(zoomLayout)
         mainLayout = QVBoxLayout()
         mainLayout.setSpacing(10)
@@ -239,26 +242,28 @@ class GeneralPage(QWidget):
         keepClipsCheckbox.setCursor(Qt.PointingHandCursor)
         keepClipsCheckbox.setChecked(self.parent.parent.keepClips)
         keepClipsCheckbox.stateChanged.connect(self.keepClips)
-        keepClipsLabel = QLabel('''<p>
-            <b>on:</b> keep the clip segments set in your clip index after they have been joined 
+        keepClipsLabel = QLabel('''
+            <b>ON:</b> keep the clip segments set in your clip index after they have been joined 
             <br/>
-            <b>off:</b> clip segments are automatically deleted once joined to produce your new file
-        </p>''', self)
+            <b>OFF:</b> clip segments are automatically deleted once joined to produce your new file
+        ''', self)
         keepClipsLabel.setObjectName('keepclipslabel')
+        keepClipsLabel.setTextFormat(Qt.RichText)
         keepClipsLabel.setWordWrap(True)
         nativeDialogsCheckbox = QCheckBox('Use native dialogs', self)
         nativeDialogsCheckbox.setToolTip('Use native file dialogs')
         nativeDialogsCheckbox.setCursor(Qt.PointingHandCursor)
         nativeDialogsCheckbox.setChecked(self.parent.parent.nativeDialogs)
         nativeDialogsCheckbox.stateChanged.connect(self.setNativeDialogs)
-        nativeDialogsLabel = QLabel('''<p>
-            <b>on:</b> use native dialog widgets as provided by your operating system
+        nativeDialogsLabel = QLabel('''
+            <b>ON:</b> use native dialog widgets as provided by your operating system
             <br/>
-            <b>off:</b> use a generic file open & save dialog widget provided by the Qt toolkit
+            <b>OFF:</b> use a generic file open & save dialog widget provided by the Qt toolkit
             <br/><br/>
-            (turn off only if native dialogs are not working for you)
-        </p>''', self)
+            <i>native dialogs should always be used unless they are not working for you</i>
+        ''', self)
         nativeDialogsLabel.setObjectName('nativedialogslabel')
+        nativeDialogsLabel.setTextFormat(Qt.RichText)
         nativeDialogsLabel.setWordWrap(True)
         generalLayout = QVBoxLayout()
         generalLayout.addWidget(keepClipsCheckbox)
@@ -266,24 +271,82 @@ class GeneralPage(QWidget):
         generalLayout.addWidget(SettingsDialog.lineSeparator())
         generalLayout.addWidget(nativeDialogsCheckbox)
         generalLayout.addWidget(nativeDialogsLabel)
-        generalGroup = QGroupBox('General settings')
+        generalGroup = QGroupBox('General')
         generalGroup.setLayout(generalLayout)
+        seek1SpinBox = QDoubleSpinBox(self)
+        seek1SpinBox.setDecimals(1)
+        seek1SpinBox.setRange(0.1, 999.9)
+        seek1SpinBox.setSingleStep(0.1)
+        seek1SpinBox.setSuffix(' secs')
+        seek1SpinBox.setValue(self.parent.parent.level1Seek)
+        # noinspection PyUnresolvedReferences
+        seek1SpinBox.valueChanged[float].connect(lambda d: self.setSpinnerValue(1, d))
+        seek1Layout = QHBoxLayout()
+        seek1Layout.addStretch(1)
+        seek1Layout.addWidget(QLabel('Seek #1'))
+        seek1Layout.addWidget(seek1SpinBox)
+        seek1Layout.addStretch(1)
+        seek2SpinBox = QDoubleSpinBox(self)
+        seek2SpinBox.setDecimals(1)
+        seek2SpinBox.setRange(0.1, 999.9)
+        seek2SpinBox.setSingleStep(0.1)
+        seek2SpinBox.setSuffix(' secs')
+        seek2SpinBox.setValue(self.parent.parent.level2Seek)
+        # noinspection PyUnresolvedReferences
+        seek2SpinBox.valueChanged[float].connect(lambda d: self.setSpinnerValue(2, d))
+        seekLabel = QLabel('''
+            these settings affect the seeking time forwards and backwards via the
+            UP/DOWN and SHIFT + UP/DOWN keys. see the "Keyboard shortcuts" menu
+            option for a full list of shortcuts available
+        ''', self)
+        seekLabel.setObjectName('seeksettingslabel')
+        seekLabel.setTextFormat(Qt.RichText)
+        seekLabel.setWordWrap(True)
+        seek2Layout = QHBoxLayout()
+        seek2Layout.addStretch(1)
+        seek2Layout.addWidget(QLabel('Seek #2'))
+        seek2Layout.addWidget(seek2SpinBox)
+        seek2Layout.addStretch(1)
+        seekWidgetsLayout = QHBoxLayout()
+        seekWidgetsLayout.addLayout(seek1Layout)
+        seekWidgetsLayout.addLayout(seek2Layout)
+        seekLayout = QVBoxLayout()
+        seekLayout.addLayout(seekWidgetsLayout)
+        seekLayout.addWidget(seekLabel)
+        self.seekGroup = QGroupBox('Seeking')
+        self.seekGroup.setLayout(seekLayout)
         mainLayout = QVBoxLayout()
         mainLayout.setSpacing(10)
         mainLayout.addWidget(generalGroup)
-        # mainLayout.addWidget(seekGroup)
+        mainLayout.addWidget(self.seekGroup)
         mainLayout.addStretch(1)
         self.setLayout(mainLayout)
 
     @pyqtSlot(int)
-    def keepClips(self, state: int):
+    def keepClips(self, state: int) -> None:
         self.parent.parent.saveSetting('keepClips', state == Qt.Checked)
         self.parent.parent.keepClips = (state == Qt.Checked)
 
     @pyqtSlot(int)
-    def setNativeDialogs(self, state: int):
+    def setNativeDialogs(self, state: int) -> None:
         self.parent.parent.saveSetting('nativeDialogs', state == Qt.Checked)
         self.parent.parent.nativeDialogs = (state == Qt.Checked)
+
+    def setSpinnerValue(self, box_id: int, val: float) -> None:
+        self.parent.settings.setValue('level{0}Seek'.format(box_id), val)
+        if box_id == 1:
+            self.parent.parent.level1Seek = val
+        elif box_id == 2:
+            self.parent.parent.level2Seek = val
+
+    def clearSpinners(self) -> None:
+        for spinner in self.seekGroup.findChildren(QDoubleSpinBox):
+            spinner.clearFocus()
+            spinner.lineEdit().deselect()
+
+    def showEvent(self, event: QShowEvent) -> None:
+        self.clearSpinners()
+        super(GeneralPage, self).showEvent(event)
 
 
 class SettingsDialog(QDialog):
@@ -304,9 +367,9 @@ class SettingsDialog(QDialog):
         self.categories.setMovement(QListView.Static)
         self.categories.setFixedWidth(105)
         self.pages = QStackedWidget(self)
-        self.pages.addWidget(ThemePage(self))
         self.pages.addWidget(GeneralPage(self))
         self.pages.addWidget(VideoPage(self))
+        self.pages.addWidget(ThemePage(self))
         self.initCategories()
         horizontalLayout = QHBoxLayout()
         horizontalLayout.addWidget(self.categories)
@@ -319,15 +382,9 @@ class SettingsDialog(QDialog):
         mainLayout.addWidget(buttons)
         self.setLayout(mainLayout)
         self.setWindowTitle('Settings - {0}'.format(qApp.applicationName()))
-        self.setFixedSize(620, 385)
+        self.setFixedWidth(620)
 
     def initCategories(self):
-        themeButton = QListWidgetItem(self.categories)
-        themeButton.setIcon(QIcon(':/images/{0}/settings-theme.png'.format(self.theme)))
-        themeButton.setText('Theme')
-        themeButton.setToolTip('Theme settings')
-        themeButton.setTextAlignment(Qt.AlignHCenter)
-        themeButton.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
         generalButton = QListWidgetItem(self.categories)
         generalButton.setIcon(QIcon(':/images/{0}/settings-general.png'.format(self.theme)))
         generalButton.setText('General')
@@ -340,6 +397,12 @@ class SettingsDialog(QDialog):
         videoButton.setToolTip('Video settings')
         videoButton.setTextAlignment(Qt.AlignHCenter)
         videoButton.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+        themeButton = QListWidgetItem(self.categories)
+        themeButton.setIcon(QIcon(':/images/{0}/settings-theme.png'.format(self.theme)))
+        themeButton.setText('Theme')
+        themeButton.setToolTip('Theme settings')
+        themeButton.setTextAlignment(Qt.AlignHCenter)
+        themeButton.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
         self.categories.currentItemChanged.connect(self.changePage)
         self.categories.setCurrentRow(0)
         self.categories.adjustSize()

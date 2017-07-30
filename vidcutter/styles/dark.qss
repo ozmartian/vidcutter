@@ -105,6 +105,10 @@ QToolBar#appcontrols QToolButton#saveButton {
 
 /* -------------------------------------------------------------------------- */
 
+QListView#settingsmenu {
+    background-color: #0C0F10;
+}
+
 QListView#cliplist {
     border-radius: 0;
     border: none;
@@ -174,11 +178,21 @@ QLabel#logowidget {
     outline: none;
 }
 
-QLabel#decodinglabel, QLabel#ratiolabel, QLabel#keepclipslabel, QLabel#nativedialogslabel {
+QLabel#decodinglabel, QLabel#ratiolabel, QLabel#keepclipslabel,
+QLabel#nativedialogslabel, QLabel#seeksettingslabel {
     font-family: "Open Sans", sans-serif;
     font-size: 11px;
     color: #EFF0F1;
+}
+
+
+QLabel#decodinglabel, QLabel#ratiolabel, QLabel#keepclipslabel,
+QLabel#nativedialogslabel {
     margin: 2px 5px 10px 22px;
+}
+
+QLabel#seeksettingslabel {
+    margin: 15px 5px 10px 5px;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -189,6 +203,21 @@ QGroupBox#counterwidgets {
     color: #FFF;
     margin: 0;
     padding: 0;
+}
+
+#settingsdialog QGroupBox {
+    font-weight: bold;
+    border: 1px solid #4D5355;
+    border-radius: 3px;
+    margin-top: 1ex;
+    padding-top: 15px;
+    background-color: #0C0F10;
+}
+
+#settingsdialog QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    padding: 0 3px;
 }
 
 /* -------------------------------------------------------------------------- */
