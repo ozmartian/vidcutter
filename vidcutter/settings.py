@@ -26,7 +26,7 @@ import sys
 
 from PyQt5.QtCore import pyqtSlot, QSize, Qt
 from PyQt5.QtGui import QCloseEvent, QIcon
-from PyQt5.QtWidgets import (qApp, QButtonGroup, QCheckBox, QDialog, QDialogButtonBox, QGridLayout, QGroupBox,
+from PyQt5.QtWidgets import (qApp, QButtonGroup, QCheckBox, QDialog, QDialogButtonBox, QFrame, QGridLayout, QGroupBox,
                              QHBoxLayout, QLabel, QListView, QListWidget, QListWidgetItem, QMessageBox, QRadioButton,
                              QStackedWidget, QVBoxLayout, QWidget)
 
@@ -135,36 +135,50 @@ class VideoPage(QWidget):
         self.setObjectName('settingsvideopage')
         decodingCheckbox = QCheckBox('Hardware decoding', self)
         decodingCheckbox.setToolTip('Enable hardware based video decoding')
-        decodingCheckbox.setStatusTip('Enable hardware based video decoding for playback (e.g. vdpau, vaapi, dxva2, ' +
-                                      'd3d11, cuda)')
         decodingCheckbox.setCursor(Qt.PointingHandCursor)
         decodingCheckbox.setChecked(self.parent.parent.hardwareDecoding)
         decodingCheckbox.stateChanged.connect(self.switchDecoding)
+        decodingLabel = QLabel('''<p>
+            <b>on:</b> attempt to use best hardware decoder, fall back to software decoding on error
+            <br/>
+            <b>off:</b> always use software decoding
+        </p>''', self)
+        decodingLabel.setObjectName('decodinglabel')
+        decodingLabel.setWordWrap(True)
         ratioCheckbox = QCheckBox('Keep aspect ratio', self)
         ratioCheckbox.setToolTip('Keep source video aspect ratio')
-        ratioCheckbox.setStatusTip('Keep source video aspect ratio or fit video to player dimensions')
         ratioCheckbox.setCursor(Qt.PointingHandCursor)
         ratioCheckbox.setChecked(self.parent.parent.keepRatio)
         ratioCheckbox.stateChanged.connect(self.keepAspectRatio)
+        ratioLabel = QLabel('''<p>
+            <b>on:</b> lock video to its defined video aspect, black bars added to compensate 
+            <br/>
+            <b>off:</b> will always stretch video to window size (ignored in fullscreen mode)
+        </p>''', self)
+        ratioLabel.setObjectName('ratiolabel')
+        ratioLabel.setWordWrap(True)
         videoLayout = QVBoxLayout()
         videoLayout.addWidget(decodingCheckbox)
+        videoLayout.addWidget(decodingLabel)
+        videoLayout.addWidget(SettingsDialog.lineSeparator())
         videoLayout.addWidget(ratioCheckbox)
+        videoLayout.addWidget(ratioLabel)
         videoGroup = QGroupBox('Video playback')
         videoGroup.setLayout(videoLayout)
         zoomLevel = self.parent.settings.value('videoZoom', 0, type=int)
-        zoom_qtrRadio = QRadioButton('1:4 Quarter', self)
+        zoom_qtrRadio = QRadioButton('Quarter [1:4]', self)
         zoom_qtrRadio.setToolTip('1/4 Zoom')
         zoom_qtrRadio.setCursor(Qt.PointingHandCursor)
         zoom_qtrRadio.setChecked(zoomLevel == -2)
-        zoom_halfRadio = QRadioButton('1:2 Half', self)
+        zoom_halfRadio = QRadioButton('Half [1:2]', self)
         zoom_halfRadio.setToolTip('1/2 Half')
         zoom_halfRadio.setCursor(Qt.PointingHandCursor)
         zoom_halfRadio.setChecked(zoomLevel == -1)
-        zoom_originalRadio = QRadioButton('1:1 No Zoom', self)
+        zoom_originalRadio = QRadioButton('No zoom [1:1]', self)
         zoom_originalRadio.setToolTip('1/1 No zoom')
         zoom_originalRadio.setCursor(Qt.PointingHandCursor)
         zoom_originalRadio.setChecked(zoomLevel == 0)
-        zoom_doubleRadio = QRadioButton('2:1 Double', self)
+        zoom_doubleRadio = QRadioButton('Double [2:1]', self)
         zoom_doubleRadio.setToolTip('2/1 Double')
         zoom_doubleRadio.setCursor(Qt.PointingHandCursor)
         zoom_doubleRadio.setChecked(zoomLevel == 1)
@@ -180,7 +194,7 @@ class VideoPage(QWidget):
         zoomLayout.addWidget(zoom_halfRadio, 0, 1)
         zoomLayout.addWidget(zoom_originalRadio, 1, 0)
         zoomLayout.addWidget(zoom_doubleRadio, 1, 1)
-        zoomGroup = QGroupBox('Zoom level')
+        zoomGroup = QGroupBox('Video zoom level')
         zoomGroup.setLayout(zoomLayout)
         mainLayout = QVBoxLayout()
         mainLayout.setSpacing(10)
@@ -255,7 +269,7 @@ class SettingsDialog(QDialog):
         mainLayout.addWidget(buttons)
         self.setLayout(mainLayout)
         self.setWindowTitle('Settings - {0}'.format(qApp.applicationName()))
-        self.setFixedSize(565, 385)
+        self.setFixedSize(620, 385)
 
     def initCategories(self):
         themeButton = QListWidgetItem(self.categories)
@@ -279,6 +293,13 @@ class SettingsDialog(QDialog):
         self.categories.currentItemChanged.connect(self.changePage)
         self.categories.setCurrentRow(0)
         self.categories.adjustSize()
+
+    @staticmethod
+    def lineSeparator() -> QFrame:
+        line = QFrame()
+        line.setFrameShape(QFrame.HLine)
+        line.setFrameShadow(QFrame.Sunken)
+        return line
 
     @pyqtSlot(QListWidgetItem, QListWidgetItem)
     def changePage(self, current: QListWidgetItem, previous: QListWidgetItem):

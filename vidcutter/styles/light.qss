@@ -173,6 +173,13 @@ QLabel#logowidget {
     outline: none;
 }
 
+QLabel#decodinglabel, QLabel#ratiolabel {
+    font-family: "Open Sans", sans-serif;
+    font-size: 11px;
+    color: #444;
+    margin: 2px 5px 10px 22px;
+}
+
 /* -------------------------------------------------------------------------- */
 
 QGroupBox#counterwidgets {
