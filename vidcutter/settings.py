@@ -234,6 +234,56 @@ class GeneralPage(QWidget):
         super(GeneralPage, self).__init__(parent)
         self.parent = parent
         self.setObjectName('settingsgeneralpage')
+        keepClipsCheckbox = QCheckBox('Keep clip segments', self)
+        keepClipsCheckbox.setToolTip('Keep joined clip segments')
+        keepClipsCheckbox.setCursor(Qt.PointingHandCursor)
+        keepClipsCheckbox.setChecked(self.parent.parent.keepClips)
+        keepClipsCheckbox.stateChanged.connect(self.keepClips)
+        keepClipsLabel = QLabel('''<p>
+            <b>on:</b> keep the clip segments set in your clip index after they have been joined 
+            <br/>
+            <b>off:</b> clip segments are automatically deleted once joined to produce your new file
+        </p>''', self)
+        keepClipsLabel.setObjectName('keepclipslabel')
+        keepClipsLabel.setWordWrap(True)
+        nativeDialogsCheckbox = QCheckBox('Use native dialogs', self)
+        nativeDialogsCheckbox.setToolTip('Use native file dialogs')
+        nativeDialogsCheckbox.setCursor(Qt.PointingHandCursor)
+        nativeDialogsCheckbox.setChecked(self.parent.parent.nativeDialogs)
+        nativeDialogsCheckbox.stateChanged.connect(self.setNativeDialogs)
+        nativeDialogsLabel = QLabel('''<p>
+            <b>on:</b> use native dialog widgets as provided by your operating system
+            <br/>
+            <b>off:</b> use a generic file open & save dialog widget provided by the Qt toolkit
+            <br/><br/>
+            (turn off only if native dialogs are not working for you)
+        </p>''', self)
+        nativeDialogsLabel.setObjectName('nativedialogslabel')
+        nativeDialogsLabel.setWordWrap(True)
+        generalLayout = QVBoxLayout()
+        generalLayout.addWidget(keepClipsCheckbox)
+        generalLayout.addWidget(keepClipsLabel)
+        generalLayout.addWidget(SettingsDialog.lineSeparator())
+        generalLayout.addWidget(nativeDialogsCheckbox)
+        generalLayout.addWidget(nativeDialogsLabel)
+        generalGroup = QGroupBox('General settings')
+        generalGroup.setLayout(generalLayout)
+        mainLayout = QVBoxLayout()
+        mainLayout.setSpacing(10)
+        mainLayout.addWidget(generalGroup)
+        # mainLayout.addWidget(seekGroup)
+        mainLayout.addStretch(1)
+        self.setLayout(mainLayout)
+
+    @pyqtSlot(int)
+    def keepClips(self, state: int):
+        self.parent.parent.saveSetting('keepClips', state == Qt.Checked)
+        self.parent.parent.keepClips = (state == Qt.Checked)
+
+    @pyqtSlot(int)
+    def setNativeDialogs(self, state: int):
+        self.parent.parent.saveSetting('nativeDialogs', state == Qt.Checked)
+        self.parent.parent.nativeDialogs = (state == Qt.Checked)
 
 
 class SettingsDialog(QDialog):
@@ -255,8 +305,8 @@ class SettingsDialog(QDialog):
         self.categories.setFixedWidth(105)
         self.pages = QStackedWidget(self)
         self.pages.addWidget(ThemePage(self))
-        self.pages.addWidget(VideoPage(self))
         self.pages.addWidget(GeneralPage(self))
+        self.pages.addWidget(VideoPage(self))
         self.initCategories()
         horizontalLayout = QHBoxLayout()
         horizontalLayout.addWidget(self.categories)
@@ -278,18 +328,18 @@ class SettingsDialog(QDialog):
         themeButton.setToolTip('Theme settings')
         themeButton.setTextAlignment(Qt.AlignHCenter)
         themeButton.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
-        videoButton = QListWidgetItem(self.categories)
-        videoButton.setIcon(QIcon(':/images/{0}/settings-video.png'.format(self.theme)))
-        videoButton.setText('Video')
-        videoButton.setToolTip('Video settings')
-        videoButton.setTextAlignment(Qt.AlignHCenter)
-        videoButton.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
         generalButton = QListWidgetItem(self.categories)
         generalButton.setIcon(QIcon(':/images/{0}/settings-general.png'.format(self.theme)))
         generalButton.setText('General')
         generalButton.setToolTip('General settings')
         generalButton.setTextAlignment(Qt.AlignHCenter)
         generalButton.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+        videoButton = QListWidgetItem(self.categories)
+        videoButton.setIcon(QIcon(':/images/{0}/settings-video.png'.format(self.theme)))
+        videoButton.setText('Video')
+        videoButton.setToolTip('Video settings')
+        videoButton.setTextAlignment(Qt.AlignHCenter)
+        videoButton.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
         self.categories.currentItemChanged.connect(self.changePage)
         self.categories.setCurrentRow(0)
         self.categories.adjustSize()

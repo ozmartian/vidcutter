@@ -32,9 +32,9 @@ from datetime import timedelta
 from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTextStream,
                           QTime, QTimer, QUrl)
 from PyQt5.QtGui import QCloseEvent, QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMovie, QPixmap
-from PyQt5.QtWidgets import (QAction, QActionGroup, qApp, QApplication, QDialogButtonBox, QDoubleSpinBox, QFileDialog,
-                             QGroupBox, QHBoxLayout, QLabel, QListWidgetItem, QMenu, QMessageBox, QPushButton,
-                             QSizePolicy, QStyleFactory, QVBoxLayout, QWidget, QWidgetAction)
+from PyQt5.QtWidgets import (QAction, qApp, QApplication, QDialogButtonBox, QDoubleSpinBox, QFileDialog, QGroupBox,
+                             QHBoxLayout, QLabel, QListWidgetItem, QMenu, QMessageBox, QPushButton, QSizePolicy,
+                             QStyleFactory, QVBoxLayout, QWidget, QWidgetAction)
 
 from vidcutter.about import About
 from vidcutter.settings import SettingsDialog
@@ -533,16 +533,6 @@ class VideoCutter(QWidget):
                                    statusTip='About %s' % qApp.applicationName(), shortcut=0)
         self.keyRefAction = QAction(self.keyRefIcon, 'Keyboard shortcuts', self, triggered=self.showKeyRef,
                                     statusTip='View shortcut key bindings')
-        self.nativeDialogsAction = QAction('Use native dialogs', self, checkable=True,
-                                           statusTip='Use platform-native dialogs on file open & save operations',
-                                           triggered=(lambda checked: self.saveSetting('nativeDialogs', checked)))
-        self.keepClipsAction = QAction('Keep individual clips', self, checkable=True,
-                                       statusTip='Keep the individual clips used to produce final media',
-                                       triggered=(lambda checked: self.saveSetting('keepClips', checked)))
-        if self.keepClips:
-            self.keepClipsAction.setChecked(True)
-        if self.nativeDialogs:
-            self.nativeDialogsAction.setChecked(True)
 
     def initToolbar(self) -> None:
         self.toolbar.addAction(self.openAction)
@@ -586,12 +576,8 @@ class VideoCutter(QWidget):
         level2seekAction.setDefaultWidget(level2Seek)
 
         optionsMenu = QMenu('Settings...', self.appMenu)
-        optionsMenu.addAction(self.keepClipsAction)
-        optionsMenu.addSeparator()
         optionsMenu.addAction(level1seekAction)
         optionsMenu.addAction(level2seekAction)
-        optionsMenu.addSeparator()
-        optionsMenu.addAction(self.nativeDialogsAction)
         optionsMenu.aboutToShow.connect(self.clearSpinners)
 
         self.appMenu.setLayoutDirection(Qt.LeftToRight)
@@ -737,7 +723,7 @@ class VideoCutter(QWidget):
                                                   directory=(self.lastFolder if os.path.exists(self.lastFolder)
                                                              else QDir.homePath()),
                                                   options=(QFileDialog.DontUseNativeDialog
-                                                           if not self.nativeDialogsAction.isChecked()
+                                                           if not self.nativeDialogs
                                                            else QFileDialog.Options()))
         if len(filename.strip()):
             self.lastFolder = QFileInfo(filename).absolutePath()
@@ -752,7 +738,7 @@ class VideoCutter(QWidget):
                                                           directory=(self.lastFolder if os.path.exists(self.lastFolder)
                                                                      else QDir.homePath()),
                                                           options=(QFileDialog.DontUseNativeDialog
-                                                                   if not self.nativeDialogsAction.isChecked()
+                                                                   if not self.nativeDialogs
                                                                    else QFileDialog.Options()))
         if len(project_file.strip()):
             self.lastFolder = QFileInfo(project_file).absolutePath()
@@ -823,7 +809,7 @@ class VideoCutter(QWidget):
                                                           filter=self.projectFilters(True),
                                                           initialFilter='VidCutter Project (*.vcp)',
                                                           options=(QFileDialog.DontUseNativeDialog
-                                                                   if not self.nativeDialogsAction.isChecked()
+                                                                   if not self.nativeDialogs
                                                                    else QFileDialog.Options()))
         if len(project_save.strip()):
             file = QFile(project_save)
@@ -986,7 +972,7 @@ class VideoCutter(QWidget):
                                                 directory=(self.lastFolder if os.path.exists(self.lastFolder)
                                                            else QDir.homePath()),
                                                 options=(QFileDialog.DontUseNativeDialog
-                                                         if not self.nativeDialogsAction.isChecked()
+                                                         if not self.nativeDialogs
                                                          else QFileDialog.Options()))
         if len(clips):
             self.lastFolder = QFileInfo(clips[0]).absolutePath()
@@ -1137,7 +1123,7 @@ class VideoCutter(QWidget):
             self.finalFilename, _ = QFileDialog.getSaveFileName(parent=self, caption='Save media',
                                                                 directory=suggestedFilename, filter=filefilter,
                                                                 options=(QFileDialog.DontUseNativeDialog
-                                                                         if not self.nativeDialogsAction.isChecked()
+                                                                         if not self.nativeDialogs
                                                                          else QFileDialog.Options()))
             if not len(self.finalFilename.strip()):
                 return False

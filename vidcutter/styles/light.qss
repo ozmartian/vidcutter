@@ -173,7 +173,7 @@ QLabel#logowidget {
     outline: none;
 }
 
-QLabel#decodinglabel, QLabel#ratiolabel {
+QLabel#decodinglabel, QLabel#ratiolabel, QLabel#keepclipslabel, QLabel#nativedialogslabel {
     font-family: "Open Sans", sans-serif;
     font-size: 11px;
     color: #444;
