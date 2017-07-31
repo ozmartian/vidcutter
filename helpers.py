@@ -26,6 +26,8 @@ import codecs
 import os
 import pydoc
 import re
+import shlex
+import subprocess
 import sys
 
 from distutils.spawn import find_executable
@@ -149,6 +151,6 @@ if __name__ == '__main__':
     if exe is None:
         sys.stderr.write('Could not find pyrcc5 executable')
         sys.exit(1)
-    os.execl(exe, exe, '-compress', '9', '-o',
-             os.path.join(os.path.dirname(os.path.abspath(__file__)), 'vidcutter', 'resources.py'),
-             os.path.join(os.path.dirname(os.path.abspath(__file__)), 'vidcutter', 'resources.qrc'))
+    subprocess.run('{0} -compress 9 -o "{1}" "{2}"'.format(exe,
+                               os.path.join(os.path.dirname(os.path.abspath(__file__)), 'vidcutter', 'resources.py'),
+                               os.path.join(os.path.dirname(os.path.abspath(__file__)), 'vidcutter', 'resources.qrc')), shell=True)
