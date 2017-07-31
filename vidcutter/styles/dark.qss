@@ -236,7 +236,7 @@ QDialogButtonBox QPushButton, QDialog#notification QPushButton {
 QDialogButtonBox QPushButton, #clipindextools QPushButton, QDialog#notification QPushButton {
     color: #EFF0F1;
     background-color: #31363B;
-    border: 1px solid #76797C;
+    border: 1px solid #4D5355;
     border-radius: 2px;
     outline: none;
     min-width: 50px;
