@@ -290,6 +290,10 @@ QPushButton#settingsButton {
     height: 32px;
 }
 
+QPushButton:hover#settingsButton {
+    border-image: url(:/images/dark/settings-hover.png);
+}
+
 QPushButton:pressed#settingsButton {
     border-image: url(:/images/dark/settings-active.png);
 }
@@ -298,6 +302,10 @@ QPushButton#menuButton {
     border-image: url(:/images/dark/menu.png);
     width: 33px;
     height: 32px;
+}
+
+QPushButton:hover#menuButton {
+    border-image: url(:/images/dark/menu-hover.png);
 }
 
 QPushButton:pressed#menuButton {
@@ -323,7 +331,11 @@ QPushButton#thumbnailsButton, QPushButton#osdButton, QPushButton#consoleButton {
 QPushButton#thumbnailsButton {
     border-image: url(:/images/dark/thumbnails-off.png);
     width: 32px;
-    height: 29px;
+    height: 31px;
+}
+
+QPushButton#thumbnailsButton:hover {
+    border-image: url(:/images/dark/thumbnails-hover.png);
 }
 
 QPushButton#thumbnailsButton:pressed, QPushButton#thumbnailsButton:checked {
@@ -333,7 +345,11 @@ QPushButton#thumbnailsButton:pressed, QPushButton#thumbnailsButton:checked {
 QPushButton#osdButton {
     border-image: url(:/images/dark/osd-off.png);
     width: 31px;
-    height: 29px;
+    height: 31px;
+}
+
+QPushButton#osdButton:hover {
+    border-image: url(:/images/dark/osd-hover.png);
 }
 
 QPushButton#osdButton:pressed, QPushButton#osdButton:checked {
@@ -343,7 +359,11 @@ QPushButton#osdButton:pressed, QPushButton#osdButton:checked {
 QPushButton#consoleButton {
     border-image: url(:/images/dark/console-off.png);
     width: 32px;
-    height: 29px;
+    height: 31px;
+}
+
+QPushButton#consoleButton:hover {
+    border-image: url(:/images/dark/console-hover.png);
 }
 
 QPushButton#consoleButton:pressed, QPushButton#consoleButton:checked {

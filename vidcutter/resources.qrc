@@ -43,24 +43,29 @@
         <file>images/dark/clipindex-add-on.png</file>
         <file>images/dark/clipindex-remove.png</file>
         <file>images/dark/clipindex-remove-on.png</file>
+        <file>images/dark/console-hover.png</file>
         <file>images/dark/console-off.png</file>
         <file>images/dark/console-on.png</file>
         <file>images/dark/fullscreen.png</file>
         <file>images/dark/mediainfo-heading.png</file>
         <file>images/dark/menu.png</file>
         <file>images/dark/menu-active.png</file>
+        <file>images/dark/menu-hover.png</file>
         <file>images/dark/muted.png</file>
+        <file>images/dark/osd-hover.png</file>
         <file>images/dark/osd-off.png</file>
         <file>images/dark/osd-on.png</file>
         <file>images/dark/python.png</file>
         <file>images/dark/settings.png</file>
         <file>images/dark/settings-active.png</file>
         <file>images/dark/settings-general.png</file>
+        <file>images/dark/settings-hover.png</file>
         <file>images/dark/settings-theme.png</file>
         <file>images/dark/settings-video.png</file>
         <file>images/dark/shortcuts.png</file>
         <file>images/dark/theme-dark.png</file>
         <file>images/dark/theme-light.png</file>
+        <file>images/dark/thumbnails-hover.png</file>
         <file>images/dark/thumbnails-off.png</file>
         <file>images/dark/thumbnails-on.png</file>
         <file>images/dark/toolbar-end.png</file>
@@ -89,24 +94,29 @@
         <file>images/light/clipindex-add-on.png</file>
         <file>images/light/clipindex-remove.png</file>
         <file>images/light/clipindex-remove-on.png</file>
+        <file>images/light/console-hover.png</file>
         <file>images/light/console-off.png</file>
         <file>images/light/console-on.png</file>
         <file>images/light/fullscreen.png</file>
         <file>images/light/mediainfo-heading.png</file>
         <file>images/light/menu.png</file>
         <file>images/light/menu-active.png</file>
+        <file>images/light/menu-hover.png</file>
         <file>images/light/muted.png</file>
+        <file>images/light/osd-hover.png</file>
         <file>images/light/osd-off.png</file>
         <file>images/light/osd-on.png</file>
         <file>images/light/python.png</file>
         <file>images/light/settings.png</file>
         <file>images/light/settings-active.png</file>
         <file>images/light/settings-general.png</file>
+        <file>images/light/settings-hover.png</file>
         <file>images/light/settings-theme.png</file>
         <file>images/light/settings-video.png</file>
         <file>images/light/shortcuts.png</file>
         <file>images/light/theme-dark.png</file>
         <file>images/light/theme-light.png</file>
+        <file>images/light/thumbnails-hover.png</file>
         <file>images/light/thumbnails-off.png</file>
         <file>images/light/thumbnails-on.png</file>
         <file>images/light/toolbar-end.png</file>

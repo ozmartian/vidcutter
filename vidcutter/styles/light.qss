@@ -286,6 +286,10 @@ QPushButton#settingsButton {
     height: 32px;
 }
 
+QPushButton:hover#settingsButton {
+    border-image: url(:/images/light/settings-hover.png);
+}
+
 QPushButton:pressed#settingsButton {
     border-image: url(:/images/light/settings-active.png);
 }
@@ -294,6 +298,10 @@ QPushButton#menuButton {
     border-image: url(:/images/light/menu.png);
     width: 33px;
     height: 32px;
+}
+
+QPushButton:hover#menuButton {
+    border-image: url(:/images/light/menu-hover.png);
 }
 
 QPushButton:pressed#menuButton {
@@ -322,6 +330,10 @@ QPushButton#thumbnailsButton {
     height: 31px;
 }
 
+QPushButton#thumbnailsButton:hover {
+    border-image: url(:/images/light/thumbnails-hover.png);
+}
+
 QPushButton#thumbnailsButton:pressed, QPushButton#thumbnailsButton:checked {
     border-image: url(:/images/light/thumbnails-on.png);
 }
@@ -332,6 +344,10 @@ QPushButton#osdButton {
     height: 31px;
 }
 
+QPushButton#osdButton:hover {
+    border-image: url(:/images/light/osd-hover.png);
+}
+
 QPushButton#osdButton:pressed, QPushButton#osdButton:checked {
     border-image: url(:/images/light/osd-on.png);
 }
@@ -340,6 +356,10 @@ QPushButton#consoleButton {
     border-image: url(:/images/light/console-off.png);
     width: 32px;
     height: 31px;
+}
+
+QPushButton#consoleButton:hover {
+    border-image: url(:/images/light/console-hover.png);
 }
 
 QPushButton#consoleButton:pressed, QPushButton#consoleButton:checked {
