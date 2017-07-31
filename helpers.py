@@ -90,7 +90,7 @@ class SetupHelpers:
         pydoc.pager('''
     If installing via PyPi (Python Pip) on Linux then you need to know that VidCutter
     depends on the following packages, grouped by distro. Install using your
-    Linux software packager for a noticeably better integrated experience. 
+    Linux software packager for a noticeably better integrated experience.
     
         ---[Ubuntu/Debian/Mint/etc]----------------------
             
@@ -140,7 +140,7 @@ class SetupHelpers:
     in the start menu. Much easier to just grab what I've already built for
     you direct from here:
 
-        https://github.com/ozmartian/vidcutter/releases/latest       
+        https://github.com/ozmartian/vidcutter/releases/latest
 ''')
 
 if __name__ == '__main__':
