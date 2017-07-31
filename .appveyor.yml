@@ -6,7 +6,6 @@ pull_requests:
 branches:
   only:
   - master
-  - feature/add-externals
 
 image: Visual Studio 2015
 

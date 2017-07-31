@@ -179,7 +179,7 @@ QLabel#logowidget {
 }
 
 QLabel#decodinglabel, QLabel#ratiolabel, QLabel#keepclipslabel,
-QLabel#nativedialogslabel, QLabel#seeksettingslabel {
+QLabel#nativedialogslabel, QLabel#seeksettingslabel, QLabel#zoomlabel {
     font-family: "Open Sans", sans-serif;
     font-size: 11px;
     color: #EFF0F1;
@@ -191,7 +191,7 @@ QLabel#nativedialogslabel {
     margin: 2px 5px 10px 22px;
 }
 
-QLabel#seeksettingslabel {
+QLabel#seeksettingslabel, QLabel#zoomlabel {
     margin: 15px 5px 10px 5px;
 }
 

@@ -192,11 +192,17 @@ class VideoPage(QWidget):
         zoom_buttonGroup.addButton(zoom_doubleRadio, 4)
         # noinspection PyUnresolvedReferences
         zoom_buttonGroup.buttonClicked[int].connect(self.setZoom)
+        zoomLabel = QLabel('<b>NOTE:</b> video zoom settings only affect the video playback and ' +
+                           'will not apply zoom effects to the media you produce', self)
+        zoomLabel.setObjectName('zoomlabel')
+        zoomLabel.setTextFormat(Qt.RichText)
+        zoomLabel.setWordWrap(True)
         zoomLayout = QGridLayout()
         zoomLayout.addWidget(zoom_qtrRadio, 0, 0)
         zoomLayout.addWidget(zoom_halfRadio, 0, 1)
         zoomLayout.addWidget(zoom_originalRadio, 1, 0)
         zoomLayout.addWidget(zoom_doubleRadio, 1, 1)
+        zoomLayout.addWidget(zoomLabel, 2, 0, 1, 2)
         zoomGroup = QGroupBox('Zoom')
         zoomGroup.setLayout(zoomLayout)
         mainLayout = QVBoxLayout()
@@ -260,7 +266,7 @@ class GeneralPage(QWidget):
             <br/>
             <b>OFF:</b> use a generic file open & save dialog widget provided by the Qt toolkit
             <br/><br/>
-            <i>native dialogs should always be used unless they are not working for you</i>
+            <b>NOTE:</b> native dialogs should always be used unless they are not working
         ''', self)
         nativeDialogsLabel.setObjectName('nativedialogslabel')
         nativeDialogsLabel.setTextFormat(Qt.RichText)
@@ -295,8 +301,8 @@ class GeneralPage(QWidget):
         # noinspection PyUnresolvedReferences
         seek2SpinBox.valueChanged[float].connect(lambda d: self.setSpinnerValue(2, d))
         seekLabel = QLabel('''
-            these settings affect the seeking time forwards and backwards via the
-            UP/DOWN and SHIFT + UP/DOWN keys. see the "Keyboard shortcuts" menu
+            <b>NOTE:</b> these settings affect the seeking time forwards and backwards
+            via the UP/DOWN and SHIFT + UP/DOWN keys. see the "Keyboard shortcuts" menu
             option for a full list of shortcuts available
         ''', self)
         seekLabel.setObjectName('seeksettingslabel')
