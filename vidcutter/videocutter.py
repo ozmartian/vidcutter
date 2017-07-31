@@ -285,12 +285,12 @@ class VideoCutter(QWidget):
         self.settingsButton = QPushButton(self, toolTip='Settings', cursor=Qt.PointingHandCursor, flat=True,
                                           statusTip='Configure settings', objectName='settingsButton',
                                           clicked=self.showSettings)
-        self.settingsButton.setFixedSize(QSize(73, 31))
+        self.settingsButton.setFixedSize(QSize(33, 32))
 
         # noinspection PyArgumentList
         self.menuButton = QPushButton(self, toolTip='Menu', cursor=Qt.PointingHandCursor, flat=True,
                                       objectName='menuButton', statusTip='Click to view menu options')
-        self.menuButton.setFixedSize(QSize(63, 31))
+        self.menuButton.setFixedSize(QSize(33, 32))
         self.menuButton.setLayoutDirection(Qt.RightToLeft)
         self.menuButton.setMenu(self.appMenu)
 
@@ -328,19 +328,16 @@ class VideoCutter(QWidget):
         settingsLayout = QHBoxLayout()
         settingsLayout.setSpacing(0)
         settingsLayout.setContentsMargins(0, 0, 0, 0)
-        settingsLayout.addWidget(self.menuButton)
+        settingsLayout.addStretch(1)
         settingsLayout.addWidget(self.settingsButton)
-
-        settingsWidget = QGroupBox()
-        settingsWidget.setContentsMargins(0, 0, 0, 0)
-        settingsWidget.setLayout(settingsLayout)
-        settingsWidget.setFixedWidth(136)
-        settingsWidget.setStyleSheet('border: 0;')
+        settingsLayout.addSpacing(10)
+        settingsLayout.addWidget(self.menuButton)
+        settingsLayout.addStretch(1)
 
         groupLayout = QVBoxLayout()
         groupLayout.addLayout(audioLayout)
         groupLayout.addSpacing(15)
-        groupLayout.addWidget(settingsWidget)
+        groupLayout.addLayout(settingsLayout)
 
         controlsLayout = QHBoxLayout()
         controlsLayout.addSpacing(10)

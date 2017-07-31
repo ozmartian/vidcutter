@@ -286,21 +286,21 @@ QDialog#notification QPushButton:pressed {
 
 QPushButton#settingsButton {
     border-image: url(:/images/dark/settings.png);
-    width: 73px;
-    height: 31px;
+    width: 33px;
+    height: 32px;
 }
 
-QPushButton:hover#settingsButton, QPushButton:pressed#settingsButton {
+QPushButton:pressed#settingsButton {
     border-image: url(:/images/dark/settings-active.png);
 }
 
 QPushButton#menuButton {
     border-image: url(:/images/dark/menu.png);
-    width: 63px;
-    height: 31px;
+    width: 33px;
+    height: 32px;
 }
 
-QPushButton:hover#menuButton, QPushButton:pressed#menuButton {
+QPushButton:pressed#menuButton {
     border-image: url(:/images/dark/menu-active.png);
 }
 
