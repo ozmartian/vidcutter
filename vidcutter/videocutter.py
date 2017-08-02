@@ -282,16 +282,16 @@ class VideoCutter(QWidget):
                                             cursor=Qt.PointingHandCursor)
 
         # noinspection PyArgumentList
-        self.mediainfoButton = QPushButton(self, toolTip='Media information', cursor=Qt.PointingHandCursor, flat=True,
-                                           statusTip='View detailed tehnical detail on currently loaded media',
-                                           objectName='mediainfoButton', clicked=self.mediaInfo, enabled=False)
-        self.mediainfoButton.setFixedSize(QSize(33, 32))
-
-        # noinspection PyArgumentList
         self.settingsButton = QPushButton(self, toolTip='Settings', cursor=Qt.PointingHandCursor, flat=True,
                                           statusTip='Click to configure settings', objectName='settingsButton',
                                           clicked=self.showSettings)
         self.settingsButton.setFixedSize(QSize(33, 32))
+
+        # noinspection PyArgumentList
+        self.mediainfoButton = QPushButton(self, toolTip='Media information', cursor=Qt.PointingHandCursor, flat=True,
+                                           statusTip='View detailed tehnical detail on currently loaded media',
+                                           objectName='mediainfoButton', clicked=self.mediaInfo, enabled=False)
+        self.mediainfoButton.setFixedSize(QSize(33, 32))
 
         # noinspection PyArgumentList
         self.menuButton = QPushButton(self, toolTip='Menu', cursor=Qt.PointingHandCursor, flat=True,
@@ -299,8 +299,6 @@ class VideoCutter(QWidget):
         self.menuButton.setFixedSize(QSize(33, 32))
         self.menuButton.setLayoutDirection(Qt.RightToLeft)
         self.menuButton.setMenu(self.appMenu)
-
-        self.seekSlider.initStyle()
 
         audioLayout = QHBoxLayout()
         audioLayout.setContentsMargins(0, 0, 0, 0)
@@ -330,9 +328,9 @@ class VideoCutter(QWidget):
         settingsLayout.setSpacing(0)
         settingsLayout.setContentsMargins(0, 0, 0, 0)
         settingsLayout.addWidget(self.settingsButton)
-        settingsLayout.addSpacing(10)
+        settingsLayout.addSpacing(5)
         settingsLayout.addWidget(self.mediainfoButton)
-        settingsLayout.addSpacing(10)
+        settingsLayout.addSpacing(5)
         settingsLayout.addWidget(self.menuButton)
 
         groupLayout = QVBoxLayout()
@@ -360,6 +358,8 @@ class VideoCutter(QWidget):
         layout.addLayout(controlsLayout)
 
         self.setLayout(layout)
+
+        self.seekSlider.initStyle()
 
     @pyqtSlot(Exception)
     def on_mpvError(self, error: Exception = None) -> None:

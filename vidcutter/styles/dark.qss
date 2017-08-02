@@ -212,12 +212,14 @@ QGroupBox#counterwidgets {
     margin-top: 1ex;
     padding-top: 15px;
     background-color: #0C0F10;
+    color: #444;
 }
 
 #settingsdialog QGroupBox::title {
     subcontrol-origin: margin;
     subcontrol-position: top left;
     padding: 0 3px;
+    background-color: #EFF0F1;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -282,6 +284,24 @@ QDialog#notification QPushButton:focus,
 QDialog#notification QPushButton:pressed {
     background-color: #642C68;
     border: 1px solid #EFF0F1;
+}
+
+QPushButton#mediainfoButton {
+    border-image: url(:/images/dark/info.png);
+    width: 33px;
+    height: 32px;
+}
+
+QPushButton:hover#mediainfoButton {
+    border-image: url(:/images/dark/info-hover.png);
+}
+
+QPushButton:pressed#mediainfoButton {
+    border-image: url(:/images/dark/info-active.png);
+}
+
+QPushButton:disabled#mediainfoButton {
+    border-image: url(:/images/dark/info-disabled.png);
 }
 
 QPushButton#settingsButton {
