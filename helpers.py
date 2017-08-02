@@ -94,23 +94,23 @@ class SetupHelpers:
     depends on the following packages, grouped by distro. Install using your
     Linux software packager for a noticeably better integrated experience.
     
-        ---[Ubuntu/Debian/Mint/etc]----------------------
+        ---[Ubuntu/Debian/Mint/etc]--------------------------
             
             python3-dev libmpv1 libmpv-dev python3-pyqt5
             python3-pyqt5.qtopengl python3-opengl ffmpeg
             mediainfo
     
-        ---[Arch Linux]----------------------------------
+        ---[Arch Linux]--------------------------------------
     
             python mpv python-pyqt5 python-opengl
             ffmpeg mediainfo
     
-        ---[Fedora]--------------------------------------
+        ---[Fedora]------------------------------------------
         
             python3-devel mpv-libs mpv-libs-devel python3-qt5
             python3-pyopengl ffmpeg mediainfo
         
-        ---[openSUSE]------------------------------------
+        ---[openSUSE]----------------------------------------
             
             python3-devel libmpv1 mpv-devel python3-qt5
             python3-opengl ffmpeg mediainfo 
@@ -153,4 +153,5 @@ if __name__ == '__main__':
         sys.exit(1)
     subprocess.run('{0} -compress 9 -o "{1}" "{2}"'.format(exe,
                                os.path.join(os.path.dirname(os.path.abspath(__file__)), 'vidcutter', 'resources.py'),
-                               os.path.join(os.path.dirname(os.path.abspath(__file__)), 'vidcutter', 'resources.qrc')), shell=True)
+                               os.path.join(os.path.dirname(os.path.abspath(__file__)), 'vidcutter', 'resources.qrc')),
+                   shell=True)
