@@ -283,13 +283,13 @@ class VideoCutter(QWidget):
 
         # noinspection PyArgumentList
         self.settingsButton = QPushButton(self, toolTip='Settings', cursor=Qt.PointingHandCursor, flat=True,
-                                          statusTip='Click to configure settings', objectName='settingsButton',
-                                          clicked=self.showSettings)
+                                          statusTip='Click to configure application settings',
+                                          objectName='settingsButton', clicked=self.showSettings)
         self.settingsButton.setFixedSize(QSize(33, 32))
 
         # noinspection PyArgumentList
         self.mediainfoButton = QPushButton(self, toolTip='Media information', cursor=Qt.PointingHandCursor, flat=True,
-                                           statusTip='View detailed tehnical detail on currently loaded media',
+                                           statusTip='Click to view technical information on currently loaded media',
                                            objectName='mediainfoButton', clicked=self.mediaInfo, enabled=False)
         self.mediainfoButton.setFixedSize(QSize(33, 32))
 
