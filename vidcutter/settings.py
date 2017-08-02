@@ -251,7 +251,7 @@ class GeneralPage(QWidget):
         keepClipsLabel = QLabel('''
             <b>ON:</b> keep the clip segments set in your clip index after they have been joined 
             <br/>
-            <b>OFF:</b> clip segments are automatically deleted once joined to produce your new file
+            <b>OFF:</b> clip segments are automatically deleted once joined to produce your file
         ''', self)
         keepClipsLabel.setObjectName('keepclipslabel')
         keepClipsLabel.setTextFormat(Qt.RichText)
