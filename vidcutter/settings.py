@@ -223,7 +223,7 @@ class VideoPage(QWidget):
         self.parent.parent.mpvWidget.mpv.set_option('keepaspect', state == Qt.Checked)
         self.parent.settings.setValue('aspectRatio', 'keep' if state == Qt.Checked else 'stretch')
         self.parent.parent.keepRatio = (state == Qt.Checked)
-        
+
     @pyqtSlot(int)
     def setZoom(self, button_id: int) -> None:
         if button_id == 1:

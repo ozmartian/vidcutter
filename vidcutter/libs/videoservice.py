@@ -39,8 +39,8 @@ from PyQt5.QtWidgets import QMessageBox
 class VideoService(QObject):
     frozen = getattr(sys, 'frozen', False)
 
-    diskSpaceWarningThreshold = 200
-    diskSpaceWarningDelivered = False
+    spaceWarningThreshold = 200
+    spaceWarningDelivered = False
 
     mpegCodecs = {'h264', 'hevc', 'mpeg4', 'divx', 'xvid', 'webm', 'ivf', 'vp9', 'mpeg2video', 'mpg2',
                   'mp2', 'mp3', 'aac'}
@@ -106,16 +106,16 @@ class VideoService(QObject):
 
     def checkDiskSpace(self, path: str):
         # noinspection PyCallByClass
-        if self.diskSpaceWarningDelivered or not QFileInfo.exists(path):
+        if self.spaceWarningDelivered or not QFileInfo.exists(path):
             return
         info = QStorageInfo(path)
         available = info.bytesAvailable() / 1000 / 1000
-        if available < VideoService.diskSpaceWarningThreshold:
-            QMessageBox.warning(self.parent, 'Disk space is low!', 'There is less than {0} MB of free disk space at ' +
-                                'the target folder selected to save your media. VidCutter WILL FAIL to produce ' +
-                                'your media if you run out of space during operations.'
-                                .format(VideoService.diskSpaceWarningThreshold))
-            self.diskSpaceWarningDelivered = True
+        if available < VideoService.spaceWarningThreshold:
+            warnmsg = 'There is less than {0}MB of disk space available at the target folder selected to save ' + \
+                      'your media. VidCutter WILL FAIL to produce your media if you run out of space during ' + \
+                      'operations.'
+            QMessageBox.warning(self.parent, 'Disk space is low!', warnmsg.format(VideoService.spaceWarningThreshold))
+            self.spaceWarningDelivered = True
 
     @staticmethod
     def capture(source: str, frametime: str, thumbsize: ThumbSize=ThumbSize.INDEX, external: bool=False) -> QPixmap:

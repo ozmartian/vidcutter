@@ -26,7 +26,6 @@ import codecs
 import os
 import pydoc
 import re
-import shlex
 import subprocess
 import sys
 

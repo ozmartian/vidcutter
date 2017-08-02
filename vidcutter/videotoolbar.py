@@ -25,7 +25,7 @@
 import sys
 
 from PyQt5.QtCore import pyqtSlot, QEvent, QObject, QSize, Qt
-from PyQt5.QtWidgets import QAction, qApp, QStyleFactory, QToolBar, QToolButton
+from PyQt5.QtWidgets import qApp, QStyleFactory, QToolBar, QToolButton
 
 
 class VideoToolBar(QToolBar):
@@ -49,12 +49,12 @@ class VideoToolBar(QToolBar):
                 button.setObjectName('saveButton')
 
     @pyqtSlot(int)
-    def setLabels(self, id: int) -> None:
-        if id == 3:
+    def setLabels(self, option_id: int) -> None:
+        if option_id == 3:
             self.setLabelByType('beside')
-        elif id == 2:
+        elif option_id == 2:
             self.setLabelByType('under')
-        elif id == 1:
+        elif option_id == 1:
             self.setLabelByType('none')
 
     def setLabelByType(self, label_type: str) -> None:
