@@ -282,8 +282,14 @@ class VideoCutter(QWidget):
                                             cursor=Qt.PointingHandCursor)
 
         # noinspection PyArgumentList
+        self.mediainfoButton = QPushButton(self, toolTip='Media information', cursor=Qt.PointingHandCursor, flat=True,
+                                           statusTip='View detailed tehnical detail on currently loaded media',
+                                           objectName='mediainfoButton', clicked=self.mediaInfo, enabled=False)
+        self.mediainfoButton.setFixedSize(QSize(33, 32))
+
+        # noinspection PyArgumentList
         self.settingsButton = QPushButton(self, toolTip='Settings', cursor=Qt.PointingHandCursor, flat=True,
-                                          statusTip='Configure settings', objectName='settingsButton',
+                                          statusTip='Click to configure settings', objectName='settingsButton',
                                           clicked=self.showSettings)
         self.settingsButton.setFixedSize(QSize(33, 32))
 
@@ -296,18 +302,13 @@ class VideoCutter(QWidget):
 
         self.seekSlider.initStyle()
 
-        togglesLayout = QHBoxLayout()
-        togglesLayout.setContentsMargins(0, 0, 0, 0)
-        togglesLayout.setSpacing(0)
-        togglesLayout.addWidget(self.thumbnailsButton, Qt.AlignLeft)
-        togglesLayout.addWidget(self.osdButton, Qt.AlignLeft)
-        togglesLayout.addWidget(self.consoleButton, Qt.AlignLeft)
-
-        togglesWidget = QGroupBox()
-        togglesWidget.setContentsMargins(0, 0, 0, 0)
-        togglesWidget.setLayout(togglesLayout)
-        togglesWidget.setFixedWidth(95)
-        togglesWidget.setStyleSheet('border: 0;')
+        audioLayout = QHBoxLayout()
+        audioLayout.setContentsMargins(0, 0, 0, 0)
+        audioLayout.addWidget(self.muteButton)
+        audioLayout.addSpacing(5)
+        audioLayout.addWidget(self.volSlider)
+        audioLayout.addSpacing(5)
+        audioLayout.addWidget(self.fullscreenButton)
 
         toolbarLayout = QHBoxLayout()
         toolbarLayout.addWidget(self.toolbar)
@@ -317,31 +318,31 @@ class VideoCutter(QWidget):
         toolbarGroup.setLayout(toolbarLayout)
         toolbarGroup.setStyleSheet('border: 0;')
 
-        audioLayout = QHBoxLayout()
-        audioLayout.setContentsMargins(0, 0, 0, 0)
-        audioLayout.addWidget(self.muteButton)
-        audioLayout.addSpacing(5)
-        audioLayout.addWidget(self.volSlider)
-        audioLayout.addSpacing(5)
-        audioLayout.addWidget(self.fullscreenButton)
+        togglesLayout = QHBoxLayout()
+        togglesLayout.setSpacing(0)
+        togglesLayout.setContentsMargins(0, 0, 0, 0)
+        togglesLayout.addWidget(self.thumbnailsButton)
+        togglesLayout.addWidget(self.osdButton)
+        togglesLayout.addWidget(self.consoleButton)
+        togglesLayout.addStretch(1)
 
         settingsLayout = QHBoxLayout()
         settingsLayout.setSpacing(0)
         settingsLayout.setContentsMargins(0, 0, 0, 0)
-        settingsLayout.addStretch(1)
         settingsLayout.addWidget(self.settingsButton)
         settingsLayout.addSpacing(10)
+        settingsLayout.addWidget(self.mediainfoButton)
+        settingsLayout.addSpacing(10)
         settingsLayout.addWidget(self.menuButton)
-        settingsLayout.addStretch(1)
 
         groupLayout = QVBoxLayout()
         groupLayout.addLayout(audioLayout)
-        groupLayout.addSpacing(15)
+        groupLayout.addSpacing(10)
         groupLayout.addLayout(settingsLayout)
 
         controlsLayout = QHBoxLayout()
         controlsLayout.addSpacing(10)
-        controlsLayout.addWidget(togglesWidget)
+        controlsLayout.addLayout(togglesLayout)
         controlsLayout.addSpacing(10)
         controlsLayout.addStretch(1)
         controlsLayout.addWidget(toolbarGroup)
@@ -648,7 +649,7 @@ class VideoCutter(QWidget):
         if savedialog:
             return 'VidCutter Project (*.vcp);;MPlayer EDL (*.edl)'
         elif self.mediaAvailable:
-            return 'Project files (*.vcp, *.edl);;VidCutter Project (*.vcp);;MPlayer EDL (*.edl);;All files (*.*)'
+            return 'Project files (*.vcp, *.edl);;VidCutter Project (*.vcp);;MPlayer EDL (*.edl) ;;All files (*.*)'
         else:
             return 'VidCutter Project (*.vcp);;All files (*.*)'
 
@@ -837,6 +838,7 @@ class VideoCutter(QWidget):
         self.cutStartAction.setEnabled(flag)
         self.cutEndAction.setEnabled(False)
         self.mediaInfoAction.setEnabled(flag)
+        self.mediainfoButton.setEnabled(flag)
         self.seekSlider.clearRegions()
         if flag:
             self.seekSlider.setRestrictValue(0)

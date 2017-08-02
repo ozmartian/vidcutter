@@ -282,6 +282,24 @@ QDialog#notification QPushButton:pressed {
     border: 1px solid #FFF;
 }
 
+QPushButton#mediainfoButton {
+    border-image: url(:/images/light/info.png);
+    width: 33px;
+    height: 32px;
+}
+
+QPushButton:hover#mediainfoButton {
+    border-image: url(:/images/light/info-hover.png);
+}
+
+QPushButton:pressed#mediainfoButton {
+    border-image: url(:/images/light/info-active.png);
+}
+
+QPushButton:disabled#mediainfoButton {
+    border-image: url(:/images/light/info-disabled.png);
+}
+
 QPushButton#settingsButton {
     border-image: url(:/images/light/settings.png);
     width: 33px;
