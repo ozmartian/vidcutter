@@ -28,7 +28,7 @@ from PyQt5.QtCore import pyqtSlot, QSize, Qt
 from PyQt5.QtGui import QCloseEvent, QIcon, QShowEvent
 from PyQt5.QtWidgets import (qApp, QButtonGroup, QCheckBox, QDialog, QDialogButtonBox, QDoubleSpinBox, QFrame,
                              QGridLayout, QGroupBox, QHBoxLayout, QLabel, QListView, QListWidget, QListWidgetItem,
-                             QMessageBox, QRadioButton, QStackedWidget, QVBoxLayout, QWidget)
+                             QMessageBox, QRadioButton, QStackedWidget, QStyleFactory, QVBoxLayout, QWidget)
 
 
 class ThemePage(QWidget):
@@ -327,6 +327,9 @@ class GeneralPage(QWidget):
         mainLayout.addWidget(self.seekGroup)
         mainLayout.addStretch(1)
         self.setLayout(mainLayout)
+        if sys.platform == 'win32':
+            seek1SpinBox.setStyle(QStyleFactory.create('Fusion'))
+            seek2SpinBox.setStyle(QStyleFactory.create('Fusion'))
 
     @pyqtSlot(int)
     def keepClips(self, state: int) -> None:

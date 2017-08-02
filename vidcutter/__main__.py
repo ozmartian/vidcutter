@@ -251,6 +251,7 @@ class MainWindow(QMainWindow):
 
     def closeEvent(self, event: QCloseEvent) -> None:
         event.accept()
+        self.console.deleteLater()
         if hasattr(self, 'cutter'):
             self.save_settings()
             if hasattr(self.cutter, 'mpvWidget'):

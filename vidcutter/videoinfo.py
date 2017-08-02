@@ -25,7 +25,7 @@
 import logging
 
 from PyQt5.QtCore import QSize, Qt
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QCloseEvent, QPixmap
 from PyQt5.QtWidgets import QDialog, QDialogButtonBox, QLabel, QSizePolicy, QTextBrowser, QHBoxLayout, QVBoxLayout
 
 
@@ -95,3 +95,7 @@ class VideoInfo(QDialog):
             layout.addWidget(buttons)
 
         self.setLayout(layout)
+
+    def closeEvent(self, event: QCloseEvent):
+        self.deleteLater()
+        super(VideoInfo, self).closeEvent(event)

@@ -1173,8 +1173,9 @@ class VideoCutter(QWidget):
         shortcuts = QWidget(self)
         shortcuts.setWindowFlags(Qt.Dialog | Qt.WindowCloseButtonHint)
         shortcuts.setObjectName('shortcuts')
+        shortcuts.setAttribute(Qt.WA_DeleteOnClose, True)
         buttons = QDialogButtonBox(QDialogButtonBox.Ok)
-        buttons.accepted.connect(shortcuts.hide)
+        buttons.accepted.connect(shortcuts.close)
         layout = QVBoxLayout()
         # noinspection PyArgumentList
         layout.addWidget(QLabel(pixmap=QPixmap(':/images/%s/shortcuts.png' % self.theme)))
