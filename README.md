@@ -1,8 +1,8 @@
-## v4.0.0 is released. Check [Releases](https://github.com/ozmartian/vidcutter/releases) page now.
-
----------
+### v4.0.0 is released!! Click link button below...
 
 [![Latest Release](http://tvlinker.ozmartians.com/images/button-latest-release.png)](https://github.com/ozmartian/vidcutter/releases/latest)
+
+---------
 
 ![VidCutter](https://raw.githubusercontent.com/ozmartian/vidcutter/gh-pages/vidcutter-banner.png)
 
