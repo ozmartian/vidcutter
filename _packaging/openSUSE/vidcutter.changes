@@ -1,4 +1,21 @@
 -------------------------------------------------------------------
+Thu Aug 02 13:37:00 UTC 2017 - pete@ozmartians.com
+
+- Update to version 4.0.0
+
+- pure OpenGL rendered window output
+
+- better mpv integration through Cython (Python C module)
+
+- manual join without cut ability via new add button under index
+
+- improved checks and changes to join and merge routines
+
+- so much more to list just install it okay!
+
+- changelog will be properly updated over the next day..
+
+-------------------------------------------------------------------
 Mon May 29 07:00:00 UTC 2017 - pete@ozmartians.com
 
 - Update to version 3.5.0

@@ -1,3 +1,16 @@
+vidcutter (4.0.0-1) stable; urgency=medium
+
+  * pure OpenGL rendered window output
+
+  * manual join without cut ability via new add button under index
+
+  * improved checks and changes to join and merge routines
+
+  * TBA ... more changelog data inserted soon, this is the biggest
+    release in app's history so the full list is going to be big...
+
+-- Pete Alexandrou <pete@ozmartians.com>  Wed, 02 Aug 2017 21:37:00 +0800
+
 vidcutter (3.5.0-1) stable; urgency=medium
 
  * redesigned timeline & slider with timecode labels at fixed intervals as per

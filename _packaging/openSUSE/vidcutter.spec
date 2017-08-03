@@ -18,7 +18,6 @@ Requires:       mediainfo
 Requires:       python3-qt5
 Requires:       python3-opengl
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
-BuildArch:      noarch
 
 %description
 The simplest & sexiest tool for cutting and joining your videos without the need for
@@ -27,7 +26,6 @@ using tried and true tech in its arsenal via mpv and FFmpeg.
 
 %prep
 %setup -q
-sed -i "s/pypi/rpm/" vidcutter/__init__.py
 
 %build
 python3 setup.py build
@@ -47,8 +45,8 @@ python3 setup.py install --root %{buildroot}
 %defattr(-,root,root)
 %doc LICENSE README.md
 %{_bindir}/%{name}
-%{python3_sitelib}/%{name}-%{version}-py*.egg-info/
-%{python3_sitelib}/%{name}/
+%{python3_sitearch}/%{name}-%{version}-py*.egg-info/
+%{python3_sitearch}/%{name}/
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/icons/hicolor/16x16/apps/%{name}.png
 %{_datadir}/icons/hicolor/22x22/apps/%{name}.png
