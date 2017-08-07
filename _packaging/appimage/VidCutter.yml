@@ -1,21 +1,27 @@
 app: VidCutter
-union: true
 
 ingredients:
   dist: trusty
   sources: 
-    - deb http://mirrors.cn99.com/ubuntu trusty main restricted universe multiverse
+    - deb http://archive.ubuntu.com/ubuntu/ trusty main universe
   ppas:
-    # - ozmartian/apps
-    - ozmartian/unstable
     - mc3man/testing6
-    - mc3man/trusty-media
+    - ubuntu-toolchain-r/test
     - fkrull/deadsnakes
-    - beineri/opt-qt591-trusty
+  packages:
+    - gcc-7-base
+    - python3.5
+    - libstdc++6
+    - libgcc1
+    - libisl15
+    - libmpv-dev
+  script:
+    - wget https://github.com/ozmartian/vidcutter/archive/4.0.0.tar.gz
+    - tar zxf 4.0.0.tar.gz
 
 script:
-  - cat > usr/bin/vidcutter <<\EOF
-  - #!/usr/bin/python3
+  - cat > usr/bin/vidcutter <<EOF
+  - #!/usr/bin/python3.5
   - import sys
   - from pkg_resources import load_entry_point, DistributionNotFound
   - from signal import SIGINT, SIG_DFL, SIGTERM, signal
@@ -28,4 +34,6 @@ script:
   -     from vidcutter.__main__ import main
   -     main()    
   - EOF
+  - cp ../vidcutter-4.0.0/data/icons/vidcutter.png .
+  - cp ../vidcutter-4.0.0/data/desktop/vidcutter.desktop .
   - mv usr/lib/x86_64-linux-gnu/caca/*.so* usr/lib/x86_64-linux-gnu/
