@@ -1,5 +1,10 @@
+[![Latest Release](http://tvlinker.ozmartians.com/images/button-latest-release.png)](https://github.com/ozmartian/vidcutter/releases/latest)
+ 
+
 ![VidCutter](http://vidcutter.ozmartians.com/vidcutter-banner.png)
 
+
+----------
 
 [![Build Status](https://travis-ci.org/ozmartian/vidcutter.svg)](https://travis-ci.org/ozmartian/vidcutter)
 [![Build Status](https://ci.appveyor.com/api/projects/status/jgasythb2vqsxy7v?svg=true)](https://ci.appveyor.com/project/ozmartian/vidcutter)
@@ -7,7 +12,7 @@
 
 ---------
 
-[![Latest Release](http://tvlinker.ozmartians.com/images/button-latest-release.png)](https://github.com/ozmartian/vidcutter/releases/latest)
+
 
 
 ### Windows + macOS Users
