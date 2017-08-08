@@ -1128,7 +1128,7 @@ class VideoCutter(QWidget):
                 if not rc or QFile(self.finalFilename).size() < 1000:
                     self.logger.info('join() resulted in 0 length file, trying again without all stream mapping')
                     self.videoService.join(filelist, self.finalFilename, False)
-                if not self.keepClipsAction.isChecked():
+                if not self.keepClips:
                     for f in filelist:
                         clip = self.clipTimes[filelist.index(f)]
                         if not len(clip[3]) and os.path.isfile(f):
