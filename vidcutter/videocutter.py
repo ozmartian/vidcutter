@@ -109,7 +109,7 @@ class VideoCutter(QWidget):
         self.keepClips = self.settings.value('keepClips', 'off', type=str) in {'on', 'true'}
         self.nativeDialogs = self.settings.value('nativeDialogs', 'on', type=str) in {'on', 'true'}
         self.timelineThumbs = self.settings.value('timelineThumbs', 'on', type=str) in {'on', 'true'}
-        self.showConsole = self.settings.value('showConsole', 'on', type=str) in {'on', 'true'}
+        self.showConsole = self.settings.value('showConsole', 'off', type=str) in {'on', 'true'}
         self.level1Seek = self.settings.value('level1Seek', 2, type=float)
         self.level2Seek = self.settings.value('level2Seek', 5, type=float)
 
