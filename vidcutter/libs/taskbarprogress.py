@@ -45,7 +45,7 @@ class TaskbarProgress(QWidget):
 
     @pyqtSlot(float, bool)
     def setProgress(self, value: float, visible: bool=True):
-        self.logger.info('setprogress - value; %s    visible: %s' % (value, visible))
+        # self.logger.info('setprogress - value; %s    visible: %s' % (value, visible))
         signal = QDBusMessage.createSignal('/com/canonical/unity/launcherentry/337963624',
                                            'com.canonical.Unity.LauncherEntry', 'Update')
         message = signal << 'application://{0}'.format(self._desktopFileName) << {
