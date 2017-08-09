@@ -16,7 +16,6 @@ a = Analysis(['..\\..\\vidcutter\\__main__.py'],
              binaries=[],
              datas=[
                  ('..\\..\\vidcutter\\__init__.py', '.'),
-                 ('..\\..\\vidcutter\\libs\\*.pyd', '.'),
                  ('..\\..\\bin\\ffmpeg.exe', 'bin'),
                  ('..\\..\\bin\\MediaInfo.exe', 'bin'),
                  ('libmpv\\64\\mpv-1.dll', '.'),
