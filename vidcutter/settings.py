@@ -366,15 +366,16 @@ class SettingsDialog(QDialog):
         self.theme = self.parent.theme
         self.setObjectName('settingsdialog')
         self.categories = QListWidget(self)
+        self.categories.setResizeMode(QListView.Adjust)
         self.categories.setStyleSheet('QListView::item { text-decoration: none; }')
         self.categories.setAttribute(Qt.WA_MacShowFocusRect, False)
         self.categories.setObjectName('settingsmenu')
         self.categories.setUniformItemSizes(True)
         self.categories.setMouseTracking(True)
         self.categories.setViewMode(QListView.IconMode)
-        self.categories.setIconSize(QSize(90, 50))
+        self.categories.setIconSize(QSize(90, 60))
         self.categories.setMovement(QListView.Static)
-        self.categories.setFixedWidth(105)
+        self.categories.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.pages = QStackedWidget(self)
         self.pages.addWidget(GeneralPage(self))
         self.pages.addWidget(VideoPage(self))
@@ -414,7 +415,7 @@ class SettingsDialog(QDialog):
         themeButton.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
         self.categories.currentItemChanged.connect(self.changePage)
         self.categories.setCurrentRow(0)
-        self.categories.adjustSize()
+        self.categories.setMaximumWidth(self.categories.sizeHintForColumn(0) + 2)
 
     @staticmethod
     def lineSeparator() -> QFrame:
