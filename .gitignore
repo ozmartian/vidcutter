@@ -30,3 +30,6 @@ MediaInfo.dll
 *.*.nupkg
 *.so
 *.pyd
+build.pyinstaller.win.signed.bat
+installer_x64.signed.iss
+installer_x86.signed.iss

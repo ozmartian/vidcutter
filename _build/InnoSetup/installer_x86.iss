@@ -13,10 +13,11 @@ AppPublisher=Pete Alexandrou
 AppPublisherURL=http://vidcutter.ozmartians.com
 DefaultDirName={pf}\VidCutter
 DefaultGroupName=VidCutter
-OutputBaseFilename=VidCutter-4.0.0-setup-x86
-SetupIconFile=C:\DEV\vidcutter\data\icons\vidcutter.ico
+OutputBaseFilename=VidCutter-4.0.0-setup-win32
+SetupIconFile=..\..\data\icons\vidcutter.ico
 UninstallDisplayIcon={app}\vidcutter.exe
 Compression=lzma2
+LZMAUseSeparateProcess=yes
 SolidCompression=yes
 ShowLanguageDialog=no
 VersionInfoVersion=4.0.0
@@ -24,8 +25,8 @@ VersionInfoCompany=ozmartians.com
 VersionInfoCopyright=(c) 2017 Pete Alexandrou
 VersionInfoProductName=VidCutter x86
 VersionInfoProductVersion=4.0.0
-WizardImageFile=C:\DEV\vidcutter\_build\InnoSetup\assets\WizModernImage.bmp
-WizardSmallImageFile=C:\DEV\vidcutter\_build\InnoSetup\assets\SmallWizardImage.bmp
+WizardImageFile=assets\WizModernImage.bmp
+WizardSmallImageFile=assets\SmallWizardImage.bmp
 WizardImageStretch=False
 
 [InstallDelete]
@@ -38,8 +39,8 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
 
 [Files]
-Source: "C:\DEV\vidcutter\_build\pyinstaller\dist\vidcutter.exe"; DestDir: "{app}"
-Source: "C:\DEV\vidcutter\data\icons\uninstall.ico"; DestDir: "{app}"
+Source: "..\pyinstaller\dist\vidcutter.exe"; DestDir: "{app}"
+Source: "..\..\data\icons\uninstall.ico"; DestDir: "{app}"
 
 [Icons]
 Name: "{group}\VidCutter"; Filename: "{app}\vidcutter.exe"
