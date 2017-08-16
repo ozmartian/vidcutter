@@ -28,8 +28,8 @@ import sys
 from datetime import datetime
 
 from PyQt5.Qt import PYQT_VERSION_STR
-from PyQt5.QtCore import QSize, Qt, QUrl
-from PyQt5.QtGui import QCloseEvent
+from PyQt5.QtCore import QBuffer, QByteArray, QSize, Qt, QUrl
+from PyQt5.QtGui import QCloseEvent, QIcon
 from PyQt5.QtWidgets import qApp, QDialog, QDialogButtonBox, QLabel, QTabWidget, QTextBrowser, QVBoxLayout
 from sip import SIP_VERSION_STR
 
@@ -46,12 +46,23 @@ class About(QDialog):
         builddate = datetime.fromtimestamp(os.path.getmtime(mpv.__file__)).strftime('%d %b %Y')
         pencolor1 = '#9A45A2' if self.parent.theme == 'dark' else '#642C68'
         pencolor2 = '#FFF' if self.parent.theme == 'dark' else '#000'
+        # use theme app icon image if one exists
+        appicon = ':/images/vidcutter-small.png'
+        if QIcon.hasThemeIcon(qApp.applicationName().lower()):
+            themeicon = QIcon.fromTheme(qApp.applicationName().lower(), QIcon(appicon))
+            themeimg = themeicon.pixmap(82, 82).toImage()
+            data = QByteArray()
+            buffer = QBuffer(data)
+            buffer.open(QBuffer.WriteOnly)
+            themeimg.save(buffer, 'PNG')
+            base64enc = str(data.toBase64().data(), 'latin1')
+            appicon = 'data:vidcutter.png;base64,%s' % base64enc
         header = QLabel('''
         <style>table { color: %s; background-color: transparent; }</style>
         <table border="0" cellpadding="5" cellspacing="1" width="100%%">
             <tr>
-                <td width="82" style="padding-top:18px;padding-right:10px;">
-                    <img src=":/images/vidcutter-small.png" width="82" />
+                <td width="82" style="padding-top:10px;padding-right:10px;">
+                    <img src="%s" width="82" />
                 </td>
                 <td style="padding:4px;">
                     <div style="font-family:'Futura-Light', sans-serif;font-size:40px;font-weight:400;color:%s;">
@@ -83,7 +94,7 @@ class About(QDialog):
                     </div>
                 </td>
             </tr>
-        </table>''' % (pencolor2, pencolor1, pencolor1, qApp.applicationVersion(), platform.architecture()[0],
+        </table>''' % (pencolor2, appicon, pencolor1, pencolor1, qApp.applicationVersion(), platform.architecture()[0],
                        pencolor1, builddate.upper(), self.parent.theme), self)
         header.setStyleSheet('border:none;')
         self.tab_about = AboutTab(self)
@@ -139,9 +150,8 @@ class AboutTab(BaseTab):
         # noinspection PyBroadException
         try:
             ffmpeg_version = self.parent.parent.videoService.version()
-            # ffmpeg_version = self.parent.parent.mpvWidget.mpv.get_property('ffmpeg-version')
         except:
-            ffmpeg_version = '2.8.10'
+            ffmpeg_version = '<span style="color:red;">MISSING</span>'
         html = '''
 <style>
     table { width: 100%%; font-family: "Open Sans", sans-serif; }

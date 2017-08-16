@@ -66,7 +66,7 @@ try:
         version=SetupHelpers.get_value('version'),
         author='Pete Alexandrou',
         author_email='pete@ozmartians.com',
-        description='the simplest + fastest video cutter & joiner',
+        description='the simplest + fastest video cutter and joiner',
         long_description=SetupHelpers.get_description(),
         url='http://vidcutter.ozmartians.com',
         license='GPLv3+',

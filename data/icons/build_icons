@@ -15,6 +15,9 @@ inkscape -z -e ./hicolor/128x128/apps/vidcutter.png -w 128 -h 128 ${SVG_SOURCE}
 inkscape -z -e ./hicolor/256x256/apps/vidcutter.png -w 256 -h 256 ${SVG_SOURCE}
 inkscape -z -e ./hicolor/512x512/apps/vidcutter.png -w 512 -h 512 ${SVG_SOURCE}
 
+mkdir -p ./hicolor/scalable/apps
+cp ${SVG_SOURCE} ./hicolor/scalable/apps/
+
 # Windows icons
 echo -e "\n[ creating Windows icon ]\n"
 icotool -c -o vidcutter.ico \

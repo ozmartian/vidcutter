@@ -453,7 +453,8 @@ class VideoCutter(QWidget):
         self.novideoWidget.setLayout(novideoLayout)
 
     def initIcons(self) -> None:
-        self.appIcon = QIcon(':/images/vidcutter.png')
+        # self.appIcon = QIcon(':/images/vidcutter.png')
+        self.appIcon = qApp.windowIcon()
         self.openIcon = QIcon()
         self.openIcon.addFile(':/images/%s/toolbar-open.png' % self.theme, QSize(50, 53), QIcon.Normal)
         self.openIcon.addFile(':/images/%s/toolbar-open-on.png' % self.theme, QSize(50, 53), QIcon.Active)

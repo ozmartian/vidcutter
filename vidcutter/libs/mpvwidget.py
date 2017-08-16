@@ -15,26 +15,17 @@ from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QEvent, QTimer
 from PyQt5.QtGui import QKeyEvent, QMouseEvent
 from PyQt5.QtOpenGL import QGLContext
 from PyQt5.QtWidgets import QOpenGLWidget
-import sip
 
 # noinspection PyUnresolvedReferences
 import vidcutter.libs.mpv as mpv
 
-try:
-    # noinspection PyUnresolvedReferences
-    from typing import Optional
 
-    def get_proc_address(proc) -> Optional[sip.voidptr]:
-        glctx = QGLContext.currentContext()
-        if glctx is None:
-            return None
-        return glctx.getProcAddress(str(proc, 'utf-8'))
-except ImportError:
-    def get_proc_address(proc):
-        glctx = QGLContext.currentContext()
-        if glctx is None:
-            return None
-        return glctx.getProcAddress(str(proc, 'utf-8'))
+def get_proc_address(proc):
+    glctx = QGLContext.currentContext()
+    if glctx is None:
+        return None
+    addr = glctx.getProcAddress(str(proc, 'utf-8'))
+    return addr.__int__()
 
 
 class mpvWidget(QOpenGLWidget):

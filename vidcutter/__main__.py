@@ -181,7 +181,8 @@ class MainWindow(QMainWindow):
     def init_cutter(self) -> None:
         self.cutter = VideoCutter(self)
         self.cutter.errorOccurred.connect(self.errorHandler)
-        qApp.setWindowIcon(QIcon(':/images/vidcutter.png'))
+        # qApp.setWindowIcon(QIcon(':/images/vidcutter.png'))
+        qApp.setWindowIcon(QIcon.fromTheme(qApp.applicationName().lower(), QIcon(':/images/vidcutter.png')))
         self.setCentralWidget(self.cutter)
 
     @staticmethod
