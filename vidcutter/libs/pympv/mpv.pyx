@@ -1096,7 +1096,7 @@ cdef class Context(object):
         self.shutdown()
 
 cdef void *_c_getprocaddress(void *ctx, const char *name) with gil:
-    return <void *><intptr_t>(<object>ctx)(name)
+    return <void *><long long>(<object>ctx)(name)
 
 cdef void _c_updatecb(void *ctx) with gil:
     (<object>ctx)()

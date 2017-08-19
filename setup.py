@@ -44,7 +44,7 @@ from helpers import SetupHelpers
 setup_requires = ['setuptools']
 
 # Cython override; default to building extension module from pre-Cythonized .c file
-USE_CYTHON = False
+USE_CYTHON = True if not os.path.isfile(os.path.join('vidcutter', 'libs', 'pympv','mpv.c')) else False
 ext = '.pyx' if USE_CYTHON else '.c'
 extensions = [Extension(
     'vidcutter.libs.mpv',

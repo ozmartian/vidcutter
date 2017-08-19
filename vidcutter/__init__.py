@@ -26,4 +26,4 @@ __author__      = 'Pete Alexandrou'
 __email__       = 'pete@ozmartians.com'
 __website__     = 'http://vidcutter.ozmartians.com'
 
-__version__     = '4.0.0'
+__version__     = '4.5.0.DEV'

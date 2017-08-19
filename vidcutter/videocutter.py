@@ -112,7 +112,6 @@ class VideoCutter(QWidget):
         self.showConsole = self.settings.value('showConsole', 'off', type=str) in {'on', 'true'}
         self.level1Seek = self.settings.value('level1Seek', 2, type=float)
         self.level2Seek = self.settings.value('level2Seek', 5, type=float)
-
         self.lastFolder = self.settings.value('lastFolder', QDir.homePath(), type=str)
         if not os.path.exists(self.lastFolder):
             self.lastFolder = QDir.homePath()

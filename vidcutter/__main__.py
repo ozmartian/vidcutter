@@ -31,7 +31,7 @@ import sys
 import traceback
 
 from PyQt5.QtCore import (pyqtSlot, QCommandLineOption, QCommandLineParser, QCoreApplication, QDir, QFileInfo,
-                          QProcess, QSettings, QSize, QStandardPaths, Qt)
+                          QLockFile, QProcess, QSettings, QSize, QStandardPaths, Qt)
 from PyQt5.QtGui import QCloseEvent, QContextMenuEvent, QDragEnterEvent, QDropEvent, QIcon, QMouseEvent, QResizeEvent
 from PyQt5.QtWidgets import qApp, QApplication, QMainWindow, QMessageBox, QSizePolicy
 
@@ -137,6 +137,8 @@ class MainWindow(QMainWindow):
             self.restoreGeometry(self.settings.value('geometry'))
         if self.settings.value('windowState') is not None:
             self.restoreState(self.settings.value('windowState'))
+        self.singleInstance = self.settings.value('singleInstance', 'on', type=str) in {'on', 'true'}
+        self.set_single_instance(self.singleInstance)
         self.theme = self.settings.value('theme', 'light', type=str)
         self.startupvol = self.settings.value('volume', 100, type=int)
 
@@ -150,15 +152,15 @@ class MainWindow(QMainWindow):
         self.parser.setApplicationDescription('\nVidCutter - the simplest + fastest video cutter & joiner')
         self.parser.addPositionalArgument('video', 'Preload video file', '[video]')
         self.parser.addPositionalArgument('project', 'Open VidCutter project file (.vcp)', '[project]')
-        self.debug_option = QCommandLineOption(['debug'], 'debug mode; verbose console output & logging. ' +
-                                               'This will basically output what is being logged to file to the ' +
-                                               'console stdout. Mainly useful for debugging problems with your ' +
+        self.debug_option = QCommandLineOption(['debug'], 'debug mode; verbose console output & logging. '
+                                               'This will basically output what is being logged to file to the '
+                                               'console stdout. Mainly useful for debugging problems with your '
                                                'system video and/or audio stack and codec configuration.')
-        self.dev_option = QCommandLineOption(['dev'], 'developer mode; disables the use of compiled resource files ' +
-                                             'so that all app resources & assets are accessed directly from the file ' +
-                                             'system allowing you to see UI changes immediately. this typically ' +
-                                             'relates to changes made to Qt stylesheets (.qss), layout/templates, ' +
-                                             'content includes and images. basically all assets defined in .qrc ' +
+        self.dev_option = QCommandLineOption(['dev'], 'developer mode; disables the use of compiled resource files '
+                                             'so that all app resources & assets are accessed directly from the file '
+                                             'system allowing you to see UI changes immediately. this typically '
+                                             'relates to changes made to Qt stylesheets (.qss), layout/templates, '
+                                             'content includes and images. basically all assets defined in .qrc '
                                              'files throughout the codebase.')
         self.parser.addOption(self.debug_option)
         self.parser.addOption(self.dev_option)
@@ -178,10 +180,12 @@ class MainWindow(QMainWindow):
                 sys.exit(1)
             self.video = file_path
 
+    def set_single_instance(self, on: bool=True) -> None:
+        pass
+
     def init_cutter(self) -> None:
         self.cutter = VideoCutter(self)
         self.cutter.errorOccurred.connect(self.errorHandler)
-        # qApp.setWindowIcon(QIcon(':/images/vidcutter.png'))
         qApp.setWindowIcon(QIcon.fromTheme(qApp.applicationName().lower(), QIcon(':/images/vidcutter.png')))
         self.setCentralWidget(self.cutter)
 
@@ -276,6 +280,12 @@ def main():
     app.setApplicationVersion(MainWindow.get_version())
     app.setOrganizationDomain('ozmartians.com')
     app.setQuitOnLastWindowClosed(True)
+
+    lockfile = QLockFile(QDir.temp().absoluteFilePath(qApp.applicationName().lower()))
+    lockfile.setStaleLockTime(0)
+    while not lockfile.tryLock(100):
+        _, pid, hostname, appname = lockfile.getLockInfo()
+        os.kill(pid, signal.SIGKILL)
 
     win = MainWindow()
     exit_code = app.exec_()

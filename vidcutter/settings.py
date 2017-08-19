@@ -243,6 +243,19 @@ class GeneralPage(QWidget):
         super(GeneralPage, self).__init__(parent)
         self.parent = parent
         self.setObjectName('settingsgeneralpage')
+        singleInstanceCheckbox = QCheckBox('Allow only one running instance', self)
+        singleInstanceCheckbox.setToolTip('Allow just one single %s instance to be running')
+        singleInstanceCheckbox.setCursor(Qt.PointingHandCursor)
+        singleInstanceCheckbox.setChecked(self.parent.parent.parent.singleInstance)
+        singleInstanceCheckbox.stateChanged.connect(self.setSingleInstance)
+        singleInstanceLabel = QLabel('''
+            <b>ON:</b> all actions open in the same app window
+            <br/>
+            <b>OFF:</b> all actions open in separate app windows 
+        ''', self)
+        singleInstanceLabel.setObjectName('singleinstancelabel')
+        singleInstanceLabel.setTextFormat(Qt.RichText)
+        singleInstanceLabel.setWordWrap(True)
         keepClipsCheckbox = QCheckBox('Keep clip segments', self)
         keepClipsCheckbox.setToolTip('Keep joined clip segments')
         keepClipsCheckbox.setCursor(Qt.PointingHandCursor)
@@ -272,6 +285,9 @@ class GeneralPage(QWidget):
         nativeDialogsLabel.setTextFormat(Qt.RichText)
         nativeDialogsLabel.setWordWrap(True)
         generalLayout = QVBoxLayout()
+        generalLayout.addWidget(singleInstanceCheckbox)
+        generalLayout.addWidget(singleInstanceLabel)
+        generalLayout.addWidget(SettingsDialog.lineSeparator())
         generalLayout.addWidget(keepClipsCheckbox)
         generalLayout.addWidget(keepClipsLabel)
         generalLayout.addWidget(SettingsDialog.lineSeparator())
@@ -332,6 +348,11 @@ class GeneralPage(QWidget):
             seek2SpinBox.setStyle(QStyleFactory.create('Fusion'))
 
     @pyqtSlot(int)
+    def setSingleInstance(self, state: int) -> None:
+        self.parent.parent.saveSetting('singleInstance', state == Qt.Checked)
+        self.parent.parent.parent.set_single_instance(state == Qt.Checked)
+
+    @pyqtSlot(int)
     def keepClips(self, state: int) -> None:
         self.parent.parent.saveSetting('keepClips', state == Qt.Checked)
         self.parent.parent.keepClips = (state == Qt.Checked)
@@ -388,11 +409,11 @@ class SettingsDialog(QDialog):
         buttons.accepted.connect(self.close)
         mainLayout = QVBoxLayout()
         mainLayout.addLayout(horizontalLayout)
-        mainLayout.addSpacing(12)
         mainLayout.addWidget(buttons)
         self.setLayout(mainLayout)
         self.setWindowTitle('Settings - {0}'.format(qApp.applicationName()))
-        self.setFixedWidth(620)
+        # self.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
+        self.setMinimumWidth(620)
 
     def initCategories(self):
         generalButton = QListWidgetItem(self.categories)
@@ -416,6 +437,7 @@ class SettingsDialog(QDialog):
         self.categories.currentItemChanged.connect(self.changePage)
         self.categories.setCurrentRow(0)
         self.categories.setMaximumWidth(self.categories.sizeHintForColumn(0) + 2)
+        self.adjustSize()
 
     @staticmethod
     def lineSeparator() -> QFrame:
