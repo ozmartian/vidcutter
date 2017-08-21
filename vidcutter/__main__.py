@@ -285,7 +285,7 @@ def main():
     lockfile.setStaleLockTime(0)
     while not lockfile.tryLock(100):
         _, pid, hostname, appname = lockfile.getLockInfo()
-        os.kill(pid, signal.SIGKILL)
+        os.kill(pid, signal.SIGTERM)
 
     win = MainWindow()
     exit_code = app.exec_()
