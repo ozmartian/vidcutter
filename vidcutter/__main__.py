@@ -31,10 +31,11 @@ import sys
 import traceback
 
 from PyQt5.QtCore import (pyqtSlot, QCommandLineOption, QCommandLineParser, QCoreApplication, QDir, QFileInfo,
-                          QLockFile, QProcess, QSettings, QSize, QStandardPaths, Qt)
+                          QProcess, QSettings, QSize, QStandardPaths, Qt)
 from PyQt5.QtGui import QCloseEvent, QContextMenuEvent, QDragEnterEvent, QDropEvent, QIcon, QMouseEvent, QResizeEvent
 from PyQt5.QtWidgets import qApp, QApplication, QMainWindow, QMessageBox, QSizePolicy
 
+from vidcutter.libs.singleapplication import SingleApplication
 from vidcutter.videoconsole import ConsoleHandler, ConsoleWidget
 from vidcutter.videocutter import VideoCutter
 
@@ -60,19 +61,8 @@ class MainWindow(QMainWindow):
         self.setAcceptDrops(True)
         self.show()
         self.console.setGeometry(int(self.x() - (self.width() / 2)), self.y() + int(self.height() / 3), 750, 300)
-        try:
-            if len(self.video):
-                if QFileInfo(self.video).suffix() == 'vcp':
-                    self.cutter.openProject(project_file=self.video)
-                else:
-                    self.cutter.loadMedia(self.video)
-        except (FileNotFoundError, PermissionError) as e:
-            QMessageBox.critical(self, 'Error loading file', sys.exc_info()[0])
-            logging.exception('Error loading file')
-            qApp.restoreOverrideCursor()
-            self.restart()
-        if not self.cutter.ffmpeg_check():
-            qApp.exit(1)
+        if self.video:
+            self.file_opener(self.video)
 
     def init_scale(self) -> None:
         screen_size = qApp.desktop().availableGeometry(-1)
@@ -80,8 +70,21 @@ class MainWindow(QMainWindow):
         self.setMinimumSize(self.get_size(self.scale))
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
+    @pyqtSlot(str)
+    def file_opener(self, filename: str) -> None:
+        try:
+            if QFileInfo(filename).suffix() == 'vcp':
+                self.cutter.openProject(project_file=filename)
+            else:
+                self.cutter.loadMedia(filename)
+        except (FileNotFoundError, PermissionError) as ex:
+            QMessageBox.critical(self, 'Error loading file', sys.exc_info()[0])
+            logging.exception('Error loading file')
+            qApp.restoreOverrideCursor()
+            self.restart()
+
     @staticmethod
-    def get_size(mode: str = 'NORMAL') -> QSize:
+    def get_size(mode: str='NORMAL') -> QSize:
         modes = {
             'LOW': QSize(800, 425),
             'NORMAL': QSize(915, 680),
@@ -138,7 +141,6 @@ class MainWindow(QMainWindow):
         if self.settings.value('windowState') is not None:
             self.restoreState(self.settings.value('windowState'))
         self.singleInstance = self.settings.value('singleInstance', 'on', type=str) in {'on', 'true'}
-        self.set_single_instance(self.singleInstance)
         self.theme = self.settings.value('theme', 'light', type=str)
         self.startupvol = self.settings.value('volume', 100, type=int)
 
@@ -177,11 +179,8 @@ class MainWindow(QMainWindow):
             if not os.path.exists(file_path):
                 sys.stderr.write('\nERROR: File not found: %s\n' % file_path)
                 self.close()
-                sys.exit(1)
+                qApp.exit(1)
             self.video = file_path
-
-    def set_single_instance(self, on: bool=True) -> None:
-        pass
 
     def init_cutter(self) -> None:
         self.cutter = VideoCutter(self)
@@ -206,7 +205,7 @@ class MainWindow(QMainWindow):
         self.settings.sync()
 
     @staticmethod
-    def get_path(path: str = None, override: bool = False) -> str:
+    def get_path(path: str=None, override: bool=False) -> str:
         if override:
             if getattr(sys, 'frozen', False):
                 return os.path.join(sys._MEIPASS, path)
@@ -214,10 +213,10 @@ class MainWindow(QMainWindow):
         return ':%s' % path
 
     @staticmethod
-    def get_version(filename: str = '__init__.py') -> str:
+    def get_package_var(varname: str, filename: str='__init__.py') -> str:
         with open(MainWindow.get_path(filename, override=True), 'r', encoding='utf-8') as initfile:
             for line in initfile.readlines():
-                m = re.match('__version__ *= *[\'](.*)[\']', line)
+                m = re.match('__{0}__ *= *[\'](.*)[\']'.format(varname), line)
                 if m:
                     return m.group(1)
 
@@ -275,19 +274,16 @@ def main():
     if sys.platform == 'darwin':
         QApplication.setStyle('Fusion')
 
-    app = QApplication(sys.argv)
+    app = SingleApplication(MainWindow.get_package_var('appid'), sys.argv)
     app.setApplicationName('VidCutter')
-    app.setApplicationVersion(MainWindow.get_version())
+    app.setApplicationVersion(MainWindow.get_package_var('version'))
     app.setOrganizationDomain('ozmartians.com')
     app.setQuitOnLastWindowClosed(True)
 
-    lockfile = QLockFile(QDir.temp().absoluteFilePath(qApp.applicationName().lower()))
-    lockfile.setStaleLockTime(0)
-    while not lockfile.tryLock(100):
-        _, pid, hostname, appname = lockfile.getLockInfo()
-        os.kill(pid, signal.SIGTERM)
-
     win = MainWindow()
+    app.setActivationWindow(win)
+    app.messageReceived.connect(win.file_opener)
+
     exit_code = app.exec_()
     if exit_code == MainWindow.EXIT_CODE_REBOOT:
         if sys.platform == 'win32':

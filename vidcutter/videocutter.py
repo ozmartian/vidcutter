@@ -1215,33 +1215,33 @@ class VideoCutter(QWidget):
     def viewLogs() -> None:
         QDesktopServices.openUrl(QUrl.fromLocalFile(logging.getLoggerClass().root.handlers[0].baseFilename))
 
-    def ffmpeg_check(self) -> bool:
-        valid = os.path.exists(self.videoService.backend) if self.videoService.backend is not None else False
-        if not valid:
-            if sys.platform == 'win32':
-                exe = 'bin\\ffmpeg.exe'
-            else:
-                valid = os.path.exists(self.parent.get_path('bin/ffmpeg', override=True))
-                exe = 'bin/ffmpeg'
-            if sys.platform.startswith('linux'):
-                link = self.ffmpeg_installer['linux'][self.parent.get_bitness()]
-            else:
-                link = self.ffmpeg_installer[sys.platform][self.parent.get_bitness()]
-            QMessageBox.critical(self.parent, 'Missing FFMpeg executable', '<style>li { margin: 1em 0; }</style>' +
-                                 '<h3 style="color:#6A687D;">MISSING FFMPEG EXECUTABLE</h3>' +
-                                 '<p>The FFMpeg utility is missing in your ' +
-                                 'installation. It should have been installed when you first setup VidCutter.</p>' +
-                                 '<p>You can easily fix this by manually downloading and installing it yourself by' +
-                                 'following the steps provided below:</p><ol>' +
-                                 '<li>Download the <b>static</b> version of FFMpeg from<br/>' +
-                                 '<a href="%s" target="_blank"><b>this clickable link</b></a>.</li>' % link +
-                                 '<li>Extract this file accordingly and locate the ffmpeg executable within.</li>' +
-                                 '<li>Move or Cut &amp; Paste the executable to the following path on your system: ' +
-                                 '<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;%s</li></ol>'
-                                 % QDir.toNativeSeparators(self.parent.get_path(exe, override=True)) +
-                                 '<p><b>NOTE:</b> You will most likely need Administrator rights (Windows) or ' +
-                                 'root access (Linux/Mac) in order to do this.</p>')
-        return valid
+    # def ffmpeg_check(self) -> bool:
+    #     valid = os.path.exists(self.videoService.backend) if self.videoService.backend is not None else False
+    #     if not valid:
+    #         if sys.platform == 'win32':
+    #             exe = 'bin\\ffmpeg.exe'
+    #         else:
+    #             valid = os.path.exists(self.parent.get_path('bin/ffmpeg', override=True))
+    #             exe = 'bin/ffmpeg'
+    #         if sys.platform.startswith('linux'):
+    #             link = self.ffmpeg_installer['linux'][self.parent.get_bitness()]
+    #         else:
+    #             link = self.ffmpeg_installer[sys.platform][self.parent.get_bitness()]
+    #         QMessageBox.critical(self.parent, 'Missing FFMpeg executable', '<style>li { margin: 1em 0; }</style>' +
+    #                              '<h3 style="color:#6A687D;">MISSING FFMPEG EXECUTABLE</h3>' +
+    #                              '<p>The FFMpeg utility is missing in your ' +
+    #                              'installation. It should have been installed when you first setup VidCutter.</p>' +
+    #                              '<p>You can easily fix this by manually downloading and installing it yourself by' +
+    #                              'following the steps provided below:</p><ol>' +
+    #                              '<li>Download the <b>static</b> version of FFMpeg from<br/>' +
+    #                              '<a href="%s" target="_blank"><b>this clickable link</b></a>.</li>' % link +
+    #                              '<li>Extract this file accordingly and locate the ffmpeg executable within.</li>' +
+    #                              '<li>Move or Cut &amp; Paste the executable to the following path on your system: ' +
+    #                              '<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;%s</li></ol>'
+    #                              % QDir.toNativeSeparators(self.parent.get_path(exe, override=True)) +
+    #                              '<p><b>NOTE:</b> You will most likely need Administrator rights (Windows) or ' +
+    #                              'root access (Linux/Mac) in order to do this.</p>')
+    #     return valid
 
     @pyqtSlot()
     def toggleFullscreen(self) -> None:

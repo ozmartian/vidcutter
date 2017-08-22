@@ -247,7 +247,7 @@ class GeneralPage(QWidget):
         singleInstanceCheckbox.setToolTip('Allow just one single %s instance to be running')
         singleInstanceCheckbox.setCursor(Qt.PointingHandCursor)
         singleInstanceCheckbox.setChecked(self.parent.parent.parent.singleInstance)
-        singleInstanceCheckbox.stateChanged.connect(self.setSingleInstance)
+        # singleInstanceCheckbox.stateChanged.connect(self.setSingleInstance)
         singleInstanceLabel = QLabel('''
             <b>ON:</b> all actions open in the same app window
             <br/>
