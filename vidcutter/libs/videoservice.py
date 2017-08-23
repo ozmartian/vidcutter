@@ -132,7 +132,7 @@ class VideoService(QObject):
         if img.open():
             imagecap = img.fileName()
             size = thumbsize.value
-            backend, _ = VideoService.initBackends()
+            backend, _, _ = VideoService.initBackends()
             args = '-hide_banner -ss %s -i "%s" -vframes 1 -s %ix%i -v 16 -y "%s"' % (frametime, source, size.width(),
                                                                                       size.height(), imagecap)
             proc = VideoService.initProc()
