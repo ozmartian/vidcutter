@@ -48,10 +48,12 @@ class VideoService(QObject):
     utils = {
         'nt': {
             'ffmpeg': ['ffmpeg.exe'],
+            'ffprobe': ['ffprobe.exe'],
             'mediainfo': ['MediaInfo.exe']
         },
         'posix': {
             'ffmpeg': ['ffmpeg', 'ffmpeg2.8', 'avconv'],
+            'ffprobe': ['ffprobe', 'avprobe'],
             'mediainfo': ['mediainfo']
         }
     }
@@ -69,7 +71,7 @@ class VideoService(QObject):
         super(VideoService, self).__init__(parent)
         self.parent = parent
         self.logger = logging.getLogger(__name__)
-        self.backend, self.mediainfo = VideoService.initBackends()
+        self.backend, self.probe, self.mediainfo = VideoService.initBackends()
         if self.backend is not None:
             self.proc = VideoService.initProc()
             if hasattr(self.proc, 'errorOccurred'):
@@ -78,24 +80,30 @@ class VideoService(QObject):
 
     @staticmethod
     def initBackends() -> tuple:
-        backend, mediainfo = None, None
         if VideoService.frozen:
             if sys.platform == 'win32':
                 return os.path.join(VideoService.getAppPath(), 'bin', 'ffmpeg.exe'), \
+                       os.path.join(VideoService.getAppPath(), 'bin', 'ffprobe.exe'), \
                        os.path.join(VideoService.getAppPath(), 'bin', 'MediaInfo.exe')
             else:
                 return os.path.join(VideoService.getAppPath(), 'bin', 'ffmpeg'), \
+                       os.path.join(VideoService.getAppPath(), 'bin', 'ffprobe'), \
                        os.path.join(VideoService.getAppPath(), 'bin', 'mediainfo')
         else:
+            backend, probe, mediainfo = None, None, None
             for exe in VideoService.utils[os.name]['ffmpeg']:
                 backend = find_executable(exe)
                 if backend is not None:
+                    break
+            for exe in VideoService.utils[os.name]['ffprobe']:
+                probe = find_executable(exe)
+                if probe is not None:
                     break
             for exe in VideoService.utils[os.name]['mediainfo']:
                 mediainfo = find_executable(exe)
                 if mediainfo is not None:
                     break
-        return backend, mediainfo
+            return backend, probe, mediainfo
 
     @staticmethod
     def initProc() -> QProcess:
@@ -111,9 +119,9 @@ class VideoService(QObject):
         info = QStorageInfo(path)
         available = info.bytesAvailable() / 1000 / 1000
         if available < VideoService.spaceWarningThreshold:
-            warnmsg = 'There is less than {0}MB of disk space available at the target folder selected to save ' + \
-                      'your media. VidCutter WILL FAIL to produce your media if you run out of space during ' + \
-                      'operations.'
+            warnmsg = "There is less than {0}MB of disk space available at the target folder selected to save " \
+                      "your media. VidCutter WILL FAIL to produce your media if you run out of space during " \
+                      "operations."
             QMessageBox.warning(self.parent, 'Disk space is low!', warnmsg.format(VideoService.spaceWarningThreshold))
             self.spaceWarningDelivered = True
 
@@ -153,10 +161,10 @@ class VideoService(QObject):
             file2_codecs = self.codecs(file2)
             if file1_codecs != file2_codecs:
                 self.logger.info('join test failed for %s and %s: codecs mismatched' % (file1, file2))
-                self.lastError = '<p>The audio + video format of this media file is not the same as the files ' + \
-                                 'already in your clip index.</p>' + \
-                                 '<div align="center">Current files are <b>{0}</b> (video) and ' + \
-                                 '<b>{1}</b> (audio)<br/>' + \
+                self.lastError = '<p>The audio + video format of this media file is not the same as the files ' \
+                                 'already in your clip index.</p>' \
+                                 '<div align="center">Current files are <b>{0}</b> (video) and ' \
+                                 '<b>{1}</b> (audio)<br/>' \
                                  'Failed media is <b>{2}</b> (video) and <b>{3}</b> (audio)</div>'
                 self.lastError = self.lastError.format(file1_codecs[0], file1_codecs[1],
                                                        file2_codecs[0], file2_codecs[1])
@@ -166,9 +174,9 @@ class VideoService(QObject):
             size2 = self.framesize(file2)
             if size1 != size2:
                 self.logger.info('join test failed for %s and %s: frame size mismatched' % (file1, file2))
-                self.lastError = '<p>The frame size of this media file is not the same as the files already in ' + \
-                                 'your clip index.</p>' + \
-                                 '<div align="center">Current media clips are <b>{0}x{1}</b>' + \
+                self.lastError = '<p>The frame size of this media file is not the same as the files already in ' \
+                                 'your clip index.</p>' \
+                                 '<div align="center">Current media clips are <b>{0}x{1}</b>' \
                                  '<br/>Failed media file is <b>{2}x{3}</b></div>'
                 self.lastError = self.lastError.format(size1.width(), size1.height(), size2.width(), size2.height())
                 return result
@@ -217,10 +225,10 @@ class VideoService(QObject):
     def cut(self, source: str, output: str, frametime: str, duration: str, allstreams: bool=True) -> bool:
         self.checkDiskSpace(output)
         if allstreams:
-            args = '-ss {0} -i "{1}" -t {2} -vcodec copy -acodec copy -scodec copy -avoid_negative_ts 1 -copyinkf ' + \
+            args = '-ss {0} -i "{1}" -t {2} -vcodec copy -acodec copy -scodec copy -avoid_negative_ts 1 -copyinkf ' \
                    '-map 0 -v 16 -y "{3}"'
         else:
-            args = '-ss {0} -i "{1}" -t {2} -vcodec copy -acodec copy -scodec copy -avoid_negative_ts 1 -copyinkf ' + \
+            args = '-ss {0} -i "{1}" -t {2} -vcodec copy -acodec copy -scodec copy -avoid_negative_ts 1 -copyinkf ' \
                    '-v 16 -y "{3}"'
         return self.cmdExec(self.backend, args.format(frametime, source, duration, QDir.fromNativeSeparators(output)))
 
@@ -258,6 +266,17 @@ class VideoService(QObject):
             elif acodec == 'mp3':
                 absf = '%s mp3decomp' % prefix
         return vbsf, absf
+
+    def getIDRFrames(self, source: str) -> list:
+        idrframes = list()
+        args = '"{0}" -show_packets -show_entries packet=pts_time,flags -of csv'.format(source)
+        result = self.cmdExec(self.probe, args, output=True)
+        for line in result.split('\n'):
+            if re.search(',K', line):
+                secs = float(line.split(',')[1])
+                idrframes.append(QTime(int((secs / 3600) % 60), int((secs / 60) % 60),
+                                       int(secs % 60), int((secs * 1000) % 1000)).toString('hh:mm:ss.zzz'))
+        return idrframes
 
     def isMPEGcodec(self, source: str) -> bool:
         return self.codecs(source)[0].lower() in self.mpegCodecs
@@ -309,7 +328,7 @@ class VideoService(QObject):
         if self.proc.state() == QProcess.NotRunning:
             self.proc.setProcessChannelMode(QProcess.SeparateChannels if cmd == self.mediainfo
                                             else QProcess.MergedChannels)
-            if cmd == self.backend:
+            if cmd in {self.backend, self.probe}:
                 args = '-hide_banner {0}'.format(args)
             self.proc.start(cmd, shlex.split(args))
             self.proc.waitForFinished(-1)
