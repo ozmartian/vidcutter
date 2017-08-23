@@ -140,7 +140,6 @@ class MainWindow(QMainWindow):
             self.restoreGeometry(self.settings.value('geometry'))
         if self.settings.value('windowState') is not None:
             self.restoreState(self.settings.value('windowState'))
-        self.singleInstance = self.settings.value('singleInstance', 'on', type=str) in {'on', 'true'}
         self.theme = self.settings.value('theme', 'light', type=str)
         self.startupvol = self.settings.value('volume', 100, type=int)
 

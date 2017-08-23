@@ -25,7 +25,7 @@
 import os
 import sys
 
-from PyQt5.QtCore import pyqtSignal, Qt, QTextStream
+from PyQt5.QtCore import pyqtSignal, Qt, QDir, QSettings, QTextStream
 from PyQt5.QtNetwork import QLocalServer, QLocalSocket
 from PyQt5.QtWidgets import QApplication
 
@@ -41,21 +41,46 @@ class SingleApplication(QApplication):
         self._outSocket = QLocalSocket()
         self._outSocket.connectToServer(self._appid)
         self._isRunning = self._outSocket.waitForConnected()
-        if self._isRunning:
+        self._outStream = None
+        self._inSocket = None
+        self._inStream = None
+        self.settings = QSettings(SingleApplication.getSettingsPath(), QSettings.IniFormat)
+        self.singleInstance = self.settings.value('singleInstance', 'on', type=str) in {'on', 'true'}
+        if self._isRunning and self.singleInstance:
             self._outStream = QTextStream(self._outSocket)
             for a in argv[0][1:]:
+                a = os.path.join(os.getcwd(), a)
                 if os.path.isfile(a):
                     self.sendMessage(a)
                     break
             sys.exit(0)
         else:
+            error = self._outSocket.error()
+            if error == QLocalSocket.ConnectionRefusedError:
+                self.close()
+                QLocalServer.removeServer(self._appid)
             self._outSocket = None
-            self._outStream = None
-            self._inSocket = None
-            self._inStream = None
             self._server = QLocalServer()
             self._server.listen(self._appid)
             self._server.newConnection.connect(self._onNewConnection)
+
+    def close(self):
+        if self._inSocket:
+            self._inSocket.disconnectFromServer()
+        if self._outSocket:
+            self._outSocket.disconnectFromServer()
+        if self._server:
+            self._server.close()
+
+    @staticmethod
+    def getSettingsPath() -> str:
+        if sys.platform == 'win32':
+            settings_path = os.path.join(QDir.homePath(), 'AppData', 'Local', 'vidcutter')
+        elif sys.platform == 'darwin':
+            settings_path = os.path.join(QDir.homePath(), 'Library', 'Preferences', 'vidcutter')
+        else:
+            settings_path = os.path.join(QDir.homePath(), '.config', 'vidcutter')
+        return os.path.join(settings_path, 'vidcutter.ini')
 
     def isRunning(self):
         return self._isRunning
@@ -73,8 +98,7 @@ class SingleApplication(QApplication):
     def activateWindow(self):
         if not self._activationWindow:
             return
-        self._activationWindow.setWindowState(
-            self._activationWindow.windowState() & ~Qt.WindowMinimized)
+        self._activationWindow.setWindowState(self._activationWindow.windowState() & ~Qt.WindowMinimized)
         self._activationWindow.raise_()
         self._activationWindow.activateWindow()
 

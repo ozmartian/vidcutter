@@ -243,11 +243,12 @@ class GeneralPage(QWidget):
         super(GeneralPage, self).__init__(parent)
         self.parent = parent
         self.setObjectName('settingsgeneralpage')
+        self.singleInstance = self.parent.settings.value('singleInstance', 'on', type=str) in {'on', 'true'}
         singleInstanceCheckbox = QCheckBox('Allow only one running instance', self)
         singleInstanceCheckbox.setToolTip('Allow just one single %s instance to be running')
         singleInstanceCheckbox.setCursor(Qt.PointingHandCursor)
-        singleInstanceCheckbox.setChecked(self.parent.parent.parent.singleInstance)
-        # singleInstanceCheckbox.stateChanged.connect(self.setSingleInstance)
+        singleInstanceCheckbox.setChecked(self.singleInstance)
+        singleInstanceCheckbox.stateChanged.connect(self.setSingleInstance)
         singleInstanceLabel = QLabel('''
             <b>ON:</b> all actions open in the same app window
             <br/>
@@ -349,8 +350,8 @@ class GeneralPage(QWidget):
 
     @pyqtSlot(int)
     def setSingleInstance(self, state: int) -> None:
-        self.parent.parent.saveSetting('singleInstance', state == Qt.Checked)
-        self.parent.parent.parent.set_single_instance(state == Qt.Checked)
+        self.singleInstance = (state == Qt.Checked)
+        self.parent.parent.saveSetting('singleInstance', self.singleInstance)
 
     @pyqtSlot(int)
     def keepClips(self, state: int) -> None:
@@ -412,7 +413,6 @@ class SettingsDialog(QDialog):
         mainLayout.addWidget(buttons)
         self.setLayout(mainLayout)
         self.setWindowTitle('Settings - {0}'.format(qApp.applicationName()))
-        # self.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
         self.setMinimumWidth(620)
 
     def initCategories(self):
