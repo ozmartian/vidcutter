@@ -27,6 +27,7 @@ import os
 import re
 import shlex
 import sys
+from bisect import bisect_left
 from distutils.spawn import find_executable
 from enum import Enum
 
@@ -267,16 +268,37 @@ class VideoService(QObject):
                 absf = '%s mp3decomp' % prefix
         return vbsf, absf
 
-    def getIDRFrames(self, source: str) -> list:
+    def getIDRFrames(self, source: str, formatted_time: bool=False) -> list:
         idrframes = list()
-        args = '"{0}" -show_packets -select_streams v -show_entries packet=pts_time,flags -of csv'.format(source)
+        args = '-v error -show_packets -select_streams v -show_entries packet=pts_time,flags {0}-of csv "{1}"' \
+            .format('-sexagesimal ' if formatted_time else '', source)
         result = self.cmdExec(self.probe, args, output=True)
         for line in result.split('\n'):
             if re.search(',K', line):
-                secs = float(line.split(',')[1])
-                idrframes.append(QTime(int((secs / 3600) % 60), int((secs / 60) % 60),
-                                       int(secs % 60), int((secs * 1000) % 1000)).toString('hh:mm:ss.zzz'))
+                if formatted_time:
+                    idrframes.append(line.split(',')[1][:-3])
+                else:
+                    idrframes.append(float(line.split(',')[1]))
         return idrframes
+
+    @staticmethod
+    def takeClosest(myList, myNumber):
+        pos = bisect_left(myList, myNumber)
+        if pos == 0:
+            return myList[0]
+        if pos == len(myList):
+            return myList[-1]
+        before = myList[pos - 1]
+        after = myList[pos]
+        if after - myNumber < myNumber - before:
+            return after
+        else:
+            return before
+
+    def getGOPbisections(self, source: str, start: float, end: float) -> dict:
+        times = {}
+        idrtimes = self.getIDRFrames(source)
+        return times
 
     def isMPEGcodec(self, source: str) -> bool:
         return self.codecs(source)[0].lower() in self.mpegCodecs

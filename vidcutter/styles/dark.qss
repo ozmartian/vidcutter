@@ -231,11 +231,12 @@ QMessageBox {
 
 /* -------------------------------------------------------------------------- */
 
-QDialogButtonBox QPushButton, QDialog#notification QPushButton {
+QDialogButtonBox QPushButton, QDialog#notification QPushButton, QDialog#videoinfo QPushButton {
     padding: 5px 8px;
 }
 
-QDialogButtonBox QPushButton, #clipindextools QPushButton, QDialog#notification QPushButton {
+QDialogButtonBox QPushButton, #clipindextools QPushButton,
+QDialog#videoinfo QPushButton, QDialog#notification QPushButton {
     color: #EFF0F1;
     background-color: #31363B;
     border: 1px solid #4D5355;
@@ -271,7 +272,8 @@ QDialogButtonBox QPushButton, #clipindextools QPushButton, QDialog#notification 
     background: #642C68 url(:images/dark/clipindex-remove-on.png) no-repeat right center;
 }
 
-QDialogButtonBox QPushButton:hover, #clipindextools QPushButton:hover, QDialog#notification QPushButton:hover {
+QDialogButtonBox QPushButton:hover, #clipindextools QPushButton:hover,
+QDialog#videoinfo QPushButton, QDialog#notification QPushButton:hover {
     border: 1px solid #642C68;
 }
 
@@ -279,6 +281,8 @@ QDialogButtonBox QPushButton:focus,
 QDialogButtonBox QPushButton:pressed,
 #clipindextools QPushButton:focus,
 #clipindextools QPushButton:pressed,
+QDialog#videoinfo QPushButton:focus,
+QDialog#videoinfo QPushButton:pressed,
 QDialog#notification QPushButton,
 QDialog#notification QPushButton:focus,
 QDialog#notification QPushButton:pressed {

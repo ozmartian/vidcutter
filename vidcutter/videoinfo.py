@@ -23,10 +23,12 @@
 #######################################################################
 
 import logging
+import math
 
 from PyQt5.QtCore import QSize, Qt
 from PyQt5.QtGui import QCloseEvent, QPixmap
-from PyQt5.QtWidgets import QDialog, QDialogButtonBox, QLabel, QSizePolicy, QTextBrowser, QHBoxLayout, QVBoxLayout
+from PyQt5.QtWidgets import (QDialog, QDialogButtonBox, QLabel, QPushButton, QSizePolicy, QTextBrowser, QHBoxLayout,
+                             QVBoxLayout)
 
 
 class VideoInfo(QDialog):
@@ -39,15 +41,14 @@ class VideoInfo(QDialog):
     def __init__(self, media, parent=None, flags=Qt.Dialog | Qt.WindowCloseButtonHint):
         super(VideoInfo, self).__init__(parent, flags)
         self.logger = logging.getLogger(__name__)
+        self.media = media
         self.parent = parent
         self.setObjectName('videoinfo')
-
         self.setContentsMargins(0, 0, 0, 0)
         self.setWindowModality(Qt.WindowModal)
         self.setWindowTitle('Media information')
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         self.setMinimumSize(self.modes.get(self.parent.parent.scale))
-
         metadata = '''<style>
     table {
         font-family: "Open Sans", sans-serif;
@@ -67,35 +68,71 @@ class VideoInfo(QDialog):
 </style>
 <div align="center" style="margin:15px;">%s</div>''' % ('#C681D5' if self.parent.theme == 'dark' else '#642C68',
                                                         '#C681D5' if self.parent.theme == 'dark' else '#642C68',
-                                                        self.parent.videoService.metadata(media))
-
+                                                        self.parent.videoService.metadata(self.media))
         content = QTextBrowser(self.parent)
         content.setStyleSheet('QTextBrowser { border: none; background-color: transparent; }')
         content.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         content.setHtml(metadata)
-
-        buttons = QDialogButtonBox(QDialogButtonBox.Ok)
-        buttons.accepted.connect(self.close)
-
-        layout = QVBoxLayout()
-        layout.addWidget(QLabel(pixmap=QPixmap(':/images/%s/mediainfo-heading.png' % self.parent.theme)))
-        layout.addWidget(content)
-
+        keyframesButton = QPushButton('View Keyframes', self)
+        keyframesButton.clicked.connect(self.showKeyframes)
+        okButton = QDialogButtonBox(QDialogButtonBox.Ok)
+        okButton.accepted.connect(self.close)
+        button_layout = QHBoxLayout()
         mediainfo_version = self.parent.videoService.cmdExec(self.parent.videoService.mediainfo, '--version', True)
         if len(mediainfo_version) >= 2:
             mediainfo_version = mediainfo_version.split('\n')[1]
             mediainfo_label = QLabel('<div style="font-size:11px;"><b>Media information by:</b><br/>%s @ '
                                      % mediainfo_version + '<a href="https://mediaarea.net" target="_blank">' +
                                      'mediaarea.net</a></div>')
-            button_layout = QHBoxLayout()
             button_layout.addWidget(mediainfo_label)
-            button_layout.addWidget(buttons)
-            layout.addLayout(button_layout)
-        else:
-            layout.addWidget(buttons)
-
+        button_layout.addStretch(1)
+        button_layout.addWidget(keyframesButton)
+        button_layout.addWidget(okButton)
+        layout = QVBoxLayout()
+        # noinspection PyArgumentList
+        layout.addWidget(QLabel(pixmap=QPixmap(':/images/%s/mediainfo-heading.png' % self.parent.theme)))
+        layout.addWidget(content)
+        layout.addLayout(button_layout)
         self.setLayout(layout)
 
-    def closeEvent(self, event: QCloseEvent):
+    def showKeyframes(self):
+        keyframes = self.parent.videoService.getIDRFrames(self.media, formatted_time=True)
+        halver = math.ceil(len(keyframes) / 2)
+        col1 = keyframes[:halver]
+        col2 = keyframes[halver:]
+        keyframe_content = '''<style>
+            table {
+                font-family: "Open Sans", sans-serif;
+                font-size: 13px;
+            }
+            td { font-weight: normal; }
+        </style>
+        <div align="center">
+            <table border="0" cellpadding="2" cellspacing="0">
+                <tr>
+                    <td>%s</td>
+                    <td>%s</td>
+                </tr>
+            </table>
+        </div>''' % ('<br/>'.join(col1), '<br/>'.join(col2))
+        content = QTextBrowser(self)
+        content.setStyleSheet('QTextBrowser { border: none; background-color: transparent; }')
+        content.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        content.setHtml(keyframe_content)
+        kframes = QDialog(self, flags=Qt.WindowCloseButtonHint)
+        kframes.setObjectName('keyframes')
+        kframes.setAttribute(Qt.WA_DeleteOnClose, True)
+        buttons = QDialogButtonBox(QDialogButtonBox.Ok)
+        buttons.accepted.connect(kframes.close)
+        layout = QVBoxLayout()
+        layout.addWidget(content)
+        layout.addWidget(buttons)
+        kframes.setLayout(layout)
+        kframes.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        kframes.setWindowModality(Qt.WindowModal)
+        kframes.setWindowTitle('View Keyframes (IDR)')
+        kframes.show()
+
+    def closeEvent(self, event: QCloseEvent) -> None:
         self.deleteLater()
         super(VideoInfo, self).closeEvent(event)

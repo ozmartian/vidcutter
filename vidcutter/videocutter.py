@@ -979,7 +979,7 @@ class VideoCutter(QWidget):
 
     def clipStart(self) -> None:
         # if os.getenv('DEBUG', False):
-        #     sys.stdout.write('cut start position: %s' % self.seekSlider.value())
+        #     self.logger.info('cut start position: %s' % self.seekSlider.value())
         starttime = self.delta2QTime(self.seekSlider.value())
         self.clipTimes.append([starttime, '', self.captureImage(starttime), ''])
         self.timeCounter.setMinimum(starttime.toString(self.timeformat))
@@ -994,7 +994,7 @@ class VideoCutter(QWidget):
 
     def clipEnd(self) -> None:
         # if os.getenv('DEBUG', False):
-        #     sys.stdout.write('cut end position: %s' % self.seekSlider.value())
+        #     self.logger.info('cut end position: %s' % self.seekSlider.value())
         item = self.clipTimes[len(self.clipTimes) - 1]
         endtime = self.delta2QTime(self.seekSlider.value())
         if endtime.__lt__(item[0]):
@@ -1060,6 +1060,11 @@ class VideoCutter(QWidget):
     def delta2QTime(millisecs: int) -> QTime:
         secs = millisecs / 1000
         return QTime(int((secs / 3600) % 60), int((secs / 60) % 60), int(secs % 60), int((secs * 1000) % 1000))
+
+    @staticmethod
+    def qtime2delta(qtime: QTime) -> float:
+        return timedelta(hours=qtime.hour(), minutes=qtime.minute(), seconds=qtime.second(),
+                         milliseconds=qtime.msec()).total_seconds()
 
     @staticmethod
     def delta2String(td: timedelta) -> str:
