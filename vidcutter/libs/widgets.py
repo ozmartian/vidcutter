@@ -43,7 +43,7 @@ class TimeCounter(QWidget):
         self.parent = parent
         self.timeedit = QTimeEdit(QTime(0, 0))
         self.timeedit.setObjectName('timeCounter')
-        self.timeedit.setStyle(QStyleFactory.create('fusion'))
+        self.timeedit.setStyle(QStyleFactory.create('Fusion'))
         self.timeedit.setFrame(False)
         self.timeedit.setDisplayFormat('hh:mm:ss.zzz')
         self.timeedit.timeChanged.connect(self.timeChangeHandler)
@@ -111,7 +111,7 @@ class FrameCounter(QWidget):
         self.parent = parent
         self.currentframe = QSpinBox(self)
         self.currentframe.setObjectName('frameCounter')
-        self.currentframe.setStyle(QStyleFactory.create('fusion'))
+        self.currentframe.setStyle(QStyleFactory.create('Fusion'))
         self.currentframe.setFrame(False)
         self.currentframe.setAlignment(Qt.AlignRight)
         self.currentframe.valueChanged.connect(self.frameChangeHandler)
@@ -176,7 +176,7 @@ class VCProgressBar(QDialog):
         self._progress = QProgressBar(self.parent)
         self._progress.setRange(0, 0)
         self._progress.setTextVisible(False)
-        self._progress.setStyle(QStyleFactory.create('fusion'))
+        self._progress.setStyle(QStyleFactory.create('Fusion'))
         self._label = QLabel(parent)
         self._label.setAlignment(Qt.AlignCenter)
         layout = QGridLayout()

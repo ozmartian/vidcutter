@@ -269,7 +269,7 @@ class VideoService(QObject):
 
     def getIDRFrames(self, source: str) -> list:
         idrframes = list()
-        args = '"{0}" -show_packets -show_entries packet=pts_time,flags -of csv'.format(source)
+        args = '"{0}" -show_packets -select_streams v -show_entries packet=pts_time,flags -of csv'.format(source)
         result = self.cmdExec(self.probe, args, output=True)
         for line in result.split('\n'):
             if re.search(',K', line):

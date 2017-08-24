@@ -44,6 +44,7 @@ class SingleApplication(QApplication):
         self._outStream = None
         self._inSocket = None
         self._inStream = None
+        self._server = None
         self.settings = QSettings(SingleApplication.getSettingsPath(), QSettings.IniFormat)
         self.singleInstance = self.settings.value('singleInstance', 'on', type=str) in {'on', 'true'}
         if self._isRunning and self.singleInstance:
