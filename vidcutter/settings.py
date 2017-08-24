@@ -41,14 +41,14 @@ class ThemePage(QWidget):
         if sys.platform != 'darwin':
             self.lightRadio = QRadioButton(self)
             self.lightRadio.setIcon(QIcon(':/images/%s/theme-light.png' % self.parent.theme))
-            self.lightRadio.setToolTip('<img src=":/images/theme-light-large.jpg" />')
+            # self.lightRadio.setToolTip('<img src=":/images/theme-light-large.jpg" />')
             self.lightRadio.setIconSize(QSize(165, 121))
             self.lightRadio.setCursor(Qt.PointingHandCursor)
             self.lightRadio.clicked.connect(self.switchTheme)
             self.lightRadio.setChecked(self.parent.theme == 'light')
             self.darkRadio = QRadioButton(self)
             self.darkRadio.setIcon(QIcon(':/images/%s/theme-dark.png' % self.parent.theme))
-            self.darkRadio.setToolTip('<img src=":/images/theme-dark-large.jpg" />')
+            # self.darkRadio.setToolTip('<img src=":/images/theme-dark-large.jpg" />')
             self.darkRadio.setIconSize(QSize(165, 121))
             self.darkRadio.setCursor(Qt.PointingHandCursor)
             self.darkRadio.clicked.connect(self.switchTheme)
@@ -90,8 +90,34 @@ class ThemePage(QWidget):
         toolbarGroup = QGroupBox('Toolbar')
         toolbarGroup.setLayout(toolbarLayout)
         mainLayout.addWidget(toolbarGroup)
+        nativeDialogsCheckbox = QCheckBox('Use native dialogs', self)
+        nativeDialogsCheckbox.setToolTip('Use native file dialogs')
+        nativeDialogsCheckbox.setCursor(Qt.PointingHandCursor)
+        nativeDialogsCheckbox.setChecked(self.parent.parent.nativeDialogs)
+        nativeDialogsCheckbox.stateChanged.connect(self.setNativeDialogs)
+        nativeDialogsLabel = QLabel('''
+            <b>ON:</b> use native dialog widgets as provided by your operating system
+            <br/>
+            <b>OFF:</b> use a generic file open & save dialog widget provided by the Qt toolkit
+            <br/><br/>
+            <b>NOTE:</b> native dialogs should always be used unless they are not working
+        ''', self)
+        nativeDialogsLabel.setObjectName('nativedialogslabel')
+        nativeDialogsLabel.setTextFormat(Qt.RichText)
+        nativeDialogsLabel.setWordWrap(True)
+        advancedLayout = QVBoxLayout()
+        advancedLayout.addWidget(nativeDialogsCheckbox)
+        advancedLayout.addWidget(nativeDialogsLabel)
+        advancedGroup = QGroupBox('Advanced')
+        advancedGroup.setLayout(advancedLayout)
+        mainLayout.addWidget(advancedGroup)
         mainLayout.addStretch(1)
         self.setLayout(mainLayout)
+
+    @pyqtSlot(int)
+    def setNativeDialogs(self, state: int) -> None:
+        self.parent.parent.saveSetting('nativeDialogs', state == Qt.Checked)
+        self.parent.parent.nativeDialogs = (state == Qt.Checked)
 
     @pyqtSlot(bool)
     def switchTheme(self) -> None:
@@ -243,6 +269,7 @@ class GeneralPage(QWidget):
         super(GeneralPage, self).__init__(parent)
         self.parent = parent
         self.setObjectName('settingsgeneralpage')
+        smartCheckbox = QCheckBox('')
         self.singleInstance = self.parent.settings.value('singleInstance', 'on', type=str) in {'on', 'true'}
         singleInstanceCheckbox = QCheckBox('Allow only one running instance', self)
         singleInstanceCheckbox.setToolTip('Allow just one single %s instance to be running')
@@ -270,30 +297,12 @@ class GeneralPage(QWidget):
         keepClipsLabel.setObjectName('keepclipslabel')
         keepClipsLabel.setTextFormat(Qt.RichText)
         keepClipsLabel.setWordWrap(True)
-        nativeDialogsCheckbox = QCheckBox('Use native dialogs', self)
-        nativeDialogsCheckbox.setToolTip('Use native file dialogs')
-        nativeDialogsCheckbox.setCursor(Qt.PointingHandCursor)
-        nativeDialogsCheckbox.setChecked(self.parent.parent.nativeDialogs)
-        nativeDialogsCheckbox.stateChanged.connect(self.setNativeDialogs)
-        nativeDialogsLabel = QLabel('''
-            <b>ON:</b> use native dialog widgets as provided by your operating system
-            <br/>
-            <b>OFF:</b> use a generic file open & save dialog widget provided by the Qt toolkit
-            <br/><br/>
-            <b>NOTE:</b> native dialogs should always be used unless they are not working
-        ''', self)
-        nativeDialogsLabel.setObjectName('nativedialogslabel')
-        nativeDialogsLabel.setTextFormat(Qt.RichText)
-        nativeDialogsLabel.setWordWrap(True)
         generalLayout = QVBoxLayout()
-        generalLayout.addWidget(singleInstanceCheckbox)
-        generalLayout.addWidget(singleInstanceLabel)
-        generalLayout.addWidget(SettingsDialog.lineSeparator())
         generalLayout.addWidget(keepClipsCheckbox)
         generalLayout.addWidget(keepClipsLabel)
         generalLayout.addWidget(SettingsDialog.lineSeparator())
-        generalLayout.addWidget(nativeDialogsCheckbox)
-        generalLayout.addWidget(nativeDialogsLabel)
+        generalLayout.addWidget(singleInstanceCheckbox)
+        generalLayout.addWidget(singleInstanceLabel)
         generalGroup = QGroupBox('General')
         generalGroup.setLayout(generalLayout)
         seek1SpinBox = QDoubleSpinBox(self)
@@ -357,11 +366,6 @@ class GeneralPage(QWidget):
     def keepClips(self, state: int) -> None:
         self.parent.parent.saveSetting('keepClips', state == Qt.Checked)
         self.parent.parent.keepClips = (state == Qt.Checked)
-
-    @pyqtSlot(int)
-    def setNativeDialogs(self, state: int) -> None:
-        self.parent.parent.saveSetting('nativeDialogs', state == Qt.Checked)
-        self.parent.parent.nativeDialogs = (state == Qt.Checked)
 
     def setSpinnerValue(self, box_id: int, val: float) -> None:
         self.parent.settings.setValue('level{0}Seek'.format(box_id), val)
