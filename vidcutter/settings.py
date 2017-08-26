@@ -269,10 +269,22 @@ class GeneralPage(QWidget):
         super(GeneralPage, self).__init__(parent)
         self.parent = parent
         self.setObjectName('settingsgeneralpage')
-        smartCheckbox = QCheckBox('')
+        smartCutCheckbox = QCheckBox('Enable SmartCut mode (frame-accurate)')
+        smartCutCheckbox.setToolTip('Enable SmartCut mode for frame-accurate cutting')
+        smartCutCheckbox.setCursor(Qt.PointingHandCursor)
+        smartCutCheckbox.setChecked(self.parent.parent.smartcut)
+        smartCutCheckbox.stateChanged.connect(self.setSmartCut)
+        smartCutLabel = QLabel('''
+            <b>ON:</b> the start and end of each clip is re-encoded (slowest, most accurate mode) 
+            <br/>
+            <b>OFF:</b> cut at specified time slots regardless of keyframe placement (fastest mode) 
+        ''', self)
+        smartCutLabel.setObjectName('smartcutlabel')
+        smartCutLabel.setTextFormat(Qt.RichText)
+        smartCutLabel.setWordWrap(True)
         self.singleInstance = self.parent.settings.value('singleInstance', 'on', type=str) in {'on', 'true'}
         singleInstanceCheckbox = QCheckBox('Allow only one running instance', self)
-        singleInstanceCheckbox.setToolTip('Allow just one single %s instance to be running')
+        singleInstanceCheckbox.setToolTip('Allow just one single %s instance to be running' % qApp.applicationName())
         singleInstanceCheckbox.setCursor(Qt.PointingHandCursor)
         singleInstanceCheckbox.setChecked(self.singleInstance)
         singleInstanceCheckbox.stateChanged.connect(self.setSingleInstance)
@@ -298,6 +310,9 @@ class GeneralPage(QWidget):
         keepClipsLabel.setTextFormat(Qt.RichText)
         keepClipsLabel.setWordWrap(True)
         generalLayout = QVBoxLayout()
+        generalLayout.addWidget(smartCutCheckbox)
+        generalLayout.addWidget(smartCutLabel)
+        generalLayout.addWidget(SettingsDialog.lineSeparator())
         generalLayout.addWidget(keepClipsCheckbox)
         generalLayout.addWidget(keepClipsLabel)
         generalLayout.addWidget(SettingsDialog.lineSeparator())
@@ -356,6 +371,10 @@ class GeneralPage(QWidget):
         if sys.platform == 'win32':
             seek1SpinBox.setStyle(QStyleFactory.create('Fusion'))
             seek2SpinBox.setStyle(QStyleFactory.create('Fusion'))
+
+    @pyqtSlot(int)
+    def setSmartCut(self, state: int) -> None:
+        self.parent.parent.toggleSmartCut(state == Qt.Checked)
 
     @pyqtSlot(int)
     def setSingleInstance(self, state: int) -> None:
@@ -441,7 +460,7 @@ class SettingsDialog(QDialog):
         self.categories.currentItemChanged.connect(self.changePage)
         self.categories.setCurrentRow(0)
         self.categories.setMaximumWidth(self.categories.sizeHintForColumn(0) + 2)
-        self.adjustSize()
+        # self.adjustSize()
 
     @staticmethod
     def lineSeparator() -> QFrame:

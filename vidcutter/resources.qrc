@@ -122,6 +122,9 @@
         <file>images/light/settings-theme.png</file>
         <file>images/light/settings-video.png</file>
         <file>images/light/shortcuts.png</file>
+        <file>images/light/smartcut-hover.png</file>
+        <file>images/light/smartcut-off.png</file>
+        <file>images/light/smartcut-on.png</file>
         <file>images/light/theme-dark.png</file>
         <file>images/light/theme-light.png</file>
         <file>images/light/thumbnails-hover.png</file>

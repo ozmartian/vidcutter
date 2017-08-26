@@ -110,6 +110,7 @@ class VideoCutter(QWidget):
         self.nativeDialogs = self.settings.value('nativeDialogs', 'on', type=str) in {'on', 'true'}
         self.timelineThumbs = self.settings.value('timelineThumbs', 'on', type=str) in {'on', 'true'}
         self.showConsole = self.settings.value('showConsole', 'off', type=str) in {'on', 'true'}
+        self.smartcut = self.settings.value('smartcut', 'on', type=str) in {'on', 'true'}
         self.level1Seek = self.settings.value('level1Seek', 2, type=float)
         self.level2Seek = self.settings.value('level2Seek', 5, type=float)
         self.lastFolder = self.settings.value('lastFolder', QDir.homePath(), type=str)
@@ -253,12 +254,20 @@ class VideoCutter(QWidget):
         self.consoleButton = QPushButton(self, flat=True, checkable=True, objectName='consoleButton',
                                          statusTip='Toggle console window', toolTip='Toggle console',
                                          cursor=Qt.PointingHandCursor, toggled=self.toggleConsole)
-        self.consoleButton.setFixedSize(32, 29 if self.theme == 'dark' else 31)
+        self.consoleButton.setFixedSize(31, 29 if self.theme == 'dark' else 31)
         if self.showConsole:
             self.consoleButton.setChecked(True)
             self.mpvWidget.setLogLevel('v')
             os.environ['DEBUG'] = '1'
             self.parent.console.show()
+
+        # noinspection PyArgumentList
+        self.smartcutButton = QPushButton(self, flat=True, checkable=True, objectName='smartcutButton',
+                                          toolTip='Toggle SmartCut', statusTip='Toggle frame accurate cutting',
+                                          cursor=Qt.PointingHandCursor, toggled=self.toggleSmartCut)
+        self.smartcutButton.setFixedSize(32, 29 if self.theme == 'dark' else 31)
+        if self.smartcut:
+            self.smartcutButton.setChecked(True)
 
         # noinspection PyArgumentList
         self.muteButton = QPushButton(objectName='muteButton', icon=self.unmuteIcon, flat=True, toolTip='Mute',
@@ -321,6 +330,7 @@ class VideoCutter(QWidget):
         togglesLayout.addWidget(self.thumbnailsButton)
         togglesLayout.addWidget(self.osdButton)
         togglesLayout.addWidget(self.consoleButton)
+        togglesLayout.addWidget(self.smartcutButton)
         togglesLayout.addStretch(1)
 
         settingsLayout = QHBoxLayout()
@@ -930,6 +940,12 @@ class VideoCutter(QWidget):
                 self.mpvWidget.setLogLevel('error')
             self.parent.console.hide()
         self.saveSetting('showConsole', checked)
+
+    @pyqtSlot(bool)
+    def toggleSmartCut(self, checked: bool):
+        self.smartcut = checked
+        self.saveSetting('smartcut', self.smartcut)
+        self.smartcutButton.setChecked(self.smartcut)
 
     @pyqtSlot()
     def addExternalClips(self):

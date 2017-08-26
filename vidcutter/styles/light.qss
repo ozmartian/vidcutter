@@ -174,14 +174,14 @@ QLabel#logowidget {
 }
 
 QLabel#decodinglabel, QLabel#ratiolabel, QLabel#keepclipslabel, QLabel#singleinstancelabel,
-QLabel#nativedialogslabel, QLabel#seeksettingslabel, QLabel#zoomlabel {
+QLabel#nativedialogslabel, QLabel#seeksettingslabel, QLabel#zoomlabel, QLabel#smartcutlabel {
     font-family: "Open Sans", sans-serif;
     font-size: 11px;
     color: #444;
 }
 
 QLabel#decodinglabel, QLabel#ratiolabel, QLabel#keepclipslabel, QLabel#singleinstancelabel,
-QLabel#nativedialogslabel {
+QLabel#smartcutlabel, QLabel#nativedialogslabel {
     margin: 2px 5px 10px 22px;
 }
 
@@ -336,14 +336,14 @@ QPushButton::menu-indicator#menuButton, #clipindextools QPushButton::menu-indica
     left: -4000px;
 }
 
-QPushButton#thumbnailsButton, QPushButton#osdButton, QPushButton#consoleButton,
+QPushButton#thumbnailsButton, QPushButton#osdButton, QPushButton#consoleButton, QPushButton#smartcutButton,
 QPushButton#muteButton, QPushButton#settingsButton, QPushButton#menuButton, QPushButton#fullscreenButton {
     background-color: transparent;
     border: none;
     outline: none;
 }
 
-QPushButton#thumbnailsButton, QPushButton#osdButton, QPushButton#consoleButton {
+QPushButton#thumbnailsButton, QPushButton#osdButton, QPushButton#consoleButton, QPushButton#smartcutButton {
     margin: 0;
     padding: 0;
 }
@@ -378,7 +378,7 @@ QPushButton#osdButton:pressed, QPushButton#osdButton:checked {
 
 QPushButton#consoleButton {
     border-image: url(:/images/light/console-off.png);
-    width: 32px;
+    width: 31px;
     height: 31px;
 }
 
@@ -388,6 +388,20 @@ QPushButton#consoleButton:hover {
 
 QPushButton#consoleButton:pressed, QPushButton#consoleButton:checked {
     border-image: url(:/images/light/console-on.png);
+}
+
+QPushButton#smartcutButton {
+    border-image: url(:/images/light/smartcut-off.png);
+    width: 32px;
+    height: 31px;
+}
+
+QPushButton#smartcutButton:hover {
+    border-image: url(:/images/light/smartcut-hover.png);
+}
+
+QPushButton#smartcutButton:pressed, QPushButton#smartcutButton:checked {
+    border-image: url(:/images/light/smartcut-on.png);
 }
 
 /* -------------------------------------------------------------------------- */
