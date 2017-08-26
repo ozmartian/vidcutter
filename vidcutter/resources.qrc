@@ -67,6 +67,9 @@
         <file>images/dark/settings-theme.png</file>
         <file>images/dark/settings-video.png</file>
         <file>images/dark/shortcuts.png</file>
+        <file>images/dark/smartcut-hover.png</file>
+        <file>images/dark/smartcut-off.png</file>
+        <file>images/dark/smartcut-on.png</file>
         <file>images/dark/theme-dark.png</file>
         <file>images/dark/theme-light.png</file>
         <file>images/dark/thumbnails-hover.png</file>
