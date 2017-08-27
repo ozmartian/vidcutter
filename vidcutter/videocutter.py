@@ -292,7 +292,7 @@ class VideoCutter(QWidget):
         self.fullscreenButton = QPushButton(objectName='fullscreenButton', icon=self.fullscreenIcon, flat=True,
                                             toolTip='Toggle fullscreen', statusTip='Switch to fullscreen video',
                                             iconSize=QSize(14, 14), clicked=self.toggleFullscreen,
-                                            cursor=Qt.PointingHandCursor)
+                                            cursor=Qt.PointingHandCursor, enabled=False)
 
         # noinspection PyArgumentList
         self.settingsButton = QPushButton(self, toolTip='Settings', cursor=Qt.PointingHandCursor, flat=True,
@@ -550,7 +550,7 @@ class VideoCutter(QWidget):
         self.settingsAction = QAction(self.settingsIcon, 'Settings', self, triggered=self.showSettings,
                                       statusTip='Configure application settings')
         self.fullscreenAction = QAction(self.fullscreenIcon, 'Toggle fullscreen', self, triggered=self.toggleFullscreen,
-                                        statusTip='Switch to fullscreen video')
+                                        statusTip='Switch to fullscreen video', enabled=False)
 
     def initToolbar(self) -> None:
         self.toolbar.addAction(self.openAction)
@@ -857,6 +857,8 @@ class VideoCutter(QWidget):
         self.cutEndAction.setEnabled(False)
         self.mediaInfoAction.setEnabled(flag)
         self.mediainfoButton.setEnabled(flag)
+        self.fullscreenButton.setEnabled(flag)
+        self.fullscreenAction.setEnabled(flag)
         self.seekSlider.clearRegions()
         if flag:
             self.seekSlider.setRestrictValue(0)
