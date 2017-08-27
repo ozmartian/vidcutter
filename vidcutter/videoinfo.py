@@ -100,10 +100,12 @@ class VideoInfo(QDialog):
         halver = math.ceil(len(keyframes) / 2)
         col1 = keyframes[:halver]
         col2 = keyframes[halver:]
+        pass
         keyframe_content = '''<style>
             table {
                 font-family: "Open Sans", sans-serif;
                 font-size: 13px;
+                margin-top:-10px;
             }
             td { font-weight: normal; }
         </style>
@@ -124,7 +126,23 @@ class VideoInfo(QDialog):
         kframes.setAttribute(Qt.WA_DeleteOnClose, True)
         buttons = QDialogButtonBox(QDialogButtonBox.Ok)
         buttons.accepted.connect(kframes.close)
+        content_headers = '''<style>
+            table {
+                font-family: "Open Sans", sans-serif;
+                font-size: 13px;
+            }
+            td.heading { font-weight: bold; }
+        </style>
+        <table widcth="230" border="0" cellpadding="2" cellspacing="0">
+            <tr>
+                <td width="115" class="heading">Timecode</td>
+                <td width="115" class="heading">Timecode</td>
+            </tr>
+        </table>
+        '''
+        headers = QLabel(content_headers, self)
         layout = QVBoxLayout()
+        layout.addWidget(headers)
         layout.addWidget(content)
         layout.addWidget(buttons)
         kframes.setLayout(layout)

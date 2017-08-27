@@ -31,13 +31,16 @@ from bisect import bisect_left
 from distutils.spawn import find_executable
 from enum import Enum
 
-from PyQt5.QtCore import (pyqtSlot, QDir, QFile, QFileInfo, QObject, QProcess, QProcessEnvironment, QSize,
+from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QDir, QFile, QFileInfo, QObject, QProcess, QProcessEnvironment, QSize,
                           QStorageInfo, QTemporaryFile, QTime)
 from PyQt5.QtGui import QPainter, QPixmap
 from PyQt5.QtWidgets import QMessageBox
 
 
 class VideoService(QObject):
+    updateProgress = pyqtSignal(int, str)
+    setProgressRange = pyqtSignal(int, int)
+
     frozen = getattr(sys, 'frozen', False)
 
     spaceWarningThreshold = 200
@@ -134,8 +137,8 @@ class VideoService(QObject):
             imagecap = img.fileName()
             size = thumbsize.value
             backend, _, _ = VideoService.initBackends()
-            args = '-hide_banner -ss %s -i "%s" -vframes 1 -s %ix%i -v 16 -y "%s"' % (frametime, source, size.width(),
-                                                                                      size.height(), imagecap)
+            args = '-hide_banner -ss %s -i "%s" -vframes 1 -s %ix%i -y "%s"' % (frametime, source, size.width(),
+                                                                                size.height(), imagecap)
             proc = VideoService.initProc()
             proc.setProcessChannelMode(QProcess.MergedChannels)
             if proc.state() == QProcess.NotRunning:
@@ -186,7 +189,7 @@ class VideoService(QObject):
             file1_cut = QTemporaryFile(os.path.join(QDir.tempPath(), 'XXXXXX%s' % ext))
             file2_cut = QTemporaryFile(os.path.join(QDir.tempPath(), 'XXXXXX%s' % ext))
             final_join = QTemporaryFile(os.path.join(QDir.tempPath(), 'XXXXXX%s' % ext))
-            # 3. produce 2 seconds long clips from input files for join test
+            # 3. produce 4 secs clips from input files for join test
             if file1_cut.open() and file2_cut.open() and final_join.open():
                 result1 = self.cut(file1, file1_cut.fileName(), '00:00:00.000', '00:00:04.00', False)
                 result2 = self.cut(file2, file2_cut.fileName(), '00:00:00.000', '00:00:04.00', False)
@@ -223,15 +226,76 @@ class VideoService(QObject):
         acodec = re.search(r'Stream.*Audio:\s(\w+)', result).group(1)
         return vcodec, acodec
 
-    def cut(self, source: str, output: str, frametime: str, duration: str, allstreams: bool=True) -> bool:
+    def cut(self, source: str, output: str, frametime: str, duration: str, allstreams: bool=True,
+            codecs: str=None, loglevel: str='error') -> bool:
         self.checkDiskSpace(output)
         if allstreams:
-            args = '-ss {0} -i "{1}" -t {2} -vcodec copy -acodec copy -scodec copy -avoid_negative_ts 1 -copyinkf ' \
-                   '-map 0 -v 16 -y "{3}"'
+            if codecs is not None:
+                args = '-v {5} -i "{0}" -ss {1} -t {2} -c:v {3} -c:a copy -c:s copy -map 0 -y "{4}"'
+                return self.cmdExec(self.backend, args.format(source, frametime, duration, codecs, output, loglevel))
+            else:
+                args = '-v {4} -ss {1} -i "{0}" -t {2} -c copy -map 0 -avoid_negative_ts 1 -copyinkf -y "{3}"'
+                return self.cmdExec(self.backend, args.format(source, frametime, duration, output, loglevel))
         else:
-            args = '-ss {0} -i "{1}" -t {2} -vcodec copy -acodec copy -scodec copy -avoid_negative_ts 1 -copyinkf ' \
-                   '-v 16 -y "{3}"'
-        return self.cmdExec(self.backend, args.format(frametime, source, duration, QDir.fromNativeSeparators(output)))
+            if codecs is not None:
+                args = '-v {5} -i "{0}" -ss {1} -t {2} -c:v {3} -c:a copy -c:s copy -y "{4}"'
+                return self.cmdExec(self.backend, args.format(source, frametime, duration, codecs, output, loglevel))
+            else:
+                args = '-v {4} -ss {1} -i "{0}" -t {2} -c copy -avoid_negative_ts 1 -copyinkf -y "{3}"'
+                return self.cmdExec(self.backend, args.format(source, frametime, duration, output, loglevel))
+
+    def smartcut(self, source: str, output: str, start: float, end: float, allstreams: bool=True) -> bool:
+        # 1. split output filename
+        output_file, output_ext = os.path.splitext(source)
+        # 2. get GOP bisections for start and end of clip times to be reencoded for frame accurate cuts
+        #    smartcut -> list: start, end, duration, filename
+        bisections = self.getGOPbisections(source, start, end)
+        smartcut = {
+            'start': [start, bisections['start'][1], (bisections['start'][1] - start),
+                      '{0}_start{1}'.format(output_file, output_ext)],
+            'middle': [bisections['start'][2], bisections['end'][0], (bisections['end'][0] - bisections['start'][2]),
+                       '{0}_middle{1}'.format(output_file, output_ext)],
+            'end': [bisections['end'][1], end, (end - bisections['end'][1]),
+                    '{0}_end{1}'.format(output_file, output_ext)]
+        }
+        self.logger.info(smartcut)
+        # 3. cut middle portion first
+        self.setProgressRange.emit(0, 5)
+        self.updateProgress.emit(1, '<b>SmartCut</b> : cutting main video chunk [1/5]...')
+        middle_result = self.cut(source=source, output=smartcut['middle'][3], frametime=smartcut['middle'][0],
+                                 duration=smartcut['middle'][2], allstreams=allstreams)
+        if not middle_result:
+            self.logger.error('smartcut error cutting MIDDLE clip')
+        # 4. determine middle clip codecs
+        smartcut_codec = self.codecs(smartcut['middle'][3])[0]
+        # if smartcut_codec == 'h264':
+        #     smartcut_codec = 'h264_nvenc'
+        # 5. cut start and end clips using same codec as middle
+        self.updateProgress.emit(2, '<b>SmartCut</b> : cut + encode START keyframe clip [2/5]...')
+        start_result = self.cut(source=source, output=smartcut['start'][3], frametime=smartcut['start'][0],
+                                duration=smartcut['start'][2], allstreams=allstreams, codecs=smartcut_codec, loglevel='info')
+        if not start_result:
+            self.logger.error('smartcut error cutting START clip')
+        self.updateProgress.emit(3, '<b>SmartCut</b> : cut + encode END keyframe clip [3/5]...')
+        end_result = self.cut(source=source, output=smartcut['end'][3], frametime=smartcut['end'][1],
+                              duration=smartcut['end'][2], allstreams=allstreams, codecs=smartcut_codec, loglevel='info')
+        if not end_result:
+            self.logger.error('smartcut error cutting END clip')
+        # 5. join three portions back together for our finalised smart cut clip
+        self.updateProgress.emit(4, '<b>SmartCut</b> : joining START, MID and END [4/5]...')
+        smartcut_join = [smartcut['start'][3], smartcut['middle'][3], smartcut['end'][3]]
+        final_join = False
+        if self.isMPEGcodec(smartcut['middle'][3]):
+            self.logger.info('smartcut files are MPEG based so join via MPEG-TS')
+            final_join = self.mpegtsJoin(smartcut_join, output)
+        if not final_join:
+            self.logger.info('smartcut MPEG-TS join failed, retry with standard concat')
+            final_join = self.join(inputs=smartcut_join, output=output, allstreams=allstreams)
+        # 6. cleanup files
+        self.updateProgress.emit(5, '<b>SmartCut</b> : SUCCESS! Sanitize and clean up workspace [5/5]...')
+        [os.remove(file) for file in smartcut_join]
+        # 7. return all results for final assesment
+        return start_result and middle_result and end_result and final_join
 
     def join(self, inputs: list, output: str, allstreams: bool=True) -> bool:
         self.checkDiskSpace(output)
@@ -240,10 +304,10 @@ class VideoService(QObject):
         [fobj.write('file \'%s\'\n' % file.replace("'", "\\'")) for file in inputs]
         fobj.close()
         if allstreams:
-            args = '-f concat -safe 0 -i "{0}" -c copy -copyinkf -map 0 -v 16 -y "{1}"'
+            args = '-v error -f concat -safe 0 -i "{0}" -c copy -map 0 -y "{1}"'
         else:
-            args = '-f concat -safe 0 -i "{0}" -c copy -copyinkf -v 16 -y "{1}"'
-        result = self.cmdExec(self.backend, args.format(filelist, QDir.fromNativeSeparators(output)))
+            args = '-v error -f concat -safe 0 -i "{0}" -c copy -y "{1}"'
+        result = self.cmdExec(self.backend, args.format(filelist, output))
         os.remove(filelist)
         return result
 
@@ -281,24 +345,14 @@ class VideoService(QObject):
                     idrframes.append(float(line.split(',')[1]))
         return idrframes
 
-    @staticmethod
-    def takeClosest(myList, myNumber):
-        pos = bisect_left(myList, myNumber)
-        if pos == 0:
-            return myList[0]
-        if pos == len(myList):
-            return myList[-1]
-        before = myList[pos - 1]
-        after = myList[pos]
-        if after - myNumber < myNumber - before:
-            return after
-        else:
-            return before
-
     def getGOPbisections(self, source: str, start: float, end: float) -> dict:
-        times = {}
-        idrtimes = self.getIDRFrames(source)
-        return times
+        idrtimes = self.getIDRFrames(source, formatted_time=False)
+        start_pos = bisect_left(idrtimes, start)
+        end_pos = bisect_left(idrtimes, end)
+        return {
+            'start': (idrtimes[start_pos - 1], idrtimes[start_pos], idrtimes[start_pos + 1]),
+            'end': (idrtimes[end_pos - 2], idrtimes[end_pos - 1], idrtimes[end_pos])
+        }
 
     def isMPEGcodec(self, source: str) -> bool:
         return self.codecs(source)[0].lower() in self.mpegCodecs
@@ -317,15 +371,14 @@ class VideoService(QObject):
                 outfiles.append(outfile)
                 if os.path.isfile(outfile):
                     os.remove(outfile)
-                args = '-i "%s" -c copy -map 0 %s -f mpegts -v 16 "%s"' % (file, video_bsf, outfile)
+                args = '-v error -i "%s" -c copy -map 0 %s -f mpegts "%s"' % (file, video_bsf, outfile)
                 if not self.cmdExec(self.backend, args):
                     return result
             # 2. losslessly concatenate at the file level
             if len(outfiles):
                 if os.path.isfile(output):
                     os.remove(output)
-                args = '-i "concat:%s" -c copy %s -v 16 "%s"' % ('|'.join(map(str, outfiles)), audio_bsf,
-                                                                 QDir.fromNativeSeparators(output))
+                args = '-v error -i "concat:%s" -c copy %s "%s"' % ('|'.join(map(str, outfiles)), audio_bsf, output)
                 result = self.cmdExec(self.backend, args)
                 # 3. cleanup mpegts files
                 [QFile.remove(file) for file in outfiles]
@@ -345,12 +398,12 @@ class VideoService(QObject):
         return result.strip()
 
     def cmdExec(self, cmd: str, args: str=None, output: bool=False):
-        if os.getenv('DEBUG', False):
-            self.logger.info('"%s %s"' % (cmd, args if args is not None else ''))
+        # if os.getenv('DEBUG', False):
+        self.logger.info('"%s %s"' % (cmd, args if args is not None else ''))
         if self.proc.state() == QProcess.NotRunning:
             self.proc.setProcessChannelMode(QProcess.SeparateChannels if cmd == self.mediainfo
                                             else QProcess.MergedChannels)
-            if cmd in {self.backend, self.probe}:
+            if cmd == self.backend:
                 args = '-hide_banner {0}'.format(args)
             self.proc.start(cmd, shlex.split(args))
             self.proc.waitForFinished(-1)

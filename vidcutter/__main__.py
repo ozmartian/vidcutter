@@ -242,7 +242,7 @@ class MainWindow(QMainWindow):
 
     def dropEvent(self, event: QDropEvent) -> None:
         filename = event.mimeData().urls()[0].toLocalFile()
-        self.cutter.loadMedia(filename)
+        self.file_opener(filename)
         event.accept()
 
     def resizeEvent(self, event: QResizeEvent) -> None:

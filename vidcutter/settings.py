@@ -275,9 +275,10 @@ class GeneralPage(QWidget):
         smartCutCheckbox.setChecked(self.parent.parent.smartcut)
         smartCutCheckbox.stateChanged.connect(self.setSmartCut)
         smartCutLabel = QLabel('''
-            <b>ON:</b> the start and end of each clip is re-encoded (slowest, most accurate mode) 
+            <b>ON:</b> cut at GOP (IDR framed) timecodes. start + end segments of clips are re-encoded then merged together with stream copied middle segment for frame-accurate cuts (slowest + most accurate mode)
             <br/>
-            <b>OFF:</b> cut at specified time slots regardless of keyframe placement (fastest mode) 
+            <b>OFF:</b> cut clips using direct stream copy method. the nearest keyframes to your cutting points are automatically chosen to ensure no content is ever missing, extra frames are usually expected to compensate.
+            you should try this mode first and then smartcut if not satisfied with the results (fastest + less precise mode) 
         ''', self)
         smartCutLabel.setObjectName('smartcutlabel')
         smartCutLabel.setTextFormat(Qt.RichText)

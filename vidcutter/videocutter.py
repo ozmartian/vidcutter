@@ -72,7 +72,12 @@ class VideoCutter(QWidget):
         self.settings = self.parent.settings
         self.initTheme()
 
+        self.progress = VCProgressBar(self)
+
         self.videoService = VideoService(self)
+        self.videoService.updateProgress.connect(self.progress.updateProgress)
+        self.videoService.setProgressRange.connect(self.progress.setRange)
+
         self.updater = Updater(self)
 
         if sys.platform.startswith('linux'):
@@ -545,7 +550,7 @@ class VideoCutter(QWidget):
         self.settingsAction = QAction(self.settingsIcon, 'Settings', self, triggered=self.showSettings,
                                       statusTip='Configure application settings')
         self.fullscreenAction = QAction(self.fullscreenIcon, 'Toggle fullscreen', self, triggered=self.toggleFullscreen,
-                                      statusTip='Switch to fullscreen video')
+                                        statusTip='Switch to fullscreen video')
 
     def initToolbar(self) -> None:
         self.toolbar.addAction(self.openAction)
@@ -662,7 +667,7 @@ class VideoCutter(QWidget):
         if savedialog:
             return 'VidCutter Project (*.vcp);;MPlayer EDL (*.edl)'
         elif self.mediaAvailable:
-            return 'Project files (*.vcp, *.edl);;VidCutter Project (*.vcp);;MPlayer EDL (*.edl) ;;All files (*.*)'
+            return 'Project files (*.edl, *.vcp);;VidCutter Project (*.vcp);;MPlayer EDL (*.edl);;All files (*.*)'
         else:
             return 'VidCutter Project (*.vcp);;All files (*.*)'
 
@@ -703,7 +708,7 @@ class VideoCutter(QWidget):
             self.loadMedia(filename)
 
     def openProject(self, checked: bool = False, project_file: str = None) -> None:
-        initialFilter = 'Project files (*.vcp, *.edl)' if self.mediaAvailable else 'VidCutter Project (*.vcp)'
+        initialFilter = 'Project files (*.edl, *.vcp)' if self.mediaAvailable else 'VidCutter Project (*.vcp)'
         if project_file is None:
             project_file, _ = QFileDialog.getOpenFileName(self, caption='Open project file',
                                                           filter=self.projectFilters(),
@@ -766,7 +771,7 @@ class VideoCutter(QWidget):
             qApp.restoreOverrideCursor()
             self.showText('Project file loaded')
 
-    def saveProject(self, filepath: str) -> None:
+    def saveProject(self) -> None:
         if self.currentMedia is None:
             return
         for item in self.clipTimes:
@@ -1131,26 +1136,35 @@ class VideoCutter(QWidget):
                     duration = self.delta2QTime(clip[0].msecsTo(clip[1])).toString(self.timeformat)
                     filename = '%s_%s%s' % (file, '{0:0>2}'.format(index), source_ext)
                     filelist.append(filename)
-                    self.videoService.cut(source='%s%s' % (source_file, source_ext), output=filename,
-                                          frametime=clip[0].toString(self.timeformat), duration=duration,
-                                          allstreams=True)
-                    if QFile(filename).size() < 1000:
-                        self.logger.info('cut resulted in 0 length file, trying again without all stream mapping')
+                    if self.smartcut:
+                        self.videoService.smartcut(source='%s%s' % (source_file, source_ext), output=filename,
+                                                   start=VideoCutter.qtime2delta(clip[0]),
+                                                   end=VideoCutter.qtime2delta(clip[1]), allstreams=True)
+                    else:
                         self.videoService.cut(source='%s%s' % (source_file, source_ext), output=filename,
                                               frametime=clip[0].toString(self.timeformat), duration=duration,
-                                              allstreams=False)
+                                              allstreams=True)
+                    if QFile(filename).size() < 1000:
+                        self.logger.info('cut resulted in 0 length file, trying again without all stream mapping')
+                        if self.smartcut:
+                            self.videoService.smartcut(source='%s%s' % (source_file, source_ext), output=filename,
+                                                       start=VideoCutter.qtime2delta(clip[0]),
+                                                       end=VideoCutter.qtime2delta(clip[1]), allstreams=False)
+                        else:
+                            self.videoService.cut(source='%s%s' % (source_file, source_ext), output=filename,
+                                                  frametime=clip[0].toString(self.timeformat), duration=duration,
+                                                  allstreams=False)
             if len(filelist) > 1:
                 self.progress.updateProgress(self.progress.value() + 1, 'Joining media clips')
                 rc = False
                 if self.videoService.isMPEGcodec(filelist[0]):
-                    self.logger.info('file is MPEG based thus join via mpegts file protocol method')
+                    self.logger.info('source file is MPEG based so join via MPEG-TS')
                     rc = self.videoService.mpegtsJoin(filelist, self.finalFilename)
-                    if not rc:
-                        self.logger.info('mpegts based join failed, will retry using standard concat')
                 if not rc or QFile(self.finalFilename).size() < 1000:
+                    self.logger.info('MPEG-TS based join failed, will retry using standard concat')
                     rc = self.videoService.join(filelist, self.finalFilename, True)
                 if not rc or QFile(self.finalFilename).size() < 1000:
-                    self.logger.info('join() resulted in 0 length file, trying again without all stream mapping')
+                    self.logger.info('join resulted in 0 length file, trying again without all stream mapping')
                     self.videoService.join(filelist, self.finalFilename, False)
                 if not self.keepClips:
                     for f in filelist:
@@ -1218,7 +1232,6 @@ class VideoCutter(QWidget):
         appInfo.exec_()
 
     def showProgress(self, steps: int) -> None:
-        self.progress = VCProgressBar(self)
         self.progress.setRange(0, steps)
         self.progress.show()
         self.progress.updateProgress(0, 'Analyzing video source')
@@ -1235,34 +1248,6 @@ class VideoCutter(QWidget):
     @pyqtSlot()
     def viewLogs() -> None:
         QDesktopServices.openUrl(QUrl.fromLocalFile(logging.getLoggerClass().root.handlers[0].baseFilename))
-
-    # def ffmpeg_check(self) -> bool:
-    #     valid = os.path.exists(self.videoService.backend) if self.videoService.backend is not None else False
-    #     if not valid:
-    #         if sys.platform == 'win32':
-    #             exe = 'bin\\ffmpeg.exe'
-    #         else:
-    #             valid = os.path.exists(self.parent.get_path('bin/ffmpeg', override=True))
-    #             exe = 'bin/ffmpeg'
-    #         if sys.platform.startswith('linux'):
-    #             link = self.ffmpeg_installer['linux'][self.parent.get_bitness()]
-    #         else:
-    #             link = self.ffmpeg_installer[sys.platform][self.parent.get_bitness()]
-    #         QMessageBox.critical(self.parent, 'Missing FFMpeg executable', '<style>li { margin: 1em 0; }</style>' +
-    #                              '<h3 style="color:#6A687D;">MISSING FFMPEG EXECUTABLE</h3>' +
-    #                              '<p>The FFMpeg utility is missing in your ' +
-    #                              'installation. It should have been installed when you first setup VidCutter.</p>' +
-    #                              '<p>You can easily fix this by manually downloading and installing it yourself by' +
-    #                              'following the steps provided below:</p><ol>' +
-    #                              '<li>Download the <b>static</b> version of FFMpeg from<br/>' +
-    #                              '<a href="%s" target="_blank"><b>this clickable link</b></a>.</li>' % link +
-    #                              '<li>Extract this file accordingly and locate the ffmpeg executable within.</li>' +
-    #                              '<li>Move or Cut &amp; Paste the executable to the following path on your system: ' +
-    #                              '<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;%s</li></ol>'
-    #                              % QDir.toNativeSeparators(self.parent.get_path(exe, override=True)) +
-    #                              '<p><b>NOTE:</b> You will most likely need Administrator rights (Windows) or ' +
-    #                              'root access (Linux/Mac) in order to do this.</p>')
-    #     return valid
 
     @pyqtSlot()
     def toggleFullscreen(self) -> None:
@@ -1285,39 +1270,56 @@ class VideoCutter(QWidget):
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
         if self.mediaAvailable:
-            if event.key() in {Qt.Key_F}:
+
+            if event.key() == Qt.Key_Space:
+                self.playMedia()
+                return
+
+            if event.key() == Qt.Key_F:
                 self.toggleFullscreen()
-            elif event.key() == Qt.Key_Left:
+                return
+
+            if event.key() == Qt.Key_Home:
+                self.setPosition(self.seekSlider.minimum())
+                return
+
+            if event.key() == Qt.Key_End:
+                self.setPosition(self.seekSlider.maximum() - 1)
+                return
+
+            if event.key() == Qt.Key_Left:
                 self.mpvWidget.frameBackStep()
                 self.playAction.setVisible(True)
                 self.pauseAction.setVisible(False)
-            elif event.key() == Qt.Key_Down:
+                return
+
+            if event.key() == Qt.Key_Down:
                 if qApp.queryKeyboardModifiers() == Qt.ShiftModifier:
                     self.mpvWidget.seek(-self.level2Seek, 'relative+exact')
                 else:
                     self.mpvWidget.seek(-self.level1Seek, 'relative+exact')
-            elif event.key() == Qt.Key_Right:
+                return
+
+            if event.key() == Qt.Key_Right:
                 self.mpvWidget.frameStep()
                 self.playAction.setVisible(True)
                 self.pauseAction.setVisible(False)
-            elif event.key() == Qt.Key_Up:
+                return
+
+            if event.key() == Qt.Key_Up:
                 if qApp.queryKeyboardModifiers() == Qt.ShiftModifier:
                     self.mpvWidget.seek(self.level2Seek, 'relative+exact')
                 else:
                     self.mpvWidget.seek(self.level1Seek, 'relative+exact')
-            elif event.key() == Qt.Key_Home:
-                self.setPosition(self.seekSlider.minimum())
-            elif event.key() == Qt.Key_End:
-                self.setPosition(self.seekSlider.maximum() - 1)
-            elif event.key() in (Qt.Key_Return, Qt.Key_Enter) and (
-                        not self.timeCounter.hasFocus() and not self.frameCounter.hasFocus()):
+                return
+
+            if (event.key() in {Qt.Key_Return, Qt.Key_Enter} and not self.timeCounter.hasFocus()
+                and not self.frameCounter.hasFocus()):
                 if self.cutStartAction.isEnabled():
                     self.clipStart()
                 elif self.cutEndAction.isEnabled():
                     self.clipEnd()
-            elif event.key() == Qt.Key_Space:
-                self.playMedia()
-            event.accept()
+                return
 
     def closeEvent(self, event: QCloseEvent) -> None:
         self.parent.closeEvent(event)

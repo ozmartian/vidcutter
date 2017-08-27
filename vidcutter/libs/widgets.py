@@ -201,6 +201,7 @@ class VCProgressBar(QDialog):
     def setMaximum(self, val: int) -> None:
         self._progress.setMaximum(val)
 
+    @pyqtSlot(int, int)
     def setRange(self, minval: int, maxval: int) -> None:
         self._progress.setRange(minval, maxval)
 
@@ -209,6 +210,7 @@ class VCProgressBar(QDialog):
             self.taskbar.setProgress(float(val / self._progress.maximum()), True)
         self._progress.setValue(val)
 
+    @pyqtSlot(int, str)
     def updateProgress(self, value: int, text: str) -> None:
         self.setValue(value)
         self.setText(text)
@@ -310,6 +312,8 @@ class ClipErrorsDialog(QDialog):
         </p>
         ''' % (self.headingcolor, self.pencolor))
 
+    # noinspection PyUnusedLocal
+    @pyqtSlot(int)
     def selectItem(self, index: int) -> None:
         self.toolbox.adjustSize()
         self.adjustSize()
