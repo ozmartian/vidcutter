@@ -67,7 +67,9 @@ if exist "dist\vidcutter.exe" (
 
     REM ......................call Inno Setup installer build script......................
     cd ..\InnoSetup
-    "C:\Program Files (x86)\Inno Setup 5\iscc.exe" /Ssigntool="""C:\Program Files (x86)\Windows Kits\10\bin\%BINARCH%\signtool.exe"" sign /f ""C:\Users\ozmartian\Documents\pgpkey\code-sign.pfx"" /t http://timestamp.comodoca.com/authenticode /p %PASS% $f" installer_%BINARCH%.signed.iss
+    REM ......................remove post strings from version number so that its M$ valid......................
+    SET APPVER=%APPVER:.DEV=%.0
+    "C:\Program Files (x86)\Inno Setup 5\iscc.exe" ""/DAppVersion=%APPVER%"" /Ssigntool="""C:\Program Files (x86)\Windows Kits\10\bin\%BINARCH%\signtool.exe"" sign /f ""C:\Users\ozmartian\Documents\pgpkey\code-sign.pfx"" /t http://timestamp.comodoca.com/authenticode /p %PASS% $f" installer_%BINARCH%.signed.iss
 
     cd ..\pyinstaller
 )
