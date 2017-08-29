@@ -1,10 +1,18 @@
-﻿@echo off
+@echo off
+
+setlocal
 
 REM ......................setup variables......................
 if [%1]==[] (
-    SET ARCH=64
+    goto :usage
 ) else (
     SET ARCH=%1
+)
+
+if [%2]==[] (
+    goto :usage
+) else (
+    SET PASS=%2
 )
 
 if ["%ARCH%"]==["64"] (
@@ -54,9 +62,26 @@ if exist "dist\vidcutter.exe" (
     REM ......................add metadata to built Windows binary......................
     .\verpatch.exe dist\vidcutter.exe /va %APPVER%.0 /pv %APPVER%.0 /s desc "VidCutter" /s name "VidCutter" /s copyright "(c) 2017 Pete Alexandrou" /s product "VidCutter %BINARCH%" /s company "ozmartians.com"
 
+    REM ................sign frozen EXE with self-assigned certificate..........
+    "C:\Program Files (x86)\Windows Kits\10\bin\%BINARCH%\signtool.exe" sign /f "C:\Users\ozmartian\Documents\pgpkey\code-sign.pfx" /t http://timestamp.comodoca.com/authenticode /p %PASS% dist\vidcutter.exe
+
     REM ......................call Inno Setup installer build script......................
     cd ..\InnoSetup
-    "C:\Program Files (x86)\Inno Setup 5\iscc.exe" installer_%BINARCH%.iss
+    "C:\Program Files (x86)\Inno Setup 5\iscc.exe" /Ssigntool="""C:\Program Files (x86)\Windows Kits\10\bin\%BINARCH%\signtool.exe"" sign /f ""C:\Users\ozmartian\Documents\pgpkey\code-sign.pfx"" /t http://timestamp.comodoca.com/authenticode /p %PASS% $f" installer_%BINARCH%.signed.iss
 
     cd ..\pyinstaller
 )
+
+goto :eof
+
+:usage
+    echo.
+    echo Usage:
+    echo. 
+    echo   build.pyinstaller.win.signed [32 or 64] [pgp password]
+    echo. 
+    goto :eof
+
+:eof
+    endlocal
+    exit /b
