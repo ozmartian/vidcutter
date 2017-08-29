@@ -42,9 +42,9 @@ class LogsPage(QWidget):
         verboseCheckbox.setChecked(self.parent.parent.verboseLogs)
         verboseCheckbox.stateChanged.connect(self.setVerboseLogs)
         verboseLabel = QLabel('''
-            <b>ON:</b> detailed logging of all info/debug messages including all from MPV
+            <b>ON:</b> includes detailed logs from video player (MPV) and backend services
             <br/>
-            <b>OFF:</b> only log error related or important messages to log and console
+            <b>OFF:</b> includes errors and important messages to log and console
         ''', self)
         verboseLabel.setObjectName('verboselogslabel')
         verboseLabel.setTextFormat(Qt.RichText)
@@ -306,26 +306,27 @@ class GeneralPage(QWidget):
         smartCutCheckbox.setCursor(Qt.PointingHandCursor)
         smartCutCheckbox.setChecked(self.parent.parent.smartcut)
         smartCutCheckbox.stateChanged.connect(self.setSmartCut)
-        smartCutLabel = QLabel('''
+        self.smartCutLabel = QLabel('''
             <b>ON:</b> re-encode start + end portions of each clip at valid GOP (IDR) keyframes
             <br/>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             - slowest + most accurate mode
-            <!-- start + end segments of clips are re-encoded then merged together with stream copied middle segment for frame-accurate cuts -->
             <br/>
             <b>OFF:</b> cut at nearest keyframe before cut marker
             <br/>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             - fastest + less precise mode
-            <!-- the nearest keyframes to your cutting points are automatically chosen to ensure no content is ever missing, extra frames are usually expected to compensate. -->
+            <br/><br/>
+            <b>NOTE:</b> only use this when not satisfied with the standard results
         ''', self)
-        smartCutLabel.setObjectName('smartcutlabel')
-        smartCutLabel.setTextFormat(Qt.RichText)
-        smartCutLabel.setWordWrap(True)
-        smartCutLabel2 = QLabel('<b>NOTE:</b> start with this OFF, then use SmartCut if not satisfied with result', self)
-        smartCutLabel2.setObjectName('smartcutlabel')
-        smartCutLabel2.setTextFormat(Qt.RichText)
-        smartCutLabel2.setWordWrap(True)
+        # <!-- start + end segments of clips are re-encoded then merged together with stream copied middle segment
+        # for frame-accurate cuts -->
+        # <!-- the nearest keyframes to your cutting points are automatically chosen to ensure no content is ever
+        # missing, extra frames are usually expected to compensate. -->
+        self.smartCutLabel.setObjectName('smartcutlabel')
+        self.smartCutLabel.setAlignment(Qt.AlignTop)
+        self.smartCutLabel.setTextFormat(Qt.RichText)
+        self.smartCutLabel.setWordWrap(True)
         self.singleInstance = self.parent.settings.value('singleInstance', 'on', type=str) in {'on', 'true'}
         singleInstanceCheckbox = QCheckBox('Allow only one running instance', self)
         singleInstanceCheckbox.setToolTip('Allow just one single %s instance to be running' % qApp.applicationName())
@@ -355,8 +356,7 @@ class GeneralPage(QWidget):
         keepClipsLabel.setWordWrap(True)
         generalLayout = QVBoxLayout()
         generalLayout.addWidget(smartCutCheckbox)
-        generalLayout.addWidget(smartCutLabel)
-        generalLayout.addWidget(smartCutLabel2)
+        generalLayout.addWidget(self.smartCutLabel)
         generalLayout.addWidget(SettingsDialog.lineSeparator())
         generalLayout.addWidget(keepClipsCheckbox)
         generalLayout.addWidget(keepClipsLabel)
@@ -456,7 +456,7 @@ class SettingsDialog(QDialog):
         self.theme = self.parent.theme
         self.setObjectName('settingsdialog')
         self.categories = QListWidget(self)
-        self.categories.setResizeMode(QListView.Adjust)
+        self.categories.setResizeMode(QListView.Fixed)
         self.categories.setStyleSheet('QListView::item { text-decoration: none; }')
         self.categories.setAttribute(Qt.WA_MacShowFocusRect, False)
         self.categories.setObjectName('settingsmenu')
@@ -512,7 +512,7 @@ class SettingsDialog(QDialog):
         self.categories.currentItemChanged.connect(self.changePage)
         self.categories.setCurrentRow(0)
         self.categories.setMaximumWidth(self.categories.sizeHintForColumn(0) + 2)
-        # self.adjustSize()
+        self.adjustSize()
 
     @staticmethod
     def lineSeparator() -> QFrame:
@@ -527,8 +527,11 @@ class SettingsDialog(QDialog):
             current = previous
         index = self.categories.row(current)
         self.pages.setCurrentIndex(index)
+        if index == 0:
+            page: GeneralPage = self.pages.currentWidget()
+            page.smartCutLabel.setMinimumHeight(page.smartCutLabel.heightForWidth(page.sizeHint().width()))
 
-    @pyqtSlot()
+    @pyqtSlot(QCloseEvent)
     def closeEvent(self, event: QCloseEvent):
         self.deleteLater()
         super(SettingsDialog, self).closeEvent(event)

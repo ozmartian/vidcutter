@@ -129,12 +129,12 @@ QListView::item#settingsmenu {
 }
 
 QListView::item:hover#settingsmenu {
-    background: rgba(136, 136, 136, 0.4);
+    background: rgba(136, 136, 136, 0.2);
 }
 
 QListView::item:selected#settingsmenu {
     color: #FFF;
-    background: #888;    
+    background: #999;
 }
 
 /* -------------------------------------------------------------------------- */

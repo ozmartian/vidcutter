@@ -100,7 +100,6 @@ class VideoInfo(QDialog):
         halver = math.ceil(len(keyframes) / 2)
         col1 = keyframes[:halver]
         col2 = keyframes[halver:]
-        pass
         keyframe_content = '''<style>
             table {
                 font-family: "Open Sans", sans-serif;
