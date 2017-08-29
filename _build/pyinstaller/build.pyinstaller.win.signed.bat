@@ -41,8 +41,8 @@ del /q ..\..\bin\*.*
 
 REM ......................download latest FFmpeg static binary......................
 if not exist ".\temp\" mkdir temp
-if not exist "temp\ffmpeg-latest-win%ARCH%-static.7z" ( curl -k -L -fsS -o temp\%FFMPEG% "%FFMPEG_URL%" )
-if not exist "temp\%MEDIAINFO%" ( curl -k -L -fsS -o temp\%MEDIAINFO% "%MEDIAINFO_URL%" )
+if not exist "temp\ffmpeg-latest-win%ARCH%-static.7z" ( call curl -k -L -fsS -o temp\%FFMPEG% "%FFMPEG_URL%" )
+if not exist "temp\%MEDIAINFO%" ( call curl -k -L -fsS -o temp\%MEDIAINFO% "%MEDIAINFO_URL%" )
 
 REM ......................extract ffmpeg.exe to its expected location......................
 cd temp\
@@ -69,7 +69,7 @@ if exist "dist\vidcutter.exe" (
     cd ..\InnoSetup
     REM ......................remove post strings from version number so that its M$ valid......................
     SET APPVER=%APPVER:.DEV=%.0
-    "C:\Program Files (x86)\Inno Setup 5\iscc.exe" ""/DAppVersion=%APPVER%"" /Ssigntool="""C:\Program Files (x86)\Windows Kits\10\bin\%BINARCH%\signtool.exe"" sign /f ""C:\Users\ozmartian\Documents\pgpkey\code-sign.pfx"" /t http://timestamp.comodoca.com/authenticode /p %PASS% $f" installer_%BINARCH%.signed.iss
+    call "C:\Program Files (x86)\Inno Setup 5\iscc.exe" ""/DAppVersion=%APPVER%"" /Ssigntool="""C:\Program Files (x86)\Windows Kits\10\bin\%BINARCH%\signtool.exe"" sign /f ""C:\Users\ozmartian\Documents\pgpkey\code-sign.pfx"" /t http://timestamp.comodoca.com/authenticode /p %PASS% $f" installer_%BINARCH%.signed.iss
 
     cd ..\pyinstaller
 )
