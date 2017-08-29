@@ -235,6 +235,9 @@ class MainWindow(QMainWindow):
             self.cutter.cliplist.clearSelection()
             self.cutter.timeCounter.clearFocus()
             self.cutter.frameCounter.clearFocus()
+            if hasattr(self.cutter, 'notify'):
+                # self.cutter.notify.fadeOut()
+                self.cutter.notify.close()
 
     def dragEnterEvent(self, event: QDragEnterEvent) -> None:
         if event.mimeData().hasUrls():

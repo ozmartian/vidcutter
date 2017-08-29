@@ -36,7 +36,7 @@ class Notification(QDialog):
     shown = pyqtSignal()
     duration = 8
 
-    def __init__(self, parent=None, f=Qt.ToolTip | Qt.FramelessWindowHint):
+    def __init__(self, parent=None, f=Qt.Widget | Qt.FramelessWindowHint):
         super(Notification, self).__init__(parent, f)
         self.parent = parent
         self.theme = self.parent.theme
@@ -135,9 +135,13 @@ class Notification(QDialog):
 
 
 class JobCompleteNotification(Notification):
-    def __init__(self, parent=None):
+    def __init__(self, filename: str, filesize: str, runtime: str, parent=None):
         super(JobCompleteNotification, self).__init__(parent)
         pencolor = '#C681D5' if self.theme == 'dark' else '#642C68'
+        self.filename = filename
+        self.filesize = filesize
+        self.runtime = runtime
+        self.parent = parent
         self.title = 'Your media file is ready!'
         self.message = '''
     <style>
@@ -181,13 +185,9 @@ class JobCompleteNotification(Notification):
                 <td width="80%%" class="value">%s</td>
             </tr>
         </table>
-    </div>''' % (pencolor, pencolor, ('#EFF0F1' if self.theme == 'dark' else '#222'), self._title,
-                 os.path.basename(self.parent.finalFilename),
-                 self.parent.sizeof_fmt(int(QFileInfo(self.parent.finalFilename).size())),
-                 self.parent.delta2QTime(self.parent.totalRuntime).toString(self.parent.runtimeformat))
-        self.icons = {
-            'play': QIcon(':/images/complete-play.png')
-        }
+    </div>''' % (pencolor, pencolor, ('#EFF0F1' if self.theme == 'dark' else '#222'),
+                 self._title, self.filename, self.filesize, self.runtime)
+        self.icons = {'play': QIcon(':/images/complete-play.png')}
         playButton = QPushButton(self.icons['play'], 'Play', self)
         playButton.setFixedWidth(82)
         playButton.clicked.connect(self.playMedia)
@@ -197,5 +197,5 @@ class JobCompleteNotification(Notification):
 
     @pyqtSlot()
     def playMedia(self) -> None:
-        if len(self.parent.finalFilename) and os.path.exists(self.parent.finalFilename):
-            QDesktopServices.openUrl(QUrl.fromLocalFile(self.parent.finalFilename))
+        if os.path.exists(self.filename):
+            QDesktopServices.openUrl(QUrl.fromLocalFile(self.filename))

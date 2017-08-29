@@ -273,12 +273,14 @@ class VideoService(QObject):
         # 5. cut start and end clips using same codec as middle
         self.updateProgress.emit(2, '<b>SmartCut</b> : cut + encode START keyframe clip [2/5]...')
         start_result = self.cut(source=source, output=smartcut['start'][3], frametime=smartcut['start'][0],
-                                duration=smartcut['start'][2], allstreams=allstreams, codecs=smartcut_codec, loglevel='info')
+                                duration=smartcut['start'][2], allstreams=allstreams, codecs=smartcut_codec,
+                                loglevel='info')
         if not start_result:
             self.logger.error('smartcut error cutting START clip')
         self.updateProgress.emit(3, '<b>SmartCut</b> : cut + encode END keyframe clip [3/5]...')
         end_result = self.cut(source=source, output=smartcut['end'][3], frametime=smartcut['end'][1],
-                              duration=smartcut['end'][2], allstreams=allstreams, codecs=smartcut_codec, loglevel='info')
+                              duration=smartcut['end'][2], allstreams=allstreams, codecs=smartcut_codec,
+                              loglevel='info')
         if not end_result:
             self.logger.error('smartcut error cutting END clip')
         # 5. join three portions back together for our finalised smart cut clip
@@ -399,6 +401,7 @@ class VideoService(QObject):
 
     def cmdExec(self, cmd: str, args: str=None, output: bool=False):
         # if os.getenv('DEBUG', False):
+        # if self.parent.verboseLogs:
         self.logger.info('"%s %s"' % (cmd, args if args is not None else ''))
         if self.proc.state() == QProcess.NotRunning:
             self.proc.setProcessChannelMode(QProcess.SeparateChannels if cmd == self.mediainfo
@@ -408,7 +411,11 @@ class VideoService(QObject):
             self.proc.start(cmd, shlex.split(args))
             self.proc.waitForFinished(-1)
             if output:
-                return str(self.proc.readAllStandardOutput().data(), 'utf-8')
+                # if os.getenv('DEBUG', False):
+                # if self.parent.verboseLogs:
+                cmdoutput = str(self.proc.readAllStandardOutput().data(), 'utf-8')
+                self.logger.info('cmd output: {0}'.format(cmdoutput))
+                return cmdoutput
             if self.proc.exitStatus() == QProcess.NormalExit and self.proc.exitCode() == 0:
                 return True
         return False

@@ -115,10 +115,11 @@ class VideoCutter(QWidget):
         self.nativeDialogs = self.settings.value('nativeDialogs', 'on', type=str) in {'on', 'true'}
         self.timelineThumbs = self.settings.value('timelineThumbs', 'on', type=str) in {'on', 'true'}
         self.showConsole = self.settings.value('showConsole', 'off', type=str) in {'on', 'true'}
-        self.smartcut = self.settings.value('smartcut', 'on', type=str) in {'on', 'true'}
+        self.smartcut = self.settings.value('smartcut', 'off', type=str) in {'on', 'true'}
         self.level1Seek = self.settings.value('level1Seek', 2, type=float)
         self.level2Seek = self.settings.value('level2Seek', 5, type=float)
         self.lastFolder = self.settings.value('lastFolder', QDir.homePath(), type=str)
+        self.verboseLogs = self.settings.value('verboseLogs', 'off', type=str) in {'on', 'true'}
         if not os.path.exists(self.lastFolder):
             self.lastFolder = QDir.homePath()
 
@@ -443,7 +444,7 @@ class VideoCutter(QWidget):
             video_sync='display-vdrop',
             audio_file_auto=False,
             quiet=True,
-            msg_level=('all=v' if os.getenv('DEBUG', False) else 'error'),
+            msg_level=('all=v' if self.verboseLogs else 'error'),
             volume=self.parent.startupvol,
             keepaspect=self.keepRatio,
             hwdec=('auto' if self.hardwareDecoding else 'no'))
@@ -1183,8 +1184,12 @@ class VideoCutter(QWidget):
                     float(self.seekSlider.value() / self.seekSlider.maximum())))
             qApp.restoreOverrideCursor()
             self.saveAction.setEnabled(True)
-            notify = JobCompleteNotification(self)
-            notify.exec_()
+            self.notify = JobCompleteNotification(
+                os.path.basename(self.finalFilename),
+                self.sizeof_fmt(int(QFileInfo(self.finalFilename).size())),
+                self.delta2QTime(self.totalRuntime).toString(self.runtimeformat),
+                self.parent)
+            self.notify.show()
             return True
         return False
 
@@ -1199,10 +1204,10 @@ class VideoCutter(QWidget):
                 self.logger.error('Error trying to load media information. mediainfo could not be found')
                 sys.stderr.write('Error trying to load media information. mediainfo could not be found')
                 QMessageBox.critical(self.parent, 'Could not find mediainfo tool',
-                                     'The <b>mediainfo</b> command line tool could not be found on your system. ' +
-                                     'This is required for the Media Information option ' +
-                                     'to work.<br/><br/>If you are on Linux, you can solve ' +
-                                     'this by installing the <b>mediainfo</b> package via your ' +
+                                     'The <b>mediainfo</b> command line tool could not be found on your system. '
+                                     'This is required for the Media Information option '
+                                     'to work.<br/><br/>If you are on Linux, you can solve '
+                                     'this by installing the <b>mediainfo</b> package via your '
                                      'package manager.')
                 return
             mediainfo = VideoInfo(media=self.currentMedia, parent=self)
@@ -1234,6 +1239,8 @@ class VideoCutter(QWidget):
         appInfo.exec_()
 
     def showProgress(self, steps: int) -> None:
+        if not hasattr(self, 'progress'):
+            self.progress = VCProgressBar(self)
         self.progress.setRange(0, steps)
         self.progress.show()
         self.progress.updateProgress(0, 'Analyzing video source')

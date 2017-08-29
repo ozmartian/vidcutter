@@ -31,6 +31,40 @@ from PyQt5.QtWidgets import (qApp, QButtonGroup, QCheckBox, QDialog, QDialogButt
                              QMessageBox, QRadioButton, QStackedWidget, QStyleFactory, QVBoxLayout, QWidget)
 
 
+class LogsPage(QWidget):
+    def __init__(self, parent=None):
+        super(LogsPage, self).__init__(parent)
+        self.parent = parent
+        self.setObjectName('settingslogspage')
+        verboseCheckbox = QCheckBox('Enable verbose logging', self)
+        verboseCheckbox.setToolTip('Detailed log ouput to log file and console')
+        verboseCheckbox.setCursor(Qt.PointingHandCursor)
+        verboseCheckbox.setChecked(self.parent.parent.verboseLogs)
+        verboseCheckbox.stateChanged.connect(self.setVerboseLogs)
+        verboseLabel = QLabel('''
+            <b>ON:</b> detailed logging of all info/debug messages including all from MPV
+            <br/>
+            <b>OFF:</b> only log error related or important messages to log and console
+        ''', self)
+        verboseLabel.setObjectName('verboselogslabel')
+        verboseLabel.setTextFormat(Qt.RichText)
+        verboseLabel.setWordWrap(True)
+        logsLayout = QVBoxLayout()
+        logsLayout.addWidget(verboseCheckbox)
+        logsLayout.addWidget(verboseLabel)
+        logsGroup = QGroupBox('Logging')
+        logsGroup.setLayout(logsLayout)
+        mainLayout = QVBoxLayout()
+        mainLayout.setSpacing(10)
+        mainLayout.addWidget(logsGroup)
+        mainLayout.addStretch(1)
+        self.setLayout(mainLayout)
+
+    def setVerboseLogs(self, state: int) -> None:
+        self.parent.parent.saveSetting('verboseLogs', state == Qt.Checked)
+        self.parent.parent.verboseLogs = (state == Qt.Checked)
+
+
 class ThemePage(QWidget):
     def __init__(self, parent=None):
         super(ThemePage, self).__init__(parent)
@@ -41,14 +75,12 @@ class ThemePage(QWidget):
         if sys.platform != 'darwin':
             self.lightRadio = QRadioButton(self)
             self.lightRadio.setIcon(QIcon(':/images/%s/theme-light.png' % self.parent.theme))
-            # self.lightRadio.setToolTip('<img src=":/images/theme-light-large.jpg" />')
             self.lightRadio.setIconSize(QSize(165, 121))
             self.lightRadio.setCursor(Qt.PointingHandCursor)
             self.lightRadio.clicked.connect(self.switchTheme)
             self.lightRadio.setChecked(self.parent.theme == 'light')
             self.darkRadio = QRadioButton(self)
             self.darkRadio.setIcon(QIcon(':/images/%s/theme-dark.png' % self.parent.theme))
-            # self.darkRadio.setToolTip('<img src=":/images/theme-dark-large.jpg" />')
             self.darkRadio.setIconSize(QSize(165, 121))
             self.darkRadio.setCursor(Qt.PointingHandCursor)
             self.darkRadio.clicked.connect(self.switchTheme)
@@ -275,14 +307,25 @@ class GeneralPage(QWidget):
         smartCutCheckbox.setChecked(self.parent.parent.smartcut)
         smartCutCheckbox.stateChanged.connect(self.setSmartCut)
         smartCutLabel = QLabel('''
-            <b>ON:</b> cut at GOP (IDR framed) timecodes. start + end segments of clips are re-encoded then merged together with stream copied middle segment for frame-accurate cuts (slowest + most accurate mode)
+            <b>ON:</b> re-encode start + end portions of each clip at valid GOP (IDR) keyframes
             <br/>
-            <b>OFF:</b> cut clips using direct stream copy method. the nearest keyframes to your cutting points are automatically chosen to ensure no content is ever missing, extra frames are usually expected to compensate.
-            you should try this mode first and then smartcut if not satisfied with the results (fastest + less precise mode) 
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            - slowest + most accurate mode
+            <!-- start + end segments of clips are re-encoded then merged together with stream copied middle segment for frame-accurate cuts -->
+            <br/>
+            <b>OFF:</b> cut at nearest keyframe before cut marker
+            <br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            - fastest + less precise mode
+            <!-- the nearest keyframes to your cutting points are automatically chosen to ensure no content is ever missing, extra frames are usually expected to compensate. -->
         ''', self)
         smartCutLabel.setObjectName('smartcutlabel')
         smartCutLabel.setTextFormat(Qt.RichText)
         smartCutLabel.setWordWrap(True)
+        smartCutLabel2 = QLabel('<b>NOTE:</b> start with this OFF, then use SmartCut if not satisfied with result', self)
+        smartCutLabel2.setObjectName('smartcutlabel')
+        smartCutLabel2.setTextFormat(Qt.RichText)
+        smartCutLabel2.setWordWrap(True)
         self.singleInstance = self.parent.settings.value('singleInstance', 'on', type=str) in {'on', 'true'}
         singleInstanceCheckbox = QCheckBox('Allow only one running instance', self)
         singleInstanceCheckbox.setToolTip('Allow just one single %s instance to be running' % qApp.applicationName())
@@ -313,6 +356,7 @@ class GeneralPage(QWidget):
         generalLayout = QVBoxLayout()
         generalLayout.addWidget(smartCutCheckbox)
         generalLayout.addWidget(smartCutLabel)
+        generalLayout.addWidget(smartCutLabel2)
         generalLayout.addWidget(SettingsDialog.lineSeparator())
         generalLayout.addWidget(keepClipsCheckbox)
         generalLayout.addWidget(keepClipsLabel)
@@ -426,6 +470,7 @@ class SettingsDialog(QDialog):
         self.pages.addWidget(GeneralPage(self))
         self.pages.addWidget(VideoPage(self))
         self.pages.addWidget(ThemePage(self))
+        self.pages.addWidget(LogsPage(self))
         self.initCategories()
         horizontalLayout = QHBoxLayout()
         horizontalLayout.addWidget(self.categories)
@@ -441,23 +486,29 @@ class SettingsDialog(QDialog):
 
     def initCategories(self):
         generalButton = QListWidgetItem(self.categories)
-        generalButton.setIcon(QIcon(':/images/{0}/settings-general.png'.format(self.theme)))
+        generalButton.setIcon(QIcon(':/images/settings-general.png'))
         generalButton.setText('General')
         generalButton.setToolTip('General settings')
         generalButton.setTextAlignment(Qt.AlignHCenter)
         generalButton.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
         videoButton = QListWidgetItem(self.categories)
-        videoButton.setIcon(QIcon(':/images/{0}/settings-video.png'.format(self.theme)))
+        videoButton.setIcon(QIcon(':/images/settings-video.png'))
         videoButton.setText('Video')
         videoButton.setToolTip('Video settings')
         videoButton.setTextAlignment(Qt.AlignHCenter)
         videoButton.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
         themeButton = QListWidgetItem(self.categories)
-        themeButton.setIcon(QIcon(':/images/{0}/settings-theme.png'.format(self.theme)))
+        themeButton.setIcon(QIcon(':/images/settings-theme.png'))
         themeButton.setText('Theme')
         themeButton.setToolTip('Theme settings')
         themeButton.setTextAlignment(Qt.AlignHCenter)
         themeButton.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+        logsButton = QListWidgetItem(self.categories)
+        logsButton.setIcon(QIcon(':/images/settings-logs.png'))
+        logsButton.setText('Logs')
+        logsButton.setToolTip('Logging settings')
+        logsButton.setTextAlignment(Qt.AlignHCenter)
+        logsButton.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
         self.categories.currentItemChanged.connect(self.changePage)
         self.categories.setCurrentRow(0)
         self.categories.setMaximumWidth(self.categories.sizeHintForColumn(0) + 2)
