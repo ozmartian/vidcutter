@@ -50,8 +50,8 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__()
         self.video, self.devmode = '', False
         self.parse_cmdline()
-        self.init_logger()
         self.init_settings()
+        self.init_logger()
         self.init_scale()
         self.init_cutter()
         self.setWindowTitle('%s' % qApp.applicationName())
@@ -109,7 +109,7 @@ class MainWindow(QMainWindow):
                                                                       % qApp.applicationName().lower()),
                                                          maxBytes=1000000, backupCount=1),
                     self.consoleLogger]
-        if self.parser.isSet(self.debug_option):
+        if self.parser.isSet(self.debug_option) or self.verboseLogs:
             handlers.append(logging.StreamHandler())
         logging.basicConfig(handlers=handlers,
                             format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -142,6 +142,7 @@ class MainWindow(QMainWindow):
             self.restoreState(self.settings.value('windowState'))
         self.theme = self.settings.value('theme', 'light', type=str)
         self.startupvol = self.settings.value('volume', 100, type=int)
+        self.verboseLogs = self.settings.value('verboseLogs', 'off', type=str) in {'on', 'true'}
 
     @staticmethod
     def log_uncaught_exceptions(cls, exc, tb) -> None:

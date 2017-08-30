@@ -62,7 +62,7 @@ class LogsPage(QWidget):
 
     def setVerboseLogs(self, state: int) -> None:
         self.parent.parent.saveSetting('verboseLogs', state == Qt.Checked)
-        self.parent.parent.verboseLogs = (state == Qt.Checked)
+        self.parent.parent.parent.verboseLogs = (state == Qt.Checked)
 
 
 class ThemePage(QWidget):
@@ -317,7 +317,8 @@ class GeneralPage(QWidget):
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             - fastest + less precise mode
             <br/><br/>
-            <b>NOTE:</b> only use this when not satisfied with the standard results
+            <b>NOTE:</b> only use this if when not satisfied with standard cutting results
+            longer 
         ''', self)
         # <!-- start + end segments of clips are re-encoded then merged together with stream copied middle segment
         # for frame-accurate cuts -->
@@ -528,7 +529,7 @@ class SettingsDialog(QDialog):
         index = self.categories.row(current)
         self.pages.setCurrentIndex(index)
         if index == 0:
-            page: GeneralPage = self.pages.currentWidget()
+            page = self.pages.currentWidget() # type: GeneralPage
             page.smartCutLabel.setMinimumHeight(page.smartCutLabel.heightForWidth(page.sizeHint().width()))
 
     @pyqtSlot(QCloseEvent)

@@ -22,6 +22,7 @@
 #
 #######################################################################
 
+import errno
 import logging
 import os
 import re
@@ -62,6 +63,8 @@ class VideoService(QObject):
         }
     }
 
+    _source = None
+
     class ThumbSize(Enum):
         INDEX = QSize(100, 70)
         TIMELINE = QSize(80, 60)
@@ -81,6 +84,14 @@ class VideoService(QObject):
             if hasattr(self.proc, 'errorOccurred'):
                 self.proc.errorOccurred.connect(self.cmdError)
             self.lastError = ''
+
+    def setSource(self, source: str) -> None:
+        if os.path.isfile(source):
+            self._source = source
+            self.probe
+        else:
+            self.logger.error('{0}: {1}'.format(os.strerror(errno.ENOENT), source))
+            raise FileNotFoundError('File not found: {0}'.format(source))
 
     @staticmethod
     def initBackends() -> tuple:
@@ -229,20 +240,24 @@ class VideoService(QObject):
     def cut(self, source: str, output: str, frametime: str, duration: str, allstreams: bool=True,
             codecs: str=None, loglevel: str='error') -> bool:
         self.checkDiskSpace(output)
-        if allstreams:
-            if codecs is not None:
-                args = '-v {5} -i "{0}" -ss {1} -t {2} -c:v {3} -c:a copy -c:s copy -map 0 -y "{4}"'
-                return self.cmdExec(self.backend, args.format(source, frametime, duration, codecs, output, loglevel))
-            else:
-                args = '-v {4} -ss {1} -i "{0}" -t {2} -c copy -map 0 -avoid_negative_ts 1 -copyinkf -y "{3}"'
-                return self.cmdExec(self.backend, args.format(source, frametime, duration, output, loglevel))
+        stream_map = '-map 0 ' if allstreams else ''
+        if codecs is not None:
+            hwaccel, codecs = VideoService.optimiseCodecs(codecs)
+            args = '-v {loglevel} {hwaccel}-i "{source}" -ss {frametime} -t {duration} -c:v {codecs} ' \
+                   '-c:a copy -c:s copy {stream_map}-y "{output}"'.format(**locals())
         else:
-            if codecs is not None:
-                args = '-v {5} -i "{0}" -ss {1} -t {2} -c:v {3} -c:a copy -c:s copy -y "{4}"'
-                return self.cmdExec(self.backend, args.format(source, frametime, duration, codecs, output, loglevel))
-            else:
-                args = '-v {4} -ss {1} -i "{0}" -t {2} -c copy -avoid_negative_ts 1 -copyinkf -y "{3}"'
-                return self.cmdExec(self.backend, args.format(source, frametime, duration, output, loglevel))
+            args = '-v {loglevel} -ss {frametime} -i "{source}" -t {duration} -c copy {stream_map}' \
+                   '-avoid_negative_ts 1 -copyinkf -y "{output}"'.format(**locals())
+        return self.cmdExec(self.backend, args)
+
+    @staticmethod
+    def optimiseCodecs(codecs: str) -> tuple:
+        hwaccel = ''
+        if codecs == '':
+            codecs = 'libx265 -tune zerolatency -preset ultrafast -x265-params crf=20'
+        if codecs == 'h264':
+            codecs = 'libx264 -tune film -preset ultrafast -qp 0'
+        return hwaccel, codecs
 
     def smartcut(self, source: str, output: str, start: float, end: float, allstreams: bool=True) -> bool:
         # 1. split output filename
@@ -411,10 +426,10 @@ class VideoService(QObject):
             self.proc.start(cmd, shlex.split(args))
             self.proc.waitForFinished(-1)
             if output:
-                # if os.getenv('DEBUG', False):
-                # if self.parent.verboseLogs:
                 cmdoutput = str(self.proc.readAllStandardOutput().data(), 'utf-8')
-                self.logger.info('cmd output: {0}'.format(cmdoutput))
+                # if os.getenv('DEBUG', False):
+                if getattr(self.parent, 'verboseLogs', False):
+                    self.logger.info('cmd output: {0}'.format(cmdoutput))
                 return cmdoutput
             if self.proc.exitStatus() == QProcess.NormalExit and self.proc.exitCode() == 0:
                 return True

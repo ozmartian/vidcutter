@@ -72,11 +72,7 @@ class VideoCutter(QWidget):
         self.settings = self.parent.settings
         self.initTheme()
 
-        self.progress = VCProgressBar(self)
-
         self.videoService = VideoService(self)
-        self.videoService.updateProgress.connect(self.progress.updateProgress)
-        self.videoService.setProgressRange.connect(self.progress.setRange)
 
         self.updater = Updater(self)
 
@@ -119,7 +115,7 @@ class VideoCutter(QWidget):
         self.level1Seek = self.settings.value('level1Seek', 2, type=float)
         self.level2Seek = self.settings.value('level2Seek', 5, type=float)
         self.lastFolder = self.settings.value('lastFolder', QDir.homePath(), type=str)
-        self.verboseLogs = self.settings.value('verboseLogs', 'off', type=str) in {'on', 'true'}
+        self.verboseLogs = self.parent.verboseLogs
         if not os.path.exists(self.lastFolder):
             self.lastFolder = QDir.homePath()
 
@@ -1239,8 +1235,9 @@ class VideoCutter(QWidget):
         appInfo.exec_()
 
     def showProgress(self, steps: int) -> None:
-        if not hasattr(self, 'progress'):
-            self.progress = VCProgressBar(self)
+        self.progress = VCProgressBar(self)
+        self.videoService.updateProgress.connect(self.progress.updateProgress)
+        self.videoService.setProgressRange.connect(self.progress.setRange)
         self.progress.setRange(0, steps)
         self.progress.show()
         self.progress.updateProgress(0, 'Analyzing video source')

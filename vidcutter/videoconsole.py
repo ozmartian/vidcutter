@@ -37,7 +37,8 @@ class VideoConsole(QTextEdit):
         self._buffer = StringIO()
         self.setReadOnly(True)
         self.setWordWrapMode(QTextOption.NoWrap)
-        self.setStyleSheet('QTextEdit { font-family:monospace; font-size:%s; }' % ('10pt' if sys.platform == 'darwin' else '8pt'))
+        self.setStyleSheet('QTextEdit { font-family:monospace; font-size:%s; }'
+                           % ('10pt' if sys.platform == 'darwin' else '8pt'))
 
     @pyqtSlot(str)
     def write(self, msg):
