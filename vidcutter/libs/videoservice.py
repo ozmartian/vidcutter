@@ -147,7 +147,7 @@ class VideoService(QObject):
             self.spaceWarningDelivered = True
 
     @staticmethod
-    def capture(source: str, frametime: str, thumbsize: ThumbSize=ThumbSize.INDEX, external: bool=False) -> QPixmap:
+    def captureFrame(source: str, frametime: str, thumbsize: ThumbSize=ThumbSize.INDEX, external: bool=False) -> QPixmap:
         capres = QPixmap()
         img = QTemporaryFile(os.path.join(QDir.tempPath(), 'XXXXXX.jpg'))
         if img.open():
@@ -258,8 +258,7 @@ class VideoService(QObject):
     def cut(self, source: str, output: str, frametime: str, duration: str, allstreams: bool=True,
             codecs: str=None, loglevel: str='error') -> bool:
         self.checkDiskSpace(output)
-        if allstreams:
-            stream_map = '-map 0 '
+        stream_map = '-map 0 ' if allstreams else ''
         if codecs is not None:
             encode_settings = VideoService.encodeSettings(codecs)
             args = '-v {loglevel} -i "{source}" -ss {frametime} -t {duration} -c:v {encode_settings} ' \

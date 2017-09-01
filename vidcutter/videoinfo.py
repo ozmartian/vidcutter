@@ -78,7 +78,8 @@ class VideoInfo(QDialog):
         okButton = QDialogButtonBox(QDialogButtonBox.Ok)
         okButton.accepted.connect(self.close)
         button_layout = QHBoxLayout()
-        mediainfo_version = self.parent.videoService.cmdExec(self.parent.videoService.mediainfo, '--version', True)
+        mediainfo_version = self.parent.videoService.cmdExec(self.parent.videoService.backends['mediainfo'],
+                                                             '--version', True)
         if len(mediainfo_version) >= 2:
             mediainfo_version = mediainfo_version.split('\n')[1]
             mediainfo_label = QLabel('<div style="font-size:11px;"><b>Media information by:</b><br/>%s @ '

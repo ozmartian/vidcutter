@@ -229,7 +229,7 @@ class VideoSlider(QSlider):
             def generate(self):
                 thumbs = list()
                 for frame in self.frames:
-                    thumbs.append(VideoService.capture(self.media, frame, VideoService.ThumbSize.TIMELINE))
+                    thumbs.append(VideoService.captureFrame(self.media, frame, VideoService.ThumbSize.TIMELINE))
                 self.completed.emit(thumbs)
 
         self.thumbsThread = QThread(self)

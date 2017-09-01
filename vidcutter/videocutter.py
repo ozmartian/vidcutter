@@ -756,7 +756,7 @@ class VideoCutter(QWidget):
                             start, stop, action = mo.groups()
                             clip_start = self.delta2QTime(int(float(start) * 1000))
                             clip_end = self.delta2QTime(int(float(stop) * 1000))
-                            clip_image = self.captureImage(clip_start)
+                            clip_image = self.captureImage(self.currentMedia, clip_start)
                             self.clipTimes.append([clip_start, clip_end, clip_image, ''])
                         else:
                             qApp.restoreOverrideCursor()
@@ -975,7 +975,7 @@ class VideoCutter(QWidget):
                     file4Test = lastItem[3] if len(lastItem[3]) else self.currentMedia
                     if self.videoService.testJoin(file4Test, file):
                         self.clipTimes.append([QTime(0, 0), self.videoService.duration(file),
-                                               VideoService.capture(file, '00:00:00.000', external=True), file])
+                                               self.captureImage(file, QTime(0, 0, second=2), True), file])
                         filesadded = True
                     else:
                         cliperrors.append((file,
@@ -983,7 +983,7 @@ class VideoCutter(QWidget):
                         self.videoService.lastError = ''
                 else:
                     self.clipTimes.append([QTime(0, 0), self.videoService.duration(file),
-                                           VideoService.capture(file, '00:00:00.000', external=True), file])
+                                           self.captureImage(file, QTime(0, 0, second=2), True), file])
                     filesadded = True
             if len(cliperrors):
                 detailedmsg = '''<p>The file(s) listed were found to be incompatible for inclusion to the clip index as
@@ -1007,7 +1007,7 @@ class VideoCutter(QWidget):
         # if os.getenv('DEBUG', False):
         #     self.logger.info('cut start position: %s' % self.seekSlider.value())
         starttime = self.delta2QTime(self.seekSlider.value())
-        self.clipTimes.append([starttime, '', self.captureImage(starttime), ''])
+        self.clipTimes.append([starttime, '', self.captureImage(self.currentMedia, starttime), ''])
         self.timeCounter.setMinimum(starttime.toString(self.timeformat))
         self.frameCounter.lockMinimum()
         self.cutStartAction.setDisabled(True)
@@ -1099,8 +1099,8 @@ class VideoCutter(QWidget):
         else:
             return '%f' % (td.days * 86400 + td.seconds + td.microseconds / 1000000.)
 
-    def captureImage(self, frametime: QTime) -> QPixmap:
-        return VideoService.capture(self.currentMedia, frametime.toString(self.timeformat))
+    def captureImage(self, source: str, frametime: QTime, external: bool=False) -> QPixmap:
+        return VideoService.captureFrame(source, frametime.toString(self.timeformat), external=external)
 
     def saveMedia(self) -> bool:
         clips = len(self.clipTimes)
