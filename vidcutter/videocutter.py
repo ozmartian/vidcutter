@@ -155,7 +155,7 @@ class VideoCutter(QWidget):
         self.clipindex_add.setObjectName('clipadd')
         self.clipindex_add.clicked.connect(self.addExternalClips)
         self.clipindex_add.setToolTip('Add clips')
-        self.clipindex_add.setStatusTip('Add one or more files to an existing project or to an empty list if ' +
+        self.clipindex_add.setStatusTip('Add one or more files to an existing project or to an empty list if '
                                         'in order to join them')
         self.clipindex_add.setCursor(Qt.PointingHandCursor)
         self.clipindex_remove = QPushButton(self)
@@ -504,6 +504,7 @@ class VideoCutter(QWidget):
         self.keyRefIcon = QIcon(':/images/keymap.png')
         self.fullscreenIcon = QIcon(':/images/%s/fullscreen.png' % self.theme)
         self.settingsIcon = QIcon(':/images/settings.png')
+        self.quitIcon = QIcon(':/images/quit.png')
 
     # noinspection PyArgumentList
     def initActions(self) -> None:
@@ -548,6 +549,7 @@ class VideoCutter(QWidget):
                                       statusTip='Configure application settings')
         self.fullscreenAction = QAction(self.fullscreenIcon, 'Toggle fullscreen', self, triggered=self.toggleFullscreen,
                                         statusTip='Switch to fullscreen video', enabled=False)
+        self.quitAction = QAction(self.quitIcon, 'Quit', self, triggered=self.close, statusTip='Quit the application')
 
     def initToolbar(self) -> None:
         self.toolbar.addAction(self.openAction)
@@ -575,6 +577,8 @@ class VideoCutter(QWidget):
         self.appMenu.addSeparator()
         self.appMenu.addAction(self.aboutQtAction)
         self.appMenu.addAction(self.aboutAction)
+        self.appMenu.addSeparator()
+        self.appMenu.addAction(self.quitAction)
 
         self.clipindex_contextmenu.addAction(self.moveItemUpAction)
         self.clipindex_contextmenu.addAction(self.moveItemDownAction)
@@ -670,23 +674,23 @@ class VideoCutter(QWidget):
 
     @staticmethod
     def mediaFilters(mediatype: str=None) -> str:
-        all_types = 'All media files (*.3gp, *.3g2, *.amv, * .avi, *.divx, *.div, *.flv, *.f4v, *.webm, *.mkv, ' + \
-                    '*.mp3, *.mpa, *.mp1, *.mpeg, *.mpg, *.mpe, *.m1v, *.tod, *.mpv, *.m2v, *.ts, *.m2t, *.m2ts, ' + \
-                    '*.mp4, *.m4v, *.mpv4, *.mod, *.mjpg, *.mjpeg, *.mov, *.qt, *.rm, *.rmvb, *.dat, *.bin, *.vob, ' + \
+        all_types = 'All media files (*.3gp, *.3g2, *.amv, * .avi, *.divx, *.div, *.flv, *.f4v, *.webm, *.mkv, ' \
+                    '*.mp3, *.mpa, *.mp1, *.mpeg, *.mpg, *.mpe, *.m1v, *.tod, *.mpv, *.m2v, *.ts, *.m2t, *.m2ts, ' \
+                    '*.mp4, *.m4v, *.mpv4, *.mod, *.mjpg, *.mjpeg, *.mov, *.qt, *.rm, *.rmvb, *.dat, *.bin, *.vob, ' \
                     '*.wav, *.wma, *.wmv, *.asf, *.asx, *.xvid)'
-        video_types = 'All video files (*.3gp, *.3g2, *.amv, * .avi, *.divx, *.div, *.flv, *.f4v, *.webm, *.mkv, ' + \
-                      '*.mpeg, *.mpg, *.mpe, *.m1v, *.tod, *.mpv, *.m2v, *.ts, *.m2t, *.m2ts, ' + \
-                      '*.mp4, *.m4v, *.mpv4, *.mod, *.mjpg, *.mjpeg, *.mov, *.qt, *.rm, *.rmvb, *.dat, *.bin, ' + \
+        video_types = 'All video files (*.3gp, *.3g2, *.amv, * .avi, *.divx, *.div, *.flv, *.f4v, *.webm, *.mkv, ' \
+                      '*.mpeg, *.mpg, *.mpe, *.m1v, *.tod, *.mpv, *.m2v, *.ts, *.m2t, *.m2ts, ' \
+                      '*.mp4, *.m4v, *.mpv4, *.mod, *.mjpg, *.mjpeg, *.mov, *.qt, *.rm, *.rmvb, *.dat, *.bin, ' \
                       '*.vob, *.wmv, *.asf, *.asx, *.xvid)'
         audio_types = 'All audio files (*.mp3, *.mpa, *.mp1, *.wav, *.wma)'
-        specific_types = '3GPP files (*.3gp, *.3g2);;AMV files (*.amv);;AVI files (* .avi);;' + \
-                         'DivX files (*.divx, *.div);;Flash files (*.flv, *.f4v);;WebM files (*.webm);;' + \
-                         'MKV files (*.mkv);;MPEG Audio files (*.mp3, *.mpa, *.mp1);;' + \
-                         'MPEG files (*.mpeg, *.mpg, *.mpe, *.m1v, *.tod);;' + \
-                         'MPEG-2 files (*.mpv, *.m2v, *.ts, *.m2t, *.m2ts);;MPEG-4 files (*.mp4, *.m4v, *.mpv4);;' + \
-                         'MOD files (*.mod);;MJPEG files (*.mjpg, *.mjpeg);;QuickTime files (*.mov, *.qt) ;;' + \
-                         'RealMedia files (*.rm, *.rmvb);;VCD DAT files (*.dat);;VCD SVCD BIN/CUE images (*.bin);;' + \
-                         'VOB files (*.vob);;Wave Audio files (*.wav);;Windows Media Audio files (*.wma);;' + \
+        specific_types = '3GPP files (*.3gp, *.3g2);;AMV files (*.amv);;AVI files (* .avi);;' \
+                         'DivX files (*.divx, *.div);;Flash files (*.flv, *.f4v);;WebM files (*.webm);;' \
+                         'MKV files (*.mkv);;MPEG Audio files (*.mp3, *.mpa, *.mp1);;' \
+                         'MPEG files (*.mpeg, *.mpg, *.mpe, *.m1v, *.tod);;' \
+                         'MPEG-2 files (*.mpv, *.m2v, *.ts, *.m2t, *.m2ts);;MPEG-4 files (*.mp4, *.m4v, *.mpv4);;' \
+                         'MOD files (*.mod);;MJPEG files (*.mjpg, *.mjpeg);;QuickTime files (*.mov, *.qt) ;;' \
+                         'RealMedia files (*.rm, *.rmvb);;VCD DAT files (*.dat);;VCD SVCD BIN/CUE images (*.bin);;' \
+                         'VOB files (*.vob);;Wave Audio files (*.wav);;Windows Media Audio files (*.wma);;' \
                          'Windows Media files (*.wmv, *.asf, *.asx);;Xvid files (*.xvid)'
         if mediatype is None:
             return '%s;;%s;;%s;;%s;;All files (*.*)' % (all_types, video_types, audio_types, specific_types)
@@ -740,7 +744,7 @@ class VideoCutter(QWidget):
                         self.logger.error('Invalid project file was selected', exc_info=True)
                         sys.stderr.write('Invalid project file was selected')
                         QMessageBox.critical(self.parent, 'Invalid project file',
-                                             'Could not make sense of the selected project file. Try viewing it in a ' +
+                                             'Could not make sense of the selected project file. Try viewing it in a '
                                              'text editor to ensure it is valid and not corrupted.')
                         return
                     if project_type == 'vcp' and linenum == 1:
@@ -774,8 +778,8 @@ class VideoCutter(QWidget):
         for item in self.clipTimes:
             if len(item[3]):
                 QMessageBox.critical(self.parent, 'Cannot save project',
-                                     'The clip index currently contains at least one external media file which is ' +
-                                     'not supported by current project file standards.\n\nSupport for external media ' +
+                                     'The clip index currently contains at least one external media file which is '
+                                     'not supported by current project file standards.\n\nSupport for external media '
                                      'may be added to the VCP (VidCutter Project file) format in the near future.')
                 return
         project_file, _ = os.path.splitext(self.currentMedia)
@@ -828,6 +832,7 @@ class VideoCutter(QWidget):
             self.videoplayerWidget.show()
             self.mediaAvailable = True
         self.mpvWidget.play(self.currentMedia)
+        self.videoService.setMedia(self.currentMedia)
 
     def playMedia(self) -> None:
         if self.mpvWidget.mpv.get_property('pause'):
@@ -950,6 +955,7 @@ class VideoCutter(QWidget):
         self.smartcut = checked
         self.saveSetting('smartcut', self.smartcut)
         self.smartcutButton.setChecked(self.smartcut)
+        self.showText('SmartCut {0}'.format('enabled' if checked else 'disabled'))
 
     @pyqtSlot()
     def addExternalClips(self):
@@ -981,15 +987,15 @@ class VideoCutter(QWidget):
                     filesadded = True
             if len(cliperrors):
                 detailedmsg = '''<p>The file(s) listed were found to be incompatible for inclusion to the clip index as
-                                 they failed to join in simple tests used to ensure their compatibility. This is
-                                 commonly due to differences in frame size, audio/video formats (codecs), or both.</p>
-                                 <p>You can join these files as they currently are using traditional video editors like
-                                 OpenShot, Kdenlive, ShotCut, Final Cut Pro or Adobe Premiere. They can re-encode media
-                                 files with mixed properties so that they are then matching and able to be joined but
-                                 be aware that this can be a time consuming process and almost always results in
-                                 degraded video quality.</p>
-                                 <p>Re-encoding video is not going to ever be supported by VidCutter because those tools
-                                 are already available for you both free and commercially.</p>'''
+                            they failed to join in simple tests used to ensure their compatibility. This is
+                            commonly due to differences in frame size, audio/video formats (codecs), or both.</p>
+                            <p>You can join these files as they currently are using traditional video editors like
+                            OpenShot, Kdenlive, ShotCut, Final Cut Pro or Adobe Premiere. They can re-encode media
+                            files with mixed properties so that they are then matching and able to be joined but
+                            be aware that this can be a time consuming process and almost always results in
+                            degraded video quality.</p>
+                            <p>Re-encoding video is not going to ever be supported by VidCutter because those tools
+                            are already available for you both free and commercially.</p>'''
                 errordialog = ClipErrorsDialog(cliperrors, self)
                 errordialog.setDetailedMessage(detailedmsg)
                 errordialog.show()

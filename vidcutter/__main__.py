@@ -36,7 +36,7 @@ from PyQt5.QtGui import QCloseEvent, QContextMenuEvent, QDragEnterEvent, QDropEv
 from PyQt5.QtWidgets import qApp, QApplication, QMainWindow, QMessageBox, QSizePolicy
 
 from vidcutter.libs.singleapplication import SingleApplication
-from vidcutter.videoconsole import ConsoleHandler, ConsoleWidget
+from vidcutter.videoconsole import ConsoleHandler, ConsoleWidget, VideoLogger
 from vidcutter.videocutter import VideoCutter
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
@@ -111,6 +111,7 @@ class MainWindow(QMainWindow):
                     self.consoleLogger]
         if self.parser.isSet(self.debug_option) or self.verboseLogs:
             handlers.append(logging.StreamHandler())
+        logging.setLoggerClass(VideoLogger)
         logging.basicConfig(handlers=handlers,
                             format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                             datefmt='%Y-%m-%d %H:%M',
@@ -237,7 +238,6 @@ class MainWindow(QMainWindow):
             self.cutter.timeCounter.clearFocus()
             self.cutter.frameCounter.clearFocus()
             if hasattr(self.cutter, 'notify'):
-                # self.cutter.notify.fadeOut()
                 self.cutter.notify.close()
 
     def dragEnterEvent(self, event: QDragEnterEvent) -> None:

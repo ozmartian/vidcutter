@@ -23,6 +23,7 @@
 #######################################################################
 
 import logging
+import pprint
 import sys
 from io import StringIO
 
@@ -94,3 +95,12 @@ class ConsoleHandler(QObject, logging.StreamHandler):
 
     def emit(self, record):
         self.logReceived.emit(record.message)
+
+
+class VideoLogger(logging.Logger):
+    def __init__(self, name, level=logging.NOTSET):
+        super(VideoLogger, self).__init__(name, level)
+        self.pp = pprint.PrettyPrinter(indent=4, compact=False)
+
+    def info(self, msg, *args, **kwargs):
+        return super(VideoLogger, self).info(self.pp.pformat(msg), *args, **kwargs)

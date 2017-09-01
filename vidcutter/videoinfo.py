@@ -68,7 +68,7 @@ class VideoInfo(QDialog):
 </style>
 <div align="center" style="margin:15px;">%s</div>''' % ('#C681D5' if self.parent.theme == 'dark' else '#642C68',
                                                         '#C681D5' if self.parent.theme == 'dark' else '#642C68',
-                                                        self.parent.videoService.metadata(self.media))
+                                                        self.parent.videoService.mediainfo(self.media))
         content = QTextBrowser(self.parent)
         content.setStyleSheet('QTextBrowser { border: none; background-color: transparent; }')
         content.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)

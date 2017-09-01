@@ -213,6 +213,9 @@ class VCProgressBar(QDialog):
     @pyqtSlot(int, str)
     def updateProgress(self, value: int, text: str) -> None:
         self.setValue(value)
+        if '<b>' in text:
+            css = '<style>b { font-family:"Open Sans"; font-weight:bold; }</style>'
+            text = '{0}{1}'.format(css, text)
         self.setText(text)
         qApp.processEvents()
 
