@@ -24,14 +24,14 @@ environment:
   PYTHONUNBUFFERED: 1
   PYTHONHOME: C:\Python36-x64
 
-# init:
-#   - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
-#   - cd C:\projects
-#   - git config --global credential.helper store
-#   - ps: Add-Content "$env:USERPROFILE\.git-credentials" "https://$($env:access_token):x-oauth-basic@github.com`n"
-#   - git config --global user.email "pete@ozmartians.com"
-#   - git config --global user.name "AppVeyor Build Agent"
-#   - git clone https://github.com/ozmartian/vidcutter-builds.git builds
+init:
+  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+  # - cd C:\projects
+  # - git config --global credential.helper store
+  # - ps: Add-Content "$env:USERPROFILE\.git-credentials" "https://$($env:access_token):x-oauth-basic@github.com`n"
+  # - git config --global user.email "pete@ozmartians.com"
+  # - git config --global user.name "AppVeyor Build Agent"
+  # - git clone https://github.com/ozmartian/vidcutter-builds.git builds
 
 install:
   - set PATH=%PYTHONHOME%;%PYTHONHOME%\scripts;%PYTHONHOME%\tools\scripts;%PATH%
@@ -65,7 +65,7 @@ install:
   - call build.pyinstaller.win.bat 64
   - echo.
   - cd ..\InnoSetup\Output
-  - appveyor PushArtifact VidCutter-4.5.0.DEV-setup-win64.exe
+  - appveyor PushArtifact VidCutter-4.5.0.0-setup-win64.exe
   - echo.
   - echo SUCCESS
   - appveyor exit
@@ -76,13 +76,17 @@ nuget:
 test: off
 
 artifacts:
- - path: C:\projects\vidcutter\_build\InnoSetup\Output\VidCutter-4.0.0.DEV-setup-win64.exe
+ - path: C:\projects\vidcutter\_build\InnoSetup\Output\VidCutter-4.5.0.0-setup-win64.exe
    name: Windows Installers
    type: File
 
  - path: C:\projects\vidcutter\vidcutter\libs\*.dll
    name: Extension Modules
    type: zip
+
+on_finish:
+ - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+
 
 # deploy:
 #   release: 4.0.0
