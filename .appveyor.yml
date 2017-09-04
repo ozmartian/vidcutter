@@ -19,7 +19,7 @@ clone_folder: C:\projects\vidcutter
 
 environment:
   APPVEYOR_RDP_PASSWORD:
-    secure: dU7R+yCfZACwkvslBf988A==
+    secure: j4QC2kKp9s71PjQqY4JIlw==
   APPVEYOR_SKIP_FINALIZE_ON_EXIT: false
   PYTHONUNBUFFERED: 1
   PYTHONHOME: C:\Python36-x64
