@@ -45,7 +45,7 @@ install:
   - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
   - echo Build Cython/C extension for libmpv binding...
   - C:\Python36-x64\python.exe setup.py build_ext -i
-  - appveyor PushArtifact vidcutter\libs\*.dll -FileName extensions.zip -Type Zip
+  - appveyor PushArtifact vidcutter\libs\mpv.cp36-win_amd64.pyd
   - echo Downloading latest libmpv 64-bit build...
   # - curl -L -fsS -o _build\pyinstaller\temp\mpv-dev.7z https://mpv.srsfckn.biz/mpv-dev-20170718.7z
   - curl -L -fsS -o _build\pyinstaller\temp\mpv-dev.7z https://downloads.sourceforge.net/project/mpv-player-windows/libmpv/mpv-dev-x86_64-20170902-git-449d972.7z
