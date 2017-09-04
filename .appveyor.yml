@@ -19,19 +19,13 @@ clone_folder: C:\projects\vidcutter
 
 environment:
   APPVEYOR_RDP_PASSWORD:
-    secure: uzV46p3oDwpGYncy5y+ysw==
+    secure: dU7R+yCfZACwkvslBf988A==
   APPVEYOR_SKIP_FINALIZE_ON_EXIT: false
   PYTHONUNBUFFERED: 1
   PYTHONHOME: C:\Python36-x64
 
 init:
   - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
-  # - cd C:\projects
-  # - git config --global credential.helper store
-  # - ps: Add-Content "$env:USERPROFILE\.git-credentials" "https://$($env:access_token):x-oauth-basic@github.com`n"
-  # - git config --global user.email "pete@ozmartians.com"
-  # - git config --global user.name "AppVeyor Build Agent"
-  # - git clone https://github.com/ozmartian/vidcutter-builds.git builds
 
 install:
   - set PATH=%PYTHONHOME%;%PYTHONHOME%\scripts;%PYTHONHOME%\tools\scripts;%PATH%
@@ -106,7 +100,6 @@ on_finish:
 # --------------------------------------------------------------
 # 
 # on_finish:
-#   # - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 #   - cd C:\projects\builds\
 #   - git add -A
 #   - git commit -am "AppVeyor Build Agent commit"
