@@ -2,6 +2,8 @@
  
 
 ![VidCutter](http://vidcutter.ozmartians.com/vidcutter-banner.png)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="http://vidcutter.software.informer.com/" target="_blank"><img border="0" src="http://img.informer.com/awards/si-award-clean.png" alt="Software Informer Virus Free award" height="120" width="120" /></a>
 
 [![Build Status](https://travis-ci.org/ozmartian/vidcutter.svg)](https://travis-ci.org/ozmartian/vidcutter)
 [![Build Status](https://ci.appveyor.com/api/projects/status/jgasythb2vqsxy7v?svg=true)](https://ci.appveyor.com/project/ozmartian/vidcutter)
