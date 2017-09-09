@@ -30,3 +30,4 @@ MediaInfo.dll
 *.*.nupkg
 *.so
 *.pyd
+*.pyc
