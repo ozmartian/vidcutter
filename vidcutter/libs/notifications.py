@@ -26,8 +26,8 @@ import os
 import sys
 import time
 
-from PyQt5.QtCore import (pyqtSignal, pyqtSlot, Qt, QEasingCurve, QFileInfo, QPropertyAnimation,
-                          QSequentialAnimationGroup, QTimer, QUrl)
+from PyQt5.QtCore import (pyqtSignal, pyqtSlot, Qt, QEasingCurve, QPropertyAnimation, QSequentialAnimationGroup,
+                          QTimer, QUrl)
 from PyQt5.QtGui import QDesktopServices, QIcon, QMouseEvent, QPixmap
 from PyQt5.QtWidgets import qApp, QDialog, QGraphicsOpacityEffect, QHBoxLayout, QLabel, QPushButton, QVBoxLayout
 
@@ -117,7 +117,7 @@ class Notification(QDialog):
 
     def mousePressEvent(self, event: QMouseEvent):
         if event.button() == Qt.LeftButton:
-            self.close()
+            self.fadeOut()
 
     # noinspection PyTypeChecker
     def showEvent(self, event):
@@ -156,13 +156,14 @@ class JobCompleteNotification(Notification):
             padding: 4px 2px;
         }
         td.label {
-            font-size: 11px;
+            font-size: 12px;
+            font-weight: bold;
             color: %s;
             padding-top: 5px;
             text-transform: lowercase;
             text-align: right;
             padding-right: 5px;
-            font-family: "Futura-Light", sans-serif;
+            font-family: "Open Sans", sans-serif;
         }
         td.value {
             font-size: 13px;
@@ -173,15 +174,15 @@ class JobCompleteNotification(Notification):
         <h2>%s</h2>
         <table class="info" cellpadding="2" cellspacing="0" align="left" width="315">
             <tr>
-                <td width="20%%" class="label"><b>File:</b></td>
+                <td valign="top" width="20%%" class="label"><b>File:</b></td>
                 <td width="80%%" class="value" nowrap>%s</td>
             </tr>
             <tr>
-                <td width="20%%" class="label"><b>Size:</b></td>
+                <td valign="top" width="20%%" class="label"><b>Size:</b></td>
                 <td width="80%%" class="value">%s</td>
             </tr>
             <tr>
-                <td width="20%%" class="label"><b>Length:</b></td>
+                <td valign="top" width="20%%" class="label"><b>Length:</b></td>
                 <td width="80%%" class="value">%s</td>
             </tr>
         </table>

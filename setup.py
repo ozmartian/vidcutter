@@ -31,10 +31,7 @@
 
 
 import os
-import shlex
-import subprocess
 import sys
-from distutils.spawn import find_executable
 
 from setuptools import setup
 from setuptools.extension import Extension
@@ -44,7 +41,7 @@ from helpers import SetupHelpers
 setup_requires = ['setuptools']
 
 # Cython override; default to building extension module from pre-Cythonized .c file
-USE_CYTHON = True if not os.path.isfile(os.path.join('vidcutter', 'libs', 'pympv','mpv.c')) else False
+USE_CYTHON = True if not os.path.isfile(os.path.join('vidcutter', 'libs', 'pympv', 'mpv.c')) else False
 ext = '.pyx' if USE_CYTHON else '.c'
 extensions = [Extension(
     'vidcutter.libs.mpv',
@@ -72,9 +69,7 @@ try:
         license='GPLv3+',
         packages=['vidcutter', 'vidcutter.libs'],
         setup_requires=setup_requires,
-
         install_requires=[],
-
         data_files=SetupHelpers.get_data_files(),
         ext_modules=extensions,
         entry_points={'gui_scripts': ['vidcutter = vidcutter.__main__:main']},
@@ -97,43 +92,43 @@ except Exception as e:
 
 # helper functions/procedures for PyPi on Linux installations which is frowned upon
 # may get rid of this so users stick with distro packaging
-if not sys.platform.startswith('linux') or not os.getenv('FAKEROOTKEY') is None:
-    ROOT = False
-else:
-    ROOT = os.geteuid() == 0
-
-if ROOT and result is not None:
-    try:
-        sys.stdout.write('Updating shared mime-info database... ')
-        exepath = find_executable('update-mime-database')
-        if exepath is None:
-            raise Exception
-        subprocess.call([exepath, '/usr/share/mime/'])
-    except:
-        sys.stdout.write('FAILED\n')
-    else:
-        sys.stdout.write('DONE\n')
-
-    try:
-        exepath = find_executable('update-desktop-database')
-        if exepath is None:
-            raise Exception
-        sys.stdout.write('Updating desktop file database... ')
-        subprocess.call([exepath])
-    except:
-        sys.stdout.write('FAILED\n')
-    else:
-        sys.stdout.write('DONE\n')
-
-    try:
-        sys.stdout.write('Updating mime-type and file-type info... ')
-        exepath = find_executable('xdg-icon-resource')
-        if exepath is None:
-            raise Exception
-        args = '{0} install --noupdate --context mimetypes --size 128 '.format(exepath) + \
-               '/usr/share/icons/hicolor/128x128/apps/vidcutter.png application-x-vidcutter'
-        subprocess.call(shlex.split(args))
-    except:
-        sys.stdout.write('FAILED\n')
-    else:
-        sys.stdout.write('DONE\n')
+# if not sys.platform.startswith('linux') or not os.getenv('FAKEROOTKEY') is None:
+#     ROOT = False
+# else:
+#     ROOT = os.geteuid() == 0
+#
+# if ROOT and result is not None:
+#     try:
+#         sys.stdout.write('Updating shared mime-info database... ')
+#         exepath = find_executable('update-mime-database')
+#         if exepath is None:
+#             raise Exception
+#         subprocess.call([exepath, '/usr/share/mime/'])
+#     except:
+#         sys.stdout.write('FAILED\n')
+#     else:
+#         sys.stdout.write('DONE\n')
+#
+#     try:
+#         exepath = find_executable('update-desktop-database')
+#         if exepath is None:
+#             raise Exception
+#         sys.stdout.write('Updating desktop file database... ')
+#         subprocess.call([exepath])
+#     except:
+#         sys.stdout.write('FAILED\n')
+#     else:
+#         sys.stdout.write('DONE\n')
+#
+#     try:
+#         sys.stdout.write('Updating mime-type and file-type info... ')
+#         exepath = find_executable('xdg-icon-resource')
+#         if exepath is None:
+#             raise Exception
+#         args = '{0} install --noupdate --context mimetypes --size 128 '.format(exepath) + \
+#                '/usr/share/icons/hicolor/128x128/apps/vidcutter.png application-x-vidcutter'
+#         subprocess.call(shlex.split(args))
+#     except:
+#         sys.stdout.write('FAILED\n')
+#     else:
+#         sys.stdout.write('DONE\n')

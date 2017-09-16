@@ -28,7 +28,7 @@ from PyQt5.QtCore import pyqtSlot, QSize, Qt
 from PyQt5.QtGui import QCloseEvent, QIcon, QShowEvent
 from PyQt5.QtWidgets import (qApp, QButtonGroup, QCheckBox, QDialog, QDialogButtonBox, QDoubleSpinBox, QFrame,
                              QGridLayout, QGroupBox, QHBoxLayout, QLabel, QListView, QListWidget, QListWidgetItem,
-                             QMessageBox, QRadioButton, QStackedWidget, QStyleFactory, QVBoxLayout, QWidget)
+                             QMessageBox, QRadioButton, QSizePolicy, QStackedWidget, QStyleFactory, QVBoxLayout, QWidget)
 
 
 class LogsPage(QWidget):
@@ -132,7 +132,7 @@ class ThemePage(QWidget):
             <br/>
             <b>OFF:</b> use a generic file open & save dialog widget provided by the Qt toolkit
             <br/><br/>
-            <b>NOTE:</b> native dialogs should always be used unless they are not working
+            <b>NOTE:</b> native dialogs should always be used if working
         ''', self)
         nativeDialogsLabel.setObjectName('nativedialogslabel')
         nativeDialogsLabel.setTextFormat(Qt.RichText)
@@ -198,10 +198,10 @@ class VideoPage(QWidget):
         decodingCheckbox.setChecked(self.parent.parent.hardwareDecoding)
         decodingCheckbox.stateChanged.connect(self.switchDecoding)
         decodingLabel = QLabel('''
-            <b>ON:</b> attempt to use best hardware decoder, fall back to software decoding on error
+            <b>ON:</b> saves laptop power + prevents video tearing;
+            falls back to software decoding if hardware not supported
             <br/>
-            <b>OFF:</b> always use software decoding
-        ''', self)
+            <b>OFF:</b> always use software based decoding''', self)
         decodingLabel.setObjectName('decodinglabel')
         decodingLabel.setTextFormat(Qt.RichText)
         decodingLabel.setWordWrap(True)
@@ -301,8 +301,8 @@ class GeneralPage(QWidget):
         super(GeneralPage, self).__init__(parent)
         self.parent = parent
         self.setObjectName('settingsgeneralpage')
-        smartCutCheckbox = QCheckBox('Enable SmartCut mode (frame-accurate)')
-        smartCutCheckbox.setToolTip('Enable SmartCut mode for frame-accurate cutting')
+        smartCutCheckbox = QCheckBox('Enable SmartCut (frame-accurate mode)')
+        smartCutCheckbox.setToolTip('Enable SmartCut mode for frame-accurate precision when cutting')
         smartCutCheckbox.setCursor(Qt.PointingHandCursor)
         smartCutCheckbox.setChecked(self.parent.parent.smartcut)
         smartCutCheckbox.stateChanged.connect(self.setSmartCut)
@@ -310,24 +310,17 @@ class GeneralPage(QWidget):
             <b>ON:</b> re-encode start + end portions of each clip at valid GOP (IDR) keyframes
             <br/>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            - slowest + most accurate mode
+            - slowest + most accurate mode; <b>approx. 1.5 - 3.0 mins</b>
             <br/>
-            <b>OFF:</b> cut at nearest keyframe before cut marker
+            <b>OFF:</b> cut at nearest keyframe before/after your start/end markers
             <br/>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            - fastest + less precise mode
-            <br/><br/>
-            <b>NOTE:</b> only use this if when not satisfied with standard cutting results
-            longer 
-        ''', self)
-        # <!-- start + end segments of clips are re-encoded then merged together with stream copied middle segment
-        # for frame-accurate cuts -->
-        # <!-- the nearest keyframes to your cutting points are automatically chosen to ensure no content is ever
-        # missing, extra frames are usually expected to compensate. -->
+            - fastest + less precise mode; <b>approx. 2.0 - 5.0 secs</b>''', self)
         self.smartCutLabel.setObjectName('smartcutlabel')
-        self.smartCutLabel.setAlignment(Qt.AlignTop)
         self.smartCutLabel.setTextFormat(Qt.RichText)
+        self.smartCutLabel.setAlignment(Qt.AlignTop)
         self.smartCutLabel.setWordWrap(True)
+        self.smartCutLabel.setMinimumHeight(int(self.smartCutLabel.sizeHint().height() / 1.3))
         self.singleInstance = self.parent.settings.value('singleInstance', 'on', type=str) in {'on', 'true'}
         singleInstanceCheckbox = QCheckBox('Allow only one running instance', self)
         singleInstanceCheckbox.setToolTip('Allow just one single %s instance to be running' % qApp.applicationName())
@@ -451,7 +444,7 @@ class GeneralPage(QWidget):
 
 class SettingsDialog(QDialog):
     def __init__(self, parent=None, flags=Qt.WindowCloseButtonHint):
-        super(SettingsDialog, self).__init__(parent, flags)
+        super(SettingsDialog, self).__init__(parent.parent, flags)
         self.parent = parent
         self.settings = self.parent.settings
         self.theme = self.parent.theme
@@ -483,7 +476,6 @@ class SettingsDialog(QDialog):
         mainLayout.addWidget(buttons)
         self.setLayout(mainLayout)
         self.setWindowTitle('Settings - {0}'.format(qApp.applicationName()))
-        self.setMinimumWidth(620)
 
     def initCategories(self):
         generalButton = QListWidgetItem(self.categories)
@@ -514,6 +506,7 @@ class SettingsDialog(QDialog):
         self.categories.setCurrentRow(0)
         self.categories.setMaximumWidth(self.categories.sizeHintForColumn(0) + 2)
         self.adjustSize()
+        self.setMinimumSize(620, self.sizeHint().height())
 
     @staticmethod
     def lineSeparator() -> QFrame:
@@ -528,9 +521,9 @@ class SettingsDialog(QDialog):
             current = previous
         index = self.categories.row(current)
         self.pages.setCurrentIndex(index)
-        if index == 0:
-            page = self.pages.currentWidget() # type: GeneralPage
-            page.smartCutLabel.setMinimumHeight(page.smartCutLabel.heightForWidth(page.sizeHint().width()))
+        # if index == 0:
+        #     page = self.pages.currentWidget() # type: GeneralPage
+        #     page.smartCutLabel.setMinimumHeight(page.smartCutLabel.heightForWidth(page.sizeHint().width()))
 
     @pyqtSlot(QCloseEvent)
     def closeEvent(self, event: QCloseEvent):

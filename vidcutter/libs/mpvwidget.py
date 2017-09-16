@@ -38,9 +38,10 @@ class mpvWidget(QOpenGLWidget):
         self.originalParent = None
         self.logger = logging.getLogger(__name__)
         locale.setlocale(locale.LC_NUMERIC, 'C')
-        self.mpv = mpv.Context()
 
-        self.mpv.set_log_level('v' if self.parent.verboseLogs else 'error')
+        self.mpv = mpv.Context()
+        self.setLogLevel('terminal-default')
+        self.mpv.set_option('msg-level', self.msglevel)
         self.mpv.set_option('config', False)
 
         def _istr(o):
@@ -51,6 +52,7 @@ class mpvWidget(QOpenGLWidget):
             try:
                 self.mpv.set_option(opt.replace('_', '-'), _istr(val))
             except mpv.MPVError:
+                print('error setting MPV option "%s" to value "%s"' % (opt, val))
                 pass
 
         self.mpv.initialize()
@@ -69,6 +71,13 @@ class mpvWidget(QOpenGLWidget):
         self.mpv.observe_property('time-pos')
         self.mpv.observe_property('duration')
         self.mpv.set_wakeup_callback(self.eventHandler)
+
+    @property
+    def msglevel(self):
+        if os.getenv('DEBUG', False) or getattr(self.parent, 'verboseLogs', False):
+            return 'all=v'
+        else:
+            return 'all=error'
 
     def shutdown(self):
         self.makeCurrent()
@@ -129,7 +138,7 @@ class mpvWidget(QOpenGLWidget):
                 if e.code != -10:
                     raise e
 
-    def setLogLevel(self, loglevel: mpv.LogLevels):
+    def setLogLevel(self, loglevel):
         self.mpv.set_log_level(loglevel)
 
     def showText(self, msg: str, duration: int=5, level: int=0):

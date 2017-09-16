@@ -56,14 +56,18 @@ class VideoInfo(QDialog):
         margin-top: -10px;
     }
     td i {
-        font-family: "Futura-Light", sans-serif;
-        font-weight: 500;
+        font-family: "Open Sans", sans-serif;
+        font-weight: normal;
         font-style: normal;
         text-align: right;
         color: %s;
         white-space: nowrap;
     }
-    td { font-weight: normal; }
+    td {
+        font-weight: normal;
+        text-align: right;
+    }
+    td + td { text-align: left; }
     h1, h2, h3 { color: %s; }
 </style>
 <div align="center" style="margin:15px;">%s</div>''' % ('#C681D5' if self.parent.theme == 'dark' else '#642C68',
@@ -78,7 +82,7 @@ class VideoInfo(QDialog):
         okButton = QDialogButtonBox(QDialogButtonBox.Ok)
         okButton.accepted.connect(self.close)
         button_layout = QHBoxLayout()
-        mediainfo_version = self.parent.videoService.cmdExec(self.parent.videoService.backends['mediainfo'],
+        mediainfo_version = self.parent.videoService.cmdExec(self.parent.videoService.backends.mediainfo,
                                                              '--version', True)
         if len(mediainfo_version) >= 2:
             mediainfo_version = mediainfo_version.split('\n')[1]
@@ -107,7 +111,10 @@ class VideoInfo(QDialog):
                 font-size: 13px;
                 margin-top:-10px;
             }
-            td { font-weight: normal; }
+            td {
+                text-align: center;
+                font-weight: normal;
+            }
         </style>
         <div align="center">
             <table border="0" cellpadding="2" cellspacing="0">
@@ -121,30 +128,34 @@ class VideoInfo(QDialog):
         content.setStyleSheet('QTextBrowser { border: none; background-color: transparent; }')
         content.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         content.setHtml(keyframe_content)
-        kframes = QDialog(self, flags=Qt.WindowCloseButtonHint)
+        kframes = QDialog(self, flags=Qt.Dialog | Qt.WindowCloseButtonHint)
         kframes.setObjectName('keyframes')
         kframes.setAttribute(Qt.WA_DeleteOnClose, True)
         buttons = QDialogButtonBox(QDialogButtonBox.Ok)
         buttons.accepted.connect(kframes.close)
         content_headers = '''<style>
             table {
-                font-family: "Open Sans", sans-serif;
-                font-size: 13px;
+                font-family: "Futura-Light", sans-serif;
+                font-size: 22px;
+                font-weight: 500;
+                text-align: center;
+                color: %s
             }
-            td.heading { font-weight: bold; }
         </style>
-        <table widcth="230" border="0" cellpadding="2" cellspacing="0">
+        <table width="230" border="0" cellpadding="8" cellspacing="0">
             <tr>
-                <td width="115" class="heading">Timecode</td>
-                <td width="115" class="heading">Timecode</td>
+                <td width="230">Keyframe Timecodes</td>
             </tr>
         </table>
-        '''
+        ''' % ('#C681D5' if self.parent.theme == 'dark' else '#642C68')
         headers = QLabel(content_headers, self)
         layout = QVBoxLayout()
         layout.addWidget(headers)
         layout.addWidget(content)
-        layout.addWidget(buttons)
+        button_layout = QHBoxLayout()
+        button_layout.addWidget(QLabel('<b>Total keyframes:</b> %i' % len(keyframes), self), Qt.AlignLeft)
+        button_layout.addWidget(buttons, Qt.AlignRight)
+        layout.addLayout(button_layout)
         kframes.setLayout(layout)
         kframes.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         kframes.setWindowModality(Qt.WindowModal)

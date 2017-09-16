@@ -117,7 +117,7 @@ class MainWindow(QMainWindow):
                             datefmt='%Y-%m-%d %H:%M',
                             level=logging.INFO)
         logging.captureWarnings(capture=True)
-        sys.excepthook = self.log_uncaught_exceptions
+        sys.excepthook = MainWindow.log_uncaught_exceptions
 
     def init_settings(self) -> None:
         if sys.platform == 'darwin':

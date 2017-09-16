@@ -532,3 +532,9 @@ VCProgressBar QProgressBar::chunk {
     background-color: #642C68;
     margin: 1px;
 }
+
+VCProgressBar QLabel#progresstimer {
+    color: #000;
+    font-size: 13px;
+    font-family: "Open Sans", sans-serif;
+}

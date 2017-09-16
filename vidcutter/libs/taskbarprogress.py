@@ -25,9 +25,8 @@
 import logging
 
 from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtWidgets import qApp, QWidget
-
 from PyQt5.QtDBus import QDBusConnection, QDBusMessage
+from PyQt5.QtWidgets import qApp, QWidget
 
 
 class TaskbarProgress(QWidget):

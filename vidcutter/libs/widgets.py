@@ -25,11 +25,11 @@
 import os
 import sys
 
-from PyQt5.QtCore import pyqtSignal, pyqtSlot, QEvent, QObject, QPoint, Qt, QTime
+from PyQt5.QtCore import pyqtSignal, pyqtSlot, QEvent, QObject, QPoint, Qt, QTime, QTimer
 from PyQt5.QtGui import QShowEvent
 from PyQt5.QtWidgets import (qApp, QAbstractSpinBox, QDialog, QDialogButtonBox, QGridLayout, QHBoxLayout, QLabel,
-                             QMessageBox, QProgressBar, QSlider, QSpinBox, QStyle, QStyleFactory, QStyleOptionSlider,
-                             QTimeEdit, QToolBox, QToolTip, QVBoxLayout, QWidget)
+                             QMessageBox, QProgressBar, QSlider, QSpinBox, QStyle, QStyleFactory,
+                             QStyleOptionSlider, QTimeEdit, QToolBox, QToolTip, QVBoxLayout, QWidget)
 
 if sys.platform.startswith('linux'):
     from vidcutter.libs.taskbarprogress import TaskbarProgress
@@ -168,23 +168,60 @@ class FrameCounter(QWidget):
 
 
 class VCProgressBar(QDialog):
-    def __init__(self, parent=None, flags=Qt.FramelessWindowHint):
-        super(VCProgressBar, self).__init__(parent, flags)
-        self.parent = parent
+    completed = pyqtSignal()
+
+    def __init__(self, steps: int=0, timer: bool=False, initialtext: str=None, flags=Qt.FramelessWindowHint):
+        super(VCProgressBar, self).__init__(None, flags)
         if sys.platform.startswith('linux'):
             self.taskbar = TaskbarProgress(self)
-        self._progress = QProgressBar(self.parent)
-        self._progress.setRange(0, 0)
+        self._progress = QProgressBar(self)
+        self._progress.setRange(0, steps)
         self._progress.setTextVisible(False)
         self._progress.setStyle(QStyleFactory.create('Fusion'))
-        self._label = QLabel(parent)
+        self._label = QLabel(self)
         self._label.setAlignment(Qt.AlignCenter)
+        if initialtext:
+            self.setText(initialtext)
         layout = QGridLayout()
         layout.addWidget(self._progress, 0, 0)
         layout.addWidget(self._label, 0, 0)
         self.setWindowModality(Qt.ApplicationModal)
-        self.setMinimumWidth(500)
+        widgetHeight = self._progress.sizeHint().height() + 20
+        if timer:
+            self._timerformat = '<b>Elapsed Time:</b> {0}'
+            self._timerlcd = QLabel(self)
+            self._timerlcd.setObjectName('progresstimer')
+            # noinspection PyArgumentList
+            layout.addWidget(self._timerlcd, 1, 0, Qt.AlignHCenter | Qt.AlignTop)
+            self._time = QTime()
+            self._time.start()
+            self.updateTimer()
+            self._timer = QTimer(self)
+            self._timer.timeout.connect(self.updateTimer)
+            self._timer.start(1000)
+            self._progress.valueChanged.connect(self.checkTimer)
+            widgetHeight += self._timerlcd.sizeHint().height() + 10
         self.setLayout(layout)
+        self.setFixedSize(550, widgetHeight)
+        self.setGeometry(self.style().alignedRect(Qt.LeftToRight, Qt.AlignCenter, self.size(),
+                                                  qApp.desktop().availableGeometry()))
+        self.show()
+        qApp.processEvents()
+
+    @pyqtSlot()
+    def updateTimer(self) -> None:
+        secs = self._time.elapsed() / 1000
+        mins = int(secs / 60) % 60
+        hrs = int(secs / 3600)
+        secs = int(secs % 60)
+        elapsed = '{hrs:02d}:{mins:02d}:{secs:02d}'.format(**locals())
+        self._timerlcd.setText(self._timerformat.format(elapsed))
+        qApp.processEvents()
+
+    @pyqtSlot(int)
+    def checkTimer(self, val: int) -> None:
+        if val >= self._progress.maximum() and hasattr(self, '_timer'):
+            self._timer.stop()
 
     def value(self) -> int:
         return self._progress.value()
@@ -193,6 +230,9 @@ class VCProgressBar(QDialog):
         self._progress.setStyle(style)
 
     def setText(self, val: str) -> None:
+        if '<b>' in val:
+            css = '<style>b { font-family:"Open Sans"; font-weight:bold; }</style>'
+            val = '{0}{1}'.format(css, val)
         self._label.setText(val)
 
     def setMinimum(self, val: int) -> None:
@@ -206,16 +246,15 @@ class VCProgressBar(QDialog):
         self._progress.setRange(minval, maxval)
 
     def setValue(self, val: int) -> None:
-        if sys.platform.startswith('linux'):
+        if sys.platform.startswith('linux') and self._progress.maximum() != 0:
             self.taskbar.setProgress(float(val / self._progress.maximum()), True)
         self._progress.setValue(val)
+        if val >= self._progress.maximum():
+            self.completed.emit()
 
-    @pyqtSlot(int, str)
-    def updateProgress(self, value: int, text: str) -> None:
-        self.setValue(value)
-        if '<b>' in text:
-            css = '<style>b { font-family:"Open Sans"; font-weight:bold; }</style>'
-            text = '{0}{1}'.format(css, text)
+    @pyqtSlot(str)
+    def updateProgress(self, text: str) -> None:
+        self.setValue(self._progress.value() + 1)
         self.setText(text)
         qApp.processEvents()
 
@@ -223,6 +262,9 @@ class VCProgressBar(QDialog):
     def close(self) -> None:
         if sys.platform.startswith('linux'):
             self.taskbar.clear()
+        if hasattr(self, '_timer'):
+            self._timer.stop()
+            self._timer.deleteLater()
         self.deleteLater()
         super(VCProgressBar, self).close()
 
@@ -324,8 +366,8 @@ class ClipErrorsDialog(QDialog):
     def parseErrors(self) -> None:
         for file, error in self.errors:
             if not len(error):
-                error = '<div align="center">Invalid media file.<br/><br/>This is not a media file or the file ' + \
-                        'is irreversibly corrupt.</div>'
+                error = '<div align="center">Invalid media file.<br/><br/>This is not a media file or the file ' \
+                        'may be corrupted.</div>'
             errorLabel = QLabel(error, self)
             index = self.toolbox.addItem(errorLabel, os.path.basename(file))
             self.toolbox.setItemToolTip(index, file)

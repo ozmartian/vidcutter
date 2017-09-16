@@ -27,8 +27,7 @@ import os
 import sys
 
 from PyQt5.QtCore import QEvent, QObject, QRect, QThread, Qt, pyqtSignal, pyqtSlot
-from PyQt5.QtGui import (QColor, QKeyEvent, QMouseEvent, QPaintEvent, QPainter, QPen, QTransform,
-                         QWheelEvent)
+from PyQt5.QtGui import QColor, QKeyEvent, QMouseEvent, QPaintEvent, QPainter, QPen, QTransform, QWheelEvent
 from PyQt5.QtWidgets import (qApp, QGraphicsEffect, QHBoxLayout, QLabel, QSizePolicy, QSlider, QStackedLayout,
                              QStackedWidget, QStyle, QStyleOptionSlider, QStylePainter, QWidget)
 
