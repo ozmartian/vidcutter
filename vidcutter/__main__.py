@@ -77,7 +77,7 @@ class MainWindow(QMainWindow):
                 self.cutter.openProject(project_file=filename)
             else:
                 self.cutter.loadMedia(filename)
-        except (FileNotFoundError, PermissionError) as ex:
+        except (FileNotFoundError, PermissionError):
             QMessageBox.critical(self, 'Error loading file', sys.exc_info()[0])
             logging.exception('Error loading file')
             qApp.restoreOverrideCursor()
@@ -110,6 +110,7 @@ class MainWindow(QMainWindow):
                                                          maxBytes=1000000, backupCount=1),
                     self.consoleLogger]
         if self.parser.isSet(self.debug_option) or self.verboseLogs:
+            # noinspection PyTypeChecker
             handlers.append(logging.StreamHandler())
         logging.setLoggerClass(VideoLogger)
         logging.basicConfig(handlers=handlers,
@@ -209,6 +210,7 @@ class MainWindow(QMainWindow):
     def get_path(path: str=None, override: bool=False) -> str:
         if override:
             if getattr(sys, 'frozen', False):
+                # noinspection PyProtectedMember, PyUnresolvedReferences
                 return os.path.join(sys._MEIPASS, path)
             return os.path.join(QFileInfo(__file__).absolutePath(), path)
         return ':%s' % path
@@ -237,8 +239,12 @@ class MainWindow(QMainWindow):
             self.cutter.cliplist.clearSelection()
             self.cutter.timeCounter.clearFocus()
             self.cutter.frameCounter.clearFocus()
-            if hasattr(self.cutter, 'notify'):
-                self.cutter.notify.close()
+            # noinspection PyBroadException
+            try:
+                if hasattr(self.cutter, 'notify'):
+                    self.cutter.notify.fadeOut()
+            except:
+                pass
 
     def dragEnterEvent(self, event: QDragEnterEvent) -> None:
         if event.mimeData().hasUrls():
@@ -296,6 +302,7 @@ def main():
         else:
             os.execl(sys.executable, sys.executable, *sys.argv)
     sys.exit(exit_code)
+
 
 if __name__ == '__main__':
     main()

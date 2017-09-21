@@ -51,12 +51,12 @@ class VideoInfo(QDialog):
         self.setMinimumSize(self.modes.get(self.parent.parent.scale))
         metadata = '''<style>
     table {
-        font-family: "Open Sans", sans-serif;
+        font-family: "Noto Sans UI", sans-serif;
         font-size: 13px;
         margin-top: -10px;
     }
     td i {
-        font-family: "Open Sans", sans-serif;
+        font-family: "Noto Sans UI", sans-serif;
         font-weight: normal;
         font-style: normal;
         text-align: right;
@@ -107,7 +107,7 @@ class VideoInfo(QDialog):
         col2 = keyframes[halver:]
         keyframe_content = '''<style>
             table {
-                font-family: "Open Sans", sans-serif;
+                font-family: "Noto Sans UI", sans-serif;
                 font-size: 13px;
                 margin-top:-10px;
             }

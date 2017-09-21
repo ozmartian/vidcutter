@@ -28,13 +28,14 @@ import os
 import re
 import shlex
 import sys
+import traceback
 from bisect import bisect_left
 from distutils.spawn import find_executable
 from enum import Enum
 from functools import partial
 
-from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QDir, QFile, QFileInfo, QObject, QProcess, QProcessEnvironment, QSize,
-                          QStorageInfo, QTemporaryFile, QTime)
+from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QDir, QFile, QFileInfo, QObject, QProcess, QProcessEnvironment,
+                          QRunnable, QSize, QStorageInfo, QTemporaryFile, QThreadPool, QTime)
 from PyQt5.QtGui import QPainter, QPixmap
 from PyQt5.QtWidgets import QMessageBox
 
@@ -49,7 +50,8 @@ from vidcutter.libs.videoconfig import VideoConfig
 
 
 class VideoService(QObject):
-    updateProgress = pyqtSignal(str)
+    progress = pyqtSignal(str)
+    finished = pyqtSignal(bool)
 
     frozen = getattr(sys, 'frozen', False)
     spaceWarningThreshold = 200
@@ -68,6 +70,7 @@ class VideoService(QObject):
 
     def __init__(self, parent=None):
         super(VideoService, self).__init__(parent)
+        self.parent = parent
         self.logger = logging.getLogger(__name__)
         self.backends = VideoService.findBackends()
         self.proc = VideoService.initProc()
@@ -76,6 +79,7 @@ class VideoService(QObject):
         self.lastError = ''
         self.media = None
         self.streams = Munch()
+        self.threadpool = QThreadPool()
 
     def setMedia(self, source: str) -> None:
         try:
@@ -198,9 +202,7 @@ class VideoService(QObject):
                 if result1 and result2:
                     # 4. attempt join of temp 2 second clips
                     result = self.join([file1_cut.fileName(), file2_cut.fileName()], final_join.fileName(), False)
-            file1_cut.remove()
-            file2_cut.remove()
-            final_join.remove()
+            VideoService.cleanup([file1_cut.fileName(), file2_cut.fileName(), final_join.fileName()])
         except:
             self.logger.exception('Exception in VideoService.testJoin', exc_info=True)
             result = False
@@ -238,7 +240,7 @@ class VideoService(QObject):
             return vcodec, acodec
 
     def cut(self, source: str, output: str, frametime: str, duration: str, allstreams: bool=True,
-            vcodec: str=None, loglevel: str='error') -> bool:
+            vcodec: str=None, loglevel: str='error', run: bool=True):
         self.checkDiskSpace(output)
         stream_map = '-map 0 ' if allstreams else ''
         if vcodec is not None:
@@ -248,7 +250,10 @@ class VideoService(QObject):
         else:
             args = '-v {loglevel} -ss {frametime} -i "{source}" -t {duration} -c copy {stream_map}' \
                    '-avoid_negative_ts 1 -copyinkf -y "{output}"'.format(**locals())
-        return self.cmdExec(self.backends.ffmpeg, args)
+        if run:
+            return self.cmdExec(self.backends.ffmpeg, args)
+        else:
+            return self.backends.ffmpeg, args
 
     @staticmethod
     def encodeSettings(codec: str) -> str:
@@ -259,65 +264,78 @@ class VideoService(QObject):
         }
         return encoding.get(codec, codec)
 
-    def smartcut(self, source: str, output: str, start: float, end: float, allstreams: bool=True) -> bool:
-        self.updateProgress.emit('<b>SmartCut [1/5] :</b> cutting main video chunk...')
-        # 1. split output filename
+    def smartcut(self, source: str, output: str, start: float, end: float, allstreams: bool=True) -> None:
         output_file, output_ext = os.path.splitext(source)
-        # 2. get GOP bisections for start and end of clip times to be reencoded for frame accurate cuts
-        #    smartcut -> list: start, end, duration, filename
+        # get GOP bisections for start and end of clip times to be reencoded for frame accurate cuts
+        # smartcut -> list: start, end, duration, filename
         bisections = self.getGOPbisections(source, start, end)
-        # 3. cut middle portion first
         smartcut_files = [
             '{0}_start{1}'.format(output_file, output_ext),
             '{0}_middle{1}'.format(output_file, output_ext),
             '{0}_end{1}'.format(output_file, output_ext)
         ]
-        middle_result = self.cut(source=source,
-                                 output=smartcut_files[1],
-                                 frametime=bisections['start'][2],
-                                 duration=bisections['end'][1] - bisections['start'][2],
-                                 allstreams=allstreams)
-        if not middle_result:
-            self.logger.error('smartcut error cutting MIDDLE clip')
-        # 4. determine middle clip codecs
-        vcodec = self.streams.video.codec_name
-        # if smartcut_codec == 'h264':vclibvclib
-        #     smartcut_codec = 'h264_nvenc'
-        # 5. cut start and end clips using same codec as middle
-        self.updateProgress.emit('<b>SmartCut [2/5] :</b> cut + encode START keyframe clip...')
-        start_result = self.cut(source=source,
-                                output=smartcut_files[0],
-                                frametime=str(start),
-                                duration=bisections['start'][1] - start,
-                                allstreams=allstreams,
-                                vcodec=vcodec,
-                                loglevel='info')
-        if not start_result:
-            self.logger.error('smartcut error cutting START clip')
-        self.updateProgress.emit('<b>SmartCut [3/5] :</b> cut + encode END keyframe clip...')
-        end_result = self.cut(source=source,
-                              output=smartcut_files[2],
-                              frametime=bisections['end'][1],
-                              duration=end - bisections['end'][1],
-                              allstreams=allstreams,
-                              vcodec=vcodec,
-                              loglevel='info')
-        if not end_result:
-            self.logger.error('smartcut error cutting END clip')
-        # 5. join three portions back together for our finalised smart cut clip
-        self.updateProgress.emit('<b>SmartCut [4/5] :</b> joining START, MID and END...')
+        smartcut_progress = [
+            '<b>SmartCut [1/5] :</b> cutting main video chunk...',
+            '<b>SmartCut [2/5] :</b> cut + encode START keyframe clip...',
+            '<b>SmartCut [3/5] :</b> cut + encode END keyframe clip...'
+        ]
+        smartcut_cmds = [
+            self.cut(source=source,
+                     output=smartcut_files[1],
+                     frametime=bisections['start'][2],
+                     duration=bisections['end'][1] - bisections['start'][2],
+                     allstreams=allstreams,
+                     run=False),
+            self.cut(source=source,
+                     output=smartcut_files[0],
+                     frametime=str(start),
+                     duration=bisections['start'][1] - start,
+                     allstreams=allstreams,
+                     vcodec=self.streams.video.codec_name,
+                     loglevel='info',
+                     run=False),
+            self.cut(source=source,
+                     output=smartcut_files[2],
+                     frametime=bisections['end'][1],
+                     duration=end - bisections['end'][1],
+                     allstreams=allstreams,
+                     vcodec=self.streams.video.codec_name,
+                     loglevel='info',
+                     run=False)
+        ]
+        worker = VideoWorker(smartcut_cmds, smartcut_progress,
+                             os.getenv('DEBUG', False) or getattr(self.parent(), 'verboseLogs', False))
+        worker.signals.progress.connect(self.progress)
+        worker.signals.result.connect(lambda results: self.smartjoin(output, smartcut_files, results, allstreams))
+        worker.signals.error.connect(lambda errortuple: VideoService.cleanup(smartcut_files))
+        self.threadpool.start(worker)
+
+    @pyqtSlot(str, list, list, bool)
+    def smartjoin(self, output: str, files: list, results: list, allstreams: bool) -> None:
+        if False in results:
+            return
+        self.progress.emit('<b>SmartCut [4/5] :</b> joining START, MID and END...')
         final_join = False
-        if self.isMPEGcodec(smartcut_files[1]):
+        if self.isMPEGcodec(files[1]):
             self.logger.info('smartcut files are MPEG based so join via MPEG-TS')
-            final_join = self.mpegtsJoin(smartcut_files, output)
+            final_join = self.mpegtsJoin(files, output)
         if not final_join:
             self.logger.info('smartcut MPEG-TS join failed, retry with standard concat')
-            final_join = self.join(inputs=smartcut_files, output=output, allstreams=allstreams)
-        # 6. cleanup files
-        self.updateProgress.emit('<b>SmartCut [5/5] :</b> Complete! Sanitize and clean up workspace...')
-        [os.remove(file) for file in smartcut_files]
-        # 7. return all results for final assesment
-        return start_result and middle_result and end_result and final_join
+            final_join = self.join(inputs=files, output=output, allstreams=allstreams)
+        self.progress.emit('<b>SmartCut [5/5] :</b> Complete! Sanitize and clean up workspace...')
+        VideoService.cleanup(files)
+
+        exectime = self.parent.cuttimer.elapsed()
+        del self.parent.cuttimer
+        print('cut execution time: {}'
+              .format(self.parent.delta2QTime(exectime).toString(self.parent.timeformat)))
+
+        results.append(final_join)
+        self.finished.emit(False not in results)
+
+    @staticmethod
+    def cleanup(files: list) -> None:
+        [os.remove(file) for file in files]
 
     def join(self, inputs: list, output: str, allstreams: bool=True) -> bool:
         self.checkDiskSpace(output)
@@ -443,7 +461,7 @@ class VideoService(QObject):
             self.proc.setProcessChannelMode(QProcess.SeparateChannels if cmd == self.backends.mediainfo
                                             else QProcess.MergedChannels)
             if cmd == self.backends.ffmpeg:
-                args = '-hide_banner {0}'.format(args)
+                args = '-hide_banner {}'.format(args)
             self.proc.start(cmd, shlex.split(args))
             self.proc.readyReadStandardOutput.connect(
                 partial(self.cmdOut, self.proc.readAllStandardOutput().data().decode().strip()))
@@ -474,3 +492,46 @@ class VideoService(QObject):
         if VideoService.frozen:
             return sys._MEIPASS
         return QFileInfo(__file__).absolutePath()
+
+
+class VideoSignals(QObject):
+    finished = pyqtSignal()
+    error = pyqtSignal(tuple)
+    result = pyqtSignal(list)
+    progress = pyqtSignal(str)
+
+
+class VideoWorker(QRunnable):
+    def __init__(self, cmds: list, progresstxt: list, uselog: bool=False):
+        super(VideoWorker, self).__init__()
+        self.logger = logging.getLogger(__name__)
+        self.cmds = cmds
+        self.progresstxt = progresstxt
+        self.uselog = uselog
+        self.signals = VideoSignals()
+        self.proc = QProcess()
+        self.proc.setProcessEnvironment(QProcessEnvironment.systemEnvironment())
+        self.proc.setWorkingDirectory(VideoService.getAppPath())
+
+    def run(self):
+        results = []
+        # noinspection PyBroadException
+        try:
+            if self.proc.state() == QProcess.NotRunning:
+                self.proc.setProcessChannelMode(QProcess.MergedChannels)
+                for cmd, args in self.cmds:
+                    index = self.cmds.index((cmd, args))
+                    if self.uselog:
+                        self.logger.info('{0} {1}'.format(cmd, args))
+                    self.signals.progress.emit(self.progresstxt[index])
+                    self.proc.start(cmd, shlex.split('-hide_banner {0}'.format(args)))
+                    self.proc.waitForFinished(-1)
+                    results.append(self.proc.exitStatus() == QProcess.NormalExit and self.proc.exitCode() == 0)
+        except:
+            traceback.print_exc()
+            exctype, value = sys.exc_info()[:2]
+            self.signals.error.emit((exctype, value, traceback.format_exc()))
+        else:
+            self.signals.result.emit(results)
+        finally:
+            self.signals.finished.emit()

@@ -148,22 +148,25 @@ class JobCompleteNotification(Notification):
         h2 {
             color: %s;
             font-family: "Futura-Light", sans-serif;
-            font-weight: 400;
+            font-weight: 500;
             text-align: center;
         }
         table.info {
             margin: 6px;
             padding: 4px 2px;
         }
+        td {
+            padding-top: 5px;
+            vertical-align: top;
+        }
         td.label {
             font-size: 12px;
             font-weight: bold;
             color: %s;
-            padding-top: 5px;
             text-transform: lowercase;
             text-align: right;
             padding-right: 5px;
-            font-family: "Open Sans", sans-serif;
+            font-family: "Noto Sans UI", sans-serif;
         }
         td.value {
             font-size: 13px;
@@ -174,20 +177,20 @@ class JobCompleteNotification(Notification):
         <h2>%s</h2>
         <table class="info" cellpadding="2" cellspacing="0" align="left" width="315">
             <tr>
-                <td valign="top" width="20%%" class="label"><b>File:</b></td>
+                <td width="20%%" class="label"><b>File:</b></td>
                 <td width="80%%" class="value" nowrap>%s</td>
             </tr>
             <tr>
-                <td valign="top" width="20%%" class="label"><b>Size:</b></td>
+                <td width="20%%" class="label"><b>Size:</b></td>
                 <td width="80%%" class="value">%s</td>
             </tr>
             <tr>
-                <td valign="top" width="20%%" class="label"><b>Length:</b></td>
+                <td width="20%%" class="label"><b>Length:</b></td>
                 <td width="80%%" class="value">%s</td>
             </tr>
         </table>
     </div>''' % (pencolor, pencolor, ('#EFF0F1' if self.theme == 'dark' else '#222'),
-                 self._title, self.filename, self.filesize, self.runtime)
+                 self._title, os.path.basename(self.filename), self.filesize, self.runtime)
         self.icons = {'play': QIcon(':/images/complete-play.png')}
         playButton = QPushButton(self.icons['play'], 'Play', self)
         playButton.setFixedWidth(82)
@@ -198,5 +201,5 @@ class JobCompleteNotification(Notification):
 
     @pyqtSlot()
     def playMedia(self) -> None:
-        if os.path.exists(self.filename):
+        if os.path.isfile(self.filename):
             QDesktopServices.openUrl(QUrl.fromLocalFile(self.filename))

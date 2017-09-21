@@ -79,7 +79,7 @@ QToolBar#appcontrols QToolButton {
     color: #444;
     font-size: 13px;
     font-weight: 400;
-    font-family: "Open Sans", sans-serif;
+    font-family: "Noto Sans UI", sans-serif;
     line-height: 80%;
     background: transparent;
     border: none;
@@ -176,7 +176,7 @@ QLabel#logowidget {
 QLabel#decodinglabel, QLabel#ratiolabel, QLabel#keepclipslabel, QLabel#singleinstancelabel,
 QLabel#verboselogslabel, QLabel#nativedialogslabel, QLabel#seeksettingslabel, QLabel#zoomlabel,
 QLabel#smartcutlabel {
-    font-family: "Open Sans", sans-serif;
+    font-family: "Noto Sans UI", sans-serif;
     font-size: 11px;
     color: #444;
 }
@@ -518,7 +518,7 @@ VCProgressBar {
 }
 
 VCProgressBar QLabel {
-    font-family: "Futura-Light", sans-serif;
+    font-family: "Noto Sans UI", sans-serif;
     font-size: 15px;
     font-weight: 400;
     color: #FFF;
@@ -536,5 +536,5 @@ VCProgressBar QProgressBar::chunk {
 VCProgressBar QLabel#progresstimer {
     color: #000;
     font-size: 13px;
-    font-family: "Open Sans", sans-serif;
+    font-family: "Noto Sans UI", sans-serif;
 }

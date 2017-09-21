@@ -29,8 +29,8 @@ import sys
 import time
 from datetime import timedelta
 
-from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QDir, QFile, QFileInfo, QMetaObject, QModelIndex, QPoint, QSize, Qt,
-                          QTextStream, QThread, QTime, QTimer, QUrl, Q_ARG)
+from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTextStream,
+                          QTime, QTimer, QUrl)
 from PyQt5.QtGui import QCloseEvent, QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMovie, QPixmap
 from PyQt5.QtWidgets import (QAction, qApp, QApplication, QDialogButtonBox, QFileDialog, QGroupBox, QHBoxLayout,
                              QLabel, QListWidgetItem, QMenu, QMessageBox, QPushButton, QSizePolicy, QStyleFactory,
@@ -70,12 +70,18 @@ class VideoCutter(QWidget):
         self.settings = self.parent.settings
         self.initTheme()
 
-        self.videoService = VideoService(self)
         self.updater = Updater(self)
+        self.progressbar = VCProgressBar(self)
+
+        self.videoService = VideoService(self)
+        self.videoService.progress.connect(self.progressbar.updateProgress)
+        self.videoService.finished.connect(self.progressbar.close)
 
         if sys.platform.startswith('linux'):
             self.taskbar = TaskbarProgress(self)
+            self.progressbar.taskbarprogress.connect(self.taskbar.setProgress)
 
+        self.videoService.finished.connect(self.complete)
         self.latest_release_url = 'https://github.com/ozmartian/vidcutter/releases/latest'
         self.ffmpeg_installer = {
             'win32': {
@@ -410,11 +416,12 @@ class VideoCutter(QWidget):
 
     def initTheme(self) -> None:
         qApp.setStyle(VideoStyleDark() if self.theme == 'dark' else VideoStyleLight())
-        QFontDatabase.addApplicationFont(':/fonts/FuturaLT.ttf')
-        QFontDatabase.addApplicationFont(':/fonts/OpenSans.ttf')
-        QFontDatabase.addApplicationFont(':/fonts/OpenSansBold.ttf')
+        self.fonts = [
+            QFontDatabase.addApplicationFont(':/fonts/FuturaLT.ttf'),
+            QFontDatabase.addApplicationFont(':/fonts/NotoSans.ttc')
+        ]
         self.style().loadQSS(self.theme, self.parent.devmode)
-        QApplication.setFont(QFont('Open Sans', 12 if sys.platform == 'darwin' else 10, 300))
+        QApplication.setFont(QFont('Noto Sans UI', 12 if sys.platform == 'darwin' else 10, 300))
 
     def getMPV(self) -> mpvWidget:
         return mpvWidget(
@@ -425,7 +432,7 @@ class VideoCutter(QWidget):
             keep_open=True,
             idle=True,
             osc=False,
-            osd_font='Futura-Light',
+            osd_font='Noto Sans UI',
             osd_level=0,
             osd_align_x='left',
             osd_align_y='top',
@@ -1087,13 +1094,13 @@ class VideoCutter(QWidget):
     def captureImage(self, source: str, frametime: QTime, external: bool=False) -> QPixmap:
         return VideoService.captureFrame(source, frametime.toString(self.timeformat), external=external)
 
-    def saveMedia(self) -> bool:
+    def saveMedia(self) -> None:
         clips = len(self.clipTimes)
         filename, filelist = '', []
         source_file, source_ext = os.path.splitext(self.currentMedia if self.currentMedia is not None
                                                    else self.clipTimes[0][3])
         suggestedFilename = '{0}_EDIT{1}'.format(source_file, source_ext)
-        filefilter = 'Video files (*{0})'.format(source_ext)
+        filefilter = 'Video files (*{})'.format(source_ext)
         if clips > 0:
             self.finalFilename, _ = QFileDialog.getSaveFileName(parent=self, caption='Save media',
                                                                 directory=suggestedFilename, filter=filefilter,
@@ -1101,7 +1108,7 @@ class VideoCutter(QWidget):
                                                                          if not self.nativeDialogs
                                                                          else QFileDialog.Options()))
             if not len(self.finalFilename.strip()):
-                return False
+                return
             file, ext = os.path.splitext(self.finalFilename)
             if len(ext) == 0 and len(source_ext):
                 self.finalFilename += source_ext
@@ -1111,7 +1118,7 @@ class VideoCutter(QWidget):
             if self.smartcut:
                 self.showProgress(5, True)
             else:
-                steps = clips + (1 if clips == 1 else 2)
+                steps = clips
                 self.showProgress(steps, False)
             for clip in self.clipTimes:
                 index = self.clipTimes.index(clip)
@@ -1119,19 +1126,27 @@ class VideoCutter(QWidget):
                     filelist.append(clip[3])
                 else:
                     if not self.smartcut:
-                        QMetaObject.invokeMethod(self.progress, 'updateProgress', Qt.QueuedConnection,
-                                                 Q_ARG(str, 'Cutting media clips <b>[{0} / {1}]</b>'.format(
-                                                     '{0:0>2}'.format(index + 1), '{0:0>2}'.format(clips))))
+                        self.progressbar.updateProgress('Cutting media clips <b>[{0} / {1}]</b>'.format(
+                                                     '{0:0>2}'.format(index + 1), '{0:0>2}'.format(clips)))
                     duration = self.delta2QTime(clip[0].msecsTo(clip[1])).toString(self.timeformat)
                     filename = '%s_%s%s' % (file, '{0:0>2}'.format(index), source_ext)
                     filelist.append(filename)
+
+                    self.cuttimer = QTime()
+                    self.cuttimer.start()
+
                     if self.smartcut:
-                        self.videoService.smartcut(source='%s%s' % (source_file, source_ext), output=filename,
+                        self.videoService.smartcut(source='%s%s' % (source_file, source_ext),
+                                                   output=filename,
                                                    start=VideoCutter.qtime2delta(clip[0]),
-                                                   end=VideoCutter.qtime2delta(clip[1]), allstreams=True)
+                                                   end=VideoCutter.qtime2delta(clip[1]),
+                                                   allstreams=True)
+                        return
                     else:
-                        self.videoService.cut(source='%s%s' % (source_file, source_ext), output=filename,
-                                              frametime=clip[0].toString(self.timeformat), duration=duration,
+                        self.videoService.cut(source='%s%s' % (source_file, source_ext),
+                                              output=filename,
+                                              frametime=clip[0].toString(self.timeformat),
+                                              duration=duration,
                                               allstreams=True)
                     if QFile(filename).size() < 1000:
                         self.logger.info('cut resulted in 0 length file, trying again without all stream mapping')
@@ -1144,8 +1159,7 @@ class VideoCutter(QWidget):
                                                   frametime=clip[0].toString(self.timeformat), duration=duration,
                                                   allstreams=False)
             if len(filelist) > 1:
-                QMetaObject.invokeMethod(self.progress, 'updateProgress', Qt.QueuedConnection,
-                                         Q_ARG(str, 'Joining media clips'))
+                self.progressbar.updateProgress('Joining media clips')
                 rc = False
                 if self.videoService.isMPEGcodec(filelist[0]):
                     self.logger.info('source file is MPEG based so join via MPEG-TS')
@@ -1166,21 +1180,23 @@ class VideoCutter(QWidget):
                 QFile.remove(self.finalFilename)
                 # noinspection PyCallByClass
                 QFile.rename(filename, self.finalFilename)
-            QMetaObject.invokeMethod(self.progress, 'updateProgress', Qt.QueuedConnection, Q_ARG(str, 'Complete'))
-            QTimer.singleShot(1000, self.progress.close)
-            if sys.platform.startswith('linux') and self.mediaAvailable:
-                QTimer.singleShot(1200, lambda: self.taskbar.setProgress(
-                    float(self.seekSlider.value() / self.seekSlider.maximum())))
-            qApp.restoreOverrideCursor()
-            self.saveAction.setEnabled(True)
-            self.notify = JobCompleteNotification(
-                os.path.basename(self.finalFilename),
-                self.sizeof_fmt(int(QFileInfo(self.finalFilename).size())),
-                self.delta2QTime(self.totalRuntime).toString(self.runtimeformat),
-                self.parent)
-            self.notify.show()
-            return True
-        return False
+            self.complete()
+
+    @pyqtSlot()
+    def complete(self):
+        self.progressbar.updateProgress('Complete')
+        QTimer.singleShot(1000, self.progressbar.close)
+        if sys.platform.startswith('linux') and self.mediaAvailable:
+            QTimer.singleShot(1200, lambda: self.taskbar.setProgress(
+                float(self.seekSlider.value() / self.seekSlider.maximum())))
+        qApp.restoreOverrideCursor()
+        self.saveAction.setEnabled(True)
+        self.notify = JobCompleteNotification(
+            self.finalFilename,
+            self.sizeof_fmt(int(QFileInfo(self.finalFilename).size())),
+            self.delta2QTime(self.totalRuntime).toString(self.runtimeformat),
+            self.parent)
+        self.notify.show()
 
     def saveSetting(self, setting: str, checked: bool) -> None:
         val = 'on' if checked else 'off'
@@ -1228,15 +1244,9 @@ class VideoCutter(QWidget):
         appInfo.exec_()
 
     def showProgress(self, steps: int, timer: bool=False) -> None:
-        self.progress = VCProgressBar(steps, timer, 'Analyzing video source')
-        self.videoService.updateProgress.connect(self.progress.updateProgress)
-        self.progressThread = QThread(self)
-        self.progress.moveToThread(self.progressThread)
-        self.progressThread.finished.connect(self.progressThread.deleteLater, Qt.DirectConnection)
-        self.progress.completed.connect(self.progressThread.quit, Qt.DirectConnection)
-        self.progress.completed.connect(self.progress.close, Qt.DirectConnection)
-        self.progressThread.start()
-        qApp.processEvents()
+        self.progressbar.reset(steps, timer)
+        self.progressbar.show()
+        # qApp.processEvents()
 
     @staticmethod
     def sizeof_fmt(num: float, suffix: chr = 'B') -> str:

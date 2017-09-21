@@ -22,9 +22,9 @@
 #
 #######################################################################
 
-__version__ = '4.5.0.dev'
+__version__ = '4.5.0.DEV'
 
 __author__ = 'Pete Alexandrou'
 __email__ = 'pete@ozmartians.com'
-__website__ = 'http://vidcutter.ozmartians.com'
+__website__ = 'https://vidcutter.ozmartians.com'
 __appid__ = 'vidcutter-CCDC440A-CC57-4BED-8CDE-1DA285976A64'

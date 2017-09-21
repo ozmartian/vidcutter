@@ -121,7 +121,7 @@ class UpdaterMsgBox(QDialog):
                 text-align: right;
             }
             td.value {
-                font-family: "Open Sans", sans-serif;
+                font-family: "Noto Sans UI", sans-serif;
                 color: %s;
                 font-weight: 500;
             }

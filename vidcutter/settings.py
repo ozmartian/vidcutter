@@ -173,7 +173,7 @@ class ThemePage(QWidget):
                 </style>
                 <h1>Warning</h1>
                 <p>The application needs to be restarted in order to switch themes. Ensure you have saved
-                your project or finished any cut ror join tasks in progress.</p>
+                your project or finished any cut ror join tasks in progressbar.</p>
                 <p>Would you like to restart and switch themes now?</p>'''
                          % ('#C681D5' if self.parent.theme == 'dark' else '#642C68'))
             mbox.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
@@ -505,8 +505,8 @@ class SettingsDialog(QDialog):
         self.categories.currentItemChanged.connect(self.changePage)
         self.categories.setCurrentRow(0)
         self.categories.setMaximumWidth(self.categories.sizeHintForColumn(0) + 2)
+        self.setMinimumWidth(620)
         self.adjustSize()
-        self.setMinimumSize(620, self.sizeHint().height())
 
     @staticmethod
     def lineSeparator() -> QFrame:

@@ -154,7 +154,7 @@ class AboutTab(BaseTab):
             ffmpeg_version = '<span style="color:red;">MISSING</span>'
         html = '''
 <style>
-    table { width: 100%%; font-family: "Open Sans", sans-serif; }
+    table { width: 100%%; font-family: "Noto Sans UI", sans-serif; }
     a { color: %s; text-decoration: none; font-weight: bold; }
 </style>
 <table border="0" cellpadding="8" cellspacing="4">

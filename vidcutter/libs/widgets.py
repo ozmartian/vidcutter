@@ -31,9 +31,6 @@ from PyQt5.QtWidgets import (qApp, QAbstractSpinBox, QDialog, QDialogButtonBox, 
                              QMessageBox, QProgressBar, QSlider, QSpinBox, QStyle, QStyleFactory,
                              QStyleOptionSlider, QTimeEdit, QToolBox, QToolTip, QVBoxLayout, QWidget)
 
-if sys.platform.startswith('linux'):
-    from vidcutter.libs.taskbarprogress import TaskbarProgress
-
 
 class TimeCounter(QWidget):
     timeChanged = pyqtSignal(QTime)
@@ -168,45 +165,53 @@ class FrameCounter(QWidget):
 
 
 class VCProgressBar(QDialog):
-    completed = pyqtSignal()
+    taskbarprogress = pyqtSignal(float, bool)
 
-    def __init__(self, steps: int=0, timer: bool=False, initialtext: str=None, flags=Qt.FramelessWindowHint):
-        super(VCProgressBar, self).__init__(None, flags)
-        if sys.platform.startswith('linux'):
-            self.taskbar = TaskbarProgress(self)
+    def __init__(self, parent=None):
+        super(VCProgressBar, self).__init__(parent)
+        self.setWindowFlag(Qt.FramelessWindowHint, True)
+        self.setWindowModality(Qt.ApplicationModal)
         self._progress = QProgressBar(self)
-        self._progress.setRange(0, steps)
         self._progress.setTextVisible(False)
         self._progress.setStyle(QStyleFactory.create('Fusion'))
         self._label = QLabel(self)
         self._label.setAlignment(Qt.AlignCenter)
-        if initialtext:
-            self.setText(initialtext)
         layout = QGridLayout()
         layout.addWidget(self._progress, 0, 0)
         layout.addWidget(self._label, 0, 0)
-        self.setWindowModality(Qt.ApplicationModal)
-        widgetHeight = self._progress.sizeHint().height() + 20
-        if timer:
-            self._timerformat = '<b>Elapsed Time:</b> {0}'
-            self._timerlcd = QLabel(self)
-            self._timerlcd.setObjectName('progresstimer')
-            # noinspection PyArgumentList
-            layout.addWidget(self._timerlcd, 1, 0, Qt.AlignHCenter | Qt.AlignTop)
-            self._time = QTime()
-            self._time.start()
-            self.updateTimer()
-            self._timer = QTimer(self)
-            self._timer.timeout.connect(self.updateTimer)
-            self._timer.start(1000)
-            self._progress.valueChanged.connect(self.checkTimer)
-            widgetHeight += self._timerlcd.sizeHint().height() + 10
+        self._timerprefix = QLabel('<b>Elapsed Time:</b>', self)
+        self._timerprefix.setObjectName('progresstimer')
+        self._timervalue = QLabel(self)
+        self._timervalue.setObjectName('progresstimer')
+        self._timerlayout = QHBoxLayout()
+        self._timerlayout.addWidget(self._timerprefix)
+        self._timerlayout.addWidget(self._timervalue)
+        self._time = QTime()
+        self._timer = QTimer(self)
+        self._timer.timeout.connect(self.updateTimer)
         self.setLayout(layout)
-        self.setFixedSize(550, widgetHeight)
-        self.setGeometry(self.style().alignedRect(Qt.LeftToRight, Qt.AlignCenter, self.size(),
-                                                  qApp.desktop().availableGeometry()))
-        self.show()
-        qApp.processEvents()
+        self.setFixedWidth(550)
+        self.reset()
+
+    def reset(self, steps: int=0, timer: bool=False) -> None:
+        self.setRange(0, steps)
+        self.setText('Analyzing video source')
+        self.showTimer() if timer else self.hideTimer()
+
+    def showTimer(self) -> None:
+        # noinspection PyArgumentList
+        self.layout().addLayout(self._timerlayout, 1, 0, Qt.AlignHCenter | Qt.AlignTop)
+        widgetHeight = self._progress.sizeHint().height() + 20
+        widgetHeight += self._timerlayout.sizeHint().height() + 10
+        self.setFixedHeight(widgetHeight)
+        self._time.start()
+        self.updateTimer()
+        self._timer.start(1000)
+
+    def hideTimer(self) -> None:
+        self.layout().removeItem(self._timerlayout)
+        widgetHeight = self._progress.sizeHint().height() + 20
+        self.setFixedHeight(widgetHeight)
 
     @pyqtSlot()
     def updateTimer(self) -> None:
@@ -215,13 +220,7 @@ class VCProgressBar(QDialog):
         hrs = int(secs / 3600)
         secs = int(secs % 60)
         elapsed = '{hrs:02d}:{mins:02d}:{secs:02d}'.format(**locals())
-        self._timerlcd.setText(self._timerformat.format(elapsed))
-        qApp.processEvents()
-
-    @pyqtSlot(int)
-    def checkTimer(self, val: int) -> None:
-        if val >= self._progress.maximum() and hasattr(self, '_timer'):
-            self._timer.stop()
+        self._timervalue.setText(elapsed)
 
     def value(self) -> int:
         return self._progress.value()
@@ -231,7 +230,7 @@ class VCProgressBar(QDialog):
 
     def setText(self, val: str) -> None:
         if '<b>' in val:
-            css = '<style>b { font-family:"Open Sans"; font-weight:bold; }</style>'
+            css = '<style>b { font-family:"Noto Sans UI"; font-weight:bold; }</style>'
             val = '{0}{1}'.format(css, val)
         self._label.setText(val)
 
@@ -247,25 +246,22 @@ class VCProgressBar(QDialog):
 
     def setValue(self, val: int) -> None:
         if sys.platform.startswith('linux') and self._progress.maximum() != 0:
-            self.taskbar.setProgress(float(val / self._progress.maximum()), True)
+            self.taskbarprogress.emit(float(val / self._progress.maximum()), True)
         self._progress.setValue(val)
-        if val >= self._progress.maximum():
-            self.completed.emit()
+        if val >= self._progress.maximum() and self._timer.isActive():
+            self._timer.stop()
 
     @pyqtSlot(str)
     def updateProgress(self, text: str) -> None:
         self.setValue(self._progress.value() + 1)
         self.setText(text)
-        qApp.processEvents()
 
     @pyqtSlot()
     def close(self) -> None:
         if sys.platform.startswith('linux'):
-            self.taskbar.clear()
-        if hasattr(self, '_timer'):
+            self.taskbarprogress.emit(0.0, False)
+        if self._timer.isActive():
             self._timer.stop()
-            self._timer.deleteLater()
-        self.deleteLater()
         super(VCProgressBar, self).close()
 
 
@@ -346,7 +342,7 @@ class ClipErrorsDialog(QDialog):
                 font-weight: 400;
             }
             p {
-                font-family: "Open Sans", sans-serif;
+                font-family: "Noto Sans UI", sans-serif;
                 color: %s;
             }
         </style>
@@ -382,7 +378,7 @@ class ClipErrorsDialog(QDialog):
                 font-weight: 400;
             }
             p {
-                font-family: "Open Sans", sans-serif;
+                font-family: "Noto Sans UI", sans-serif;
                 font-weight: 300;
                 color: %s;
             }
