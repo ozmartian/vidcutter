@@ -75,13 +75,12 @@ class VideoCutter(QWidget):
 
         self.videoService = VideoService(self)
         self.videoService.progress.connect(self.progressbar.updateProgress)
-        self.videoService.finished.connect(self.progressbar.close)
+        self.videoService.finished.connect(self.complete)
 
         if sys.platform.startswith('linux'):
             self.taskbar = TaskbarProgress(self)
             self.progressbar.taskbarprogress.connect(self.taskbar.setProgress)
 
-        self.videoService.finished.connect(self.complete)
         self.latest_release_url = 'https://github.com/ozmartian/vidcutter/releases/latest'
         self.ffmpeg_installer = {
             'win32': {
@@ -1131,10 +1130,6 @@ class VideoCutter(QWidget):
                     duration = self.delta2QTime(clip[0].msecsTo(clip[1])).toString(self.timeformat)
                     filename = '%s_%s%s' % (file, '{0:0>2}'.format(index), source_ext)
                     filelist.append(filename)
-
-                    self.cuttimer = QTime()
-                    self.cuttimer.start()
-
                     if self.smartcut:
                         self.videoService.smartcut(source='%s%s' % (source_file, source_ext),
                                                    output=filename,
@@ -1175,15 +1170,17 @@ class VideoCutter(QWidget):
                         clip = self.clipTimes[filelist.index(f)]
                         if not len(clip[3]) and os.path.isfile(f):
                             QFile.remove(f)
+                self.complete(False)
             else:
-                # noinspection PyCallByClass
-                QFile.remove(self.finalFilename)
-                # noinspection PyCallByClass
-                QFile.rename(filename, self.finalFilename)
-            self.complete()
+                self.complete(True, filename)
 
-    @pyqtSlot()
-    def complete(self):
+    @pyqtSlot(bool, str)
+    def complete(self, rename: bool=True, filename: str=None):
+        if rename and filename is not None:
+            # noinspection PyCallByClass
+            QFile.remove(self.finalFilename)
+            # noinspection PyCallByClass
+            QFile.rename(filename, self.finalFilename)
         self.progressbar.updateProgress('Complete')
         QTimer.singleShot(1000, self.progressbar.close)
         if sys.platform.startswith('linux') and self.mediaAvailable:

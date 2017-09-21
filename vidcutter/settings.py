@@ -310,12 +310,12 @@ class GeneralPage(QWidget):
             <b>ON:</b> re-encode start + end portions of each clip at valid GOP (IDR) keyframes
             <br/>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            - slowest + most accurate mode; <b>approx. 1.5 - 3.0 mins</b>
+            - slowest + most accurate mode
             <br/>
             <b>OFF:</b> cut at nearest keyframe before/after your start/end markers
             <br/>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            - fastest + less precise mode; <b>approx. 2.0 - 5.0 secs</b>''', self)
+            - fastest + less precise mode''', self)
         self.smartCutLabel.setObjectName('smartcutlabel')
         self.smartCutLabel.setTextFormat(Qt.RichText)
         self.smartCutLabel.setAlignment(Qt.AlignTop)
@@ -449,6 +449,7 @@ class SettingsDialog(QDialog):
         self.settings = self.parent.settings
         self.theme = self.parent.theme
         self.setObjectName('settingsdialog')
+        self.setWindowTitle('Settings - {0}'.format(qApp.applicationName()))
         self.categories = QListWidget(self)
         self.categories.setResizeMode(QListView.Fixed)
         self.categories.setStyleSheet('QListView::item { text-decoration: none; }')
@@ -475,7 +476,6 @@ class SettingsDialog(QDialog):
         mainLayout.addLayout(horizontalLayout)
         mainLayout.addWidget(buttons)
         self.setLayout(mainLayout)
-        self.setWindowTitle('Settings - {0}'.format(qApp.applicationName()))
 
     def initCategories(self):
         generalButton = QListWidgetItem(self.categories)
@@ -506,7 +506,8 @@ class SettingsDialog(QDialog):
         self.categories.setCurrentRow(0)
         self.categories.setMaximumWidth(self.categories.sizeHintForColumn(0) + 2)
         self.setMinimumWidth(620)
-        self.adjustSize()
+        if sys.platform != 'win32':
+            self.adjustSize()
 
     @staticmethod
     def lineSeparator() -> QFrame:
