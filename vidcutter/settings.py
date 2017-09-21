@@ -320,7 +320,7 @@ class GeneralPage(QWidget):
         self.smartCutLabel.setTextFormat(Qt.RichText)
         self.smartCutLabel.setAlignment(Qt.AlignTop)
         self.smartCutLabel.setWordWrap(True)
-        self.smartCutLabel.setMinimumHeight(110)
+        self.smartCutLabel.setMinimumHeight(self.smartCutLabel.heightForWidth(self.sizeHint().width()))
         self.singleInstance = self.parent.settings.value('singleInstance', 'on', type=str) in {'on', 'true'}
         singleInstanceCheckbox = QCheckBox('Allow only one running instance', self)
         singleInstanceCheckbox.setToolTip('Allow just one single %s instance to be running' % qApp.applicationName())
@@ -522,9 +522,6 @@ class SettingsDialog(QDialog):
             current = previous
         index = self.categories.row(current)
         self.pages.setCurrentIndex(index)
-        # if index == 0:
-        #     page = self.pages.currentWidget() # type: GeneralPage
-        #     page.smartCutLabel.setMinimumHeight(page.smartCutLabel.heightForWidth(page.sizeHint().width()))
 
     @pyqtSlot(QCloseEvent)
     def closeEvent(self, event: QCloseEvent):
