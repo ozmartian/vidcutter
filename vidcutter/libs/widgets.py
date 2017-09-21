@@ -169,7 +169,7 @@ class VCProgressBar(QDialog):
 
     def __init__(self, parent=None):
         super(VCProgressBar, self).__init__(parent)
-        self.setWindowFlag(Qt.FramelessWindowHint, True)
+        self.setWindowFlags(Qt.Dialog | Qt.FramelessWindowHint)
         self.setWindowModality(Qt.ApplicationModal)
         self._progress = QProgressBar(self)
         self._progress.setTextVisible(False)
