@@ -45,14 +45,14 @@ class VideoWorker(QRunnable):
         self.progresstxt = progresstxt
         self.uselog = uselog
         self.signals = VideoSignals()
-        self.proc = QProcess()
 
     def run(self):
         results = []
         # noinspection PyBroadException
         try:
+            self.proc = QProcess()
+            self.proc.setProcessChannelMode(QProcess.MergedChannels)
             if self.proc.state() == QProcess.NotRunning:
-                self.proc.setProcessChannelMode(QProcess.MergedChannels)
                 if self.uselog:
                     self.logger.info('{0} {1}'.format(self.cmd, self.args))
                 self.signals.progress.emit(self.progresstxt)
