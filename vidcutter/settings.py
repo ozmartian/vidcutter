@@ -320,7 +320,8 @@ class GeneralPage(QWidget):
         self.smartCutLabel.setTextFormat(Qt.RichText)
         self.smartCutLabel.setAlignment(Qt.AlignTop)
         self.smartCutLabel.setWordWrap(True)
-        self.smartCutLabel.setMinimumHeight(self.smartCutLabel.heightForWidth(self.sizeHint().width()))
+        if sys.platform != 'win32':
+            self.smartCutLabel.setMinimumHeight(self.smartCutLabel.heightForWidth(self.sizeHint().width()))
         self.singleInstance = self.parent.settings.value('singleInstance', 'on', type=str) in {'on', 'true'}
         singleInstanceCheckbox = QCheckBox('Allow only one running instance', self)
         singleInstanceCheckbox.setToolTip('Allow just one single %s instance to be running' % qApp.applicationName())
