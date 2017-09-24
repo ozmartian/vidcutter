@@ -76,6 +76,7 @@ class VideoCutter(QWidget):
         self.videoService = VideoService(self)
         self.videoService.progress.connect(self.progressbar.updateProgress)
         self.videoService.finished.connect(self.complete)
+        self.videoService.error.connect(self.errorOccurred)
 
         if sys.platform.startswith('linux'):
             self.taskbar = TaskbarProgress(self)
@@ -100,8 +101,7 @@ class VideoCutter(QWidget):
         self.clipTimes = []
         self.inCut, self.newproject = False, False
         self.finalFilename = ''
-        self.totalRuntime = 0
-        self.frameRate = 0
+        self.totalRuntime, self.frameRate = 0, 0
         self.notifyInterval = 1000
         self.currentMedia, self.mediaAvailable, self.mpvError = None, False, False
 
@@ -143,7 +143,7 @@ class VideoCutter(QWidget):
         self.cliplist.model().rowsMoved.connect(self.syncClipList)
 
         listHeader = QLabel(self)
-        listHeader.setPixmap(QPixmap(':/images/%s/clipindex.png' % self.theme, 'PNG'))
+        listHeader.setPixmap(QPixmap(f':/images/{self.theme}/clipindex.png', 'PNG'))
         listHeader.setAlignment(Qt.AlignCenter)
         listHeader.setObjectName('listHeader')
 
@@ -384,18 +384,18 @@ class VideoCutter(QWidget):
         mbox.setObjectName('genericdialog')
         mbox.setWindowFlags(Qt.Dialog | Qt.WindowCloseButtonHint)
         mbox.setIconPixmap(QIcon(':/images/mpv.png').pixmap(128, 128))
-        mbox.setWindowTitle('Missing libmpv library...')
+        mbox.setWindowTitle('Missing libmpv library')
         mbox.setMinimumWidth(500)
-        mbox.setText('''
+        mbox.setText(f'''
         <style>
-            h1 {
-                color: %s;
+            h1 {{
+                color: {pencolor1};
                 font-family: 'Futura-Light', sans-serif;
                 font-weight: 400;
-            }
-            p, li { font-size: 15px; }
-            p { color: %s; }
-            li { color: %s; font-weight: bold; }
+            }}
+            p, li {{ font-size: 15px; }}
+            p {{ color: {pencolor2}; }}
+            li {{ color: {pencolor1}; font-weight: bold; }}
         </style>
         <table border="0" cellpadding="6" cellspacing="0" width="500">
         <tr><td>
@@ -409,7 +409,7 @@ class VideoCutter(QWidget):
                 <li>mpv-libs</li>
             </ul></p>
         </td></tr>
-        </table>''' % (pencolor1, pencolor2, pencolor1))
+        </table>''')
         mbox.addButton(QMessageBox.Ok)
         sys.exit(mbox.exec_())
 
@@ -470,7 +470,7 @@ class VideoCutter(QWidget):
         # self.appIcon = QIcon(':/images/vidcutter.png')
         self.appIcon = qApp.windowIcon()
         self.openIcon = QIcon()
-        self.openIcon.addFile(':/images/%s/toolbar-open.png' % self.theme, QSize(50, 53), QIcon.Normal)
+        self.openIcon.addFile(f':/images/{self.theme}/toolbar-open.png', QSize(50, 53), QIcon.Normal)
         self.openIcon.addFile(':/images/%s/toolbar-open-on.png' % self.theme, QSize(50, 53), QIcon.Active)
         self.openIcon.addFile(':/images/%s/toolbar-open-disabled.png' % self.theme, QSize(50, 53), QIcon.Disabled)
         self.playIcon = QIcon()
@@ -677,21 +677,21 @@ class VideoCutter(QWidget):
 
     @staticmethod
     def mediaFilters(initial: bool=False) -> str:
-        filters = 'All media files (*.{})'.format(' *.'.join(VideoService.config.filters.get('all')))
+        filters = f'All media files (*.{" *.".join(VideoService.config.filters.get("all"))})'
         if initial:
             return filters
-        filters += ';;{}'.format(';;'.join(VideoService.config.filters.get('types')))
-        filters += ';;All files (*)'
+        filters += f';;{";;".join(VideoService.config.filters.get("types"))};;All files (*)'
         return filters
 
     def openMedia(self) -> None:
-        filename, _ = QFileDialog.getOpenFileName(self, caption='Open media file', filter=self.mediaFilters(),
+        filename, _ = QFileDialog.getOpenFileName(self,
+                                                  caption=f'{qApp.applicationName()} - Open media file',
+                                                  filter=self.mediaFilters(),
                                                   initialFilter=self.mediaFilters(True),
                                                   directory=(self.lastFolder if os.path.exists(self.lastFolder)
                                                              else QDir.homePath()),
                                                   options=(QFileDialog.DontUseNativeDialog
-                                                           if not self.nativeDialogs
-                                                           else QFileDialog.Options()))
+                                                           if not self.nativeDialogs else QFileDialog.Options()))
         if len(filename.strip()):
             self.lastFolder = QFileInfo(filename).absolutePath()
             self.loadMedia(filename)
@@ -700,7 +700,8 @@ class VideoCutter(QWidget):
     def openProject(self, checked: bool = False, project_file: str = None) -> None:
         initialFilter = 'Project files (*.edl *.vcp)' if self.mediaAvailable else 'VidCutter Project (*.vcp)'
         if project_file is None:
-            project_file, _ = QFileDialog.getOpenFileName(self, caption='Open project file',
+            project_file, _ = QFileDialog.getOpenFileName(self,
+                                                          caption=f'{qApp.applicationName()} - Open project file',
                                                           filter=self.projectFilters(),
                                                           initialFilter=initialFilter,
                                                           directory=(self.lastFolder if os.path.exists(self.lastFolder)
@@ -772,7 +773,8 @@ class VideoCutter(QWidget):
                                      'may be added to the VCP (VidCutter Project file) format in the near future.')
                 return
         project_file, _ = os.path.splitext(self.currentMedia)
-        project_save, ptype = QFileDialog.getSaveFileName(self, caption='Save project',
+        project_save, ptype = QFileDialog.getSaveFileName(self, 
+                                                          caption=f'{qApp.applicationName()} - Save project',
                                                           directory='%s.vcp' % project_file,
                                                           filter=self.projectFilters(True),
                                                           initialFilter='VidCutter Project (*.vcp)',
@@ -948,7 +950,9 @@ class VideoCutter(QWidget):
 
     @pyqtSlot()
     def addExternalClips(self):
-        clips, _ = QFileDialog.getOpenFileNames(self, caption='Add media files', filter=self.mediaFilters(),
+        clips, _ = QFileDialog.getOpenFileNames(self,
+                                                caption=f'{qApp.applicationName()} - Add media files',
+                                                filter=self.mediaFilters(),
                                                 initialFilter=self.mediaFilters(True),
                                                 directory=(self.lastFolder if os.path.exists(self.lastFolder)
                                                            else QDir.homePath()),
@@ -1101,7 +1105,8 @@ class VideoCutter(QWidget):
         suggestedFilename = '{0}_EDIT{1}'.format(source_file, source_ext)
         filefilter = 'Video files (*{})'.format(source_ext)
         if clips > 0:
-            self.finalFilename, _ = QFileDialog.getSaveFileName(parent=self, caption='Save media',
+            self.finalFilename, _ = QFileDialog.getSaveFileName(parent=self,
+                                                                caption=f'{qApp.applicationName()} - Save media file',
                                                                 directory=suggestedFilename, filter=filefilter,
                                                                 options=(QFileDialog.DontUseNativeDialog
                                                                          if not self.nativeDialogs
@@ -1117,7 +1122,7 @@ class VideoCutter(QWidget):
             if self.smartcut:
                 self.showProgress(5, True)
             else:
-                steps = clips
+                steps = clips + 1
                 self.showProgress(steps, False)
             for clip in self.clipTimes:
                 index = self.clipTimes.index(clip)
@@ -1181,7 +1186,8 @@ class VideoCutter(QWidget):
             QFile.remove(self.finalFilename)
             # noinspection PyCallByClass
             QFile.rename(filename, self.finalFilename)
-        self.progressbar.updateProgress('Complete')
+        self.progressbar.updateProgress(
+            f'{"<b>[SmartCut]</b> " if self.smartcut else ""}Complete! Workspace cleaned and sanitized')
         QTimer.singleShot(1000, self.progressbar.close)
         if sys.platform.startswith('linux') and self.mediaAvailable:
             QTimer.singleShot(1200, lambda: self.taskbar.setProgress(
@@ -1243,7 +1249,6 @@ class VideoCutter(QWidget):
     def showProgress(self, steps: int, timer: bool=False) -> None:
         self.progressbar.reset(steps, timer)
         self.progressbar.show()
-        # qApp.processEvents()
 
     @staticmethod
     def sizeof_fmt(num: float, suffix: chr = 'B') -> str:

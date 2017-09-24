@@ -267,6 +267,8 @@ class MainWindow(QMainWindow):
         self.console.deleteLater()
         if hasattr(self, 'cutter'):
             self.save_settings()
+            if hasattr(self.cutter.videoService, 'smartcut_files'):
+                self.cutter.videoService.cleanup(self.cutter.videoService.smartcut_files)
             if hasattr(self.cutter, 'mpvWidget'):
                 self.cutter.mpvWidget.shutdown()
         qApp.quit()

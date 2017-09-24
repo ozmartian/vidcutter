@@ -34,25 +34,35 @@ class VideoConfig:
 
     @property
     def formats(self) -> list:
-        return ['3g2', '3gp', 'aac', 'ac3', 'avi', 'dv', 'flac', 'flv', 'm4a', 'm4v', 'mka', 'mkv', 'mov', 'mp3',
-                'mp4', 'mpg', 'ogg', 'vob', 'wav', 'webm', 'wma', 'wmv']
+        return [
+            '3g2', '3gp', 'aac', 'ac3', 'avi', 'dv', 'flac', 'flv', 'm4a', 'm4v', 'mka', 'mkv', 'mov', 'mp3',
+            'mp4', 'mpg', 'ogg', 'vob', 'wav', 'webm', 'wma', 'wmv'
+        ]
 
     @property
     def mpeg_formats(self) -> list:
-        return ['h264', 'hevc', 'mpeg4', 'divx', 'xvid', 'webm', 'ivf', 'vp9', 'mpeg2video', 'mpg2', 'mp2', 'mp3',
-                'aac']
+        return [
+            'h264', 'hevc', 'mpeg4', 'divx', 'xvid', 'webm', 'ivf', 'vp9', 'mpeg2video', 'mpg2', 'mp2', 'mp3',
+            'aac'
+        ]
+
+    @property
+    def encoding(self) -> dict:
+        return {
+            'hevc': 'libx265 -tune zerolatency -preset ultrafast -x265-params crf=20 -qp 4 -flags +cgop',
+            'h264': 'libx264 -tune film -preset ultrafast -x264-params crf=20 -qp 0 -flags +cgop',
+            'vp9': 'libvpx-vp9 -deadline best -quality best'
+        }
 
     @property
     def binaries(self) -> dict:
         return {
-            # Windows
-            'nt': {
+            'nt': {  # Windows
                 'ffmpeg': ['ffmpeg.exe'],
                 'ffprobe': ['ffprobe.exe'],
                 'mediainfo': ['MediaInfo.exe']
             },
-            # Linux + macOS
-            'posix': {
+            'posix': {  # Linux + macOS
                 'ffmpeg': ['ffmpeg', 'ffmpeg2.8', 'avconv'],
                 'ffprobe': ['ffprobe', 'avprobe'],
                 'mediainfo': ['mediainfo']
@@ -62,16 +72,20 @@ class VideoConfig:
     @property
     def filters(self) -> dict:
         return {
-            'all': ['3g2', '3gp', 'amv', 'asf', 'asx', 'avi', 'bin', 'dat', 'div', 'divx', 'f4v', 'flv',
-                    'm1v', 'm2t', 'm2ts', 'm2v', 'm4v', 'mjpeg', 'mjpg', 'mkv', 'mod', 'mov', 'mp1', 'mp3',
-                    'mp4', 'mpa', 'mpe', 'mpeg', 'mpg', 'mpv', 'mpv4', 'qt', 'rm', 'rmvb', 'tod', 'ts',
-                    'vob', 'wav', 'webm', 'wma', 'wmv', 'xvid'],
-            'types': ['3GPP files (*.3gp *.3g2)', 'AMV files (*.amv)', 'AVI files (*.avi)', 'DivX files (*.divx *.div)',
-                      'Flash files (*.flv *.f4v)', 'WebM files (*.webm)', 'MKV files (*.mkv)',
-                      'MPEG Audio files (*.mp3 *.mpa *.mp1)', 'MPEG files (*.mpeg *.mpg *.mpe *.m1v *.tod)',
-                      'MPEG-2 files (*.mpv *.m2v *.ts *.m2t *.m2ts)', 'MPEG-4 files (*.mp4 *.m4v *.mpv4)',
-                      'MOD files (*.mod)', 'MJPEG files (*.mjpg *.mjpeg)', 'QuickTime files (*.mov *.qt)',
-                      'RealMedia files (*.rm *.rmvb)', 'VCD DAT files (*.dat)', 'VCD SVCD BIN/CUE images (*.bin)',
-                      'VOB files (*.vob)', 'Wave Audio files (*.wav)', 'Windows Media audio (*.wma)',
-                      'Windows Media files (*.asf *.asx *.wmv)', 'Xvid files (*.xvid)']
+            'all': [
+                '3g2', '3gp', 'amv', 'asf', 'asx', 'avi', 'bin', 'dat', 'div', 'divx', 'f4v', 'flv',
+                'm1v', 'm2t', 'm2ts', 'm2v', 'm4v', 'mjpeg', 'mjpg', 'mkv', 'mod', 'mov', 'mp1', 'mp3',
+                'mp4', 'mpa', 'mpe', 'mpeg', 'mpg', 'mpv', 'mpv4', 'qt', 'rm', 'rmvb', 'tod', 'ts',
+                'vob', 'wav', 'webm', 'wma', 'wmv', 'xvid'
+            ],
+            'types': [
+                '3GPP files (*.3gp *.3g2)', 'AMV files (*.amv)', 'AVI files (*.avi)', 'DivX files (*.divx *.div)',
+                'Flash files (*.flv *.f4v)', 'WebM files (*.webm)', 'MKV files (*.mkv)',
+                'MPEG Audio files (*.mp3 *.mpa *.mp1)', 'MPEG files (*.mpeg *.mpg *.mpe *.m1v *.tod)',
+                'MPEG-2 files (*.mpv *.m2v *.ts *.m2t *.m2ts)', 'MPEG-4 files (*.mp4 *.m4v *.mpv4)',
+                'MOD files (*.mod)', 'MJPEG files (*.mjpg *.mjpeg)', 'QuickTime files (*.mov *.qt)',
+                'RealMedia files (*.rm *.rmvb)', 'VCD DAT files (*.dat)', 'VCD SVCD BIN/CUE images (*.bin)',
+                'VOB files (*.vob)', 'Wave Audio files (*.wav)', 'Windows Media audio (*.wma)',
+                'Windows Media files (*.asf *.asx *.wmv)', 'Xvid files (*.xvid)'
+            ]
         }

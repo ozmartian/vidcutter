@@ -514,7 +514,7 @@ QSlider::handle:hover#volumeslider, QSlider::handle:pressed#volumeslider {
 
 VCProgressBar {
     background-color: #EFF0F1;
-    border: 2px solid #FFF;
+    border: 1px solid #666;
 }
 
 VCProgressBar QLabel {

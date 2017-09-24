@@ -169,9 +169,10 @@ class VCProgressBar(QDialog):
 
     def __init__(self, parent=None):
         super(VCProgressBar, self).__init__(parent)
-        self.setWindowFlags(Qt.Dialog | Qt.FramelessWindowHint)
+        self.setWindowFlags(Qt.Tool | Qt.CustomizeWindowHint)
         self.setWindowModality(Qt.ApplicationModal)
         self._progress = QProgressBar(self)
+        self._progress.setRange(0, 0)
         self._progress.setTextVisible(False)
         self._progress.setStyle(QStyleFactory.create('Fusion'))
         self._label = QLabel(self)
@@ -179,37 +180,41 @@ class VCProgressBar(QDialog):
         layout = QGridLayout()
         layout.addWidget(self._progress, 0, 0)
         layout.addWidget(self._label, 0, 0)
-        self._timerprefix = QLabel('<b>Elapsed Time:</b>', self)
+        self._timerprefix = QLabel('<b>Elapsed time:</b>', self)
         self._timerprefix.setObjectName('progresstimer')
         self._timervalue = QLabel(self)
         self._timervalue.setObjectName('progresstimer')
-        self._timerlayout = QHBoxLayout()
-        self._timerlayout.addWidget(self._timerprefix)
-        self._timerlayout.addWidget(self._timervalue)
+        timerlayout = QHBoxLayout()
+        timerlayout.addWidget(self._timerprefix)
+        timerlayout.addWidget(self._timervalue)
+        self._timerwidget = QWidget(self)
+        self._timerwidget.setLayout(timerlayout)
         self._time = QTime()
         self._timer = QTimer(self)
         self._timer.timeout.connect(self.updateTimer)
         self.setLayout(layout)
         self.setFixedWidth(550)
-        self.reset()
 
     def reset(self, steps: int=0, timer: bool=False) -> None:
+        self.setValue(0)
         self.setRange(0, steps)
         self.setText('Analyzing video source')
         self.showTimer() if timer else self.hideTimer()
 
     def showTimer(self) -> None:
+        self._timerwidget.show()
         # noinspection PyArgumentList
-        self.layout().addLayout(self._timerlayout, 1, 0, Qt.AlignHCenter | Qt.AlignTop)
+        self.layout().addWidget(self._timerwidget, 1, 0, Qt.AlignHCenter | Qt.AlignTop)
         widgetHeight = self._progress.sizeHint().height() + 20
-        widgetHeight += self._timerlayout.sizeHint().height() + 10
+        widgetHeight += self._timerwidget.sizeHint().height() + 10
         self.setFixedHeight(widgetHeight)
         self._time.start()
         self.updateTimer()
         self._timer.start(1000)
 
     def hideTimer(self) -> None:
-        self.layout().removeItem(self._timerlayout)
+        self._timerwidget.hide()
+        self.layout().removeWidget(self._timerwidget)
         widgetHeight = self._progress.sizeHint().height() + 20
         self.setFixedHeight(widgetHeight)
 
@@ -219,7 +224,7 @@ class VCProgressBar(QDialog):
         mins = int(secs / 60) % 60
         hrs = int(secs / 3600)
         secs = int(secs % 60)
-        elapsed = '{hrs:02d}:{mins:02d}:{secs:02d}'.format(**locals())
+        elapsed = f'{hrs:02d}:{mins:02d}:{secs:02d}'
         self._timervalue.setText(elapsed)
 
     def value(self) -> int:
@@ -231,7 +236,7 @@ class VCProgressBar(QDialog):
     def setText(self, val: str) -> None:
         if '<b>' in val:
             css = '<style>b { font-family:"Noto Sans UI"; font-weight:bold; }</style>'
-            val = '{0}{1}'.format(css, val)
+            val = f'{css}{val}'
         self._label.setText(val)
 
     def setMinimum(self, val: int) -> None:
@@ -333,25 +338,24 @@ class ClipErrorsDialog(QDialog):
         self.parseErrors()
 
     def intro(self) -> QLabel:
-        return QLabel('''
-        <style>
-            h1 {
-                text-align: center;
-                color: %s;
-                font-family: "Futura-Light", sans-serif;
-                font-weight: 400;
-            }
-            p {
-                font-family: "Noto Sans UI", sans-serif;
-                color: %s;
-            }
-        </style>
-        <h1>Invalid media files detected</h1>
-        <p>
-            One or more media files were prevented from being added to your project. Each rejected file is listed below.
-            Clicking on filenames will reveal error information explaining why it was not added. 
-        </p>
-        ''' % (self.headingcolor, self.pencolor))
+        return QLabel(f'''
+            <style>
+                h1 {{
+                    text-align: center;
+                    color: {self.headingcolor};
+                    font-family: "Futura-Light", sans-serif;
+                    font-weight: 400;
+                }}
+                p {{
+                    font-family: "Noto Sans UI", sans-serif;
+                    color: {self.pencolor};
+                }}
+            </style>
+            <h1>Invalid media files detected</h1>
+            <p>
+                One or more media files were rejected and are listed below. Clicking on the filenames will reveal
+                information about the error, explaining why it could not be added. 
+            </p>''')
 
     # noinspection PyUnusedLocal
     @pyqtSlot(int)
@@ -369,22 +373,22 @@ class ClipErrorsDialog(QDialog):
             self.toolbox.setItemToolTip(index, file)
 
     def setDetailedMessage(self, msg: str) -> None:
-        msg = '''
+        msg = f'''
         <style>
-            h1 {
+            h1 {{
                 text-align: center;
-                color: %s;
+                color: {self.headingcolor};
                 font-family: "Futura-Light", sans-serif;
                 font-weight: 400;
-            }
-            p {
+            }}
+            p {{
                 font-family: "Noto Sans UI", sans-serif;
                 font-weight: 300;
-                color: %s;
-            }
+                color: {self.pencolor};
+            }}
         </style>
         <h1>Help :: Adding media files</h1>
-        %s''' % (self.headingcolor, self.pencolor, msg)
+        {msg}'''
         helpbutton = self.buttons.addButton('Help', QDialogButtonBox.ResetRole)
         helpbutton.setCursor(Qt.PointingHandCursor)
         helpbutton.clicked.connect(lambda: QMessageBox.information(self, 'Help :: Adding Media Files', msg,

@@ -34,7 +34,7 @@ from enum import Enum
 from functools import partial
 
 from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QDir, QFile, QFileInfo, QObject, QProcess, QProcessEnvironment, QSize,
-                          QStorageInfo, QTemporaryFile, QThreadPool, QTime)
+                          QStorageInfo, QTemporaryFile, QTime)
 from PyQt5.QtGui import QPainter, QPixmap
 from PyQt5.QtWidgets import QMessageBox
 
@@ -46,12 +46,12 @@ except ImportError:
 
 from vidcutter.libs.munch import Munch
 from vidcutter.libs.videoconfig import VideoConfig
-from vidcutter.libs.videoworker import VideoWorker
 
 
 class VideoService(QObject):
     progress = pyqtSignal(str)
     finished = pyqtSignal(bool, str)
+    error = pyqtSignal(str)
 
     frozen = getattr(sys, 'frozen', False)
     spaceWarningThreshold = 200
@@ -79,7 +79,6 @@ class VideoService(QObject):
         self.lastError = ''
         self.media = None
         self.streams = Munch()
-        self.threadpool = QThreadPool()
 
     def setMedia(self, source: str) -> None:
         try:
@@ -102,7 +101,7 @@ class VideoService(QObject):
         tools = Munch(ffmpeg=None, ffprobe=None, mediainfo=None)
         for backend in tools.keys():
             for exe in VideoService.config.binaries[os.name][backend]:
-                binpath = QDir.toNativeSeparators('{0}/bin/{1}'.format(QDir.currentPath(), exe))
+                binpath = QDir.toNativeSeparators(f'{QDir.currentPath()}/bin/{exe}')
                 if os.path.isfile(binpath):
                     tools[backend] = binpath
                     break
@@ -114,10 +113,12 @@ class VideoService(QObject):
         return tools
 
     @staticmethod
-    def initProc() -> QProcess:
+    def initProc(program: str=None) -> QProcess:
         p = QProcess()
         p.setProcessEnvironment(QProcessEnvironment.systemEnvironment())
         p.setWorkingDirectory(VideoService.getAppPath())
+        if program is not None:
+            p.setProgram(program)
         return p
 
     def checkDiskSpace(self, path: str):
@@ -130,7 +131,7 @@ class VideoService(QObject):
             warnmsg = 'There is less than {0}MB of disk space available at the target folder selected to save ' \
                       'your media. VidCutter WILL FAIL to produce your media if you run out of space during ' \
                       'operations.'
-            QMessageBox.warning(self.parentWidget(), 'Disk space is low!',
+            QMessageBox.warning(self.parentWidget(), 'Disk space warning',
                                 warnmsg.format(VideoService.spaceWarningThreshold))
             self.spaceWarningDelivered = True
 
@@ -143,13 +144,13 @@ class VideoService(QObject):
             imagecap = img.fileName()
             size = thumbsize.value
             cmd = VideoService.findBackends().ffmpeg
-            args = '-hide_banner -ss %s -i "%s" -vframes 1 -s %ix%i -y "%s"' % (frametime, source, size.width(),
-                                                                                size.height(), imagecap)
+            args = f'-hide_banner -ss {frametime} -i "{source}" -vframes 1 -s {size.width():d}x{size.height():d} ' \
+                   f'-y "{imagecap}"'
             proc = VideoService.initProc()
             proc.setProcessChannelMode(QProcess.MergedChannels)
             if proc.state() == QProcess.NotRunning:
-                if os.getenv('DEBUG', False):
-                    logging.getLogger(__name__).info('"%s %s"' % (cmd, args))
+                # if os.getenv('DEBUG', False):
+                #     logging.getLogger(__name__).info('"%s %s"' % (cmd, args))
                 proc.start(cmd, shlex.split(args))
                 proc.waitForFinished(-1)
                 if proc.exitStatus() == QProcess.NormalExit and proc.exitCode() == 0:
@@ -164,13 +165,13 @@ class VideoService(QObject):
     # noinspection PyBroadException
     def testJoin(self, file1: str, file2: str) -> bool:
         result = False
-        self.logger.info('attempting to test joining of "%s" + "%s"' % (file1, file2))
+        self.logger.info(f'attempting to test joining of "{file1}" + "{file2}"')
         try:
             # 1. check audio + video codecs
             file1_codecs = self.codecs(file1)
             file2_codecs = self.codecs(file2)
             if file1_codecs != file2_codecs:
-                self.logger.info('join test failed for %s and %s: codecs mismatched' % (file1, file2))
+                self.logger.info(f'join test failed for {file1} and {file2}: codecs mismatched')
                 self.lastError = '<p>The audio + video format of this media file is not the same as the files ' \
                                  'already in your clip index.</p>' \
                                  '<div align="center">Current files are <b>{0}</b> (video) and ' \
@@ -183,7 +184,7 @@ class VideoService(QObject):
             size1 = self.framesize(file1)
             size2 = self.framesize(file2)
             if size1 != size2:
-                self.logger.info('join test failed for %s and %s: frame size mismatched' % (file1, file2))
+                self.logger.info(f'join test failed for {file1} and {file2}: frame size mismatched')
                 self.lastError = '<p>The frame size of this media file is not the same as the files already in ' \
                                  'your clip index.</p>' \
                                  '<div align="center">Current media clips are <b>{0}x{1}</b>' \
@@ -192,9 +193,9 @@ class VideoService(QObject):
                 return result
             # 2. generate temporary file handles
             _, ext = os.path.splitext(file1)
-            file1_cut = QTemporaryFile(os.path.join(QDir.tempPath(), 'XXXXXX%s' % ext))
-            file2_cut = QTemporaryFile(os.path.join(QDir.tempPath(), 'XXXXXX%s' % ext))
-            final_join = QTemporaryFile(os.path.join(QDir.tempPath(), 'XXXXXX%s' % ext))
+            file1_cut = QTemporaryFile(os.path.join(QDir.tempPath(), f'XXXXXX{ext}'))
+            file2_cut = QTemporaryFile(os.path.join(QDir.tempPath(), f'XXXXXX{ext}'))
+            final_join = QTemporaryFile(os.path.join(QDir.tempPath(), f'XXXXXX{ext}'))
             # 3. produce 4 secs clips from input files for join test
             if file1_cut.open() and file2_cut.open() and final_join.open():
                 result1 = self.cut(file1, file1_cut.fileName(), '00:00:00.000', '00:00:04.00', False)
@@ -203,26 +204,26 @@ class VideoService(QObject):
                     # 4. attempt join of temp 2 second clips
                     result = self.join([file1_cut.fileName(), file2_cut.fileName()], final_join.fileName(), False)
             VideoService.cleanup([file1_cut.fileName(), file2_cut.fileName(), final_join.fileName()])
-        except:
+        except BaseException:
             self.logger.exception('Exception in VideoService.testJoin', exc_info=True)
             result = False
         return result
 
     def framesize(self, source: str=None) -> QSize:
-        if source is None and len(self.streams.video):
+        if hasattr(self.streams, 'video'):
             return QSize(int(self.streams.video.width), int(self.streams.video.height))
         else:
-            args = '-i "%s"' % source
+            args = f'-i "{source}"'
             result = self.cmdExec(self.backends.ffmpeg, args, True)
             matches = re.search(r'Stream.*Video:.*[,\s](?P<width>\d+?)x(?P<height>\d+?)[,\s]',
                                 result, re.DOTALL).groupdict()
             return QSize(int(matches['width']), int(matches['height']))
 
     def duration(self, source: str=None) -> QTime:
-        if source is None and hasattr(self.media, 'format') and self.parent is not None:
+        if hasattr(self.media, 'format') and self.parent is not None:
             return self.parent.delta2QTime(float(self.media.format.duration) * 1000)
         else:
-            args = '-i "%s"' % source
+            args = f'-i "{source}"'
             result = self.cmdExec(self.backends.ffmpeg, args, True)
             matches = re.search(r'Duration:\s(?P<hrs>\d+?):(?P<mins>\d+?):(?P<secs>\d+\.\d+?),',
                                 result, re.DOTALL).groupdict()
@@ -230,10 +231,10 @@ class VideoService(QObject):
             return QTime(int(matches['hrs']), int(matches['mins']), int(secs), int(msecs))
 
     def codecs(self, source: str=None) -> tuple:
-        if source is None and len(self.streams.video):
+        if hasattr(self.streams, 'video'):
             return self.streams.video.codec_name, self.streams.audio[0].codec_name if len(self.streams.audio) else None
         else:
-            args = '-i "%s"' % source
+            args = f'-i "{source}"'
             result = self.cmdExec(self.backends.ffmpeg, args, True)
             vcodec = re.search(r'Stream.*Video:\s(\w+)', result).group(1)
             acodec = re.search(r'Stream.*Audio:\s(\w+)', result).group(1)
@@ -244,89 +245,95 @@ class VideoService(QObject):
         self.checkDiskSpace(output)
         stream_map = '-map 0 ' if allstreams else ''
         if vcodec is not None:
-            encode_settings = VideoService.encodeSettings(vcodec)
-            args = '-v {loglevel} -i "{source}" -ss {frametime} -t {duration} -c:v {encode_settings} ' \
-                   '-c:a copy -c:s copy {stream_map}-y "{output}"'.format(**locals())
+            encode_options = VideoService.config.encoding.get(vcodec, vcodec)
+            args = f'-v {loglevel} -i "{source}" -ss {frametime} -t {duration} ' \
+                   f'-c:v {encode_options} -c:a copy -c:s copy {stream_map}-y "{output}"'
         else:
-            args = '-v {loglevel} -ss {frametime} -i "{source}" -t {duration} -c copy {stream_map}' \
-                   '-avoid_negative_ts 1 -copyinkf -y "{output}"'.format(**locals())
+            args = f'-v {loglevel} -ss {frametime} -i "{source}" -t {duration} ' \
+                   f'-c copy {stream_map}-avoid_negative_ts 1 -copyinkf -y "{output}"'
         if run:
             return self.cmdExec(self.backends.ffmpeg, args)
         else:
             return self.backends.ffmpeg, args
-
-    @staticmethod
-    def encodeSettings(codec: str) -> str:
-        encoding = {
-            'hevc': 'libx265 -tune zerolatency -preset ultrafast -x265-params crf=20 -qp 4',
-            'h264': 'libx264 -tune film -preset ultrafast -x264-params crf=20 -qp 0',
-            'vp9': 'libvpx-vp9 -deadline best -quality best'
-        }
-        return encoding.get(codec, codec)
 
     def smartcut(self, source: str, output: str, start: float, end: float, allstreams: bool=True) -> None:
         output_file, output_ext = os.path.splitext(source)
         # get GOP bisections for start and end of clip times to be reencoded for frame accurate cuts
         # smartcut -> list: start, end, duration, filename
         bisections = self.getGOPbisections(source, start, end)
-        self.smartcut_files = [
-            '{0}_start{1}'.format(output_file, output_ext),
-            '{0}_middle{1}'.format(output_file, output_ext),
-            '{0}_end{1}'.format(output_file, output_ext)
-        ]
-        cmd, args = self.cut(source=source,
-                             output=self.smartcut_files[1],
-                             frametime=bisections['start'][2],
-                             duration=bisections['end'][1] - bisections['start'][2],
-                             allstreams=allstreams,
-                             run=False)
-        self.threadpool.start(self._getWorker(cmd, args, '<b>[SmartCut]</b> Cutting video chunks...',
-                                              output, allstreams))
-        cmd, args = self.cut(source=source,
-                             output=self.smartcut_files[0],
-                             frametime=str(start),
-                             duration=bisections['start'][1] - start,
-                             allstreams=allstreams,
-                             vcodec=self.streams.video.codec_name,
-                             loglevel='info',
-                             run=False)
-        self.threadpool.start(self._getWorker(cmd, args, '<b>[SmartCut]</b> Encoding START keyframe clip (GOP)...',
-                                              output, allstreams))
-        cmd, args = self.cut(source=source,
-                             output=self.smartcut_files[2],
-                             frametime=bisections['end'][1],
-                             duration=end - bisections['end'][1],
-                             allstreams=allstreams,
-                             vcodec=self.streams.video.codec_name,
-                             loglevel='info',
-                             run=False)
-        self.threadpool.start(self._getWorker(cmd, args, '<b>[SmartCut]</b> Encoding END keyframe clip (GOP)...',
-                                              output, allstreams))
+        self.smartcut_job = Munch(output=output, allstreams=allstreams,
+                                  procs=Munch(start=VideoService.initProc(self.backends.ffmpeg),
+                                              middle=VideoService.initProc(self.backends.ffmpeg),
+                                              end=VideoService.initProc(self.backends.ffmpeg)),
+                                  files=[f'{output_file}_start{output_ext}',
+                                         f'{output_file}_middle{output_ext}',
+                                         f'{output_file}_end{output_ext}'],
+                                  results=Munch(start=False, middle=False, end=False))
+        self.smartcut_job.procs.middle.setObjectName('middle')
+        self.smartcut_job.procs.middle.setProcessChannelMode(QProcess.MergedChannels)
+        self.smartcut_job.procs.middle.finished.connect(self.smartjoin)
+        self.smartcut_job.procs.middle.setArguments(shlex.split(
+            self.cut(source=source,
+                     output=self.smartcut_job.files[1],
+                     frametime=bisections['start'][2],
+                     duration=bisections['end'][1] - bisections['start'][2],
+                     allstreams=allstreams,
+                     run=False)[1]
+        ))
+        self.smartcut_job.procs.start.setObjectName('start')
+        self.smartcut_job.procs.start.setProcessChannelMode(QProcess.MergedChannels)
+        self.smartcut_job.procs.start.finished.connect(self.smartjoin)
+        self.smartcut_job.procs.start.setArguments(shlex.split(
+            self.cut(source=source,
+                     output=self.smartcut_job.files[0],
+                     frametime=str(start),
+                     duration=bisections['start'][1] - start,
+                     allstreams=allstreams,
+                     vcodec=self.streams.video.codec_name,
+                     loglevel='info',
+                     run=False)[1]
+        ))
+        self.smartcut_job.procs.end.setObjectName('end')
+        self.smartcut_job.procs.end.setProcessChannelMode(QProcess.MergedChannels)
+        self.smartcut_job.procs.end.finished.connect(self.smartjoin)
+        self.smartcut_job.procs.end.setArguments(shlex.split(
+            self.cut(source=source,
+                     output=self.smartcut_job.files[2],
+                     frametime=bisections['end'][1],
+                     duration=end - bisections['end'][1],
+                     allstreams=allstreams,
+                     vcodec=self.streams.video.codec_name,
+                     loglevel='info',
+                     run=False)[1]
+        ))
+        self.smartcut_progress = {
+            'start': '<b>[SmartCut]</b> Encoding START keyframe clip',
+            'middle': '<b>[SmartCut]</b> Generating START, MIDDLE and END clips',
+            'end': '<b>[SmartCut]</b> Encoding END keyframe clip'
+        }
+        self.smartcut_job.procs.middle.start()
+        self.smartcut_job.procs.start.start()
+        self.smartcut_job.procs.end.start()
 
-    def _getWorker(self, cmd: str, args: str, progresstxt: str, output: str, allstreams: bool=True) -> VideoWorker:
-        worker = VideoWorker(cmd, args, progresstxt,
-                             os.getenv('DEBUG', False) or getattr(self.parent, 'verboseLogs', False))
-        worker.signals.progress.connect(self.progress)
-        worker.signals.result.connect(lambda results: self.smartjoin(output, self.smartcut_files, results, allstreams))
-        return worker
-
-    @pyqtSlot(str, list, list, bool)
-    def smartjoin(self, output: str, files: list, results: list, allstreams: bool) -> None:
-        # print('smartjoin activeThreadCount = {}'.format(self.threadpool.activeThreadCount()))
-        if False in results or self.threadpool.activeThreadCount() != 0:
+    @pyqtSlot(int, QProcess.ExitStatus)
+    def smartjoin(self, exitcode: int, exitstatus: QProcess.ExitStatus) -> None:
+        self.smartcut_job.results[self.sender().objectName()] = (exitcode == 0 and exitstatus == QProcess.NormalExit)
+        self.progress.emit(self.smartcut_progress.get(self.sender().objectName()))
+        # print(self.smartcut_job.results)
+        if False in self.smartcut_job.results.values():
             return
-        self.progress.emit('<b>[SmartCut]</b> Joining START, MID and END...')
+        self.progress.emit('<b>[SmartCut]</b> Joining START, MID and END')
         final_join = False
-        if self.isMPEGcodec(files[1]):
+        if self.isMPEGcodec(self.smartcut_job.files[1]):
             self.logger.info('smartcut files are MPEG based so join via MPEG-TS')
-            final_join = self.mpegtsJoin(files, output)
+            final_join = self.mpegtsJoin(self.smartcut_job.files, self.smartcut_job.output)
         if not final_join:
             self.logger.info('smartcut MPEG-TS join failed, retry with standard concat')
-            final_join = self.join(inputs=files, output=output, allstreams=allstreams)
-        self.progress.emit('<b>[SmartCut]</b> Complete! Workspace cleaned and sanitized...')
-        VideoService.cleanup(files)
-        results.append(final_join)
-        self.finished.emit(True, output)
+            final_join = self.join(inputs=self.smartcut_job.files, output=self.smartcut_job.output,
+                                   allstreams=self.smartcut_job.allstreams)
+        VideoService.cleanup(self.smartcut_job.files)
+        self.finished.emit(final_join, self.smartcut_job.output)
+        delattr(self, 'smartcut_job')
 
     @staticmethod
     def cleanup(files: list) -> None:
@@ -339,9 +346,9 @@ class VideoService(QObject):
         [fobj.write('file \'%s\'\n' % file.replace("'", "\\'")) for file in inputs]
         fobj.close()
         if allstreams:
-            args = '-v error -f concat -safe 0 -i "{0}" -c copy -map 0 -y "{1}"'
+            args = '-v error -err_detect ignore_err -f concat -safe 0 -i "{0}" -c copy -map 0 -y "{1}"'
         else:
-            args = '-v error -f concat -safe 0 -i "{0}" -c copy -y "{1}"'
+            args = '-v error -err_detect ignore_err -f concat -safe 0 -i "{0}" -c copy -y "{1}"'
         result = self.cmdExec(self.backends.ffmpeg, args.format(filelist, output))
         os.remove(filelist)
         return result
@@ -352,38 +359,38 @@ class VideoService(QObject):
         if vcodec:
             prefix = '-bsf:v'
             if vcodec == 'hevc':
-                vbsf = '%s hevc_mp4toannexb' % prefix
+                vbsf = f'{prefix} hevc_mp4toannexb'
             elif vcodec == 'h264':
-                vbsf = '%s h264_mp4toannexb' % prefix
+                vbsf = f'{prefix} h264_mp4toannexb'
             elif vcodec == 'mpeg4':
-                vbsf = '%s mpeg4_unpack_bframes' % prefix
+                vbsf = f'{prefix} mpeg4_unpack_bframes'
             elif vcodec in {'webm', 'ivf', 'vp9'}:
-                vbsf = '%s vp9_superframe' % prefix
+                vbsf = f'{prefix} vp9_superframe'
         if acodec:
             prefix = '-bsf:a'
             if acodec == 'aac':
-                absf = '%s aac_adtstoasc' % prefix
+                absf = f'{prefix} aac_adtstoasc'
             elif acodec == 'mp3':
-                absf = '%s mp3decomp' % prefix
+                absf = f'{prefix} mp3decomp'
         return vbsf, absf
 
     def probe(self, source: str) -> bool:
         try:
-            args = '-v error -show_streams -show_format -of json "{0}"'.format(source)
+            args = f'-v error -show_streams -show_format -of json "{source}"'
             json_data = self.cmdExec(self.backends.ffprobe, args, output=True)
             self.media = Munch.fromDict(json.loads(json_data))
             return hasattr(self.media, 'streams') and len(self.media.streams)
         except FileNotFoundError:
-            self.logger.exception('Probe media file not found: {0}'.format(source), exc_info=True)
+            self.logger.exception(f'Probe media file not found: {source}', exc_info=True)
             raise
         except json.JSONDecodeError:
             self.logger.exception('Error decoding ffprobe JSON output', exc_info=True)
             raise
 
     def getIDRFrames(self, source: str, formatted_time: bool=False) -> list:
-        idrframes = list()
-        args = '-v error -show_packets -select_streams v -show_entries packet=pts_time,flags {0}-of csv "{1}"' \
-            .format('-sexagesimal ' if formatted_time else '', source)
+        idrframes = []
+        args = '-v error -show_packets -select_streams v -show_entries packet=pts_time,flags ' \
+               f'{"-sexagesimal " if formatted_time else ""}-of csv "{source}"'
         result = self.cmdExec(self.backends.ffprobe, args, output=True, suppresslog=True)
         for line in result.split('\n'):
             if re.search(',K', line):
@@ -403,7 +410,7 @@ class VideoService(QObject):
         }
 
     def isMPEGcodec(self, source: str=None) -> bool:
-        if source is None and len(self.streams.video):
+        if hasattr(self.streams, 'video'):
             codec = self.streams.video.codec_name
         else:
             codec = self.codecs(source)[0].lower()
@@ -414,27 +421,27 @@ class VideoService(QObject):
         result = False
         try:
             self.checkDiskSpace(output)
-            outfiles = list()
+            outfiles = []
             video_bsf, audio_bsf = self.getBSF(inputs[0])
             # 1. transcode to mpeg transport streams
             for file in inputs:
                 name, _ = os.path.splitext(file)
-                outfile = '%s.ts' % name
+                outfile = f'{name}.ts'
                 outfiles.append(outfile)
                 if os.path.isfile(outfile):
                     os.remove(outfile)
-                args = '-v error -i "%s" -c copy -map 0 %s -f mpegts "%s"' % (file, video_bsf, outfile)
+                args = f'-v error -i "{file}" -c copy -map 0 {video_bsf} -f mpegts "{outfile}"'
                 if not self.cmdExec(self.backends.ffmpeg, args):
                     return result
             # 2. losslessly concatenate at the file level
             if len(outfiles):
                 if os.path.isfile(output):
                     os.remove(output)
-                args = '-v error -i "concat:%s" -c copy %s "%s"' % ('|'.join(map(str, outfiles)), audio_bsf, output)
+                args = f'-v error -i "concat:{"|".join(map(str, outfiles))}" -c copy {audio_bsf} "{output}"'
                 result = self.cmdExec(self.backends.ffmpeg, args)
                 # 3. cleanup mpegts files
                 [QFile.remove(file) for file in outfiles]
-        except:
+        except BaseException:
             self.logger.exception('Exception during MPEG-TS join', exc_info=True)
             result = False
         return result
@@ -445,18 +452,18 @@ class VideoService(QObject):
         return re.search(r'ffmpeg\sversion\s([\S]+)\s', result).group(1)
 
     def mediainfo(self, source: str, output: str='HTML') -> str:
-        args = '--output=%s "%s"' % (output, source)
+        args = f'--output={output} "{source}"'
         result = self.cmdExec(self.backends.mediainfo, args, True)
         return result.strip()
 
     def cmdExec(self, cmd: str, args: str=None, output: bool=False, suppresslog: bool=False):
         if os.getenv('DEBUG', False) or getattr(self.parent, 'verboseLogs', False):
-            self.logger.info('{0} {1}'.format(cmd, args if args is not None else ''))
+            self.logger.info(f'{cmd} {args if args is not None else ""}')
         if self.proc.state() == QProcess.NotRunning:
             self.proc.setProcessChannelMode(QProcess.SeparateChannels if cmd == self.backends.mediainfo
                                             else QProcess.MergedChannels)
             if cmd == self.backends.ffmpeg:
-                args = '-hide_banner {}'.format(args)
+                args = f'-hide_banner {args}'
             self.proc.start(cmd, shlex.split(args))
             self.proc.readyReadStandardOutput.connect(
                 partial(self.cmdOut, self.proc.readAllStandardOutput().data().decode().strip()))
@@ -464,7 +471,7 @@ class VideoService(QObject):
             if output:
                 cmdoutput = self.proc.readAllStandardOutput().data().decode()
                 if os.getenv('DEBUG', False) and not suppresslog:
-                    self.logger.info('cmd output: {0}'.format(cmdoutput))
+                    self.logger.info(f'cmd output: {cmdoutput}')
                 return cmdoutput
             return self.proc.exitStatus() == QProcess.NormalExit and self.proc.exitCode() == 0
         return False
@@ -477,9 +484,9 @@ class VideoService(QObject):
     @pyqtSlot(QProcess.ProcessError)
     def cmdError(self, error: QProcess.ProcessError) -> None:
         if error != QProcess.Crashed:
-            QMessageBox.critical(self.parentWidget(), '',
-                                 '<h4>%s Error:</h4>' % self.backends.ffmpeg +
-                                 '<p>%s</p>' % self.proc.errorString(), buttons=QMessageBox.Close)
+            QMessageBox.critical(self.parent, 'Error alert',
+                                 f'<h4>{self.backends.ffmpeg} Error:</h4><p>{self.proc.errorString()}</p>',
+                                 buttons=QMessageBox.Close)
 
     # noinspection PyUnresolvedReferences, PyProtectedMember
     @staticmethod
