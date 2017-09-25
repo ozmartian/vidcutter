@@ -113,12 +113,14 @@ class VideoService(QObject):
         return tools
 
     @staticmethod
-    def initProc(program: str=None) -> QProcess:
+    def initProc(program: str=None, finish: pyqtSlot=None) -> QProcess:
         p = QProcess()
         p.setProcessEnvironment(QProcessEnvironment.systemEnvironment())
         p.setWorkingDirectory(VideoService.getAppPath())
         if program is not None:
             p.setProgram(program)
+        if finish is not None:
+            p.finished.connect(finish)
         return p
 
     def checkDiskSpace(self, path: str):
@@ -262,16 +264,17 @@ class VideoService(QObject):
         # smartcut -> list: start, end, duration, filename
         bisections = self.getGOPbisections(source, start, end)
         self.smartcut_job = Munch(output=output, allstreams=allstreams,
-                                  procs=Munch(start=VideoService.initProc(self.backends.ffmpeg),
-                                              middle=VideoService.initProc(self.backends.ffmpeg),
-                                              end=VideoService.initProc(self.backends.ffmpeg)),
+                                  procs=Munch(start=VideoService.initProc(self.backends.ffmpeg, self.smartcheck),
+                                              middle=VideoService.initProc(self.backends.ffmpeg, self.smartcheck),
+                                              end=VideoService.initProc(self.backends.ffmpeg, self.smartcheck)),
                                   files=[f'{output_file}_start{output_ext}',
                                          f'{output_file}_middle{output_ext}',
                                          f'{output_file}_end{output_ext}'],
                                   results=Munch(start=False, middle=False, end=False))
         self.smartcut_job.procs.middle.setObjectName('middle')
         self.smartcut_job.procs.middle.setProcessChannelMode(QProcess.MergedChannels)
-        self.smartcut_job.procs.middle.finished.connect(self.smartjoin)
+        self.smartcut_job.procs.middle.started.connect(
+            lambda: self.progress.emit('<b>[SmartCut]</b> Generating START, MIDDLE and END clips'))
         self.smartcut_job.procs.middle.setArguments(shlex.split(
             self.cut(source=source,
                      output=self.smartcut_job.files[1],
@@ -282,7 +285,8 @@ class VideoService(QObject):
         ))
         self.smartcut_job.procs.start.setObjectName('start')
         self.smartcut_job.procs.start.setProcessChannelMode(QProcess.MergedChannels)
-        self.smartcut_job.procs.start.finished.connect(self.smartjoin)
+        self.smartcut_job.procs.start.started.connect(
+            lambda: self.progress.emit('<b>[SmartCut]</b> Encoding START keyframe clip'))
         self.smartcut_job.procs.start.setArguments(shlex.split(
             self.cut(source=source,
                      output=self.smartcut_job.files[0],
@@ -295,7 +299,8 @@ class VideoService(QObject):
         ))
         self.smartcut_job.procs.end.setObjectName('end')
         self.smartcut_job.procs.end.setProcessChannelMode(QProcess.MergedChannels)
-        self.smartcut_job.procs.end.finished.connect(self.smartjoin)
+        self.smartcut_job.procs.end.started.connect(
+            lambda: self.progress.emit('<b>[SmartCut]</b> Encoding END keyframe clip'))
         self.smartcut_job.procs.end.setArguments(shlex.split(
             self.cut(source=source,
                      output=self.smartcut_job.files[2],
@@ -306,22 +311,23 @@ class VideoService(QObject):
                      loglevel='info',
                      run=False)[1]
         ))
-        self.smartcut_progress = {
-            'start': '<b>[SmartCut]</b> Encoding START keyframe clip',
-            'middle': '<b>[SmartCut]</b> Generating START, MIDDLE and END clips',
-            'end': '<b>[SmartCut]</b> Encoding END keyframe clip'
-        }
         self.smartcut_job.procs.middle.start()
-        self.smartcut_job.procs.start.start()
-        self.smartcut_job.procs.end.start()
 
     @pyqtSlot(int, QProcess.ExitStatus)
-    def smartjoin(self, exitcode: int, exitstatus: QProcess.ExitStatus) -> None:
-        self.smartcut_job.results[self.sender().objectName()] = (exitcode == 0 and exitstatus == QProcess.NormalExit)
-        self.progress.emit(self.smartcut_progress.get(self.sender().objectName()))
-        # print(self.smartcut_job.results)
-        if False in self.smartcut_job.results.values():
-            return
+    def smartcheck(self, code: int, status: QProcess.ExitStatus) -> None:
+        name = self.sender().objectName()
+        setattr(self.smartcut_job.results, name, (code == 0 and status == QProcess.NormalExit))
+        if os.getenv('DEBUG', False) or getattr(self.parent, 'verboseLogs', False):
+            self.logger.info('SmartCut progress: {}'.format(self.smartcut_job.results))
+        if name == 'middle':
+            self.smartcut_job.procs.start.start()
+        elif name == 'start':
+            self.smartcut_job.procs.end.start()
+        elif name == 'end':
+            self.smartjoin()
+
+    @pyqtSlot()
+    def smartjoin(self) -> None:
         self.progress.emit('<b>[SmartCut]</b> Joining START, MID and END')
         final_join = False
         if self.isMPEGcodec(self.smartcut_job.files[1]):

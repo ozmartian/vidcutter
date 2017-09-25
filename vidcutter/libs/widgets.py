@@ -167,9 +167,8 @@ class FrameCounter(QWidget):
 class VCProgressBar(QDialog):
     taskbarprogress = pyqtSignal(float, bool)
 
-    def __init__(self, parent=None):
-        super(VCProgressBar, self).__init__(parent)
-        self.setWindowFlags(Qt.Tool | Qt.CustomizeWindowHint)
+    def __init__(self, parent=None, flags=Qt.Dialog | Qt.FramelessWindowHint):
+        super(VCProgressBar, self).__init__(parent, flags)
         self.setWindowModality(Qt.ApplicationModal)
         self._progress = QProgressBar(self)
         self._progress.setRange(0, 0)
