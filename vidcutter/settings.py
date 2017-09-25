@@ -329,9 +329,9 @@ class GeneralPage(QWidget):
         singleInstanceCheckbox.setChecked(self.singleInstance)
         singleInstanceCheckbox.stateChanged.connect(self.setSingleInstance)
         singleInstanceLabel = QLabel('''
-            <b>ON:</b> all actions open in the same app window
+            <b>ON:</b> allow only one single application window
             <br/>
-            <b>OFF:</b> all actions open in separate app windows 
+            <b>OFF:</b> allow multiple application windows
         ''', self)
         singleInstanceLabel.setObjectName('singleinstancelabel')
         singleInstanceLabel.setTextFormat(Qt.RichText)
