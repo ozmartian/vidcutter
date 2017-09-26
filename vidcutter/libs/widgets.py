@@ -223,7 +223,7 @@ class VCProgressBar(QDialog):
         mins = int(secs / 60) % 60
         hrs = int(secs / 3600)
         secs = int(secs % 60)
-        elapsed = f'{hrs:02d}:{mins:02d}:{secs:02d}'
+        elapsed = '{hrs:02d}:{mins:02d}:{secs:02d}'.format(**locals())
         self._timervalue.setText(elapsed)
 
     def value(self) -> int:
@@ -235,7 +235,7 @@ class VCProgressBar(QDialog):
     def setText(self, val: str) -> None:
         if '<b>' in val:
             css = '<style>b { font-family:"Noto Sans UI"; font-weight:bold; }</style>'
-            val = f'{css}{val}'
+            val = '{0}{1}'.format(css, val)
         self._label.setText(val)
 
     def setMinimum(self, val: int) -> None:
@@ -337,24 +337,24 @@ class ClipErrorsDialog(QDialog):
         self.parseErrors()
 
     def intro(self) -> QLabel:
-        return QLabel(f'''
+        return QLabel('''
             <style>
-                h1 {{
+                h1 {
                     text-align: center;
-                    color: {self.headingcolor};
+                    color: {0};
                     font-family: "Futura-Light", sans-serif;
                     font-weight: 400;
-                }}
-                p {{
+                }
+                p {
                     font-family: "Noto Sans UI", sans-serif;
-                    color: {self.pencolor};
-                }}
+                    color: {1};
+                }
             </style>
             <h1>Invalid media files detected</h1>
             <p>
                 One or more media files were rejected and are listed below. Clicking on the filenames will reveal
                 information about the error, explaining why it could not be added. 
-            </p>''')
+            </p>'''.format(self.headingcolor, self.pencolor))
 
     # noinspection PyUnusedLocal
     @pyqtSlot(int)
@@ -372,22 +372,22 @@ class ClipErrorsDialog(QDialog):
             self.toolbox.setItemToolTip(index, file)
 
     def setDetailedMessage(self, msg: str) -> None:
-        msg = f'''
+        msg = '''
         <style>
             h1 {{
                 text-align: center;
-                color: {self.headingcolor};
+                color: {0};
                 font-family: "Futura-Light", sans-serif;
                 font-weight: 400;
             }}
             p {{
                 font-family: "Noto Sans UI", sans-serif;
                 font-weight: 300;
-                color: {self.pencolor};
+                color: {1};
             }}
         </style>
         <h1>Help :: Adding media files</h1>
-        {msg}'''
+        {2}'''.format(self.headingcolor, self.pencolor, msg)
         helpbutton = self.buttons.addButton('Help', QDialogButtonBox.ResetRole)
         helpbutton.setCursor(Qt.PointingHandCursor)
         helpbutton.clicked.connect(lambda: QMessageBox.information(self, 'Help :: Adding Media Files', msg,
