@@ -142,7 +142,7 @@ class VideoCutter(QWidget):
         self.clipindex_add.setObjectName('clipadd')
         self.clipindex_add.clicked.connect(self.addExternalClips)
         self.clipindex_add.setToolTip('Add clips')
-        self.clipindex_add.setStatusTip('Add one or more files to an existing project or an empty list if you are only'
+        self.clipindex_add.setStatusTip('Add one or more files to an existing project or an empty list if you are only '
                                         'joining files')
         self.clipindex_add.setCursor(Qt.PointingHandCursor)
         self.clipindex_remove = QPushButton(self)
@@ -632,7 +632,7 @@ class VideoCutter(QWidget):
         return filters
 
     def openMedia(self) -> None:
-        filename, _ = QFileDialog.getOpenFileName(self,
+        filename, _ = QFileDialog.getOpenFileName(self.parent,
                                                   caption='{} - Open media file'.format(qApp.applicationName()),
                                                   filter=self.mediaFilters(),
                                                   initialFilter=self.mediaFilters(True),
@@ -648,7 +648,7 @@ class VideoCutter(QWidget):
     def openProject(self, checked: bool = False, project_file: str = None) -> None:
         initialFilter = 'Project files (*.edl *.vcp)' if self.mediaAvailable else 'VidCutter Project (*.vcp)'
         if project_file is None:
-            project_file, _ = QFileDialog.getOpenFileName(self,
+            project_file, _ = QFileDialog.getOpenFileName(self.parent,
                                                           caption='{} - Open project file'
                                                                   .format(qApp.applicationName()),
                                                           filter=self.projectFilters(),
@@ -722,7 +722,7 @@ class VideoCutter(QWidget):
                                      'may be added to the VCP (VidCutter Project file) format in the near future.')
                 return
         project_file, _ = os.path.splitext(self.currentMedia)
-        project_save, ptype = QFileDialog.getSaveFileName(self, 
+        project_save, ptype = QFileDialog.getSaveFileName(self.parent, 
                                                           caption='{} - Save project'.format(qApp.applicationName()),
                                                           directory='{}.vcp'.format(project_file),
                                                           filter=self.projectFilters(True),
@@ -900,7 +900,7 @@ class VideoCutter(QWidget):
 
     @pyqtSlot()
     def addExternalClips(self):
-        clips, _ = QFileDialog.getOpenFileNames(self,
+        clips, _ = QFileDialog.getOpenFileNames(self.parent,
                                                 caption='{} - Add media files'.format(qApp.applicationName()),
                                                 filter=self.mediaFilters(),
                                                 initialFilter=self.mediaFilters(True),
@@ -1055,7 +1055,7 @@ class VideoCutter(QWidget):
         suggestedFilename = '{0}_EDIT{1}'.format(source_file, source_ext)
         filefilter = 'Video files (*{})'.format(source_ext)
         if clips > 0:
-            self.finalFilename, _ = QFileDialog.getSaveFileName(parent=self,
+            self.finalFilename, _ = QFileDialog.getSaveFileName(parent=self.parent,
                                                                 caption='{} - Save media file'
                                                                         .format(qApp.applicationName()),
                                                                 directory=suggestedFilename, filter=filefilter,
@@ -1289,6 +1289,3 @@ class VideoCutter(QWidget):
                 elif self.cutEndAction.isEnabled():
                     self.clipEnd()
                 return
-
-    def closeEvent(self, event: QCloseEvent) -> None:
-        self.parent.closeEvent(event)

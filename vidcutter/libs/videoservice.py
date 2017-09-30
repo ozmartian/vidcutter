@@ -390,26 +390,30 @@ class VideoService(QObject):
             self.logger.exception('Error decoding ffprobe JSON output', exc_info=True)
             raise
 
-    def getIDRFrames(self, source: str, formatted_time: bool=False) -> list:
-        idrframes = []
+    def getKeyframes(self, source: str, formatted_time: bool=False) -> list:
+        keyframes = []
+        timecode = '0:00:00.000000' if formatted_time else 0
         args = '-v error -show_packets -select_streams v -show_entries packet=pts_time,flags ' \
                '{0}-of csv "{1}"'.format('-sexagesimal ' if formatted_time else '', source)
         result = self.cmdExec(self.backends.ffprobe, args, output=True, suppresslog=True)
+        # print('keyframes: {}'.format(result))
         for line in result.split('\n'):
+            if line.split(',')[1] != 'N/A':
+                timecode = line.split(',')[1]
             if re.search(',K', line):
                 if formatted_time:
-                    idrframes.append(line.split(',')[1][:-3])
+                    keyframes.append(timecode[:-3])
                 else:
-                    idrframes.append(float(line.split(',')[1]))
-        return idrframes
+                    keyframes.append(float(timecode))
+        return keyframes
 
     def getGOPbisections(self, source: str, start: float, end: float) -> dict:
-        idrtimes = self.getIDRFrames(source, formatted_time=False)
-        start_pos = bisect_left(idrtimes, start)
-        end_pos = bisect_left(idrtimes, end)
+        keyframes = self.getKeyframes(source)
+        start_pos = bisect_left(keyframes, start)
+        end_pos = bisect_left(keyframes, end)
         return {
-            'start': (idrtimes[start_pos - 1], idrtimes[start_pos], idrtimes[start_pos + 1]),
-            'end': (idrtimes[end_pos - 2], idrtimes[end_pos - 1], idrtimes[end_pos])
+            'start': (keyframes[start_pos - 1], keyframes[start_pos], keyframes[start_pos + 1]),
+            'end': (keyframes[end_pos - 2], keyframes[end_pos - 1], keyframes[end_pos])
         }
 
     def isMPEGcodec(self, source: str=None) -> bool:
@@ -457,7 +461,7 @@ class VideoService(QObject):
 
     def mediainfo(self, source: str, output: str='HTML') -> str:
         args = '--output={0} "{1}"'.format(output, source)
-        result = self.cmdExec(self.backends.mediainfo, args, True)
+        result = self.cmdExec(self.backends.mediainfo, args, True, True)
         return result.strip()
 
     def cmdExec(self, cmd: str, args: str=None, output: bool=False, suppresslog: bool=False):
@@ -475,7 +479,7 @@ class VideoService(QObject):
             if cmd == self.backends.mediainfo:
                 self.proc.setProcessChannelMode(QProcess.MergedChannels)
             if output:
-                cmdoutput = self.proc.readAllStandardOutput().data().decode()
+                cmdoutput = self.proc.readAllStandardOutput().data().decode().strip()
                 if os.getenv('DEBUG', False) and not suppresslog:
                     self.logger.info('cmd output: {}'.format(cmdoutput))
                 return cmdoutput

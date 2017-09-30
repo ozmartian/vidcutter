@@ -45,7 +45,7 @@ class VideoInfo(QDialog):
         self.parent = parent
         self.setObjectName('videoinfo')
         self.setContentsMargins(0, 0, 0, 0)
-        self.setWindowModality(Qt.WindowModal)
+        self.setWindowModality(Qt.ApplicationModal)
         self.setWindowTitle('Media information')
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         self.setMinimumSize(self.modes.get(self.parent.parent.scale))
@@ -101,7 +101,7 @@ class VideoInfo(QDialog):
         self.setLayout(layout)
 
     def showKeyframes(self):
-        keyframes = self.parent.videoService.getIDRFrames(self.media, formatted_time=True)
+        keyframes = self.parent.videoService.getKeyframes(self.media, formatted_time=True)
         halver = math.ceil(len(keyframes) / 2)
         col1 = keyframes[:halver]
         col2 = keyframes[halver:]
@@ -128,10 +128,15 @@ class VideoInfo(QDialog):
         content.setStyleSheet('QTextBrowser { border: none; background-color: transparent; }')
         content.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         content.setHtml(keyframe_content)
+        self.setWindowModality(Qt.NonModal)
         kframes = QDialog(self, flags=Qt.Dialog | Qt.WindowCloseButtonHint)
         kframes.setObjectName('keyframes')
         kframes.setAttribute(Qt.WA_DeleteOnClose, True)
+        kframes.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        kframes.setWindowModality(Qt.ApplicationModal)
+        kframes.setWindowTitle('View Keyframes (IDR)')
         buttons = QDialogButtonBox(QDialogButtonBox.Ok)
+        buttons.accepted.connect(lambda: self.setWindowModality(Qt.ApplicationModal))
         buttons.accepted.connect(kframes.close)
         content_headers = '''<style>
             table {
@@ -150,16 +155,16 @@ class VideoInfo(QDialog):
         ''' % ('#C681D5' if self.parent.theme == 'dark' else '#642C68')
         headers = QLabel(content_headers, self)
         layout = QVBoxLayout()
+        layout.setSpacing(15)
         layout.addWidget(headers)
         layout.addWidget(content)
         button_layout = QHBoxLayout()
-        button_layout.addWidget(QLabel('<b>Total keyframes:</b> %i' % len(keyframes), self), Qt.AlignLeft)
-        button_layout.addWidget(buttons, Qt.AlignRight)
+        totalLabel = QLabel('<b>Total keyframes:</b> %i' % len(keyframes), self)
+        totalLabel.setStyleSheet('border-top: 1px solid #444;')
+        button_layout.addWidget(totalLabel, Qt.AlignLeft)
+        button_layout.addWidget(buttons, Qt.AlignHCenter)
         layout.addLayout(button_layout)
         kframes.setLayout(layout)
-        kframes.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-        kframes.setWindowModality(Qt.WindowModal)
-        kframes.setWindowTitle('View Keyframes (IDR)')
         kframes.show()
 
     def closeEvent(self, event: QCloseEvent) -> None:

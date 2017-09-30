@@ -188,6 +188,7 @@ class VCProgressBar(QDialog):
         timerlayout.addWidget(self._timervalue)
         self._timerwidget = QWidget(self)
         self._timerwidget.setLayout(timerlayout)
+        self._timerwidget.hide()
         self._time = QTime()
         self._timer = QTimer(self)
         self._timer.timeout.connect(self.updateTimer)
