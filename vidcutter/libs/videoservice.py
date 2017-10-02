@@ -291,7 +291,7 @@ class VideoService(QObject):
                          allstreams=allstreams,
                          vcodec=self.streams.video.codec_name,
                          loglevel='info',
-                         run=False)[1]
+                         run=False)
             ))
             self.smartcut_job.procs.append(startproc)
             self.smartcut_job.results.update(start=False)
@@ -306,7 +306,7 @@ class VideoService(QObject):
                      frametime=bisections['start'][2],
                      duration=bisections['end'][1] - bisections['start'][2],
                      allstreams=allstreams,
-                     run=False)[1]
+                     run=False)
         ))
         self.smartcut_job.procs.append(middleproc)
         self.smartcut_job.results.update(middle=False)
@@ -324,7 +324,7 @@ class VideoService(QObject):
                          allstreams=allstreams,
                          vcodec=self.streams.video.codec_name,
                          loglevel='info',
-                         run=False)[1]
+                         run=False)
             ))
             self.smartcut_job.procs.append(endproc)
             self.smartcut_job.results.update(end=False)
@@ -337,7 +337,7 @@ class VideoService(QObject):
         self.smartcut_job.results[name] = (code == 0 and status == QProcess.NormalExit)
         if os.getenv('DEBUG', False) or getattr(self.parent, 'verboseLogs', False):
             self.logger.info('SmartCut progress: {}'.format(self.smartcut_job.results))
-        resultfile = self.smartcut_job.files[getattr(self.SmartCutIndex, name.upper())]
+        resultfile = self.smartcut_job.files[self.SmartCutIndex[name.upper()].value]
         if not self.smartcut_job.results[name] or QFile(resultfile).size() < 1000:
             args = ' '.join(self.smartcut_job.procs[0].arguments())
             if '-map 0 ' in args:
@@ -350,7 +350,9 @@ class VideoService(QObject):
                 # both attempts to cut have failed so exit and let user know
                 self.error.emit('SmartCut failed to cut media file. Please ensure your media files are valid otherwise '
                                 'try again with SmartCut disabled.')
+                # self.logger.error('Error executing: {0} {1}'.format(self.smartcut_job.procs[0].program(), args))
                 VideoService.cleanup(self.smartcut_job.files)
+                delattr(self, 'smartcut_job')
                 return
         self.smartcut_job.procs.pop(0)
         if len(self.smartcut_job.procs):
