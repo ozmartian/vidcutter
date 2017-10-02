@@ -27,7 +27,7 @@ import math
 
 from PyQt5.QtCore import QSize, Qt
 from PyQt5.QtGui import QCloseEvent, QPixmap
-from PyQt5.QtWidgets import (QDialog, QDialogButtonBox, QLabel, QPushButton, QSizePolicy, QTextBrowser, QHBoxLayout,
+from PyQt5.QtWidgets import (QDialog, QDialogButtonBox, QHBoxLayout, QLabel, QPushButton, QSizePolicy, QTextBrowser,
                              QVBoxLayout)
 
 
@@ -129,7 +129,7 @@ class VideoInfo(QDialog):
         content.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         content.setHtml(keyframe_content)
         self.setWindowModality(Qt.NonModal)
-        kframes = QDialog(self, flags=Qt.Dialog | Qt.WindowCloseButtonHint)
+        kframes = QDialog(self.parent, flags=Qt.Dialog | Qt.WindowCloseButtonHint)
         kframes.setObjectName('keyframes')
         kframes.setAttribute(Qt.WA_DeleteOnClose, True)
         kframes.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
@@ -154,17 +154,19 @@ class VideoInfo(QDialog):
         </table>
         ''' % ('#C681D5' if self.parent.theme == 'dark' else '#642C68')
         headers = QLabel(content_headers, self)
+        totalLabel = QLabel('<b>Total keyframes:</b> %i' % len(keyframes), self)
+        totalLabel.setStyleSheet('border-top: 1px solid #444;')
+        totalLabel.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding)
+        button_layout = QHBoxLayout()
+        button_layout.addWidget(totalLabel, 1)
+        button_layout.addWidget(buttons, 0)
         layout = QVBoxLayout()
         layout.setSpacing(15)
         layout.addWidget(headers)
         layout.addWidget(content)
-        button_layout = QHBoxLayout()
-        totalLabel = QLabel('<b>Total keyframes:</b> %i' % len(keyframes), self)
-        totalLabel.setStyleSheet('border-top: 1px solid #444;')
-        button_layout.addWidget(totalLabel, Qt.AlignLeft)
-        button_layout.addWidget(buttons, Qt.AlignHCenter)
         layout.addLayout(button_layout)
         kframes.setLayout(layout)
+        kframes.setMinimumWidth(350)
         kframes.show()
 
     def closeEvent(self, event: QCloseEvent) -> None:

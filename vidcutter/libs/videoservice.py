@@ -66,6 +66,11 @@ class VideoService(QObject):
         VIDEO = 1
         SUBTITLE = 2
 
+    class SmartCutIndex(Enum):
+        START = 0
+        MIDDLE = 1
+        END = 2
+
     config = VideoConfig()
 
     def __init__(self, parent=None):
@@ -254,78 +259,108 @@ class VideoService(QObject):
             args = '-v {0} -ss {1} -i "{2}" -t {3} -c copy {4}-avoid_negative_ts 1 -copyinkf -y "{5}"' \
                    .format(loglevel, frametime, source, duration, stream_map, output)
         if run:
-            return self.cmdExec(self.backends.ffmpeg, args)
+            result = self.cmdExec(self.backends.ffmpeg, args)
+            if not result or QFile(output).size() < 1000:
+                if allstreams:
+                    # smartcut failed so try again without mapping all media streams
+                    self.logger.info('cut resulted in zero length file, trying again without all stream mapping')
+                    self.cut(source, output, frametime, duration, False)
+                else:
+                    # both attempts to cut have failed so exit and let user know
+                    VideoService.cleanup([output])
+                    return False
+            return True
         else:
-            return self.backends.ffmpeg, args
+            return args
 
     def smartcut(self, source: str, output: str, start: float, end: float, allstreams: bool=True) -> None:
         output_file, output_ext = os.path.splitext(source)
-        # get GOP bisections for start and end of clip times to be reencoded for frame accurate cuts
-        # smartcut -> list: start, end, duration, filename
         bisections = self.getGOPbisections(source, start, end)
-        self.smartcut_job = Munch(output=output, allstreams=allstreams,
-                                  procs=Munch(start=VideoService.initProc(self.backends.ffmpeg, self.smartcheck),
-                                              middle=VideoService.initProc(self.backends.ffmpeg, self.smartcheck),
-                                              end=VideoService.initProc(self.backends.ffmpeg, self.smartcheck)),
-                                  files=['{0}_start{1}'.format(output_file, output_ext),
-                                         '{0}_middle{1}'.format(output_file, output_ext),
-                                         '{0}_end{1}'.format(output_file, output_ext)],
-                                  results=Munch(start=False, middle=False, end=False))
-        self.smartcut_job.procs.middle.setObjectName('middle')
-        self.smartcut_job.procs.middle.started.connect(
-            lambda: self.progress.emit('<b>[SmartCut]</b> Generating START, MIDDLE and END clips'))
-        self.smartcut_job.procs.middle.setArguments(shlex.split(
+        self.smartcut_job = Munch(output=output, allstreams=allstreams, procs=[], files=[], results={})
+        # step 1 - start of clip if start time is not a keyframe
+        if bisections['start'][1] > bisections['start'][0]:
+            self.smartcut_job.files.append('{0}_start{1}'.format(output_file, output_ext))
+            startproc = VideoService.initProc(self.backends.ffmpeg, self.smartcheck)
+            startproc.setObjectName('start')
+            startproc.started.connect(lambda: self.progress.emit('<b>[SmartCut]</b> Encoding START keyframe clip'))
+            startproc.setArguments(shlex.split(
+                self.cut(source=source,
+                         output=self.smartcut_job.files[-1],
+                         frametime=str(start),
+                         duration=bisections['start'][1] - start,
+                         allstreams=allstreams,
+                         vcodec=self.streams.video.codec_name,
+                         loglevel='info',
+                         run=False)[1]
+            ))
+            self.smartcut_job.procs.append(startproc)
+            self.smartcut_job.results.update(start=False)
+        # step 2 - always produce middle (main) segment of clip
+        self.smartcut_job.files.append('{0}_middle{1}'.format(output_file, output_ext))
+        middleproc = VideoService.initProc(self.backends.ffmpeg, self.smartcheck)
+        middleproc.setObjectName('middle')
+        middleproc.started.connect(lambda: self.progress.emit('<b>[SmartCut]</b> Cutting MAIN clip section'))
+        middleproc.setArguments(shlex.split(
             self.cut(source=source,
-                     output=self.smartcut_job.files[1],
+                     output=self.smartcut_job.files[-1],
                      frametime=bisections['start'][2],
                      duration=bisections['end'][1] - bisections['start'][2],
                      allstreams=allstreams,
                      run=False)[1]
         ))
-        self.smartcut_job.procs.start.setObjectName('start')
-        self.smartcut_job.procs.start.started.connect(
-            lambda: self.progress.emit('<b>[SmartCut]</b> Encoding START keyframe clip'))
-        self.smartcut_job.procs.start.setArguments(shlex.split(
-            self.cut(source=source,
-                     output=self.smartcut_job.files[0],
-                     frametime=str(start),
-                     duration=bisections['start'][1] - start,
-                     allstreams=allstreams,
-                     vcodec=self.streams.video.codec_name,
-                     loglevel='info',
-                     run=False)[1]
-        ))
-        self.smartcut_job.procs.end.setObjectName('end')
-        self.smartcut_job.procs.end.started.connect(
-            lambda: self.progress.emit('<b>[SmartCut]</b> Encoding END keyframe clip'))
-        self.smartcut_job.procs.end.setArguments(shlex.split(
-            self.cut(source=source,
-                     output=self.smartcut_job.files[2],
-                     frametime=bisections['end'][1],
-                     duration=end - bisections['end'][1],
-                     allstreams=allstreams,
-                     vcodec=self.streams.video.codec_name,
-                     loglevel='info',
-                     run=False)[1]
-        ))
-        self.smartcut_job.procs.middle.start()
+        self.smartcut_job.procs.append(middleproc)
+        self.smartcut_job.results.update(middle=False)
+        # step 3 - end of clip if end time is not a keyframe
+        if bisections['end'][2] > bisections['end'][1]:
+            self.smartcut_job.files.append('{0}_end{1}'.format(output_file, output_ext))
+            endproc = VideoService.initProc(self.backends.ffmpeg, self.smartcheck)
+            endproc.setObjectName('end')
+            endproc.started.connect(lambda: self.progress.emit('<b>[SmartCut]</b> Encoding END keyframe clip'))
+            endproc.setArguments(shlex.split(
+                self.cut(source=source,
+                         output=self.smartcut_job.files[-1],
+                         frametime=bisections['end'][1],
+                         duration=end - bisections['end'][1],
+                         allstreams=allstreams,
+                         vcodec=self.streams.video.codec_name,
+                         loglevel='info',
+                         run=False)[1]
+            ))
+            self.smartcut_job.procs.append(endproc)
+            self.smartcut_job.results.update(end=False)
+
+        self.smartcut_job.procs[0].start()
 
     @pyqtSlot(int, QProcess.ExitStatus)
     def smartcheck(self, code: int, status: QProcess.ExitStatus) -> None:
         name = self.sender().objectName()
-        setattr(self.smartcut_job.results, name, (code == 0 and status == QProcess.NormalExit))
+        self.smartcut_job.results[name] = (code == 0 and status == QProcess.NormalExit)
         if os.getenv('DEBUG', False) or getattr(self.parent, 'verboseLogs', False):
             self.logger.info('SmartCut progress: {}'.format(self.smartcut_job.results))
-        if name == 'middle':
-            self.smartcut_job.procs.start.start()
-        elif name == 'start':
-            self.smartcut_job.procs.end.start()
-        elif name == 'end':
+        resultfile = self.smartcut_job.files[getattr(self.SmartCutIndex, name.upper())]
+        if not self.smartcut_job.results[name] or QFile(resultfile).size() < 1000:
+            args = ' '.join(self.smartcut_job.procs[0].arguments())
+            if '-map 0 ' in args:
+                # smartcut failed so try again without mapping all media streams
+                self.logger.info('cut resulted in zero length file, trying again without all stream mapping')
+                self.smartcut_job.procs[0].setArguments(shlex.split(args.replace('-map 0 ', '')))
+                self.smartcut_job.procs[0].start()
+                return
+            else:
+                # both attempts to cut have failed so exit and let user know
+                self.error.emit('SmartCut failed to cut media file. Please ensure your media files are valid otherwise '
+                                'try again with SmartCut disabled.')
+                VideoService.cleanup(self.smartcut_job.files)
+                return
+        self.smartcut_job.procs.pop(0)
+        if len(self.smartcut_job.procs):
+            self.smartcut_job.procs[0].start()
+        else:
             self.smartjoin()
 
     @pyqtSlot()
     def smartjoin(self) -> None:
-        self.progress.emit('<b>[SmartCut]</b> Joining START, MID and END')
+        self.progress.emit('<b>[SmartCut]</b> Joining keyframe clips')
         final_join = False
         if self.isMPEGcodec(self.smartcut_job.files[1]):
             self.logger.info('smartcut files are MPEG based so join via MPEG-TS')
@@ -340,7 +375,10 @@ class VideoService(QObject):
 
     @staticmethod
     def cleanup(files: list) -> None:
-        [os.remove(file) for file in files]
+        try:
+            [os.remove(file) for file in files]
+        except FileNotFoundError:
+            pass
 
     def join(self, inputs: list, output: str, allstreams: bool=True) -> bool:
         self.checkDiskSpace(output)
@@ -412,8 +450,16 @@ class VideoService(QObject):
         start_pos = bisect_left(keyframes, start)
         end_pos = bisect_left(keyframes, end)
         return {
-            'start': (keyframes[start_pos - 1], keyframes[start_pos], keyframes[start_pos + 1]),
-            'end': (keyframes[end_pos - 2], keyframes[end_pos - 1], keyframes[end_pos])
+            'start': (
+                keyframes[start_pos - 1] if start_pos > 0 else keyframes[start_pos],
+                keyframes[start_pos],
+                keyframes[start_pos + 1]
+            ),
+            'end': (
+                keyframes[end_pos - 2] if end_pos != (len(keyframes) - 1) else keyframes[end_pos - 1],
+                keyframes[end_pos - 1] if end_pos != (len(keyframes) - 1) else keyframes[end_pos],
+                keyframes[end_pos]
+            )
         }
 
     def isMPEGcodec(self, source: str=None) -> bool:

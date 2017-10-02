@@ -76,7 +76,7 @@ class VideoCutter(QWidget):
         self.videoService = VideoService(self)
         self.videoService.progress.connect(self.progressbar.updateProgress)
         self.videoService.finished.connect(self.complete)
-        self.videoService.error.connect(self.errorOccurred)
+        self.videoService.error.connect(self.completeOnError)
 
         if sys.platform.startswith('linux'):
             self.taskbar = TaskbarProgress(self)
@@ -1094,25 +1094,18 @@ class VideoCutter(QWidget):
                                                    allstreams=True)
                         return
                     else:
-                        self.videoService.cut(source='{0}{1}'.format(source_file, source_ext),
-                                              output=filename,
-                                              frametime=clip[0].toString(self.timeformat),
-                                              duration=duration,
-                                              allstreams=True)
-                    if QFile(filename).size() < 1000:
-                        self.logger.info('cut resulted in zero length file, trying again without all stream mapping')
-                        if self.smartcut:
-                            self.videoService.smartcut(source='{0}{1}'.format(source_file, source_ext),
-                                                       output=filename,
-                                                       start=VideoCutter.qtime2delta(clip[0]),
-                                                       end=VideoCutter.qtime2delta(clip[1]),
-                                                       allstreams=False)
-                        else:
-                            self.videoService.cut(source='{0}{1}'.format(source_file, source_ext),
-                                                  output=filename,
-                                                  frametime=clip[0].toString(self.timeformat),
-                                                  duration=duration,
-                                                  allstreams=False)
+                        if not self.videoService.cut(source='{0}{1}'.format(source_file, source_ext),
+                                                     output=filename,
+                                                     frametime=clip[0].toString(self.timeformat),
+                                                     duration=duration,
+                                                     allstreams=True):
+                            self.completeOnError('Failed to cut media file, assuming media is invalid or corrupt. '
+                                                 'Attempts are made to reindex and repair problematic media files even '
+                                                 'when keyframes are incorrectly set or missing.\n\nIf you feel this '
+                                                 'is a bug in the software then please let us know using the '
+                                                 'information provided in the About {} menu option so we may '
+                                                 'fix and improve for all users.'.format(qApp.applicationName()))
+                            return
             if len(filelist) > 1:
                 self.progressbar.updateProgress('Joining media clips')
                 rc = False
@@ -1135,7 +1128,7 @@ class VideoCutter(QWidget):
                 self.complete(True, filename)
 
     @pyqtSlot(bool, str)
-    def complete(self, rename: bool=True, filename: str=None):
+    def complete(self, rename: bool=True, filename: str=None) -> None:
         if rename and filename is not None:
             # noinspection PyCallByClass
             QFile.remove(self.finalFilename)
@@ -1155,6 +1148,15 @@ class VideoCutter(QWidget):
             self.delta2QTime(self.totalRuntime).toString(self.runtimeformat),
             self.parent)
         self.notify.show()
+
+    @pyqtSlot(str)
+    def completeOnError(self, errormsg: str) -> None:
+        self.progressbar.close()
+        if sys.platform.startswith('linux') and self.mediaAvailable:
+            QTimer.singleShot(1200, lambda: self.taskbar.setProgress(
+                float(self.seekSlider.value() / self.seekSlider.maximum())))
+        self.saveAction.setEnabled(True)
+        self.parent.errorHandler(errormsg)
 
     def saveSetting(self, setting: str, checked: bool) -> None:
         self.settings.setValue(setting, 'on' if checked else 'off')

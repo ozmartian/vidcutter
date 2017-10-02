@@ -225,6 +225,7 @@ class MainWindow(QMainWindow):
 
     @pyqtSlot(str)
     def errorHandler(self, msg: str) -> None:
+        qApp.restoreOverrideCursor()
         QMessageBox.critical(self, 'An error occurred', msg, QMessageBox.Ok)
         logging.error(msg)
 
