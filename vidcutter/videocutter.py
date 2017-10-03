@@ -376,7 +376,7 @@ class VideoCutter(QWidget):
             vo='opengl-cb',
             ytdl=False,
             pause=True,
-            keep_open=True,
+            keep_open='always',
             idle=True,
             osc=False,
             osd_font='Noto Sans UI',
@@ -1255,7 +1255,7 @@ class VideoCutter(QWidget):
                 return
 
             if event.key() == Qt.Key_End:
-                self.setPosition(self.seekSlider.maximum() - 1)
+                self.setPosition(self.seekSlider.maximum())
                 return
 
             if event.key() == Qt.Key_Left:

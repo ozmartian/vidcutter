@@ -149,14 +149,15 @@ class VideoInfo(QDialog):
         </style>
         <table width="230" border="0" cellpadding="8" cellspacing="0">
             <tr>
-                <td width="230">Keyframe Timecodes</td>
+                <td>Keyframe Timecodes</td>
             </tr>
         </table>
         ''' % ('#C681D5' if self.parent.theme == 'dark' else '#642C68')
         headers = QLabel(content_headers, self)
-        totalLabel = QLabel('<b>Total keyframes:</b> %i' % len(keyframes), self)
-        totalLabel.setStyleSheet('border-top: 1px solid #444;')
-        totalLabel.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding)
+        totalLabel = QLabel('<b>total keyframes:</b> %i' % len(keyframes), self)
+        totalLabel.setAlignment(Qt.AlignCenter)
+        totalLabel.setObjectName('modalfooter')
+        totalLabel.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Preferred)
         button_layout = QHBoxLayout()
         button_layout.addWidget(totalLabel, 1)
         button_layout.addWidget(buttons, 0)

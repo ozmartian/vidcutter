@@ -2,8 +2,6 @@
     <qresource prefix="/">
         <file>fonts/FuturaLT.ttf</file>
         <file>fonts/NotoSans.ttc</file>
-        <!-- <file>fonts/OpenSans.ttf</file>
-        <file>fonts/OpenSansBold.ttf</file> -->
         <file>images/dialog-backdrop.png</file>
         <file>images/dialog-backdrop-02.png</file>
         <file>images/down.png</file>

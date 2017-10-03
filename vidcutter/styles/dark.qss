@@ -195,6 +195,12 @@ QLabel#seeksettingslabel, QLabel#zoomlabel {
     margin: 15px 5px 10px 5px;
 }
 
+QLabel#modalfooter {
+    background-color: rgb(106, 69, 114);
+    color: #FFF;
+    margin: 3px;
+}
+
 /* -------------------------------------------------------------------------- */
 
 QGroupBox#counterwidgets {

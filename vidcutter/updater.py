@@ -36,8 +36,8 @@ from PyQt5.QtWidgets import qApp, QDialog, QDialogButtonBox, QLabel, QVBoxLayout
 from vidcutter.libs.widgets import VCProgressBar
 
 
-class Updater(QWidget):
-    def __init__(self, parent=None, f=Qt.WindowCloseButtonHint):
+class Updater(QDialog):
+    def __init__(self, parent=None, f=Qt.Dialog | Qt.WindowCloseButtonHint):
         super(Updater, self).__init__(parent, f)
         self.parent = parent
         self.logger = logging.getLogger(__name__)
