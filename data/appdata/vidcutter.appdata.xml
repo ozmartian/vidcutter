@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2017 Pete Alexandrou <pete@ozmartians.com> -->
+<component type="desktop">
+  <id>vidcutter.desktop</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0+</project_license>
+  <name>VidCutter</name>
+  <summary>the simplest and fastest video cutter and joiner</summary>
+  <description>
+    <p>The simplest and sexiest tool for cutting and joining your videos without the need for encoding or a multimedia diploma.</p>
+    <p>VidCutter focuses on getting the job done built using FFmpeg, mpv and mediainfo.</p>
+  </description>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://vidcutter.ozmartians.com/images/vidcutter-4.0.0-screenshot-01.png</image>
+      <caption>VidCutter :: the simplest and fastest video cutter and joiner</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://vidcutter.ozmartians.com/images/vidcutter-4.0.0-screenshot-02.png</image>
+      <caption>VidCutter :: the simplest and fastest video cutter and joiner</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/ozmartian/vidcutter/master/vidcutter/images/startup-backdrop.png</image>
+      <caption>VidCutter :: the simplest and fastest video cutter and joiner</caption>
+    </screenshot>
+  </screenshots>
+  <url type="homepage">https://vidcutter.ozmartians.com</url>
+  <url type="bugtracker">https://github.com/ozmartian/vidcutter/issues</url>
+  <update_contact>pete_AT_ozmartians.com</update_contact>
+</component>

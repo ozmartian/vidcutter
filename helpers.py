@@ -81,6 +81,7 @@ class SetupHelpers:
                 ('/usr/share/icons/hicolor/scalable/apps', ['data/icons/hicolor/scalable/apps/vidcutter.svg']),
                 ('/usr/share/pixmaps', ['data/icons/vidcutter.svg']),
                 ('/usr/share/applications', ['data/desktop/vidcutter.desktop']),
+                ('/usr/share/appdata', ['data/appdata/vidcutter.appdata.xml']),
                 ('/usr/share/mime/packages', ['data/mime/x-vidcutter.xml'])
             ]
         return files
@@ -126,20 +127,25 @@ class SetupHelpers:
     And to then run the app directly from source, from the same top-most
     source code folder:
     
-        $ python3 -m vidcutter (append --debug if needed)
+        $ python3 -m vidcutter
+
+    To view all console output for debugging or general interest then
+    append the debug parameter:
+
+        $ python3 -m vidcutter --debug
         
     Make sure you build the extension module AFTER installing the
     dependencies covered above, in particular libmpv and the mpv + python3
     dev headers are all needed for it to compile successfully. Compiled
-    extension modules under vidcutter/libs will similar to:
+    extension modules under vidcutter/libs will look like:
 
         mpv.cpython-36m-x86_64-linux-gnu.so [linux]
         mpv.cp36-win_amd64.pyd              [win32]
         
     Windows users must do all this within a Visual Studio 2015/2017 Native x64/x86
     Developer Command Prompt accessible from your Visual Studio program group
-    in the start menu. Much easier to just grab what I've already built for
-    you direct from here:
+    via the start menu. It's easier to just grab the prebuilt Windows installers
+    directly from:
 
         https://github.com/ozmartian/vidcutter/releases/latest
 ''')

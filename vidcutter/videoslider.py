@@ -214,8 +214,7 @@ class VideoSlider(QSlider):
                                               VideoService.ThumbSize.TIMELINE.value.width(), self.width() - self.offset)
         index = list(range(self.minimum(), self.maximum(), step))
         frametimes = list()
-        for msec in index:
-            frametimes.append(self.parent.delta2QTime(msec).toString(self.parent.timeformat))
+        [frametimes.append(self.parent.delta2QTime(msec).toString(self.parent.timeformat)) for msec in index]
 
         class ThumbWorker(QObject):
             completed = pyqtSignal(list)
