@@ -87,7 +87,7 @@ class MainWindow(QMainWindow):
     def get_size(mode: str='NORMAL') -> QSize:
         modes = {
             'LOW': QSize(800, 425),
-            'NORMAL': QSize(915, 680),
+            'NORMAL': QSize(930, 680),
             'HIGH': QSize(1850, 1300)
         }
         return modes[mode]
@@ -268,10 +268,13 @@ class MainWindow(QMainWindow):
         self.console.deleteLater()
         if hasattr(self, 'cutter'):
             self.save_settings()
-            if hasattr(self.cutter.videoService, 'smartcut_files'):
-                self.cutter.videoService.cleanup(self.cutter.videoService.smartcut_files)
-            if hasattr(self.cutter, 'mpvWidget'):
-                self.cutter.mpvWidget.shutdown()
+            try:
+                if hasattr(self.cutter.videoService, 'smartcut_job'):
+                    self.cutter.videoService.cleanup(self.cutter.videoService.smartcut_job.files)
+                if hasattr(self.cutter, 'mpvWidget'):
+                    self.cutter.mpvWidget.shutdown()
+            except AttributeError:
+                pass
         qApp.quit()
 
 

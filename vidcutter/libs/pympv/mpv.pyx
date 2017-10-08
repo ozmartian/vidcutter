@@ -306,9 +306,9 @@ cdef extern from "mpv/opengl_cb.h":
                                            mpv_opengl_cb_update_fn callback,
                                            void *callback_ctx) nogil
 
-    int mpv_opengl_cb_init_gl(mpv_opengl_cb_context *ctx, const char *exts,
-                              mpv_opengl_cb_get_proc_address_fn get_proc_address,
-                              void *get_proc_address_ctx) nogil
+    long long mpv_opengl_cb_init_gl(mpv_opengl_cb_context *ctx, const char *exts,
+                                    mpv_opengl_cb_get_proc_address_fn get_proc_address,
+                                    void *get_proc_address_ctx) nogil
 
     int mpv_opengl_cb_draw(mpv_opengl_cb_context *ctx, int fbo, int w, int h) nogil
 

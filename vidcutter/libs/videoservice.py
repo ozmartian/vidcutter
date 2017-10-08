@@ -59,7 +59,7 @@ class VideoService(QObject):
 
     class ThumbSize(Enum):
         INDEX = QSize(100, 70)
-        TIMELINE = QSize(80, 60)
+        TIMELINE = QSize(105, 60)
 
     class Stream(Enum):
         AUDIO = 0
@@ -89,7 +89,7 @@ class VideoService(QObject):
         try:
             self.probe(source)
             if self.media is not None:
-                if os.getenv('DEBUG', False) or getattr(self.parent, 'verboseLogs', False):
+                if getattr(self.parent, 'verboseLogs', False):
                     self.logger.info(self.media)
                 for codec_type in VideoService.Stream.__members__:
                     setattr(self.streams, codec_type.lower(),
@@ -144,16 +144,16 @@ class VideoService(QObject):
             self.spaceWarningDelivered = True
 
     @staticmethod
-    def captureFrame(source: str, frametime: str, thumbsize: ThumbSize=ThumbSize.INDEX,
+    def captureFrame(source: str, frametime: str, thumbsize: QSize=ThumbSize.INDEX.value,
                      external: bool=False) -> QPixmap:
+        # print('[captureFrame] frametime: {0}  thumbsize: {1}'.format(frametime, thumbsize))
         capres = QPixmap()
         img = QTemporaryFile(os.path.join(QDir.tempPath(), 'XXXXXX.jpg'))
         if img.open():
             imagecap = img.fileName()
-            size = thumbsize.value
             cmd = VideoService.findBackends().ffmpeg
             args = '-hide_banner -ss {0} -i "{1}" -vframes 1 -s {2:d}x{3:d} -y "{4}"' \
-                   .format(frametime, source, size.width(), size.height(), imagecap)
+                   .format(frametime, source, thumbsize.width(), thumbsize.height(), imagecap)
             proc = VideoService.initProc()
             if proc.state() == QProcess.NotRunning:
                 # if os.getenv('DEBUG', False):
@@ -543,7 +543,7 @@ class VideoService(QObject):
                 self.proc.setProcessChannelMode(QProcess.MergedChannels)
             if output:
                 cmdoutput = self.proc.readAllStandardOutput().data().decode().strip()
-                if os.getenv('DEBUG', False) and not suppresslog:
+                if getattr(self.parent, 'verboseLogs', False) and not suppresslog:
                     self.logger.info('cmd output: {}'.format(cmdoutput))
                 return cmdoutput
             return self.proc.exitStatus() == QProcess.NormalExit and self.proc.exitCode() == 0

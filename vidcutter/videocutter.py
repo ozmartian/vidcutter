@@ -31,7 +31,7 @@ from datetime import timedelta
 
 from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTextStream,
                           QTime, QTimer, QUrl)
-from PyQt5.QtGui import QCloseEvent, QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMovie, QPixmap
+from PyQt5.QtGui import QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMovie, QPixmap
 from PyQt5.QtWidgets import (QAction, qApp, QApplication, QDialogButtonBox, QFileDialog, QGroupBox, QHBoxLayout,
                              QLabel, QListWidgetItem, QMenu, QMessageBox, QPushButton, QSizePolicy, QStyleFactory,
                              QVBoxLayout, QWidget)
@@ -349,11 +349,16 @@ class VideoCutter(QWidget):
         controlsLayout.addLayout(groupLayout)
         controlsLayout.addSpacing(10)
 
+        sliderLayout = QHBoxLayout()
+        # sliderLayout.addSpacing(8)
+        sliderLayout.addWidget(self.sliderWidget)
+        # sliderLayout.addSpacing(8)
+
         layout = QVBoxLayout()
         layout.setSpacing(0)
         layout.setContentsMargins(10, 10, 10, 0)
         layout.addLayout(self.videoLayout)
-        layout.addWidget(self.sliderWidget)
+        layout.addLayout(sliderLayout)
         layout.addSpacing(5)
         layout.addLayout(controlsLayout)
 
@@ -370,7 +375,7 @@ class VideoCutter(QWidget):
         self.style().loadQSS(self.theme, self.parent.devmode)
         QApplication.setFont(QFont('Noto Sans UI', 12 if sys.platform == 'darwin' else 10, 300))
 
-    def getMPV(self) -> mpvWidget:
+    def getMPV(self, ) -> mpvWidget:
         return mpvWidget(
             parent=self,
             vo='opengl-cb',

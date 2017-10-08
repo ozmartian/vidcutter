@@ -174,7 +174,7 @@ class AboutTab(BaseTab):
             <p style="font-size:13px;">
                 Copyright &copy; %s <a href="mailto:pete@ozmartians.com">Pete Alexandrou</a>
                 <br/>
-                Website: <a href="http://vidcutter.ozmartians.com">http://vidcutter.ozmartians.com</a>
+                Website: <a href="https://vidcutter.ozmartians.com" target="_blank">https://vidcutter.ozmartians.com</a>
             </p>
             <p style="font-size:13px;">
                 Found a bug? You can <a href="https://github.com/ozmartian/vidcutter/issues">REPORT IT HERE</a>.

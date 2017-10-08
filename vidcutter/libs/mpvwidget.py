@@ -6,26 +6,37 @@ import logging
 import os
 import sys
 
-# this is required for Ubuntu which seems to
-# have a broken PyQt5 OpenGL implementation
+# this is required for Ubuntu which seems to have a broken PyQt5 OpenGL implementation
+# so we use PyOpenGL instead for the GL context
 # noinspection PyUnresolvedReferences
 from OpenGL import GL
 
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QEvent, QTimer
-from PyQt5.QtGui import QKeyEvent, QMouseEvent
+from PyQt5.QtGui import QKeyEvent, QMouseEvent, QWheelEvent
 from PyQt5.QtOpenGL import QGLContext
 from PyQt5.QtWidgets import QOpenGLWidget
 
 # noinspection PyUnresolvedReferences
 import vidcutter.libs.mpv as mpv
 
+# use try catch to allow Python versions below 3.5.3 to still work
+try:
+    # noinspection PyUnresolvedReferences
+    from typing import Optional
+    # noinspection PyUnresolvedReferences
+    from sip import voidptr
 
-def get_proc_address(proc):
-    glctx = QGLContext.currentContext()
-    if glctx is None:
-        return None
-    addr = glctx.getProcAddress(str(proc, 'utf-8'))
-    return addr.__int__()
+    def get_proc_address(proc) -> Optional[voidptr]:
+        glctx = QGLContext.currentContext()
+        if glctx is None:
+            return None
+        return glctx.getProcAddress(str(proc, 'utf-8'))
+except ImportError:
+    def get_proc_address(proc):
+        glctx = QGLContext.currentContext()
+        if glctx is None:
+            return None
+        return glctx.getProcAddress(str(proc, 'utf-8'))
 
 
 class mpvWidget(QOpenGLWidget):
@@ -56,6 +67,8 @@ class mpvWidget(QOpenGLWidget):
                 pass
 
         self.mpv.initialize()
+        self.mpv.observe_property('time-pos')
+        self.mpv.observe_property('duration')
         self.opengl = self.mpv.opengl_cb_api()
         self.opengl.set_update_callback(self.updateHandler)
         # ignore expection thrown by older versions of libmpv that do not implement the option
@@ -68,8 +81,6 @@ class mpvWidget(QOpenGLWidget):
 
         self.frameSwapped.connect(self.swapped, Qt.DirectConnection)
 
-        self.mpv.observe_property('time-pos')
-        self.mpv.observe_property('duration')
         self.mpv.set_wakeup_callback(self.eventHandler)
 
     @property
@@ -131,8 +142,10 @@ class mpvWidget(QOpenGLWidget):
                 elif event.id == mpv.Events.property_change:
                     event_prop = event.data
                     if event_prop.name == 'time-pos':
+                        # print('time-pos property event')
                         self.positionChanged.emit(event_prop.data, self.mpv.get_property('estimated-frame-number'))
                     elif event_prop.name == 'duration':
+                        # print('duration property event')
                         self.durationChanged.emit(event_prop.data, self.mpv.get_property('estimated-frame-count'))
             except mpv.MPVError as e:
                 if e.code != -10:
@@ -145,7 +158,7 @@ class mpvWidget(QOpenGLWidget):
         self.mpv.command('show-text', msg, duration * 1000, level)
 
     def play(self, filepath) -> None:
-        if not os.path.exists(filepath):
+        if not os.path.isfile(filepath):
             return
         self.mpv.command('loadfile', filepath, 'replace')
 
@@ -203,3 +216,6 @@ class mpvWidget(QOpenGLWidget):
             self.parent.toggleFullscreen()
         event.accept()
         super(mpvWidget, self).mouseDoubleClickEvent(event)
+
+    def wheelEvent(self, event: QWheelEvent) -> None:
+        self.parent.seekSlider.wheelEvent(event)
