@@ -169,6 +169,7 @@ class VCProgressBar(QDialog):
 
     def __init__(self, parent=None, flags=Qt.Dialog | Qt.FramelessWindowHint):
         super(VCProgressBar, self).__init__(parent, flags)
+        self.parent = parent
         self.setWindowModality(Qt.ApplicationModal)
         self._progress = QProgressBar(self)
         self._progress.setRange(0, 0)
@@ -260,6 +261,8 @@ class VCProgressBar(QDialog):
     def updateProgress(self, text: str) -> None:
         self.setValue(self._progress.value() + 1)
         self.setText(text)
+        if not self.parent.smartcut:
+            qApp.processEvents()
 
     @pyqtSlot()
     def close(self) -> None:

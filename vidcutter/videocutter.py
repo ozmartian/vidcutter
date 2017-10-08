@@ -713,6 +713,7 @@ class VideoCutter(QWidget):
             self.seekSlider.setRestrictValue(0, False)
             self.inCut = False
             self.newproject = True
+            QTimer.singleShot(2000, lambda: self.selectClip())
             qApp.restoreOverrideCursor()
             self.showText('Project file loaded')
 
@@ -845,8 +846,10 @@ class VideoCutter(QWidget):
             self.sliderWidget.setLoader(False)
 
     @pyqtSlot(QListWidgetItem)
-    def selectClip(self, item: QListWidgetItem) -> None:
-        row = self.cliplist.row(item)
+    def selectClip(self, item: QListWidgetItem=None) -> None:
+        row = self.cliplist.row(item) if item is not None else 0
+        if item is None:
+            self.cliplist.item(row).setSelected(True)
         if not len(self.clipTimes[row][3]):
             self.seekSlider.selectRegion(row)
             self.setPosition(self.clipTimes[row][0].msecsSinceStartOfDay())
