@@ -26,7 +26,7 @@ import logging
 import math
 
 from PyQt5.QtCore import QSize, Qt
-from PyQt5.QtGui import QCloseEvent, QPixmap
+from PyQt5.QtGui import QCloseEvent, QPixmap, QShowEvent
 from PyQt5.QtWidgets import (QDialog, QDialogButtonBox, QHBoxLayout, QLabel, QPushButton, QSizePolicy, QTextBrowser,
                              QVBoxLayout)
 
@@ -102,59 +102,67 @@ class VideoInfo(QDialog):
 
     def showKeyframes(self):
         keyframes = self.parent.videoService.getKeyframes(self.media, formatted_time=True)
-        halver = math.ceil(len(keyframes) / 2)
-        col1 = keyframes[:halver]
-        col2 = keyframes[halver:]
-        keyframe_content = '''<style>
-            table {
-                font-family: "Noto Sans UI", sans-serif;
-                font-size: 13px;
-                margin-top:-10px;
-            }
-            td {
-                text-align: center;
-                font-weight: normal;
-            }
-        </style>
-        <div align="center">
-            <table border="0" cellpadding="2" cellspacing="0">
-                <tr>
-                    <td>%s</td>
-                    <td>%s</td>
-                </tr>
-            </table>
-        </div>''' % ('<br/>'.join(col1), '<br/>'.join(col2))
+        kframes = KeyframesDialog(keyframes, self)
+        kframes.show()
+
+    def closeEvent(self, event: QCloseEvent) -> None:
+        self.deleteLater()
+        super(VideoInfo, self).closeEvent(event)
+
+
+class KeyframesDialog(QDialog):
+    def __init__(self, keyframes: list, parent=None, flags=Qt.Tool | Qt.WindowCloseButtonHint):
+        super(KeyframesDialog, self).__init__(parent, flags)
+        self.setObjectName('keyframes')
+        self.setAttribute(Qt.WA_DeleteOnClose, True)
+        self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        self.setWindowModality(Qt.ApplicationModal)
+        self.setWindowTitle('View Keyframes')
         content = QTextBrowser(self)
         content.setStyleSheet('QTextBrowser { border: none; background-color: transparent; }')
         content.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        content.setHtml(keyframe_content)
-        self.setWindowModality(Qt.NonModal)
-        kframes = QDialog(self.parent, flags=Qt.Dialog | Qt.WindowCloseButtonHint)
-        kframes.setObjectName('keyframes')
-        kframes.setAttribute(Qt.WA_DeleteOnClose, True)
-        kframes.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-        kframes.setWindowModality(Qt.ApplicationModal)
-        kframes.setWindowTitle('View Keyframes (IDR)')
         buttons = QDialogButtonBox(QDialogButtonBox.Ok)
-        buttons.accepted.connect(lambda: self.setWindowModality(Qt.ApplicationModal))
-        buttons.accepted.connect(kframes.close)
+        buttons.accepted.connect(self.close)
         content_headers = '''<style>
-            table {
-                font-family: "Futura-Light", sans-serif;
-                font-size: 22px;
-                font-weight: 500;
-                text-align: center;
-                color: %s
-            }
-        </style>
-        <table width="230" border="0" cellpadding="8" cellspacing="0">
-            <tr>
-                <td>Keyframe Timecodes</td>
-            </tr>
-        </table>
-        ''' % ('#C681D5' if self.parent.theme == 'dark' else '#642C68')
+                    table td {{
+                        font-family: "Futura-Light", sans-serif;
+                        font-size: 22px;
+                        font-weight: 500;
+                        text-align: center;
+                        color: {}
+                    }}
+                </style>
+                <table width="300" border="0" cellpadding="4" cellspacing="0">
+                    <tr>
+                        <td>Keyframe Timecodes</td>
+                    </tr>
+                </table>
+                '''.format('#C681D5' if parent.parent.theme == 'dark' else '#642C68')
         headers = QLabel(content_headers, self)
-        totalLabel = QLabel('<b>total keyframes:</b> %i' % len(keyframes), self)
+        halver = math.ceil(len(keyframes) / 2)
+        col1 = '<br/>'.join(keyframes[:halver])
+        col2 = '<br/>'.join(keyframes[halver:])
+        html = '''<style>
+            table {{
+               font-family: "Noto Sans UI", sans-serif;
+               font-size: 13px;
+               margin-top:-10px;
+           }}
+           td {{
+               text-align: center;
+               font-weight: normal;
+           }}
+        </style>
+        <div align="center">
+           <table border="0" cellpadding="2" cellspacing="0">
+               <tr>
+                   <td>{col1}</td>
+                   <td>{col2}</td>
+               </tr>
+           </table>
+        </div>'''.format(**locals())
+        content.setHtml(html)
+        totalLabel = QLabel('<b>total keyframes:</b> {}'.format(len(keyframes)), self)
         totalLabel.setAlignment(Qt.AlignCenter)
         totalLabel.setObjectName('modalfooter')
         totalLabel.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Preferred)
@@ -166,10 +174,5 @@ class VideoInfo(QDialog):
         layout.addWidget(headers)
         layout.addWidget(content)
         layout.addLayout(button_layout)
-        kframes.setLayout(layout)
-        kframes.setMinimumWidth(350)
-        kframes.show()
-
-    def closeEvent(self, event: QCloseEvent) -> None:
-        self.deleteLater()
-        super(VideoInfo, self).closeEvent(event)
+        self.setLayout(layout)
+        self.setMinimumWidth(350)

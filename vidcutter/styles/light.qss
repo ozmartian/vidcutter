@@ -191,8 +191,8 @@ QLabel#seeksettingslabel, QLabel#zoomlabel {
 }
 
 QLabel#modalfooter {
-    background-color: rgb(106, 69, 114);
-    color: #FFF;
+    background-color: #DFDFDF;
+    color: #000;
     margin: 3px;
 }
 
