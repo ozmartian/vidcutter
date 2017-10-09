@@ -847,12 +847,16 @@ class VideoCutter(QWidget):
 
     @pyqtSlot(QListWidgetItem)
     def selectClip(self, item: QListWidgetItem=None) -> None:
-        row = self.cliplist.row(item) if item is not None else 0
-        if item is None:
-            self.cliplist.item(row).setSelected(True)
-        if not len(self.clipTimes[row][3]):
-            self.seekSlider.selectRegion(row)
-            self.setPosition(self.clipTimes[row][0].msecsSinceStartOfDay())
+        # noinspection PyBroadException
+        try:
+            row = self.cliplist.row(item) if item is not None else 0
+            if item is None:
+                self.cliplist.item(row).setSelected(True)
+            if not len(self.clipTimes[row][3]):
+                self.seekSlider.selectRegion(row)
+                self.setPosition(self.clipTimes[row][0].msecsSinceStartOfDay())
+        except:
+            pass
 
     def muteAudio(self) -> None:
         if self.mpvWidget.mpv.get_property('mute'):

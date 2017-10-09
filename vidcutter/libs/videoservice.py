@@ -273,23 +273,10 @@ class VideoService(QObject):
         else:
             return args
 
-    '''
-    import multiprocessing  # pylint: disable=g-import-not-at-top
-    import concurrent.futures  # pylint: disable=g-import-not-at-top
-    workers = min(multiprocessing.cpu_count(), len(filenames))
-    with concurrent.futures.ProcessPoolExecutor(workers) as executor:
-      future_formats = [
-          executor.submit(_FormatFile, filename, lines, style_config,
-                          no_local_style, in_place, print_diff, verify, verbose)
-          for filename in filenames
-      ]
-      for future in concurrent.futures.as_completed(future_formats):
-        changed |= future.result()
-    '''
     def smartcut(self, source: str, output: str, start: float, end: float, allstreams: bool=True) -> None:
         output_file, output_ext = os.path.splitext(source)
         bisections = self.getGOPbisections(source, start, end)
-        self.smartcut_job = Munch(output=output, allstreams=allstreams, procs=[], files=[], results={})
+        self.smartcut_job = Munch(output=output, allstreams=allstreams, procs={}, files=[], results={})
         # step 1 - start of clip if start time is not a keyframe
         if bisections['start'][1] > bisections['start'][0]:
             self.smartcut_job.files.append('{0}_start{1}'.format(output_file, output_ext))
@@ -306,7 +293,7 @@ class VideoService(QObject):
                          loglevel='info',
                          run=False)
             ))
-            self.smartcut_job.procs.append(startproc)
+            self.smartcut_job.procs.update(start=startproc)
             self.smartcut_job.results.update(start=False)
         # step 2 - always produce middle (main) segment of clip
         self.smartcut_job.files.append('{0}_middle{1}'.format(output_file, output_ext))
@@ -321,7 +308,7 @@ class VideoService(QObject):
                      allstreams=allstreams,
                      run=False)
         ))
-        self.smartcut_job.procs.append(middleproc)
+        self.smartcut_job.procs.update(middle=middleproc)
         self.smartcut_job.results.update(middle=False)
         # step 3 - end of clip if end time is not a keyframe
         if bisections['end'][2] > bisections['end'][1]:
@@ -339,9 +326,9 @@ class VideoService(QObject):
                          loglevel='info',
                          run=False)
             ))
-            self.smartcut_job.procs.append(endproc)
+            self.smartcut_job.procs.update(end=endproc)
             self.smartcut_job.results.update(end=False)
-        self.smartcut_job.procs[0].start()
+        [self.smartcut_job.procs.get(proc).start() for proc in self.smartcut_job.procs.keys()]
 
     @pyqtSlot(int, QProcess.ExitStatus)
     def smartcheck(self, code: int, status: QProcess.ExitStatus) -> None:
@@ -351,26 +338,29 @@ class VideoService(QObject):
             self.logger.info('SmartCut progress: {}'.format(self.smartcut_job.results))
         resultfile = self.smartcut_job.files[self.SmartCutIndex[name.upper()].value]
         if not self.smartcut_job.results[name] or QFile(resultfile).size() < 1000:
-            args = ' '.join(self.smartcut_job.procs[0].arguments())
+            args = ' '.join(self.smartcut_job.procs[name].arguments())
             if '-map 0 ' in args:
                 # smartcut failed so try again without mapping all media streams
                 self.logger.info('cut resulted in zero length file, trying again without all stream mapping')
-                self.smartcut_job.procs[0].setArguments(shlex.split(args.replace('-map 0 ', '')))
-                self.smartcut_job.procs[0].start()
+                self.smartcut_job.procs[name].setArguments(shlex.split(args.replace('-map 0 ', '')))
+                self.smartcut_job.procs[name].start()
                 return
             else:
                 # both attempts to cut have failed so exit and let user know
                 self.error.emit('SmartCut failed to cut media file. Please ensure your media files are valid otherwise '
                                 'try again with SmartCut disabled.')
-                # self.logger.error('Error executing: {0} {1}'.format(self.smartcut_job.procs[0].program(), args))
+                # self.logger.error('Error executing: {0} {1}'.format(self.smartcut_job.procs[name].program(), args))
+                self.smartabort()
                 VideoService.cleanup(self.smartcut_job.files)
                 delattr(self, 'smartcut_job')
                 return
-        self.smartcut_job.procs.pop(0)
-        if len(self.smartcut_job.procs):
-            self.smartcut_job.procs[0].start()
-        else:
+        if False not in self.smartcut_job.results.values():
             self.smartjoin()
+
+    def smartabort(self):
+        for name, proc in self.smartcut_job.procs:
+            if proc.state() != QProcess.NotRunning:
+                proc.kill()
 
     @pyqtSlot()
     def smartjoin(self) -> None:
