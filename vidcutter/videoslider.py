@@ -324,6 +324,7 @@ class VideoSlider(QSlider):
                                                         self.width() - (self.offset * 2))
                 self.setValue(newpos)
                 self.parent.setPosition(newpos)
+                self.parent.parent.mousePressEvent(event)
         return super(VideoSlider, self).eventFilter(obj, event)
 
 
@@ -340,12 +341,12 @@ class VideoSliderWidget(QStackedWidget):
         self.layout().setStackingMode(QStackedLayout.StackAll)
         self.addWidget(self.slider)
         spacerlabel1 = QLabel(self)
-        spacerlabel1.setFixedWidth(8)
+        spacerlabel1.setFixedWidth(10)
         spacerlabel1.setAlignment(Qt.AlignLeft)
         spacerlabel1.setStyleSheet('background: {};'.format(self.palette().color(QPalette.Window).name()))
         spacerlabel2 = QLabel(self)
         spacerlabel1.setAlignment(Qt.AlignRight)
-        spacerlabel2.setFixedWidth(8)
+        spacerlabel2.setFixedWidth(10)
         spacerlabel2.setStyleSheet('background: {};'.format(self.palette().color(QPalette.Window).name()))
         trimlayout = QHBoxLayout()
         trimlayout.addWidget(spacerlabel1)
@@ -353,7 +354,7 @@ class VideoSliderWidget(QStackedWidget):
         trimlayout.addWidget(spacerlabel2)
         trimwidget = QWidget(self)
         trimwidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
-        trimwidget.setContentsMargins(-6, 10, -6, 0)
+        trimwidget.setContentsMargins(-10, 6, -10, 0)
         trimwidget.setLayout(trimlayout)
         self.addWidget(trimwidget)
 
