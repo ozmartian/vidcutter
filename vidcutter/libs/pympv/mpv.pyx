@@ -77,9 +77,9 @@ cdef extern from "mpv/client.h":
 
     ctypedef unsigned long uint_fast64_t
 
-    ctypedef long intptr_t
+    ctypedef long long intptr_t
 
-    ctypedef unsigned long uintptr_t
+    ctypedef unsigned long long uintptr_t
 
     ctypedef long intmax_t
 
@@ -1003,7 +1003,7 @@ cdef class Context(object):
     def set_wakeup_callback(self, callback):
         """Wraps: mpv_set_wakeup_callback"""
         assert self._ctx
-        cdef uint64_t name = <uint64_t>id(self)
+        cdef uintptr_t name = <uintptr_t>id(self)
         self.callback = callback
         self.callbackthread.set(callback)
         with nogil:
@@ -1096,7 +1096,7 @@ cdef class Context(object):
         self.shutdown()
 
 cdef void *_c_getprocaddress(void *ctx, const char *name) with gil:
-    return <void *><long long>(<object>ctx)(name)
+    return <void *><uintptr_t>(<object>ctx)(name)
 
 cdef void _c_updatecb(void *ctx) with gil:
     (<object>ctx)()
@@ -1193,6 +1193,6 @@ class CallbackThread(Thread):
             sys.stderr.write("pympv error during callback: %s\n" % e)
 
 cdef void _c_callback(void* d) with gil:
-    cdef uint64_t name = <uint64_t>d
+    cdef uintptr_t name = <uintptr_t>d
     callback = _callbacks.get(name)
     callback.call()
