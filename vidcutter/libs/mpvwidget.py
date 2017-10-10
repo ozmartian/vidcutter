@@ -74,8 +74,7 @@ class mpvWidget(QOpenGLWidget):
         # ignore expection thrown by older versions of libmpv that do not implement the option
         try:
             self.mpv.set_option('opengl-hwdec-interop', 'auto')
-            if sys.platform == 'win32':
-                self.mpv.set_option('opengl-backend', 'angle')
+            self.mpv.set_option('gpu-context', 'auto')
         except mpv.MPVError:
             pass
 
