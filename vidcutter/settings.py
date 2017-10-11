@@ -28,7 +28,7 @@ from PyQt5.QtCore import pyqtSlot, QSize, Qt
 from PyQt5.QtGui import QCloseEvent, QIcon, QShowEvent
 from PyQt5.QtWidgets import (qApp, QButtonGroup, QCheckBox, QDialog, QDialogButtonBox, QDoubleSpinBox, QFrame,
                              QGridLayout, QGroupBox, QHBoxLayout, QLabel, QListView, QListWidget, QListWidgetItem,
-                             QMessageBox, QRadioButton, QSizePolicy, QStackedWidget, QStyleFactory, QVBoxLayout, QWidget)
+                             QMessageBox, QRadioButton, QStackedWidget, QStyleFactory, QVBoxLayout, QWidget)
 
 
 class LogsPage(QWidget):
@@ -250,23 +250,23 @@ class VideoPage(QWidget):
         zoom_buttonGroup.addButton(zoom_doubleRadio, 4)
         # noinspection PyUnresolvedReferences
         zoom_buttonGroup.buttonClicked[int].connect(self.setZoom)
-        zoomLabel = QLabel('<b>NOTE:</b> video zoom settings only affect the video playback and ' +
-                           'will not apply zoom effects to the media you produce', self)
-        zoomLabel.setObjectName('zoomlabel')
-        zoomLabel.setTextFormat(Qt.RichText)
-        zoomLabel.setWordWrap(True)
         zoomLayout = QGridLayout()
         zoomLayout.addWidget(zoom_qtrRadio, 0, 0)
         zoomLayout.addWidget(zoom_halfRadio, 0, 1)
         zoomLayout.addWidget(zoom_originalRadio, 1, 0)
         zoomLayout.addWidget(zoom_doubleRadio, 1, 1)
-        zoomLayout.addWidget(zoomLabel, 2, 0, 1, 2)
         zoomGroup = QGroupBox('Zoom')
         zoomGroup.setLayout(zoomLayout)
+        noteLabel = QLabel('<b>NOTE:</b> video settings apply only to video playback and have no affect on the media '
+                           'files you produce', self)
+        noteLabel.setObjectName('zoomlabel')
+        noteLabel.setTextFormat(Qt.RichText)
+        noteLabel.setWordWrap(True)
         mainLayout = QVBoxLayout()
         mainLayout.setSpacing(10)
         mainLayout.addWidget(videoGroup)
         mainLayout.addWidget(zoomGroup)
+        mainLayout.addWidget(noteLabel)
         mainLayout.addStretch(1)
         self.setLayout(mainLayout)
 
@@ -383,8 +383,8 @@ class GeneralPage(QWidget):
         seek2SpinBox.valueChanged[float].connect(lambda d: self.setSpinnerValue(2, d))
         seekLabel = QLabel('''
             <b>NOTE:</b> these settings affect the seeking time forwards and backwards
-            via the UP/DOWN and SHIFT + UP/DOWN keys. see the "Keyboard shortcuts" menu
-            option for a full list of shortcuts available
+            via the UP/DOWN and SHIFT + UP/DOWN keys. see the <i>Keyboard shortcuts</i> menu
+            option for a full list of available shortcuts
         ''', self)
         seekLabel.setObjectName('seeksettingslabel')
         seekLabel.setTextFormat(Qt.RichText)

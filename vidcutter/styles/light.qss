@@ -196,6 +196,13 @@ QLabel#modalfooter {
     margin: 3px;
 }
 
+QLabel#filmstrip {
+    border: 1px ridge #444;
+    padding: 0;
+    margin: 0;
+    background: transparent url(:images/filmstrip-thumbs.png) repeat-x left top;
+}
+
 /* -------------------------------------------------------------------------- */
 
 QGroupBox#counterwidgets {
