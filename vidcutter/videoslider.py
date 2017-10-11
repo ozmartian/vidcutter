@@ -273,6 +273,11 @@ class VideoSlider(QSlider):
         if self.parent.newproject:
             self.parent.renderClipIndex()
             self.parent.newproject = False
+        print('{0} {1}'.format(self.parent.sliderWidget.pos().x(), self.parent.sliderWidget.pos().y()))
+        print('slider width: {}'.format(self.parent.sliderWidget.widget(0).width()))
+        print('slider sizehint width: {}'.format(self.parent.sliderWidget.widget(0).sizeHint().width()))
+        print('thumbs width: {}'.format(self.parent.sliderWidget.widget(2).width()))
+        print('thumbs sizehint width: {}'.format(self.parent.sliderWidget.widget(2).sizeHint().width()))
 
     def removeThumbs(self) -> None:
         if self.parent.sliderWidget.count() == 3:

@@ -1059,9 +1059,23 @@ class VideoCutter(QWidget):
     def captureImage(self, source: str, frametime: QTime, external: bool=False) -> QPixmap:
         return VideoService.captureFrame(source, frametime.toString(self.timeformat), external=external)
 
+    def smartcutter(self, file: str, source_file: str, source_ext :str) -> None:
+        filename, filelist = '', []
+        for clip in self.clipTimes:
+            index = self.clipTimes.index(clip)
+            if len(clip[3]):
+                filelist.append(clip[3])
+            else:
+                filename = '{0}_{1}{2}'.format(file, '{0:0>2}'.format(index), source_ext)
+                filelist.append(filename)
+                self.videoService.smartcut(source='{0}{1}'.format(source_file, source_ext),
+                                           output=filename,
+                                           start=VideoCutter.qtime2delta(clip[0]),
+                                           end=VideoCutter.qtime2delta(clip[1]),
+                                           allstreams=True)
+
     def saveMedia(self) -> None:
         clips = len(self.clipTimes)
-        filename, filelist = '', []
         source_file, source_ext = os.path.splitext(self.currentMedia if self.currentMedia is not None
                                                    else self.clipTimes[0][3])
         suggestedFilename = '{0}_EDIT{1}'.format(source_file, source_ext)
@@ -1084,60 +1098,56 @@ class VideoCutter(QWidget):
             self.saveAction.setDisabled(True)
             if self.smartcut:
                 self.showProgress(5, True)
-            else:
-                steps = clips + 1
-                self.showProgress(steps, False)
+                self.smartcutter(file, source_file, source_ext)
+                return
+            steps = clips + 1
+            self.showProgress(steps, False)
+            filename, filelist = '', []
             for clip in self.clipTimes:
                 index = self.clipTimes.index(clip)
                 if len(clip[3]):
                     filelist.append(clip[3])
                 else:
-                    if not self.smartcut:
-                        self.progressbar.updateProgress('Cutting media clips <b>[{0} / {1}]</b>'.format(
-                                                     '{0:0>2}'.format(index + 1), '{0:0>2}'.format(clips)))
+                    self.progressbar.updateProgress('Cutting media clips <b>[{0} / {1}]</b>'.format(
+                                                 '{0:0>2}'.format(index + 1), '{0:0>2}'.format(clips)))
                     duration = self.delta2QTime(clip[0].msecsTo(clip[1])).toString(self.timeformat)
                     filename = '{0}_{1}{2}'.format(file, '{0:0>2}'.format(index), source_ext)
                     filelist.append(filename)
-                    if self.smartcut:
-                        self.videoService.smartcut(source='{0}{1}'.format(source_file, source_ext),
-                                                   output=filename,
-                                                   start=VideoCutter.qtime2delta(clip[0]),
-                                                   end=VideoCutter.qtime2delta(clip[1]),
-                                                   allstreams=True)
+                    if not self.videoService.cut(source='{0}{1}'.format(source_file, source_ext),
+                                                 output=filename,
+                                                 frametime=clip[0].toString(self.timeformat),
+                                                 duration=duration,
+                                                 allstreams=True):
+                        self.completeOnError('Failed to cut media file, assuming media is invalid or corrupt. '
+                                             'Attempts are made to reindex and repair problematic media files even '
+                                             'when keyframes are incorrectly set or missing.\n\nIf you feel this '
+                                             'is a bug in the software then please let us know using the '
+                                             'information provided in the About {} menu option so we may '
+                                             'fix and improve for all users.'.format(qApp.applicationName()))
                         return
-                    else:
-                        if not self.videoService.cut(source='{0}{1}'.format(source_file, source_ext),
-                                                     output=filename,
-                                                     frametime=clip[0].toString(self.timeformat),
-                                                     duration=duration,
-                                                     allstreams=True):
-                            self.completeOnError('Failed to cut media file, assuming media is invalid or corrupt. '
-                                                 'Attempts are made to reindex and repair problematic media files even '
-                                                 'when keyframes are incorrectly set or missing.\n\nIf you feel this '
-                                                 'is a bug in the software then please let us know using the '
-                                                 'information provided in the About {} menu option so we may '
-                                                 'fix and improve for all users.'.format(qApp.applicationName()))
-                            return
-            if len(filelist) > 1:
-                self.progressbar.updateProgress('Joining media clips')
-                rc = False
-                if self.videoService.isMPEGcodec(filelist[0]):
-                    self.logger.info('source file is MPEG based so join via MPEG-TS')
-                    rc = self.videoService.mpegtsJoin(filelist, self.finalFilename)
-                if not rc or QFile(self.finalFilename).size() < 1000:
-                    self.logger.info('MPEG-TS based join failed, will retry using standard concat')
-                    rc = self.videoService.join(filelist, self.finalFilename, True)
-                if not rc or QFile(self.finalFilename).size() < 1000:
-                    self.logger.info('join resulted in 0 length file, trying again without all stream mapping')
-                    self.videoService.join(filelist, self.finalFilename, False)
-                if not self.keepClips:
-                    for f in filelist:
-                        clip = self.clipTimes[filelist.index(f)]
-                        if not len(clip[3]) and os.path.isfile(f):
-                            QFile.remove(f)
-                self.complete(False)
-            else:
-                self.complete(True, filename)
+            self.joinMedia(filelist)
+
+    def joinMedia(self, filelist: list):
+        if len(filelist) > 1:
+            self.progressbar.updateProgress('Joining media clips')
+            rc = False
+            if self.videoService.isMPEGcodec(filelist[0]):
+                self.logger.info('source file is MPEG based so join via MPEG-TS')
+                rc = self.videoService.mpegtsJoin(filelist, self.finalFilename)
+            if not rc or QFile(self.finalFilename).size() < 1000:
+                self.logger.info('MPEG-TS based join failed, will retry using standard concat')
+                rc = self.videoService.join(filelist, self.finalFilename, True)
+            if not rc or QFile(self.finalFilename).size() < 1000:
+                self.logger.info('join resulted in 0 length file, trying again without all stream mapping')
+                self.videoService.join(filelist, self.finalFilename, False)
+            if not self.keepClips:
+                for f in filelist:
+                    clip = self.clipTimes[filelist.index(f)]
+                    if not len(clip[3]) and os.path.isfile(f):
+                        QFile.remove(f)
+            self.complete(False)
+        else:
+            self.complete(True, filelist[-1])
 
     @pyqtSlot(bool, str)
     def complete(self, rename: bool=True, filename: str=None) -> None:
