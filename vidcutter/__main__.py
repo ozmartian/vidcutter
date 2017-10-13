@@ -202,7 +202,7 @@ class MainWindow(QMainWindow):
 
     @pyqtSlot()
     def reboot(self) -> None:
-        if self.cutter.saveProjectAction.isEnabled():
+        if self.cutter.mediaAvailable:
             self.cutter.saveProject(reboot=True)
         self.save_settings()
         qApp.exit(MainWindow.EXIT_CODE_REBOOT)

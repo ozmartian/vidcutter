@@ -172,8 +172,8 @@ class ThemePage(QWidget):
                     p { font-size: 15px; }
                 </style>
                 <h1>Warning</h1>
-                <p>The application needs to be restarted in order to switch themes. Ensure you have saved
-                your project or finished any cut ror join tasks in progressbar.</p>
+                <p>The application needs to be restarted in order to switch themes. Attempts will be made to reopen
+                media files and add back all clip times from your clip index.</p>
                 <p>Would you like to restart and switch themes now?</p>'''
                          % ('#C681D5' if self.parent.theme == 'dark' else '#642C68'))
             mbox.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
