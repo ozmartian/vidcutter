@@ -40,6 +40,7 @@ from PyQt5.QtWidgets import (QAction, qApp, QApplication, QDialogButtonBox, QFil
 from vidcutter import resources
 from vidcutter.about import About
 from vidcutter.libs.mpvwidget import mpvWidget
+from vidcutter.libs.munch import Munch
 from vidcutter.libs.notifications import JobCompleteNotification
 from vidcutter.libs.videoservice import VideoService
 from vidcutter.libs.widgets import ClipErrorsDialog, FrameCounter, TimeCounter, VCProgressBar, VolumeSlider
@@ -75,7 +76,7 @@ class VideoCutter(QWidget):
 
         self.videoService = VideoService(self)
         self.videoService.progress.connect(self.progressbar.updateProgress)
-        self.videoService.finished.connect(self.complete)
+        self.videoService.finished.connect(self.smartmonitor)
         self.videoService.error.connect(self.completeOnError)
 
         if sys.platform.startswith('linux'):
@@ -712,7 +713,7 @@ class VideoCutter(QWidget):
             qApp.restoreOverrideCursor()
             self.showText('Project file loaded')
 
-    def saveProject(self) -> None:
+    def saveProject(self, reboot: bool=False) -> None:
         if self.currentMedia is None:
             return
         for item in self.clipTimes:
@@ -723,14 +724,18 @@ class VideoCutter(QWidget):
                                      'may be added to the VCP (VidCutter Project file) format in the near future.')
                 return
         project_file, _ = os.path.splitext(self.currentMedia)
-        project_save, ptype = QFileDialog.getSaveFileName(self.parent, 
-                                                          caption='{} - Save project'.format(qApp.applicationName()),
-                                                          directory='{}.vcp'.format(project_file),
-                                                          filter=self.projectFilters(True),
-                                                          initialFilter='VidCutter Project (*.vcp)',
-                                                          options=(QFileDialog.DontUseNativeDialog
-                                                                   if not self.nativeDialogs
-                                                                   else QFileDialog.Options()))
+        if reboot:
+            project_save = os.path.join(QDir.tempPath(), self.parent.TEMP_PROJECT_FILE)
+            ptype = 'VidCutter Project (*.vcp)'
+        else:
+            project_save, ptype = QFileDialog.getSaveFileName(self.parent,
+                                                              caption=qApp.applicationName() + ' - Save project',
+                                                              directory='{}.vcp'.format(project_file),
+                                                              filter=self.projectFilters(True),
+                                                              initialFilter='VidCutter Project (*.vcp)',
+                                                              options=(QFileDialog.DontUseNativeDialog
+                                                                       if not self.nativeDialogs
+                                                                       else QFileDialog.Options()))
         if len(project_save.strip()):
             file = QFile(project_save)
             if not file.open(QFile.WriteOnly | QFile.Text):
@@ -750,7 +755,8 @@ class VideoCutter(QWidget):
                 QTextStream(file) << '{0}\t{1}\t{2}\n'.format(self.delta2String(start_time),
                                                               self.delta2String(stop_time), 0)
             qApp.restoreOverrideCursor()
-            self.showText('Project file saved')
+            if not reboot:
+                self.showText('Project file saved')
 
     def loadMedia(self, filename: str) -> None:
         if not os.path.exists(filename):
@@ -1054,21 +1060,6 @@ class VideoCutter(QWidget):
     def captureImage(self, source: str, frametime: QTime, external: bool=False) -> QPixmap:
         return VideoService.captureFrame(source, frametime.toString(self.timeformat), external=external)
 
-    def smartcutter(self, file: str, source_file: str, source_ext :str) -> None:
-        filename, filelist = '', []
-        for clip in self.clipTimes:
-            index = self.clipTimes.index(clip)
-            if len(clip[3]):
-                filelist.append(clip[3])
-            else:
-                filename = '{0}_{1}{2}'.format(file, '{0:0>2}'.format(index), source_ext)
-                filelist.append(filename)
-                self.videoService.smartcut(source='{0}{1}'.format(source_file, source_ext),
-                                           output=filename,
-                                           start=VideoCutter.qtime2delta(clip[0]),
-                                           end=VideoCutter.qtime2delta(clip[1]),
-                                           allstreams=True)
-
     def saveMedia(self) -> None:
         clips = len(self.clipTimes)
         source_file, source_ext = os.path.splitext(self.currentMedia if self.currentMedia is not None
@@ -1092,10 +1083,11 @@ class VideoCutter(QWidget):
             qApp.setOverrideCursor(Qt.WaitCursor)
             self.saveAction.setDisabled(True)
             if self.smartcut:
-                self.showProgress(5, True)
+                self.showProgress((3 * clips) + 2, True)
+                self.videoService.smartinit(clips)
                 self.smartcutter(file, source_file, source_ext)
                 return
-            steps = clips + 1
+            steps = clips + 2
             self.showProgress(steps, False)
             filename, filelist = '', []
             for clip in self.clipTimes:
@@ -1122,7 +1114,37 @@ class VideoCutter(QWidget):
                         return
             self.joinMedia(filelist)
 
-    def joinMedia(self, filelist: list):
+    def smartcutter(self, file: str, source_file: str, source_ext: str) -> None:
+        self.smartcut_monitor = Munch(clips=[], results=[], externals=0)
+        for clip in self.clipTimes:
+            index = self.clipTimes.index(clip)
+            if len(clip[3]):
+                self.smartcut_monitor.clips.append(clip[3])
+                self.smartcut_monitor.externals += 1
+                if index == len(self.clipTimes):
+                    self.smartmonitor()
+            else:
+                filename = '{0}_{1}{2}'.format(file, '{0:0>2}'.format(index), source_ext)
+                self.smartcut_monitor.clips.append(filename)
+                self.videoService.smartcut(index=index,
+                                           source='{0}{1}'.format(source_file, source_ext),
+                                           output=filename,
+                                           start=VideoCutter.qtime2delta(clip[0]),
+                                           end=VideoCutter.qtime2delta(clip[1]),
+                                           allstreams=True)
+
+    @pyqtSlot(bool, str)
+    def smartmonitor(self, success: bool=None, outputfile: str=None) -> None:
+        # print('smartmonitor: {0} - {1}'.format(success, outputfile))
+        if success is not None:
+            if not success:
+                self.logger.error('Failed to smartcut {}'.format(outputfile))
+            self.smartcut_monitor.results.append(success)
+        if len(self.smartcut_monitor.results) == len(self.smartcut_monitor.clips) - self.smartcut_monitor.externals:
+            if False not in self.smartcut_monitor.results:
+                self.joinMedia(self.smartcut_monitor.clips)
+
+    def joinMedia(self, filelist: list) -> None:
         if len(filelist) > 1:
             self.progressbar.updateProgress('Joining media clips')
             rc = False
@@ -1144,15 +1166,13 @@ class VideoCutter(QWidget):
         else:
             self.complete(True, filelist[-1])
 
-    @pyqtSlot(bool, str)
     def complete(self, rename: bool=True, filename: str=None) -> None:
         if rename and filename is not None:
             # noinspection PyCallByClass
             QFile.remove(self.finalFilename)
             # noinspection PyCallByClass
             QFile.rename(filename, self.finalFilename)
-        self.progressbar.updateProgress(
-            '{}Complete! Workspace cleaned and sanitized'.format('<b>[SmartCut]</b> ' if self.smartcut else ''))
+        self.progressbar.updateProgress('Complete! Workspace cleaned and sanitized')
         QTimer.singleShot(1000, self.progressbar.close)
         if sys.platform.startswith('linux') and self.mediaAvailable:
             QTimer.singleShot(1200, lambda: self.taskbar.setProgress(
@@ -1165,6 +1185,7 @@ class VideoCutter(QWidget):
             self.delta2QTime(self.totalRuntime).toString(self.runtimeformat),
             self.parent)
         self.notify.show()
+        self.cleanup()
 
     @pyqtSlot(str)
     def completeOnError(self, errormsg: str) -> None:
@@ -1174,6 +1195,13 @@ class VideoCutter(QWidget):
                 float(self.seekSlider.value() / self.seekSlider.maximum())))
         self.saveAction.setEnabled(True)
         self.parent.errorHandler(errormsg)
+        self.cleanup()
+
+    def cleanup(self) -> None:
+        if hasattr(self.videoService, 'smartcut_jobs'):
+            delattr(self.videoService, 'smartcut_jobs')
+        if hasattr(self, 'smartcut_monitor'):
+            delattr(self, 'smartcut_monitor')
 
     def saveSetting(self, setting: str, checked: bool) -> None:
         self.settings.setValue(setting, 'on' if checked else 'off')

@@ -158,9 +158,9 @@ class JobCompleteNotification(Notification):
         td {
             padding-top: 5px;
             vertical-align: top;
+            font-size: 13px;
         }
         td.label {
-            font-size: 12px;
             font-weight: bold;
             color: %s;
             text-transform: lowercase;
@@ -169,7 +169,6 @@ class JobCompleteNotification(Notification):
             font-family: "Noto Sans UI", sans-serif;
         }
         td.value {
-            font-size: 13px;
             color: %s;
         }
     </style>

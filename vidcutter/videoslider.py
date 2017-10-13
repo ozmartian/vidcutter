@@ -165,7 +165,7 @@ class VideoSlider(QSlider):
                     h, w, z = 18, 1, 13
                 else:
                     h, w, z = 8, 1, 23
-                tickcolor = QColor('#8F8F8F' if self.theme == 'dark' else '#888')
+                tickcolor = QColor('#8F8F8F' if self.theme == 'dark' else '#444')
                 pen = QPen(tickcolor)
                 pen.setWidthF(w)
                 painter.setPen(pen)
@@ -176,7 +176,7 @@ class VideoSlider(QSlider):
                     y = self.rect().bottom() - z
                     painter.drawLine(x, y, x, y - h)
                     if self.parent.mediaAvailable and i % 10 == 0 and (x + 4 + 50) < self.width():
-                        painter.setPen(Qt.white if self.theme == 'dark' else QColor('#444'))
+                        painter.setPen(Qt.white if self.theme == 'dark' else Qt.black)
                         timecode = QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), x - self.offset,
                                                                   self.width() - (self.offset * 2))
                         timecode = self.parent.delta2QTime(timecode).toString(self.parent.runtimeformat)

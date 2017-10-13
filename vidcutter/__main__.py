@@ -45,6 +45,7 @@ signal.signal(signal.SIGTERM, signal.SIG_DFL)
 
 class MainWindow(QMainWindow):
     EXIT_CODE_REBOOT = 666
+    TEMP_PROJECT_FILE = 'vidcutter_reboot.vcp'
 
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -54,13 +55,15 @@ class MainWindow(QMainWindow):
         self.init_logger()
         self.init_scale()
         self.init_cutter()
-        self.setWindowTitle('%s' % qApp.applicationName())
+        self.setWindowTitle(qApp.applicationName())
         self.setContentsMargins(0, 0, 0, 0)
         self.statusBar().showMessage('Ready')
         self.statusBar().setStyleSheet('border: none; padding: 0; margin: 0;')
         self.setAcceptDrops(True)
         self.show()
         self.console.setGeometry(int(self.x() - (self.width() / 2)), self.y() + int(self.height() / 3), 750, 300)
+        if not self.video and os.path.isfile(os.path.join(QDir.tempPath(), MainWindow.TEMP_PROJECT_FILE)):
+            self.video = os.path.join(QDir.tempPath(), MainWindow.TEMP_PROJECT_FILE)
         if self.video:
             self.file_opener(self.video)
 
@@ -75,6 +78,8 @@ class MainWindow(QMainWindow):
         try:
             if QFileInfo(filename).suffix() == 'vcp':
                 self.cutter.openProject(project_file=filename)
+                if filename == os.path.join(QDir.tempPath(), MainWindow.TEMP_PROJECT_FILE):
+                    os.remove(os.path.join(QDir.tempPath(), MainWindow.TEMP_PROJECT_FILE))
             else:
                 self.cutter.loadMedia(filename)
         except (FileNotFoundError, PermissionError):
@@ -197,6 +202,8 @@ class MainWindow(QMainWindow):
 
     @pyqtSlot()
     def reboot(self) -> None:
+        if self.cutter.saveProjectAction.isEnabled():
+            self.cutter.saveProject(reboot=True)
         self.save_settings()
         qApp.exit(MainWindow.EXIT_CODE_REBOOT)
 
@@ -269,7 +276,7 @@ class MainWindow(QMainWindow):
         if hasattr(self, 'cutter'):
             self.save_settings()
             try:
-                if hasattr(self.cutter.videoService, 'smartcut_job'):
+                if hasattr(self.cutter.videoService, 'smartcut_jobs'):
                     self.cutter.videoService.cleanup(self.cutter.videoService.smartcut_job.files)
                 if hasattr(self.cutter, 'mpvWidget'):
                     self.cutter.mpvWidget.shutdown()
@@ -304,7 +311,7 @@ def main():
         if sys.platform == 'win32':
             if hasattr(win.cutter, 'mpvWidget'):
                 win.close()
-            QProcess.startDetached('"%s"' % qApp.applicationFilePath())
+            QProcess.startDetached('"{}"'.format(qApp.applicationFilePath()))
         else:
             os.execl(sys.executable, sys.executable, *sys.argv)
     sys.exit(exit_code)
