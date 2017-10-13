@@ -616,7 +616,7 @@ class VideoCutter(QWidget):
             self.initMediaControls(False)
         self.renderClipIndex()
 
-    def projectFilters(self, savedialog: bool = False) -> str:
+    def projectFilters(self, savedialog: bool=False) -> str:
         if savedialog:
             return 'VidCutter Project (*.vcp);;MPlayer EDL (*.edl)'
         elif self.mediaAvailable:
@@ -646,7 +646,7 @@ class VideoCutter(QWidget):
             self.loadMedia(filename)
 
     # noinspection PyUnusedLocal
-    def openProject(self, checked: bool = False, project_file: str = None) -> None:
+    def openProject(self, checked: bool=False, project_file: str=None) -> None:
         initialFilter = 'Project files (*.edl *.vcp)' if self.mediaAvailable else 'VidCutter Project (*.vcp)'
         if project_file is None:
             project_file, _ = QFileDialog.getOpenFileName(self.parent,
@@ -660,7 +660,8 @@ class VideoCutter(QWidget):
                                                                    if not self.nativeDialogs
                                                                    else QFileDialog.Options()))
         if len(project_file.strip()):
-            self.lastFolder = QFileInfo(project_file).absolutePath()
+            if project_file != os.path.join(QDir.tempPath(), self.parent.TEMP_PROJECT_FILE):
+                self.lastFolder = QFileInfo(project_file).absolutePath()
             file = QFile(project_file)
             info = QFileInfo(file)
             project_type = info.suffix()
