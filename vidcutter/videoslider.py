@@ -281,7 +281,7 @@ class VideoSlider(QSlider):
         thumbnails.setLayout(thumbslayout)
         filmlabel = QLabel()
         filmlabel.setObjectName('filmstrip')
-        filmlabel.setFixedHeight(VideoService.ThumbSize.TIMELINE.value.height())
+        filmlabel.setFixedHeight(VideoService.ThumbSize.TIMELINE.value.height() + 2)
         filmlabel.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         filmlayout = QHBoxLayout()
         filmlayout.setContentsMargins(0, 0, 0, 16)
