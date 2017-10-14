@@ -56,6 +56,7 @@ class VideoService(QObject):
     frozen = getattr(sys, 'frozen', False)
     spaceWarningThreshold = 200
     spaceWarningDelivered = False
+    smartcutError = False
 
     class ThumbSize(Enum):
         INDEX = QSize(100, 70)
@@ -247,16 +248,16 @@ class VideoService(QObject):
             acodec = re.search(r'Stream.*Audio:\s(\w+)', result).group(1)
             return vcodec, acodec
 
-    def cut(self, source: str, output: str, frametime: str, duration: str, allstreams: bool=True,
-            vcodec: str=None, loglevel: str='error', run: bool=True):
+    def cut(self, source: str, output: str, frametime: str, duration: str, allstreams: bool=True, vcodec: str=None,
+            loglevel: str='error', run: bool=True):
         self.checkDiskSpace(output)
-        stream_map = '-map 0 ' if allstreams else ''
+        stream_map = '-c:s copy -map 0 ' if allstreams else ''
         if vcodec is not None:
             encode_options = VideoService.config.encoding.get(vcodec, vcodec)
-            args = '-v {0} -i "{1}" -ss {2} -t {3} -c:v {4} -c:a copy -c:s copy {5}-y "{6}"' \
+            args = '-v {0} -i "{1}" -ss {2} -t {3} -c:v {4} -c:a copy {5}-y "{6}"' \
                    .format(loglevel, source, frametime, duration, encode_options, stream_map, output)
         else:
-            args = '-v {0} -ss {1} -i "{2}" -t {3} -c copy {4}-avoid_negative_ts 1 -copyinkf -y "{5}"' \
+            args = '-v {0} -ss {1} -i "{2}" -t {3} -c:v copy -c:a copy {4}-avoid_negative_ts 1 -copyinkf -y "{5}"' \
                    .format(loglevel, frametime, source, duration, stream_map, output)
         if run:
             result = self.cmdExec(self.backends.ffmpeg, args)
@@ -271,13 +272,17 @@ class VideoService(QObject):
                     return False
             return True
         else:
-            return args
+            # if os.getenv('DEBUG', False) or getattr(self.parent, 'verboseLogs', False):
+            #     self.logger.info(args)
+            return args.replace('"', '\\"')
 
     def smartinit(self, clips: int):
         self.smartcut_jobs = []
         # noinspection PyUnusedLocal
-        for index in range(clips):
+        [
             self.smartcut_jobs.append(Munch(output='', allstreams=True, procs={}, files=[], results={}))
+            for index in range(clips)
+        ]
 
     def smartcut(self, index: int, source: str, output: str, start: float, end: float, allstreams: bool=True) -> None:
         output_file, output_ext = os.path.splitext(source)
@@ -290,8 +295,7 @@ class VideoService(QObject):
                                                                              output_ext))
             startproc = VideoService.initProc(self.backends.ffmpeg, self.smartcheck)
             startproc.setObjectName('start.{}'.format(index))
-            startproc.started.connect(lambda: self.progress.emit('<b>[SmartCut]</b> {} - Encoding START keyframe clip'
-                                      .format('{0:0>2}'.format(index + 1))))
+            startproc.started.connect(lambda: self.progress.emit('<b>SmartCut -</b> Encoding keyframe clips'))
             startproc.setArguments(shlex.split(
                 self.cut(source=source,
                          output=self.smartcut_jobs[index].files[-1],
@@ -299,7 +303,6 @@ class VideoService(QObject):
                          duration=bisections['start'][1] - start,
                          allstreams=allstreams,
                          vcodec=self.streams.video.codec_name,
-                         loglevel='info',
                          run=False)
             ))
             self.smartcut_jobs[index].procs.update(start=startproc)
@@ -309,8 +312,7 @@ class VideoService(QObject):
                                                                           output_ext))
         middleproc = VideoService.initProc(self.backends.ffmpeg, self.smartcheck)
         middleproc.setObjectName('middle.{}'.format(index))
-        middleproc.started.connect(lambda: self.progress.emit('<b>[SmartCut]</b> {} - Cutting MAIN clip section'
-                                   .format('{0:0>2}'.format(index + 1))))
+        middleproc.started.connect(lambda: self.progress.emit('<b>SmartCut -</b> Cutting main clip section'))
         middleproc.setArguments(shlex.split(
             self.cut(source=source,
                      output=self.smartcut_jobs[index].files[-1],
@@ -327,8 +329,7 @@ class VideoService(QObject):
                                                                            output_ext))
             endproc = VideoService.initProc(self.backends.ffmpeg, self.smartcheck)
             endproc.setObjectName('end.{}'.format(index))
-            endproc.started.connect(lambda: self.progress.emit('<b>[SmartCut]</b> {} - Encoding END keyframe clip'
-                                    .format('{0:0>2}'.format(index + 1))))
+            endproc.started.connect(lambda: self.progress.emit('<b>SmartCut -</b> Encoding keyframe clips'))
             endproc.setArguments(shlex.split(
                 self.cut(source=source,
                          output=self.smartcut_jobs[index].files[-1],
@@ -336,7 +337,6 @@ class VideoService(QObject):
                          duration=end - bisections['end'][1],
                          allstreams=allstreams,
                          vcodec=self.streams.video.codec_name,
-                         loglevel='info',
                          run=False)
             ))
             self.smartcut_jobs[index].procs.update(end=endproc)
@@ -345,39 +345,43 @@ class VideoService(QObject):
 
     @pyqtSlot(int, QProcess.ExitStatus)
     def smartcheck(self, code: int, status: QProcess.ExitStatus) -> None:
-        name, index = self.sender().objectName().split('.')
-        index = int(index)
-        self.smartcut_jobs[index].results[name] = (code == 0 and status == QProcess.NormalExit)
-        if os.getenv('DEBUG', False) or getattr(self.parent, 'verboseLogs', False):
-            self.logger.info('SmartCut progress: {}'.format(self.smartcut_jobs[index].results))
-        resultfile = self.smartcut_jobs[index].files[self.SmartCutIndex[name.upper()].value]
-        if not self.smartcut_jobs[index].results[name] or QFile(resultfile).size() < 1000:
-            args = ' '.join(self.smartcut_jobs[index].procs[name].arguments())
-            if '-map 0 ' in args:
-                # smartcut failed so try again without mapping all media streams
-                self.logger.info('cut resulted in zero length file, trying again without all stream mapping')
-                self.smartcut_jobs[index].procs[name].setArguments(shlex.split(args.replace('-map 0 ', '')))
-                self.smartcut_jobs[index].procs[name].start()
-                return
-            else:
-                # both attempts to cut have failed so exit and let user know
-                self.error.emit('SmartCut failed to cut media file. Please ensure your media files are valid otherwise '
-                                'try again with SmartCut disabled.')
-                # self.logger.error('Error executing: {0} {1}'.format(self.smartcut_jobs.procs[name].program(), args))
-                self.smartabort()
-                return
-        if False not in self.smartcut_jobs[index].results.values():
-            self.smartjoin(index)
+        if hasattr(self, 'smartcut_jobs') and not self.smartcutError:
+            name, index = self.sender().objectName().split('.')
+            index = int(index)
+            self.smartcut_jobs[index].results[name] = (code == 0 and status == QProcess.NormalExit)
+            if os.getenv('DEBUG', False) or getattr(self.parent, 'verboseLogs', False):
+                self.logger.info('SmartCut progress: {}'.format(self.smartcut_jobs[index].results))
+            resultfile = self.smartcut_jobs[index].files[self.SmartCutIndex[name.upper()].value]
+            if not self.smartcut_jobs[index].results[name] or QFile(resultfile).size() < 1000:
+                args = ' '.join(self.smartcut_jobs[index].procs[name].arguments())
+                if '-map 0 ' in args:
+                    # smartcut failed so try again without mapping all media streams
+                    self.logger.info('SmartCut resulted in zero length file, trying again without all stream mapping')
+                    newargs = args.replace('-map 0 ', '').replace('-c:s copy ', '')
+                    self.smartcut_jobs[index].procs[name].setArguments(shlex.split(newargs))
+                    self.smartcut_jobs[index].procs[name].started.disconnect()
+                    self.smartcut_jobs[index].procs[name].start()
+                    return
+                else:
+                    self.smartcutError = True
+                    # both attempts to cut have failed so exit and let user know
+                    self.logger.error('Error executing: {0} {1}'.format(self.smartcut_jobs[index].procs[name].program(),
+                                                                        args))
+                    self.error.emit('SmartCut failed to cut media file. Please ensure your media files are valid '
+                                    'otherwise try again with SmartCut disabled.')
+                    return
+            if False not in self.smartcut_jobs[index].results.values():
+                self.smartjoin(index)
 
     def smartabort(self):
         for job in self.smartcut_jobs:
-            for name, proc in self.smartcut_jobs[job].procs:
-                if proc.state() != QProcess.NotRunning:
-                    proc.kill()
-            VideoService.cleanup(self.smartcut_jobs[job].files)
+            for name in job.procs:
+                if job.procs[name].state() != QProcess.NotRunning:
+                    job.procs[name].kill()
+            VideoService.cleanup(job.files)
 
     def smartjoin(self, index: int) -> None:
-        self.progress.emit('<b>[SmartCut]</b> Joining keyframe clips')
+        self.progress.emit('<b>SmartCut -</b> Joining keyframe clips')
         final_join = False
         if self.isMPEGcodec(self.smartcut_jobs[index].files[1]):
             self.logger.info('smartcut files are MPEG based so join via MPEG-TS')

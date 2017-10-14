@@ -206,9 +206,9 @@ class VCProgressBar(QDialog):
         self._timerwidget.show()
         # noinspection PyArgumentList
         self.layout().addWidget(self._timerwidget, 1, 0, Qt.AlignHCenter | Qt.AlignTop)
-        widgetHeight = self._progress.sizeHint().height() + 20
-        widgetHeight += self._timerwidget.sizeHint().height() + 10
-        self.setFixedHeight(widgetHeight)
+        # widgetHeight = self._progress.sizeHint().height() + 10
+        # widgetHeight += self._timerwidget.sizeHint().height() + 10
+        # self.setFixedHeight(widgetHeight)
         self._time.start()
         self.updateTimer()
         self._timer.start(1000)
@@ -261,8 +261,6 @@ class VCProgressBar(QDialog):
     def updateProgress(self, text: str) -> None:
         self.setValue(self._progress.value() + 1)
         self.setText(text)
-        if not self.parent.smartcut:
-            qApp.processEvents()
 
     @pyqtSlot()
     def close(self) -> None:

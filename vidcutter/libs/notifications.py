@@ -34,7 +34,7 @@ from PyQt5.QtWidgets import qApp, QDialog, QGraphicsOpacityEffect, QHBoxLayout, 
 
 class Notification(QDialog):
     shown = pyqtSignal()
-    duration = 8
+    duration = 10
 
     def __init__(self, parent=None, f=Qt.Widget | Qt.FramelessWindowHint):
         super(Notification, self).__init__(parent, f)
@@ -125,9 +125,9 @@ class Notification(QDialog):
             self.shown.emit()
         self.msgLabel.setText(self._message)
         [self.left_layout.addWidget(btn) for btn in self.buttons]
-        screen = qApp.desktop().screenNumber(self.parent)
-        bottomright = qApp.screens()[screen].availableGeometry().bottomRight()
-        self.setGeometry(bottomright.x() - (459 + 5), bottomright.y() - (156 + 10), 459, 156)
+        # screen = qApp.desktop().screenNumber(self.parent)
+        # bottomright = qApp.screens()[screen].availableGeometry().bottomRight()
+        # self.setGeometry(bottomright.x() - (459 + 5), bottomright.y() - (156 + 10), 459, 156)
         super(Notification, self).showEvent(event)
 
     def closeEvent(self, event):
@@ -158,7 +158,7 @@ class JobCompleteNotification(Notification):
         td {
             padding-top: 5px;
             vertical-align: top;
-            font-size: 13px;
+            font-size: 14px;
         }
         td.label {
             font-weight: bold;

@@ -58,6 +58,7 @@ if sys.platform.startswith('linux'):
 
 class VideoCutter(QWidget):
     errorOccurred = pyqtSignal(str)
+    progress = pyqtSignal(str)
 
     timeformat = 'hh:mm:ss.zzz'
     runtimeformat = 'hh:mm:ss'
@@ -71,8 +72,10 @@ class VideoCutter(QWidget):
         self.settings = self.parent.settings
         self.initTheme()
 
-        self.updater = Updater(self)
+        self.updater = Updater(self.parent)
         self.progressbar = VCProgressBar(self)
+
+        self.progress.connect(self.progressbar.updateProgress)
 
         self.videoService = VideoService(self)
         self.videoService.progress.connect(self.progressbar.updateProgress)
@@ -712,7 +715,8 @@ class VideoCutter(QWidget):
             self.newproject = True
             QTimer.singleShot(2000, lambda: self.selectClip())
             qApp.restoreOverrideCursor()
-            self.showText('Project file loaded')
+            if project_file != os.path.join(QDir.tempPath(), self.parent.TEMP_PROJECT_FILE):
+                self.showText('Project file loaded')
 
     def saveProject(self, reboot: bool=False) -> None:
         if self.currentMedia is None:
@@ -1084,7 +1088,7 @@ class VideoCutter(QWidget):
             qApp.setOverrideCursor(Qt.WaitCursor)
             self.saveAction.setDisabled(True)
             if self.smartcut:
-                self.showProgress((3 * clips) + 2, True)
+                self.showProgress((3 * clips) + clips + 2, True)
                 self.videoService.smartinit(clips)
                 self.smartcutter(file, source_file, source_ext)
                 return
@@ -1096,8 +1100,8 @@ class VideoCutter(QWidget):
                 if len(clip[3]):
                     filelist.append(clip[3])
                 else:
-                    self.progressbar.updateProgress('Cutting media clips <b>[{0} / {1}]</b>'.format(
-                                                 '{0:0>2}'.format(index + 1), '{0:0>2}'.format(clips)))
+                    self.progress.emit('Cutting media clips <b>[{0} / {1}]</b>'
+                                       .format('{0:0>2}'.format(index + 1), '{0:0>2}'.format(clips)))
                     duration = self.delta2QTime(clip[0].msecsTo(clip[1])).toString(self.timeformat)
                     filename = '{0}_{1}{2}'.format(file, '{0:0>2}'.format(index), source_ext)
                     filelist.append(filename)
@@ -1139,7 +1143,7 @@ class VideoCutter(QWidget):
         # print('smartmonitor: {0} - {1}'.format(success, outputfile))
         if success is not None:
             if not success:
-                self.logger.error('Failed to smartcut {}'.format(outputfile))
+                self.logger.error('SmartCut failed for {}'.format(outputfile))
             self.smartcut_monitor.results.append(success)
         if len(self.smartcut_monitor.results) == len(self.smartcut_monitor.clips) - self.smartcut_monitor.externals:
             if False not in self.smartcut_monitor.results:
@@ -1147,7 +1151,7 @@ class VideoCutter(QWidget):
 
     def joinMedia(self, filelist: list) -> None:
         if len(filelist) > 1:
-            self.progressbar.updateProgress('Joining media clips')
+            self.progress.emit('Joining media clips')
             rc = False
             if self.videoService.isMPEGcodec(filelist[0]):
                 self.logger.info('source file is MPEG based so join via MPEG-TS')
@@ -1173,36 +1177,40 @@ class VideoCutter(QWidget):
             QFile.remove(self.finalFilename)
             # noinspection PyCallByClass
             QFile.rename(filename, self.finalFilename)
-        self.progressbar.updateProgress('Complete! Workspace cleaned and sanitized')
-        QTimer.singleShot(1000, self.progressbar.close)
+        self.progress.emit('Complete! Workspace cleaned and sanitized')
         if sys.platform.startswith('linux') and self.mediaAvailable:
             QTimer.singleShot(1200, lambda: self.taskbar.setProgress(
                 float(self.seekSlider.value() / self.seekSlider.maximum())))
         qApp.restoreOverrideCursor()
         self.saveAction.setEnabled(True)
+        self.progressbar.close()
         self.notify = JobCompleteNotification(
             self.finalFilename,
             self.sizeof_fmt(int(QFileInfo(self.finalFilename).size())),
             self.delta2QTime(self.totalRuntime).toString(self.runtimeformat),
             self.parent)
         self.notify.show()
-        self.cleanup()
+        if self.smartcut:
+            QTimer.singleShot(1000, self.cleanup)
 
     @pyqtSlot(str)
     def completeOnError(self, errormsg: str) -> None:
+        if self.smartcut:
+            self.videoService.smartabort()
+            QTimer.singleShot(1500, self.cleanup)
         self.progressbar.close()
         if sys.platform.startswith('linux') and self.mediaAvailable:
             QTimer.singleShot(1200, lambda: self.taskbar.setProgress(
                 float(self.seekSlider.value() / self.seekSlider.maximum())))
         self.saveAction.setEnabled(True)
         self.parent.errorHandler(errormsg)
-        self.cleanup()
 
     def cleanup(self) -> None:
         if hasattr(self.videoService, 'smartcut_jobs'):
             delattr(self.videoService, 'smartcut_jobs')
         if hasattr(self, 'smartcut_monitor'):
             delattr(self, 'smartcut_monitor')
+        self.videoService.smartcutError = False
 
     def saveSetting(self, setting: str, checked: bool) -> None:
         self.settings.setValue(setting, 'on' if checked else 'off')
@@ -1238,7 +1246,7 @@ class VideoCutter(QWidget):
         shortcuts.setLayout(layout)
         shortcuts.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         shortcuts.setContentsMargins(10, 10, 10, 10)
-        shortcuts.setWindowModality(Qt.WindowModal)
+        shortcuts.setWindowModality(Qt.NonModal)
         shortcuts.setWindowTitle('Keyboard shortcuts')
         shortcuts.setMinimumWidth(400 if self.parent.scale == 'LOW' else 600)
         shortcuts.show()
