@@ -18,14 +18,14 @@ clone_depth: 1
 clone_folder: C:\projects\vidcutter
 
 environment:
-  APPVEYOR_RDP_PASSWORD:
-    secure: cr6ouL4ybiiKClW/UJwM6g==
+  # APPVEYOR_RDP_PASSWORD:
+  #   secure: cr6ouL4ybiiKClW/UJwM6g==
   APPVEYOR_SKIP_FINALIZE_ON_EXIT: false
   PYTHONUNBUFFERED: 1
   PYTHONHOME: C:\Python36-x64
 
-init:
-  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+# init:
+#   - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 install:
   - set PATH=%PYTHONHOME%;%PYTHONHOME%\scripts;%PYTHONHOME%\tools\scripts;%PATH%
@@ -79,8 +79,8 @@ artifacts:
    name: Extension Modules
    type: zip
 
-on_finish:
- - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+# on_finish:
+#  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 
 # deploy:
