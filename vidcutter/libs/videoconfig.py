@@ -89,3 +89,13 @@ class VideoConfig:
                 'Windows Media files (*.asf *.asx *.wmv)', 'Xvid files (*.xvid)'
             ]
         }
+
+
+class VidCutterException(Exception):
+    def __init__(self, msg: str=None):
+        super(VidCutterException, self).__init__(msg)
+
+
+class InvalidMediaException(VidCutterException):
+    def __init__(self, msg: str=None):
+        super(InvalidMediaException, self).__init__(msg)

@@ -45,7 +45,7 @@ except ImportError:
     import json
 
 from vidcutter.libs.munch import Munch
-from vidcutter.libs.videoconfig import VideoConfig
+from vidcutter.libs.videoconfig import VideoConfig, InvalidMediaException
 
 
 class VideoService(QObject):
@@ -95,7 +95,10 @@ class VideoService(QObject):
                 for codec_type in VideoService.Stream.__members__:
                     setattr(self.streams, codec_type.lower(),
                             [stream for stream in self.media.streams if stream.codec_type == codec_type.lower()])
-                self.streams.video = self.streams.video[0]
+                if len(self.streams.video):
+                    self.streams.video = self.streams.video[0]  # we always assume one video stream per media file
+                else:
+                    raise InvalidMediaException('Could not load video stream for {}'.format(source))
         except OSError as e:
             if e.errno == errno.ENOENT:
                 errormsg = '{0}: {1}'.format(os.strerror(errno.ENOENT), source)
@@ -573,3 +576,4 @@ class VideoService(QObject):
         if VideoService.frozen:
             return sys._MEIPASS
         return QFileInfo(__file__).absolutePath()
+

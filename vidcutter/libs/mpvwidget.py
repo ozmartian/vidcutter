@@ -45,6 +45,7 @@ class mpvWidget(QOpenGLWidget):
     def __init__(self, parent=None, **mpv_opts):
         super(mpvWidget, self).__init__(parent)
         self.parent = parent
+        self.mpvError = mpv.MPVError
         self.originalParent = None
         self.logger = logging.getLogger(__name__)
         locale.setlocale(locale.LC_NUMERIC, 'C')

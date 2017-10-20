@@ -89,6 +89,7 @@ class VideoSlider(QSlider):
         self.setFocus()
         self.restrictValue = 0
         self.valueChanged.connect(self.restrictMove)
+        self.rangeChanged.connect(self.on_rangeChanged)
         self.installEventFilter(self)
 
     def initStyle(self) -> None:
@@ -324,6 +325,13 @@ class VideoSlider(QSlider):
             self.initStyle()
             self.initThumbs()
             self.parent.renderClipIndex()
+
+    @pyqtSlot(int, int)
+    def on_rangeChanged(self, min: int, max: int) -> None:
+        if self.parent.thumbnailsButton.isChecked():
+            self.initThumbs()
+        else:
+            self.parent.sliderWidget.setLoader(False)
 
     def wheelEvent(self, event: QWheelEvent) -> None:
         if self.parent.mediaAvailable:
