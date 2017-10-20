@@ -29,8 +29,6 @@ VERSION = tuple(map(int, __version__.split('.')))
 
 __all__ = ('Munch', 'munchify', 'DefaultMunch', 'unmunchify')
 
-from six import u, iteritems, iterkeys
-
 
 class Munch(dict):
     """ A dictionary that provides attribute-style access.
@@ -186,7 +184,7 @@ class Munch(dict):
         return '{0}({1})'.format(self.__class__.__name__, dict.__repr__(self))
 
     def __dir__(self):
-        return list(iterkeys(self))
+        return list(self.keys())
 
     __members__ = __dir__  # for python2.x compatibility
 
@@ -285,7 +283,7 @@ def munchify(x, factory=Munch):
         nb. As dicts are not hashable, they cannot be nested in sets/frozensets.
     """
     if isinstance(x, dict):
-        return factory((k, munchify(v, factory)) for k, v in iteritems(x))
+        return factory((k, munchify(v, factory)) for k, v in x.items())
     elif isinstance(x, (list, tuple)):
         return type(x)(munchify(v, factory) for v in x)
     else:
@@ -310,7 +308,7 @@ def unmunchify(x):
         nb. As dicts are not hashable, they cannot be nested in sets/frozensets.
     """
     if isinstance(x, dict):
-        return dict((k, unmunchify(v)) for k, v in iteritems(x))
+        return dict((k, unmunchify(v)) for k, v in x.items())
     elif isinstance(x, (list, tuple)):
         return type(x)(unmunchify(v) for v in x)
     else:
@@ -391,11 +389,11 @@ try:
             >>> yaml.dump(b, default_flow_style=True)
             '!munch.Munch {foo: [bar, !munch.Munch {lol: true}], hello: 42}\\n'
         """
-        return dumper.represent_mapping(u('!munch.Munch'), data)
+        return dumper.represent_mapping('!munch.Munch', data)
 
 
-    yaml.add_constructor(u('!munch'), from_yaml)
-    yaml.add_constructor(u('!munch.Munch'), from_yaml)
+    yaml.add_constructor('!munch', from_yaml)
+    yaml.add_constructor('!munch.Munch', from_yaml)
 
     SafeRepresenter.add_representer(Munch, to_yaml_safe)
     SafeRepresenter.add_multi_representer(Munch, to_yaml_safe)
