@@ -1,3 +1,9 @@
+vidcutter (4.0.5-1) stable; urgency=high
+
+  * fix for 32-bit Linux users; the switch to OpenGL rendering
+    broke 32-bit under Linux only due to Python to C data type
+    conversions in the Python interpreter which have been resolved.
+
 vidcutter (4.0.0-1) stable; urgency=medium
 
   * pure OpenGL rendered window output
