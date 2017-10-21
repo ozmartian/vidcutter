@@ -19,13 +19,24 @@ from PyQt5.QtWidgets import QOpenGLWidget
 # noinspection PyUnresolvedReferences
 import vidcutter.libs.mpv as mpv
 
+# use try catch to allow Python versions below 3.5.3 without typing.Optional to still work
+try:
+    # noinspection PyUnresolvedReferences
+    from typing import Optional
+    # noinspection PyUnresolvedReferences
+    from sip import voidptr
 
-def get_proc_address(proc):
-    glctx = QGLContext.currentContext()
-    if glctx is None:
-        return None
-    addr = glctx.getProcAddress(str(proc, 'utf-8'))
-    return addr.__int__()
+    def get_proc_address(proc) -> Optional[voidptr]:
+        glctx = QGLContext.currentContext()
+        if glctx is None:
+            return None
+        return glctx.getProcAddress(str(proc, 'utf-8'))
+except ImportError:
+    def get_proc_address(proc):
+        glctx = QGLContext.currentContext()
+        if glctx is None:
+            return None
+        return glctx.getProcAddress(str(proc, 'utf-8'))
 
 
 class mpvWidget(QOpenGLWidget):
