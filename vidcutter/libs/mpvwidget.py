@@ -15,16 +15,18 @@ from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QEvent, QTimer
 from PyQt5.QtGui import QKeyEvent, QMouseEvent
 from PyQt5.QtOpenGL import QGLContext
 from PyQt5.QtWidgets import QOpenGLWidget
-import sip
 
 # noinspection PyUnresolvedReferences
 import vidcutter.libs.mpv as mpv
 
+# use try catch to allow Python versions below 3.5.3 without typing.Optional to still work
 try:
     # noinspection PyUnresolvedReferences
     from typing import Optional
+    # noinspection PyUnresolvedReferences
+    from sip import voidptr
 
-    def get_proc_address(proc) -> Optional[sip.voidptr]:
+    def get_proc_address(proc) -> Optional[voidptr]:
         glctx = QGLContext.currentContext()
         if glctx is None:
             return None
