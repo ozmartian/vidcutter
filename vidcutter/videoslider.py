@@ -24,7 +24,6 @@
 
 import logging
 import math
-import os
 import sys
 
 from PyQt5.QtCore import QEvent, QObject, QRect, QSize, QThread, Qt, pyqtSignal, pyqtSlot
@@ -67,6 +66,9 @@ class VideoSlider(QSlider):
             width: 15px;
             height: {handleHeight}px;
             margin: -12px -8px -20px;
+        }}
+        QSlider::handle:horizontal:hover {{
+            background: transparent url(:images/{handleImageSelected}) no-repeat top center;
         }}'''
         self._regions = list()
         self._regionHeight = 32
@@ -77,13 +79,12 @@ class VideoSlider(QSlider):
         self.offset = 8
         self.setOrientation(Qt.Horizontal)
         self.setObjectName('videoslider')
-        self.setAttribute(Qt.WA_Hover, True)
+        self.setCursor(Qt.PointingHandCursor)
         self.setStatusTip('Set clip start and end points')
         self.setFocusPolicy(Qt.StrongFocus)
         self.setRange(0, 0)
         self.setSingleStep(1)
         self.setTickInterval(100000)
-        self.setMouseTracking(True)
         self.setTracking(True)
         self.setTickPosition(QSlider.TicksBelow)
         self.setFocus()
@@ -96,6 +97,7 @@ class VideoSlider(QSlider):
         bground = 'rgba(200, 213, 236, 0.85)' if self._cutStarted else 'transparent'
         height = 60
         handle = 'handle.png'
+        handleSelect = 'handle-select.png'
         handleHeight = 85
         margin = 0
         timeline = ''
@@ -106,9 +108,10 @@ class VideoSlider(QSlider):
             else:
                 timeline = 'background: #000 url(:images/filmstrip-nothumbs.png) repeat-x left;'
                 handleHeight = 42
-            height = 15 if not self.parent.thumbnailsButton.isChecked() else height
-            handle = 'handle-nothumbs.png' if not self.parent.thumbnailsButton.isChecked() else handle
-            self._regionHeight = 32 if self.parent.thumbnailsButton.isChecked() else 12
+                height = 15
+                handle = 'handle-nothumbs.png'
+                handleSelect = 'handle-nothumbs-select.png'
+                self._regionHeight = 12
             self._styles += '''
             QSlider::groove:horizontal {{
                 border: 1px ridge #444;
@@ -124,8 +127,7 @@ class VideoSlider(QSlider):
                 margin: 0;
             }}'''
         if self._cutStarted:
-            _file, _ext = os.path.splitext(handle)
-            handle = '{0}-select{1}'.format(_file, _ext)
+            handle = handleSelect
             opt = QStyleOptionSlider()
             self.initStyleOption(opt)
             control = self.style().subControlRect(QStyle.CC_Slider, opt, QStyle.SC_SliderHandle, self)
@@ -136,6 +138,7 @@ class VideoSlider(QSlider):
             subpageHeight=height + 2,
             subpageLeftMargin=margin,
             handleImage=handle,
+            handleImageSelected=handleSelect,
             handleHeight=handleHeight,
             timelineBackground=timeline))
 
@@ -191,13 +194,13 @@ class VideoSlider(QSlider):
             rect.setY(int((self.height() - self._regionHeight) / 2) - 8)
             rect.setHeight(self._regionHeight)
             if self._regions.index(rect) == self._regionSelected:
-                brushcolor = QColor(150, 190, 78, 185)
+                brushcolor = QColor(150, 190, 78, 200)
             else:
-                brushcolor = QColor(237, 242, 255, 185)
+                brushcolor = QColor(237, 242, 255, 200)
             painter.setBrush(brushcolor)
-            painter.setPen(QColor(255, 255, 255, 170))
+            painter.setPen(QColor(50, 50, 50, 170))
             painter.drawRect(rect)
-        opt.subControls = QStyle.SC_SliderHandle
+        opt.activeSubControls = opt.subControls = QStyle.SC_SliderHandle
         painter.drawComplexControl(QStyle.CC_Slider, opt)
 
     def addRegion(self, start: int, end: int) -> None:
@@ -326,8 +329,8 @@ class VideoSlider(QSlider):
             self.initThumbs()
             self.parent.renderClipIndex()
 
-    @pyqtSlot(int, int)
-    def on_rangeChanged(self, min: int, max: int) -> None:
+    @pyqtSlot()
+    def on_rangeChanged(self) -> None:
         if self.parent.thumbnailsButton.isChecked():
             self.initThumbs()
         else:
@@ -343,16 +346,6 @@ class VideoSlider(QSlider):
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
         qApp.sendEvent(self.parent, event)
-
-    def mouseMoveEvent(self, event: QMouseEvent) -> None:
-        opt = QStyleOptionSlider()
-        self.initStyleOption(opt)
-        handle = self.style().subControlRect(QStyle.CC_Slider, opt, QStyle.SC_SliderHandle, self)
-        if handle.x() <= event.pos().x() <= (handle.x() + handle.width()):
-            self.setCursor(Qt.PointingHandCursor)
-        else:
-            self.unsetCursor()
-        super(VideoSlider, self).mouseMoveEvent(event)
 
     def eventFilter(self, obj: QObject, event: QMouseEvent) -> bool:
         if event.type() == QEvent.MouseButtonRelease:
