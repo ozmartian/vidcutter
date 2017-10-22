@@ -24,6 +24,7 @@
 
 import logging
 import math
+import os
 
 from PyQt5.QtCore import QSize, Qt
 from PyQt5.QtGui import QCloseEvent, QPixmap, QShowEvent
@@ -46,7 +47,7 @@ class VideoInfo(QDialog):
         self.setObjectName('videoinfo')
         self.setContentsMargins(0, 0, 0, 0)
         self.setWindowModality(Qt.ApplicationModal)
-        self.setWindowTitle('Media information')
+        self.setWindowTitle('Media information - {}'.format(os.path.basename(self.media)))
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         self.setMinimumSize(self.modes.get(self.parent.parent.scale))
         metadata = '''<style>
@@ -70,7 +71,7 @@ class VideoInfo(QDialog):
     td + td { text-align: left; }
     h1, h2, h3 { color: %s; }
 </style>
-<div align="center" style="margin:15px;">%s</div>''' % ('#C681D5' if self.parent.theme == 'dark' else '#642C68',
+<div align="center">%s</div>''' % ('#C681D5' if self.parent.theme == 'dark' else '#642C68',
                                                         '#C681D5' if self.parent.theme == 'dark' else '#642C68',
                                                         self.parent.videoService.mediainfo(self.media))
         content = QTextBrowser(self.parent)
@@ -95,7 +96,7 @@ class VideoInfo(QDialog):
         button_layout.addWidget(okButton)
         layout = QVBoxLayout()
         # noinspection PyArgumentList
-        layout.addWidget(QLabel(pixmap=QPixmap(':/images/%s/mediainfo-heading.png' % self.parent.theme)))
+        # layout.addWidget(QLabel(pixmap=QPixmap(':/images/%s/mediainfo-heading.png' % self.parent.theme)))
         layout.addWidget(content)
         layout.addLayout(button_layout)
         self.setLayout(layout)
