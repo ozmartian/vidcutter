@@ -772,16 +772,16 @@ class VideoCutter(QWidget):
             self.mpvWidget.play(self.currentMedia)
             self.videoService.setMedia(self.currentMedia)
             self.initMediaControls(True)
-        except (InvalidMediaException, BaseException) as e:
+        except InvalidMediaException:
             qApp.restoreOverrideCursor()
             self.initMediaControls(False)
             self.logger.error('Could not load media file', exc_info=True)
             QMessageBox.critical(self.parent, 'Could not load media file',
-                                 '<h3>Invalid media file selected</h3><p>All attempts to make sense of the file have failed but you could '
-                                 'try viewing it in another media player. If it plays as expected in other apps then it is a bug '
-                                 'in this software which you can help us resolve. See the About VidCutter menu option for details '
-                                 'and make sure to include your operating system, video card, the invalid media file and the '
-                                 'version of VidCutter you are currently using.</p>')
+                                 '<h3>Invalid media file selected</h3><p>All attempts to make sense of the file have '
+                                 'failed. Try viewing it in another media player and if it plays as expected please '
+                                 'report it as a bug. Use the link in the About VidCutter menu option for details '
+                                 'and make sure to include your operating system, video card, the invalid media file '
+                                 'and the version of VidCutter you are currently using.</p>')
             return
         self.cliplist.clear()
         self.clipTimes.clear()

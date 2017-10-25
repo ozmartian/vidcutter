@@ -24,12 +24,10 @@
 
 import functools
 import os
-import sys
 
 from PyQt5.QtCore import Qt, QFile, QFileInfo, QTextStream
 from PyQt5.QtGui import QColor, QPalette
 from PyQt5.QtWidgets import qApp, QStyle
-
 
 try:
     from PyQt5.QtWidgets import QProxyStyle
@@ -67,8 +65,6 @@ class VideoStyle(QProxyStyle):
             qssfile = QFile(filename)
             qssfile.open(QFile.ReadOnly | QFile.Text)
             content = QTextStream(qssfile).readAll()
-            if sys.platform == 'darwin' and theme == 'dark':
-                content += 'QComboBox, QHeaderView::section, QMenu::item, QMenu::item:selected { color: #444; }'
             qApp.setStyleSheet(content)
             return content
 

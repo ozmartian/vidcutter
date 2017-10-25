@@ -193,10 +193,8 @@ class VideoSlider(QSlider):
         for rect in self._regions:
             rect.setY(int((self.height() - self._regionHeight) / 2) - 8)
             rect.setHeight(self._regionHeight)
-            if self._regions.index(rect) == self._regionSelected:
-                brushcolor = QColor(150, 190, 78, 200)
-            else:
-                brushcolor = QColor(237, 242, 255, 200)
+            brushcolor = QColor(150, 190, 78, 200) if self._regions.index(rect) == self._regionSelected \
+                else QColor(237, 242, 255, 200)
             painter.setBrush(brushcolor)
             painter.setPen(QColor(50, 50, 50, 170))
             painter.drawRect(rect)
@@ -210,8 +208,7 @@ class VideoSlider(QSlider):
         width = self.style().sliderPositionFromValue(self.minimum(), self.maximum(), end - self.offset,
                                                      self.width() - (self.offset * 2)) - x
         height = self._regionHeight
-        rect = QRect(x + self.offset, y - 8, width, height)
-        self._regions.append(rect)
+        self._regions.append(QRect(x + self.offset, y - 8, width, height))
         self.update()
 
     def switchRegions(self, index1: int, index2: int) -> None:
@@ -232,15 +229,14 @@ class VideoSlider(QSlider):
         framesize = self.parent.videoService.framesize()
         thumbsize = QSize(VideoService.ThumbSize.TIMELINE.value.height() * (framesize.width() / framesize.height()),
                           VideoService.ThumbSize.TIMELINE.value.height())
-        positions = list()
-        thumbs = int(math.ceil((self.width() - (self.offset * 2)) / thumbsize.width()))
+        positions, frametimes = [], []
+        thumbs = int(math.ceil((self.rect().width() - (self.offset * 2)) / thumbsize.width()))
         for pos in range(thumbs):
             val = QStyle.sliderValueFromPosition(self.minimum(), self.maximum(),
                                                  (thumbsize.width() * pos) - self.offset,
-                                                 self.width() - (self.offset * 2))
+                                                 self.rect().width() - (self.offset * 2))
             positions.append(val)
         positions[0] = 1000
-        frametimes = list()
         [frametimes.append(self.parent.delta2QTime(msec).toString(self.parent.timeformat)) for msec in positions]
 
         class ThumbWorker(QObject):
@@ -252,10 +248,10 @@ class VideoSlider(QSlider):
                 self.times = times
                 self.size = size
 
+            @pyqtSlot()
             def generate(self):
                 frames = list()
-                for frame in self.times:
-                    frames.append(VideoService.captureFrame(self.media, frame, self.size))
+                [frames.append(VideoService.captureFrame(self.media, frame, self.size)) for frame in self.times]
                 self.completed.emit(frames)
 
         self.thumbsThread = QThread(self)
@@ -322,8 +318,8 @@ class VideoSlider(QSlider):
         if self.parent.mediaAvailable and self.parent.thumbnailsButton.isChecked():
             if self.thumbnailsOn:
                 if self.parent.sliderWidget.count() == 3:
+                    self.parent.sliderWidget.widget(2).hide()
                     self.parent.sliderWidget.widget(1).hide()
-                    self.parent.sliderWidget.widget().hide()
                 self.thumbnailsOn = False
             self.initStyle()
             self.initThumbs()

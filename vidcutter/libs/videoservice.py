@@ -292,7 +292,7 @@ class VideoService(QObject):
         bisections = self.getGOPbisections(source, start, end)
         self.smartcut_jobs[index].output = output
         self.smartcut_jobs[index].allstreams = allstreams
-        # step 1 - start of clip if start time is not a keyframe
+        # ----------------------[ STEP 1 - start of clip if start time is not a keyframe ]-------------------------
         if bisections['start'][1] > bisections['start'][0]:
             self.smartcut_jobs[index].files.append('{0}_start_{1}{2}'.format(output_file, '{0:0>2}'.format(index),
                                                                              output_ext))
@@ -306,11 +306,11 @@ class VideoService(QObject):
                          duration=bisections['start'][1] - start,
                          allstreams=allstreams,
                          vcodec=self.streams.video.codec_name,
-                         run=False)
-            ))
+                         run=False)))
             self.smartcut_jobs[index].procs.update(start=startproc)
             self.smartcut_jobs[index].results.update(start=False)
-        # step 2 - always produce middle segment of clip
+            startproc.start()
+        # ----------------------[ STEP 2 - always produce middle segment of clip ]-------------------------
         self.smartcut_jobs[index].files.append('{0}_middle_{1}{2}'.format(output_file, '{0:0>2}'.format(index),
                                                                           output_ext))
         middleproc = VideoService.initProc(self.backends.ffmpeg, self.smartcheck)
@@ -322,11 +322,11 @@ class VideoService(QObject):
                      frametime=bisections['start'][2],
                      duration=bisections['end'][1] - bisections['start'][2],
                      allstreams=allstreams,
-                     run=False)
-        ))
+                     run=False)))
         self.smartcut_jobs[index].procs.update(middle=middleproc)
         self.smartcut_jobs[index].results.update(middle=False)
-        # step 3 - end of clip if end time is not a keyframe
+        middleproc.start()
+        # ----------------------[ STEP 3 - end of clip if end time is not a keyframe ]-------------------------
         if bisections['end'][2] > bisections['end'][1]:
             self.smartcut_jobs[index].files.append('{0}_end_{1}{2}'.format(output_file, '{0:0>2}'.format(index),
                                                                            output_ext))
@@ -344,7 +344,7 @@ class VideoService(QObject):
             ))
             self.smartcut_jobs[index].procs.update(end=endproc)
             self.smartcut_jobs[index].results.update(end=False)
-        [self.smartcut_jobs[index].procs.get(proc).start() for proc in self.smartcut_jobs[index].procs.keys()]
+            endproc.start()
 
     @pyqtSlot(int, QProcess.ExitStatus)
     def smartcheck(self, code: int, status: QProcess.ExitStatus) -> None:
@@ -576,4 +576,3 @@ class VideoService(QObject):
         if VideoService.frozen:
             return sys._MEIPASS
         return QFileInfo(__file__).absolutePath()
-

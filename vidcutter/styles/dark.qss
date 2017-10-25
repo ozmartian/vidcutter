@@ -85,15 +85,6 @@ QToolBar#appcontrols QToolButton {
     border: none;
 }
 
-QToolBar#appcontrols QToolButton:hover {
-    color: #EAEAEA;
-}
-
-QToolBar#appcontrols QToolButton:pressed {
-    font-weight: 500;
-    color: #EAEAEA;
-}
-
 QToolBar#appcontrols QToolButton:disabled,
 QToolBar#appcontrols QToolButton:disabled#saveButton {
     color: #444;
@@ -196,7 +187,7 @@ QLabel#seeksettingslabel, QLabel#zoomlabel {
 }
 
 QLabel#modalfooter {
-    background-color: rgb(106, 69, 114);
+    background-color: rgba(106, 69, 114, 100);
     color: #FFF;
     margin: 3px;
 }
@@ -270,7 +261,6 @@ QDialog#videoinfo QPushButton, QDialog#notification QPushButton {
 }
 
 #clipindextools QPushButton:hover#clipadd,
-#clipindextools QPushButton:focus#clipadd,
 #clipindextools QPushButton:pressed#clipadd {
     background: #642C68 url(:images/dark/clipindex-add-on.png) no-repeat left center;
 }
@@ -280,7 +270,6 @@ QDialog#videoinfo QPushButton, QDialog#notification QPushButton {
 }
 
 #clipindextools QPushButton:hover#clipremove,
-#clipindextools QPushButton:focus#clipremove,
 #clipindextools QPushButton:pressed#clipremove {
     background: #642C68 url(:images/dark/clipindex-remove-on.png) no-repeat right center;
 }
@@ -292,7 +281,6 @@ QDialog#videoinfo QPushButton, QDialog#notification QPushButton:hover {
 
 QDialogButtonBox QPushButton:focus,
 QDialogButtonBox QPushButton:pressed,
-#clipindextools QPushButton:focus,
 #clipindextools QPushButton:pressed,
 QDialog#videoinfo QPushButton:focus,
 QDialog#videoinfo QPushButton:pressed,
