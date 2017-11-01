@@ -27,7 +27,7 @@ import math
 import os
 
 from PyQt5.QtCore import QSize, Qt
-from PyQt5.QtGui import QCloseEvent, QPixmap, QShowEvent
+from PyQt5.QtGui import QCloseEvent
 from PyQt5.QtWidgets import (QDialog, QDialogButtonBox, QHBoxLayout, QLabel, QPushButton, QSizePolicy, QTextBrowser,
                              QVBoxLayout, qApp)
 
@@ -72,8 +72,8 @@ class VideoInfo(QDialog):
     h1, h2, h3 { color: %s; }
 </style>
 <div align="center">%s</div>''' % ('#C681D5' if self.parent.theme == 'dark' else '#642C68',
-                                                        '#C681D5' if self.parent.theme == 'dark' else '#642C68',
-                                                        self.parent.videoService.mediainfo(self.media))
+                                   '#C681D5' if self.parent.theme == 'dark' else '#642C68',
+                                   self.parent.videoService.mediainfo(self.media))
         content = QTextBrowser(self.parent)
         content.setStyleSheet('QTextBrowser { border: none; background-color: transparent; }')
         content.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)

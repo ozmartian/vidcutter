@@ -106,7 +106,7 @@ class SingleApplication(QApplication):
     def sendMessage(self, msg):
         if not self._outStream:
             return False
-        # noinspection PyStatementEffect
+        # noinspection PyUnresolvedReferences
         self._outStream << msg << '\n'
         self._outStream.flush()
         return self._outSocket.waitForBytesWritten()
