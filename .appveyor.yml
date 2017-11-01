@@ -5,7 +5,7 @@ pull_requests:
 
 branches:
   only:
-  - 4.5.0.DEV
+  - 4.5.0
 
 skip_non_tags: false
 
