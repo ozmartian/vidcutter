@@ -25,7 +25,6 @@
 import codecs
 import os
 import pydoc
-import re
 import subprocess
 import sys
 
@@ -46,14 +45,6 @@ class SetupHelpers:
         if sys.platform == 'win32':
             _dirs = ['vidcutter/libs/pympv/win%s' % SetupHelpers.get_bitness()]
         return _dirs
-
-    @staticmethod
-    def get_value(varname, filename='vidcutter/__init__.py'):
-        with codecs.open(os.path.join(SetupHelpers.here, filename), encoding='utf-8') as initfile:
-            for line in initfile.readlines():
-                m = re.match('__%s__ *= *[\'](.*)[\']' % varname, line)
-                if m:
-                    return m.group(1)
 
     @staticmethod
     def get_description(filename='README.md'):
@@ -157,7 +148,8 @@ if __name__ == '__main__':
     if exe is None:
         sys.stderr.write('Could not find pyrcc5 executable')
         sys.exit(1)
-    subprocess.run('{0} -compress 9 -o "{1}" "{2}"'.format(exe,
-                               os.path.join(os.path.dirname(os.path.abspath(__file__)), 'vidcutter', 'resources.py'),
-                               os.path.join(os.path.dirname(os.path.abspath(__file__)), 'vidcutter', 'resources.qrc')),
+    subprocess.run('{0} -compress 9 -o "{1}" "{2}"'
+                   .format(exe,
+                           os.path.join(os.path.dirname(os.path.abspath(__file__)), 'vidcutter', 'resources.py'),
+                           os.path.join(os.path.dirname(os.path.abspath(__file__)), 'vidcutter', 'resources.qrc')),
                    shell=True)

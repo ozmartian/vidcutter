@@ -24,7 +24,13 @@
 
 __version__ = '4.5.0'
 
+__name__ = 'VidCutter'
+__domain__ = 'ozmartians.com'
+__appid__ = 'vidcutter-CCDC440A-CC57-4BED-8CDE-1DA285976A64'
+
 __author__ = 'Pete Alexandrou'
 __email__ = 'pete@ozmartians.com'
 __website__ = 'https://vidcutter.ozmartians.com'
-__appid__ = 'vidcutter-CCDC440A-CC57-4BED-8CDE-1DA285976A64'
+__bugreport__ = 'https://github.com/ozmartian/vidcutter/issues'
+
+__ispypi__ = False

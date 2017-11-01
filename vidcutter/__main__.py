@@ -25,7 +25,6 @@
 import logging
 import logging.handlers
 import os
-import re
 import signal
 import sys
 import traceback
@@ -38,6 +37,8 @@ from PyQt5.QtWidgets import qApp, QApplication, QMainWindow, QMessageBox, QSizeP
 from vidcutter.libs.singleapplication import SingleApplication
 from vidcutter.videoconsole import ConsoleHandler, ConsoleWidget, VideoLogger
 from vidcutter.videocutter import VideoCutter
+
+import vidcutter
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 signal.signal(signal.SIGTERM, signal.SIG_DFL)
@@ -222,14 +223,6 @@ class MainWindow(QMainWindow):
             return os.path.join(QFileInfo(__file__).absolutePath(), path)
         return ':%s' % path
 
-    @staticmethod
-    def get_package_var(varname: str, filename: str='__init__.py') -> str:
-        with open(MainWindow.get_path(filename, override=True), 'r', encoding='utf-8') as initfile:
-            for line in initfile.readlines():
-                m = re.match('__{0}__ *= *[\'](.*)[\']'.format(varname), line)
-                if m:
-                    return m.group(1)
-
     @pyqtSlot(str)
     def errorHandler(self, msg: str, title: str=None) -> None:
         qApp.restoreOverrideCursor()
@@ -312,10 +305,10 @@ def main():
     if sys.platform == 'darwin':
         QApplication.setStyle('Fusion')
 
-    app = SingleApplication(MainWindow.get_package_var('appid'), sys.argv)
-    app.setApplicationName('VidCutter')
-    app.setApplicationVersion(MainWindow.get_package_var('version'))
-    app.setOrganizationDomain('ozmartians.com')
+    app = SingleApplication(vidcutter.__appid__, sys.argv)
+    app.setApplicationName(vidcutter.__name__)
+    app.setApplicationVersion(vidcutter.__version__)
+    app.setOrganizationDomain(vidcutter.__domain__)
     app.setQuitOnLastWindowClosed(True)
 
     win = MainWindow()

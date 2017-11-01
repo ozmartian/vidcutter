@@ -36,8 +36,6 @@ from PyQt5.QtWidgets import (QAction, qApp, QApplication, QDialogButtonBox, QFil
                              QLabel, QListWidgetItem, QMenu, QMessageBox, QPushButton, QSizePolicy, QStyleFactory,
                              QVBoxLayout, QWidget)
 
-# noinspection PyUnresolvedReferences
-from vidcutter import resources
 from vidcutter.about import About
 from vidcutter.libs.mpvwidget import mpvWidget
 from vidcutter.libs.munch import Munch
@@ -52,6 +50,9 @@ from vidcutter.videolist import VideoList
 from vidcutter.videoslider import VideoSlider, VideoSliderWidget
 from vidcutter.videostyle import VideoStyleDark, VideoStyleLight
 from vidcutter.videotoolbar import VideoToolBar
+
+# noinspection PyUnresolvedReferences
+import vidcutter.resources
 
 if sys.platform.startswith('linux'):
     from vidcutter.libs.taskbarprogress import TaskbarProgress

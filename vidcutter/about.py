@@ -33,6 +33,7 @@ from PyQt5.QtGui import QCloseEvent, QIcon
 from PyQt5.QtWidgets import qApp, QDialog, QDialogButtonBox, QLabel, QTabWidget, QTextBrowser, QVBoxLayout
 from sip import SIP_VERSION_STR
 
+import vidcutter
 import vidcutter.libs.mpv as mpv
 
 
@@ -172,12 +173,12 @@ class AboutTab(BaseTab):
                 <b>SIP:</b> %s
             </p> 
             <p style="font-size:13px;">
-                Copyright &copy; %s <a href="mailto:pete@ozmartians.com">Pete Alexandrou</a>
+                Copyright &copy; %s <a href="mailto:%s">%s</a>
                 <br/>
-                Website: <a href="https://vidcutter.ozmartians.com" target="_blank">https://vidcutter.ozmartians.com</a>
+                Website: <a href="%s" target="_blank">%s</a>
             </p>
             <p style="font-size:13px;">
-                Found a bug? You can <a href="https://github.com/ozmartian/vidcutter/issues">REPORT IT HERE</a>.
+                Found a bug? You can <a href="%s">REPORT IT HERE</a>.
             </p>
             <p style="font-size:11px; margin-top:15px;">
                 This program is free software; you can redistribute it and/or
@@ -193,7 +194,9 @@ class AboutTab(BaseTab):
     </tr>
 </table>''' % ('#EA95FF' if self.parent.parent.theme == 'dark' else '#441D4E',
                self.parent.parent.mpvWidget.mpv.get_property('mpv-version').replace('mpv ', ''), linebreak,
-               ffmpeg_version, sys.version.split(' ')[0], PYQT_VERSION_STR, SIP_VERSION_STR, datetime.now().year)
+               ffmpeg_version, sys.version.split(' ')[0], PYQT_VERSION_STR, SIP_VERSION_STR, datetime.now().year,
+               vidcutter.__email__, vidcutter.__author__, vidcutter.__website__, vidcutter.__website__,
+               vidcutter.__bugreport__)
         self.setHtml(html)
 
 
