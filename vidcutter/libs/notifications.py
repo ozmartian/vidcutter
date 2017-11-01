@@ -42,7 +42,7 @@ class Notification(QDialog):
         self.theme = self.parent.theme
         self.setObjectName('notification')
         self.setWindowModality(Qt.NonModal)
-        self.setMinimumWidth(450)
+        self.setMinimumWidth(550)
         self._title, self._message = '', ''
         self._icons = dict()
         self.buttons = list()
@@ -125,9 +125,6 @@ class Notification(QDialog):
             self.shown.emit()
         self.msgLabel.setText(self._message)
         [self.left_layout.addWidget(btn) for btn in self.buttons]
-        # screen = qApp.desktop().screenNumber(self.parent)
-        # bottomright = qApp.screens()[screen].availableGeometry().bottomRight()
-        # self.setGeometry(bottomright.x() - (459 + 5), bottomright.y() - (156 + 10), 459, 156)
         super(Notification, self).showEvent(event)
 
     def closeEvent(self, event):
@@ -174,7 +171,7 @@ class JobCompleteNotification(Notification):
     </style>
     <div style="margin:20px 10px 0;">
         <h2>%s</h2>
-        <table class="info" cellpadding="2" cellspacing="0" align="left" width="315">
+        <table class="info" cellpadding="2" cellspacing="0" align="left">
             <tr>
                 <td width="20%%" class="label"><b>File:</b></td>
                 <td width="80%%" class="value" nowrap>%s</td>
