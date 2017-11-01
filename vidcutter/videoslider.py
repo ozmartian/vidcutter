@@ -27,9 +27,9 @@ import math
 import sys
 
 from PyQt5.QtCore import QEvent, QObject, QRect, QSize, QThread, Qt, pyqtSignal, pyqtSlot
-from PyQt5.QtGui import QColor, QKeyEvent, QMouseEvent, QPaintEvent, QPainter, QPen, QTransform, QWheelEvent
-from PyQt5.QtWidgets import (qApp, QGraphicsEffect, QHBoxLayout, QLabel, QLayout, QSizePolicy, QSlider, QStackedLayout,
-                             QStackedWidget, QStyle, QStyleOptionSlider, QStylePainter, QWidget)
+from PyQt5.QtGui import QColor, QKeyEvent, QMouseEvent, QPaintEvent, QPainter, QPen, QPixmap, QTransform, QWheelEvent
+from PyQt5.QtWidgets import (qApp, QGraphicsEffect, QGridLayout, QHBoxLayout, QLabel, QLayout, QSizePolicy, QSlider,
+                             QStackedLayout, QStackedWidget, QStyle, QStyleOptionSlider, QStylePainter, QWidget)
 
 from vidcutter.libs.videoservice import VideoService
 
@@ -361,13 +361,27 @@ class VideoSliderWidget(QStackedWidget):
         self.setContentsMargins(0, 0, 0, 0)
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         self.layout().setStackingMode(QStackedLayout.StackAll)
-        self.addWidget(self.slider)
+        self.genlabel = QLabel(self.parent)
+        self.genlabel.setContentsMargins(0, 0, 0, 14)
+        self.genlabel.setPixmap(QPixmap(':/images/generating-thumbs.png'))
+        self.genlabel.setAlignment(Qt.AlignCenter)
+        self.genlabel.hide()
+        sliderLayout = QGridLayout()
+        sliderLayout.setContentsMargins(0, 0, 0, 0)
+        sliderLayout.setSpacing(0)
+        sliderLayout.addWidget(self.slider, 0, 0)
+        sliderLayout.addWidget(self.genlabel, 0, 0)
+        sliderWidget = QWidget(self.parent)
+        sliderWidget.setLayout(sliderLayout)
+        self.addWidget(sliderWidget)
 
     def setLoader(self, enabled: bool=True) -> None:
         if hasattr(self.parent, 'toolbar') and self.parent.mediaAvailable:
             self.parent.toolbar.setEnabled(not enabled)
         self.slider.setEnabled(not enabled)
         self.loaderEffect.setEnabled(enabled)
+        if self.parent.mediaAvailable:
+            self.genlabel.setVisible(enabled)
 
     def hideThumbs(self) -> None:
         if self.count() == 3:
