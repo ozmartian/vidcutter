@@ -244,7 +244,7 @@ class MainWindow(QMainWindow):
             try:
                 if hasattr(self.cutter, 'notify'):
                     self.cutter.notify.fadeOut()
-            except:
+            except BaseException:
                 pass
 
     def dragEnterEvent(self, event: QDragEnterEvent) -> None:
@@ -306,7 +306,7 @@ def main():
         QApplication.setStyle('Fusion')
 
     app = SingleApplication(vidcutter.__appid__, sys.argv)
-    app.setApplicationName(vidcutter.__name__)
+    app.setApplicationName(vidcutter.__appname__)
     app.setApplicationVersion(vidcutter.__version__)
     app.setOrganizationDomain(vidcutter.__domain__)
     app.setQuitOnLastWindowClosed(True)

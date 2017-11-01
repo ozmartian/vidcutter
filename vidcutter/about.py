@@ -151,7 +151,7 @@ class AboutTab(BaseTab):
         # noinspection PyBroadException
         try:
             ffmpeg_version = self.parent.parent.videoService.version()
-        except:
+        except BaseException:
             ffmpeg_version = '<span style="color:red;">MISSING</span>'
         html = '''
 <style>

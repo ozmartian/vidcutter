@@ -36,6 +36,8 @@ from PyQt5.QtWidgets import (QAction, qApp, QApplication, QDialogButtonBox, QFil
                              QLabel, QListWidgetItem, QMenu, QMessageBox, QPushButton, QSizePolicy, QStyleFactory,
                              QVBoxLayout, QWidget)
 
+# noinspection PyUnresolvedReferences
+from vidcutter import resources
 from vidcutter.about import About
 from vidcutter.libs.mpvwidget import mpvWidget
 from vidcutter.libs.munch import Munch
@@ -50,9 +52,6 @@ from vidcutter.videolist import VideoList
 from vidcutter.videoslider import VideoSlider, VideoSliderWidget
 from vidcutter.videostyle import VideoStyleDark, VideoStyleLight
 from vidcutter.videotoolbar import VideoToolBar
-
-# noinspection PyUnresolvedReferences
-import vidcutter.resources
 
 if sys.platform.startswith('linux'):
     from vidcutter.libs.taskbarprogress import TaskbarProgress
@@ -813,7 +812,7 @@ class VideoCutter(QWidget):
             if not self.osdButton.isChecked() and not override:
                 return
             if len(text.strip()):
-                self.mpvWidget.showText(text, duration, 0)
+                self.mpvWidget.showText(text, duration)
 
     def initMediaControls(self, flag: bool=True) -> None:
         self.playAction.setEnabled(flag)
@@ -867,7 +866,7 @@ class VideoCutter(QWidget):
             if not len(self.clipTimes[row][3]):
                 self.seekSlider.selectRegion(row)
                 self.setPosition(self.clipTimes[row][0].msecsSinceStartOfDay())
-        except:
+        except BaseException:
             pass
 
     def muteAudio(self) -> None:

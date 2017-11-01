@@ -60,7 +60,7 @@ if USE_CYTHON:
 try:
     # begin setuptools installer
     result = setup(
-        name=vidcutter.__name__.lower(),
+        name=vidcutter.__appname__.lower(),
         version=vidcutter.__version__,
         author=vidcutter.__author__,
         author_email=vidcutter.__email__,

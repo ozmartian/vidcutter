@@ -24,7 +24,7 @@
 
 __version__ = '4.5.0'
 
-__name__ = 'VidCutter'
+__appname__ = 'VidCutter'
 __domain__ = 'ozmartians.com'
 __appid__ = 'vidcutter-CCDC440A-CC57-4BED-8CDE-1DA285976A64'
 
