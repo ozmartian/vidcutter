@@ -49,8 +49,8 @@ class VideoConfig:
     @property
     def encoding(self) -> dict:
         return {
-            'hevc': 'libx265 -tune zerolatency -preset ultrafast -x265-params crf=20 -qp 4 -flags +cgop',
-            'h264': 'libx264 -tune film -preset ultrafast -x264-params crf=20 -qp 0 -flags +cgop',
+            'hevc': 'libx265 -tune zerolatency -preset ultrafast -x265-params crf=23 -qp 4 -flags +cgop',
+            'h264': 'libx264 -tune film -preset ultrafast -x264-params crf=23 -qp 0 -flags +cgop',
             'vp9': 'libvpx-vp9 -deadline best -quality best'
         }
 
@@ -94,8 +94,14 @@ class VideoConfig:
 class VidCutterException(Exception):
     def __init__(self, msg: str=None):
         super(VidCutterException, self).__init__(msg)
+        self.msg = msg
 
 
 class InvalidMediaException(VidCutterException):
     def __init__(self, msg: str=None):
         super(InvalidMediaException, self).__init__(msg)
+
+
+class FFmpegNotFoundException(VidCutterException):
+    def __init__(self, msg: str=None):
+        super(FFmpegNotFoundException, self).__init__(msg)

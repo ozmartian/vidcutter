@@ -59,7 +59,6 @@ if sys.platform.startswith('linux'):
 
 class VideoCutter(QWidget):
     errorOccurred = pyqtSignal(str)
-    progress = pyqtSignal(str)
 
     timeformat = 'hh:mm:ss.zzz'
     runtimeformat = 'hh:mm:ss'
@@ -75,8 +74,6 @@ class VideoCutter(QWidget):
 
         self.updater = Updater(self.parent)
         self.progressbar = VCProgressBar(self)
-
-        self.progress.connect(self.progressbar.updateProgress)
 
         self.videoService = VideoService(self)
         self.videoService.progress.connect(self.progressbar.updateProgress)
@@ -768,21 +765,7 @@ class VideoCutter(QWidget):
         if not os.path.isfile(filename):
             return
         self.currentMedia = filename
-        try:
-            self.mpvWidget.play(self.currentMedia)
-            self.videoService.setMedia(self.currentMedia)
-            self.initMediaControls(True)
-        except InvalidMediaException:
-            qApp.restoreOverrideCursor()
-            self.initMediaControls(False)
-            self.logger.error('Could not load media file', exc_info=True)
-            QMessageBox.critical(self.parent, 'Could not load media file',
-                                 '<h3>Invalid media file selected</h3><p>All attempts to make sense of the file have '
-                                 'failed. Try viewing it in another media player and if it plays as expected please '
-                                 'report it as a bug. Use the link in the About VidCutter menu option for details '
-                                 'and make sure to include your operating system, video card, the invalid media file '
-                                 'and the version of VidCutter you are currently using.</p>')
-            return
+        self.initMediaControls(True)
         self.cliplist.clear()
         self.clipTimes.clear()
         self.totalRuntime = 0
@@ -799,10 +782,19 @@ class VideoCutter(QWidget):
             self.novideoWidget.deleteLater()
             self.videoplayerWidget.show()
             self.mediaAvailable = True
-        if self.thumbnailsButton.isChecked():
-            self.seekSlider.initThumbs()
-        else:
-            self.sliderWidget.setLoader(False)
+        try:
+            self.videoService.setMedia(self.currentMedia)
+            self.mpvWidget.play(self.currentMedia)
+        except InvalidMediaException:
+            qApp.restoreOverrideCursor()
+            self.initMediaControls(False)
+            self.logger.error('Could not load media file', exc_info=True)
+            QMessageBox.critical(self.parent, 'Could not load media file',
+                                 '<h3>Invalid media file selected</h3><p>All attempts to make sense of the file have '
+                                 'failed. Try viewing it in another media player and if it plays as expected please '
+                                 'report it as a bug. Use the link in the About VidCutter menu option for details '
+                                 'and make sure to include your operating system, video card, the invalid media file '
+                                 'and the version of VidCutter you are currently using.</p>')
 
     def playMedia(self) -> None:
         if self.mpvWidget.mpv.get_property('pause'):
@@ -1101,7 +1093,7 @@ class VideoCutter(QWidget):
             qApp.setOverrideCursor(Qt.WaitCursor)
             self.saveAction.setDisabled(True)
             if self.smartcut:
-                self.showProgress((3 * clips) + clips + 2, True)
+                self.showProgress((3 * clips) + 3, True)
                 self.videoService.smartinit(clips)
                 self.smartcutter(file, source_file, source_ext)
                 return
@@ -1113,8 +1105,8 @@ class VideoCutter(QWidget):
                 if len(clip[3]):
                     filelist.append(clip[3])
                 else:
-                    self.progress.emit('Cutting media clips <b>[{0} / {1}]</b>'
-                                       .format('{0:0>2}'.format(index + 1), '{0:0>2}'.format(clips)))
+                    self.progressbar.updateProgress('Cutting media clips <b>[{0} / {1}]</b>'
+                                                    .format('{0:0>2}'.format(index + 1), '{0:0>2}'.format(clips)))
                     duration = self.delta2QTime(clip[0].msecsTo(clip[1])).toString(self.timeformat)
                     filename = '{0}_{1}{2}'.format(file, '{0:0>2}'.format(index), source_ext)
                     filelist.append(filename)
@@ -1164,7 +1156,7 @@ class VideoCutter(QWidget):
 
     def joinMedia(self, filelist: list) -> None:
         if len(filelist) > 1:
-            self.progress.emit('Joining media clips')
+            self.progressbar.updateProgress('Joining media clips')
             rc = False
             if self.videoService.isMPEGcodec(filelist[0]):
                 self.logger.info('source file is MPEG based so join via MPEG-TS')
@@ -1190,7 +1182,7 @@ class VideoCutter(QWidget):
             QFile.remove(self.finalFilename)
             # noinspection PyCallByClass
             QFile.rename(filename, self.finalFilename)
-        self.progress.emit('Complete! Workspace cleaned and sanitized')
+        self.progressbar.updateProgress('Complete! Workspace cleaned and sanitized')
         if sys.platform.startswith('linux') and self.mediaAvailable:
             QTimer.singleShot(1200, lambda: self.taskbar.setProgress(
                 float(self.seekSlider.value() / self.seekSlider.maximum())))
@@ -1201,7 +1193,7 @@ class VideoCutter(QWidget):
             self.finalFilename,
             self.sizeof_fmt(int(QFileInfo(self.finalFilename).size())),
             self.delta2QTime(self.totalRuntime).toString(self.runtimeformat),
-            self.parent)
+            self)
         self.notify.show()
         if self.smartcut:
             QTimer.singleShot(1000, self.cleanup)

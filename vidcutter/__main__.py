@@ -31,7 +31,7 @@ import sys
 import traceback
 
 from PyQt5.QtCore import (pyqtSlot, QCommandLineOption, QCommandLineParser, QCoreApplication, QDir, QFileInfo,
-                          QProcess, QSettings, QSize, QStandardPaths, Qt)
+                          QProcess, QSettings, QSize, QStandardPaths, QTimerEvent, Qt)
 from PyQt5.QtGui import QCloseEvent, QContextMenuEvent, QDragEnterEvent, QDropEvent, QIcon, QMouseEvent, QResizeEvent
 from PyQt5.QtWidgets import qApp, QApplication, QMainWindow, QMessageBox, QSizePolicy
 
@@ -49,7 +49,7 @@ class MainWindow(QMainWindow):
 
     def __init__(self):
         super(MainWindow, self).__init__()
-        self.video, self.devmode = '', False
+        self.video, self.devmode, self.resizeTimer = '', False, 0
         self.parse_cmdline()
         self.init_settings()
         self.init_logger()
@@ -231,9 +231,9 @@ class MainWindow(QMainWindow):
                     return m.group(1)
 
     @pyqtSlot(str)
-    def errorHandler(self, msg: str) -> None:
+    def errorHandler(self, msg: str, title: str=None) -> None:
         qApp.restoreOverrideCursor()
-        QMessageBox.critical(self, 'An error occurred', msg, QMessageBox.Ok)
+        QMessageBox.critical(self, 'An error occurred' if title is None else title, msg, QMessageBox.Ok)
         logging.error(msg)
 
     def contextMenuEvent(self, event: QContextMenuEvent) -> None:
@@ -266,7 +266,20 @@ class MainWindow(QMainWindow):
     def resizeEvent(self, event: QResizeEvent) -> None:
         try:
             if self.cutter.mediaAvailable and self.cutter.thumbnailsButton.isChecked():
-                self.cutter.seekSlider.reloadThumbs()
+                if self.cutter.seekSlider.thumbnailsOn:
+                    self.cutter.sliderWidget.setLoader(True)
+                    self.cutter.sliderWidget.hideThumbs()
+                if self.resizeTimer:
+                    self.killTimer(self.resizeTimer)
+                self.resizeTimer = self.startTimer(500)
+        except AttributeError:
+            pass
+
+    def timerEvent(self, event: QTimerEvent) -> None:
+        try:
+            self.cutter.seekSlider.reloadThumbs()
+            self.killTimer(self.resizeTimer)
+            self.resizeTimer = 0
         except AttributeError:
             pass
 
@@ -277,7 +290,10 @@ class MainWindow(QMainWindow):
             self.save_settings()
             try:
                 if hasattr(self.cutter.videoService, 'smartcut_jobs'):
-                    self.cutter.videoService.cleanup(self.cutter.videoService.smartcut_job.files)
+                    [
+                        self.cutter.videoService.cleanup(job.files.values())
+                        for job in self.cutter.videoService.smartcut_jobs
+                    ]
                 if hasattr(self.cutter, 'mpvWidget'):
                     self.cutter.mpvWidget.shutdown()
             except AttributeError:

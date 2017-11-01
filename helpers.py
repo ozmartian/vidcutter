@@ -150,6 +150,7 @@ class SetupHelpers:
         https://github.com/ozmartian/vidcutter/releases/latest
 ''')
 
+
 if __name__ == '__main__':
     print('\nRebuilding resource file...\n')
     exe = find_executable('pyrcc5')

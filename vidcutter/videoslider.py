@@ -317,11 +317,7 @@ class VideoSlider(QSlider):
     def reloadThumbs(self) -> None:
         if self.parent.mediaAvailable and self.parent.thumbnailsButton.isChecked():
             if self.thumbnailsOn:
-                if self.parent.sliderWidget.count() == 3:
-                    self.parent.sliderWidget.widget(2).hide()
-                    self.parent.sliderWidget.widget(1).hide()
-                self.thumbnailsOn = False
-            self.initStyle()
+                self.parent.sliderWidget.hideThumbs()
             self.initThumbs()
             self.parent.renderClipIndex()
 
@@ -372,6 +368,13 @@ class VideoSliderWidget(QStackedWidget):
             self.parent.toolbar.setEnabled(not enabled)
         self.slider.setEnabled(not enabled)
         self.loaderEffect.setEnabled(enabled)
+
+    def hideThumbs(self) -> None:
+        if self.count() == 3:
+            self.widget(2).hide()
+            self.widget(1).hide()
+            self.slider.thumbnailsOn = False
+            self.slider.initStyle()
 
     class LoaderEffect(QGraphicsEffect):
         def draw(self, painter: QPainter) -> None:

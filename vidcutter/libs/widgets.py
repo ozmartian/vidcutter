@@ -171,6 +171,7 @@ class VCProgressBar(QDialog):
         super(VCProgressBar, self).__init__(parent, flags)
         self.parent = parent
         self.setWindowModality(Qt.ApplicationModal)
+        self.setStyleSheet('QDialog { border: 2px solid #000; }')
         self._progress = QProgressBar(self)
         self._progress.setRange(0, 0)
         self._progress.setTextVisible(False)
@@ -206,9 +207,6 @@ class VCProgressBar(QDialog):
         self._timerwidget.show()
         # noinspection PyArgumentList
         self.layout().addWidget(self._timerwidget, 1, 0, Qt.AlignHCenter | Qt.AlignTop)
-        # widgetHeight = self._progress.sizeHint().height() + 10
-        # widgetHeight += self._timerwidget.sizeHint().height() + 10
-        # self.setFixedHeight(widgetHeight)
         self._time.start()
         self.updateTimer()
         self._timer.start(1000)
@@ -216,8 +214,6 @@ class VCProgressBar(QDialog):
     def hideTimer(self) -> None:
         self._timerwidget.hide()
         self.layout().removeWidget(self._timerwidget)
-        widgetHeight = self._progress.sizeHint().height() + 20
-        self.setFixedHeight(widgetHeight)
 
     @pyqtSlot()
     def updateTimer(self) -> None:
@@ -261,6 +257,7 @@ class VCProgressBar(QDialog):
     def updateProgress(self, text: str) -> None:
         self.setValue(self._progress.value() + 1)
         self.setText(text)
+        qApp.processEvents()
 
     @pyqtSlot()
     def close(self) -> None:

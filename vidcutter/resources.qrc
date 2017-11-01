@@ -2,6 +2,7 @@
     <qresource prefix="/">
         <file>fonts/FuturaLT.ttf</file>
         <file>fonts/NotoSans.ttc</file>
+        <file>images/complete-play.png</file>
         <file>images/dialog-backdrop.png</file>
         <file>images/dialog-backdrop-02.png</file>
         <file>images/down.png</file>

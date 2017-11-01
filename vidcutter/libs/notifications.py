@@ -42,7 +42,6 @@ class Notification(QDialog):
         self.setWindowModality(Qt.NonModal)
         self.setMinimumWidth(550)
         self._title, self._message = '', ''
-        self._icons = dict()
         self.buttons = list()
         self.msgLabel = QLabel(self)
         self.msgLabel.setWordWrap(True)
@@ -78,14 +77,6 @@ class Notification(QDialog):
     @message.setter
     def message(self, value):
         self._message = value
-
-    @property
-    def icons(self):
-        return self._icons
-
-    @icons.setter
-    def icons(self, value):
-        self._icons = value
 
     @pyqtSlot()
     def fadeOut(self):
@@ -151,7 +142,7 @@ class JobCompleteNotification(Notification):
     </style>
     <div style="margin:20px 10px 0;">
         <h2>%s</h2>
-        <table class="info" cellpadding="2" cellspacing="0" align="left">
+        <table border="0" class="info" cellpadding="2" cellspacing="0" align="left">
             <tr>
                 <td width="20%%" class="label"><b>File:</b></td>
                 <td width="80%%" class="value" nowrap>%s</td>
@@ -167,11 +158,9 @@ class JobCompleteNotification(Notification):
         </table>
     </div>''' % (pencolor, pencolor, ('#EFF0F1' if self.theme == 'dark' else '#222'),
                  self._title, os.path.basename(self.filename), self.filesize, self.runtime)
-        self.icons = {'play': QIcon(':/images/complete-play.png')}
-        playButton = QPushButton(self.icons['play'], 'Play', self)
+        playButton = QPushButton(QIcon(':/images/complete-play.png'), 'Play', self)
         playButton.setFixedWidth(82)
         playButton.clicked.connect(self.playMedia)
-        playButton.setIcon(self.icons['play'])
         playButton.setCursor(Qt.PointingHandCursor)
         self.buttons.append(playButton)
 

@@ -29,7 +29,7 @@ import os
 from PyQt5.QtCore import QSize, Qt
 from PyQt5.QtGui import QCloseEvent, QPixmap, QShowEvent
 from PyQt5.QtWidgets import (QDialog, QDialogButtonBox, QHBoxLayout, QLabel, QPushButton, QSizePolicy, QTextBrowser,
-                             QVBoxLayout)
+                             QVBoxLayout, qApp)
 
 
 class VideoInfo(QDialog):
@@ -102,6 +102,7 @@ class VideoInfo(QDialog):
         self.setLayout(layout)
 
     def showKeyframes(self):
+        qApp.setOverrideCursor(Qt.WaitCursor)
         keyframes = self.parent.videoService.getKeyframes(self.media, formatted_time=True)
         kframes = KeyframesDialog(keyframes, self)
         kframes.show()
@@ -112,23 +113,25 @@ class VideoInfo(QDialog):
 
 
 class KeyframesDialog(QDialog):
-    def __init__(self, keyframes: list, parent=None, flags=Qt.Tool | Qt.WindowCloseButtonHint):
+    def __init__(self, keyframes: list, parent=None, flags=Qt.Tool | Qt.FramelessWindowHint):
         super(KeyframesDialog, self).__init__(parent, flags)
         self.setObjectName('keyframes')
         self.setAttribute(Qt.WA_DeleteOnClose, True)
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         self.setWindowModality(Qt.ApplicationModal)
         self.setWindowTitle('View Keyframes')
+        self.setStyleSheet('QDialog { border: 2px solid #000; }')
         content = QTextBrowser(self)
         content.setStyleSheet('QTextBrowser { border: none; background-color: transparent; }')
         content.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        buttons = QDialogButtonBox(QDialogButtonBox.Ok)
+        buttons = QDialogButtonBox(QDialogButtonBox.Close)
         buttons.accepted.connect(self.close)
+        buttons.rejected.connect(self.close)
         content_headers = '''<style>
                     table td {{
                         font-family: "Futura-Light", sans-serif;
                         font-size: 22px;
-                        font-weight: 500;
+                        font-weight: 600;
                         text-align: center;
                         color: {}
                     }}
@@ -177,3 +180,4 @@ class KeyframesDialog(QDialog):
         layout.addLayout(button_layout)
         self.setLayout(layout)
         self.setMinimumWidth(350)
+        qApp.restoreOverrideCursor()

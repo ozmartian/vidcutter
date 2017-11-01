@@ -68,9 +68,6 @@ class mpvWidget(QOpenGLWidget):
 
         self.mpv.initialize()
 
-        self.mpv.observe_property('time-pos')
-        self.mpv.observe_property('duration')
-
         self.opengl = self.mpv.opengl_cb_api()
         self.opengl.set_update_callback(self.updateHandler)
 
@@ -87,6 +84,8 @@ class mpvWidget(QOpenGLWidget):
 
         self.frameSwapped.connect(self.swapped, Qt.DirectConnection)
 
+        self.mpv.observe_property('time-pos')
+        self.mpv.observe_property('duration')
         self.mpv.set_wakeup_callback(self.eventHandler)
 
     @property
@@ -148,10 +147,12 @@ class mpvWidget(QOpenGLWidget):
                 elif event.id == mpv.Events.property_change:
                     event_prop = event.data
                     if event_prop.name == 'time-pos':
-                        # print('time-pos property event')
+                        if os.getenv('DEBUG', False) or getattr(self.parent, 'verboseLogs', False):
+                            self.logger.info('time-pos property event')
                         self.positionChanged.emit(event_prop.data, self.mpv.get_property('estimated-frame-number'))
                     elif event_prop.name == 'duration':
-                        # print('duration property event')
+                        if os.getenv('DEBUG', False) or getattr(self.parent, 'verboseLogs', False):
+                            self.logger.info('duration property event')
                         self.durationChanged.emit(event_prop.data, self.mpv.get_property('estimated-frame-count'))
             except mpv.MPVError as e:
                 if e.code != -10:
@@ -164,9 +165,8 @@ class mpvWidget(QOpenGLWidget):
         self.mpv.command('show-text', msg, duration * 1000, level)
 
     def play(self, filepath) -> None:
-        if not os.path.isfile(filepath):
-            return
-        self.mpv.command('loadfile', filepath, 'replace')
+        if os.path.isfile(filepath):
+            self.mpv.command('loadfile', filepath, 'replace')
 
     def frameStep(self) -> None:
         self.mpv.command('frame-step')
