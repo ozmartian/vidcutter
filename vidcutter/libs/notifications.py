@@ -23,13 +23,11 @@
 #######################################################################
 
 import os
-import sys
 import time
 
-from PyQt5.QtCore import (pyqtSignal, pyqtSlot, Qt, QEasingCurve, QPropertyAnimation, QSequentialAnimationGroup,
-                          QTimer, QUrl)
+from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QTimer, QUrl
 from PyQt5.QtGui import QDesktopServices, QIcon, QMouseEvent, QPixmap
-from PyQt5.QtWidgets import qApp, QDialog, QGraphicsOpacityEffect, QHBoxLayout, QLabel, QPushButton, QVBoxLayout
+from PyQt5.QtWidgets import qApp, QDialog, QHBoxLayout, QLabel, QPushButton, QVBoxLayout
 
 
 class Notification(QDialog):
@@ -56,22 +54,7 @@ class Notification(QDialog):
         self.left_layout.addWidget(logo_label)
         self.right_layout = QVBoxLayout()
         self.right_layout.addWidget(self.msgLabel)
-        if sys.platform != 'win32':
-            effect = QGraphicsOpacityEffect()
-            effect.setOpacity(1)
-            self.window().setGraphicsEffect(effect)
-            self.animations = QSequentialAnimationGroup(self)
-            self.pauseAnimation = self.animations.addPause(int(self.duration / 2 * 1000))
-            opacityAnimation = QPropertyAnimation(effect, b'opacity', self.animations)
-            opacityAnimation.setDuration(2000)
-            opacityAnimation.setStartValue(1.0)
-            opacityAnimation.setEndValue(0.0)
-            opacityAnimation.setEasingCurve(QEasingCurve.InOutQuad)
-            self.animations.addAnimation(opacityAnimation)
-            self.animations.finished.connect(self.close)
-            self.shown.connect(self.fadeOut)
-        else:
-            self.shown.connect(lambda: QTimer.singleShot(self.duration * 1000, self.fadeOut))
+        self.shown.connect(lambda: QTimer.singleShot(self.duration * 1000, self.fadeOut))
         layout = QHBoxLayout()
         layout.addStretch(1)
         layout.addLayout(self.left_layout)
@@ -106,14 +89,11 @@ class Notification(QDialog):
 
     @pyqtSlot()
     def fadeOut(self):
-        if sys.platform == 'win32':
-            for step in range(100, 0, -10):
-                self.setWindowOpacity(step / 100)
-                qApp.processEvents()
-                time.sleep(0.05)
-            self.close()
-        else:
-            self.animations.start(QSequentialAnimationGroup.DeleteWhenStopped)
+        for step in range(100, 0, -10):
+            self.setWindowOpacity(step / 100)
+            qApp.processEvents()
+            time.sleep(0.05)
+        self.close()
 
     def mousePressEvent(self, event: QMouseEvent):
         if event.button() == Qt.LeftButton:
