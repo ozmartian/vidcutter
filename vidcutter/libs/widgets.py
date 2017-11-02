@@ -224,6 +224,9 @@ class VCProgressBar(QDialog):
         elapsed = '{hrs:02d}:{mins:02d}:{secs:02d}'.format(**locals())
         self._timervalue.setText(elapsed)
 
+    def elapsedTime(self):
+        return self._timervalue.text()
+
     def value(self) -> int:
         return self._progress.value()
 

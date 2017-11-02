@@ -103,12 +103,13 @@ class Notification(QDialog):
 
 
 class JobCompleteNotification(Notification):
-    def __init__(self, filename: str, filesize: str, runtime: str, parent=None):
+    def __init__(self, filename: str, filesize: str, runtime: str, jobtime: str=None, parent=None):
         super(JobCompleteNotification, self).__init__(parent)
         pencolor = '#C681D5' if self.theme == 'dark' else '#642C68'
         self.filename = filename
         self.filesize = filesize
         self.runtime = runtime
+        self.jobtime = jobtime
         self.parent = parent
         self.title = 'Your media file is ready!'
         self.message = '''
@@ -122,11 +123,11 @@ class JobCompleteNotification(Notification):
         table.info {
             margin: 6px;
             padding: 4px 2px;
+            font-family: "Noto Sans UI", sans-serif;
         }
         td {
             padding-top: 5px;
             vertical-align: top;
-            font-size: 14px;
         }
         td.label {
             font-weight: bold;
@@ -134,11 +135,15 @@ class JobCompleteNotification(Notification):
             text-transform: lowercase;
             text-align: right;
             padding-right: 5px;
-            font-family: "Noto Sans UI", sans-serif;
+            font-size: 14px;
         }
         td.value {
             color: %s;
+            font-size: 14px;
         }
+        td.small {
+            font-size: 12px;
+        } 
     </style>
     <div style="margin:20px 10px 0;">
         <h2>%s</h2>
@@ -152,12 +157,21 @@ class JobCompleteNotification(Notification):
                 <td width="80%%" class="value">%s</td>
             </tr>
             <tr>
-                <td width="20%%" class="label"><b>Length:</b></td>
+                <td width="20%%" class="label"><b>Runtime:</b></td>
                 <td width="80%%" class="value">%s</td>
             </tr>
+        ''' % (pencolor, pencolor, ('#EFF0F1' if self.theme == 'dark' else '#222'),
+               self._title, os.path.basename(self.filename), self.filesize, self.runtime)
+        if jobtime is not None:
+            self.message += '''
+            <tr>
+                <td width="20%%" class="label small"><b>Waited:</b></td>
+                <td width="80%%" class="value small">{}</td>
+            </tr>
+            '''.format(self.jobtime)
+        self.message += '''
         </table>
-    </div>''' % (pencolor, pencolor, ('#EFF0F1' if self.theme == 'dark' else '#222'),
-                 self._title, os.path.basename(self.filename), self.filesize, self.runtime)
+    </div>''' 
         playButton = QPushButton(QIcon(':/images/complete-play.png'), 'Play', self)
         playButton.setFixedWidth(82)
         playButton.clicked.connect(self.playMedia)

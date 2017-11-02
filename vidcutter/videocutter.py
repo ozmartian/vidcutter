@@ -711,7 +711,7 @@ class VideoCutter(QWidget):
             self.seekSlider.setRestrictValue(0, False)
             self.inCut = False
             self.newproject = True
-            QTimer.singleShot(2000, lambda: self.selectClip())
+            QTimer.singleShot(2000, self.selectClip)
             qApp.restoreOverrideCursor()
             if project_file != os.path.join(QDir.tempPath(), self.parent.TEMP_PROJECT_FILE):
                 self.showText('Project file loaded')
@@ -856,7 +856,7 @@ class VideoCutter(QWidget):
         self.timeCounter.setDuration(self.delta2QTime(int(duration)).toString(self.timeformat))
         self.frameCounter.setFrameCount(frames)
 
-    @pyqtSlot(QListWidgetItem)
+    @pyqtSlot()
     def selectClip(self, item: QListWidgetItem=None) -> None:
         # noinspection PyBroadException
         try:
@@ -1093,7 +1093,7 @@ class VideoCutter(QWidget):
             qApp.setOverrideCursor(Qt.WaitCursor)
             self.saveAction.setDisabled(True)
             if self.smartcut:
-                self.showProgress((3 * clips) + 3, True)
+                self.showProgress((3 * clips) + 1, True)
                 self.videoService.smartinit(clips)
                 self.smartcutter(file, source_file, source_ext)
                 return
@@ -1188,11 +1188,13 @@ class VideoCutter(QWidget):
                 float(self.seekSlider.value() / self.seekSlider.maximum())))
         qApp.restoreOverrideCursor()
         self.saveAction.setEnabled(True)
+        elapsedtime = self.progressbar.elapsedTime() if self.smartcut else None
         self.progressbar.close()
         self.notify = JobCompleteNotification(
             self.finalFilename,
             self.sizeof_fmt(int(QFileInfo(self.finalFilename).size())),
             self.delta2QTime(self.totalRuntime).toString(self.runtimeformat),
+            elapsedtime,
             self)
         self.notify.show()
         if self.smartcut:

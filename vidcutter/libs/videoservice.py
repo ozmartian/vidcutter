@@ -79,7 +79,8 @@ class VideoService(QObject):
             if hasattr(self.proc, 'errorOccurred'):
                 self.proc.errorOccurred.connect(self.cmdError)
             self.lastError = ''
-            self.media, self.source, self.keyframes = None, None, None
+            self.media, self.source = None, None
+            self.keyframes = []
             self.streams = Munch()
         except FFmpegNotFoundException as e:
             self.logger.exception(e.msg, exc_info=True)
@@ -360,9 +361,6 @@ class VideoService(QObject):
                 self.logger.info('SmartCut progress: {}'.format(self.smartcut_jobs[index].results))
             resultfile = self.smartcut_jobs[index].files.get(name)
             if not self.smartcut_jobs[index].results[name] or os.path.getsize(resultfile) < 1000:
-                # print('exit code: {0}   exit status: {1}'.format(code, status))
-                # import pprint
-                # pprint.pprint(self.smartcut_jobs[index].procs[name].arguments())
                 args = self.smartcut_jobs[index].procs[name].arguments()
                 if '-map' in args:
                     self.logger.info('SmartCut resulted in zero length file, trying again without all stream mapping')
@@ -469,41 +467,43 @@ class VideoService(QObject):
             raise
 
     def getKeyframes(self, source: str, formatted_time: bool=False) -> list:
-        if self.keyframes is not None and source == self.source:
+        if len(self.keyframes) and source == self.source:
             return self.keyframes
-        keyframes = []
         timecode = '0:00:00.000000' if formatted_time else 0
         args = '-v error -show_packets -select_streams v -show_entries packet=pts_time,flags ' \
                '{0}-of csv "{1}"'.format('-sexagesimal ' if formatted_time else '', source)
         result = self.cmdExec(self.backends.ffprobe, args, output=True, suppresslog=True)
+        keyframe_times = []
         # print('keyframes: {}'.format(result))
         for line in result.split('\n'):
             if line.split(',')[1] != 'N/A':
                 timecode = line.split(',')[1]
             if re.search(',K', line):
                 if formatted_time:
-                    keyframes.append(timecode[:-3])
+                    keyframe_times.append(timecode[:-3])
                 else:
-                    keyframes.append(float(timecode))
+                    keyframe_times.append(float(timecode))
         last_keyframe = self.duration().toString('h:mm:ss.zzz')
-        if keyframes[-1] != last_keyframe:
-            keyframes.append(last_keyframe)
-        return keyframes
+        if keyframe_times[-1] != last_keyframe:
+            keyframe_times.append(last_keyframe)
+        if source == self.source:
+            self.keyframes = keyframe_times
+        return keyframe_times
 
     def getGOPbisections(self, source: str, start: float, end: float) -> dict:
-        self.keyframes = self.getKeyframes(source)
-        start_pos = bisect_left(self.keyframes, start)
-        end_pos = bisect_left(self.keyframes, end)
+        keyframes = self.getKeyframes(source)
+        start_pos = bisect_left(keyframes, start)
+        end_pos = bisect_left(keyframes, end)
         return {
             'start': (
-                self.keyframes[start_pos - 1] if start_pos > 0 else self.keyframes[start_pos],
-                self.keyframes[start_pos],
-                self.keyframes[start_pos + 1]
+                keyframes[start_pos - 1] if start_pos > 0 else keyframes[start_pos],
+                keyframes[start_pos],
+                keyframes[start_pos + 1]
             ),
             'end': (
-                self.keyframes[end_pos - 2] if end_pos != (len(self.keyframes) - 1) else self.keyframes[end_pos - 1],
-                self.keyframes[end_pos - 1] if end_pos != (len(self.keyframes) - 1) else self.keyframes[end_pos],
-                self.keyframes[end_pos]
+                keyframes[end_pos - 2] if end_pos != (len(keyframes) - 1) else keyframes[end_pos - 1],
+                keyframes[end_pos - 1] if end_pos != (len(keyframes) - 1) else keyframes[end_pos],
+                keyframes[end_pos]
             )
         }
 
