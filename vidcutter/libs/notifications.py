@@ -39,7 +39,7 @@ class Notification(QDialog):
         self.parent = parent
         self.theme = self.parent.theme
         self.setObjectName('notification')
-        self.setWindowModality(Qt.NonModal)
+        self.setWindowModality(Qt.ApplicationModal)
         self.setMinimumWidth(550)
         self._title, self._message = '', ''
         self.buttons = list()
@@ -114,59 +114,60 @@ class JobCompleteNotification(Notification):
         self.title = 'Your media file is ready!'
         self.message = '''
     <style>
-        h2 {
-            color: %s;
+        h2 {{
+            color: {labelscolor};
             font-family: "Futura-Light", sans-serif;
             font-weight: 500;
             text-align: center;
-        }
-        table.info {
+        }}
+        table.info {{
             margin: 6px;
             padding: 4px 2px;
             font-family: "Noto Sans UI", sans-serif;
-        }
-        td {
+        }}
+        td {{
             padding-top: 5px;
             vertical-align: top;
-        }
-        td.label {
+        }}
+        td.label {{
             font-weight: bold;
-            color: %s;
+            color: {labelscolor};
             text-transform: lowercase;
             text-align: right;
             padding-right: 5px;
             font-size: 14px;
-        }
-        td.value {
-            color: %s;
+        }}
+        td.value {{
+            color: {valuescolor};
             font-size: 14px;
-        }
-        td.small {
-            font-size: 12px;
-        } 
+        }}
     </style>
     <div style="margin:20px 10px 0;">
-        <h2>%s</h2>
+        <h2>{heading}</h2>
         <table border="0" class="info" cellpadding="2" cellspacing="0" align="left">
             <tr>
                 <td width="20%%" class="label"><b>File:</b></td>
-                <td width="80%%" class="value" nowrap>%s</td>
+                <td width="80%%" class="value" nowrap>{filename}</td>
             </tr>
             <tr>
                 <td width="20%%" class="label"><b>Size:</b></td>
-                <td width="80%%" class="value">%s</td>
+                <td width="80%%" class="value">{filesize}</td>
             </tr>
             <tr>
                 <td width="20%%" class="label"><b>Runtime:</b></td>
-                <td width="80%%" class="value">%s</td>
+                <td width="80%%" class="value">{runtime}</td>
             </tr>
-        ''' % (pencolor, pencolor, ('#EFF0F1' if self.theme == 'dark' else '#222'),
-               self._title, os.path.basename(self.filename), self.filesize, self.runtime)
+        '''.format(labelscolor=pencolor,
+                   valuescolor=('#EFF0F1' if self.theme == 'dark' else '#222'),
+                   heading=self._title,
+                   filename=os.path.basename(self.filename),
+                   filesize=self.filesize,
+                   runtime=self.runtime)
         if jobtime is not None:
             self.message += '''
             <tr>
-                <td width="20%%" class="label small"><b>Waited:</b></td>
-                <td width="80%%" class="value small">{}</td>
+                <td width="20%%" class="label"><b>Task:</b></td>
+                <td width="80%%" class="value">{}</td>
             </tr>
             '''.format(self.jobtime)
         self.message += '''

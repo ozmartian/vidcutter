@@ -1194,8 +1194,7 @@ class VideoCutter(QWidget):
             self.finalFilename,
             self.sizeof_fmt(int(QFileInfo(self.finalFilename).size())),
             self.delta2QTime(self.totalRuntime).toString(self.runtimeformat),
-            elapsedtime,
-            self)
+            elapsedtime, self.parent)
         self.notify.show()
         if self.smartcut:
             QTimer.singleShot(1000, self.cleanup)
