@@ -34,7 +34,7 @@ class Notification(QDialog):
     shown = pyqtSignal()
     duration = 10
 
-    def __init__(self, parent=None, f=Qt.Widget | Qt.FramelessWindowHint):
+    def __init__(self, parent=None, f=Qt.Dialog | Qt.FramelessWindowHint):
         super(Notification, self).__init__(parent, f)
         self.parent = parent
         self.theme = self.parent.theme
@@ -103,13 +103,12 @@ class Notification(QDialog):
 
 
 class JobCompleteNotification(Notification):
-    def __init__(self, filename: str, filesize: str, runtime: str, jobtime: str=None, parent=None):
+    def __init__(self, filename: str, filesize: str, runtime: str, parent=None):
         super(JobCompleteNotification, self).__init__(parent)
         pencolor = '#C681D5' if self.theme == 'dark' else '#642C68'
         self.filename = filename
         self.filesize = filesize
         self.runtime = runtime
-        self.jobtime = jobtime
         self.parent = parent
         self.title = 'Your media file is ready!'
         self.message = '''
@@ -157,22 +156,13 @@ class JobCompleteNotification(Notification):
                 <td width="20%%" class="label"><b>Runtime:</b></td>
                 <td width="80%%" class="value">{runtime}</td>
             </tr>
-        '''.format(labelscolor=pencolor,
-                   valuescolor=('#EFF0F1' if self.theme == 'dark' else '#222'),
-                   heading=self._title,
-                   filename=os.path.basename(self.filename),
-                   filesize=self.filesize,
-                   runtime=self.runtime)
-        if jobtime is not None:
-            self.message += '''
-            <tr>
-                <td width="20%%" class="label"><b>Task:</b></td>
-                <td width="80%%" class="value">{}</td>
-            </tr>
-            '''.format(self.jobtime)
-        self.message += '''
         </table>
-    </div>''' 
+    </div>'''.format(labelscolor=pencolor,
+                     valuescolor=('#EFF0F1' if self.theme == 'dark' else '#222'),
+                     heading=self._title,
+                     filename=os.path.basename(self.filename),
+                     filesize=self.filesize,
+                     runtime=self.runtime)
         playButton = QPushButton(QIcon(':/images/complete-play.png'), 'Play', self)
         playButton.setFixedWidth(82)
         playButton.clicked.connect(self.playMedia)

@@ -1108,7 +1108,8 @@ class VideoCutter(QWidget):
             qApp.setOverrideCursor(Qt.WaitCursor)
             self.saveAction.setDisabled(True)
             if self.smartcut:
-                self.showProgress((3 * clips) + 1, True)
+                additionalSteps = 2 if clips > 1 else 1
+                self.showProgress((3 * clips) + additionalSteps, True)
                 self.videoService.smartinit(clips)
                 self.smartcutter(file, source_file, source_ext)
                 return
@@ -1203,16 +1204,16 @@ class VideoCutter(QWidget):
                 float(self.seekSlider.value() / self.seekSlider.maximum())))
         qApp.restoreOverrideCursor()
         self.saveAction.setEnabled(True)
-        elapsedtime = self.progressbar.elapsedTime() if self.smartcut else None
         self.progressbar.close()
         self.notify = JobCompleteNotification(
             self.finalFilename,
             self.sizeof_fmt(int(QFileInfo(self.finalFilename).size())),
             self.delta2QTime(self.totalRuntime).toString(self.runtimeformat),
-            elapsedtime, self.parent)
+            self.parent)
         self.notify.show()
         if self.smartcut:
             QTimer.singleShot(1000, self.cleanup)
+        self.setProjectDirty(False)
 
     @pyqtSlot(str)
     def completeOnError(self, errormsg: str) -> None:
