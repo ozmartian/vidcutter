@@ -277,6 +277,32 @@ class MainWindow(QMainWindow):
             pass
 
     def closeEvent(self, event: QCloseEvent) -> None:
+        try:
+            if self.cutter.mediaAvailable and self.cutter.projectDirty and not self.cutter.projectSaved:
+                savewarn_text = '''
+                    <table border="0" cellpadding="6" cellspacing="0" width="350">
+                        <tr>
+                            <td><b>There are unsaved changes in your project</b></td>
+                        </tr>
+                        <tr>
+                            <td>Would you like to save the project now?</td>
+                        </tr>
+                    </table>'''
+                savewarn = QMessageBox(QMessageBox.Warning, qApp.applicationName(), savewarn_text, parent=self)
+                savebutton = savewarn.addButton('Save Project', QMessageBox.YesRole)
+                savewarn.addButton('Don\'t Save', QMessageBox.NoRole)
+                cancelbutton = savewarn.addButton('Cancel', QMessageBox.RejectRole)
+                savewarn.exec_()
+                res = savewarn.clickedButton()
+                if res == savebutton:
+                    event.ignore()
+                    self.cutter.saveProject()
+                    return
+                elif res == cancelbutton:
+                    event.ignore()
+                    return
+        except AttributeError:
+            pass
         event.accept()
         self.console.deleteLater()
         if hasattr(self, 'cutter'):

@@ -70,6 +70,7 @@ class VideoCutter(QWidget):
         self.parent = parent
         self.theme = self.parent.theme
         self.settings = self.parent.settings
+        self.projectDirty, self.projectSaved = False, False
         self.initTheme()
 
         self.updater = Updater(self.parent)
@@ -128,6 +129,9 @@ class VideoCutter(QWidget):
         self.cliplist = VideoList(self)
         self.cliplist.customContextMenuRequested.connect(self.itemMenu)
         self.cliplist.itemClicked.connect(self.selectClip)
+        self.cliplist.model().rowsInserted.connect(self.setProjectDirty)
+        self.cliplist.model().rowsRemoved.connect(self.setProjectDirty)
+        self.cliplist.model().rowsMoved.connect(self.setProjectDirty)
         self.cliplist.model().rowsMoved.connect(self.syncClipList)
 
         listHeader = QLabel(self)
@@ -585,6 +589,7 @@ class VideoCutter(QWidget):
         tmpItem = self.clipTimes[index]
         del self.clipTimes[index]
         self.clipTimes.insert(index - 1, tmpItem)
+        self.showText('clip moved up')
         self.renderClipIndex()
 
     def moveItemDown(self) -> None:
@@ -592,12 +597,14 @@ class VideoCutter(QWidget):
         tmpItem = self.clipTimes[index]
         del self.clipTimes[index]
         self.clipTimes.insert(index + 1, tmpItem)
+        self.showText('clip moved down')
         self.renderClipIndex()
 
     def removeItem(self) -> None:
         index = self.cliplist.currentRow()
         del self.clipTimes[index]
-        self.showText('clip removed from clip index')
+        self.cliplist.takeItem(index)
+        self.showText('clip removed')
         if self.mediaAvailable:
             if self.inCut and index == self.cliplist.count() - 1:
                 self.inCut = False
@@ -609,7 +616,7 @@ class VideoCutter(QWidget):
     def clearList(self) -> None:
         self.clipTimes.clear()
         self.cliplist.clear()
-        self.showText('clip index cleared')
+        self.showText('all clips cleared')
         if self.mediaAvailable:
             self.inCut = False
             self.initMediaControls(True)
@@ -714,7 +721,7 @@ class VideoCutter(QWidget):
             QTimer.singleShot(2000, self.selectClip)
             qApp.restoreOverrideCursor()
             if project_file != os.path.join(QDir.tempPath(), self.parent.TEMP_PROJECT_FILE):
-                self.showText('Project file loaded')
+                self.showText('Project loaded')
 
     def saveProject(self, reboot: bool=False) -> None:
         if self.currentMedia is None:
@@ -758,6 +765,7 @@ class VideoCutter(QWidget):
                 QTextStream(file) << '{0}\t{1}\t{2}\n'.format(self.delta2String(start_time),
                                                               self.delta2String(stop_time), 0)
             qApp.restoreOverrideCursor()
+            self.projectSaved = True
             if not reboot:
                 self.showText('Project file saved')
 
@@ -766,6 +774,7 @@ class VideoCutter(QWidget):
             return
         self.currentMedia = filename
         self.initMediaControls(True)
+        self.projectDirty, self.projectSaved = False, False
         self.cliplist.clear()
         self.clipTimes.clear()
         self.totalRuntime = 0
@@ -856,6 +865,7 @@ class VideoCutter(QWidget):
         self.timeCounter.setDuration(self.delta2QTime(int(duration)).toString(self.timeformat))
         self.frameCounter.setFrameCount(frames)
 
+    @pyqtSlot(QListWidgetItem)
     @pyqtSlot()
     def selectClip(self, item: QListWidgetItem=None) -> None:
         # noinspection PyBroadException
@@ -1004,6 +1014,10 @@ class VideoCutter(QWidget):
         self.showText('end clip at {}'.format(endtime.toString(self.timeformat)))
         self.renderClipIndex()
 
+    @pyqtSlot()
+    def setProjectDirty(self, dirty: bool=True) -> None:
+        self.projectDirty = dirty
+
     # noinspection PyUnusedLocal,PyUnusedLocal,PyUnusedLocal
     @pyqtSlot(QModelIndex, int, int, QModelIndex, int)
     def syncClipList(self, parent: QModelIndex, start: int, end: int, destination: QModelIndex, row: int) -> None:
@@ -1015,6 +1029,7 @@ class VideoCutter(QWidget):
         self.clipTimes.insert(index, clip)
         if not len(clip[3]):
             self.seekSlider.switchRegions(start, index)
+        self.showText('clip order updated')
 
     def renderClipIndex(self) -> None:
         self.cliplist.clear()
@@ -1032,7 +1047,7 @@ class VideoCutter(QWidget):
                 externalCount += 1
             else:
                 listitem.setToolTip('Drag to reorder clips')
-            listitem.setStatusTip('Reorder clips with drag and drop or right-click menu')
+            listitem.setStatusTip('Reorder clips with mouse drag & drop or right-click menu on the clip to be moved')
             listitem.setTextAlignment(Qt.AlignVCenter)
             listitem.setData(Qt.DecorationRole + 1, clip[2])
             listitem.setData(Qt.DisplayRole + 1, clip[0].toString(self.timeformat))

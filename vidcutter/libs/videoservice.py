@@ -263,8 +263,8 @@ class VideoService(QObject):
             args = '-v error -i "{}" -ss {} -t {} -c:v {} -c:a copy -c:s copy {}-avoid_negative_ts 1 ' \
                    '-copyinkf -y "{}"'.format(source, frametime, duration, encode_options, stream_map, output)
         else:
-            args = '-ss {} -i "{}" -t {} -c copy {}-avoid_negative_ts 1 -copyinkf -y "{}"' \
-                   .format(frametime, source, duration, stream_map, output)
+            args = '-v error -ss {} -t {} -i "{}" -c copy {}-avoid_negative_ts 1 -copyinkf -y "{}"' \
+                   .format(frametime, duration, source, stream_map, output)
         if run:
             result = self.cmdExec(self.backends.ffmpeg, args)
             if not result or os.path.getsize(output) < 1000:
