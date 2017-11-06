@@ -61,13 +61,13 @@ if exist "dist\vidcutter.exe" (
     .\verpatch.exe dist\vidcutter.exe /va %APPVER%.0 /pv %APPVER%.0 /s desc "VidCutter" /s name "VidCutter" /s copyright "(c) 2017 Pete Alexandrou" /s product "VidCutter %BINARCH%" /s company "ozmartians.com"
 
     REM ................sign frozen EXE with self-assigned certificate..........
-    "C:\Program Files (x86)\Windows Kits\10\bin\%BINARCH%\signtool.exe" sign /f "C:\Users\ozmartian\Documents\pgpkey\code-sign.pfx" /t http://timestamp.comodoca.com/authenticode /p %PASS% dist\vidcutter.exe
+    "C:\Program Files (x86)\Windows Kits\10\bin\10.0.16299.0\%BINARCH%\signtool.exe" sign /f "C:\Users\ozmartian\Documents\pgpkey\code-sign.pfx" /t http://timestamp.comodoca.com/authenticode /p %PASS% dist\vidcutter.exe
 
     REM ......................call Inno Setup installer build script......................
     cd ..\InnoSetup
     REM ......................remove post strings from version number so that its M$ valid......................
     SET APPVER=%APPVER:.DEV=%.0
-    call "C:\Program Files (x86)\Inno Setup 5\iscc.exe" ""/DAppVersion=%APPVER%"" /Ssigntool="""C:\Program Files (x86)\Windows Kits\10\bin\%BINARCH%\signtool.exe"" sign /f ""C:\Users\ozmartian\Documents\pgpkey\code-sign.pfx"" /t http://timestamp.comodoca.com/authenticode /p %PASS% $f" installer_%BINARCH%.signed.iss
+    call "C:\Program Files (x86)\Inno Setup 5\iscc.exe" ""/DAppVersion=%APPVER%"" /Ssigntool="""C:\Program Files (x86)\Windows Kits\10\bin\10.0.16299.0\%BINARCH%\signtool.exe"" sign /f ""C:\Users\ozmartian\Documents\pgpkey\code-sign.pfx"" /t http://timestamp.comodoca.com/authenticode /p %PASS% $f" installer_%BINARCH%.signed.iss
 
     cd ..\pyinstaller
 )
