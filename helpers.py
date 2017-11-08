@@ -78,6 +78,16 @@ class SetupHelpers:
         return files
 
     @staticmethod
+    def get_latest_win32_libmpv():
+        from urllib.request import urlopen
+        import xmltodict
+        xml = urlopen('https://sourceforge.net/projects/mpv-player-windows/rss?path=/libmpv').read()
+        data = xml.decode('utf-8')
+        datadict = xmltodict.parse(data)
+        link = datadict['rss']['channel']['item'][0]['title']
+        print(link)
+
+    @staticmethod
     def pip_notes():
         os.system('cls' if sys.platform == 'win32' else 'clear')
         pydoc.pager('''
@@ -143,13 +153,16 @@ class SetupHelpers:
 
 
 if __name__ == '__main__':
-    print('\nRebuilding resource file...\n')
-    exe = find_executable('pyrcc5')
-    if exe is None:
-        sys.stderr.write('Could not find pyrcc5 executable')
-        sys.exit(1)
-    subprocess.run('{0} -compress 9 -o "{1}" "{2}"'
-                   .format(exe,
-                           os.path.join(os.path.dirname(os.path.abspath(__file__)), 'vidcutter', 'resources.py'),
-                           os.path.join(os.path.dirname(os.path.abspath(__file__)), 'vidcutter', 'resources.qrc')),
-                   shell=True)
+    if len(sys.argv[1]):
+        getattr(SetupHelpers, sys.argv[1])()
+    else:
+        print('\nRebuilding resource file...\n')
+        exe = find_executable('pyrcc5')
+        if exe is None:
+            sys.stderr.write('Could not find pyrcc5 executable')
+            sys.exit(1)
+        subprocess.run('{0} -compress 9 -o "{1}" "{2}"'
+                       .format(exe,
+                               os.path.join(os.path.dirname(os.path.abspath(__file__)), 'vidcutter', 'resources.py'),
+                               os.path.join(os.path.dirname(os.path.abspath(__file__)), 'vidcutter', 'resources.qrc')),
+                       shell=True)

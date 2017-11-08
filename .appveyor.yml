@@ -33,7 +33,7 @@ install:
   - echo Installing latest pip + setuptools...
   - C:\Python36-x64\python.exe -m pip install -U pip setuptools
   - echo Installing PyQt5 and PyOpenGL C:\Python36-x64\python.exe wheels via pip...
-  - C:\Python36-x64\python.exe -m pip install PyQt5 PyOpenGL PyOpenGL-accelerate PyInstaller
+  - C:\Python36-x64\python.exe -m pip install PyQt5 PyOpenGL PyOpenGL-accelerate PyInstaller xmltodict
   # - echo Installing latest git checkout of PyInstaller...
   # - C:\Python36-x64\python.exe -m pip install git+https://github.com/pyinstaller/pyinstaller.git@develop
   - echo Setting up libmpv build subfolders...
@@ -46,9 +46,11 @@ install:
   - echo Build Cython/C extension for libmpv binding...
   - C:\Python36-x64\python.exe setup.py build_ext -i
   - appveyor PushArtifact vidcutter\libs\mpv.cp36-win_amd64.pyd
+  - echo Retrieve URL for latest available version of libmpv
+  - for /f "delims=" %%a in ('C:\Python36-x64\python.exe helpers.py get_latest_win32_libmpv') do @set LIBMPV=%%a
   - echo Downloading latest libmpv 64-bit build...
   # - curl -L -fsS -o _build\pyinstaller\temp\mpv-dev.7z https://mpv.srsfckn.biz/mpv-dev-20170718.7z
-  - curl -L -fsS -o _build\pyinstaller\temp\mpv-dev.7z https://downloads.sourceforge.net/project/mpv-player-windows/libmpv/mpv-dev-x86_64-20170930-git-052ae53.7z
+  - curl -L -fsS -o _build\pyinstaller\temp\mpv-dev.7z https://downloads.sourceforge.net/project/mpv-player-windows%LIBMPV%
   - cd _build/pyinstaller/temp
   - 7z e mpv-dev.7z mpv-1.dll -o"..\libmpv\64\"
   - echo Copy DLLs from Windows for ANGLE Direct3D engine support..
@@ -60,7 +62,7 @@ install:
   - call build.pyinstaller.win.bat 64
   - echo.
   - cd ..\InnoSetup\Output
-  - appveyor PushArtifact VidCutter-4.5.0.0-setup-win64.exe
+  - appveyor PushArtifact VidCutter-*-setup-win64.exe
   - echo.
   - echo SUCCESS
   - appveyor exit
@@ -71,7 +73,7 @@ nuget:
 test: off
 
 artifacts:
- - path: C:\projects\vidcutter\_build\InnoSetup\Output\VidCutter-4.5.0.0-setup-win64.exe
+ - path: C:\projects\vidcutter\_build\InnoSetup\Output\VidCutter-*-setup-win64.exe
    name: Windows Installers
    type: File
 
