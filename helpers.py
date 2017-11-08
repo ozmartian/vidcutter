@@ -153,7 +153,7 @@ class SetupHelpers:
 
 
 if __name__ == '__main__':
-    if len(sys.argv[1]):
+    if len(sys.argv) > 1:
         getattr(SetupHelpers, sys.argv[1])()
     else:
         print('\nRebuilding resource file...\n')
