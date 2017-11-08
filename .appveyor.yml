@@ -73,12 +73,12 @@ nuget:
 test: off
 
 artifacts:
- - path: C:\projects\vidcutter\_build\InnoSetup\Output\VidCutter-*-setup-win64.exe
-   name: Windows Installers
+ - path: '_build\InnoSetup\Output\VidCutter-*-setup-win64.exe'
+   name: Windows Installer
    type: File
 
- - path: C:\projects\vidcutter\vidcutter\libs\*.pyd
-   name: Extension Modules
+ - path: 'vidcutter\libs\*.pyd'
+   name: Extension Module
    type: zip
 
 # on_finish:
