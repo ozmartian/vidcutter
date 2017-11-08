@@ -55,7 +55,6 @@
         <file>images/dark/info-active.png</file>
         <file>images/dark/info-disabled.png</file>
         <file>images/dark/info-hover.png</file>
-        <file>images/dark/mediainfo-heading.png</file>
         <file>images/dark/menu.png</file>
         <file>images/dark/menu-active.png</file>
         <file>images/dark/menu-hover.png</file>
@@ -110,7 +109,6 @@
         <file>images/light/info-active.png</file>
         <file>images/light/info-disabled.png</file>
         <file>images/light/info-hover.png</file>
-        <file>images/light/mediainfo-heading.png</file>
         <file>images/light/menu.png</file>
         <file>images/light/menu-active.png</file>
         <file>images/light/menu-hover.png</file>

@@ -364,10 +364,9 @@ class VideoService(QObject):
                 args = self.smartcut_jobs[index].procs[name].arguments()
                 if '-map' in args:
                     self.logger.info('SmartCut resulted in zero length file, trying again without all stream mapping')
-                    for arg in {'-map'}:
-                        pos = args.index(arg)
-                        args.remove(arg)
-                        del args[pos]
+                    pos = args.index('-map')
+                    args.remove('-map')
+                    del args[pos]
                     self.smartcut_jobs[index].procs[name].setArguments(args)
                     self.smartcut_jobs[index].procs[name].started.disconnect()
                     self.smartcut_jobs[index].procs[name].start()

@@ -95,8 +95,6 @@ class VideoInfo(QDialog):
         button_layout.addWidget(keyframesButton)
         button_layout.addWidget(okButton)
         layout = QVBoxLayout()
-        # noinspection PyArgumentList
-        # layout.addWidget(QLabel(pixmap=QPixmap(':/images/%s/mediainfo-heading.png' % self.parent.theme)))
         layout.addWidget(content)
         layout.addLayout(button_layout)
         self.setLayout(layout)
@@ -150,7 +148,6 @@ class KeyframesDialog(QDialog):
             table {{
                font-family: "Noto Sans UI", sans-serif;
                font-size: 13px;
-               margin-top:-10px;
            }}
            td {{
                text-align: center;
@@ -174,7 +171,6 @@ class KeyframesDialog(QDialog):
         button_layout.addWidget(totalLabel, 1)
         button_layout.addWidget(buttons, 0)
         layout = QVBoxLayout()
-        layout.setSpacing(15)
         layout.addWidget(headers)
         layout.addWidget(content)
         layout.addLayout(button_layout)

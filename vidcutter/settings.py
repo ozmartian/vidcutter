@@ -506,7 +506,7 @@ class SettingsDialog(QDialog):
         self.categories.currentItemChanged.connect(self.changePage)
         self.categories.setCurrentRow(0)
         self.categories.setMaximumWidth(self.categories.sizeHintForColumn(0) + 2)
-        self.setMinimumWidth(620)
+        self.setMinimumWidth(650 if sys.platform == 'darwin' else 620)
         if sys.platform != 'win32':
             self.adjustSize()
 
