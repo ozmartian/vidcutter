@@ -45,7 +45,7 @@ install:
   - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
   - echo Build Cython/C extension for libmpv binding...
   - C:\Python36-x64\python.exe setup.py build_ext -i
-  # - appveyor PushArtifact vidcutter\libs\mpv.cp36-win_amd64.pyd
+  - appveyor PushArtifact vidcutter\libs\mpv.cp36-win_amd64.pyd
   - echo Retrieve URL for latest available version of libmpv
   - for /f "delims=" %%a in ('C:\Python36-x64\python.exe helpers.py get_latest_win32_libmpv') do @set LIBMPV=%%a
   - echo Downloading latest libmpv 64-bit build...
@@ -60,9 +60,9 @@ install:
   - cd ..
   # - for /f "delims=" %%a in ('C:\Python36-x64\python.exe version.py') do @set APPVER=%%a
   - call build.pyinstaller.win.bat 64
-  # - echo.
-  # - cd ..\InnoSetup\Output
-  # - appveyor PushArtifact VidCutter-*-setup-win64.exe
+  - echo.
+  - cd ..\InnoSetup\Output
+  - appveyor PushArtifact VidCutter-4.5.0-setup-win64.exe
   - echo.
   - echo SUCCESS
   - appveyor exit
@@ -72,14 +72,14 @@ nuget:
 
 test: off
 
-artifacts:
- - path: '_build\InnoSetup\Output\VidCutter-*-setup-win64.exe'
-   name: Windows Installer
-   type: File
-
- - path: 'vidcutter\libs\*.pyd'
-   name: Extension Module
-   type: zip
+#artifacts:
+# - path: '_build\InnoSetup\Output\VidCutter-*-setup-win64.exe'
+#   name: Windows Installer
+#   type: File
+#
+# - path: 'vidcutter\libs\*.pyd'
+#   name: Extension Module
+#   type: zip
 
 # on_finish:
 #  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
