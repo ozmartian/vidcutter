@@ -127,23 +127,19 @@ class MainWindow(QMainWindow):
         sys.excepthook = MainWindow.log_uncaught_exceptions
 
     def init_settings(self) -> None:
-        if sys.platform == 'darwin':
-            QSettings.setDefaultFormat(QSettings.IniFormat)
-            self.settings = QSettings(self)
-        else:
-            try:
-                settings_path = QStandardPaths.writableLocation(QStandardPaths.AppConfigLocation).lower()
-            except AttributeError:
-                if sys.platform == 'win32':
-                    settings_path = os.path.join(QDir.homePath(), 'AppData', 'Local', qApp.applicationName().lower())
-                elif sys.platform == 'darwin':
-                    settings_path = os.path.join(QDir.homePath(), 'Library', 'Preferences',
-                                                 qApp.applicationName()).lower()
-                else:
-                    settings_path = os.path.join(QDir.homePath(), '.config', qApp.applicationName()).lower()
-            os.makedirs(settings_path, exist_ok=True)
-            settings_file = '%s.ini' % qApp.applicationName().lower()
-            self.settings = QSettings(os.path.join(settings_path, settings_file), QSettings.IniFormat)
+        try:
+            settings_path = QStandardPaths.writableLocation(QStandardPaths.AppConfigLocation).lower()
+        except AttributeError:
+            if sys.platform == 'win32':
+                settings_path = os.path.join(QDir.homePath(), 'AppData', 'Local', qApp.applicationName().lower())
+            elif sys.platform == 'darwin':
+                settings_path = os.path.join(QDir.homePath(), 'Library', 'Preferences',
+                                             qApp.applicationName()).lower()
+            else:
+                settings_path = os.path.join(QDir.homePath(), '.config', qApp.applicationName()).lower()
+        os.makedirs(settings_path, exist_ok=True)
+        settings_file = '%s.ini' % qApp.applicationName().lower()
+        self.settings = QSettings(os.path.join(settings_path, settings_file), QSettings.IniFormat)
         if self.settings.value('geometry') is not None:
             self.restoreGeometry(self.settings.value('geometry'))
         if self.settings.value('windowState') is not None:
