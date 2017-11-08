@@ -26,7 +26,7 @@ import os
 import time
 
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QTimer, QUrl
-from PyQt5.QtGui import QDesktopServices, QIcon, QMouseEvent, QPixmap
+from PyQt5.QtGui import QDesktopServices, QIcon, QMouseEvent
 from PyQt5.QtWidgets import qApp, QDialog, QHBoxLayout, QLabel, QPushButton, QVBoxLayout
 
 
@@ -34,7 +34,7 @@ class Notification(QDialog):
     shown = pyqtSignal()
     duration = 10
 
-    def __init__(self, parent=None, f=Qt.Dialog | Qt.FramelessWindowHint):
+    def __init__(self, icon: str, parent=None, f=Qt.Dialog | Qt.FramelessWindowHint):
         super(Notification, self).__init__(parent, f)
         self.parent = parent
         self.theme = self.parent.theme
@@ -45,10 +45,8 @@ class Notification(QDialog):
         self.buttons = list()
         self.msgLabel = QLabel(self)
         self.msgLabel.setWordWrap(True)
-        logo = QPixmap(82, 82)
-        logo.load(':/images/vidcutter-small.png', 'PNG')
-        logo_label = QLabel(self)
-        logo_label.setPixmap(logo)
+        logo_label = QLabel('<img src="{}" width="82" />'.format(icon), self)
+        logo_label.setFixedSize(82, 82)
         self.left_layout = QVBoxLayout()
         self.left_layout.addWidget(logo_label)
         self.right_layout = QVBoxLayout()
@@ -97,14 +95,15 @@ class Notification(QDialog):
         self.msgLabel.setText(self._message)
         [self.left_layout.addWidget(btn) for btn in self.buttons]
         super(Notification, self).showEvent(event)
+        self.adjustSize()
 
     def closeEvent(self, event):
         self.deleteLater()
 
 
 class JobCompleteNotification(Notification):
-    def __init__(self, filename: str, filesize: str, runtime: str, parent=None):
-        super(JobCompleteNotification, self).__init__(parent)
+    def __init__(self, filename: str, filesize: str, runtime: str, icon: str, parent=None):
+        super(JobCompleteNotification, self).__init__(icon, parent)
         pencolor = '#C681D5' if self.theme == 'dark' else '#642C68'
         self.filename = filename
         self.filesize = filesize
@@ -141,28 +140,26 @@ class JobCompleteNotification(Notification):
             font-size: 14px;
         }}
     </style>
-    <div style="margin:20px 10px 0;">
-        <h2>{heading}</h2>
-        <table border="0" class="info" cellpadding="2" cellspacing="0" align="left">
-            <tr>
-                <td width="20%%" class="label"><b>File:</b></td>
-                <td width="80%%" class="value" nowrap>{filename}</td>
-            </tr>
-            <tr>
-                <td width="20%%" class="label"><b>Size:</b></td>
-                <td width="80%%" class="value">{filesize}</td>
-            </tr>
-            <tr>
-                <td width="20%%" class="label"><b>Runtime:</b></td>
-                <td width="80%%" class="value">{runtime}</td>
-            </tr>
-        </table>
-    </div>'''.format(labelscolor=pencolor,
-                     valuescolor=('#EFF0F1' if self.theme == 'dark' else '#222'),
-                     heading=self._title,
-                     filename=os.path.basename(self.filename),
-                     filesize=self.filesize,
-                     runtime=self.runtime)
+    <h2>{heading}</h2>
+    <table border="0" class="info" cellpadding="2" cellspacing="0" align="left">
+        <tr>
+            <td width="20%%" class="label"><b>File:</b></td>
+            <td width="80%%" class="value" nowrap>{filename}</td>
+        </tr>
+        <tr>
+            <td width="20%%" class="label"><b>Size:</b></td>
+            <td width="80%%" class="value">{filesize}</td>
+        </tr>
+        <tr>
+            <td width="20%%" class="label"><b>Runtime:</b></td>
+            <td width="80%%" class="value">{runtime}</td>
+        </tr>
+    </table>'''.format(labelscolor=pencolor,
+                       valuescolor=('#EFF0F1' if self.theme == 'dark' else '#222'),
+                       heading=self._title,
+                       filename=os.path.basename(self.filename),
+                       filesize=self.filesize,
+                       runtime=self.runtime)
         playButton = QPushButton(QIcon(':/images/complete-play.png'), 'Play', self)
         playButton.setFixedWidth(82)
         playButton.clicked.connect(self.playMedia)

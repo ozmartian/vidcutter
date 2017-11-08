@@ -260,7 +260,7 @@ class VideoService(QObject):
         stream_map = '-map 0 ' if allstreams else ''
         if vcodec is not None:
             encode_options = VideoService.config.encoding.get(vcodec, vcodec)
-            args = '-v error -i "{}" -ss {} -t {} -c:v {} -c:a copy -c:s copy {}-avoid_negative_ts 1 ' \
+            args = '-v 32 -i "{}" -ss {} -t {} -c:v {} -c:a copy -c:s copy {}-avoid_negative_ts 1 ' \
                    '-copyinkf -y "{}"'.format(source, frametime, duration, encode_options, stream_map, output)
         else:
             args = '-v error -ss {} -t {} -i "{}" -c copy {}-avoid_negative_ts 1 -copyinkf -y "{}"' \
@@ -278,8 +278,8 @@ class VideoService(QObject):
                     return False
             return True
         else:
-            # if os.getenv('DEBUG', False) or getattr(self.parent, 'verboseLogs', False):
-            #     self.logger.info(args)
+            if os.getenv('DEBUG', False) or getattr(self.parent, 'verboseLogs', False):
+                self.logger.info(args)
             return args
 
     def smartinit(self, clips: int):
@@ -555,13 +555,13 @@ class VideoService(QObject):
         return result.strip()
 
     def cmdExec(self, cmd: str, args: str=None, output: bool=False, suppresslog: bool=False):
-        if os.getenv('DEBUG', False) or getattr(self.parent, 'verboseLogs', False):
-            self.logger.info('{0} {1}'.format(cmd, args if args is not None else ''))
         if self.proc.state() == QProcess.NotRunning:
             if cmd == self.backends.mediainfo:
                 self.proc.setProcessChannelMode(QProcess.SeparateChannels)
-            if cmd == self.backends.ffmpeg:
+            if cmd in {self.backends.ffmpeg, self.backends.ffprobe}:
                 args = '-hide_banner {}'.format(args)
+            if os.getenv('DEBUG', False) or getattr(self.parent, 'verboseLogs', False):
+                self.logger.info('{0} {1}'.format(cmd, args if args is not None else ''))
             self.proc.start(cmd, shlex.split(args))
             self.proc.readyReadStandardOutput.connect(
                 partial(self.cmdOut, self.proc.readAllStandardOutput().data().decode().strip()))

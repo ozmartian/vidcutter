@@ -28,9 +28,10 @@ import re
 import sys
 import time
 from datetime import timedelta
+from typing import Union
 
-from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize, Qt, QTextStream,
-                          QTime, QTimer, QUrl)
+from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QBuffer, QByteArray, QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize,
+                          Qt, QTextStream, QTime, QTimer, QUrl)
 from PyQt5.QtGui import QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMovie, QPixmap
 from PyQt5.QtWidgets import (QAction, qApp, QApplication, QDialogButtonBox, QFileDialog, QGroupBox, QHBoxLayout,
                              QLabel, QListWidgetItem, QMenu, QMessageBox, QPushButton, QSizePolicy, QStyleFactory,
@@ -1209,8 +1210,9 @@ class VideoCutter(QWidget):
             self.finalFilename,
             self.sizeof_fmt(int(QFileInfo(self.finalFilename).size())),
             self.delta2QTime(self.totalRuntime).toString(self.runtimeformat),
+            self.getAppIcon(encoded=True),
             self.parent)
-        self.notify.show()
+        self.notify.exec_()
         if self.smartcut:
             QTimer.singleShot(1000, self.cleanup)
         self.setProjectDirty(False)
@@ -1281,6 +1283,20 @@ class VideoCutter(QWidget):
     def showProgress(self, steps: int, timer: bool=False) -> None:
         self.progressbar.reset(steps, timer)
         self.progressbar.show()
+
+    @staticmethod
+    def getAppIcon(encoded: bool = False) -> Union[QIcon, str]:
+        icon = QIcon.fromTheme(qApp.applicationName().lower(), QIcon(':/images/vidcutter-small.png'))
+        if not encoded:
+            return icon
+        iconimg = icon.pixmap(82, 82).toImage()
+        data = QByteArray()
+        buffer = QBuffer(data)
+        buffer.open(QBuffer.WriteOnly)
+        iconimg.save(buffer, 'PNG')
+        base64enc = str(data.toBase64().data(), 'latin1')
+        icon = 'data:vidcutter.png;base64,{}'.format(base64enc)
+        return icon
 
     @staticmethod
     def sizeof_fmt(num: float, suffix: chr = 'B') -> str:

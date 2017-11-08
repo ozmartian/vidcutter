@@ -28,8 +28,8 @@ import sys
 from datetime import datetime
 
 from PyQt5.Qt import PYQT_VERSION_STR
-from PyQt5.QtCore import QBuffer, QByteArray, QSize, Qt, QUrl
-from PyQt5.QtGui import QCloseEvent, QIcon
+from PyQt5.QtCore import QSize, Qt, QUrl
+from PyQt5.QtGui import QCloseEvent
 from PyQt5.QtWidgets import qApp, QDialog, QDialogButtonBox, QLabel, QTabWidget, QTextBrowser, QVBoxLayout
 from sip import SIP_VERSION_STR
 
@@ -47,17 +47,7 @@ class About(QDialog):
         builddate = datetime.fromtimestamp(os.path.getmtime(mpv.__file__)).strftime('%d %b %Y')
         pencolor1 = '#9A45A2' if self.parent.theme == 'dark' else '#642C68'
         pencolor2 = '#FFF' if self.parent.theme == 'dark' else '#000'
-        # use theme app icon image if one exists
-        appicon = ':/images/vidcutter-small.png'
-        if QIcon.hasThemeIcon(qApp.applicationName().lower()):
-            themeicon = QIcon.fromTheme(qApp.applicationName().lower(), QIcon(appicon))
-            themeimg = themeicon.pixmap(82, 82).toImage()
-            data = QByteArray()
-            buffer = QBuffer(data)
-            buffer.open(QBuffer.WriteOnly)
-            themeimg.save(buffer, 'PNG')
-            base64enc = str(data.toBase64().data(), 'latin1')
-            appicon = 'data:vidcutter.png;base64,%s' % base64enc
+        appicon = self.parent.getAppIcon(encoded=True)
         header = QLabel('''
         <style>table { color: %s; background-color: transparent; }</style>
         <table border="0" cellpadding="5" cellspacing="1" width="100%%">

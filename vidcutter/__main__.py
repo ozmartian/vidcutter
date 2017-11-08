@@ -31,7 +31,7 @@ import traceback
 
 from PyQt5.QtCore import (pyqtSlot, QCommandLineOption, QCommandLineParser, QCoreApplication, QDir, QFileInfo,
                           QProcess, QSettings, QSize, QStandardPaths, QTimerEvent, Qt)
-from PyQt5.QtGui import QCloseEvent, QContextMenuEvent, QDragEnterEvent, QDropEvent, QIcon, QMouseEvent, QResizeEvent
+from PyQt5.QtGui import QCloseEvent, QContextMenuEvent, QDragEnterEvent, QDropEvent, QMouseEvent, QResizeEvent
 from PyQt5.QtWidgets import qApp, QApplication, QMainWindow, QMessageBox, QSizePolicy
 
 from vidcutter.libs.singleapplication import SingleApplication
@@ -193,8 +193,8 @@ class MainWindow(QMainWindow):
     def init_cutter(self) -> None:
         self.cutter = VideoCutter(self)
         self.cutter.errorOccurred.connect(self.errorHandler)
-        qApp.setWindowIcon(QIcon.fromTheme(qApp.applicationName().lower(), QIcon(':/images/vidcutter.png')))
         self.setCentralWidget(self.cutter)
+        qApp.setWindowIcon(VideoCutter.getAppIcon(encoded=False))
 
     @staticmethod
     def get_bitness() -> int:
