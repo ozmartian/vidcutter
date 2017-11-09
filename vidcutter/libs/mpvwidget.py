@@ -196,9 +196,8 @@ class mpvWidget(QOpenGLWidget):
         return self.mpv.get_property(prop)
 
     def _exitFullScreen(self) -> None:
-        self.showNormal()
         self.setParent(self.originalParent)
-        self.parent.toggleFullscreen()
+        self.showNormal()
 
     def changeEvent(self, event: QEvent) -> None:
         if event.type() == QEvent.WindowStateChange and self.isFullScreen():
@@ -211,21 +210,22 @@ class mpvWidget(QOpenGLWidget):
         self.mpv.set_option('osd-align-x', 'left')
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
-        if self.isFullScreen():
-            if event.key() in {Qt.Key_Escape, Qt.Key_F}:
+        if event.key() in {Qt.Key_F, Qt.Key_Escape}:
+            event.accept()
+            if self.isFullScreen():
                 self._exitFullScreen()
-                event.accept()
-            else:
-                self.originalParent.keyPressEvent(event)
-        super(mpvWidget, self).keyPressEvent(event)
+            self.parent.toggleFullscreen()
+        elif self.isFullScreen():
+            self.parent.keyPressEvent(event)
+        else:
+            super(mpvWidget, self).keyPressEvent(event)
 
     def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
+        event.accept()
         if self.isFullScreen():
             self._exitFullScreen()
-        else:
-            self.parent.toggleFullscreen()
-        event.accept()
-        super(mpvWidget, self).mouseDoubleClickEvent(event)
+        self.parent.toggleFullscreen()
+        # super(mpvWidget, self).mouseDoubleClickEvent(event)
 
     def wheelEvent(self, event: QWheelEvent) -> None:
         self.parent.seekSlider.wheelEvent(event)

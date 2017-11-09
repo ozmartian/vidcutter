@@ -1338,8 +1338,8 @@ class VideoCutter(QWidget):
                 self.playMedia()
                 return
 
-            if event.key() == Qt.Key_F:
-                self.toggleFullscreen()
+            if event.key() in {Qt.Key_F, Qt.Key_Escape}:
+                self.mpvWidget.keyPressEvent(event)
                 return
 
             if event.key() == Qt.Key_Home:
