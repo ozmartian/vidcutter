@@ -42,8 +42,8 @@ class Notification(QDialog):
         self.setWindowModality(Qt.ApplicationModal)
         self.setMinimumWidth(550)
         self._title, self._message = '', ''
-        self.buttons = list()
-        self.msgLabel = QLabel(self)
+        self.buttons = []
+        self.msgLabel = QLabel(self._message, self)
         self.msgLabel.setWordWrap(True)
         logo_label = QLabel('<img src="{}" width="82" />'.format(icon), self)
         logo_label.setFixedSize(82, 82)
@@ -74,6 +74,7 @@ class Notification(QDialog):
     
     @message.setter
     def message(self, value):
+        self.msgLabel.setText(value)
         self._message = value
 
     @pyqtSlot()
@@ -92,10 +93,8 @@ class Notification(QDialog):
     def showEvent(self, event):
         if self.isVisible():
             self.shown.emit()
-        self.msgLabel.setText(self._message)
         [self.left_layout.addWidget(btn) for btn in self.buttons]
         super(Notification, self).showEvent(event)
-        self.adjustSize()
 
     def closeEvent(self, event):
         self.deleteLater()
