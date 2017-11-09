@@ -204,7 +204,11 @@ class mpvWidget(QOpenGLWidget):
         if event.type() == QEvent.WindowStateChange and self.isFullScreen():
             self.mpv.set_option('osd-align-x', 'center')
             self.showText('Press ESC key to exit full screen')
-            QTimer.singleShot(6500, lambda: self.mpv.set_option('osd-align-x', 'left'))
+            QTimer.singleShot(5000, self.resetOSD)
+
+    def resetOSD(self) -> None:
+        self.showText('')
+        self.mpv.set_option('osd-align-x', 'left')
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
         if self.isFullScreen():
