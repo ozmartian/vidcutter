@@ -27,9 +27,11 @@ import math
 import sys
 
 from PyQt5.QtCore import QEvent, QObject, QRect, QSize, QThread, Qt, pyqtSignal, pyqtSlot
-from PyQt5.QtGui import QColor, QKeyEvent, QMouseEvent, QPaintEvent, QPainter, QPen, QPixmap, QTransform, QWheelEvent
-from PyQt5.QtWidgets import (qApp, QGraphicsEffect, QGridLayout, QHBoxLayout, QLabel, QLayout, QSizePolicy, QSlider,
-                             QStackedLayout, QStackedWidget, QStyle, QStyleOptionSlider, QStylePainter, QWidget)
+from PyQt5.QtGui import (QColor, QKeyEvent, QMouseEvent, QPaintEvent, QPainter, QPalette, QPen, QPixmap, QTransform,
+                         QWheelEvent)
+from PyQt5.QtWidgets import (qApp, QGraphicsEffect, QGridLayout, QHBoxLayout, QLabel, QLayout, QProgressBar,
+                             QSizePolicy, QSlider, QStackedLayout, QStackedWidget, QStyle, QStyleFactory,
+                             QStyleOptionSlider, QStylePainter, QWidget)
 
 from vidcutter.libs.videoservice import VideoService
 
@@ -70,7 +72,8 @@ class VideoSlider(QSlider):
         QSlider::handle:horizontal:hover {{
             background: transparent url(:images/{handleImageSelected}) no-repeat top center;
         }}'''
-        self._regions = list()
+        self.progressbars = []
+        self._regions = []
         self._regionHeight = 32
         self._regionSelected = -1
         self._cutStarted = False
@@ -190,14 +193,15 @@ class VideoSlider(QSlider):
                 x += 15
         opt.subControls = QStyle.SC_SliderGroove
         painter.drawComplexControl(QStyle.CC_Slider, opt)
-        for rect in self._regions:
-            rect.setY(int((self.height() - self._regionHeight) / 2) - 8)
-            rect.setHeight(self._regionHeight)
-            brushcolor = QColor(150, 190, 78, 200) if self._regions.index(rect) == self._regionSelected \
-                else QColor(237, 242, 255, 200)
-            painter.setBrush(brushcolor)
-            painter.setPen(QColor(50, 50, 50, 170))
-            painter.drawRect(rect)
+        if not len(self.progressbars):
+            for rect in self._regions:
+                rect.setY(int((self.height() - self._regionHeight) / 2) - 8)
+                rect.setHeight(self._regionHeight)
+                brushcolor = QColor(150, 190, 78, 200) if self._regions.index(rect) == self._regionSelected \
+                    else QColor(237, 242, 255, 200)
+                painter.setBrush(brushcolor)
+                painter.setPen(QColor(50, 50, 50, 170))
+                painter.drawRect(rect)
         opt.activeSubControls = opt.subControls = QStyle.SC_SliderHandle
         painter.drawComplexControl(QStyle.CC_Slider, opt)
 
@@ -219,11 +223,44 @@ class VideoSlider(QSlider):
     def selectRegion(self, clipindex: int) -> None:
         self._regionSelected = clipindex
         self.update()
+        # if clipindex != -1:
+        #     self.showProgress()
+        #     self.startProgress()
 
     def clearRegions(self) -> None:
         self._regions.clear()
         self._regionSelected = -1
         self.update()
+
+    def showProgress(self) -> None:
+        for rect in self._regions:
+            progress = SliderProgress(self)
+            progress.setGeometry(rect)
+            progress.show()
+            self.progressbars.append(progress)
+
+    def startProgress(self) -> None:
+        self.parent.parent.setEnabled(False)
+        self.grabMouse()
+        self.grabKeyboard()
+        self.blockSignals(True)
+        import time
+        for x in range(6):
+            for progress in self.progressbars:
+                progress.setValue(x * 20)
+            time.sleep(1)
+        self.clearProgress()
+
+    def clearProgress(self) -> None:
+        for progress in self.progressbars:
+            progress.hide()
+            progress.deleteLater()
+        qApp.processEvents()
+        self.progressbars.clear()
+        self.blockSignals(False)
+        self.releaseMouse()
+        self.releaseKeyboard()
+        self.parent.parent.setEnabled(True)
 
     def initThumbs(self) -> None:
         framesize = self.parent.videoService.framesize()
@@ -401,3 +438,13 @@ class VideoSliderWidget(QStackedWidget):
             painter.drawRect(pixmap.rect())
             painter.setOpacity(0.2)
             painter.drawPixmap(offset, pixmap)
+
+
+class SliderProgress(QProgressBar):
+    def __init__(self, parent=None):
+        super(SliderProgress, self).__init__(parent)
+        self.setStyle(QStyleFactory.create('Fusion'))
+        self.setRange(0, 100)
+        palette = self.palette()
+        palette.setColor(QPalette.Highlight, QColor(100, 44, 104))
+        self.setPalette(palette)
