@@ -276,14 +276,21 @@ class MainWindow(QMainWindow):
         try:
             if self.cutter.mediaAvailable and self.cutter.projectDirty and not self.cutter.projectSaved:
                 savewarn_text = '''
+                    <style>
+                        h2 {{
+                            color: {};
+                            font-family: "Futura-Light", sans-serif;
+                            font-weight: 400;
+                        }}
+                    </style>
                     <table border="0" cellpadding="6" cellspacing="0" width="350">
                         <tr>
-                            <td><b>There are unsaved changes in your project</b></td>
+                            <td><h2>There are unsaved changes in your project</h2></td>
                         </tr>
                         <tr>
                             <td>Would you like to save the project now?</td>
                         </tr>
-                    </table>'''
+                    </table>'''.format('#C681D5' if self.theme == 'dark' else '#642C68')
                 savewarn = QMessageBox(QMessageBox.Warning, qApp.applicationName(), savewarn_text, parent=self)
                 savebutton = savewarn.addButton('Save Project', QMessageBox.YesRole)
                 savewarn.addButton('Don\'t Save', QMessageBox.NoRole)
