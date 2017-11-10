@@ -32,6 +32,7 @@ from PyQt5.QtWidgets import qApp, QDialog, QHBoxLayout, QLabel, QPushButton, QVB
 
 class Notification(QDialog):
     shown = pyqtSignal()
+    closed = pyqtSignal()
     duration = 10
 
     def __init__(self, icon: str, parent=None, f=Qt.Dialog | Qt.FramelessWindowHint):
@@ -82,7 +83,7 @@ class Notification(QDialog):
         for step in range(100, 0, -10):
             self.setWindowOpacity(step / 100)
             qApp.processEvents()
-            time.sleep(0.05)
+            time.sleep(0.1)
         self.close()
 
     def mousePressEvent(self, event: QMouseEvent):
@@ -97,6 +98,7 @@ class Notification(QDialog):
         super(Notification, self).showEvent(event)
 
     def closeEvent(self, event):
+        self.closed.emit()
         self.deleteLater()
 
 

@@ -1115,16 +1115,19 @@ class VideoCutter(QWidget):
                 self.videoService.smartinit(clips)
                 self.smartcutter(file, source_file, source_ext)
                 return
-            steps = clips + 2
-            self.showProgress(steps, False)
+            steps = 3 if clips > 1 else 2
+            # self.showProgress(steps, False)
+            self.seekSlider.lockGUI(True)
+            self.seekSlider.showProgress(steps)
             filename, filelist = '', []
             for clip in self.clipTimes:
                 index = self.clipTimes.index(clip)
+                self.seekSlider.updateProgress(index)
                 if len(clip[3]):
                     filelist.append(clip[3])
                 else:
-                    self.progressbar.updateProgress('Cutting media clips <b>[{0} / {1}]</b>'
-                                                    .format('{0:0>2}'.format(index + 1), '{0:0>2}'.format(clips)))
+                    # self.progressbar.updateProgress('Cutting media clips <b>[{0} / {1}]</b>'
+                    #                                 .format('{0:0>2}'.format(index + 1), '{0:0>2}'.format(clips)))
                     duration = self.delta2QTime(clip[0].msecsTo(clip[1])).toString(self.timeformat)
                     filename = '{0}_{1}{2}'.format(file, '{0:0>2}'.format(index), source_ext)
                     filelist.append(filename)
@@ -1174,7 +1177,8 @@ class VideoCutter(QWidget):
 
     def joinMedia(self, filelist: list) -> None:
         if len(filelist) > 1:
-            self.progressbar.updateProgress('Joining media clips')
+            # self.progressbar.updateProgress('Joining media clips')
+            self.seekSlider.updateProgress()
             rc = False
             if self.videoService.isMPEGcodec(filelist[0]):
                 self.logger.info('source file is MPEG based so join via MPEG-TS')
@@ -1200,19 +1204,22 @@ class VideoCutter(QWidget):
             QFile.remove(self.finalFilename)
             # noinspection PyCallByClass
             QFile.rename(filename, self.finalFilename)
-        self.progressbar.updateProgress('Complete! Workspace cleaned and sanitized')
+        # self.progressbar.updateProgress('Complete! Workspace cleaned and sanitized')
+        self.seekSlider.updateProgress()
         if sys.platform.startswith('linux') and self.mediaAvailable:
             QTimer.singleShot(1200, lambda: self.taskbar.setProgress(
                 float(self.seekSlider.value() / self.seekSlider.maximum())))
         qApp.restoreOverrideCursor()
         self.saveAction.setEnabled(True)
-        self.progressbar.close()
+        # self.progressbar.close()
+        self.seekSlider.lockGUI(False)
         self.notify = JobCompleteNotification(
             self.finalFilename,
             self.sizeof_fmt(int(QFileInfo(self.finalFilename).size())),
             self.delta2QTime(self.totalRuntime).toString(self.runtimeformat),
             self.getAppIcon(encoded=True),
             self.parent)
+        self.notify.closed.connect(self.seekSlider.clearProgress)
         self.notify.exec_()
         if self.smartcut:
             QTimer.singleShot(1000, self.cleanup)

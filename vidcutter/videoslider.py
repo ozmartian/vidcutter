@@ -221,44 +221,45 @@ class VideoSlider(QSlider):
     def selectRegion(self, clipindex: int) -> None:
         self._regionSelected = clipindex
         self.update()
-        # if clipindex != -1:
-        #     self.showProgress()
-        #     self.startProgress()
 
     def clearRegions(self) -> None:
         self._regions.clear()
         self._regionSelected = -1
         self.update()
 
-    def showProgress(self) -> None:
+    def showProgress(self, steps: int) -> None:
         for rect in self._regions:
-            progress = SliderProgress(self)
-            progress.setGeometry(rect)
-            progress.show()
+            progress = SliderProgress(steps, rect, self)
             self.progressbars.append(progress)
 
-    def startProgress(self) -> None:
-        self.parent.parent.setEnabled(False)
-        self.grabMouse()
-        self.grabKeyboard()
-        self.blockSignals(True)
-        import time
-        for x in range(6):
-            for progress in self.progressbars:
-                progress.setValue(x * 20)
-            time.sleep(1)
-        self.clearProgress()
+    @pyqtSlot()
+    def updateProgress(self, region: int=None) -> None:
+        # [print('pre-update value: {}'.format(progress.value())) for progress in self.progressbars]
+        if region is None:
+            [progress.setValue(progress.value() + 1) for progress in self.progressbars]
+        else:
+            self.progressbars[region].setValue(self.progressbars[region].value() + 1)
+        # [print('post-update value: {}'.format(progress.value())) for progress in self.progressbars]
 
+    @pyqtSlot()
     def clearProgress(self) -> None:
         for progress in self.progressbars:
             progress.hide()
             progress.deleteLater()
         qApp.processEvents()
         self.progressbars.clear()
-        self.blockSignals(False)
-        self.releaseMouse()
-        self.releaseKeyboard()
-        self.parent.parent.setEnabled(True)
+
+    def lockGUI(self, locked: bool) -> None:
+        if locked:
+            self.parent.parent.setEnabled(False)
+            self.grabMouse()
+            self.grabKeyboard()
+            self.blockSignals(True)
+        else:
+            self.blockSignals(False)
+            self.releaseMouse()
+            self.releaseKeyboard()
+            self.parent.parent.setEnabled(True)
 
     def initThumbs(self) -> None:
         framesize = self.parent.videoService.framesize()
@@ -386,10 +387,13 @@ class VideoSlider(QSlider):
 
 
 class SliderProgress(QProgressBar):
-    def __init__(self, parent=None):
+    def __init__(self, steps: int, geometry: QRect, parent=None):
         super(SliderProgress, self).__init__(parent)
         self.setStyle(QStyleFactory.create('Fusion'))
-        self.setRange(0, 100)
+        self.setRange(0, steps)
+        self.setValue(0)
+        self.setGeometry(geometry)
         palette = self.palette()
         palette.setColor(QPalette.Highlight, QColor(100, 44, 104))
         self.setPalette(palette)
+        self.show()
