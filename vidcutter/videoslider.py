@@ -221,9 +221,9 @@ class VideoSlider(QSlider):
     def selectRegion(self, clipindex: int) -> None:
         self._regionSelected = clipindex
         self.update()
-        if clipindex != -1:
-            self.showProgress()
-            self.startProgress()
+        # if clipindex != -1:
+        #     self.showProgress()
+        #     self.startProgress()
 
     def clearRegions(self) -> None:
         self._regions.clear()
