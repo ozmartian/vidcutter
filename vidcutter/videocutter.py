@@ -50,7 +50,8 @@ from vidcutter.settings import SettingsDialog
 from vidcutter.updater import Updater
 from vidcutter.videoinfo import VideoInfo
 from vidcutter.videolist import VideoList
-from vidcutter.videoslider import VideoSlider, VideoSliderWidget
+from vidcutter.videoslider import VideoSlider
+from vidcutter.videosliderwidget import VideoSliderWidget
 from vidcutter.videostyle import VideoStyleDark, VideoStyleLight
 from vidcutter.videotoolbar import VideoToolBar
 
