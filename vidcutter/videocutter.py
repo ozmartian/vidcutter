@@ -1218,7 +1218,7 @@ class VideoCutter(QWidget):
             self.sizeof_fmt(int(QFileInfo(self.finalFilename).size())),
             self.delta2QTime(self.totalRuntime).toString(self.runtimeformat),
             self.getAppIcon(encoded=True),
-            self.parent)
+            self)
         self.notify.closed.connect(self.seekSlider.clearProgress)
         self.notify.exec_()
         if self.smartcut:
