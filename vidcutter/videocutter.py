@@ -45,7 +45,7 @@ from vidcutter.libs.munch import Munch
 from vidcutter.libs.notifications import JobCompleteNotification
 from vidcutter.libs.videoconfig import InvalidMediaException
 from vidcutter.libs.videoservice import VideoService
-from vidcutter.libs.widgets import ClipErrorsDialog, FrameCounter, TimeCounter, VCProgressBar, VolumeSlider
+from vidcutter.libs.widgets import ClipErrorsDialog, FrameCounter, TimeCounter, VolumeSlider
 from vidcutter.settings import SettingsDialog
 from vidcutter.updater import Updater
 from vidcutter.videoinfo import VideoInfo
@@ -72,20 +72,27 @@ class VideoCutter(QWidget):
         self.parent = parent
         self.theme = self.parent.theme
         self.settings = self.parent.settings
+        self.currentMedia, self.mediaAvailable, self.mpvError = None, False, False
         self.projectDirty, self.projectSaved = False, False
         self.initTheme()
 
         self.updater = Updater(self.parent)
-        self.progressbar = VCProgressBar(self)
+        # self.progressbar = VCProgressBar(self)
+
+        self.seekSlider = VideoSlider(self)
+        self.seekSlider.sliderMoved.connect(self.setPosition)
+        self.sliderWidget = VideoSliderWidget(self, self.seekSlider)
+        self.sliderWidget.setLoader(True)
 
         self.videoService = VideoService(self)
-        self.videoService.progress.connect(self.progressbar.updateProgress)
+        # self.videoService.progress.connect(self.progressbar.updateProgress)
+        self.videoService.progress.connect(self.seekSlider.updateProgress)
         self.videoService.finished.connect(self.smartmonitor)
         self.videoService.error.connect(self.completeOnError)
 
         if sys.platform.startswith('linux'):
             self.taskbar = TaskbarProgress(self)
-            self.progressbar.taskbarprogress.connect(self.taskbar.setProgress)
+            # self.progressbar.taskbarprogress.connect(self.taskbar.setProgress)
 
         self.latest_release_url = 'https://github.com/ozmartian/vidcutter/releases/latest'
 
@@ -94,7 +101,6 @@ class VideoCutter(QWidget):
         self.finalFilename = ''
         self.totalRuntime, self.frameRate = 0, 0
         self.notifyInterval = 1000
-        self.currentMedia, self.mediaAvailable, self.mpvError = None, False, False
 
         self.enableOSD = self.settings.value('enableOSD', 'on', type=str) in {'on', 'true'}
         self.hardwareDecoding = self.settings.value('hwdec', 'on', type=str) in {'on', 'auto'}
@@ -120,11 +126,6 @@ class VideoCutter(QWidget):
 
         self.appMenu, self.clipindex_removemenu, self.clipindex_contextmenu = QMenu(self), QMenu(self), QMenu(self)
         self.initMenus()
-
-        self.seekSlider = VideoSlider(self)
-        self.seekSlider.sliderMoved.connect(self.setPosition)
-        self.sliderWidget = VideoSliderWidget(self, self.seekSlider)
-        self.sliderWidget.setLoader(True)
 
         self.initNoVideo()
 
@@ -1110,8 +1111,9 @@ class VideoCutter(QWidget):
             qApp.setOverrideCursor(Qt.WaitCursor)
             self.saveAction.setDisabled(True)
             if self.smartcut:
-                additionalSteps = 2 if clips > 1 else 1
-                self.showProgress((3 * clips) + additionalSteps, True)
+                # additionalSteps = 2 if clips > 1 else 1
+                # self.showProgress((3 * clips) + additionalSteps, True)
+                self.seekSlider.showProgress(6 if clips > 1 else 5)
                 self.videoService.smartinit(clips)
                 self.smartcutter(file, source_file, source_ext)
                 return
@@ -1206,9 +1208,9 @@ class VideoCutter(QWidget):
             QFile.rename(filename, self.finalFilename)
         # self.progressbar.updateProgress('Complete! Workspace cleaned and sanitized')
         self.seekSlider.updateProgress()
-        if sys.platform.startswith('linux') and self.mediaAvailable:
-            QTimer.singleShot(1200, lambda: self.taskbar.setProgress(
-                float(self.seekSlider.value() / self.seekSlider.maximum())))
+        # if sys.platform.startswith('linux') and self.mediaAvailable:
+        #     QTimer.singleShot(1200, lambda: self.taskbar.setProgress(
+        #         float(self.seekSlider.value() / self.seekSlider.maximum())))
         qApp.restoreOverrideCursor()
         self.saveAction.setEnabled(True)
         # self.progressbar.close()
@@ -1230,10 +1232,11 @@ class VideoCutter(QWidget):
         if self.smartcut:
             self.videoService.smartabort()
             QTimer.singleShot(1500, self.cleanup)
-        self.progressbar.close()
-        if sys.platform.startswith('linux') and self.mediaAvailable:
-            QTimer.singleShot(1200, lambda: self.taskbar.setProgress(
-                float(self.seekSlider.value() / self.seekSlider.maximum())))
+        # self.progressbar.close()
+        self.seekSlider.clearProgress()
+        # if sys.platform.startswith('linux') and self.mediaAvailable:
+        #     QTimer.singleShot(1200, lambda: self.taskbar.setProgress(
+        #         float(self.seekSlider.value() / self.seekSlider.maximum())))
         self.saveAction.setEnabled(True)
         self.parent.errorHandler(errormsg)
 
@@ -1288,9 +1291,9 @@ class VideoCutter(QWidget):
         appInfo = About(self)
         appInfo.exec_()
 
-    def showProgress(self, steps: int, timer: bool=False) -> None:
-        self.progressbar.reset(steps, timer)
-        self.progressbar.show()
+    # def showProgress(self, steps: int, timer: bool=False) -> None:
+    #     self.progressbar.reset(steps, timer)
+    #     self.progressbar.show()
 
     @staticmethod
     def getAppIcon(encoded: bool = False) -> Union[QIcon, str]:

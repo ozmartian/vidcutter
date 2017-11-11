@@ -233,6 +233,7 @@ class VideoSlider(QSlider):
             self.progressbars.append(progress)
 
     @pyqtSlot()
+    @pyqtSlot(int)
     def updateProgress(self, region: int=None) -> None:
         # [print('pre-update value: {}'.format(progress.value())) for progress in self.progressbars]
         if region is None:
