@@ -109,8 +109,8 @@ class About(QDialog):
     @staticmethod
     def get_size(mode: str = 'NORMAL') -> QSize:
         modes = {
-            'LOW': QSize(450, 250),
-            'NORMAL': QSize(515, 480),
+            'LOW': QSize(450, 300),
+            'NORMAL': QSize(515, 505),
             'HIGH': QSize(1080, 920)
         }
         return modes[mode]
@@ -169,6 +169,11 @@ class AboutTab(BaseTab):
             </p>
             <p style="font-size:13px;">
                 Found a bug? You can <a href="%s">REPORT IT HERE</a>.
+            </p>
+            <p style="font-size:12px;">
+                Built in Python with the help of <a href="https://www.jetbrains.com/pycharm">PyCharm Professional</a>
+                using an open-source development license donated by its wickedly cool creators at
+                <a href="https://www.jetbrains.com">JetBrains</a>.
             </p>
             <p style="font-size:11px; margin-top:15px;">
                 This program is free software; you can redistribute it and/or
