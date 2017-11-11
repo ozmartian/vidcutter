@@ -376,7 +376,7 @@ class VideoSlider(QSlider):
         qApp.sendEvent(self.parent, event)
 
     def eventFilter(self, obj: QObject, event: QMouseEvent) -> bool:
-        if event.type() == QEvent.MouseButtonRelease:
+        if event.type() == QEvent.MouseButtonRelease and event.button() == Qt.LeftButton:
             if self.parent.mediaAvailable and self.isEnabled():
                 newpos = QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.x() - self.offset,
                                                         self.width() - (self.offset * 2))
