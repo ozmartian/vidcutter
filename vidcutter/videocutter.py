@@ -1113,6 +1113,7 @@ class VideoCutter(QWidget):
             if self.smartcut:
                 # additionalSteps = 2 if clips > 1 else 1
                 # self.showProgress((3 * clips) + additionalSteps, True)
+                self.seekSlider.lockGUI(True)
                 self.seekSlider.showProgress(6 if clips > 1 else 5)
                 self.videoService.smartinit(clips)
                 self.smartcutter(file, source_file, source_ext)
@@ -1233,6 +1234,7 @@ class VideoCutter(QWidget):
             self.videoService.smartabort()
             QTimer.singleShot(1500, self.cleanup)
         # self.progressbar.close()
+        self.seekSlider.lockGUI(False)
         self.seekSlider.clearProgress()
         # if sys.platform.startswith('linux') and self.mediaAvailable:
         #     QTimer.singleShot(1200, lambda: self.taskbar.setProgress(
