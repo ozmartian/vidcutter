@@ -26,10 +26,10 @@ import logging
 import math
 import sys
 
-from PyQt5.QtCore import QEvent, QObject, QRect, QSize, QThread, Qt, pyqtSignal, pyqtSlot
+from PyQt5.QtCore import QEvent, QObject, QPoint, QRect, QSize, QThread, Qt, pyqtSignal, pyqtSlot
 from PyQt5.QtGui import QColor, QKeyEvent, QMouseEvent, QPaintEvent, QPalette, QPen, QWheelEvent
 from PyQt5.QtWidgets import (qApp, QHBoxLayout, QLabel, QLayout, QProgressBar, QSizePolicy, QSlider, QStyle,
-                             QStyleFactory, QStyleOptionSlider, QStylePainter, QWidget)
+                             QStyleFactory, QStyleOptionSlider, QStylePainter, QToolTip, QWidget)
 
 from vidcutter.libs.videoservice import VideoService
 
@@ -75,6 +75,7 @@ class VideoSlider(QSlider):
         self._regionHeight = 32
         self._regionSelected = -1
         self._cutStarted = False
+        self._showSeekToolTip = True
         self.showThumbs = True
         self.thumbnailsOn = False
         self.offset = 8
@@ -155,6 +156,15 @@ class VideoSlider(QSlider):
     def on_valueChanged(self, value: int) -> None:
         if value < self.restrictValue:
             self.setSliderPosition(self.restrictValue)
+        if self._showSeekToolTip:
+            opt = QStyleOptionSlider()
+            self.initStyleOption(opt)
+            handle = self.style().subControlRect(QStyle.CC_Slider, opt, QStyle.SC_SliderHandle, self)
+            pos = handle.topRight()
+            pos += QPoint(5, 13)
+            globalPos = self.mapToGlobal(pos)
+            timecode = self.parent.delta2QTime(value).toString(self.parent.timeformat)
+            QToolTip.showText(globalPos, str(timecode), self)
 
     def paintEvent(self, event: QPaintEvent) -> None:
         painter = QStylePainter(self)
