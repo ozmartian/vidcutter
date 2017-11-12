@@ -512,7 +512,8 @@ class VideoCutter(QWidget):
                                       statusTip='Configure application settings')
         self.fullscreenAction = QAction(self.fullscreenIcon, 'Toggle fullscreen', self, triggered=self.toggleFullscreen,
                                         statusTip='Switch to fullscreen video', enabled=False)
-        self.quitAction = QAction(self.quitIcon, 'Quit', self, triggered=self.close, statusTip='Quit the application')
+        self.quitAction = QAction(self.quitIcon, 'Quit', self, triggered=self.parent.close,
+                                  statusTip='Quit the application')
 
     def initToolbar(self) -> None:
         self.toolbar.addAction(self.openAction)
