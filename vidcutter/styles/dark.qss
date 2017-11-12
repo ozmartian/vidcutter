@@ -28,11 +28,6 @@ QWidget#shortcuts {
     background-color: #1B2326;
 }
 
-QWidget#videoplayer {
-    border: none;
-    background: #000;
-}
-
 QWidget#novideoWidget {
     border-image: url(':/images/startup-backdrop.png') 0 0 0 0 stretch stretch;
 }
@@ -47,6 +42,11 @@ QWidget#genericdialog2 {
 
 QWidget#genericdialog3, QDialog#notification {
     border-image: url(':/images/dark/background_complete.png') 0 0 0 0 stretch stretch;
+    background: #000;
+}
+
+QFrame#videoplayer {
+    border: 1px solid #4D5355;
     background: #000;
 }
 

@@ -40,6 +40,8 @@ class Notification(QDialog):
         self.parent = parent
         self.theme = self.parent.theme
         self.setObjectName('notification')
+        self.setContentsMargins(10, 10, 10, 10)
+        self.shown.connect(lambda: QTimer.singleShot(self.duration * 1000, self.fadeOut))
         self.setWindowModality(Qt.ApplicationModal)
         self.setMinimumWidth(550)
         self._title, self._message = '', ''
@@ -50,14 +52,11 @@ class Notification(QDialog):
         logo_label.setFixedSize(82, 82)
         self.left_layout = QVBoxLayout()
         self.left_layout.addWidget(logo_label)
-        self.right_layout = QVBoxLayout()
-        self.right_layout.addWidget(self.msgLabel)
-        self.shown.connect(lambda: QTimer.singleShot(self.duration * 1000, self.fadeOut))
         layout = QHBoxLayout()
         layout.addStretch(1)
         layout.addLayout(self.left_layout)
         layout.addSpacing(10)
-        layout.addLayout(self.right_layout)
+        layout.addWidget(self.msgLabel, Qt.AlignVCenter)
         layout.addStretch(1)
         self.setLayout(layout)
 
@@ -123,10 +122,6 @@ class JobCompleteNotification(Notification):
             margin: 6px;
             padding: 4px 2px;
             font-family: "Noto Sans UI", sans-serif;
-        }}
-        td {{
-            padding-top: 5px;
-            vertical-align: top;
         }}
         td.label {{
             font-weight: bold;

@@ -70,7 +70,7 @@ class VideoSlider(QSlider):
         QSlider::handle:horizontal:hover {{
             background: transparent url(:images/{handleImageSelected}) no-repeat top center;
         }}'''
-        self.progressbars = []
+        self._progressbars = []
         self._regions = []
         self._regionHeight = 32
         self._regionSelected = -1
@@ -90,7 +90,7 @@ class VideoSlider(QSlider):
         self.setTickPosition(QSlider.TicksBelow)
         self.setFocus()
         self.restrictValue = 0
-        self.valueChanged.connect(self.restrictMove)
+        self.valueChanged.connect(self.on_valueChanged)
         self.rangeChanged.connect(self.on_rangeChanged)
         self.installEventFilter(self)
 
@@ -152,7 +152,7 @@ class VideoSlider(QSlider):
         self.initStyle()
 
     @pyqtSlot(int)
-    def restrictMove(self, value: int) -> None:
+    def on_valueChanged(self, value: int) -> None:
         if value < self.restrictValue:
             self.setSliderPosition(self.restrictValue)
 
@@ -191,7 +191,7 @@ class VideoSlider(QSlider):
                 x += 15
         opt.subControls = QStyle.SC_SliderGroove
         painter.drawComplexControl(QStyle.CC_Slider, opt)
-        if not len(self.progressbars):
+        if not len(self._progressbars):
             for rect in self._regions:
                 rect.setY(int((self.height() - self._regionHeight) / 2) - 8)
                 rect.setHeight(self._regionHeight)
@@ -230,29 +230,30 @@ class VideoSlider(QSlider):
     def showProgress(self, steps: int) -> None:
         for rect in self._regions:
             progress = SliderProgress(steps, rect, self)
-            self.progressbars.append(progress)
+            self._progressbars.append(progress)
 
     @pyqtSlot()
     @pyqtSlot(int)
     def updateProgress(self, region: int=None) -> None:
-        # [print('pre-update value: {}'.format(progress.value())) for progress in self.progressbars]
+        # [print('pre-update value: {}'.format(progress.value())) for progress in self._progressbars]
         if region is None:
-            [progress.setValue(progress.value() + 1) for progress in self.progressbars]
+            [progress.setValue(progress.value() + 1) for progress in self._progressbars]
         else:
-            self.progressbars[region].setValue(self.progressbars[region].value() + 1)
-        # [print('post-update value: {}'.format(progress.value())) for progress in self.progressbars]
+            self._progressbars[region].setValue(self._progressbars[region].value() + 1)
+        # [print('post-update value: {}'.format(progress.value())) for progress in self._progressbars]
 
     @pyqtSlot()
     def clearProgress(self) -> None:
-        for progress in self.progressbars:
+        for progress in self._progressbars:
             progress.hide()
             progress.deleteLater()
         qApp.processEvents()
-        self.progressbars.clear()
+        self._progressbars.clear()
 
     def lockGUI(self, locked: bool) -> None:
         if locked:
             self.parent.parent.setEnabled(False)
+            self.parent.cliplist.setEnabled(False)
             self.grabMouse()
             self.grabKeyboard()
             self.blockSignals(True)
@@ -260,6 +261,7 @@ class VideoSlider(QSlider):
             self.blockSignals(False)
             self.releaseMouse()
             self.releaseKeyboard()
+            self.parent.cliplist.setEnabled(True)
             self.parent.parent.setEnabled(True)
 
     def initThumbs(self) -> None:

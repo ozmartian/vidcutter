@@ -21,9 +21,10 @@
 #
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPainter, QPixmap, QTransform
-from PyQt5.QtWidgets import QGraphicsEffect, QGridLayout, QLabel, QSizePolicy, QStackedLayout, QStackedWidget, QWidget
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import QGridLayout, QLabel, QSizePolicy, QStackedLayout, QStackedWidget, QWidget
 
+from vidcutter.graphicseffects import OpacityEffect
 from vidcutter.videoslider import VideoSlider
 
 
@@ -32,7 +33,7 @@ class VideoSliderWidget(QStackedWidget):
         super(VideoSliderWidget, self).__init__(parent)
         self.parent = parent
         self.slider = slider
-        self.loaderEffect = self.LoaderEffect()
+        self.loaderEffect = OpacityEffect()
         self.loaderEffect.setEnabled(False)
         self.setGraphicsEffect(self.loaderEffect)
         self.setContentsMargins(0, 0, 0, 0)
@@ -66,15 +67,3 @@ class VideoSliderWidget(QStackedWidget):
             self.widget(1).hide()
             self.slider.thumbnailsOn = False
             self.slider.initStyle()
-
-    class LoaderEffect(QGraphicsEffect):
-        def draw(self, painter: QPainter) -> None:
-            if self.sourceIsPixmap():
-                pixmap, offset = self.sourcePixmap(Qt.LogicalCoordinates, QGraphicsEffect.PadToEffectiveBoundingRect)
-            else:
-                pixmap, offset = self.sourcePixmap(Qt.DeviceCoordinates, QGraphicsEffect.PadToEffectiveBoundingRect)
-                painter.setWorldTransform(QTransform())
-            painter.setBrush(Qt.black)
-            painter.drawRect(pixmap.rect())
-            painter.setOpacity(0.2)
-            painter.drawPixmap(offset, pixmap)

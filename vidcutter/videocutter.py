@@ -33,7 +33,7 @@ from typing import Union
 from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QBuffer, QByteArray, QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize,
                           Qt, QTextStream, QTime, QTimer, QUrl)
 from PyQt5.QtGui import QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMovie, QPixmap
-from PyQt5.QtWidgets import (QAction, qApp, QApplication, QDialogButtonBox, QFileDialog, QGroupBox, QHBoxLayout,
+from PyQt5.QtWidgets import (QAction, qApp, QApplication, QDialogButtonBox, QFileDialog, QFrame, QGroupBox, QHBoxLayout,
                              QLabel, QListWidgetItem, QMenu, QMessageBox, QPushButton, QSizePolicy, QStyleFactory,
                              QVBoxLayout, QWidget)
 
@@ -223,9 +223,12 @@ class VideoCutter(QWidget):
         self.videoplayerLayout.addWidget(self.mpvWidget)
         self.videoplayerLayout.addWidget(countersWidget)
 
-        self.videoplayerWidget = QWidget(self)
-        self.videoplayerWidget.setVisible(False)
+        self.videoplayerWidget = QFrame(self)
         self.videoplayerWidget.setObjectName('videoplayer')
+        self.videoplayerWidget.setFrameStyle(QFrame.Box | QFrame.Sunken)
+        self.videoplayerWidget.setLineWidth(0)
+        self.videoplayerWidget.setMidLineWidth(0)
+        self.videoplayerWidget.setVisible(False)
         self.videoplayerWidget.setLayout(self.videoplayerLayout)
 
         # noinspection PyArgumentList
