@@ -110,7 +110,7 @@ class About(QDialog):
     def get_size(mode: str = 'NORMAL') -> QSize:
         modes = {
             'LOW': QSize(450, 300),
-            'NORMAL': QSize(515, 505),
+            'NORMAL': QSize(515, 520),
             'HIGH': QSize(1080, 920)
         }
         return modes[mode]
