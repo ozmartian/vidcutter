@@ -86,13 +86,13 @@ class VideoItem(QAbstractItemDelegate):
         pencolor = Qt.white if self.theme == 'dark' else Qt.black
         if self.parent.isEnabled():
             if option.state & QStyle.State_Selected:
-                painter.setBrush(QColor('#96BE4E'))
+                painter.setBrush(QColor(150, 190, 78, 150))
             elif option.state & QStyle.State_MouseOver:
-                painter.setBrush(QColor('#E3D4E8'))
+                painter.setBrush(QColor(227, 212, 232))
                 pencolor = Qt.black
-        else:
-            brushcolor = QColor(79, 85, 87, 175) if self.theme == 'dark' else QColor('#EFF0F1')
-            painter.setBrush(Qt.transparent if index.row() % 2 == 0 else brushcolor)
+            else:
+                brushcolor = QColor(79, 85, 87, 175) if self.theme == 'dark' else QColor('#EFF0F1')
+                painter.setBrush(Qt.transparent if index.row() % 2 == 0 else brushcolor)
         painter.setPen(Qt.NoPen)
         painter.drawRect(r)
         thumb = QIcon(index.data(Qt.DecorationRole + 1))

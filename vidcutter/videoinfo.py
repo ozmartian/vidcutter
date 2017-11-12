@@ -78,7 +78,7 @@ class VideoInfo(QDialog):
         content.setStyleSheet('QTextBrowser { border: none; background-color: transparent; }')
         content.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         content.setHtml(metadata)
-        keyframesButton = QPushButton('View Keyframes', self)
+        keyframesButton = QPushButton('View keyframes', self)
         keyframesButton.clicked.connect(self.showKeyframes)
         okButton = QDialogButtonBox(QDialogButtonBox.Ok)
         okButton.accepted.connect(self.close)
@@ -117,7 +117,7 @@ class KeyframesDialog(QDialog):
         self.setAttribute(Qt.WA_DeleteOnClose, True)
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         self.setWindowModality(Qt.ApplicationModal)
-        self.setWindowTitle('View Keyframes')
+        self.setWindowTitle('View keyframes')
         self.setStyleSheet('QDialog { border: 2px solid #000; }')
         content = QTextBrowser(self)
         content.setStyleSheet('QTextBrowser { border: none; background-color: transparent; }')
@@ -126,17 +126,16 @@ class KeyframesDialog(QDialog):
         buttons.accepted.connect(self.close)
         buttons.rejected.connect(self.close)
         content_headers = '''<style>
-                    table td {{
+                    table td h2 {{
                         font-family: "Futura-Light", sans-serif;
-                        font-size: 22px;
-                        font-weight: 600;
+                        font-weight: 500;
                         text-align: center;
                         color: {}
                     }}
                 </style>
                 <table width="300" border="0" cellpadding="4" cellspacing="0">
                     <tr>
-                        <td>Keyframe Timecodes</td>
+                        <td><h2>Keyframe Timecodes</h2></td>
                     </tr>
                 </table>
                 '''.format('#C681D5' if parent.parent.theme == 'dark' else '#642C68')
@@ -175,5 +174,5 @@ class KeyframesDialog(QDialog):
         layout.addWidget(content)
         layout.addLayout(button_layout)
         self.setLayout(layout)
-        self.setMinimumWidth(350)
+        self.setMinimumWidth(320)
         qApp.restoreOverrideCursor()

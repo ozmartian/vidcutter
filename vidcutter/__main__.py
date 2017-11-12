@@ -274,8 +274,33 @@ class MainWindow(QMainWindow):
 
     def closeEvent(self, event: QCloseEvent) -> None:
         try:
-            if self.cutter.mediaAvailable and self.cutter.projectDirty and not self.cutter.projectSaved:
-                savewarn_text = '''
+            if not self.isEnabled():
+                warntext = '''
+                    <style>
+                        h2 {{
+                            color: {};
+                            font-family: "Futura-Light", sans-serif;
+                            font-weight: 400;
+                        }}
+                    </style>
+                    <table border="0" cellpadding="6" cellspacing="0" width="350">
+                        <tr>
+                            <td><h2>Video is currently being processed</h2></td>
+                        </tr>
+                        <tr>
+                            <td>Are you sure you wish to exit right now?</td>
+                        </tr>
+                    </table>'''.format('#C681D5' if self.theme == 'dark' else '#642C68')
+                exitwarn = QMessageBox(QMessageBox.Warning, 'Warning', warntext, parent=self)
+                exitwarn.addButton('Yes', QMessageBox.NoRole)
+                cancelbutton = exitwarn.addButton('No', QMessageBox.RejectRole)
+                exitwarn.exec_()
+                res = exitwarn.clickedButton()
+                if res == cancelbutton:
+                    event.ignore()
+                    return
+            elif self.cutter.mediaAvailable and self.cutter.projectDirty and not self.cutter.projectSaved:
+                warntext = '''
                     <style>
                         h2 {{
                             color: {};
@@ -291,9 +316,9 @@ class MainWindow(QMainWindow):
                             <td>Would you like to save the project now?</td>
                         </tr>
                     </table>'''.format('#C681D5' if self.theme == 'dark' else '#642C68')
-                savewarn = QMessageBox(QMessageBox.Warning, qApp.applicationName(), savewarn_text, parent=self)
-                savebutton = savewarn.addButton('Save Project', QMessageBox.YesRole)
-                savewarn.addButton('Don\'t Save', QMessageBox.NoRole)
+                savewarn = QMessageBox(QMessageBox.Warning, 'Warning', warntext, parent=self)
+                savebutton = savewarn.addButton('Save project', QMessageBox.YesRole)
+                savewarn.addButton('Do not save', QMessageBox.NoRole)
                 cancelbutton = savewarn.addButton('Cancel', QMessageBox.RejectRole)
                 savewarn.exec_()
                 res = savewarn.clickedButton()

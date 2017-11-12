@@ -262,17 +262,15 @@ class VideoSlider(QSlider):
 
     def lockGUI(self, locked: bool) -> None:
         if locked:
-            self.parent.parent.setEnabled(False)
+            qApp.setOverrideCursor(Qt.WaitCursor)
             self.parent.cliplist.setEnabled(False)
-            self.grabMouse()
-            self.grabKeyboard()
+            self.parent.parent.setEnabled(False)
             self.blockSignals(True)
         else:
             self.blockSignals(False)
-            self.releaseMouse()
-            self.releaseKeyboard()
-            self.parent.cliplist.setEnabled(True)
             self.parent.parent.setEnabled(True)
+            self.parent.cliplist.setEnabled(True)
+            qApp.restoreOverrideCursor()
 
     def initThumbs(self) -> None:
         framesize = self.parent.videoService.framesize()

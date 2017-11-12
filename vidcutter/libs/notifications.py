@@ -82,7 +82,7 @@ class Notification(QDialog):
         for step in range(100, 0, -10):
             self.setWindowOpacity(step / 100)
             qApp.processEvents()
-            time.sleep(0.1)
+            time.sleep(0.085)
         self.close()
 
     def mousePressEvent(self, event: QMouseEvent):
@@ -112,10 +112,10 @@ class JobCompleteNotification(Notification):
         self.title = 'Your media file is ready!'
         self.message = '''
     <style>
-        h2 {{
+        h1 {{
             color: {labelscolor};
             font-family: "Futura-Light", sans-serif;
-            font-weight: 500;
+            font-weight: 400;
             text-align: center;
         }}
         table.info {{
@@ -136,7 +136,7 @@ class JobCompleteNotification(Notification):
             font-size: 14px;
         }}
     </style>
-    <h2>{heading}</h2>
+    <h1>{heading}</h1>
     <table border="0" class="info" cellpadding="2" cellspacing="0" align="left">
         <tr>
             <td width="20%%" class="label"><b>File:</b></td>

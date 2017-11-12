@@ -274,7 +274,8 @@ class VolumeSlider(QSlider):
         self.setObjectName('volumeslider')
         self.valueChanged.connect(self.showTooltip)
         self.offset = QPoint(0, -45)
-        self.setStyle(QStyleFactory.create('Fusion'))
+        if sys.platform == 'win32':
+            self.setStyle(QStyleFactory.create('Fusion'))
 
     @pyqtSlot(int)
     def showTooltip(self, value: int) -> None:

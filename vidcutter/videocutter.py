@@ -1111,7 +1111,6 @@ class VideoCutter(QWidget):
             if len(ext) == 0 and len(source_ext):
                 self.finalFilename += source_ext
             self.lastFolder = QFileInfo(self.finalFilename).absolutePath()
-            qApp.setOverrideCursor(Qt.WaitCursor)
             self.saveAction.setDisabled(True)
             if self.smartcut:
                 # additionalSteps = 2 if clips > 1 else 1
@@ -1215,7 +1214,6 @@ class VideoCutter(QWidget):
         # if sys.platform.startswith('linux') and self.mediaAvailable:
         #     QTimer.singleShot(1200, lambda: self.taskbar.setProgress(
         #         float(self.seekSlider.value() / self.seekSlider.maximum())))
-        qApp.restoreOverrideCursor()
         self.saveAction.setEnabled(True)
         # self.progressbar.close()
         self.seekSlider.lockGUI(False)
