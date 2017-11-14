@@ -261,6 +261,10 @@ QDialog#videoinfo QPushButton, #clipindextools QPushButton {
     background: #642C68 url(:images/light/clipindex-add-on.png) no-repeat left center;
 }
 
+#clipindextools QPushButton:disabled#clipadd {
+    background: #E1E1E1 url(:images/light/clipindex-add-disabled.png) no-repeat left center;
+}
+
 #clipindextools QPushButton#clipremove {
     background: #E1E1E1 url(:images/light/clipindex-remove.png) no-repeat right center;
 }
@@ -268,6 +272,10 @@ QDialog#videoinfo QPushButton, #clipindextools QPushButton {
 #clipindextools QPushButton:hover#clipremove,
 #clipindextools QPushButton:pressed#clipremove {
     background: #642C68 url(:images/light/clipindex-remove-on.png) no-repeat right center;
+}
+
+#clipindextools QPushButton:disabled#clipremove {
+    background: #E1E1E1 url(:images/light/clipindex-remove-disabled.png) no-repeat right center;
 }
 
 QDialogButtonBox QPushButton:hover, #clipindextools QPushButton:hover,
@@ -320,6 +328,10 @@ QPushButton:pressed#settingsButton {
     border-image: url(:/images/light/settings-active.png);
 }
 
+QPushButton:disabled#settingsButton {
+    border-image: url(:/images/light/settings-disabled.png);
+}
+
 QPushButton#menuButton {
     border-image: url(:/images/light/menu.png);
     width: 33px;
@@ -332,6 +344,10 @@ QPushButton:hover#menuButton {
 
 QPushButton:pressed#menuButton {
     border-image: url(:/images/light/menu-active.png);
+}
+
+QPushButton:disabled#menuButton {
+    border-image: url(:/images/light/menu-disabled.png);
 }
 
 QPushButton::menu-indicator#menuButton, #clipindextools QPushButton::menu-indicator {
@@ -356,11 +372,15 @@ QPushButton#thumbnailsButton {
     height: 31px;
 }
 
-QPushButton#thumbnailsButton:hover {
+QPushButton:hover#thumbnailsButton {
     border-image: url(:/images/light/thumbnails-hover.png);
 }
 
-QPushButton#thumbnailsButton:pressed, QPushButton#thumbnailsButton:checked {
+QPushButton:disabled#thumbnailsButton {
+    border-image: url(:/images/light/thumbnails-disabled.png);
+}
+
+QPushButton:pressed#thumbnailsButton, QPushButton:checked#thumbnailsButton {
     border-image: url(:/images/light/thumbnails-on.png);
 }
 
@@ -370,11 +390,15 @@ QPushButton#osdButton {
     height: 31px;
 }
 
-QPushButton#osdButton:hover {
+QPushButton:hover#osdButton {
     border-image: url(:/images/light/osd-hover.png);
 }
 
-QPushButton#osdButton:pressed, QPushButton#osdButton:checked {
+QPushButton:disabled#osdButton {
+    border-image: url(:/images/light/osd-disabled.png);
+}
+
+QPushButton:checked#osdButton, QPushButton:pressed#osdButton {
     border-image: url(:/images/light/osd-on.png);
 }
 
@@ -384,11 +408,15 @@ QPushButton#consoleButton {
     height: 31px;
 }
 
-QPushButton#consoleButton:hover {
+QPushButton:hover#consoleButton {
     border-image: url(:/images/light/console-hover.png);
 }
 
-QPushButton#consoleButton:pressed, QPushButton#consoleButton:checked {
+QPushButton:disabled#consoleButton {
+    border-image: url(:/images/light/console-disabled.png);
+}
+
+QPushButton:pressed#consoleButton, QPushButton:checked#consoleButton {
     border-image: url(:/images/light/console-on.png);
 }
 
@@ -398,11 +426,15 @@ QPushButton#smartcutButton {
     height: 31px;
 }
 
-QPushButton#smartcutButton:hover {
+QPushButton:hover#smartcutButton {
     border-image: url(:/images/light/smartcut-hover.png);
 }
 
-QPushButton#smartcutButton:pressed, QPushButton#smartcutButton:checked {
+QPushButton:disabled#smartcutButton {
+    border-image: url(:/images/light/smartcut-disabled.png);
+}
+
+QPushButton:pressed#smartcutButton, QPushButton:checked#smartcutButton {
     border-image: url(:/images/light/smartcut-on.png);
 }
 
