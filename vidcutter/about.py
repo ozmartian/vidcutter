@@ -28,8 +28,8 @@ import sys
 from datetime import datetime
 
 from PyQt5.Qt import PYQT_VERSION_STR
-from PyQt5.QtCore import QSize, Qt, QUrl
-from PyQt5.QtGui import QCloseEvent
+from PyQt5.QtCore import QPoint, QSize, Qt, QUrl
+from PyQt5.QtGui import QCloseEvent, QPixmap
 from PyQt5.QtWidgets import qApp, QDialog, QDialogButtonBox, QLabel, QTabWidget, QTextBrowser, QVBoxLayout
 from sip import SIP_VERSION_STR
 
@@ -62,14 +62,14 @@ class About(QDialog):
                     &nbsp;&nbsp;
                     <div style="padding:0; margin:0; margin-left:10px;">
                         <table border="0" cellpadding="2" cellspacing="0">
-                        <tr valign="bottom">
+                        <tr valign="middle">
                             <td style="text-align:right;font-size:10pt;font-weight:500;color:%s;">version:</td>
                             <td>
                                 <span style="font-size:18px;font-weight:400;">%s</span>
                                 &nbsp;<span style="font-size:10pt;margin-left:5px;">(%s)</span>
                             </td>
                         </tr>
-                        <tr valign="bottom">
+                        <tr valign="middle">
                             <td style="text-align:right;font-size:10pt;font-weight:500;color:%s;">build date:</td>
                             <td style="font-size:10pt;font-weight:400;">%s</td>
                         </tr>
@@ -151,25 +151,34 @@ class AboutTab(BaseTab):
 <table border="0" cellpadding="8" cellspacing="4">
     <tr>
         <td>
-            <p style="font-size:13px;">
-                <b>libmpv:</b> %s
-                %s
-                <b>FFmpeg:</b> %s
-                <br/>
-                <b>Python:</b> %s
-                &nbsp;&nbsp;&nbsp;
-                <b>PyQt5:</b> %s
-                &nbsp;&nbsp;&nbsp;
-                <b>SIP:</b> %s
-            </p> 
-            <p style="font-size:13px;">
-                Copyright &copy; %s <a href="mailto:%s">%s</a>
-                <br/>
-                Website: <a href="%s" target="_blank">%s</a>
-            </p>
-            <p style="font-size:13px;">
-                Found a bug? You can <a href="%s">REPORT IT HERE</a>.
-            </p>
+            <table border="0" cellpadding="0" cellspacing="0">
+                <tr valign="bottom">
+                    <td>
+                        <p style="font-size:13px;">
+                            <b>libmpv:</b> %s
+                            %s
+                            <b>FFmpeg:</b> %s
+                            <br/>
+                            <b>Python:</b> %s
+                            &nbsp;&nbsp;&nbsp;
+                            <b>PyQt5:</b> %s
+                            &nbsp;&nbsp;&nbsp;
+                            <b>SIP:</b> %s
+                        </p>
+                        <p style="font-size:13px;">
+                            Copyright &copy; %s <a href="mailto:%s">%s</a>
+                            <br/>
+                            Website: <a href="%s" target="_blank">%s</a>
+                        </p>
+                        <p style="font-size:13px;">
+                            Found a bug? You can <a href="%s">REPORT IT HERE</a>.
+                        </p>
+                    </td>
+                    <td align="right">
+                        <a href="https://www.jetbrains.com/pycharm"><img src=":/images/pycharm.png" /></a>
+                    </td>
+                </tr>
+            </table>
             <p style="font-size:12px;">
                 Built in Python with the help of <a href="https://www.jetbrains.com/pycharm">PyCharm Professional</a>
                 using an open-source development license donated by its wickedly cool creators at
