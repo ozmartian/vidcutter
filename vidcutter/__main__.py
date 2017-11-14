@@ -22,9 +22,11 @@
 #
 #######################################################################
 
+import atexit
 import logging
 import logging.handlers
 import os
+import shutil
 import signal
 import sys
 import traceback
@@ -47,6 +49,7 @@ signal.signal(signal.SIGTERM, signal.SIG_DFL)
 class MainWindow(QMainWindow):
     EXIT_CODE_REBOOT = 666
     TEMP_PROJECT_FILE = 'vidcutter_reboot.vcp'
+    WORKING_FOLDER = os.path.join(QDir.tempPath(), 'vidcutter')
 
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -63,6 +66,8 @@ class MainWindow(QMainWindow):
         self.setAcceptDrops(True)
         self.show()
         self.console.setGeometry(int(self.x() - (self.width() / 2)), self.y() + int(self.height() / 3), 750, 300)
+        if not os.path.isdir(MainWindow.WORKING_FOLDER):
+            os.mkdir(MainWindow.WORKING_FOLDER)
         if not self.video and os.path.isfile(os.path.join(QDir.tempPath(), MainWindow.TEMP_PROJECT_FILE)):
             self.video = os.path.join(QDir.tempPath(), MainWindow.TEMP_PROJECT_FILE)
         if self.video:
@@ -225,6 +230,10 @@ class MainWindow(QMainWindow):
         QMessageBox.critical(self, 'An error occurred' if title is None else title, msg, QMessageBox.Ok)
         logging.error(msg)
 
+    @staticmethod
+    def cleanup():
+        shutil.rmtree(MainWindow.WORKING_FOLDER, ignore_errors=True)
+
     def contextMenuEvent(self, event: QContextMenuEvent) -> None:
         if event.reason() == QContextMenuEvent.Mouse:
             self.cutter.appMenu.exec_(event.globalPos())
@@ -358,6 +367,8 @@ def main():
 
     if sys.platform == 'darwin':
         QApplication.setStyle('Fusion')
+
+    atexit.register(MainWindow.cleanup)
 
     app = SingleApplication(vidcutter.__appid__, sys.argv)
     app.setApplicationName(vidcutter.__appname__)

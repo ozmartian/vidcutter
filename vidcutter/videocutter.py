@@ -71,13 +71,13 @@ class VideoCutter(QWidget):
         self.logger = logging.getLogger(__name__)
         self.parent = parent
         self.theme = self.parent.theme
+        self.workFolder = self.parent.WORKING_FOLDER
         self.settings = self.parent.settings
         self.currentMedia, self.mediaAvailable, self.mpvError = None, False, False
         self.projectDirty, self.projectSaved = False, False
         self.initTheme()
 
         self.updater = Updater(self.parent)
-        # self.progressbar = VCProgressBar(self)
 
         self.seekSlider = VideoSlider(self)
         self.seekSlider.sliderMoved.connect(self.setPosition)
@@ -85,14 +85,12 @@ class VideoCutter(QWidget):
         self.sliderWidget.setLoader(True)
 
         self.videoService = VideoService(self)
-        # self.videoService.progress.connect(self.progressbar.updateProgress)
         self.videoService.progress.connect(self.seekSlider.updateProgress)
         self.videoService.finished.connect(self.smartmonitor)
         self.videoService.error.connect(self.completeOnError)
 
         if sys.platform.startswith('linux'):
             self.taskbar = TaskbarProgress(self)
-            # self.progressbar.taskbarprogress.connect(self.taskbar.setProgress)
 
         self.latest_release_url = 'https://github.com/ozmartian/vidcutter/releases/latest'
 
@@ -427,7 +425,6 @@ class VideoCutter(QWidget):
         self.novideoWidget.setLayout(novideoLayout)
 
     def initIcons(self) -> None:
-        # self.appIcon = QIcon(':/images/vidcutter.png')
         self.appIcon = qApp.windowIcon()
         self.openIcon = QIcon()
         self.openIcon.addFile(':/images/{}/toolbar-open.png'.format(self.theme), QSize(50, 53), QIcon.Normal)
@@ -1114,15 +1111,12 @@ class VideoCutter(QWidget):
             self.lastFolder = QFileInfo(self.finalFilename).absolutePath()
             self.saveAction.setDisabled(True)
             if self.smartcut:
-                # additionalSteps = 2 if clips > 1 else 1
-                # self.showProgress((3 * clips) + additionalSteps, True)
                 self.seekSlider.lockGUI(True)
                 self.seekSlider.showProgress(6 if clips > 1 else 5)
                 self.videoService.smartinit(clips)
                 self.smartcutter(file, source_file, source_ext)
                 return
             steps = 3 if clips > 1 else 2
-            # self.showProgress(steps, False)
             self.seekSlider.lockGUI(True)
             self.seekSlider.showProgress(steps)
             filename, filelist = '', []
@@ -1132,10 +1126,10 @@ class VideoCutter(QWidget):
                 if len(clip[3]):
                     filelist.append(clip[3])
                 else:
-                    # self.progressbar.updateProgress('Cutting media clips <b>[{0} / {1}]</b>'
-                    #                                 .format('{0:0>2}'.format(index + 1), '{0:0>2}'.format(clips)))
                     duration = self.delta2QTime(clip[0].msecsTo(clip[1])).toString(self.timeformat)
                     filename = '{0}_{1}{2}'.format(file, '{0:0>2}'.format(index), source_ext)
+                    if not self.keepClips:
+                        filename = os.path.join(self.workFolder, os.path.basename(filename))
                     filelist.append(filename)
                     if not self.videoService.cut(source='{0}{1}'.format(source_file, source_ext),
                                                  output=filename,
@@ -1162,6 +1156,8 @@ class VideoCutter(QWidget):
                     self.smartmonitor()
             else:
                 filename = '{0}_{1}{2}'.format(file, '{0:0>2}'.format(index), source_ext)
+                if not self.keepClips:
+                    filename = os.path.join(self.workFolder, os.path.basename(filename))
                 self.smartcut_monitor.clips.append(filename)
                 self.videoService.smartcut(index=index,
                                            source='{0}{1}'.format(source_file, source_ext),
@@ -1172,7 +1168,6 @@ class VideoCutter(QWidget):
 
     @pyqtSlot(bool, str)
     def smartmonitor(self, success: bool=None, outputfile: str=None) -> None:
-        # print('smartmonitor: {0} - {1}'.format(success, outputfile))
         if success is not None:
             if not success:
                 self.logger.error('SmartCut failed for {}'.format(outputfile))
@@ -1183,7 +1178,6 @@ class VideoCutter(QWidget):
 
     def joinMedia(self, filelist: list) -> None:
         if len(filelist) > 1:
-            # self.progressbar.updateProgress('Joining media clips')
             self.seekSlider.updateProgress()
             rc = False
             if self.videoService.isMPEGcodec(filelist[0]):
@@ -1210,13 +1204,8 @@ class VideoCutter(QWidget):
             QFile.remove(self.finalFilename)
             # noinspection PyCallByClass
             QFile.rename(filename, self.finalFilename)
-        # self.progressbar.updateProgress('Complete! Workspace cleaned and sanitized')
         self.seekSlider.updateProgress()
-        # if sys.platform.startswith('linux') and self.mediaAvailable:
-        #     QTimer.singleShot(1200, lambda: self.taskbar.setProgress(
-        #         float(self.seekSlider.value() / self.seekSlider.maximum())))
         self.saveAction.setEnabled(True)
-        # self.progressbar.close()
         self.seekSlider.lockGUI(False)
         self.notify = JobCompleteNotification(
             self.finalFilename,
@@ -1235,12 +1224,8 @@ class VideoCutter(QWidget):
         if self.smartcut:
             self.videoService.smartabort()
             QTimer.singleShot(1500, self.cleanup)
-        # self.progressbar.close()
         self.seekSlider.lockGUI(False)
         self.seekSlider.clearProgress()
-        # if sys.platform.startswith('linux') and self.mediaAvailable:
-        #     QTimer.singleShot(1200, lambda: self.taskbar.setProgress(
-        #         float(self.seekSlider.value() / self.seekSlider.maximum())))
         self.saveAction.setEnabled(True)
         self.parent.errorHandler(errormsg)
 
@@ -1294,10 +1279,6 @@ class VideoCutter(QWidget):
     def aboutApp(self) -> None:
         appInfo = About(self)
         appInfo.exec_()
-
-    # def showProgress(self, steps: int, timer: bool=False) -> None:
-    #     self.progressbar.reset(steps, timer)
-    #     self.progressbar.show()
 
     @staticmethod
     def getAppIcon(encoded: bool = False) -> Union[QIcon, str]:

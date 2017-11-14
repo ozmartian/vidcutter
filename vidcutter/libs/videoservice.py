@@ -49,7 +49,6 @@ except ImportError:
 
 
 class VideoService(QObject):
-    # progress = pyqtSignal(str)
     progress = pyqtSignal(int)
     finished = pyqtSignal(bool, str)
     error = pyqtSignal(str)
@@ -292,7 +291,7 @@ class VideoService(QObject):
         ]
 
     def smartcut(self, index: int, source: str, output: str, start: float, end: float, allstreams: bool=True) -> None:
-        output_file, output_ext = os.path.splitext(source)
+        output_file, output_ext = os.path.splitext(output)
         bisections = self.getGOPbisections(source, start, end)
         self.smartcut_jobs[index].output = output
         self.smartcut_jobs[index].allstreams = allstreams
@@ -302,7 +301,6 @@ class VideoService(QObject):
                                                    .format(output_file, '{0:0>2}'.format(index), output_ext))
             startproc = VideoService.initProc(self.backends.ffmpeg, self.smartcheck, os.path.dirname(source))
             startproc.setObjectName('start.{}'.format(index))
-            # startproc.started.connect(lambda: self.progress.emit('<b>SmartCut -</b> Encoding start segment'))
             startproc.started.connect(lambda: self.progress.emit(index))
             startproc.setArguments(shlex.split(
                 self.cut(source=source,
@@ -322,7 +320,6 @@ class VideoService(QObject):
         middleproc.setProcessChannelMode(QProcess.MergedChannels)
         middleproc.setWorkingDirectory(os.path.dirname(self.smartcut_jobs[index].files['middle']))
         middleproc.setObjectName('middle.{}'.format(index))
-        # middleproc.started.connect(lambda: self.progress.emit('<b>SmartCut -</b> Cutting middle segment'))
         middleproc.started.connect(lambda: self.progress.emit(index))
         middleproc.setArguments(shlex.split(
             self.cut(source=source,
@@ -341,7 +338,6 @@ class VideoService(QObject):
                                                    .format(output_file, '{0:0>2}'.format(index), output_ext))
             endproc = VideoService.initProc(self.backends.ffmpeg, self.smartcheck, os.path.dirname(source))
             endproc.setObjectName('end.{}'.format(index))
-            # endproc.started.connect(lambda: self.progress.emit('<b>SmartCut -</b> Encoding end segment'))
             endproc.started.connect(lambda: self.progress.emit(index))
             endproc.setArguments(shlex.split(
                 self.cut(source=source,
@@ -399,7 +395,6 @@ class VideoService(QObject):
             VideoService.cleanup(job.files)
 
     def smartjoin(self, index: int) -> None:
-        # self.progress.emit('<b>SmartCut -</b> Joining keyframe clips')
         self.progress.emit(index)
         final_join = False
         joinlist = [
