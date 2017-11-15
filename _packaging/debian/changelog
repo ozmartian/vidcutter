@@ -1,3 +1,51 @@
+vidcutter (5.0.0-1) stable; urgency=medium
+
+  * SmartCut feature introduced for frame accurate cuts; beginning and end
+    clip segments are reencoded and joined with middle segment for each clip
+    defined in the Clip Index along source video's defined keyframes
+
+  * SmartCut enabled via app settings as well as toggle button on the main
+    interface. SmartCut can take up to 2 mins vs a few seconds so use it
+    only if frame accuracy is a requirement
+
+  * new progress bars on clips in timeline to visualise video processing in
+    more accurate and modern way
+
+  * thumbnail generation accuracy fixed so thumbnails generated accurately
+  	match frame with timecode placement
+
+  * new "View keyframes" button option available under Video Info which
+    displays the source video's defined keyframes which are utilised
+    by the new SmartCut feature
+
+  * improvements made to standard quick cutting to make them as frame
+  	accurate as can be given the source's media codec and container
+
+  * improvements to stream mapping to help ensure all source media's
+  	streams (video, audio, text/subtitles) are included in the target
+  	video produced. only if problems are found during the cut/join
+  	process will this be abandoned and FFmpeg then allowed to make its
+  	usual "best choice" in choosing the best streams for you
+
+  * single app instance code added along with a settings option to force all
+  	file manager associated tasks to the single already loaded instance of
+  	VidCutter
+
+  * .vcp registered as "VidCutter Project file" for Linux and Windows
+  	installations
+
+  * more debugging information available for the console or "--debug"
+  	command-line argument
+
+  * new verbose logging option added to settings for even more verbose
+    logging in the application log file, console window and debug command-
+    line output if running with the "--debug" argument (Linux only)
+
+  * new app icon; hopefully this one sticks :-)
+
+  * countless more improvements and fixes that aren't worth documenting but
+  	available in the freely available commit logs if you're interested
+
 vidcutter (4.0.5-1) stable; urgency=high
 
   * fix for 32-bit Linux users; the switch to OpenGL rendering

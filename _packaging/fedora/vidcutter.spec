@@ -3,7 +3,7 @@
 %global pkg_name vidcutter
 
 Name:           %{pkg_name}
-Version:        4.0.0
+Version:        5.0.0
 Release:        1%{?dist}
 Summary:        the simplest + fastest video cutter & joiner
 Group:          Applications/Multimedia
@@ -55,6 +55,8 @@ rm -rf %{pkg_name}.egg-info
 %{_datadir}/pixmaps/%{pkg_name}.svg
 
 %changelog
+* Wed Nov 16 2017 Pete Alexandrou <pete AT ozmartians DOT com> 5.0.0-1
+- 5.0.0 release
 * Thu Aug 03 2017 Pete Alexandrou <pete AT ozmartians DOT com> 4.0.0-1
 - 4.0.0 release
 * Mon May 29 2017 Pete Alexandrou <pete AT ozmartians DOT com> 3.5.0-1

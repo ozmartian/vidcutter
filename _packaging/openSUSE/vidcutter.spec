@@ -1,5 +1,5 @@
 Name:           vidcutter
-Version:        4.0.0
+Version:        5.0.0
 Release:        0
 Summary:        the simplest + fastest video cutter & joiner
 License:        GPL-3.0+
