@@ -485,7 +485,7 @@ class VideoService(QObject):
         last_keyframe = self.duration().toString('h:mm:ss.zzz')
         if keyframe_times[-1] != last_keyframe:
             keyframe_times.append(last_keyframe)
-        if source == self.source:
+        if source == self.source and not formatted_time:
             self.keyframes = keyframe_times
         return keyframe_times
 
