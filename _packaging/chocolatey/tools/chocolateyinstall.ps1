@@ -3,8 +3,8 @@ $ErrorActionPreference = 'Stop';
 
 $packageName= 'vidcutter'
 $toolsDir   = "$(Split-Path -parent $MyInvocation.MyCommand.Definition)"
-$url        = 'https://github.com/ozmartian/vidcutter/releases/download/4.0.0/VidCutter-4.0.0-setup-win32.exe'
-$url64      = 'https://github.com/ozmartian/vidcutter/releases/download/4.0.0/VidCutter-4.0.0-setup-win64.exe'
+$url 		= 'https://github.com/ozmartian/vidcutter/releases/download/5.0.0/VidCutter-5.0.0-setup-win32.exe'
+$url64 		= 'https://github.com/ozmartian/vidcutter/releases/download/5.0.0/VidCutter-5.0.0-setup-win64.exe'
 
 $packageArgs = @{
   packageName   = $packageName
@@ -15,9 +15,9 @@ $packageArgs = @{
 
   softwareName  = 'VidCutter'
 
-  checksum      = 'e63209e2b72bc933399708634fa9109e08bc5099a3c1ef84d573cc4a9ab87e0a'
+  checksum      = 'd74f7cde2a92e78aa1d075a2a67d800289e51c75ccef50926ecdd6591cc72bc2'
   checksumType  = 'sha256'
-  checksum64    = '846e158c22807389e09f29c7ee48a8db4f341ad5f95fc9d904a096f4ee8b56bc'
+  checksum64    = '261ac04b6f5fb6ebaf70a4b8a1ba4cb6e031111228cd79fa9cd4d4cd5885d278'
   checksumType64= 'sha256'
 
   silentArgs    = "/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP-"

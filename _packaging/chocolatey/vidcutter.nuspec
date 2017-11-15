@@ -8,7 +8,7 @@
     <owners>ozmartian</owners>
     <licenseUrl>http://www.gnu.org/licenses/gpl.html</licenseUrl>
     <projectUrl>http://vidcutter.ozmartians.com</projectUrl>
-    <iconUrl>https://cdn.rawgit.com/ozmartian/vidcutter/c4b96ac5/data/icons/vidcutter.png</iconUrl>
+    <iconUrl>https://cdn.rawgit.com/ozmartian/vidcutter/a64c64b1/data/icons/vidcutter.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>The simplest + sexiest tool for cutting and joining your videos without needing to re-encode, now with a powerful OpenGL based rendering engine.
 
