@@ -39,7 +39,6 @@ class VideoToolBar(QToolBar):
         self.setIconSize(QSize(50, 53))
         if sys.platform == 'darwin':
             self.setStyle(QStyleFactory.create('Fusion'))
-            self.setStyleSheet('QToolBar QToolButton { font-size: 12pt; }')
 
     def disableTooltips(self) -> None:
         buttonlist = self.findChildren(QToolButton)

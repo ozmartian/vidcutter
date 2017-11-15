@@ -1,8 +1,8 @@
 <RCC>
     <qresource prefix="/">
         <file>fonts/FuturaLT.ttf</file>
-        <file>fonts/OpenSans.ttf</file>
-        <file>fonts/OpenSansBold.ttf</file>
+        <file>fonts/NotoSans.ttc</file>
+        <file>images/complete-play.png</file>
         <file>images/dialog-backdrop.png</file>
         <file>images/dialog-backdrop-02.png</file>
         <file>images/down.png</file>
@@ -10,6 +10,7 @@
         <file>images/filmstrip.png</file>
         <file>images/filmstrip-thumbs.png</file>
         <file>images/filmstrip-nothumbs.png</file>
+        <file>images/generating-thumbs.png</file>
         <file>images/handle.png</file>
         <file>images/handle-select.png</file>
         <file>images/handle-nothumbs.png</file>
@@ -19,17 +20,21 @@
         <file>images/mpv.png</file>
         <file>images/novideotext.gif</file>
         <file>images/open.png</file>
+        <file>images/pycharm.png</file>
         <file>images/qt.png</file>
+        <file>images/quit.png</file>
         <file>images/remove.png</file>
         <file>images/remove-all.png</file>
         <file>images/runtime.png</file>
         <file>images/save.png</file>
         <file>images/settings.png</file>
+        <file>images/settings-general.png</file>
+        <file>images/settings-logs.png</file>
+        <file>images/settings-theme.png</file>
+        <file>images/settings-video.png</file>
         <file>images/slider-knob.png</file>
         <file>images/slider-knob-active.png</file>
         <file>images/startup-backdrop.png</file>
-        <file>images/theme-dark-large.jpg</file>
-        <file>images/theme-light-large.jpg</file>
         <file>images/up.png</file>
         <file>images/update.png</file>
         <file>images/vidcutter.png</file>
@@ -40,9 +45,12 @@
         <file>images/dark/background_complete.png</file>
         <file>images/dark/clipindex.png</file>
         <file>images/dark/clipindex-add.png</file>
+        <file>images/dark/clipindex-add-disabled.png</file>
         <file>images/dark/clipindex-add-on.png</file>
         <file>images/dark/clipindex-remove.png</file>
+        <file>images/dark/clipindex-remove-disabled.png</file>
         <file>images/dark/clipindex-remove-on.png</file>
+        <file>images/dark/console-disabled.png</file>
         <file>images/dark/console-hover.png</file>
         <file>images/dark/console-off.png</file>
         <file>images/dark/console-on.png</file>
@@ -51,24 +59,28 @@
         <file>images/dark/info-active.png</file>
         <file>images/dark/info-disabled.png</file>
         <file>images/dark/info-hover.png</file>
-        <file>images/dark/mediainfo-heading.png</file>
         <file>images/dark/menu.png</file>
         <file>images/dark/menu-active.png</file>
+        <file>images/dark/menu-disabled.png</file>
         <file>images/dark/menu-hover.png</file>
         <file>images/dark/muted.png</file>
+        <file>images/dark/osd-disabled.png</file>
         <file>images/dark/osd-hover.png</file>
         <file>images/dark/osd-off.png</file>
         <file>images/dark/osd-on.png</file>
         <file>images/dark/python.png</file>
         <file>images/dark/settings.png</file>
         <file>images/dark/settings-active.png</file>
-        <file>images/dark/settings-general.png</file>
+        <file>images/dark/settings-disabled.png</file>
         <file>images/dark/settings-hover.png</file>
-        <file>images/dark/settings-theme.png</file>
-        <file>images/dark/settings-video.png</file>
         <file>images/dark/shortcuts.png</file>
+        <file>images/dark/smartcut-disabled.png</file>
+        <file>images/dark/smartcut-hover.png</file>
+        <file>images/dark/smartcut-off.png</file>
+        <file>images/dark/smartcut-on.png</file>
         <file>images/dark/theme-dark.png</file>
         <file>images/dark/theme-light.png</file>
+        <file>images/dark/thumbnails-disabled.png</file>
         <file>images/dark/thumbnails-hover.png</file>
         <file>images/dark/thumbnails-off.png</file>
         <file>images/dark/thumbnails-on.png</file>
@@ -95,9 +107,12 @@
         <file>images/light/background_complete.png</file>
         <file>images/light/clipindex.png</file>
         <file>images/light/clipindex-add.png</file>
+        <file>images/light/clipindex-add-disabled.png</file>
         <file>images/light/clipindex-add-on.png</file>
         <file>images/light/clipindex-remove.png</file>
+        <file>images/light/clipindex-remove-disabled.png</file>
         <file>images/light/clipindex-remove-on.png</file>
+        <file>images/light/console-disabled.png</file>
         <file>images/light/console-hover.png</file>
         <file>images/light/console-off.png</file>
         <file>images/light/console-on.png</file>
@@ -106,24 +121,28 @@
         <file>images/light/info-active.png</file>
         <file>images/light/info-disabled.png</file>
         <file>images/light/info-hover.png</file>
-        <file>images/light/mediainfo-heading.png</file>
         <file>images/light/menu.png</file>
         <file>images/light/menu-active.png</file>
+        <file>images/light/menu-disabled.png</file>
         <file>images/light/menu-hover.png</file>
         <file>images/light/muted.png</file>
+        <file>images/light/osd-disabled.png</file>
         <file>images/light/osd-hover.png</file>
         <file>images/light/osd-off.png</file>
         <file>images/light/osd-on.png</file>
         <file>images/light/python.png</file>
         <file>images/light/settings.png</file>
         <file>images/light/settings-active.png</file>
-        <file>images/light/settings-general.png</file>
+        <file>images/light/settings-disabled.png</file>
         <file>images/light/settings-hover.png</file>
-        <file>images/light/settings-theme.png</file>
-        <file>images/light/settings-video.png</file>
         <file>images/light/shortcuts.png</file>
+        <file>images/light/smartcut-disabled.png</file>
+        <file>images/light/smartcut-hover.png</file>
+        <file>images/light/smartcut-off.png</file>
+        <file>images/light/smartcut-on.png</file>
         <file>images/light/theme-dark.png</file>
         <file>images/light/theme-light.png</file>
+        <file>images/light/thumbnails-disabled.png</file>
         <file>images/light/thumbnails-hover.png</file>
         <file>images/light/thumbnails-off.png</file>
         <file>images/light/thumbnails-on.png</file>

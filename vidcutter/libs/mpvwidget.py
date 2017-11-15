@@ -6,17 +6,16 @@ import logging
 import os
 import sys
 
-# this is required for Ubuntu which seems to
-# have a broken PyQt5 OpenGL implementation
+# this is required for Ubuntu which seems to have a broken PyQt5 OpenGL implementation
+# so we use PyOpenGL instead for the GL context
 # noinspection PyUnresolvedReferences
 from OpenGL import GL
 
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QEvent, QTimer
-from PyQt5.QtGui import QKeyEvent, QMouseEvent
+from PyQt5.QtGui import QKeyEvent, QMouseEvent, QWheelEvent
 from PyQt5.QtOpenGL import QGLContext
 from PyQt5.QtWidgets import QOpenGLWidget
 
-# noinspection PyUnresolvedReferences
 import vidcutter.libs.mpv as mpv
 
 # use try catch to allow Python versions below 3.5.3 without typing.Optional to still work
@@ -46,12 +45,14 @@ class mpvWidget(QOpenGLWidget):
     def __init__(self, parent=None, **mpv_opts):
         super(mpvWidget, self).__init__(parent)
         self.parent = parent
+        self.mpvError = mpv.MPVError
         self.originalParent = None
         self.logger = logging.getLogger(__name__)
         locale.setlocale(locale.LC_NUMERIC, 'C')
-        self.mpv = mpv.Context()
 
-        self.mpv.set_log_level('v' if os.getenv('DEBUG', False) else 'error')
+        self.mpv = mpv.Context()
+        self.setLogLevel('terminal-default')
+        self.mpv.set_option('msg-level', self.msglevel)
         self.mpv.set_option('config', False)
 
         def _istr(o):
@@ -62,24 +63,37 @@ class mpvWidget(QOpenGLWidget):
             try:
                 self.mpv.set_option(opt.replace('_', '-'), _istr(val))
             except mpv.MPVError:
+                print('error setting MPV option "%s" to value "%s"' % (opt, val))
                 pass
 
         self.mpv.initialize()
+
         self.opengl = self.mpv.opengl_cb_api()
         self.opengl.set_update_callback(self.updateHandler)
-        # ignore expection thrown by older versions of libmpv that do not implement the option
+
         try:
             self.mpv.set_option('opengl-hwdec-interop', 'auto')
-            if sys.platform == 'win32':
-                self.mpv.set_option('opengl-backend', 'angle')
         except mpv.MPVError:
             pass
+
+        if sys.platform == 'win32':
+            try:
+                self.mpv.set_option('gpu-context', 'angle')
+            except mpv.MPVError:
+                self.mpv.set_option('opengl-backend', 'angle')
 
         self.frameSwapped.connect(self.swapped, Qt.DirectConnection)
 
         self.mpv.observe_property('time-pos')
         self.mpv.observe_property('duration')
         self.mpv.set_wakeup_callback(self.eventHandler)
+
+    @property
+    def msglevel(self):
+        if os.getenv('DEBUG', False) or getattr(self.parent, 'verboseLogs', False):
+            return 'all=v'
+        else:
+            return 'all=error'
 
     def shutdown(self):
         self.makeCurrent()
@@ -133,23 +147,26 @@ class mpvWidget(QOpenGLWidget):
                 elif event.id == mpv.Events.property_change:
                     event_prop = event.data
                     if event_prop.name == 'time-pos':
+                        # if os.getenv('DEBUG', False) or getattr(self.parent, 'verboseLogs', False):
+                        #     self.logger.info('time-pos property event')
                         self.positionChanged.emit(event_prop.data, self.mpv.get_property('estimated-frame-number'))
                     elif event_prop.name == 'duration':
+                        # if os.getenv('DEBUG', False) or getattr(self.parent, 'verboseLogs', False):
+                        #     self.logger.info('duration property event')
                         self.durationChanged.emit(event_prop.data, self.mpv.get_property('estimated-frame-count'))
             except mpv.MPVError as e:
                 if e.code != -10:
                     raise e
 
-    def setLogLevel(self, loglevel: mpv.LogLevels):
+    def setLogLevel(self, loglevel):
         self.mpv.set_log_level(loglevel)
 
-    def showText(self, msg: str, duration: int=5, level: int=0):
+    def showText(self, msg: str, duration: int = 5, level: int = 0):
         self.mpv.command('show-text', msg, duration * 1000, level)
 
     def play(self, filepath) -> None:
-        if not os.path.exists(filepath):
-            return
-        self.mpv.command('loadfile', filepath, 'replace')
+        if os.path.isfile(filepath):
+            self.mpv.command('loadfile', filepath, 'replace')
 
     def frameStep(self) -> None:
         self.mpv.command('frame-step')
@@ -169,39 +186,46 @@ class mpvWidget(QOpenGLWidget):
     def volume(self, vol: int) -> None:
         self.mpv.set_property('volume', vol)
 
-    def codec(self, stream: str='video') -> str:
+    def codec(self, stream: str = 'video') -> str:
         return self.mpv.get_property('audio-codec' if stream == 'audio' else 'video-codec')
 
-    def format(self, stream: str='video') -> str:
+    def format(self, stream: str = 'video') -> str:
         return self.mpv.get_property('audio-codec-name' if stream == 'audio' else 'video-format')
 
     def property(self, prop: str):
         return self.mpv.get_property(prop)
 
     def _exitFullScreen(self) -> None:
-        self.showNormal()
         self.setParent(self.originalParent)
-        self.parent.toggleFullscreen()
+        self.showNormal()
 
     def changeEvent(self, event: QEvent) -> None:
         if event.type() == QEvent.WindowStateChange and self.isFullScreen():
             self.mpv.set_option('osd-align-x', 'center')
             self.showText('Press ESC key to exit full screen')
-            QTimer.singleShot(6500, lambda: self.mpv.set_option('osd-align-x', 'left'))
+            QTimer.singleShot(5000, self.resetOSD)
+
+    def resetOSD(self) -> None:
+        self.showText('')
+        self.mpv.set_option('osd-align-x', 'left')
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
-        if self.isFullScreen():
-            if event.key() in {Qt.Key_Escape, Qt.Key_F}:
+        if event.key() in {Qt.Key_F, Qt.Key_Escape}:
+            event.accept()
+            if self.isFullScreen():
                 self._exitFullScreen()
-                event.accept()
-            else:
-                self.originalParent.keyPressEvent(event)
-        super(mpvWidget, self).keyPressEvent(event)
+            self.parent.toggleFullscreen()
+        elif self.isFullScreen():
+            self.parent.keyPressEvent(event)
+        else:
+            super(mpvWidget, self).keyPressEvent(event)
 
     def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
+        event.accept()
         if self.isFullScreen():
             self._exitFullScreen()
-        else:
-            self.parent.toggleFullscreen()
-        event.accept()
-        super(mpvWidget, self).mouseDoubleClickEvent(event)
+        self.parent.toggleFullscreen()
+        # super(mpvWidget, self).mouseDoubleClickEvent(event)
+
+    def wheelEvent(self, event: QWheelEvent) -> None:
+        self.parent.seekSlider.wheelEvent(event)

@@ -31,14 +31,14 @@ from pkg_resources import parse_version
 from PyQt5.QtCore import Qt, QUrl
 from PyQt5.QtGui import QDesktopServices
 from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkReply, QNetworkRequest
-from PyQt5.QtWidgets import qApp, QDialog, QDialogButtonBox, QLabel, QVBoxLayout, QWidget
+from PyQt5.QtWidgets import qApp, QDialog, QDialogButtonBox, QLabel, QVBoxLayout
 
 from vidcutter.libs.widgets import VCProgressBar
 
 
-class Updater(QWidget):
-    def __init__(self, parent=None, f=Qt.WindowCloseButtonHint):
-        super(Updater, self).__init__(parent, f)
+class Updater(QDialog):
+    def __init__(self, parent=None, flags=Qt.Dialog | Qt.WindowCloseButtonHint):
+        super(Updater, self).__init__(parent, flags)
         self.parent = parent
         self.logger = logging.getLogger(__name__)
         self.api_github_latest = QUrl('https://api.github.com/repos/ozmartian/vidcutter/releases/latest')
@@ -64,7 +64,7 @@ class Updater(QWidget):
         self.mbox.show_result(latest, current)
 
     def check(self) -> None:
-        self.mbox = UpdaterMsgBox(self, theme=self.parent.theme)
+        self.mbox = UpdaterMsgBox(self.parent, theme=self.parent.theme)
         self.get(self.api_github_latest)
 
     def log_request(self, reply: QNetworkReply) -> None:
@@ -77,11 +77,13 @@ class Updater(QWidget):
 
 
 class UpdaterMsgBox(QDialog):
-    def __init__(self, parent=None, theme: str='light', title: str='Checking for updates', f=Qt.WindowCloseButtonHint):
-        super(UpdaterMsgBox, self).__init__(parent, f)
+    def __init__(self, parent=None, theme: str='light', title: str='Checking for updates',
+                 flags=Qt.Dialog | Qt.WindowCloseButtonHint):
+        super(UpdaterMsgBox, self).__init__(parent, flags)
         self.parent = parent
         self.theme = theme
         self.setWindowTitle(title)
+        self.setWindowModality(Qt.ApplicationModal)
         self.setObjectName('updaterdialog')
         self.loading = VCProgressBar(self.parent)
         self.loading.setText('contacting server')
@@ -121,7 +123,7 @@ class UpdaterMsgBox(QDialog):
                 text-align: right;
             }
             td.value {
-                font-family: "Open Sans", sans-serif;
+                font-family: "Noto Sans UI", sans-serif;
                 color: %s;
                 font-weight: 500;
             }

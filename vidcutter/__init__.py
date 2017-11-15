@@ -22,8 +22,15 @@
 #
 #######################################################################
 
-__author__      = 'Pete Alexandrou'
-__email__       = 'pete@ozmartians.com'
-__website__     = 'http://vidcutter.ozmartians.com'
+__version__ = '5.0.0'
 
-__version__     = '4.0.0'
+__appname__ = 'VidCutter'
+__domain__ = 'ozmartians.com'
+__appid__ = 'vidcutter-CCDC440A-CC57-4BED-8CDE-1DA285976A64'
+
+__author__ = 'Pete Alexandrou'
+__email__ = 'pete@ozmartians.com'
+__website__ = 'https://vidcutter.ozmartians.com'
+__bugreport__ = 'https://github.com/ozmartian/vidcutter/issues'
+
+__ispypi__ = False

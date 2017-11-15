@@ -23,6 +23,7 @@
 #######################################################################
 
 import logging
+import pprint
 import sys
 from io import StringIO
 
@@ -37,7 +38,8 @@ class VideoConsole(QTextEdit):
         self._buffer = StringIO()
         self.setReadOnly(True)
         self.setWordWrapMode(QTextOption.NoWrap)
-        self.setStyleSheet('QTextEdit { font-family:monospace; font-size:%s; }' % ('10pt' if sys.platform == 'darwin' else '8pt'))
+        self.setStyleSheet('QTextEdit { font-family:monospace; font-size:%s; }'
+                           % ('10pt' if sys.platform == 'darwin' else '8pt'))
 
     @pyqtSlot(str)
     def write(self, msg):
@@ -93,3 +95,12 @@ class ConsoleHandler(QObject, logging.StreamHandler):
 
     def emit(self, record):
         self.logReceived.emit(record.message)
+
+
+class VideoLogger(logging.Logger):
+    def __init__(self, name, level=logging.NOTSET):
+        super(VideoLogger, self).__init__(name, level)
+        self.pp = pprint.PrettyPrinter(indent=2, compact=False)
+
+    def info(self, msg, pretty: bool=False, *args, **kwargs):
+        return super(VideoLogger, self).info(self.pp.pformat(msg) if pretty else msg, *args, **kwargs)

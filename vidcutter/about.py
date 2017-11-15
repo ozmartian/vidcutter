@@ -28,11 +28,12 @@ import sys
 from datetime import datetime
 
 from PyQt5.Qt import PYQT_VERSION_STR
-from PyQt5.QtCore import QBuffer, QByteArray, QSize, Qt, QUrl
-from PyQt5.QtGui import QCloseEvent, QIcon
+from PyQt5.QtCore import QPoint, QSize, Qt, QUrl
+from PyQt5.QtGui import QCloseEvent, QPixmap
 from PyQt5.QtWidgets import qApp, QDialog, QDialogButtonBox, QLabel, QTabWidget, QTextBrowser, QVBoxLayout
 from sip import SIP_VERSION_STR
 
+import vidcutter
 import vidcutter.libs.mpv as mpv
 
 
@@ -46,17 +47,7 @@ class About(QDialog):
         builddate = datetime.fromtimestamp(os.path.getmtime(mpv.__file__)).strftime('%d %b %Y')
         pencolor1 = '#9A45A2' if self.parent.theme == 'dark' else '#642C68'
         pencolor2 = '#FFF' if self.parent.theme == 'dark' else '#000'
-        # use theme app icon image if one exists
-        appicon = ':/images/vidcutter-small.png'
-        if QIcon.hasThemeIcon(qApp.applicationName().lower()):
-            themeicon = QIcon.fromTheme(qApp.applicationName().lower(), QIcon(appicon))
-            themeimg = themeicon.pixmap(82, 82).toImage()
-            data = QByteArray()
-            buffer = QBuffer(data)
-            buffer.open(QBuffer.WriteOnly)
-            themeimg.save(buffer, 'PNG')
-            base64enc = str(data.toBase64().data(), 'latin1')
-            appicon = 'data:vidcutter.png;base64,%s' % base64enc
+        appicon = self.parent.getAppIcon(encoded=True)
         header = QLabel('''
         <style>table { color: %s; background-color: transparent; }</style>
         <table border="0" cellpadding="5" cellspacing="1" width="100%%">
@@ -69,16 +60,16 @@ class About(QDialog):
                         <span style="font-size:58px;">V</span>ID<span style="font-size:58px;">C</span>UTTER
                     </div>
                     &nbsp;&nbsp;
-                    <div style="padding:0; margin:0; margin-left:35px;">
+                    <div style="padding:0; margin:0; margin-left:10px;">
                         <table border="0" cellpadding="2" cellspacing="0">
-                        <tr valign="bottom">
+                        <tr valign="middle">
                             <td style="text-align:right;font-size:10pt;font-weight:500;color:%s;">version:</td>
                             <td>
                                 <span style="font-size:18px;font-weight:400;">%s</span>
                                 &nbsp;<span style="font-size:10pt;margin-left:5px;">(%s)</span>
                             </td>
                         </tr>
-                        <tr valign="bottom">
+                        <tr valign="middle">
                             <td style="text-align:right;font-size:10pt;font-weight:500;color:%s;">build date:</td>
                             <td style="font-size:10pt;font-weight:400;">%s</td>
                         </tr>
@@ -118,8 +109,8 @@ class About(QDialog):
     @staticmethod
     def get_size(mode: str = 'NORMAL') -> QSize:
         modes = {
-            'LOW': QSize(450, 250),
-            'NORMAL': QSize(515, 480),
+            'LOW': QSize(450, 300),
+            'NORMAL': QSize(515, 520),
             'HIGH': QSize(1080, 920)
         }
         return modes[mode]
@@ -150,34 +141,48 @@ class AboutTab(BaseTab):
         # noinspection PyBroadException
         try:
             ffmpeg_version = self.parent.parent.videoService.version()
-        except:
+        except BaseException:
             ffmpeg_version = '<span style="color:red;">MISSING</span>'
         html = '''
 <style>
-    table { width: 100%%; font-family: "Open Sans", sans-serif; }
+    table { width: 100%%; font-family: "Noto Sans UI", sans-serif; }
     a { color: %s; text-decoration: none; font-weight: bold; }
 </style>
 <table border="0" cellpadding="8" cellspacing="4">
     <tr>
         <td>
-            <p style="font-size:13px;">
-                <b>libmpv:</b> %s
-                %s
-                <b>FFmpeg:</b> %s
-                <br/>
-                <b>Python:</b> %s
-                &nbsp;&nbsp;&nbsp;
-                <b>PyQt5:</b> %s
-                &nbsp;&nbsp;&nbsp;
-                <b>SIP:</b> %s
-            </p> 
-            <p style="font-size:13px;">
-                Copyright &copy; %s <a href="mailto:pete@ozmartians.com">Pete Alexandrou</a>
-                <br/>
-                Website: <a href="http://vidcutter.ozmartians.com">http://vidcutter.ozmartians.com</a>
-            </p>
-            <p style="font-size:13px;">
-                Found a bug? You can <a href="https://github.com/ozmartian/vidcutter/issues">REPORT IT HERE</a>.
+            <table border="0" cellpadding="0" cellspacing="0">
+                <tr valign="bottom">
+                    <td>
+                        <p style="font-size:13px;">
+                            <b>libmpv:</b> %s
+                            %s
+                            <b>FFmpeg:</b> %s
+                            <br/>
+                            <b>Python:</b> %s
+                            &nbsp;&nbsp;&nbsp;
+                            <b>PyQt5:</b> %s
+                            &nbsp;&nbsp;&nbsp;
+                            <b>SIP:</b> %s
+                        </p>
+                        <p style="font-size:13px;">
+                            Copyright &copy; %s <a href="mailto:%s">%s</a>
+                            <br/>
+                            Website: <a href="%s" target="_blank">%s</a>
+                        </p>
+                        <p style="font-size:13px;">
+                            Found a bug? You can <a href="%s">REPORT IT HERE</a>.
+                        </p>
+                    </td>
+                    <td align="right">
+                        <a href="https://www.jetbrains.com/pycharm"><img src=":/images/pycharm.png" /></a>
+                    </td>
+                </tr>
+            </table>
+            <p style="font-size:12px;">
+                Built in Python with the help of <a href="https://www.jetbrains.com/pycharm">PyCharm Professional</a>
+                using an open-source development license donated by its wickedly cool creators at
+                <a href="https://www.jetbrains.com">JetBrains</a>.
             </p>
             <p style="font-size:11px; margin-top:15px;">
                 This program is free software; you can redistribute it and/or
@@ -193,7 +198,9 @@ class AboutTab(BaseTab):
     </tr>
 </table>''' % ('#EA95FF' if self.parent.parent.theme == 'dark' else '#441D4E',
                self.parent.parent.mpvWidget.mpv.get_property('mpv-version').replace('mpv ', ''), linebreak,
-               ffmpeg_version, sys.version.split(' ')[0], PYQT_VERSION_STR, SIP_VERSION_STR, datetime.now().year)
+               ffmpeg_version, sys.version.split(' ')[0], PYQT_VERSION_STR, SIP_VERSION_STR, datetime.now().year,
+               vidcutter.__email__, vidcutter.__author__, vidcutter.__website__, vidcutter.__website__,
+               vidcutter.__bugreport__)
         self.setHtml(html)
 
 

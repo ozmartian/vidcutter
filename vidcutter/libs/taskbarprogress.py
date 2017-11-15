@@ -22,20 +22,15 @@
 #
 #######################################################################
 
-import logging
-
 from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtWidgets import qApp, QWidget
-
 from PyQt5.QtDBus import QDBusConnection, QDBusMessage
+from PyQt5.QtWidgets import qApp, QWidget
 
 
 class TaskbarProgress(QWidget):
     def __init__(self, parent=None):
         super(TaskbarProgress, self).__init__(parent)
-        self.parent = parent
-        self.logger = logging.getLogger(__name__)
-        self._desktopFileName = '%s.desktop' % qApp.applicationName().lower()
+        self._desktopfile = 'application://{}.desktop'.format(qApp.applicationName().lower())
         self._sessionbus = QDBusConnection.sessionBus()
         self.clear()
 
@@ -45,11 +40,7 @@ class TaskbarProgress(QWidget):
 
     @pyqtSlot(float, bool)
     def setProgress(self, value: float, visible: bool=True):
-        # self.logger.info('setprogress - value; %s    visible: %s' % (value, visible))
         signal = QDBusMessage.createSignal('/com/canonical/unity/launcherentry/337963624',
                                            'com.canonical.Unity.LauncherEntry', 'Update')
-        message = signal << 'application://{0}'.format(self._desktopFileName) << {
-            'progress-visible': visible,
-            'progress': value
-        }
+        message = signal << self._desktopfile << {'progress-visible': visible, 'progress': value}
         self._sessionbus.send(message)

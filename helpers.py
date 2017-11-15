@@ -25,7 +25,6 @@
 import codecs
 import os
 import pydoc
-import re
 import subprocess
 import sys
 
@@ -46,14 +45,6 @@ class SetupHelpers:
         if sys.platform == 'win32':
             _dirs = ['vidcutter/libs/pympv/win%s' % SetupHelpers.get_bitness()]
         return _dirs
-
-    @staticmethod
-    def get_value(varname, filename='vidcutter/__init__.py'):
-        with codecs.open(os.path.join(SetupHelpers.here, filename), encoding='utf-8') as initfile:
-            for line in initfile.readlines():
-                m = re.match('__%s__ *= *[\'](.*)[\']' % varname, line)
-                if m:
-                    return m.group(1)
 
     @staticmethod
     def get_description(filename='README.md'):
@@ -81,9 +72,20 @@ class SetupHelpers:
                 ('/usr/share/icons/hicolor/scalable/apps', ['data/icons/hicolor/scalable/apps/vidcutter.svg']),
                 ('/usr/share/pixmaps', ['data/icons/vidcutter.svg']),
                 ('/usr/share/applications', ['data/desktop/vidcutter.desktop']),
+                ('/usr/share/appdata', ['data/appdata/vidcutter.appdata.xml']),
                 ('/usr/share/mime/packages', ['data/mime/x-vidcutter.xml'])
             ]
         return files
+
+    @staticmethod
+    def get_latest_win32_libmpv():
+        from urllib.request import urlopen
+        import xmltodict
+        xml = urlopen('https://sourceforge.net/projects/mpv-player-windows/rss?path=/libmpv').read()
+        data = xml.decode('utf-8')
+        datadict = xmltodict.parse(data)
+        link = datadict['rss']['channel']['item'][0]['title']
+        print(link)
 
     @staticmethod
     def pip_notes():
@@ -126,31 +128,41 @@ class SetupHelpers:
     And to then run the app directly from source, from the same top-most
     source code folder:
     
-        $ python3 -m vidcutter (append --debug if needed)
+        $ python3 -m vidcutter
+
+    To view all console output for debugging or general interest then
+    append the debug parameter:
+
+        $ python3 -m vidcutter --debug
         
     Make sure you build the extension module AFTER installing the
     dependencies covered above, in particular libmpv and the mpv + python3
     dev headers are all needed for it to compile successfully. Compiled
-    extension modules under vidcutter/libs will similar to:
+    extension modules under vidcutter/libs will look like:
 
         mpv.cpython-36m-x86_64-linux-gnu.so [linux]
         mpv.cp36-win_amd64.pyd              [win32]
         
     Windows users must do all this within a Visual Studio 2015/2017 Native x64/x86
     Developer Command Prompt accessible from your Visual Studio program group
-    in the start menu. Much easier to just grab what I've already built for
-    you direct from here:
+    via the start menu. It's easier to just grab the prebuilt Windows installers
+    directly from:
 
         https://github.com/ozmartian/vidcutter/releases/latest
 ''')
 
+
 if __name__ == '__main__':
-    print('\nRebuilding resource file...\n')
-    exe = find_executable('pyrcc5')
-    if exe is None:
-        sys.stderr.write('Could not find pyrcc5 executable')
-        sys.exit(1)
-    subprocess.run('{0} -compress 9 -o "{1}" "{2}"'.format(exe,
+    if len(sys.argv) > 1:
+        getattr(SetupHelpers, sys.argv[1])()
+    else:
+        print('\nRebuilding resource file...\n')
+        exe = find_executable('pyrcc5')
+        if exe is None:
+            sys.stderr.write('Could not find pyrcc5 executable')
+            sys.exit(1)
+        subprocess.run('{0} -compress 9 -o "{1}" "{2}"'
+                       .format(exe,
                                os.path.join(os.path.dirname(os.path.abspath(__file__)), 'vidcutter', 'resources.py'),
                                os.path.join(os.path.dirname(os.path.abspath(__file__)), 'vidcutter', 'resources.qrc')),
-                   shell=True)
+                       shell=True)

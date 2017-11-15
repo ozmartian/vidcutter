@@ -25,10 +25,12 @@
 import os
 import sys
 
-from PyQt5.QtCore import QModelIndex, Qt, QSize
-from PyQt5.QtGui import QPainter, QColor, QIcon, QPen, QFont, QMouseEvent
+from PyQt5.QtCore import Qt, QEvent, QModelIndex, QSize
+from PyQt5.QtGui import QColor, QFont, QIcon, QMouseEvent, QPainter, QPen
 from PyQt5.QtWidgets import (QAbstractItemDelegate, QAbstractItemView, QListWidget, QSizePolicy, QStyle,
                              QStyleOptionViewItem)
+
+from vidcutter.graphicseffects import OpacityEffect
 
 
 class VideoList(QListWidget):
@@ -50,6 +52,9 @@ class VideoList(QListWidget):
         self.setAlternatingRowColors(True)
         self.setObjectName('cliplist')
         self.setStyleSheet('QListView::item { border: none; }')
+        self.opacityEffect = OpacityEffect(0.3)
+        self.opacityEffect.setEnabled(False)
+        self.setGraphicsEffect(self.opacityEffect)
 
     def mouseMoveEvent(self, event: QMouseEvent) -> None:
         if self.count() > 0:
@@ -59,6 +64,10 @@ class VideoList(QListWidget):
             else:
                 self.setCursor(Qt.ArrowCursor)
         super(VideoList, self).mouseMoveEvent(event)
+
+    def changeEvent(self, event: QEvent) -> None:
+        if event.type() == QEvent.EnabledChange:
+            self.opacityEffect.setEnabled(not self.isEnabled())
 
     def clearSelection(self) -> None:
         self.parent.seekSlider.selectRegion(-1)
@@ -74,16 +83,16 @@ class VideoItem(QAbstractItemDelegate):
 
     def paint(self, painter: QPainter, option: QStyleOptionViewItem, index: QModelIndex) -> None:
         r = option.rect
-        if option.state & QStyle.State_Selected:
-            painter.setBrush(QColor('#96BE4E'))
-            pencolor = Qt.white if self.theme == 'dark' else Qt.black
-        elif option.state & QStyle.State_MouseOver:
-            painter.setBrush(QColor('#E3D4E8'))
-            pencolor = Qt.black
-        else:
-            brushcolor = QColor(79, 85, 87, 175) if self.theme == 'dark' else QColor('#EFF0F1')
-            painter.setBrush(Qt.transparent if index.row() % 2 == 0 else brushcolor)
-            pencolor = Qt.white if self.theme == 'dark' else Qt.black
+        pencolor = Qt.white if self.theme == 'dark' else Qt.black
+        if self.parent.isEnabled():
+            if option.state & QStyle.State_Selected:
+                painter.setBrush(QColor(150, 190, 78, 150))
+            elif option.state & QStyle.State_MouseOver:
+                painter.setBrush(QColor(227, 212, 232))
+                pencolor = Qt.black
+            else:
+                brushcolor = QColor(79, 85, 87, 175) if self.theme == 'dark' else QColor('#EFF0F1')
+                painter.setBrush(Qt.transparent if index.row() % 2 == 0 else brushcolor)
         painter.setPen(Qt.NoPen)
         painter.drawRect(r)
         thumb = QIcon(index.data(Qt.DecorationRole + 1))
@@ -94,20 +103,20 @@ class VideoItem(QAbstractItemDelegate):
         thumb.paint(painter, r, Qt.AlignVCenter | Qt.AlignLeft)
         painter.setPen(QPen(pencolor, 1, Qt.SolidLine))
         r = option.rect.adjusted(110, 8, 0, 0)
-        painter.setFont(QFont('Open Sans', 10 if sys.platform == 'darwin' else 8, QFont.Bold))
+        painter.setFont(QFont('Noto Sans UI', 10 if sys.platform == 'darwin' else 8, QFont.Bold))
         painter.drawText(r, Qt.AlignLeft, 'FILENAME' if len(externalPath) else 'START')
         r = option.rect.adjusted(110, 20, 0, 0)
-        painter.setFont(QFont('Open Sans', 11 if sys.platform == 'darwin' else 9, QFont.Normal))
+        painter.setFont(QFont('Noto Sans UI', 11 if sys.platform == 'darwin' else 9, QFont.Normal))
         if len(externalPath):
             painter.drawText(r, Qt.AlignLeft, self.clipText(os.path.basename(externalPath), painter))
         else:
             painter.drawText(r, Qt.AlignLeft, starttime)
         if len(endtime) > 0:
             r = option.rect.adjusted(110, 45, 0, 0)
-            painter.setFont(QFont('Open Sans', 10 if sys.platform == 'darwin' else 8, QFont.Bold))
+            painter.setFont(QFont('Noto Sans UI', 10 if sys.platform == 'darwin' else 8, QFont.Bold))
             painter.drawText(r, Qt.AlignLeft, 'RUNTIME' if len(externalPath) else 'END')
             r = option.rect.adjusted(110, 60, 0, 0)
-            painter.setFont(QFont('Open Sans', 11 if sys.platform == 'darwin' else 9, QFont.Normal))
+            painter.setFont(QFont('Noto Sans UI', 11 if sys.platform == 'darwin' else 9, QFont.Normal))
             painter.drawText(r, Qt.AlignLeft, endtime)
         if self.parent.verticalScrollBar().isVisible():
             self.parent.setFixedWidth(210)
