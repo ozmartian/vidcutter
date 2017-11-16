@@ -55,7 +55,7 @@ rm -rf %{pkg_name}.egg-info
 %{_datadir}/pixmaps/%{pkg_name}.svg
 
 %changelog
-* Wed Nov 16 2017 Pete Alexandrou <pete AT ozmartians DOT com> 5.0.0-1
+* Thu Nov 16 2017 Pete Alexandrou <pete AT ozmartians DOT com> 5.0.0-1
 - 5.0.0 release
 * Thu Aug 03 2017 Pete Alexandrou <pete AT ozmartians DOT com> 4.0.0-1
 - 4.0.0 release
