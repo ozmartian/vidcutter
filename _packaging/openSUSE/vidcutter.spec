@@ -58,6 +58,7 @@ python3 setup.py install --root %{buildroot}
 %{_datadir}/icons/hicolor/256x256/apps/%{name}.png
 %{_datadir}/icons/hicolor/512x512/apps/%{name}.png
 %{_datadir}/icons/hicolor/scalable/apps/%{name}.svg
+%{_datadir}/data/appdata/%{name}.appdata.xml
 %{_datadir}/mime/packages/x-%{name}.xml
 %{_datadir}/pixmaps/%{name}.svg
 

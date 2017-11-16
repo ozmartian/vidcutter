@@ -51,6 +51,7 @@ rm -rf %{pkg_name}.egg-info
 %{_datadir}/icons/hicolor/512x512/apps/%{pkg_name}.png
 %{_datadir}/icons/hicolor/64x64/apps/%{pkg_name}.png
 %{_datadir}/icons/hicolor/scalable/apps/%{pkg_name}.svg
+%{_datadir}/data/appdata/%{pkg_name}.appdata.xml
 %{_datadir}/mime/packages/x-%{pkg_name}.xml
 %{_datadir}/pixmaps/%{pkg_name}.svg
 
