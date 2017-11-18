@@ -36,7 +36,7 @@ from functools import partial
 from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QDir, QFile, QFileInfo, QObject, QProcess, QProcessEnvironment, QSize,
                           QStorageInfo, QTemporaryFile, QTime)
 from PyQt5.QtGui import QPainter, QPixmap
-from PyQt5.QtWidgets import qApp, QMessageBox
+from PyQt5.QtWidgets import QMessageBox
 
 from vidcutter.libs.munch import Munch
 from vidcutter.libs.videoconfig import FFmpegNotFoundException, InvalidMediaException, VideoConfig
