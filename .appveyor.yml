@@ -75,9 +75,10 @@ install:
   # - echo Installing latest git checkout of PyInstaller...
   # - C:\Python35\python.exe -m pip install git+https://github.com/pyinstaller/pyinstaller.git@develop
   - echo Setting up libmpv build subfolders...
-  - mkdir "_build\pyinstaller\temp"
-  - mkdir "_build\pyinstaller\libmpv"
+  # - mkdir "_build\pyinstaller\temp"
+  # - mkdir "_build\pyinstaller\libmpv"
   - mkdir "_build\pyinstaller\libmpv\32"
+  - del /q "_build\pyinstaller\temp\*.*"
   - echo Setup build environment for MSVC++
   - call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x86
   - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
