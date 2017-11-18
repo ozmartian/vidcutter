@@ -1,11 +1,11 @@
-version: 4.5.0.{build}
+version: 5.0.0.{build}
 
 pull_requests:
   do_not_increment_build_number: true
 
 branches:
   only:
-  - 4.5.0
+  - master
 
 skip_non_tags: false
 
@@ -62,7 +62,7 @@ install:
   - call build.pyinstaller.win.bat 64
   - echo.
   - cd ..\InnoSetup\Output
-  - appveyor PushArtifact VidCutter-4.5.0-setup-win64.exe
+  - appveyor PushArtifact VidCutter-5.0.0-setup-win64.exe
   - echo.
   - echo SUCCESS
   - appveyor exit
