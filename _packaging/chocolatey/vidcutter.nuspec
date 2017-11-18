@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
   <metadata>
     <id>vidcutter</id>
-    <version>5.0.0.1</version>
+    <version>5.0.0.2</version>
     <title>VidCutter</title>
     <authors>Pete Alexandrou</authors>
     <owners>ozmartian</owners>
@@ -18,7 +18,7 @@ mpv powered playback for frame-level accuracy and support for the widest array o
 
 install location: %PROGRAMFILES%\VidCutter</description>
     <summary>the simplest + fastest video cutter and joiner</summary>
-    <releaseNotes>Checksums fixed to allow installation again + https://github.com/ozmartian/vidcutter/releases/tag/4.0.0</releaseNotes>
+    <releaseNotes>https://github.com/ozmartian/vidcutter/releases/tag/5.0.0</releaseNotes>
     <copyright>All Rights Reserved</copyright>
     <tags>vidcutter ffmpeg audiovideo opengl mpv libmpv videoeditor video videoedit pyqt Qt5 multimedia admin</tags>
     <projectSourceUrl>https://github.com/ozmartian/vidcutter.git</projectSourceUrl>

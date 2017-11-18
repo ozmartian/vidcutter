@@ -15,9 +15,9 @@ $packageArgs = @{
 
   softwareName  = 'VidCutter'
 
-  checksum      = 'd74f7cde2a92e78aa1d075a2a67d800289e51c75ccef50926ecdd6591cc72bc2'
+  checksum      = 'f572b65c7c03dc439b71cbfa0e3eb5cbbc3c8a945987694980b963dbb50be39e'
   checksumType  = 'sha256'
-  checksum64    = '261ac04b6f5fb6ebaf70a4b8a1ba4cb6e031111228cd79fa9cd4d4cd5885d278'
+  checksum64    = 'e8a000161ff205351510097f19003004f2b4410e4c91799cd1911aab8b5853dc'
   checksumType64= 'sha256'
 
   silentArgs    = "/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP-"
