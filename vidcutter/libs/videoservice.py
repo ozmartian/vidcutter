@@ -111,7 +111,7 @@ class VideoService(QObject):
         tools = Munch(ffmpeg=None, ffprobe=None, mediainfo=None)
         for backend in tools.keys():
             for exe in VideoService.config.binaries[os.name][backend]:
-                binpath = QDir.toNativeSeparators('{0}/bin/{1}'.format(qApp.applicationDirPath(), exe))
+                binpath = QDir.toNativeSeparators('{0}/bin/{1}'.format(VideoService.getAppPath(), exe))
                 if binpath is not None and os.path.isfile(binpath):
                     tools[backend] = binpath
                     break
