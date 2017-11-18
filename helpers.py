@@ -78,14 +78,22 @@ class SetupHelpers:
         return files
 
     @staticmethod
-    def get_latest_win32_libmpv():
+    def get_latest_win32_libmpv(arch: int=64):
         from urllib.request import urlopen
         import xmltodict
         xml = urlopen('https://sourceforge.net/projects/mpv-player-windows/rss?path=/libmpv').read()
         data = xml.decode('utf-8')
         datadict = xmltodict.parse(data)
-        link = datadict['rss']['channel']['item'][0]['title']
+        link = datadict['rss']['channel']['item'][1 if arch == 32 else 0]['title']
         print(link)
+
+    @staticmethod
+    def get_latest_win32_libmpv_64():
+        return SetupHelpers.get_latest_win32_libmpv(64)
+
+    @staticmethod
+    def get_latest_win32_libmpv_32():
+        return SetupHelpers.get_latest_win32_libmpv(32)
 
     @staticmethod
     def pip_notes():
