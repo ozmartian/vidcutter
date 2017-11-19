@@ -1,6 +1,3 @@
-[![Latest Release](http://tvlinker.ozmartians.com/images/button-latest-release.png)](https://github.com/ozmartian/vidcutter/releases/latest)
- 
-
 ![VidCutter](http://vidcutter.ozmartians.com/vidcutter-banner.png)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -15,6 +12,8 @@
 ### Windows + macOS Users
 
 Native installers for Windows and macOS are available on the releases page with every new version, or just click the button below. 
+
+[![Latest Releases](http://tvlinker.ozmartians.com/images/button-latest-release.png)](https://github.com/ozmartian/vidcutter/releases/latest)
 
 #### Chocolatey package
 
