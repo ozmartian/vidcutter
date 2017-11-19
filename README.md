@@ -3,6 +3,7 @@
 
 ![VidCutter](http://vidcutter.ozmartians.com/vidcutter-banner.png)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <a href="http://vidcutter.software.informer.com/" target="_blank"><img border="0" src="http://img.informer.com/awards/si-award-clean.png" alt="Software Informer Virus Free award" height="120" width="120" /></a>
 
 [![AUR](https://img.shields.io/aur/version/vidcutter.svg)](https://aur.archlinux.org/packages/vidcutter)
@@ -38,6 +39,16 @@ for Windows).
 Users can install directly from AUR, package is available in both stable and git-latest versions:
 
     AUR: vidcutter, vidcutter-git
+    
+Using an AUR helper like pacaur (or substitute with yaourt if that is your preference):
+
+    LATEST STABLE RELEASE:
+
+        pacaur -S vidcutter
+
+    LATEST DEVELOPMENT RELEASE:
+    
+        pacaur -S vidcutter-git
 
 #### Ubuntu/Mint/Debian and all other Ubuntu derivatives 
 
@@ -48,23 +59,25 @@ Users can install the latest release via:
 If you are new to PPAs then just issue the following commands in a terminal:
 
     sudo add-apt-repository ppa:ozmartian/apps
-    sudo apt-get update
-    sudo apt-get install vidcutter
+    sudo apt update
+    sudo apt install vidcutter
 
 #### Fedora
 
-Users can install via the RPM available on the releases page or via my custom copr repository:
+A custom COPR repository is maintained at:
 
     suspiria/VidCutter
     
-The commands for a Fedora install via this method are:
+The commands for a Fedora install are:
 
-    dnf copr enable suspiria/VidCutter
-    dnf install vidcutter
+    sudo dnf copr enable suspiria/VidCutter
+    sudo dnf install vidcutter
 
 #### openSUSE
 
-VidCutter is available via the Packman third-party repository. Instructions to enable it can be found here:
+VidCutter was recently added to openSUSE Tumbleweed (rolling-build) official repos and should hopefully make its way to release versions in time.
+
+VidCutter is also available via the Packman third-party repository. Instructions to enable it can be found here:
 
    https://en.opensuse.org/Additional_package_repositories#Packman
 
@@ -90,7 +103,7 @@ Fedora and RedHat users need to enable the RPMFusion repository in order to acce
 
 ## Fedora Installation Walkthrough
 
-NOTE: a Fedora25 RPM package is now included in release builds so use that. The following remains for reference or troubleshooting.
+NOTE: a Fedora COPR repo RPM package is now included in release builds so use that. The following remains for reference or troubleshooting.
 
 1. Enable RPMFusion Free repository on your system if not already added. Follow the instructions here for your distro/version
 
@@ -108,7 +121,7 @@ NOTE: a Fedora25 RPM package is now included in release builds so use that. The 
     - mediainfo
     - python3-setuptools
 
-5. Download VidCutter3 source code to temp folder location and install via python setuptools as follows:
+5. Download VidCutter source code to a temp folder location and install via python setuptools as follows:
     ```
     $ wget https://github.com/ozmartian/vidcutter/archive/master.tar.gz
     
