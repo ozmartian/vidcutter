@@ -297,7 +297,7 @@ class VideoCutter(QWidget):
         self.settingsButton.setFixedSize(QSize(33, 32))
 
         # noinspection PyArgumentList
-        self.mediainfoButton = QPushButton(self, toolTip='Media information', cursor=Qt.PointingHandCursor, flat=True,
+        self.mediainfoButton = QPushButton(self, toolTip='MediaInfo', cursor=Qt.PointingHandCursor, flat=True,
                                            statusTip='Click to view technical information on currently loaded media',
                                            objectName='mediainfoButton', clicked=self.mediaInfo, enabled=False)
         self.mediainfoButton.setFixedSize(QSize(33, 32))
@@ -317,13 +317,37 @@ class VideoCutter(QWidget):
         audioLayout.addSpacing(5)
         audioLayout.addWidget(self.fullscreenButton)
 
+        self.toolbar_open = QPushButton(self)
+        self.toolbar_open.setObjectName('toolbar-open')
+        self.toolbar_open.setToolTip('Open Media')
+        self.toolbar_open.setStatusTip('Open a media file to play, cut and join')
+        self.toolbar_open.setCursor(Qt.PointingHandCursor)
+        self.toolbar_open.setFlat(True)
+        self.toolbar_open.setFixedSize(QSize(50, 53))
+        self.toolbar_open.clicked.connect(self.openMedia)
+        
+        self.toolbar_play = QPushButton(self)
+        self.toolbar_play.setObjectName('toolbar-play')
+        self.toolbar_play.setToolTip('Play Media')
+        self.toolbar_play.setStatusTip('Play open media file')
+        self.toolbar_play.setCursor(Qt.PointingHandCursor)
+        self.toolbar_play.setFlat(True)
+        self.toolbar_play.setFixedSize(QSize(50, 53))
+        self.toolbar_play.clicked.connect(self.playMedia)
+
         toolbarLayout = QHBoxLayout()
+        toolbarLayout.addWidget(self.toolbar_open)
+        toolbarLayout.addWidget(QLabel('Open\nMedia'))
+        toolbarLayout.addStretch(1)
+        toolbarLayout.addWidget(self.toolbar_play)
+        toolbarLayout.addWidget(QLabel('Play\nMedia'))
+        toolbarLayout.addStretch(1)
         toolbarLayout.addWidget(self.toolbar)
         toolbarLayout.setContentsMargins(0, 0, 0, 0)
 
         toolbarGroup = QGroupBox()
         toolbarGroup.setLayout(toolbarLayout)
-        toolbarGroup.setStyleSheet('border: 0;')
+        toolbarGroup.setStyleSheet('QGroupBox { border: 0; }')
 
         togglesLayout = QHBoxLayout()
         togglesLayout.setSpacing(0)
@@ -368,7 +392,6 @@ class VideoCutter(QWidget):
         layout.addLayout(controlsLayout)
 
         self.setLayout(layout)
-
         self.seekSlider.initStyle()
 
     def initTheme(self) -> None:
@@ -428,7 +451,7 @@ class VideoCutter(QWidget):
         self.appIcon = qApp.windowIcon()
         self.openIcon = QIcon()
         self.openIcon.addFile(':/images/{}/toolbar-open.png'.format(self.theme), QSize(50, 53), QIcon.Normal)
-        self.openIcon.addFile(':/images/%s/toolbar-open-on.png' % self.theme, QSize(50, 53), QIcon.Active)
+        self.openIcon.addFile(':/images/%s/toolbar-open-hover.png' % self.theme, QSize(50, 53), QIcon.Active)
         self.openIcon.addFile(':/images/%s/toolbar-open-disabled.png' % self.theme, QSize(50, 53), QIcon.Disabled)
         self.playIcon = QIcon()
         self.playIcon.addFile(':/images/%s/toolbar-play.png' % self.theme, QSize(50, 53), QIcon.Normal)
@@ -513,8 +536,8 @@ class VideoCutter(QWidget):
                                   statusTip='Quit the application')
 
     def initToolbar(self) -> None:
-        self.toolbar.addAction(self.openAction)
-        self.toolbar.addAction(self.playAction)
+        # self.toolbar.addAction(self.openAction)
+        # self.toolbar.addAction(self.playAction)
         self.toolbar.addAction(self.pauseAction)
         self.toolbar.addAction(self.cutStartAction)
         self.toolbar.addAction(self.cutEndAction)

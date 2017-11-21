@@ -151,13 +151,15 @@
         <file>images/light/toolbar-end-on.png</file>
         <file>images/light/toolbar-open.png</file>
         <file>images/light/toolbar-open-disabled.png</file>
-        <file>images/light/toolbar-open-on.png</file>
+        <file>images/light/toolbar-open-hover.png</file>
+        <file>images/light/toolbar-open-pressed.png</file>
         <file>images/light/toolbar-pause.png</file>
         <file>images/light/toolbar-pause-disabled.png</file>
         <file>images/light/toolbar-pause-on.png</file>
         <file>images/light/toolbar-play.png</file>
         <file>images/light/toolbar-play-disabled.png</file>
-        <file>images/light/toolbar-play-on.png</file>
+        <file>images/light/toolbar-play-hover.png</file>
+        <file>images/light/toolbar-play-pressed.png</file>
         <file>images/light/toolbar-save.png</file>
         <file>images/light/toolbar-save-disabled.png</file>
         <file>images/light/toolbar-save-on.png</file>

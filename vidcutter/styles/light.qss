@@ -230,6 +230,42 @@ QMessageBox {
 
 /* -------------------------------------------------------------------------- */
 
+QPushButton#toolbar-open {
+    border-image: url(:/images/light/toolbar-open.png);
+}
+
+QPushButton:disabled#toolbar-open {
+    border-image: url(:/images/light/toolbar-open-disabled.png);
+}
+
+QPushButton:hover#toolbar-open {
+    border-image: url(:/images/light/toolbar-open-hover.png);
+}
+
+QPushButton:pressed#toolbar-open {
+    border-image: url(:/images/light/toolbar-open-pressed.png);
+}
+
+/* -------------------------------------------------------------------------- */
+
+QPushButton#toolbar-play {
+    border-image: url(:/images/light/toolbar-play.png);
+}
+
+QPushButton:disabled#toolbar-play {
+    border-image: url(:/images/light/toolbar-play-disabled.png);
+}
+
+QPushButton:hover#toolbar-play {
+    border-image: url(:/images/light/toolbar-play-hover.png);
+}
+
+QPushButton:pressed#toolbar-play {
+    border-image: url(:/images/light/toolbar-play-pressed.png);
+}
+
+/* -------------------------------------------------------------------------- */
+
 QDialogButtonBox QPushButton, QDialog#notification QPushButton, QDialog#videoinfo QPushButton {
     padding: 5px 8px;
 }
@@ -258,7 +294,7 @@ QDialog#videoinfo QPushButton, #clipindextools QPushButton {
 
 #clipindextools QPushButton:hover#clipadd,
 #clipindextools QPushButton:pressed#clipadd {
-    background: #642C68 url(:images/light/clipindex-add-on.png) no-repeat left center;
+    background: #DACFDB url(:images/light/clipindex-add-on.png) no-repeat left center;
 }
 
 #clipindextools QPushButton:disabled#clipadd {
@@ -271,7 +307,7 @@ QDialog#videoinfo QPushButton, #clipindextools QPushButton {
 
 #clipindextools QPushButton:hover#clipremove,
 #clipindextools QPushButton:pressed#clipremove {
-    background: #642C68 url(:images/light/clipindex-remove-on.png) no-repeat right center;
+    background: #DACFDB url(:images/light/clipindex-remove-on.png) no-repeat right center;
 }
 
 #clipindextools QPushButton:disabled#clipremove {

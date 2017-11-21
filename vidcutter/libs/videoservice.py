@@ -62,7 +62,7 @@ class VideoService(QObject):
         INDEX = QSize(100, 70)
         TIMELINE = QSize(105, 60)
 
-    class Stream(Enum):
+    class StreamType(Enum):
         AUDIO = 0
         VIDEO = 1
         SUBTITLE = 2
@@ -93,7 +93,7 @@ class VideoService(QObject):
             if self.media is not None:
                 if getattr(self.parent, 'verboseLogs', False):
                     self.logger.info(self.media)
-                for codec_type in VideoService.Stream.__members__:
+                for codec_type in VideoService.StreamType.__members__:
                     setattr(self.streams, codec_type.lower(),
                             [stream for stream in self.media.streams if stream.codec_type == codec_type.lower()])
                 if len(self.streams.video):
@@ -229,7 +229,7 @@ class VideoService(QObject):
         else:
             args = '-i "{}"'.format(source)
             result = self.cmdExec(self.backends.ffmpeg, args, True)
-            matches = re.search(r'Stream.*Video:.*[,\s](?P<width>\d+?)x(?P<height>\d+?)[,\s]',
+            matches = re.search(r'StreamType.*Video:.*[,\s](?P<width>\d+?)x(?P<height>\d+?)[,\s]',
                                 result, re.DOTALL).groupdict()
             return QSize(int(matches['width']), int(matches['height']))
 
@@ -250,8 +250,8 @@ class VideoService(QObject):
         else:
             args = '-i "{}"'.format(source)
             result = self.cmdExec(self.backends.ffmpeg, args, True)
-            vcodec = re.search(r'Stream.*Video:\s(\w+)', result).group(1)
-            acodec = re.search(r'Stream.*Audio:\s(\w+)', result).group(1)
+            vcodec = re.search(r'StreamType.*Video:\s(\w+)', result).group(1)
+            acodec = re.search(r'StreamType.*Audio:\s(\w+)', result).group(1)
             return vcodec, acodec
 
     def cut(self, source: str, output: str, frametime: str, duration: str, allstreams: bool=True, vcodec: str=None,
