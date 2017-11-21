@@ -1,0 +1,342 @@
+vidcutter (5.5.0-1) stable; urgency=medium
+
+  * The most requested feature is finally added; media stream mapping! A
+    new media settings button has been added and is enabled for use when
+    clips are all derived from the same source media OR media files added
+    manually all share the same codecs, formats, etc... A view of all
+    detected streams including video, audio, text/subtitles, metadata/chapters
+    will be presented upon which you can enable/disable what you want mapped
+    and carried across to the target media produced for you.
+
+    As always, suggestions for further improvements to all this, whether it
+    be visual or technical, are welcome & encouraged via the app Issues page; which
+    I definitely, most assuredly, promise to start paying attention to. I'm
+    running out of new app ideas + innovations so I have no choice :-)
+
+  * Migrated main toolbar buttons from QToolBar/QActions to grouped QPushButton
+    instances, buttons now include active + pressed states which makes the
+    author very happy (its the little things that count!)
+
+  * Minor changes/improvements to other front panel buttons w/ pressed states
+    where previously unavailable + minor cosmetic improvements to color schemes
+    of hover/active state buttons
+
+vidcutter (5.0.0-1) stable; urgency=medium
+
+  * SmartCut feature introduced for frame accurate cuts; beginning and end
+    clip segments are reencoded and joined with middle segment for each clip
+    defined in the Clip Index along source video's defined keyframes
+
+  * SmartCut enabled via app settings as well as toggle button on the main
+    interface. SmartCut can take up to 2 mins vs a few seconds so use it
+    only if frame accuracy is a requirement
+
+  * new progress bars on clips in timeline to visualise video processing in
+    more accurate and modern way
+
+  * thumbnail generation accuracy fixed so thumbnails generated accurately
+  	match frame with timecode placement
+
+  * new "View keyframes" button option available under Video Info which
+    displays the source video's defined keyframes which are utilised
+    by the new SmartCut feature
+
+  * improvements made to standard quick cutting to make them as frame
+  	accurate as can be given the source's media codec and container
+
+  * improvements to stream mapping to help ensure all source media's
+  	streams (video, audio, text/subtitles) are included in the target
+  	video produced. only if problems are found during the cut/join
+  	process will this be abandoned and FFmpeg then allowed to make its
+  	usual "best choice" in choosing the best streams for you
+
+  * single app instance code added along with a settings option to force all
+  	file manager associated tasks to the single already loaded instance of
+  	VidCutter
+
+  * .vcp registered as "VidCutter Project file" for Linux and Windows
+  	installations
+
+  * more debugging information available for the console or "--debug"
+  	command-line argument
+
+  * new verbose logging option added to settings for even more verbose
+    logging in the application log file, console window and debug command-
+    line output if running with the "--debug" argument (Linux only)
+
+  * new app icon; hopefully this one sticks :-)
+
+  * countless more improvements and fixes that aren't worth documenting but
+  	available in the freely available commit logs if you're interested
+
+vidcutter (4.0.5-1) stable; urgency=high
+
+  * fix for 32-bit Linux users; the switch to OpenGL rendering
+    broke 32-bit under Linux only due to Python to C data type
+    conversions in the Python interpreter which have been resolved.
+
+vidcutter (4.0.0-1) stable; urgency=medium
+
+  * pure OpenGL rendered window output
+
+  * manual join without cut ability via new add button under index
+
+  * improved checks and changes to join and merge routines
+
+  * TBA ... more changelog data inserted soon, this is the biggest
+    release in app's history so the full list is going to be big...
+
+-- Pete Alexandrou <pete@ozmartians.com>  Wed, 02 Aug 2017 21:37:00 +0800
+
+vidcutter (3.5.0-1) stable; urgency=medium
+
+ * redesigned timeline & slider with timecode labels at fixed intervals as per
+   regular video editors
+
+ * thumbnail previews on timeline; the entire timeline background is overlayed
+   with thumbnail previews which looks good + helps you target where you want
+   to mark a start/stop point. thumbnil generation is threaded so will not
+   slow the app down or hinder your use of it. thumbnails will regenerate on
+   app resize
+
+ * thumbnail previews and on screen display toggle buttons added to far left of
+   main toolbar; what they do is self-explanatory
+
+ * slider movement/sync with mpv backend improved; should be less jumpy on
+   problematic videos with bad indexes
+
+ * configurable seeking time lengths; this is for the up+down and shift up+down
+   keys which were set to 2 secs and 5 secs forwards and backwards. you can
+   now set the number of secs as preferred via new spinboxes added to the
+   settings menu labelled Seek #1 and Seek #2
+
+ * additional on screen display text added to various functions
+
+ * fixed bug when clearing clip index and you could not continue navigating video
+   requiring you to reload
+
+ * continue button added to the job completion dialog and set as the default
+   button selection
+
+ * libmpv bindings library updated with the latest changed from upstream;
+   should not be noticeable to users albeit improved playback or slider position
+   sync
+
+ * VidCutter project files (.vcp) can now be preloaded like regular videos either
+   by passing file path on command line or drag 'n dropping project onto a
+   VidCutter application/shortcut icon
+
+ * new icon, let me know if you find the old icon still being used someplace
+
+ * some other minor bug fixes from user issues that I am sure I have forgotten
+   to list
+
+ -- Pete Alexandrou <pete@ozmartians.com>  Mon, 29 May 2017 06:40:00 +0800
+
+vidcutter (3.2.0-1) stable; urgency=medium
+ 
+ * dark and light themes; chosen in the new settings sub-menu found in the
+    right-click menu or via menu toolbar icon
+
+ * new settings sub-menu (right-click or menu toolbar icon). some blurb
+   on the settings (since i am too lazy to produce a help file right now :-)
+
+    - Themes = select from the new dark and light themes (requires app restart)
+
+    - Keep individual clips = each clip made from the clip index, which are then
+       merged to produce the final product, are not deleted at end of proceess.
+       They can be found in the same folder as the final produced video file 
+       with file name sequence 001....00n appended.
+
+    - Use native dialogs = on by default; can switch off to not use your 
+      desktop manager's native file open/save dialogs and instead use a generic
+      cross-platform version supplied by Qt framework.
+
+    - Always on top = sets application window as the top-most window, avoiding
+      others apps from displaying over the top of it.
+
+    - Toolbar labels = self-explanatory; allows you to set the main toolbar
+      labels to display beside icons (default), under icons or hidden from view.
+
+    - Hardware decoding = on by default to make the most of your GPU hardware.
+      Switch this off if you are experiencing problems with the video playback.
+      This option doesn't affect video cutting itself and is primarily for playback.
+
+    - Keep aspect ratio = as the title suggests, switching this off caues video
+      fill the available frame space rather than maintain its intended ratio for
+      viewport width and height. This option doesn't affect video cutting itself
+      and is primarily for playback.
+
+    - Zoom = zoom in video from half its original size and up to double. This
+      option doesn't affect video cutting itself and is primarily for playback.
+
+    - a few minor changes to keyboard shortcuts; check the keyboad shortcuts
+      cheatsheet via right-click or toolbar menu options.
+
+ * new app icon
+
+ * improved timeline look + new slider image + remove awkward mouse cursor
+    previously in use to standard pointing hand cursor which feels better IMHO.
+
+ * new VidCutter project file format; this is the same as an EDL but includes
+    the full path to the media file associated with it. These can be saved and
+    opened after program launch to set you back to where you last were in a
+    cutting project.
+
+ * eeePC and better support for HiDPI
+
+ * better handling of multistreamed video sources including VOB files; if the
+    standard method of creation produces a 0 length file the app will now run
+    it again using various other methods to achieve th desired result. all cases
+    reported by users as bugs in this area are now working. in most cases you
+    will continue to get back exactly what you put in (pardon the pun). some VOBs
+    are problematic so until the UI is built to allow users finer control over the
+    backend settings the app will continue to make its own best judgement on
+    behalf of the user. so, in the worse case scenario you should now get back a
+    valid video file instead of 0 length video, but it may only include a single audio
+    track rather than all the tracks from the source. keep in mind that in these rare
+    cases the app will choose the best quality audio/video track when it can only 
+    work with just the one stream. The next version will allow you to select which
+    streams from source media to include in your final generated video file.
+
+ * improved handling of corrupted media files. the app should now work with far
+    more source files than before.
+
+ * time counter widget created allowing manual entry of timecode. just click on 
+    the time segment to edit and video will seek to that exact point OR use the
+    up/down arrow controls to the right of the running time code, highlight the
+    segment you wish to increase or decrease (i.e. hours, mins, secs, msecs)
+
+ * new dark theme; app is now better integrated for those who prefer to work
+    with the darker side of the force; configurable via new menu option
+
+ * video zoom level option added; configurable via new menu option
+
+ * "Check for updates..." now checks for the latest release version of the app
+   via the GitHub API and alerts user accordingly. It only offers to take user to
+   release page while also explaining to stick with distriubution specific packages
+   if running on Linux. Automatic updates are a goal of the future but would only
+   be for Windows, macOS and AppImage linux versions.
+
+ * The app will automatically check for updates; it will do this weekly and only
+    disturb the user if an update has been released AND it has been at least one
+    week since the last time updates were checked for.
+
+ * new startup graphic.
+
+ * new look dialogs including updater and about.
+
+ * application settings now saved across all platforms; this includes window
+   state and geometry as well as new settings in right-click context menu.
+
+ -- Pete Alexandrou <pete@ozmartians.com>  Tue, 09 May 2017 11:40:00 +0800
+
+vidcutter (3.0.0-1) stable; urgency=medium
+
+  * complete rewrite of multimedia backend which now uses libmpv to drive
+     video viewing and enables frame stepping for greater accuracy in cutting.
+     this has greatly shortened to the list of dependcies to enable this app to
+     work and should allow for quicker and easier installation for all users.
+
+  * frame level accuracy when stepping through video via cursor keys or mouse
+     wheel. see the new Keyboard Shortcuts menu option for more details.
+
+  * improved UI in many areas including main toolbar redesign.
+
+  * keyboard shortcuts now advertised to user view new menu option
+
+  * exception handing improved with all errors, even those not surfaced to user,
+     are logged. application log file can be viewed by the user via new menu
+     option.
+
+  * mediainfo library now used to generate metadata for media information which
+    works a million times better than what the previous gstreamer codecs had to
+    offer.
+
+  * hardware accelerated video via vdpau or vaapi depending on what user has
+    installaed. this is all dependant on libpmpv which is the by far the best
+    multimedia library in the opensource world. fallback options also exist if
+    user has no power codecs installed so things should all still work on a
+    minimual workstation setup.
+
+  * many UI fixes and improvements that I cannot be bothered to list but 
+    should overall make the app feel much more professional than ever before :-)
+
+ -- Pete Alexandrou <pete@ozmartians.com>  Fri, 03 Mar 2017 20:15:03 +0800
+
+vidcutter (2.6.5-1) stable; urgency=medium
+
+  * major fixes to ensure frame accuracy between player and backend. once loaded
+    a video framerate is estimated and seeking/stepping by a single step, using 
+    arrow keys or mouse wheel should be closest to a single frame in either
+    direction. when marking cut points the point in time to the millisecond is also
+    communicated to the backend. this will all improve even further with the next
+    major release which will encompass a move away from Qt's QMediaPlayer
+    widgets which utilise GStreamer (Linux/Mac) and DirectShow (Windows) to a
+    libmpv (MPV player) based client.
+
+  * command line argument support added. run the app from the command line
+     with --help or -h for the details.
+
+  * major code restructure for a more pluggable/adaptable architecture ie.
+    in future, w/ libmpv if for some reason system cannot support it then
+    fallback to existing backend (what we have now w/ GStreamer etc.)
+
+ -- Pete Alexandrou <pete@ozmartians.com>  Thu, 03 Feb 2017 12:15:12 +0800
+
+vidcutter (2.5.0-1) stable; urgency=medium
+
+  * video seeking is now closer to a frame rather and no longer a one second
+     interval
+
+  * shortcut keys for seeking video updated for frame stepping changes
+     (i.e. left-right / mouse wheel = 1 step; up-down = 10 steps)
+
+  * early & basic support for EDLs. Only the very simple MPlayer EDL standard 
+     is currently supported but this now allows you to save your clip index for 
+     a particular video and reload it again in future for recutting etc. If users
+     are using VidCutter and would like interchangeable file format support with
+     other tools, like ComSkip for example, then submit a feature request at the
+     app's GitHub page (more likely to get noticed there rather than launchpad.net)
+
+  * custom mouse cursor when mouse is over the slider handle (Linux only). this 
+     always worked for Windows and macOS but the cursor is missing in X11
+     standard themes. i think it gives the app more character so gave Linux the
+     needed love it deserves.
+
+  * various UI improvements incl. new app icon care of the papirus crew
+     at https://github.com/PapirusDevelopmentTeam (thx!)
+
+  * bug fixes; the filename set by default in the save video file dialog is now
+     the original video's filename with '_EDIT' appended to help avoid accidental
+     writing over original source material.
+
+  * i've probably forgotten a number of other important changes and additions
+    but its too late to bother sifting through git logs ;-)
+
+ -- Pete Alexandrou <pete@ozmartians.com>  Thu, 26 Jan 2017 01:32:09 +0800
+
+vidcutter (2.2.5-0) stable; urgency=medium
+
+  * added dependency libqt5multimedia5-plugins to fix missing service
+    issue or new Ubuntu installations
+
+  * UI tweaks and other minor fixes
+
+ -- Pete Alexandrou <pete@ozmartians.com>  Mon, 14 Jan 2017 20:12:43 +0800
+
+vidcutter (2.2.0-1) stable; urgency=medium
+
+  * UI improvements + fixes for Windows and macOS
+  
+  * removed qtawesome dependency so icons are now PNG based; this cuts
+    out annoying dependencies allowing for much smaller builds and
+    simplified distribution packages in Linux and Pypi
+
+ -- Pete Alexandrou <pete@ozmartians.com>  Mon, 12 Jan 2017 18:31:15 +0800
+
+vidcutter (2.0.0-1) unstable; urgency=low
+
+  * source package automatically created by stdeb 0.8.5
+
+ -- Pete Alexandrou <pete@ozmartians.com>  Mon, 02 Jan 2017 08:41:42 +0800

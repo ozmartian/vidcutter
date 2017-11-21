@@ -21,14 +21,21 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 #######################################################################
-
-# *** IMPORTANT IF YOU ARE INSTALLING VIA PyPi (Python Pip) ***
 #
-# no longer enforcing dependencies via setuptools
-# a notifcation msg is now displayed detailing requirements so users from PyPi,
-# Conda or obscure distros can get them installed however they like.
-# Distro targetted packages will always be the recommended approach
-
+# *** IMPORTANT: READ IF INSTALLING VIA PyPi (Pip) ***
+#
+# dependencies are no lonfer enforced via setuptools scripts; its too limiting and
+# Python only AND conflicts with package handling dependencies when dealing with all
+# flavours and distros in Linux. If you're on Windows or macOS then you should NOT
+# be reading this and simply grab the latest pre-built release installer from our
+# GitHub releases page (https://github.com/ozmartian/vidcutter/releases/latest)
+# if you have sourced this via PyPi (Pip) or Conda then see SetupHelpers.pip_notes()
+# in helpers.py for details regarding dependencies and other non-Pythonic requirements
+# Linux distro packages or our pre-built AppImage binary is the author's recommendation
+# unless you're either a developer or know you're way around all (if not, why are
+# you even reading this right now?! :-)
+#
+#######################################################################
 
 import os
 import sys

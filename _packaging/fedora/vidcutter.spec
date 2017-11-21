@@ -11,7 +11,7 @@ License:        GPLv3+
 URL:            http://vidcutter.ozmartians.com
 
 Source0:        https://github.com/ozmartian/%{pkg_name}/archive/%{version}.tar.gz
-BuildArch:      x86 x86_64
+BuildArch:      i686 x86_64
  
 BuildRequires:  python3-devel, python3-setuptools, mpv-libs-devel
 Requires:       python3-qt5, mpv-libs, mediainfo, ffmpeg, python3-pyopengl
