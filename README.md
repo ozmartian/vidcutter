@@ -63,7 +63,9 @@ If you are new to PPAs then just issue the following commands in a terminal:
 
 #### Fedora
 
-A custom COPR repository is maintained at:
+The easiest, recommended and endorsed means to get VidCutter installed on Fedora is via the third-party repo UnitedRPMs who should always have the latest release RPM packaged AND all required dependencies missing from Fedora core are there too so its a simple one stop shop for all.
+
+Additionally, I maintain a custom COPR repository at:
 
     suspiria/VidCutter
     
@@ -71,18 +73,26 @@ The commands for a Fedora install are:
 
     sudo dnf copr enable suspiria/VidCutter
     sudo dnf install vidcutter
+    
+Check https://copr.fedorainfracloud.org/coprs/suspiria/VidCutter/ for more details regarding multimedia dependencies. UnitedRPMs or RPMFusion repos will get you on track.
 
 #### openSUSE
 
-VidCutter was recently added to openSUSE Tumbleweed (rolling-build) official repos and should hopefully make its way to release versions in time.
+https://software.opensuse.org/package/vidcutter
 
-VidCutter is also available via the Packman third-party repository. Instructions to enable it can be found here:
+VidCutter was recently added to openSUSE Tumbleweed (rolling-build) official repos and should hopefully make its way to release versions in time. 
+
+VidCutter is also available via the well-known Packman third-party repo. Instructions to enable it can be found here:
 
    https://en.opensuse.org/Additional_package_repositories#Packman
 
 ### AppImage
 
-An AppImage version is also available on the releases page to help all other Linux users.
+An AppImage version is also available on the releases page to help all other Linux users. Current AppImage appears to only work on Trusty-Vivid based distros so please avoid it if you're on an Ubuntu base of 16.04 and above. A new AppImage should be available in the coming days, and requires some changes to bring it up to speed with the latest AppImage spec + runtime.
+
+### FlatPak + Snap ??
+
+I've played around with both of these alternative Linux portable app frameworks and while I have no personal need for them (I dont like the way either of them do things, not to mention both being tightly coupled to their desktop managers or distro i.e. GNOME and Ubuntu respectively. They exist to serve different needs I guess BUT if there are enough requests from you guys I'll hapilly make the effort to get VidCutter packaged and available in respective stores.
 
 ***
 
@@ -100,9 +110,9 @@ Fedora and RedHat users need to enable the RPMFusion repository in order to acce
 
 ***
 
-## Fedora Installation Walkthrough
+## Fedora Example Manual Install Walkthrough
 
-NOTE: a Fedora COPR repo RPM package is now included in release builds so use that. The following remains for reference or troubleshooting.
+#### A COPR repo with builds for all the latest Fedora releases is available, instructions above. The following remains for troubleshooting assistance.
 
 1. Enable RPMFusion Free repository on your system if not already added. Follow the instructions here for your distro/version
 
