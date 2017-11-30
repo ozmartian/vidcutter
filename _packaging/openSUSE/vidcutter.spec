@@ -1,5 +1,5 @@
 Name:           vidcutter
-Version:        5.0.0
+Version:        5.0.5
 Release:        0
 Summary:        the simplest + fastest video cutter & joiner
 License:        GPL-3.0+
@@ -16,13 +16,12 @@ Requires:       ffmpeg
 Requires:       libmpv1
 Requires:       mediainfo
 Requires:       python3-qt5
-Requires:       python3-opengl
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 
 %description
-The simplest & sexiest tool for cutting and joining your videos without the need for
-re-encoding or a diploma in multimedia. VidCutter focuses on getting the job done
-using tried and true tech in its arsenal via mpv and FFmpeg.
+A modern, simple to use, constantly evolving and hella fast MEDIA CUTTER + JOINER
+w/ frame-accurate SmartCut technology + Qt5, libmpv, FFmpeg and MediaInfo powering
+the backend.
 
 %prep
 %setup -q

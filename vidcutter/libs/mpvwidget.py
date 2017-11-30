@@ -6,11 +6,6 @@ import logging
 import os
 import sys
 
-# this is required for Ubuntu which seems to have a broken PyQt5 OpenGL implementation
-# so we use PyOpenGL instead for the GL context
-# noinspection PyUnresolvedReferences
-# from OpenGL import GL
-
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QEvent, QTimer
 from PyQt5.QtGui import QKeyEvent, QMouseEvent, QWheelEvent
 from PyQt5.QtOpenGL import QGLContext

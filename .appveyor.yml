@@ -1,4 +1,4 @@
-version: 5.0.0.{build}
+version: 5.0.5.{build}
 
 pull_requests:
   do_not_increment_build_number: true
@@ -31,10 +31,9 @@ install:
   # ---------------------------------------- 64-bit build ----------------------------------------
   - set PATH=%PYTHONHOME%;%PYTHONHOME%\scripts;%PYTHONHOME%\tools\scripts;%PATH%
   - cd C:\projects\vidcutter
-  - echo Installing latest pip + setuptools...
+  - echo Installing latest pip + setuptools + dependencies
   - C:\Python36-x64\python.exe -m pip install -U pip setuptools
-  - echo Installing PyQt5 and PyOpenGL C:\Python36-x64\python.exe wheels via pip...
-  - C:\Python36-x64\python.exe -m pip install PyQt5 PyOpenGL PyOpenGL-accelerate PyInstaller xmltodict
+  - C:\Python36-x64\python.exe -m pip install PyQt5 PyInstaller xmltodict
   # - echo Installing latest git checkout of PyInstaller...
   # - C:\Python36-x64\python.exe -m pip install git+https://github.com/pyinstaller/pyinstaller.git@develop
   - echo Setting up libmpv build subfolders...
@@ -63,15 +62,14 @@ install:
   - call build.pyinstaller.win.bat 64
   - echo.
   - cd ..\InnoSetup\Output
-  - appveyor PushArtifact VidCutter-5.0.0-setup-win64.exe
+  - appveyor PushArtifact VidCutter-5.0.5-setup-win64.exe
   # ---------------------------------------- 32-bit build ----------------------------------------
   - cd ..\..\..
   - set PYTHONHOME=C:\Python35
   - set PATH=%PYTHONHOME%;%PYTHONHOME%\scripts;%PYTHONHOME%\tools\scripts;%PATH%
-  - echo Installing latest pip + setuptools...
+  - echo Installing latest pip + setuptools + dependencies
   - C:\Python35\python.exe -m pip install -U pip setuptools
-  - echo Installing PyQt5 and PyOpenGL C:\Python35\python.exe wheels via pip...
-  - C:\Python35\python.exe -m pip install PyQt5 PyOpenGL PyOpenGL-accelerate PyInstaller xmltodict
+  - C:\Python35\python.exe -m pip install PyQt5 PyInstaller xmltodict
   # - echo Installing latest git checkout of PyInstaller...
   # - C:\Python35\python.exe -m pip install git+https://github.com/pyinstaller/pyinstaller.git@develop
   - echo Setting up libmpv build subfolders...
@@ -101,7 +99,7 @@ install:
   - call build.pyinstaller.win.bat 32
   - echo.
   - cd ..\InnoSetup\Output
-  - appveyor PushArtifact VidCutter-5.0.0-setup-win32.exe
+  - appveyor PushArtifact VidCutter-5.0.5-setup-win32.exe
   # completion
   - echo.
   - echo SUCCESS

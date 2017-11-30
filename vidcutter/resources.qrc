@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
+        <file>config/vidcutter.ini</file>
         <file>fonts/FuturaLT.ttf</file>
         <file>fonts/NotoSans.ttc</file>
         <file>images/complete-play.png</file>
