@@ -15,6 +15,9 @@ permanent basis.
 when mouse is over the slider widget. this stops it from constantly
 appearing whenever media position changes like during simple playback
 
+- switched to modern domain based app naming for appstream metadata
+.appdata.xml and .desktop file 
+
 -------------------------------------------------------------------
 Thu Nov 16 00:22:00 UTC 2017 - pete@ozmartians.com
 

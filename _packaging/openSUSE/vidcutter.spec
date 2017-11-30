@@ -1,5 +1,3 @@
-%global id com.ozmartians.VidCutter
-
 Name:           vidcutter
 Version:        5.0.5
 Release:        0
@@ -48,7 +46,7 @@ python3 setup.py install --root %{buildroot}
 %{_bindir}/%{name}
 %{python3_sitearch}/%{name}-%{version}-py*.egg-info/
 %{python3_sitearch}/%{name}/
-%{_datadir}/applications/%{id}.desktop
+%{_datadir}/applications/com.ozmartians.VidCutter.desktop
 %{_datadir}/icons/hicolor/16x16/apps/%{name}.png
 %{_datadir}/icons/hicolor/22x22/apps/%{name}.png
 %{_datadir}/icons/hicolor/24x24/apps/%{name}.png
@@ -59,7 +57,7 @@ python3 setup.py install --root %{buildroot}
 %{_datadir}/icons/hicolor/256x256/apps/%{name}.png
 %{_datadir}/icons/hicolor/512x512/apps/%{name}.png
 %{_datadir}/icons/hicolor/scalable/apps/%{name}.svg
-%{_datadir}/appdata/%{id}.appdata.xml
+%{_datadir}/appdata/com.ozmartians.VidCutter.appdata.xml
 %{_datadir}/mime/packages/x-%{name}.xml
 %{_datadir}/pixmaps/%{name}.svg
 
