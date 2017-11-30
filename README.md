@@ -39,7 +39,7 @@ Users can install directly from AUR, package is available in both stable and git
 
     AUR: vidcutter, vidcutter-git
     
-Using an AUR helper like pacaur (or substitute with yaourt if that is your preference):
+Using an AUR helper like pacaur (replace pacaur with yaourt or other AUR helper):
 
     LATEST STABLE RELEASE:
 
@@ -49,13 +49,13 @@ Using an AUR helper like pacaur (or substitute with yaourt if that is your prefe
     
         pacaur -S vidcutter-git
 
-#### Ubuntu/Mint/Debian and all other Ubuntu derivatives 
+#### Ubuntu/Mint/Debian/KDE Neon and other Ubuntu flavors + derivatives 
 
 Users can install the latest release via:
 
     ppa:ozmartian/apps
 
-If you are new to PPAs then just issue the following commands in a terminal:
+The following set of commands will get you up and running:
 
     sudo add-apt-repository ppa:ozmartian/apps
     sudo apt update
@@ -63,18 +63,20 @@ If you are new to PPAs then just issue the following commands in a terminal:
 
 #### Fedora
 
-The easiest, recommended and endorsed means to get VidCutter installed on Fedora is via the third-party repo UnitedRPMs who should always have the latest release RPM packaged AND all required dependencies missing from Fedora core are there too so its a simple one stop shop for all.
+Due to Fedora's restrictive policies on media licensing you'll need to install a VidCutter package from a third-party repository to have all common media formats supported. At the time of writing RPMFusion and UnitedRPMs both contain VidCutter RPMs as well as all the required dependencies so you can simply install the VidCutter RPM package from these sources without needing to do anything else for an up to date version of the app with all common libraries, codecs and formats supported right away.
 
-Additionally, I maintain a custom COPR repository at:
+I also maintain a custom COPR repository at:
 
     suspiria/VidCutter
     
-The commands for a Fedora install are:
+I keep this updated myself so it will alwats carry the very latest release version but you will still need to enable one of the third-party repos for the multimedia dependencies. RPMFusion and UnitedRPMs only take a couple of days to update their repos when new versions are released so only bother with COPR if you're "must have the very latest version" type of addict.
+
+Commands for a Fedora install using the COPR repo are:
 
     sudo dnf copr enable suspiria/VidCutter
     sudo dnf install vidcutter
     
-Check https://copr.fedorainfracloud.org/coprs/suspiria/VidCutter/ for more details regarding multimedia dependencies. UnitedRPMs or RPMFusion repos will get you on track.
+Check https://copr.fedorainfracloud.org/coprs/suspiria/VidCutter for more detailed instructions on enabling third-party repos for your multimedia dependencies.
 
 #### openSUSE
 
