@@ -39,7 +39,7 @@ Users can install directly from AUR, package is available in both stable and git
 
     AUR: vidcutter, vidcutter-git
     
-Using an AUR helper like pacaur (or substitute with yaourt if that is your preference):
+Using an AUR helper like pacaur (replace pacaur with yaourt or other AUR helper):
 
     LATEST STABLE RELEASE:
 
@@ -49,13 +49,13 @@ Using an AUR helper like pacaur (or substitute with yaourt if that is your prefe
     
         pacaur -S vidcutter-git
 
-#### Ubuntu/Mint/Debian and all other Ubuntu derivatives 
+#### Ubuntu/Mint/Debian/KDE Neon and other Ubuntu flavors + derivatives 
 
 Users can install the latest release via:
 
     ppa:ozmartian/apps
 
-If you are new to PPAs then just issue the following commands in a terminal:
+The following set of commands will get you up and running:
 
     sudo add-apt-repository ppa:ozmartian/apps
     sudo apt update
@@ -63,26 +63,38 @@ If you are new to PPAs then just issue the following commands in a terminal:
 
 #### Fedora
 
-A custom COPR repository is maintained at:
+Due to Fedora's restrictive policies on media licensing you'll need to install a VidCutter package from a third-party repository to have all common media formats supported. At the time of writing RPMFusion and UnitedRPMs both contain VidCutter RPMs as well as all the required dependencies so you can simply install the VidCutter RPM package from these sources without needing to do anything else for an up to date version of the app with all common libraries, codecs and formats supported right away.
+
+I also maintain a custom COPR repository at:
 
     suspiria/VidCutter
     
-The commands for a Fedora install are:
+I keep this updated myself so it will alwats carry the very latest release version but you will still need to enable one of the third-party repos for the multimedia dependencies. RPMFusion and UnitedRPMs only take a couple of days to update their repos when new versions are released so only bother with COPR if you're "must have the very latest version" type of addict.
+
+Commands for a Fedora install using the COPR repo are:
 
     sudo dnf copr enable suspiria/VidCutter
     sudo dnf install vidcutter
+    
+Check https://copr.fedorainfracloud.org/coprs/suspiria/VidCutter for more detailed instructions on enabling third-party repos for your multimedia dependencies.
 
 #### openSUSE
 
-VidCutter was recently added to openSUSE Tumbleweed (rolling-build) official repos and should hopefully make its way to release versions in time.
+https://software.opensuse.org/package/vidcutter
 
-VidCutter is also available via the Packman third-party repository. Instructions to enable it can be found here:
+VidCutter was recently added to openSUSE Tumbleweed (rolling-build) official repos and should hopefully make its way to release versions in time. 
+
+VidCutter is also available via the well-known Packman third-party repo. Instructions to enable it can be found here:
 
    https://en.opensuse.org/Additional_package_repositories#Packman
 
 ### AppImage
 
-An AppImage version is also available on the releases page to help all other Linux users.
+An AppImage version is also available on the releases page to help all other Linux users. Current AppImage appears to only work on Trusty-Vivid based distros so please avoid it if you're on an Ubuntu base of 16.04 and above. A new AppImage should be available in the coming days, and requires some changes to bring it up to speed with the latest AppImage spec + runtime.
+
+### FlatPak + Snap ??
+
+I've played around with both of these alternative Linux portable app frameworks and while I have no personal need for them (I dont like the way either of them do things, not to mention both being tightly coupled to their desktop managers or distro i.e. GNOME and Ubuntu respectively. They exist to serve different needs I guess BUT if there are enough requests from you guys I'll hapilly make the effort to get VidCutter packaged and available in respective stores.
 
 ***
 
@@ -100,9 +112,9 @@ Fedora and RedHat users need to enable the RPMFusion repository in order to acce
 
 ***
 
-## Fedora Installation Walkthrough
+## Fedora Example Manual Install Walkthrough
 
-NOTE: a Fedora COPR repo RPM package is now included in release builds so use that. The following remains for reference or troubleshooting.
+#### A COPR repo with builds for all the latest Fedora releases is available, instructions above. The following remains for troubleshooting assistance.
 
 1. Enable RPMFusion Free repository on your system if not already added. Follow the instructions here for your distro/version
 
