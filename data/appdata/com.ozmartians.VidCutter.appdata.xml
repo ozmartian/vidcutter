@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright 2017 Pete Alexandrou <pete@ozmartians.com> -->
 <component type="desktop">
-  <id>vidcutter.desktop</id>
+  <id>com.ozmartians.VidCutter.desktop</id>
+  <name>VidCutter</name>
+  <summary>Media Cutter + Joiner</summary>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-3.0+</project_license>
-  <name>VidCutter</name>
-  <summary>the simplest + fastest video cutter and joiner</summary>
   <description>
-    A modern, simple to use, constantly evolving and hella fast MEDIA CUTTER + JOINER
-    w/ frame-accurate SmartCut technology + Qt5, libmpv, FFmpeg and MediaInfo powering
-    the backend.
+    <p>
+      A modern, simple to use, constantly evolving and hella fast MEDIA CUTTER + JOINER
+      w/ frame-accurate SmartCut technology + Qt5, libmpv, FFmpeg and MediaInfo powering
+      the backend.
+    </p>
   </description>
   <screenshots>
     <screenshot type="default">

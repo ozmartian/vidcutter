@@ -24,13 +24,15 @@
 
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtDBus import QDBusConnection, QDBusMessage
-from PyQt5.QtWidgets import qApp, QWidget
+from PyQt5.QtWidgets import QWidget
+
+import vidcutter
 
 
 class TaskbarProgress(QWidget):
     def __init__(self, parent=None):
         super(TaskbarProgress, self).__init__(parent)
-        self._desktopfile = 'application://{}.desktop'.format(qApp.applicationName().lower())
+        self._desktopfile = 'application://{}.desktop'.format(vidcutter.__desktopid__)
         self._sessionbus = QDBusConnection.sessionBus()
         self.clear()
 

@@ -1,3 +1,9 @@
+vidcutter (5.0.5-2) stable; urgency=medium
+
+  * fixed timeline slider tooltip displaying time position to only appear
+    when mouse is over the slider widget. this stops it from constantly
+    appearing whenever media position changes like during simple playback
+
 vidcutter (5.0.5-1) stable; urgency=medium
 
   * Removal of Python 3 OpenGL module to allow app to work on

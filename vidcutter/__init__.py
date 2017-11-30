@@ -26,6 +26,7 @@ __version__ = '5.0.5'
 
 __appname__ = 'VidCutter'
 __domain__ = 'ozmartians.com'
+__desktopid__ = 'com.ozmartians.VidCutter'
 __appid__ = 'vidcutter-CCDC440A-CC57-4BED-8CDE-1DA285976A64'
 
 __author__ = 'Pete Alexandrou'

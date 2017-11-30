@@ -4,7 +4,7 @@ Section: video
 Priority: optional
 Build-Depends: dh-python, python3-setuptools, python3-all, python3-dev, libmpv-dev, debhelper (>= 9)
 Standards-Version: 3.9.8
-Homepage: http://vidcutter.ozmartians.com
+Homepage: https://vidcutter.ozmartians.com
 
 Package: vidcutter
 Architecture: i386 amd64

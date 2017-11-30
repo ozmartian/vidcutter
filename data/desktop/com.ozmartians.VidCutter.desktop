@@ -1,8 +1,8 @@
 [Desktop Entry]
 Name=VidCutter
-GenericName=Video Cutter + Joiner
+GenericName=Media Cutter + Joiner
 X-GNOME-FullName=VidCutter
-Comment=Simple & fast FFmpeg based video cutter & joiner
+Comment=the simplest + fastest video cutter & joiner
 Exec=vidcutter %f
 Terminal=false
 Type=Application

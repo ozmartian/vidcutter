@@ -11,6 +11,10 @@ implementation in the core PyOpenGL package. Vivid is no longer
 a supported distro version so it should be okay to omit on a
 permanent basis.
 
+- fixed timeline slider tooltip displaying time position to only appear
+when mouse is over the slider widget. this stops it from constantly
+appearing whenever media position changes like during simple playback
+
 -------------------------------------------------------------------
 Thu Nov 16 00:22:00 UTC 2017 - pete@ozmartians.com
 
