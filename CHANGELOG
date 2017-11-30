@@ -8,10 +8,10 @@ vidcutter (5.5.0-1) stable; urgency=medium
     will be presented upon which you can enable/disable what you want mapped
     and carried across to the target media produced for you.
 
-    As always, suggestions for further improvements to all this, whether it
-    be visual or technical, are welcome & encouraged via the app Issues page; which
-    I definitely, most assuredly, promise to start paying attention to. I'm
-    running out of new app ideas + innovations so I have no choice :-)
+    As always, suggestions for further improvements to this, whether visual
+    or technical via the Issues page; which I definitely, most assuredly,
+    promise to start paying attention to. I'm mearly all out of new app ideas
+    + innovations so I have no choice :-)
 
   * Migrated main toolbar buttons from QToolBar/QActions to grouped QPushButton
     instances, buttons now include active + pressed states which makes the
@@ -20,6 +20,22 @@ vidcutter (5.5.0-1) stable; urgency=medium
   * Minor changes/improvements to other front panel buttons w/ pressed states
     where previously unavailable + minor cosmetic improvements to color schemes
     of hover/active state buttons
+
+vidcutter (5.0.5-2) stable; urgency=medium
+
+  * fixed timeline slider tooltip displaying time position to only appear
+    when mouse is over the slider widget. this stops it from constantly
+    appearing whenever media position changes like during simple playback
+
+vidcutter (5.0.5-1) stable; urgency=medium
+
+  * Removal of Python 3 OpenGL module to allow app to work on
+    Linux distros containing older 3.0.1 versions of the module. The
+    dependency on python3-opengl has now been removed and was only
+    necessary for Ubuntu users on Vivid due to a broken PyQt5 OpenGL
+    implementation in the core PyOpenGL package. Vivid is no longer
+    a supported distro version so it should be okay to omit on a
+    permanent basis.
 
 vidcutter (5.0.0-1) stable; urgency=medium
 
