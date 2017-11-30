@@ -7,7 +7,7 @@ Release:        1%{?dist}
 Summary:        the simplest + fastest video cutter & joiner
 Group:          Applications/Multimedia
 License:        GPLv3+
-URL:            http://vidcutter.ozmartians.com
+URL:            https://vidcutter.ozmartians.com
 
 Source0:        https://github.com/ozmartian/%{pkg_name}/archive/%{version}.tar.gz
 BuildArch:      i686 x86_64

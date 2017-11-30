@@ -1,5 +1,5 @@
 name: vidcutter
-version: 5.0.0
+version: 5.0.5
 summary: the simplest + fastest video cutter & joiner
 description: |
     A modern, simple to use, constantly evolving and 
@@ -30,4 +30,3 @@ parts:
         - libmpv1
         - ffmpeg
         - mediainfo
-        - python3-opengl

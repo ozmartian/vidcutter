@@ -76,6 +76,7 @@ class VideoSlider(QSlider):
         self._regionSelected = -1
         self._cutStarted = False
         self._showSeekToolTip = True
+        self._mouseOver = False
         self.showThumbs = True
         self.thumbnailsOn = False
         self.offset = 8
@@ -151,20 +152,6 @@ class VideoSlider(QSlider):
         else:
             self._cutStarted = False
         self.initStyle()
-
-    @pyqtSlot(int)
-    def on_valueChanged(self, value: int) -> None:
-        if value < self.restrictValue:
-            self.setSliderPosition(self.restrictValue)
-        if self._showSeekToolTip:
-            opt = QStyleOptionSlider()
-            self.initStyleOption(opt)
-            handle = self.style().subControlRect(QStyle.CC_Slider, opt, QStyle.SC_SliderHandle, self)
-            pos = handle.topRight()
-            pos += QPoint(5, 13)
-            globalPos = self.mapToGlobal(pos)
-            timecode = self.parent.delta2QTime(value).toString(self.parent.timeformat)
-            QToolTip.showText(globalPos, str(timecode), self)
 
     def paintEvent(self, event: QPaintEvent) -> None:
         painter = QStylePainter(self)
@@ -368,6 +355,20 @@ class VideoSlider(QSlider):
             self.initThumbs()
             self.parent.renderClipIndex()
 
+    @pyqtSlot(int)
+    def on_valueChanged(self, value: int) -> None:
+        if value < self.restrictValue:
+            self.setSliderPosition(self.restrictValue)
+        if self._showSeekToolTip and self._mouseOver:
+            opt = QStyleOptionSlider()
+            self.initStyleOption(opt)
+            handle = self.style().subControlRect(QStyle.CC_Slider, opt, QStyle.SC_SliderHandle, self)
+            pos = handle.topRight()
+            pos += QPoint(5, 13)
+            globalPos = self.mapToGlobal(pos)
+            timecode = self.parent.delta2QTime(value).toString(self.parent.timeformat)
+            QToolTip.showText(globalPos, str(timecode), self)
+
     @pyqtSlot()
     def on_rangeChanged(self) -> None:
         if self.parent.thumbnailsButton.isChecked():
@@ -385,6 +386,12 @@ class VideoSlider(QSlider):
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
         qApp.sendEvent(self.parent, event)
+
+    def enterEvent(self, event: QEvent) -> None:
+        self._mouseOver = True
+
+    def leaveEvent(self, event: QEvent) -> None:
+        self._mouseOver = False
 
     def eventFilter(self, obj: QObject, event: QMouseEvent) -> bool:
         if event.type() == QEvent.MouseButtonRelease and event.button() == Qt.LeftButton:
