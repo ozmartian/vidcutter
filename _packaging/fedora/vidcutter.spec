@@ -39,7 +39,7 @@ rm -rf %{pkg_name}.egg-info
 %{python3_sitearch}/%{pkg_name}
 %{python3_sitearch}/%{pkg_name}-%{version}-py?.?.egg-info
 %{_bindir}/%{pkg_name}
-%{_datadir}/applications/%{pkg_name}.desktop
+%{_datadir}/applications/com.ozmartians.VidCutter.desktop
 %{_datadir}/icons/hicolor/16x16/apps/%{pkg_name}.png
 %{_datadir}/icons/hicolor/128x128/apps/%{pkg_name}.png
 %{_datadir}/icons/hicolor/22x22/apps/%{pkg_name}.png
@@ -50,7 +50,7 @@ rm -rf %{pkg_name}.egg-info
 %{_datadir}/icons/hicolor/512x512/apps/%{pkg_name}.png
 %{_datadir}/icons/hicolor/64x64/apps/%{pkg_name}.png
 %{_datadir}/icons/hicolor/scalable/apps/%{pkg_name}.svg
-%{_datadir}/appdata/%{pkg_name}.appdata.xml
+%{_datadir}/appdata/com.ozmartians.VidCutter.appdata.xml
 %{_datadir}/mime/packages/x-%{pkg_name}.xml
 %{_datadir}/pixmaps/%{pkg_name}.svg
 

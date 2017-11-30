@@ -71,8 +71,8 @@ class SetupHelpers:
                 ('/usr/share/icons/hicolor/512x512/apps', ['data/icons/hicolor/512x512/apps/vidcutter.png']),
                 ('/usr/share/icons/hicolor/scalable/apps', ['data/icons/hicolor/scalable/apps/vidcutter.svg']),
                 ('/usr/share/pixmaps', ['data/icons/vidcutter.svg']),
-                ('/usr/share/applications', ['data/desktop/vidcutter.desktop']),
-                ('/usr/share/appdata', ['data/appdata/vidcutter.appdata.xml']),
+                ('/usr/share/applications', ['data/desktop/com.ozmartians.VidCutter.desktop']),
+                ('/usr/share/appdata', ['data/appdata/com.ozmartians.VidCutter.appdata.xml']),
                 ('/usr/share/mime/packages', ['data/mime/x-vidcutter.xml'])
             ]
         return files
@@ -106,23 +106,21 @@ class SetupHelpers:
         ---[Ubuntu/Debian/Mint/etc]--------------------------
             
             python3-dev libmpv1 libmpv-dev python3-pyqt5
-            python3-pyqt5.qtopengl python3-opengl ffmpeg
-            mediainfo
+            python3-pyqt5.qtopengl ffmpeg mediainfo
     
         ---[Arch Linux]--------------------------------------
     
-            python mpv python-pyqt5 python-opengl
-            ffmpeg mediainfo
+            python mpv python-pyqt5 ffmpeg mediainfo
     
         ---[Fedora]------------------------------------------
         
             python3-devel mpv-libs mpv-libs-devel python3-qt5
-            python3-pyopengl ffmpeg mediainfo
+            ffmpeg mediainfo
         
         ---[openSUSE]----------------------------------------
             
             python3-devel libmpv1 mpv-devel python3-qt5
-            python3-opengl ffmpeg mediainfo 
+            ffmpeg mediainfo 
 
     You need to build a Python extension module before you can run the
     app directly from source code. This is done for you automatically by
