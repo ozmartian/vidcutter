@@ -6,11 +6,6 @@ import logging
 import os
 import sys
 
-# this is required for Ubuntu which seems to have a broken PyQt5 OpenGL implementation
-# so we use PyOpenGL instead for the GL context
-# noinspection PyUnresolvedReferences
-from OpenGL import GL
-
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QEvent, QTimer
 from PyQt5.QtGui import QKeyEvent, QMouseEvent, QWheelEvent
 from PyQt5.QtOpenGL import QGLContext
@@ -161,7 +156,7 @@ class mpvWidget(QOpenGLWidget):
     def setLogLevel(self, loglevel):
         self.mpv.set_log_level(loglevel)
 
-    def showText(self, msg: str, duration: int = 5, level: int = 0):
+    def showText(self, msg: str, duration: int=5, level: int=0):
         self.mpv.command('show-text', msg, duration * 1000, level)
 
     def play(self, filepath) -> None:
@@ -186,10 +181,10 @@ class mpvWidget(QOpenGLWidget):
     def volume(self, vol: int) -> None:
         self.mpv.set_property('volume', vol)
 
-    def codec(self, stream: str = 'video') -> str:
-        return self.mpv.get_property('audio-codec' if stream == 'audio' else 'video-codec')
+    def codec(self, stream: str='video') -> str:
+        return self.mpv.get_property('{}-codec'.format(stream))
 
-    def format(self, stream: str = 'video') -> str:
+    def format(self, stream: str='video') -> str:
         return self.mpv.get_property('audio-codec-name' if stream == 'audio' else 'video-format')
 
     def property(self, prop: str):

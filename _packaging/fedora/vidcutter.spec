@@ -1,9 +1,8 @@
 # Maintained by app author Pete Alexandrou <pete AT ozmartians DOT com>
-# for copr repo build + unitedrpms
 %global pkg_name vidcutter
 
 Name:           %{pkg_name}
-Version:        5.0.0
+Version:        5.0.5
 Release:        1%{?dist}
 Summary:        the simplest + fastest video cutter & joiner
 Group:          Applications/Multimedia
@@ -14,12 +13,12 @@ Source0:        https://github.com/ozmartian/%{pkg_name}/archive/%{version}.tar.
 BuildArch:      i686 x86_64
  
 BuildRequires:  python3-devel, python3-setuptools, mpv-libs-devel
-Requires:       python3-qt5, mpv-libs, mediainfo, ffmpeg, python3-pyopengl
+Requires:       python3-qt5, mpv-libs, mediainfo, ffmpeg
 
 %description
-     The simplest & sexiest tool for cutting and joining your videos without the need for
-     re-encoding or a diploma in multimedia. VidCutter focuses on getting the job done
-     using tried and true tech in its arsenal via mpv and FFmpeg.
+    A modern, simple to use, constantly evolving and hella fast MEDIA CUTTER + JOINER
+    w/ frame-accurate SmartCut technology + Qt5, libmpv, FFmpeg and MediaInfo powering
+    the backend.
 
 %prep
 %autosetup -n %{pkg_name}-%{version}
@@ -56,6 +55,8 @@ rm -rf %{pkg_name}.egg-info
 %{_datadir}/pixmaps/%{pkg_name}.svg
 
 %changelog
+* Thu Nov 30 2017 Pete Alexandrou <pete AT ozmartians DOT com> 5.0.5-1
+- 5.0.5 release
 * Thu Nov 16 2017 Pete Alexandrou <pete AT ozmartians DOT com> 5.0.0-1
 - 5.0.0 release
 * Thu Aug 03 2017 Pete Alexandrou <pete AT ozmartians DOT com> 4.0.0-1

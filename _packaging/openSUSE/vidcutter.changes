@@ -1,4 +1,17 @@
 -------------------------------------------------------------------
+Thu Nov 30 09:20:00 UTC 2017 - pete@ozmartians.com
+
+- Update to version 5.0.5
+
+- Removal of Python 3 OpenGL module to allow app to work on
+Linux distros containing older 3.0.1 versions of the module. The
+dependency on python3-opengl has now been removed and was only
+necessary for Ubuntu users on Vivid due to a broken PyQt5 OpenGL
+implementation in the core PyOpenGL package. Vivid is no longer
+a supported distro version so it should be okay to omit on a
+permanent basis.
+
+-------------------------------------------------------------------
 Thu Nov 16 00:22:00 UTC 2017 - pete@ozmartians.com
 
 - Update to version 5.0.0

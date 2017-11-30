@@ -1,12 +1,11 @@
 name: vidcutter
-version: 4.0.0
+version: 5.0.0
 summary: the simplest + fastest video cutter & joiner
 description: |
-    The simplest & sexiest tool for cutting and
-    joining your videos without the need for re-encoding
-    or a diploma in multimedia. VidCutter focuses on
-    getting the job done using tried and true tech in its
-    arsenal via mpv and FFmpeg.
+    A modern, simple to use, constantly evolving and 
+    hella fast MEDIA CUTTER + JOINER w/ frame-accurate
+    SmartCut technology + Qt5, libmpv, FFmpeg and
+    MediaInfo powering the backend.
 icon: data/icons/vidcutter.png
 grade: devel
 confinement: devmode
@@ -32,4 +31,3 @@ parts:
         - ffmpeg
         - mediainfo
         - python3-opengl
-    prepare: sed -i "s/pypi/deb/" "vidcutter/__init__.py"
