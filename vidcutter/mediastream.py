@@ -25,13 +25,12 @@ from enum import Enum
 from PyQt5.QtWidgets import QDialog
 
 
-class StreamType(Enum):
-    VIDEO = 0,
-    AUDIO = 1,
-    TEXT = 2
-
-
 class StreamEditor(QDialog):
+
+    class Stream(Enum):
+        VIDEO = 0,
+        AUDIO = 1,
+        TEXT = 2
 
     def __init__(self, parent=None):
         super(StreamEditor, self).__init__(parent)

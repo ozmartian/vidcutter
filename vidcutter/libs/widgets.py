@@ -25,11 +25,46 @@
 import os
 import sys
 
-from PyQt5.QtCore import pyqtSignal, pyqtSlot, QEvent, QObject, QPoint, Qt, QTime, QTimer
+from PyQt5.QtCore import pyqtSignal, pyqtSlot, QEvent, QObject, QPoint, QSize, Qt, QTime, QTimer
 from PyQt5.QtGui import QShowEvent
 from PyQt5.QtWidgets import (qApp, QAbstractSpinBox, QDialog, QDialogButtonBox, QGridLayout, QHBoxLayout, QLabel,
-                             QMessageBox, QProgressBar, QSlider, QSpinBox, QStyle, QStyleFactory,
+                             QMessageBox, QProgressBar, QPushButton, QSlider, QSpinBox, QStyle, QStyleFactory,
                              QStyleOptionSlider, QTimeEdit, QToolBox, QToolTip, QVBoxLayout, QWidget)
+
+
+class VCToolBarButton(QWidget):
+    clicked = pyqtSignal(bool)
+
+    def __init__(self, label: str, tooltip: str=None, statustip: str=None, parent=None):
+        super(VCToolBarButton, self).__init__(parent)
+        self.setFocusPolicy(Qt.NoFocus)
+        self.button = QPushButton(parent)
+        self.button.setCursor(Qt.PointingHandCursor)
+        self.button.setFlat(True)
+        self.button.setFixedSize(QSize(50, 53))
+        self.button.installEventFilter(self)
+        self.button.clicked.connect(self.clicked)
+        self.label = QLabel(parent)
+        self.setup(label, tooltip, statustip)
+        layout = QHBoxLayout()
+        layout.addWidget(self.button)
+        layout.addWidget(self.label)
+        self.setLayout(layout)
+
+    def setup(self, label: str, tooltip: str=None, statustip: str=None, reset: bool=False) -> None:
+        self.label.setText(label)
+        self.button.setObjectName('toolbar-{}'.format(label.split()[0].lower()))
+        if reset:
+            self.button.setStyleSheet('')
+        if tooltip is not None:
+            self.button.setToolTip(tooltip)
+        if statustip is not None:
+            self.button.setStatusTip(statustip)
+
+    def eventFilter(self, obj: QObject, event: QEvent) -> bool:
+        if event.type() in {QEvent.ToolTip, QEvent.StatusTip} and not self.isEnabled():
+            return True
+        return super(VCToolBarButton, self).eventFilter(obj, event)
 
 
 class TimeCounter(QWidget):
@@ -272,6 +307,7 @@ class VolumeSlider(QSlider):
     def __init__(self, parent=None, **kwargs):
         super(VolumeSlider, self).__init__(parent, **kwargs)
         self.setObjectName('volumeslider')
+        self.setFocusPolicy(Qt.NoFocus)
         self.valueChanged.connect(self.showTooltip)
         self.offset = QPoint(0, -45)
         if sys.platform == 'win32':

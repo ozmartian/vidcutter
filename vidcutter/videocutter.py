@@ -45,7 +45,7 @@ from vidcutter.libs.munch import Munch
 from vidcutter.libs.notifications import JobCompleteNotification
 from vidcutter.libs.videoconfig import InvalidMediaException
 from vidcutter.libs.videoservice import VideoService
-from vidcutter.libs.widgets import ClipErrorsDialog, FrameCounter, TimeCounter, VolumeSlider
+from vidcutter.libs.widgets import VCToolBarButton, ClipErrorsDialog, FrameCounter, TimeCounter, VolumeSlider
 from vidcutter.settings import SettingsDialog
 from vidcutter.updater import Updater
 from vidcutter.videoinfo import VideoInfo
@@ -53,7 +53,7 @@ from vidcutter.videolist import VideoList
 from vidcutter.videoslider import VideoSlider
 from vidcutter.videosliderwidget import VideoSliderWidget
 from vidcutter.videostyle import VideoStyleDark, VideoStyleLight
-from vidcutter.videotoolbar import VideoToolBar
+# from vidcutter.videotoolbar import VideoToolBar
 
 if sys.platform.startswith('linux'):
     from vidcutter.libs.taskbarprogress import TaskbarProgress
@@ -110,8 +110,9 @@ class VideoCutter(QWidget):
         self.smartcut = self.settings.value('smartcut', 'off', type=str) in {'on', 'true'}
         self.level1Seek = self.settings.value('level1Seek', 2, type=float)
         self.level2Seek = self.settings.value('level2Seek', 5, type=float)
-        self.lastFolder = self.settings.value('lastFolder', QDir.homePath(), type=str)
         self.verboseLogs = self.parent.verboseLogs
+
+        self.lastFolder = self.settings.value('lastFolder', QDir.homePath(), type=str)
         if not os.path.exists(self.lastFolder):
             self.lastFolder = QDir.homePath()
 
@@ -119,8 +120,8 @@ class VideoCutter(QWidget):
 
         self.initIcons()
         self.initActions()
-        self.toolbar = VideoToolBar(self)
-        self.initToolbar()
+        # self.toolbar = VideoToolBar(self)
+        # self.initToolbar()
 
         self.appMenu, self.clipindex_removemenu, self.clipindex_contextmenu = QMenu(self), QMenu(self), QMenu(self)
         self.initMenus()
@@ -317,33 +318,37 @@ class VideoCutter(QWidget):
         audioLayout.addSpacing(5)
         audioLayout.addWidget(self.fullscreenButton)
 
-        self.toolbar_open = QPushButton(self)
-        self.toolbar_open.setObjectName('toolbar-open')
-        self.toolbar_open.setToolTip('Open Media')
-        self.toolbar_open.setStatusTip('Open a media file to play, cut and join')
-        self.toolbar_open.setCursor(Qt.PointingHandCursor)
-        self.toolbar_open.setFlat(True)
-        self.toolbar_open.setFixedSize(QSize(50, 53))
+        self.toolbar_open = VCToolBarButton('Open\nMedia', 'Open Media', 'Open and load a media file to begin', self)
         self.toolbar_open.clicked.connect(self.openMedia)
-        
-        self.toolbar_play = QPushButton(self)
-        self.toolbar_play.setObjectName('toolbar-play')
-        self.toolbar_play.setToolTip('Play Media')
-        self.toolbar_play.setStatusTip('Play open media file')
-        self.toolbar_play.setCursor(Qt.PointingHandCursor)
-        self.toolbar_play.setFlat(True)
-        self.toolbar_play.setFixedSize(QSize(50, 53))
+        self.toolbar_play = VCToolBarButton('Play\nMedia', 'Play Media', 'Play currently loaded media file', self)
+        self.toolbar_play.setEnabled(False)
         self.toolbar_play.clicked.connect(self.playMedia)
+        self.toolbar_start = VCToolBarButton('Start\nClip', 'Start Clip', 'Start a new clip from the current timeline '
+                                                                          'position', self)
+        self.toolbar_start.setEnabled(False)
+        self.toolbar_start.clicked.connect(self.clipStart)
+        self.toolbar_end = VCToolBarButton('End\nClip', 'End Clip', 'End a new clip at the current timeline position',
+                                           self)
+        self.toolbar_end.setEnabled(False)
+        self.toolbar_end.clicked.connect(self.clipEnd)
+        self.toolbar_save = VCToolBarButton('Save\nMedia', 'Save Media', 'Save clips to a new media file', self)
+        self.toolbar_save.setObjectName('savebutton')
+        self.toolbar_save.setEnabled(False)
+        self.toolbar_save.clicked.connect(self.saveMedia)
 
         toolbarLayout = QHBoxLayout()
+        toolbarLayout.setContentsMargins(0, 0, 0, 0)
+        toolbarLayout.addStretch(1)
         toolbarLayout.addWidget(self.toolbar_open)
-        toolbarLayout.addWidget(QLabel('Open\nMedia'))
         toolbarLayout.addStretch(1)
         toolbarLayout.addWidget(self.toolbar_play)
-        toolbarLayout.addWidget(QLabel('Play\nMedia'))
         toolbarLayout.addStretch(1)
-        toolbarLayout.addWidget(self.toolbar)
-        toolbarLayout.setContentsMargins(0, 0, 0, 0)
+        toolbarLayout.addWidget(self.toolbar_start)
+        toolbarLayout.addStretch(1)
+        toolbarLayout.addWidget(self.toolbar_end)
+        toolbarLayout.addStretch(1)
+        toolbarLayout.addWidget(self.toolbar_save)
+        toolbarLayout.addStretch(1)
 
         toolbarGroup = QGroupBox()
         toolbarGroup.setLayout(toolbarLayout)
@@ -449,30 +454,6 @@ class VideoCutter(QWidget):
 
     def initIcons(self) -> None:
         self.appIcon = qApp.windowIcon()
-        self.openIcon = QIcon()
-        self.openIcon.addFile(':/images/{}/toolbar-open.png'.format(self.theme), QSize(50, 53), QIcon.Normal)
-        self.openIcon.addFile(':/images/%s/toolbar-open-hover.png' % self.theme, QSize(50, 53), QIcon.Active)
-        self.openIcon.addFile(':/images/%s/toolbar-open-disabled.png' % self.theme, QSize(50, 53), QIcon.Disabled)
-        self.playIcon = QIcon()
-        self.playIcon.addFile(':/images/%s/toolbar-play.png' % self.theme, QSize(50, 53), QIcon.Normal)
-        self.playIcon.addFile(':/images/%s/toolbar-play-on.png' % self.theme, QSize(50, 53), QIcon.Active)
-        self.playIcon.addFile(':/images/%s/toolbar-play-disabled.png' % self.theme, QSize(50, 53), QIcon.Disabled)
-        self.pauseIcon = QIcon()
-        self.pauseIcon.addFile(':/images/%s/toolbar-pause.png' % self.theme, QSize(50, 53), QIcon.Normal)
-        self.pauseIcon.addFile(':/images/%s/toolbar-pause-on.png' % self.theme, QSize(50, 53), QIcon.Active)
-        self.pauseIcon.addFile(':/images/%s/toolbar-pause-disabled.png' % self.theme, QSize(50, 53), QIcon.Disabled)
-        self.cutStartIcon = QIcon()
-        self.cutStartIcon.addFile(':/images/%s/toolbar-start.png' % self.theme, QSize(50, 53), QIcon.Normal)
-        self.cutStartIcon.addFile(':/images/%s/toolbar-start-on.png' % self.theme, QSize(50, 53), QIcon.Active)
-        self.cutStartIcon.addFile(':/images/%s/toolbar-start-disabled.png' % self.theme, QSize(50, 53), QIcon.Disabled)
-        self.cutEndIcon = QIcon()
-        self.cutEndIcon.addFile(':/images/%s/toolbar-end.png' % self.theme, QSize(50, 53), QIcon.Normal)
-        self.cutEndIcon.addFile(':/images/%s/toolbar-end-on.png' % self.theme, QSize(50, 53), QIcon.Active)
-        self.cutEndIcon.addFile(':/images/%s/toolbar-end-disabled.png' % self.theme, QSize(50, 53), QIcon.Disabled)
-        self.saveIcon = QIcon()
-        self.saveIcon.addFile(':/images/%s/toolbar-save.png' % self.theme, QSize(50, 53), QIcon.Normal)
-        self.saveIcon.addFile(':/images/%s/toolbar-save-on.png' % self.theme, QSize(50, 53), QIcon.Active)
-        self.saveIcon.addFile(':/images/%s/toolbar-save-disabled.png' % self.theme, QSize(50, 53), QIcon.Disabled)
         self.muteIcon = QIcon(':/images/{}/muted.png'.format(self.theme))
         self.unmuteIcon = QIcon(':/images/{}/unmuted.png'.format(self.theme))
         self.upIcon = QIcon(':/images/up.png')
@@ -491,18 +472,6 @@ class VideoCutter(QWidget):
 
     # noinspection PyArgumentList
     def initActions(self) -> None:
-        self.openAction = QAction(self.openIcon, 'Open\nMedia', self, statusTip='Open a media file for a cut & join',
-                                  triggered=self.openMedia)
-        self.playAction = QAction(self.playIcon, 'Play\nMedia', self, triggered=self.playMedia,
-                                  statusTip='Play media file', enabled=False)
-        self.pauseAction = QAction(self.pauseIcon, 'Pause\nMedia', self, visible=False, triggered=self.playMedia,
-                                   statusTip='Pause currently playing media')
-        self.cutStartAction = QAction(self.cutStartIcon, 'Start\nClip', self, triggered=self.clipStart, enabled=False,
-                                      statusTip='Set the start position of a new clip')
-        self.cutEndAction = QAction(self.cutEndIcon, 'End\nClip', self, triggered=self.clipEnd,
-                                    enabled=False, statusTip='Set the end position of a new clip')
-        self.saveAction = QAction(self.saveIcon, 'Save\nMedia', self, triggered=self.saveMedia, enabled=False,
-                                  statusTip='Save clips to a new media file')
         self.moveItemUpAction = QAction(self.upIcon, 'Move up', self, statusTip='Move clip position up in list',
                                         triggered=self.moveItemUp, enabled=False)
         self.moveItemDownAction = QAction(self.downIcon, 'Move down', self, statusTip='Move clip position down in list',
@@ -535,15 +504,9 @@ class VideoCutter(QWidget):
         self.quitAction = QAction(self.quitIcon, 'Quit', self, triggered=self.parent.close,
                                   statusTip='Quit the application')
 
-    def initToolbar(self) -> None:
-        # self.toolbar.addAction(self.openAction)
-        # self.toolbar.addAction(self.playAction)
-        self.toolbar.addAction(self.pauseAction)
-        self.toolbar.addAction(self.cutStartAction)
-        self.toolbar.addAction(self.cutEndAction)
-        self.toolbar.addAction(self.saveAction)
-        self.toolbar.disableTooltips()
-        self.toolbar.setLabelByType(self.settings.value('toolbarLabels', 'beside', type=str))
+    # def initToolbar(self) -> None:
+    #     self.toolbar.disableTooltips()
+    #     self.toolbar.setLabelByType(self.settings.value('toolbarLabels', 'beside', type=str))
 
     def initMenus(self) -> None:
         self.appMenu.setLayoutDirection(Qt.LeftToRight)
@@ -740,8 +703,8 @@ class VideoCutter(QWidget):
                                                  'Invalid entry at line {0}:\n\n{1}'.format(linenum, line))
                             return
                 linenum += 1
-            self.cutStartAction.setEnabled(True)
-            self.cutEndAction.setDisabled(True)
+            self.toolbar_start.setEnabled(True)
+            self.toolbar_end.setDisabled(True)
             self.seekSlider.setRestrictValue(0, False)
             self.inCut = False
             self.newproject = True
@@ -834,11 +797,9 @@ class VideoCutter(QWidget):
 
     def playMedia(self) -> None:
         if self.mpvWidget.mpv.get_property('pause'):
-            self.playAction.setVisible(False)
-            self.pauseAction.setVisible(True)
+            self.toolbar_play.setup('Pause\nMedia', 'Pause Media', 'Pause currently playing media file', True)
         else:
-            self.playAction.setVisible(True)
-            self.pauseAction.setVisible(False)
+            self.toolbar_play.setup('Play\nMedia', 'Play Media', 'Play currently loaded media file', True)
         self.timeCounter.clearFocus()
         self.frameCounter.clearFocus()
         self.mpvWidget.pause()
@@ -851,10 +812,10 @@ class VideoCutter(QWidget):
                 self.mpvWidget.showText(text, duration)
 
     def initMediaControls(self, flag: bool=True) -> None:
-        self.playAction.setEnabled(flag)
-        self.saveAction.setEnabled(False)
-        self.cutStartAction.setEnabled(flag)
-        self.cutEndAction.setEnabled(False)
+        self.toolbar_play.setEnabled(flag)
+        self.toolbar_start.setEnabled(flag)
+        self.toolbar_end.setEnabled(False)
+        self.toolbar_save.setEnabled(False)
         self.mediaInfoAction.setEnabled(flag)
         self.mediainfoButton.setEnabled(flag)
         self.fullscreenButton.setEnabled(flag)
@@ -1014,8 +975,8 @@ class VideoCutter(QWidget):
         self.clipTimes.append([starttime, '', self.captureImage(self.currentMedia, starttime), ''])
         self.timeCounter.setMinimum(starttime.toString(self.timeformat))
         self.frameCounter.lockMinimum()
-        self.cutStartAction.setDisabled(True)
-        self.cutEndAction.setEnabled(True)
+        self.toolbar_start.setDisabled(True)
+        self.toolbar_end.setEnabled(True)
         self.clipindex_add.setDisabled(True)
         self.seekSlider.setRestrictValue(self.seekSlider.value(), True)
         self.inCut = True
@@ -1032,8 +993,8 @@ class VideoCutter(QWidget):
                                  'The clip end time must come AFTER it\'s start time. Please try again.')
             return
         item[1] = endtime
-        self.cutStartAction.setEnabled(True)
-        self.cutEndAction.setDisabled(True)
+        self.toolbar_start.setEnabled(True)
+        self.toolbar_end.setDisabled(True)
         self.clipindex_add.setEnabled(True)
         self.timeCounter.setMinimum()
         self.seekSlider.setRestrictValue(0, False)
@@ -1085,10 +1046,10 @@ class VideoCutter(QWidget):
             if isinstance(clip[1], QTime) and not len(clip[3]):
                 self.seekSlider.addRegion(clip[0].msecsSinceStartOfDay(), clip[1].msecsSinceStartOfDay())
         if len(self.clipTimes) and not self.inCut and (externalCount == 0 or externalCount > 1):
-            self.saveAction.setEnabled(True)
+            self.toolbar_save.setEnabled(True)
             self.saveProjectAction.setEnabled(True)
         if self.inCut or len(self.clipTimes) == 0 or not isinstance(self.clipTimes[0][1], QTime):
-            self.saveAction.setEnabled(False)
+            self.toolbar_save.setEnabled(False)
             self.saveProjectAction.setEnabled(False)
         self.setRunningTime(self.delta2QTime(self.totalRuntime).toString(self.runtimeformat))
 
@@ -1132,7 +1093,7 @@ class VideoCutter(QWidget):
             if len(ext) == 0 and len(source_ext):
                 self.finalFilename += source_ext
             self.lastFolder = QFileInfo(self.finalFilename).absolutePath()
-            self.saveAction.setDisabled(True)
+            self.toolbar_save.setDisabled(True)
             if self.smartcut:
                 self.seekSlider.lockGUI(True)
                 self.seekSlider.showProgress(6 if clips > 1 else 5)
@@ -1228,7 +1189,7 @@ class VideoCutter(QWidget):
             # noinspection PyCallByClass
             QFile.rename(filename, self.finalFilename)
         self.seekSlider.updateProgress()
-        self.saveAction.setEnabled(True)
+        self.toolbar_save.setEnabled(True)
         self.seekSlider.lockGUI(False)
         self.notify = JobCompleteNotification(
             self.finalFilename,
@@ -1249,7 +1210,7 @@ class VideoCutter(QWidget):
             QTimer.singleShot(1500, self.cleanup)
         self.seekSlider.lockGUI(False)
         self.seekSlider.clearProgress()
-        self.saveAction.setEnabled(True)
+        self.toolbar_save.setEnabled(True)
         self.parent.errorHandler(errormsg)
 
     def cleanup(self) -> None:
@@ -1371,8 +1332,7 @@ class VideoCutter(QWidget):
 
             if event.key() == Qt.Key_Left:
                 self.mpvWidget.frameBackStep()
-                self.playAction.setVisible(True)
-                self.pauseAction.setVisible(False)
+                self.toolbar_play.setup('Play\nMedia', 'Play Media', 'Play currently loaded media file', True)
                 return
 
             if event.key() == Qt.Key_Down:
@@ -1384,8 +1344,7 @@ class VideoCutter(QWidget):
 
             if event.key() == Qt.Key_Right:
                 self.mpvWidget.frameStep()
-                self.playAction.setVisible(True)
-                self.pauseAction.setVisible(False)
+                self.toolbar_play.setup('Play\nMedia', 'Play Media', 'Play currently loaded media file', True)
                 return
 
             if event.key() == Qt.Key_Up:
@@ -1397,8 +1356,10 @@ class VideoCutter(QWidget):
 
             if event.key() in {Qt.Key_Return, Qt.Key_Enter} and \
                     (not self.timeCounter.hasFocus() and not self.frameCounter.hasFocus()):
-                if self.cutStartAction.isEnabled():
+                if self.toolbar_start.isEnabled():
                     self.clipStart()
-                elif self.cutEndAction.isEnabled():
+                elif self.toolbar_end.isEnabled():
                     self.clipEnd()
                 return
+
+        super(VideoCutter, self).keyPressEvent(event)

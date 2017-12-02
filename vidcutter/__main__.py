@@ -41,6 +41,7 @@ from vidcutter.videoconsole import ConsoleHandler, ConsoleWidget, VideoLogger
 from vidcutter.videocutter import VideoCutter
 
 import vidcutter
+import vidcutter.libs.mpv as mpv
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 signal.signal(signal.SIGTERM, signal.SIG_DFL)
@@ -354,7 +355,10 @@ class MainWindow(QMainWindow):
                     self.cutter.mpvWidget.shutdown()
             except AttributeError:
                 pass
-        qApp.quit()
+        try:
+            qApp.quit()
+        except mpv.MPVError:
+            pass
 
 
 def main():

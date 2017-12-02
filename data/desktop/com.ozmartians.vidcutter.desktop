@@ -1,0 +1,13 @@
+[Desktop Entry]
+Name=VidCutter
+GenericName=Media Cutter + Joiner
+X-GNOME-FullName=VidCutter
+Comment=the simplest + fastest video cutter & joiner
+Exec=vidcutter %f
+Terminal=false
+Type=Application
+Icon=vidcutter
+Categories=Qt;KDE;AudioVideo;Video;AudioVideoEditing;
+Keywords=editing;video;audio;ffmpeg;qt;python;pyqt5;
+MimeType=application/x-vidcutter;video/x-msvideo;video/x-ms-wmv;video/x-matroska-3d;video/x-matroska;video/x-flv;video/webm;video/quicktime;video/mpeg;video/mp4;video/3gpp2;video/3gpp;video/mp2t;
+StartupNotify=true

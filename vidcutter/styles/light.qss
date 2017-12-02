@@ -87,7 +87,7 @@ QToolBar#appcontrols QToolButton {
 
 QToolBar#appcontrols QToolButton:disabled,
 QToolBar#appcontrols QToolButton:disabled#saveButton {
-    color: rgb(170, 170, 170)
+    color: rgb(170, 170, 170);
 }
 
 QToolBar#appcontrols QToolButton#saveButton {
@@ -262,6 +262,78 @@ QPushButton:hover#toolbar-play {
 
 QPushButton:pressed#toolbar-play {
     border-image: url(:/images/light/toolbar-play-pressed.png);
+}
+
+/* -------------------------------------------------------------------------- */
+
+QPushButton#toolbar-pause {
+    border-image: url(:/images/light/toolbar-pause.png);
+}
+
+QPushButton:disabled#toolbar-pause {
+    border-image: url(:/images/light/toolbar-pause-disabled.png);
+}
+
+QPushButton:hover#toolbar-pause {
+    border-image: url(:/images/light/toolbar-pause-hover.png);
+}
+
+QPushButton:pressed#toolbar-pause {
+    border-image: url(:/images/light/toolbar-pause-pressed.png);
+}
+
+/* -------------------------------------------------------------------------- */
+
+QPushButton#toolbar-start {
+    border-image: url(:/images/light/toolbar-start.png);
+}
+
+QPushButton:disabled#toolbar-start {
+    border-image: url(:/images/light/toolbar-start-disabled.png);
+}
+
+QPushButton:hover#toolbar-start {
+    border-image: url(:/images/light/toolbar-start-hover.png);
+}
+
+QPushButton:pressed#toolbar-start {
+    border-image: url(:/images/light/toolbar-start-pressed.png);
+}
+
+/* -------------------------------------------------------------------------- */
+
+QPushButton#toolbar-end {
+    border-image: url(:/images/light/toolbar-end.png);
+}
+
+QPushButton:disabled#toolbar-end {
+    border-image: url(:/images/light/toolbar-end-disabled.png);
+}
+
+QPushButton:hover#toolbar-end {
+    border-image: url(:/images/light/toolbar-end-hover.png);
+}
+
+QPushButton:pressed#toolbar-end {
+    border-image: url(:/images/light/toolbar-end-pressed.png);
+}
+
+/* -------------------------------------------------------------------------- */
+
+QPushButton#toolbar-save {
+    border-image: url(:/images/light/toolbar-save.png);
+}
+
+QPushButton:disabled#toolbar-save {
+    border-image: url(:/images/light/toolbar-save-disabled.png);
+}
+
+QPushButton:hover#toolbar-save {
+    border-image: url(:/images/light/toolbar-save-hover.png);
+}
+
+QPushButton:pressed#toolbar-save {
+    border-image: url(:/images/light/toolbar-save-pressed.png);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -577,6 +649,23 @@ QSlider::handle#volumeslider {
 
 QSlider::handle:hover#volumeslider, QSlider::handle:pressed#volumeslider {
     background: transparent url(:/images/slider-knob-active.png) no-repeat center center;
+}
+
+/* -------------------------------------------------------------------------- */
+
+VCToolBarButton QLabel {
+    color: #444;
+    font-size: 13px;
+    font-weight: 400;
+    font-family: "Noto Sans UI", sans-serif;    
+}
+
+VCToolBarButton#savebutton QLabel {
+    color: #642C68;
+}
+
+VCToolBarButton QLabel:disabled, VCToolBarButton#savebutton QLabel:disabled {
+    color: rgb(170, 170, 170);
 }
 
 /* -------------------------------------------------------------------------- */

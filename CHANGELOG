@@ -13,13 +13,24 @@ vidcutter (5.5.0-1) stable; urgency=medium
     promise to start paying attention to. I'm mearly all out of new app ideas
     + innovations so I have no choice :-)
 
-  * Migrated main toolbar buttons from QToolBar/QActions to grouped QPushButton
-    instances, buttons now include active + pressed states which makes the
-    author very happy (its the little things that count!)
+  * Migrated main toolbar buttons from QToolBar + QActions to new custom
+    widget VCToolBarButton handling QPushButton with attached. This allows
+    working pressed states on existing toolbar buttons which QToolBar buttons
+    (for reasons I cannot figure out) do not.
 
-  * Minor changes/improvements to other front panel buttons w/ pressed states
+  * Minor changes/improvements to a few other front panel buttons w/ pressed states
     where previously unavailable + minor cosmetic improvements to color schemes
     of hover/active state buttons
+
+  * Application desktop and appdata metadata files now using reverse domain
+    notation file names
+
+  * Hardened logic for app quit when clips exist to prompt for project save
+
+  * Better detection and prompting if application exit is attempted while
+    video processing jobs in progress, if user decides to continue quitting
+    then kill all VidCutter associated jobs gracefully and force the usual
+    cleanup routines
 
 vidcutter (5.0.5-2) stable; urgency=medium
 
@@ -33,9 +44,9 @@ vidcutter (5.0.5-1) stable; urgency=medium
     Linux distros containing older 3.0.1 versions of the module. The
     dependency on python3-opengl has now been removed and was only
     necessary for Ubuntu users on Vivid due to a broken PyQt5 OpenGL
-    implementation in the core PyOpenGL package. Vivid is no longer
-    a supported distro version so it should be okay to omit on a
-    permanent basis.
+    implementation in Canonical's PyQt5 core. Vivid is no longer
+    a supported distro so decision made to simply omit it on a
+    permanent basis and refrain for worrying about it any further.
 
 vidcutter (5.0.0-1) stable; urgency=medium
 

@@ -229,7 +229,7 @@ class VideoService(QObject):
         else:
             args = '-i "{}"'.format(source)
             result = self.cmdExec(self.backends.ffmpeg, args, True)
-            matches = re.search(r'StreamType.*Video:.*[,\s](?P<width>\d+?)x(?P<height>\d+?)[,\s]',
+            matches = re.search(r'Stream.*Video:.*[,\s](?P<width>\d+?)x(?P<height>\d+?)[,\s]',
                                 result, re.DOTALL).groupdict()
             return QSize(int(matches['width']), int(matches['height']))
 
@@ -250,8 +250,8 @@ class VideoService(QObject):
         else:
             args = '-i "{}"'.format(source)
             result = self.cmdExec(self.backends.ffmpeg, args, True)
-            vcodec = re.search(r'StreamType.*Video:\s(\w+)', result).group(1)
-            acodec = re.search(r'StreamType.*Audio:\s(\w+)', result).group(1)
+            vcodec = re.search(r'Stream.*Video:\s(\w+)', result).group(1)
+            acodec = re.search(r'Stream.*Audio:\s(\w+)', result).group(1)
             return vcodec, acodec
 
     def cut(self, source: str, output: str, frametime: str, duration: str, allstreams: bool=True, vcodec: str=None,

@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>config/vidcutter.ini</file>
         <file>fonts/FuturaLT.ttf</file>
         <file>fonts/NotoSans.ttc</file>
         <file>images/complete-play.png</file>
@@ -149,24 +148,28 @@
         <file>images/light/thumbnails-on.png</file>
         <file>images/light/toolbar-end.png</file>
         <file>images/light/toolbar-end-disabled.png</file>
-        <file>images/light/toolbar-end-on.png</file>
+        <file>images/light/toolbar-end-hover.png</file>
+        <file>images/light/toolbar-end-pressed.png</file>
         <file>images/light/toolbar-open.png</file>
         <file>images/light/toolbar-open-disabled.png</file>
         <file>images/light/toolbar-open-hover.png</file>
         <file>images/light/toolbar-open-pressed.png</file>
         <file>images/light/toolbar-pause.png</file>
         <file>images/light/toolbar-pause-disabled.png</file>
-        <file>images/light/toolbar-pause-on.png</file>
+        <file>images/light/toolbar-pause-hover.png</file>
+        <file>images/light/toolbar-pause-pressed.png</file>
         <file>images/light/toolbar-play.png</file>
         <file>images/light/toolbar-play-disabled.png</file>
         <file>images/light/toolbar-play-hover.png</file>
         <file>images/light/toolbar-play-pressed.png</file>
         <file>images/light/toolbar-save.png</file>
         <file>images/light/toolbar-save-disabled.png</file>
-        <file>images/light/toolbar-save-on.png</file>
+        <file>images/light/toolbar-save-hover.png</file>
+        <file>images/light/toolbar-save-pressed.png</file>
         <file>images/light/toolbar-start.png</file>
         <file>images/light/toolbar-start-disabled.png</file>
-        <file>images/light/toolbar-start-on.png</file>
+        <file>images/light/toolbar-start-hover.png</file>
+        <file>images/light/toolbar-start-pressed.png</file>
         <file>images/light/unmuted.png</file>
         <file>styles/light.qss</file>
         <file>styles/dark.qss</file>

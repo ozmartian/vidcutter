@@ -90,11 +90,11 @@ class VideoSlider(QSlider):
         self.setTickInterval(100000)
         self.setTracking(True)
         self.setTickPosition(QSlider.TicksBelow)
-        self.setFocus()
         self.restrictValue = 0
         self.valueChanged.connect(self.on_valueChanged)
         self.rangeChanged.connect(self.on_rangeChanged)
         self.installEventFilter(self)
+        self.setFocus()
 
     def initStyle(self) -> None:
         bground = 'rgba(200, 213, 236, 0.85)' if self._cutStarted else 'transparent'
@@ -382,6 +382,7 @@ class VideoSlider(QSlider):
                 self.parent.mpvWidget.frameBackStep()
             else:
                 self.parent.mpvWidget.frameStep()
+            self.parent.toolbar_play.setup('Play\nMedia', 'Play Media', 'Play currently loaded media file', True)
             event.accept()
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
@@ -389,9 +390,11 @@ class VideoSlider(QSlider):
 
     def enterEvent(self, event: QEvent) -> None:
         self._mouseOver = True
+        super(VideoSlider, self).enterEvent(event)
 
     def leaveEvent(self, event: QEvent) -> None:
         self._mouseOver = False
+        super(VideoSlider, self).leaveEvent(event)
 
     def eventFilter(self, obj: QObject, event: QMouseEvent) -> bool:
         if event.type() == QEvent.MouseButtonRelease and event.button() == Qt.LeftButton:
