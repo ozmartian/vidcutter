@@ -222,7 +222,8 @@ class MainWindow(QMainWindow):
             if getattr(sys, 'frozen', False):
                 # noinspection PyProtectedMember, PyUnresolvedReferences
                 return os.path.join(sys._MEIPASS, path)
-            return os.path.join(QFileInfo(__file__).absolutePath(), path)
+            # return os.path.join(QFileInfo(__file__).absolutePath(), path)
+            return os.path.join(os.path.dirname(os.path.realpath(sys.argv[0])), path)
         return ':%s' % path
 
     @pyqtSlot(str)

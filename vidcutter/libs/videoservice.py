@@ -593,4 +593,4 @@ class VideoService(QObject):
     def getAppPath() -> str:
         if VideoService.frozen:
             return sys._MEIPASS
-        return QFileInfo(__file__).absolutePath()
+        return os.path.dirname(os.path.realpath(sys.argv[0]))
