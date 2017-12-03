@@ -2,7 +2,7 @@
 %global pkg_name vidcutter
 
 Name:           %{pkg_name}
-Version:        5.0.5
+Version:        5.5.0
 Release:        1%{?dist}
 Summary:        the simplest + fastest video cutter & joiner
 Group:          Applications/Multimedia
@@ -39,7 +39,7 @@ rm -rf %{pkg_name}.egg-info
 %{python3_sitearch}/%{pkg_name}
 %{python3_sitearch}/%{pkg_name}-%{version}-py?.?.egg-info
 %{_bindir}/%{pkg_name}
-%{_datadir}/applications/com.ozmartians.VidCutter.desktop
+%{_datadir}/applications/com.ozmartians.vidcutter.desktop
 %{_datadir}/icons/hicolor/16x16/apps/%{pkg_name}.png
 %{_datadir}/icons/hicolor/128x128/apps/%{pkg_name}.png
 %{_datadir}/icons/hicolor/22x22/apps/%{pkg_name}.png
@@ -50,7 +50,8 @@ rm -rf %{pkg_name}.egg-info
 %{_datadir}/icons/hicolor/512x512/apps/%{pkg_name}.png
 %{_datadir}/icons/hicolor/64x64/apps/%{pkg_name}.png
 %{_datadir}/icons/hicolor/scalable/apps/%{pkg_name}.svg
-%{_datadir}/appdata/com.ozmartians.VidCutter.appdata.xml
+%{_datadir}/appdata/com.ozmartians.vidcutter.appdata.xml
+%{_datadir}/metainfo/com.ozmartians.vidcutter.appdata.xml
 %{_datadir}/mime/packages/x-%{pkg_name}.xml
 %{_datadir}/pixmaps/%{pkg_name}.svg
 
