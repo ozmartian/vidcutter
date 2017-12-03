@@ -375,15 +375,16 @@ def main():
 
     atexit.register(MainWindow.cleanup)
 
-    app = SingleApplication(vidcutter.__appid__, sys.argv)
+    # app = SingleApplication(vidcutter.__appid__, sys.argv)
+    app = QApplication(sys.argv)
     app.setApplicationName(vidcutter.__appname__)
     app.setApplicationVersion(vidcutter.__version__)
     app.setOrganizationDomain(vidcutter.__domain__)
     app.setQuitOnLastWindowClosed(True)
 
     win = MainWindow()
-    app.setActivationWindow(win)
-    app.messageReceived.connect(win.file_opener)
+    # app.setActivationWindow(win)
+    # app.messageReceived.connect(win.file_opener)
 
     exit_code = app.exec_()
     if exit_code == MainWindow.EXIT_CODE_REBOOT:

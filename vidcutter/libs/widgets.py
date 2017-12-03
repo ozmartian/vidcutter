@@ -35,7 +35,7 @@ from PyQt5.QtWidgets import (qApp, QAbstractSpinBox, QDialog, QDialogButtonBox, 
 class VCToolBarButton(QWidget):
     clicked = pyqtSignal(bool)
 
-    def __init__(self, label: str, tooltip: str=None, statustip: str=None, parent=None):
+    def __init__(self, label: str, statustip: str, labelstyle: str='beside', parent=None):
         super(VCToolBarButton, self).__init__(parent)
         self.setFocusPolicy(Qt.NoFocus)
         self.button = QPushButton(parent)
@@ -44,22 +44,33 @@ class VCToolBarButton(QWidget):
         self.button.setFixedSize(QSize(50, 53))
         self.button.installEventFilter(self)
         self.button.clicked.connect(self.clicked)
-        self.label = QLabel(parent)
-        self.setup(label, tooltip, statustip)
-        layout = QHBoxLayout()
-        layout.addWidget(self.button)
-        layout.addWidget(self.label)
+        self.setup(label, statustip)
+        self.label1 = QLabel(label.replace(' ', '<br/>'), self)
+        self.label2 = QLabel(label, self)
+        layout = QGridLayout()
+        layout.addWidget(self.button, 0, 0, Qt.AlignHCenter)
+        layout.addWidget(self.label1, 0, 1)
+        layout.addWidget(self.label2, 1, 0)
         self.setLayout(layout)
+        self.setLabelStyle(labelstyle)
 
-    def setup(self, label: str, tooltip: str=None, statustip: str=None, reset: bool=False) -> None:
-        self.label.setText(label)
+    def setup(self, label: str, statustip: str, reset: bool=False) -> None:
+        self.button.setToolTip(label)
+        self.button.setStatusTip(statustip)
         self.button.setObjectName('toolbar-{}'.format(label.split()[0].lower()))
         if reset:
             self.button.setStyleSheet('')
-        if tooltip is not None:
-            self.button.setToolTip(tooltip)
-        if statustip is not None:
-            self.button.setStatusTip(statustip)
+
+    def setLabelStyle(self, labelstyle: str) -> None:
+        if labelstyle == 'under':
+            self.label1.setVisible(False)
+            self.label2.setVisible(True)
+        elif labelstyle == 'none':
+            self.label1.setVisible(False)
+            self.label2.setVisible(False)
+        else:
+            self.label1.setVisible(True)
+            self.label2.setVisible(False)
 
     def eventFilter(self, obj: QObject, event: QEvent) -> bool:
         if event.type() in {QEvent.ToolTip, QEvent.StatusTip} and not self.isEnabled():

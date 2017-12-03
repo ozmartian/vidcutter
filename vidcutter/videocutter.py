@@ -53,7 +53,6 @@ from vidcutter.videolist import VideoList
 from vidcutter.videoslider import VideoSlider
 from vidcutter.videosliderwidget import VideoSliderWidget
 from vidcutter.videostyle import VideoStyleDark, VideoStyleLight
-# from vidcutter.videotoolbar import VideoToolBar
 
 if sys.platform.startswith('linux'):
     from vidcutter.libs.taskbarprogress import TaskbarProgress
@@ -318,20 +317,19 @@ class VideoCutter(QWidget):
         audioLayout.addSpacing(5)
         audioLayout.addWidget(self.fullscreenButton)
 
-        self.toolbar_open = VCToolBarButton('Open\nMedia', 'Open Media', 'Open and load a media file to begin', self)
+        self.toolbar_open = VCToolBarButton('Open Media', 'Open and load a media file to begin', parent=self)
         self.toolbar_open.clicked.connect(self.openMedia)
-        self.toolbar_play = VCToolBarButton('Play\nMedia', 'Play Media', 'Play currently loaded media file', self)
+        self.toolbar_play = VCToolBarButton('Play Media', 'Play currently loaded media file', parent=self)
         self.toolbar_play.setEnabled(False)
         self.toolbar_play.clicked.connect(self.playMedia)
-        self.toolbar_start = VCToolBarButton('Start\nClip', 'Start Clip', 'Start a new clip from the current timeline '
-                                                                          'position', self)
+        self.toolbar_start = VCToolBarButton('Start Clip', 'Start a new clip from the current timeline position',
+                                             parent=self)
         self.toolbar_start.setEnabled(False)
         self.toolbar_start.clicked.connect(self.clipStart)
-        self.toolbar_end = VCToolBarButton('End\nClip', 'End Clip', 'End a new clip at the current timeline position',
-                                           self)
+        self.toolbar_end = VCToolBarButton('End Clip', 'End a new clip at the current timeline position', parent=self)
         self.toolbar_end.setEnabled(False)
         self.toolbar_end.clicked.connect(self.clipEnd)
-        self.toolbar_save = VCToolBarButton('Save\nMedia', 'Save Media', 'Save clips to a new media file', self)
+        self.toolbar_save = VCToolBarButton('Save Media', 'Save clips to a new media file', parent=self)
         self.toolbar_save.setObjectName('savebutton')
         self.toolbar_save.setEnabled(False)
         self.toolbar_save.clicked.connect(self.saveMedia)
@@ -350,9 +348,11 @@ class VideoCutter(QWidget):
         toolbarLayout.addWidget(self.toolbar_save)
         toolbarLayout.addStretch(1)
 
-        toolbarGroup = QGroupBox()
-        toolbarGroup.setLayout(toolbarLayout)
-        toolbarGroup.setStyleSheet('QGroupBox { border: 0; }')
+        self.toolbarGroup = QGroupBox()
+        self.toolbarGroup.setLayout(toolbarLayout)
+        self.toolbarGroup.setStyleSheet('QGroupBox { border: 0; }')
+
+        self.setToolBarStyle(self.settings.value('toolbarLabels', 'beside', type=str))
 
         togglesLayout = QHBoxLayout()
         togglesLayout.setSpacing(0)
@@ -382,7 +382,7 @@ class VideoCutter(QWidget):
         controlsLayout.addLayout(togglesLayout)
         controlsLayout.addSpacing(10)
         controlsLayout.addStretch(1)
-        controlsLayout.addWidget(toolbarGroup)
+        controlsLayout.addWidget(self.toolbarGroup)
         controlsLayout.addStretch(1)
         controlsLayout.addSpacing(10)
         controlsLayout.addLayout(groupLayout)
@@ -504,10 +504,6 @@ class VideoCutter(QWidget):
         self.quitAction = QAction(self.quitIcon, 'Quit', self, triggered=self.parent.close,
                                   statusTip='Quit the application')
 
-    # def initToolbar(self) -> None:
-    #     self.toolbar.disableTooltips()
-    #     self.toolbar.setLabelByType(self.settings.value('toolbarLabels', 'beside', type=str))
-
     def initMenus(self) -> None:
         self.appMenu.setLayoutDirection(Qt.LeftToRight)
         self.appMenu.addAction(self.openProjectAction)
@@ -540,6 +536,10 @@ class VideoCutter(QWidget):
             self.appMenu.setStyle(QStyleFactory.create('Fusion'))
             self.clipindex_contextmenu.setStyle(QStyleFactory.create('Fusion'))
             self.clipindex_removemenu.setStyle(QStyleFactory.create('Fusion'))
+
+    def setToolBarStyle(self, labelstyle: str='beside') -> None:
+        buttonlist = self.toolbarGroup.findChildren(VCToolBarButton)
+        [button.setLabelStyle(labelstyle) for button in buttonlist]
 
     def setRunningTime(self, runtime: str) -> None:
         self.runtimeLabel.setText('<div align="right">{}</div>'.format(runtime))
@@ -797,9 +797,9 @@ class VideoCutter(QWidget):
 
     def playMedia(self) -> None:
         if self.mpvWidget.mpv.get_property('pause'):
-            self.toolbar_play.setup('Pause\nMedia', 'Pause Media', 'Pause currently playing media file', True)
+            self.toolbar_play.setup('Pause Media', 'Pause currently playing media file', True)
         else:
-            self.toolbar_play.setup('Play\nMedia', 'Play Media', 'Play currently loaded media file', True)
+            self.toolbar_play.setup('Play Media', 'Play currently loaded media file', True)
         self.timeCounter.clearFocus()
         self.frameCounter.clearFocus()
         self.mpvWidget.pause()
@@ -1332,7 +1332,7 @@ class VideoCutter(QWidget):
 
             if event.key() == Qt.Key_Left:
                 self.mpvWidget.frameBackStep()
-                self.toolbar_play.setup('Play\nMedia', 'Play Media', 'Play currently loaded media file', True)
+                self.toolbar_play.setup('Play Media', 'Play currently loaded media file', True)
                 return
 
             if event.key() == Qt.Key_Down:
@@ -1344,7 +1344,7 @@ class VideoCutter(QWidget):
 
             if event.key() == Qt.Key_Right:
                 self.mpvWidget.frameStep()
-                self.toolbar_play.setup('Play\nMedia', 'Play Media', 'Play currently loaded media file', True)
+                self.toolbar_play.setup('Play Media', 'Play currently loaded media file', True)
                 return
 
             if event.key() == Qt.Key_Up:

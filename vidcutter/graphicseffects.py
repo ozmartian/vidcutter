@@ -26,7 +26,7 @@ from PyQt5.QtWidgets import QGraphicsEffect
 
 
 class OpacityEffect(QGraphicsEffect):
-    def __init__(self, opacity: float=0.4):
+    def __init__(self, opacity: float=0.6):
         super(OpacityEffect, self).__init__()
         self.opacity = opacity
 

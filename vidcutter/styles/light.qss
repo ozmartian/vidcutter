@@ -230,114 +230,6 @@ QMessageBox {
 
 /* -------------------------------------------------------------------------- */
 
-QPushButton#toolbar-open {
-    border-image: url(:/images/light/toolbar-open.png);
-}
-
-QPushButton:disabled#toolbar-open {
-    border-image: url(:/images/light/toolbar-open-disabled.png);
-}
-
-QPushButton:hover#toolbar-open {
-    border-image: url(:/images/light/toolbar-open-hover.png);
-}
-
-QPushButton:pressed#toolbar-open {
-    border-image: url(:/images/light/toolbar-open-pressed.png);
-}
-
-/* -------------------------------------------------------------------------- */
-
-QPushButton#toolbar-play {
-    border-image: url(:/images/light/toolbar-play.png);
-}
-
-QPushButton:disabled#toolbar-play {
-    border-image: url(:/images/light/toolbar-play-disabled.png);
-}
-
-QPushButton:hover#toolbar-play {
-    border-image: url(:/images/light/toolbar-play-hover.png);
-}
-
-QPushButton:pressed#toolbar-play {
-    border-image: url(:/images/light/toolbar-play-pressed.png);
-}
-
-/* -------------------------------------------------------------------------- */
-
-QPushButton#toolbar-pause {
-    border-image: url(:/images/light/toolbar-pause.png);
-}
-
-QPushButton:disabled#toolbar-pause {
-    border-image: url(:/images/light/toolbar-pause-disabled.png);
-}
-
-QPushButton:hover#toolbar-pause {
-    border-image: url(:/images/light/toolbar-pause-hover.png);
-}
-
-QPushButton:pressed#toolbar-pause {
-    border-image: url(:/images/light/toolbar-pause-pressed.png);
-}
-
-/* -------------------------------------------------------------------------- */
-
-QPushButton#toolbar-start {
-    border-image: url(:/images/light/toolbar-start.png);
-}
-
-QPushButton:disabled#toolbar-start {
-    border-image: url(:/images/light/toolbar-start-disabled.png);
-}
-
-QPushButton:hover#toolbar-start {
-    border-image: url(:/images/light/toolbar-start-hover.png);
-}
-
-QPushButton:pressed#toolbar-start {
-    border-image: url(:/images/light/toolbar-start-pressed.png);
-}
-
-/* -------------------------------------------------------------------------- */
-
-QPushButton#toolbar-end {
-    border-image: url(:/images/light/toolbar-end.png);
-}
-
-QPushButton:disabled#toolbar-end {
-    border-image: url(:/images/light/toolbar-end-disabled.png);
-}
-
-QPushButton:hover#toolbar-end {
-    border-image: url(:/images/light/toolbar-end-hover.png);
-}
-
-QPushButton:pressed#toolbar-end {
-    border-image: url(:/images/light/toolbar-end-pressed.png);
-}
-
-/* -------------------------------------------------------------------------- */
-
-QPushButton#toolbar-save {
-    border-image: url(:/images/light/toolbar-save.png);
-}
-
-QPushButton:disabled#toolbar-save {
-    border-image: url(:/images/light/toolbar-save-disabled.png);
-}
-
-QPushButton:hover#toolbar-save {
-    border-image: url(:/images/light/toolbar-save-hover.png);
-}
-
-QPushButton:pressed#toolbar-save {
-    border-image: url(:/images/light/toolbar-save-pressed.png);
-}
-
-/* -------------------------------------------------------------------------- */
-
 QDialogButtonBox QPushButton, QDialog#notification QPushButton, QDialog#videoinfo QPushButton {
     padding: 5px 8px;
 }
@@ -666,6 +558,114 @@ VCToolBarButton#savebutton QLabel {
 
 VCToolBarButton QLabel:disabled, VCToolBarButton#savebutton QLabel:disabled {
     color: rgb(170, 170, 170);
+}
+
+/* -------------------------------------------------------------------------- */
+
+VCToolBarButton QPushButton#toolbar-open {
+    border-image: url(:/images/light/toolbar-open.png);
+}
+
+VCToolBarButton QPushButton:disabled#toolbar-open {
+    border-image: url(:/images/light/toolbar-open-disabled.png);
+}
+
+VCToolBarButton QPushButton:hover#toolbar-open {
+    border-image: url(:/images/light/toolbar-open-hover.png);
+}
+
+VCToolBarButton QPushButton:pressed#toolbar-open {
+    border-image: url(:/images/light/toolbar-open-pressed.png);
+}
+
+/* -------------------------------------------------------------------------- */
+
+VCToolBarButton QPushButton#toolbar-play {
+    border-image: url(:/images/light/toolbar-play.png);
+}
+
+VCToolBarButton QPushButton:disabled#toolbar-play {
+    border-image: url(:/images/light/toolbar-play-disabled.png);
+}
+
+VCToolBarButton QPushButton:hover#toolbar-play {
+    border-image: url(:/images/light/toolbar-play-hover.png);
+}
+
+VCToolBarButton QPushButton:pressed#toolbar-play {
+    border-image: url(:/images/light/toolbar-play-pressed.png);
+}
+
+/* -------------------------------------------------------------------------- */
+
+VCToolBarButton QPushButton#toolbar-pause {
+    border-image: url(:/images/light/toolbar-pause.png);
+}
+
+VCToolBarButton QPushButton:disabled#toolbar-pause {
+    border-image: url(:/images/light/toolbar-pause-disabled.png);
+}
+
+VCToolBarButton QPushButton:hover#toolbar-pause {
+    border-image: url(:/images/light/toolbar-pause-hover.png);
+}
+
+VCToolBarButton QPushButton:pressed#toolbar-pause {
+    border-image: url(:/images/light/toolbar-pause-pressed.png);
+}
+
+/* -------------------------------------------------------------------------- */
+
+VCToolBarButton QPushButton#toolbar-start {
+    border-image: url(:/images/light/toolbar-start.png);
+}
+
+VCToolBarButton QPushButton:disabled#toolbar-start {
+    border-image: url(:/images/light/toolbar-start-disabled.png);
+}
+
+VCToolBarButton QPushButton:hover#toolbar-start {
+    border-image: url(:/images/light/toolbar-start-hover.png);
+}
+
+VCToolBarButton QPushButton:pressed#toolbar-start {
+    border-image: url(:/images/light/toolbar-start-pressed.png);
+}
+
+/* -------------------------------------------------------------------------- */
+
+VCToolBarButton QPushButton#toolbar-end {
+    border-image: url(:/images/light/toolbar-end.png);
+}
+
+VCToolBarButton QPushButton:disabled#toolbar-end {
+    border-image: url(:/images/light/toolbar-end-disabled.png);
+}
+
+VCToolBarButton QPushButton:hover#toolbar-end {
+    border-image: url(:/images/light/toolbar-end-hover.png);
+}
+
+VCToolBarButton QPushButton:pressed#toolbar-end {
+    border-image: url(:/images/light/toolbar-end-pressed.png);
+}
+
+/* -------------------------------------------------------------------------- */
+
+VCToolBarButton QPushButton#toolbar-save {
+    border-image: url(:/images/light/toolbar-save.png);
+}
+
+VCToolBarButton QPushButton:disabled#toolbar-save {
+    border-image: url(:/images/light/toolbar-save-disabled.png);
+}
+
+VCToolBarButton QPushButton:hover#toolbar-save {
+    border-image: url(:/images/light/toolbar-save-hover.png);
+}
+
+VCToolBarButton QPushButton:pressed#toolbar-save {
+    border-image: url(:/images/light/toolbar-save-pressed.png);
 }
 
 /* -------------------------------------------------------------------------- */

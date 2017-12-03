@@ -30,6 +30,8 @@ from PyQt5.QtWidgets import (qApp, QButtonGroup, QCheckBox, QDialog, QDialogButt
                              QGridLayout, QGroupBox, QHBoxLayout, QLabel, QListView, QListWidget, QListWidgetItem,
                              QMessageBox, QRadioButton, QStackedWidget, QStyleFactory, QVBoxLayout, QWidget)
 
+from vidcutter.libs.widgets import VCToolBarButton
+
 
 class LogsPage(QWidget):
     def __init__(self, parent=None):
@@ -97,28 +99,28 @@ class ThemePage(QWidget):
             themeGroup.setLayout(themeLayout)
             mainLayout.addWidget(themeGroup)
         toolbar_labels = self.parent.settings.value('toolbarLabels', 'beside', type=str)
-        toolbar_iconsRadio = QRadioButton('Icons only', self)
-        toolbar_iconsRadio.setToolTip('Icons only')
-        toolbar_iconsRadio.setCursor(Qt.PointingHandCursor)
-        toolbar_iconsRadio.setChecked(toolbar_labels == 'none')
-        toolbar_underRadio = QRadioButton('Text under icons', self)
-        toolbar_underRadio.setToolTip('Text under icons')
+        toolbar_notextRadio = QRadioButton('No text (buttons only)', self)
+        toolbar_notextRadio.setToolTip('No text (buttons only)')
+        toolbar_notextRadio.setCursor(Qt.PointingHandCursor)
+        toolbar_notextRadio.setChecked(toolbar_labels == 'none')
+        toolbar_underRadio = QRadioButton('Text under buttons', self)
+        toolbar_underRadio.setToolTip('Text under buttons')
         toolbar_underRadio.setCursor(Qt.PointingHandCursor)
         toolbar_underRadio.setChecked(toolbar_labels == 'under')
-        toolbar_besideRadio = QRadioButton('Text beside icons', self)
-        toolbar_besideRadio.setToolTip('Text beside icons')
+        toolbar_besideRadio = QRadioButton('Text beside buttons', self)
+        toolbar_besideRadio.setToolTip('Text beside buttons')
         toolbar_besideRadio.setCursor(Qt.PointingHandCursor)
         toolbar_besideRadio.setChecked(toolbar_labels == 'beside')
         toolbar_buttonGroup = QButtonGroup(self)
-        toolbar_buttonGroup.addButton(toolbar_iconsRadio, 1)
+        toolbar_buttonGroup.addButton(toolbar_besideRadio, 1)
         toolbar_buttonGroup.addButton(toolbar_underRadio, 2)
-        toolbar_buttonGroup.addButton(toolbar_besideRadio, 3)
+        toolbar_buttonGroup.addButton(toolbar_notextRadio, 3)
         # noinspection PyUnresolvedReferences
-        toolbar_buttonGroup.buttonClicked[int].connect(self.parent.parent.toolbar.setLabels)
+        toolbar_buttonGroup.buttonClicked[int].connect(self.setLabelStyle)
         toolbarLayout = QGridLayout()
         toolbarLayout.addWidget(toolbar_besideRadio, 0, 0)
         toolbarLayout.addWidget(toolbar_underRadio, 0, 1)
-        toolbarLayout.addWidget(toolbar_iconsRadio, 1, 0)
+        toolbarLayout.addWidget(toolbar_notextRadio, 1, 0)
         toolbarGroup = QGroupBox('Toolbar')
         toolbarGroup.setLayout(toolbarLayout)
         mainLayout.addWidget(toolbarGroup)
@@ -145,6 +147,17 @@ class ThemePage(QWidget):
         mainLayout.addWidget(advancedGroup)
         mainLayout.addStretch(1)
         self.setLayout(mainLayout)
+
+    @pyqtSlot(int)
+    def setLabelStyle(self, button_id: int) -> None:
+        if button_id == 2:
+            style = 'under'
+        elif button_id == 3:
+            style = 'none'
+        else:
+            style = 'beside'
+        self.parent.settings.setValue('toolbarLabels', style)
+        self.parent.parent.setToolBarStyle(style)
 
     @pyqtSlot(int)
     def setNativeDialogs(self, state: int) -> None:
