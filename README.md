@@ -90,7 +90,7 @@ VidCutter is also available via the well-known Packman third-party repo. Instruc
 
 ### AppImage
 
-An AppImage version is also available on the releases page to help all other Linux users. Current AppImage appears to only work on Trusty-Vivid based distros so please avoid it if you're on an Ubuntu base of 16.04 and above. A new AppImage should be available in the coming days, and requires some changes to bring it up to speed with the latest AppImage spec + runtime.
+An AppImage portable Linux binary is also available via the releases page for Linux users. The latest 5.0.5 AppImage has been tested and confirmed to work on Ubuntu based distributions, including KDE Neon etc., from 14.04 up to and including current 17.10 versions.
 
 ### FlatPak + Snap ??
 
