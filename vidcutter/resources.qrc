@@ -86,22 +86,28 @@
         <file>images/dark/thumbnails-on.png</file>
         <file>images/dark/toolbar-end.png</file>
         <file>images/dark/toolbar-end-disabled.png</file>
-        <file>images/dark/toolbar-end-on.png</file>
+        <file>images/dark/toolbar-end-hover.png</file>
+        <file>images/dark/toolbar-end-pressed.png</file>
         <file>images/dark/toolbar-open.png</file>
         <file>images/dark/toolbar-open-disabled.png</file>
-        <file>images/dark/toolbar-open-on.png</file>
+        <file>images/dark/toolbar-open-hover.png</file>
+        <file>images/dark/toolbar-open-pressed.png</file>
         <file>images/dark/toolbar-pause.png</file>
         <file>images/dark/toolbar-pause-disabled.png</file>
-        <file>images/dark/toolbar-pause-on.png</file>
+        <file>images/dark/toolbar-pause-hover.png</file>
+        <file>images/dark/toolbar-pause-pressed.png</file>
         <file>images/dark/toolbar-play.png</file>
         <file>images/dark/toolbar-play-disabled.png</file>
-        <file>images/dark/toolbar-play-on.png</file>
+        <file>images/dark/toolbar-play-hover.png</file>
+        <file>images/dark/toolbar-play-pressed.png</file>
         <file>images/dark/toolbar-save.png</file>
         <file>images/dark/toolbar-save-disabled.png</file>
-        <file>images/dark/toolbar-save-on.png</file>
+        <file>images/dark/toolbar-save-hover.png</file>
+        <file>images/dark/toolbar-save-pressed.png</file>
         <file>images/dark/toolbar-start.png</file>
         <file>images/dark/toolbar-start-disabled.png</file>
-        <file>images/dark/toolbar-start-on.png</file>
+        <file>images/dark/toolbar-start-hover.png</file>
+        <file>images/dark/toolbar-start-pressed.png</file>
         <file>images/dark/unmuted.png</file>
         <file>images/light/about-background.png</file>
         <file>images/light/background_complete.png</file>

@@ -548,6 +548,131 @@ QSlider::handle:hover#volumeslider, QSlider::handle:pressed#volumeslider {
 
 /* -------------------------------------------------------------------------- */
 
+VCToolBarButton QLabel {
+    color: #444;
+    font-size: 13px;
+    font-weight: 400;
+    font-family: "Noto Sans UI", sans-serif;    
+}
+
+VCToolBarButton#savebutton QLabel {
+    color: #94469A;
+}
+
+VCToolBarButton QLabel:disabled, VCToolBarButton#savebutton QLabel:disabled {
+    color: rgba(140, 140, 140, 100);
+}
+
+/* -------------------------------------------------------------------------- */
+
+VCToolBarButton QPushButton#toolbar-open {
+    border-image: url(:/images/dark/toolbar-open.png);
+}
+
+VCToolBarButton QPushButton:disabled#toolbar-open {
+    border-image: url(:/images/dark/toolbar-open-disabled.png);
+}
+
+VCToolBarButton QPushButton:hover#toolbar-open {
+    border-image: url(:/images/dark/toolbar-open-hover.png);
+}
+
+VCToolBarButton QPushButton:pressed#toolbar-open {
+    border-image: url(:/images/dark/toolbar-open-pressed.png);
+}
+
+/* -------------------------------------------------------------------------- */
+
+VCToolBarButton QPushButton#toolbar-play {
+    border-image: url(:/images/dark/toolbar-play.png);
+}
+
+VCToolBarButton QPushButton:disabled#toolbar-play {
+    border-image: url(:/images/dark/toolbar-play-disabled.png);
+}
+
+VCToolBarButton QPushButton:hover#toolbar-play {
+    border-image: url(:/images/dark/toolbar-play-hover.png);
+}
+
+VCToolBarButton QPushButton:pressed#toolbar-play {
+    border-image: url(:/images/dark/toolbar-play-pressed.png);
+}
+
+/* -------------------------------------------------------------------------- */
+
+VCToolBarButton QPushButton#toolbar-pause {
+    border-image: url(:/images/dark/toolbar-pause.png);
+}
+
+VCToolBarButton QPushButton:disabled#toolbar-pause {
+    border-image: url(:/images/dark/toolbar-pause-disabled.png);
+}
+
+VCToolBarButton QPushButton:hover#toolbar-pause {
+    border-image: url(:/images/dark/toolbar-pause-hover.png);
+}
+
+VCToolBarButton QPushButton:pressed#toolbar-pause {
+    border-image: url(:/images/dark/toolbar-pause-pressed.png);
+}
+
+/* -------------------------------------------------------------------------- */
+
+VCToolBarButton QPushButton#toolbar-start {
+    border-image: url(:/images/dark/toolbar-start.png);
+}
+
+VCToolBarButton QPushButton:disabled#toolbar-start {
+    border-image: url(:/images/dark/toolbar-start-disabled.png);
+}
+
+VCToolBarButton QPushButton:hover#toolbar-start {
+    border-image: url(:/images/dark/toolbar-start-hover.png);
+}
+
+VCToolBarButton QPushButton:pressed#toolbar-start {
+    border-image: url(:/images/dark/toolbar-start-pressed.png);
+}
+
+/* -------------------------------------------------------------------------- */
+
+VCToolBarButton QPushButton#toolbar-end {
+    border-image: url(:/images/dark/toolbar-end.png);
+}
+
+VCToolBarButton QPushButton:disabled#toolbar-end {
+    border-image: url(:/images/dark/toolbar-end-disabled.png);
+}
+
+VCToolBarButton QPushButton:hover#toolbar-end {
+    border-image: url(:/images/dark/toolbar-end-hover.png);
+}
+
+VCToolBarButton QPushButton:pressed#toolbar-end {
+    border-image: url(:/images/dark/toolbar-end-pressed.png);
+}
+
+/* -------------------------------------------------------------------------- */
+
+VCToolBarButton QPushButton#toolbar-save {
+    border-image: url(:/images/dark/toolbar-save.png);
+}
+
+VCToolBarButton QPushButton:disabled#toolbar-save {
+    border-image: url(:/images/dark/toolbar-save-disabled.png);
+}
+
+VCToolBarButton QPushButton:hover#toolbar-save {
+    border-image: url(:/images/dark/toolbar-save-hover.png);
+}
+
+VCToolBarButton QPushButton:pressed#toolbar-save {
+    border-image: url(:/images/dark/toolbar-save-pressed.png);
+}
+
+/* -------------------------------------------------------------------------- */
+
 VCProgressBar {
     background-color: #1B2326;
     border: 1px solid #000;
