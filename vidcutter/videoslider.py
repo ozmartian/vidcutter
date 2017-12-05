@@ -382,7 +382,7 @@ class VideoSlider(QSlider):
                 self.parent.mpvWidget.frameBackStep()
             else:
                 self.parent.mpvWidget.frameStep()
-            self.parent.toolbar_play.setup('Play\nMedia', 'Play Media', 'Play currently loaded media file', True)
+            self.parent.toolbar_play.setup(kwargs)
             event.accept()
 
     def keyPressEvent(self, event: QKeyEvent) -> None:

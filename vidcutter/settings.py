@@ -24,7 +24,7 @@
 
 import sys
 
-from PyQt5.QtCore import pyqtSlot, QSize, Qt
+from PyQt5.QtCore import pyqtSlot, QProcessEnvironment, QSize, Qt
 from PyQt5.QtGui import QCloseEvent, QIcon, QShowEvent
 from PyQt5.QtWidgets import (qApp, QButtonGroup, QCheckBox, QDialog, QDialogButtonBox, QDoubleSpinBox, QFrame,
                              QGridLayout, QGroupBox, QHBoxLayout, QLabel, QListView, QListWidget, QListWidgetItem,
@@ -163,6 +163,12 @@ class ThemePage(QWidget):
     def setNativeDialogs(self, state: int) -> None:
         self.parent.parent.saveSetting('nativeDialogs', state == Qt.Checked)
         self.parent.parent.nativeDialogs = (state == Qt.Checked)
+        if sys.platform.startswith('linux') and 'QT_APPIMAGE' in QProcessEnvironment.systemEnvironment().keys():
+            if self.parent.parent.nativeDialogs:
+                self.parent.parent.filedialog = None
+            else:
+                from vidcutter.libs.widgets import VCFileDialog
+                self.filedialog = VCFileDialog(self.parent.parent)
 
     @pyqtSlot(bool)
     def switchTheme(self) -> None:

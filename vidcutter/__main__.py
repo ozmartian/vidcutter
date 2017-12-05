@@ -32,7 +32,7 @@ import sys
 import traceback
 
 from PyQt5.QtCore import (pyqtSlot, QCommandLineOption, QCommandLineParser, QCoreApplication, QDir, QFileInfo,
-                          QProcess, QSettings, QSize, QStandardPaths, QTimerEvent, Qt)
+                          QProcess, QProcessEnvironment, QSettings, QSize, QStandardPaths, QTimerEvent, Qt)
 from PyQt5.QtGui import QCloseEvent, QContextMenuEvent, QDragEnterEvent, QDropEvent, QMouseEvent, QResizeEvent
 from PyQt5.QtWidgets import qApp, QApplication, QMainWindow, QMessageBox, QSizePolicy
 
@@ -67,8 +67,6 @@ class MainWindow(QMainWindow):
         self.setAcceptDrops(True)
         self.show()
         self.console.setGeometry(int(self.x() - (self.width() / 2)), self.y() + int(self.height() / 3), 750, 300)
-        if not os.path.isdir(MainWindow.WORKING_FOLDER):
-            os.mkdir(MainWindow.WORKING_FOLDER)
         if not self.video and os.path.isfile(os.path.join(QDir.tempPath(), MainWindow.TEMP_PROJECT_FILE)):
             self.video = os.path.join(QDir.tempPath(), MainWindow.TEMP_PROJECT_FILE)
         if self.video:
@@ -235,6 +233,9 @@ class MainWindow(QMainWindow):
     @staticmethod
     def cleanup():
         shutil.rmtree(MainWindow.WORKING_FOLDER, ignore_errors=True)
+        if sys.platform.startswith('linux') and 'QT_APPIMAGE' in QProcessEnvironment.systemEnvironment().keys():
+            from vidcutter.libs.widgets import VCFileDialog
+            VCFileDialog.cleanup()
 
     def contextMenuEvent(self, event: QContextMenuEvent) -> None:
         if event.reason() == QContextMenuEvent.Mouse:
@@ -375,16 +376,15 @@ def main():
 
     atexit.register(MainWindow.cleanup)
 
-    # app = SingleApplication(vidcutter.__appid__, sys.argv)
-    app = QApplication(sys.argv)
+    app = SingleApplication(vidcutter.__appid__, sys.argv)
     app.setApplicationName(vidcutter.__appname__)
     app.setApplicationVersion(vidcutter.__version__)
     app.setOrganizationDomain(vidcutter.__domain__)
     app.setQuitOnLastWindowClosed(True)
 
     win = MainWindow()
-    # app.setActivationWindow(win)
-    # app.messageReceived.connect(win.file_opener)
+    app.setActivationWindow(win)
+    app.messageReceived.connect(win.file_opener)
 
     exit_code = app.exec_()
     if exit_code == MainWindow.EXIT_CODE_REBOOT:

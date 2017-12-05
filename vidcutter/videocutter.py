@@ -30,8 +30,8 @@ import time
 from datetime import timedelta
 from typing import Union
 
-from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QBuffer, QByteArray, QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize,
-                          Qt, QTextStream, QTime, QTimer, QUrl)
+from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QBuffer, QByteArray, QDir, QFile, QFileInfo, QModelIndex, QPoint,
+                          QProcessEnvironment, QSize, Qt, QTextStream, QTime, QTimer, QUrl)
 from PyQt5.QtGui import QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMovie, QPixmap
 from PyQt5.QtWidgets import (QAction, qApp, QApplication, QDialogButtonBox, QFileDialog, QFrame, QGroupBox, QHBoxLayout,
                              QLabel, QListWidgetItem, QMenu, QMessageBox, QPushButton, QSizePolicy, QStyleFactory,
@@ -45,7 +45,7 @@ from vidcutter.libs.munch import Munch
 from vidcutter.libs.notifications import JobCompleteNotification
 from vidcutter.libs.videoconfig import InvalidMediaException
 from vidcutter.libs.videoservice import VideoService
-from vidcutter.libs.widgets import VCToolBarButton, ClipErrorsDialog, FrameCounter, TimeCounter, VolumeSlider
+from vidcutter.libs.widgets import ClipErrorsDialog, FrameCounter, TimeCounter, VolumeSlider, VCToolBarButton
 from vidcutter.settings import SettingsDialog
 from vidcutter.updater import Updater
 from vidcutter.videoinfo import VideoInfo
@@ -67,6 +67,7 @@ class VideoCutter(QWidget):
     def __init__(self, parent: QWidget):
         super(VideoCutter, self).__init__(parent)
         self.setObjectName('videocutter')
+        self.filedialog = None
         self.logger = logging.getLogger(__name__)
         self.parent = parent
         self.theme = self.parent.theme
@@ -90,6 +91,10 @@ class VideoCutter(QWidget):
 
         if sys.platform.startswith('linux'):
             self.taskbar = TaskbarProgress(self)
+
+        if sys.platform.startswith('linux') and 'QT_APPIMAGE' in QProcessEnvironment.systemEnvironment().keys():
+            from vidcutter.libs.widgets import VCFileDialog
+            self.filedialog = VCFileDialog(self)
 
         self.latest_release_url = 'https://github.com/ozmartian/vidcutter/releases/latest'
 
@@ -631,15 +636,25 @@ class VideoCutter(QWidget):
         return filters
 
     def openMedia(self) -> None:
-        filename, _ = QFileDialog.getOpenFileName(self.parent,
-                                                  caption='{} - Open media file'.format(qApp.applicationName()),
-                                                  filter=self.mediaFilters(),
-                                                  initialFilter=self.mediaFilters(True),
-                                                  directory=(self.lastFolder if os.path.exists(self.lastFolder)
-                                                             else QDir.homePath()),
-                                                  options=(QFileDialog.DontUseNativeDialog
-                                                           if not self.nativeDialogs else QFileDialog.Options()))
-        if len(filename.strip()):
+        if self.filedialog is not None:
+            filename = self.filedialog.getOpenFileName(parent=self.parent,
+                                                       caption='{} - HEY Open media file'.format(qApp.applicationName()),
+                                                       filter=self.mediaFilters(),
+                                                       initialFilter=self.mediaFilters(True),
+                                                       directory=(self.lastFolder if os.path.exists(self.lastFolder)
+                                                                  else QDir.homePath()),
+                                                       options=(QFileDialog.DontUseNativeDialog
+                                                               if not self.nativeDialogs else QFileDialog.Options()))
+        else:
+            filename, _ = QFileDialog.getOpenFileName(self.parent,
+                                                      caption='{} - Open media file'.format(qApp.applicationName()),
+                                                      filter=self.mediaFilters(),
+                                                      initialFilter=self.mediaFilters(True),
+                                                      directory=(self.lastFolder if os.path.exists(self.lastFolder)
+                                                                 else QDir.homePath()),
+                                                      options=(QFileDialog.DontUseNativeDialog
+                                                               if not self.nativeDialogs else QFileDialog.Options()))
+        if filename is not None and len(filename.strip()):
             self.lastFolder = QFileInfo(filename).absolutePath()
             self.loadMedia(filename)
 
@@ -1083,7 +1098,8 @@ class VideoCutter(QWidget):
             self.finalFilename, _ = QFileDialog.getSaveFileName(parent=self.parent,
                                                                 caption='{} - Save media file'
                                                                         .format(qApp.applicationName()),
-                                                                directory=suggestedFilename, filter=filefilter,
+                                                                directory=suggestedFilename,
+                                                                filter=filefilter,
                                                                 options=(QFileDialog.DontUseNativeDialog
                                                                          if not self.nativeDialogs
                                                                          else QFileDialog.Options()))
@@ -1094,6 +1110,8 @@ class VideoCutter(QWidget):
                 self.finalFilename += source_ext
             self.lastFolder = QFileInfo(self.finalFilename).absolutePath()
             self.toolbar_save.setDisabled(True)
+            if not os.path.isdir(self.workFolder):
+                os.mkdir(self.workFolder)
             if self.smartcut:
                 self.seekSlider.lockGUI(True)
                 self.seekSlider.showProgress(6 if clips > 1 else 5)

@@ -32,11 +32,15 @@ vidcutter (5.5.0-1) stable; urgency=medium
     then kill all VidCutter associated jobs gracefully and force the usual
     cleanup routines
 
+ -- Pete Alexandrou <pete@ozmartians.com>  xxx, xx xxx xxxx xx:xx:xx +0800
+
 vidcutter (5.0.5-2) stable; urgency=medium
 
   * fixed timeline slider tooltip displaying time position to only appear
     when mouse is over the slider widget. this stops it from constantly
     appearing whenever media position changes like during simple playback
+
+ -- Pete Alexandrou <pete@ozmartians.com>  Thu, 30 Nov 2017 11:45:00 +0800
 
 vidcutter (5.0.5-1) stable; urgency=medium
 
@@ -44,9 +48,11 @@ vidcutter (5.0.5-1) stable; urgency=medium
     Linux distros containing older 3.0.1 versions of the module. The
     dependency on python3-opengl has now been removed and was only
     necessary for Ubuntu users on Vivid due to a broken PyQt5 OpenGL
-    implementation in Canonical's PyQt5 core. Vivid is no longer
-    a supported distro so decision made to simply omit it on a
-    permanent basis and refrain for worrying about it any further.
+    implementation in the core PyOpenGL package. Vivid is no longer
+    a supported distro version so it should be okay to omit on a
+    permanent basis.
+
+ -- Pete Alexandrou <pete@ozmartians.com>  Thu, 30 Nov 2017 09:20:00 +0800
 
 vidcutter (5.0.0-1) stable; urgency=medium
 
@@ -96,11 +102,15 @@ vidcutter (5.0.0-1) stable; urgency=medium
   * countless more improvements and fixes that aren't worth documenting but
   	available in the freely available commit logs if you're interested
 
+ -- Pete Alexandrou <pete@ozmartians.com>  Thu, 16 Nov 2017 00:22:00 +0800
+
 vidcutter (4.0.5-1) stable; urgency=high
 
   * fix for 32-bit Linux users; the switch to OpenGL rendering
     broke 32-bit under Linux only due to Python to C data type
     conversions in the Python interpreter which have been resolved.
+
+ -- Pete Alexandrou <pete@ozmartians.com>  Wed, 15 Aug 2017 18:05:00 +0800
 
 vidcutter (4.0.0-1) stable; urgency=medium
 
@@ -113,7 +123,7 @@ vidcutter (4.0.0-1) stable; urgency=medium
   * TBA ... more changelog data inserted soon, this is the biggest
     release in app's history so the full list is going to be big...
 
--- Pete Alexandrou <pete@ozmartians.com>  Wed, 02 Aug 2017 21:37:00 +0800
+ -- Pete Alexandrou <pete@ozmartians.com>  Thu, 02 Aug 2017 21:37:00 +0800
 
 vidcutter (3.5.0-1) stable; urgency=medium
 
