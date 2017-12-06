@@ -386,16 +386,16 @@ class ClipErrorsDialog(QDialog):
     def intro(self) -> QLabel:
         return QLabel('''
             <style>
-                h1 {
+                h1 {{
                     text-align: center;
                     color: {0};
                     font-family: "Futura-Light", sans-serif;
                     font-weight: 400;
-                }
-                p {
+                }}
+                p {{
                     font-family: "Noto Sans UI", sans-serif;
                     color: {1};
-                }
+                }}
             </style>
             <h1>Invalid media files detected</h1>
             <p>
