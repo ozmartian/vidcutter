@@ -257,6 +257,7 @@ class VideoService(QObject):
     def cut(self, source: str, output: str, frametime: str, duration: str, allstreams: bool=True, vcodec: str=None,
             run: bool=True):
         self.checkDiskSpace(output)
+        source = QDir.toNativeSeparators(source)
         stream_map = '-map 0 ' if allstreams else ''
         if vcodec is not None:
             encode_options = VideoService.config.encoding.get(vcodec, vcodec)
@@ -291,6 +292,7 @@ class VideoService(QObject):
         ]
 
     def smartcut(self, index: int, source: str, output: str, start: float, end: float, allstreams: bool=True) -> None:
+        source = QDir.toNativeSeparators(source)
         output_file, output_ext = os.path.splitext(output)
         bisections = self.getGOPbisections(source, start, end)
         self.smartcut_jobs[index].output = output

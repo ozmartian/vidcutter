@@ -45,7 +45,7 @@ from vidcutter.libs.munch import Munch
 from vidcutter.libs.notifications import JobCompleteNotification
 from vidcutter.libs.videoconfig import InvalidMediaException
 from vidcutter.libs.videoservice import VideoService
-from vidcutter.libs.widgets import ClipErrorsDialog, FrameCounter, TimeCounter, VolumeSlider, VCToolBarButton
+from vidcutter.libs.widgets import ClipErrorsDialog, FrameCounter, TimeCounter, VolumeSlider, VCFileDialog, VCToolBarButton
 from vidcutter.settings import SettingsDialog
 from vidcutter.updater import Updater
 from vidcutter.videoinfo import VideoInfo
@@ -67,7 +67,7 @@ class VideoCutter(QWidget):
     def __init__(self, parent: QWidget):
         super(VideoCutter, self).__init__(parent)
         self.setObjectName('videocutter')
-        self.filedialog = None
+        self.customFileDialogs = True if 'QT_APPIMAGE' in QProcessEnvironment.systemEnvironment().keys() else False
         self.logger = logging.getLogger(__name__)
         self.parent = parent
         self.theme = self.parent.theme
@@ -91,10 +91,6 @@ class VideoCutter(QWidget):
 
         if sys.platform.startswith('linux'):
             self.taskbar = TaskbarProgress(self)
-
-        if sys.platform.startswith('linux') and 'QT_APPIMAGE' in QProcessEnvironment.systemEnvironment().keys():
-            from vidcutter.libs.widgets import VCFileDialog
-            self.filedialog = VCFileDialog(self)
 
         self.latest_release_url = 'https://github.com/ozmartian/vidcutter/releases/latest'
 
@@ -124,8 +120,6 @@ class VideoCutter(QWidget):
 
         self.initIcons()
         self.initActions()
-        # self.toolbar = VideoToolBar(self)
-        # self.initToolbar()
 
         self.appMenu, self.clipindex_removemenu, self.clipindex_contextmenu = QMenu(self), QMenu(self), QMenu(self)
         self.initMenus()
@@ -542,7 +536,7 @@ class VideoCutter(QWidget):
             self.clipindex_contextmenu.setStyle(QStyleFactory.create('Fusion'))
             self.clipindex_removemenu.setStyle(QStyleFactory.create('Fusion'))
 
-    def setToolBarStyle(self, labelstyle: str='beside') -> None:
+    def setToolBarStyle(self, labelstyle: str = 'beside') -> None:
         buttonlist = self.toolbarGroup.findChildren(VCToolBarButton)
         [button.setLabelStyle(labelstyle) for button in buttonlist]
 
@@ -619,7 +613,7 @@ class VideoCutter(QWidget):
             self.initMediaControls(False)
         self.renderClipIndex()
 
-    def projectFilters(self, savedialog: bool=False) -> str:
+    def projectFilters(self, savedialog: bool = False) -> str:
         if savedialog:
             return 'VidCutter Project (*.vcp);;MPlayer EDL (*.edl)'
         elif self.mediaAvailable:
@@ -628,7 +622,7 @@ class VideoCutter(QWidget):
             return 'VidCutter Project (*.vcp);;All files (*)'
 
     @staticmethod
-    def mediaFilters(initial: bool=False) -> str:
+    def mediaFilters(initial: bool = False) -> str:
         filters = 'All media files (*.{})'.format(' *.'.join(VideoService.config.filters.get('all')))
         if initial:
             return filters
@@ -636,43 +630,43 @@ class VideoCutter(QWidget):
         return filters
 
     def openMedia(self) -> None:
-        if self.filedialog is not None:
-            filename = self.filedialog.getOpenFileName(parent=self.parent,
-                                                       caption='{} - HEY Open media file'.format(qApp.applicationName()),
-                                                       filter=self.mediaFilters(),
-                                                       initialFilter=self.mediaFilters(True),
-                                                       directory=(self.lastFolder if os.path.exists(self.lastFolder)
-                                                                  else QDir.homePath()),
-                                                       options=(QFileDialog.DontUseNativeDialog
-                                                               if not self.nativeDialogs else QFileDialog.Options()))
+        if self.customFileDialogs:
+            filename = VCFileDialog.getOpenFileName(
+                parent=self.parent,
+                caption='{} - Open media file'.format(qApp.applicationName()),
+                filter=self.mediaFilters().split(';;'),
+                directory=(self.lastFolder if os.path.exists(self.lastFolder) else QDir.homePath()))
         else:
-            filename, _ = QFileDialog.getOpenFileName(self.parent,
-                                                      caption='{} - Open media file'.format(qApp.applicationName()),
-                                                      filter=self.mediaFilters(),
-                                                      initialFilter=self.mediaFilters(True),
-                                                      directory=(self.lastFolder if os.path.exists(self.lastFolder)
-                                                                 else QDir.homePath()),
-                                                      options=(QFileDialog.DontUseNativeDialog
-                                                               if not self.nativeDialogs else QFileDialog.Options()))
+            filename, _ = QFileDialog.getOpenFileName(
+                self.parent,
+                caption='{} - Open media file'.format(qApp.applicationName()),
+                filter=self.mediaFilters(),
+                initialFilter=self.mediaFilters(True),
+                directory=(self.lastFolder if os.path.exists(self.lastFolder) else QDir.homePath()),
+                options=(QFileDialog.DontUseNativeDialog if not self.nativeDialogs else QFileDialog.Options()))
         if filename is not None and len(filename.strip()):
             self.lastFolder = QFileInfo(filename).absolutePath()
             self.loadMedia(filename)
 
     # noinspection PyUnusedLocal
-    def openProject(self, checked: bool=False, project_file: str=None) -> None:
+    def openProject(self, checked: bool = False, project_file: str = None) -> None:
         initialFilter = 'Project files (*.edl *.vcp)' if self.mediaAvailable else 'VidCutter Project (*.vcp)'
         if project_file is None:
-            project_file, _ = QFileDialog.getOpenFileName(self.parent,
-                                                          caption='{} - Open project file'
-                                                                  .format(qApp.applicationName()),
-                                                          filter=self.projectFilters(),
-                                                          initialFilter=initialFilter,
-                                                          directory=(self.lastFolder if os.path.exists(self.lastFolder)
-                                                                     else QDir.homePath()),
-                                                          options=(QFileDialog.DontUseNativeDialog
-                                                                   if not self.nativeDialogs
-                                                                   else QFileDialog.Options()))
-        if len(project_file.strip()):
+            if self.customFileDialogs:
+                project_file = VCFileDialog.getOpenFileName(
+                    parent=self.parent,
+                    caption='{} - Open project file'.format(qApp.applicationName()),
+                    filter=self.projectFilters().split(';;'),
+                    directory=(self.lastFolder if os.path.exists(self.lastFolder) else QDir.homePath()))
+            else:
+                project_file, _ = QFileDialog.getOpenFileName(
+                    self.parent,
+                    caption='{} - Open project file'.format(qApp.applicationName()),
+                    filter=self.projectFilters(),
+                    initialFilter=initialFilter,
+                    directory=(self.lastFolder if os.path.exists(self.lastFolder) else QDir.homePath()),
+                    options=(QFileDialog.DontUseNativeDialog if not self.nativeDialogs else QFileDialog.Options()))
+        if project_file is not None and len(project_file.strip()):
             if project_file != os.path.join(QDir.tempPath(), self.parent.TEMP_PROJECT_FILE):
                 self.lastFolder = QFileInfo(project_file).absolutePath()
             file = QFile(project_file)
@@ -728,7 +722,7 @@ class VideoCutter(QWidget):
             if project_file != os.path.join(QDir.tempPath(), self.parent.TEMP_PROJECT_FILE):
                 self.showText('Project loaded')
 
-    def saveProject(self, reboot: bool=False) -> None:
+    def saveProject(self, reboot: bool = False) -> None:
         if self.currentMedia is None:
             return
         for item in self.clipTimes:
@@ -743,15 +737,21 @@ class VideoCutter(QWidget):
             project_save = os.path.join(QDir.tempPath(), self.parent.TEMP_PROJECT_FILE)
             ptype = 'VidCutter Project (*.vcp)'
         else:
-            project_save, ptype = QFileDialog.getSaveFileName(self.parent,
-                                                              caption=qApp.applicationName() + ' - Save project',
-                                                              directory='{}.vcp'.format(project_file),
-                                                              filter=self.projectFilters(True),
-                                                              initialFilter='VidCutter Project (*.vcp)',
-                                                              options=(QFileDialog.DontUseNativeDialog
-                                                                       if not self.nativeDialogs
-                                                                       else QFileDialog.Options()))
-        if len(project_save.strip()):
+            if self.customFileDialogs:
+                project_save, ptype = VCFileDialog.getSaveFileName(
+                    parent=self.parent,
+                    caption='{} - Save project'.format(qApp.applicationName()),
+                    directory='{}.vcp'.format(project_file),
+                    filter=self.projectFilters(True).split(';;'))
+            else:
+                project_save, ptype = QFileDialog.getSaveFileName(
+                    self.parent,
+                    caption='{} - Save project'.format(qApp.applicationName()),
+                    directory='{}.vcp'.format(project_file),
+                    filter=self.projectFilters(True),
+                    initialFilter='VidCutter Project (*.vcp)',
+                    options=(QFileDialog.DontUseNativeDialog if not self.nativeDialogs else QFileDialog.Options()))
+        if project_save is not None and len(project_save.strip()):
             file = QFile(project_save)
             if not file.open(QFile.WriteOnly | QFile.Text):
                 QMessageBox.critical(self.parent, 'Cannot save project',
@@ -819,14 +819,14 @@ class VideoCutter(QWidget):
         self.frameCounter.clearFocus()
         self.mpvWidget.pause()
 
-    def showText(self, text: str, duration: int=3, override: bool=False) -> None:
+    def showText(self, text: str, duration: int = 3, override: bool = False) -> None:
         if self.mediaAvailable:
             if not self.osdButton.isChecked() and not override:
                 return
             if len(text.strip()):
                 self.mpvWidget.showText(text, duration)
 
-    def initMediaControls(self, flag: bool=True) -> None:
+    def initMediaControls(self, flag: bool = True) -> None:
         self.toolbar_play.setEnabled(flag)
         self.toolbar_start.setEnabled(flag)
         self.toolbar_end.setEnabled(False)
@@ -870,7 +870,7 @@ class VideoCutter(QWidget):
 
     @pyqtSlot(QListWidgetItem)
     @pyqtSlot()
-    def selectClip(self, item: QListWidgetItem=None) -> None:
+    def selectClip(self, item: QListWidgetItem = None) -> None:
         # noinspection PyBroadException
         try:
             row = self.cliplist.row(item) if item is not None else 0
@@ -936,16 +936,21 @@ class VideoCutter(QWidget):
 
     @pyqtSlot()
     def addExternalClips(self):
-        clips, _ = QFileDialog.getOpenFileNames(self.parent,
-                                                caption='{} - Add media files'.format(qApp.applicationName()),
-                                                filter=self.mediaFilters(),
-                                                initialFilter=self.mediaFilters(True),
-                                                directory=(self.lastFolder if os.path.exists(self.lastFolder)
-                                                           else QDir.homePath()),
-                                                options=(QFileDialog.DontUseNativeDialog
-                                                         if not self.nativeDialogs
-                                                         else QFileDialog.Options()))
-        if len(clips):
+        if self.customFileDialogs:
+            clips = VCFileDialog.getOpenFileNames(
+                parent=self.parent,
+                caption='{} - Add media files'.format(qApp.applicationName()),
+                filter=self.mediaFilters().split(';;'),
+                directory=(self.lastFolder if os.path.exists(self.lastFolder) else QDir.homePath()))
+        else:
+            clips, _ = QFileDialog.getOpenFileNames(
+                self.parent,
+                caption='{} - Add media files'.format(qApp.applicationName()),
+                filter=self.mediaFilters(),
+                initialFilter=self.mediaFilters(True),
+                directory=(self.lastFolder if os.path.exists(self.lastFolder) else QDir.homePath()),
+                options=(QFileDialog.DontUseNativeDialog if not self.nativeDialogs else QFileDialog.Options()))
+        if clips is not None and len(clips):
             self.lastFolder = QFileInfo(clips[0]).absolutePath()
             filesadded = False
             cliperrors = list()
@@ -1018,7 +1023,7 @@ class VideoCutter(QWidget):
         self.renderClipIndex()
 
     @pyqtSlot()
-    def setProjectDirty(self, dirty: bool=True) -> None:
+    def setProjectDirty(self, dirty: bool = True) -> None:
         self.projectDirty = dirty
 
     # noinspection PyUnusedLocal,PyUnusedLocal,PyUnusedLocal
@@ -1085,7 +1090,7 @@ class VideoCutter(QWidget):
         else:
             return '%f' % (td.days * 86400 + td.seconds + td.microseconds / 1000000.)
 
-    def captureImage(self, source: str, frametime: QTime, external: bool=False) -> QPixmap:
+    def captureImage(self, source: str, frametime: QTime, external: bool = False) -> QPixmap:
         return VideoService.captureFrame(source, frametime.toString(self.timeformat), external=external)
 
     def saveMedia(self) -> None:
@@ -1093,17 +1098,22 @@ class VideoCutter(QWidget):
         source_file, source_ext = os.path.splitext(self.currentMedia if self.currentMedia is not None
                                                    else self.clipTimes[0][3])
         suggestedFilename = '{0}_EDIT{1}'.format(source_file, source_ext)
-        filefilter = 'Video files (*{})'.format(source_ext)
+        filefilter = 'Video files (*{0})'.format(source_ext)
         if clips > 0:
-            self.finalFilename, _ = QFileDialog.getSaveFileName(parent=self.parent,
-                                                                caption='{} - Save media file'
-                                                                        .format(qApp.applicationName()),
-                                                                directory=suggestedFilename,
-                                                                filter=filefilter,
-                                                                options=(QFileDialog.DontUseNativeDialog
-                                                                         if not self.nativeDialogs
-                                                                         else QFileDialog.Options()))
-            if not len(self.finalFilename.strip()):
+            if self.customFileDialogs:
+                self.finalFilename, _ = VCFileDialog.getSaveFileName(
+                    parent=self.parent,
+                    caption='{} - Save media file'.format(qApp.applicationName()),
+                    directory=suggestedFilename,
+                    filter=[filefilter])
+            else:
+                self.finalFilename, _ = QFileDialog.getSaveFileName(
+                    self.parent,
+                    caption='{} - Save media file'.format(qApp.applicationName()),
+                    directory=suggestedFilename,
+                    filter=filefilter,
+                    options=(QFileDialog.DontUseNativeDialog if not self.nativeDialogs else QFileDialog.Options()))
+            if self.finalFilename is None or not len(self.finalFilename.strip()):
                 return
             file, ext = os.path.splitext(self.finalFilename)
             if len(ext) == 0 and len(source_ext):
@@ -1132,6 +1142,7 @@ class VideoCutter(QWidget):
                     filename = '{0}_{1}{2}'.format(file, '{0:0>2}'.format(index), source_ext)
                     if not self.keepClips:
                         filename = os.path.join(self.workFolder, os.path.basename(filename))
+                    filename = QDir.toNativeSeparators(filename)
                     filelist.append(filename)
                     if not self.videoService.cut(source='{0}{1}'.format(source_file, source_ext),
                                                  output=filename,
@@ -1160,6 +1171,7 @@ class VideoCutter(QWidget):
                 filename = '{0}_{1}{2}'.format(file, '{0:0>2}'.format(index), source_ext)
                 if not self.keepClips:
                     filename = os.path.join(self.workFolder, os.path.basename(filename))
+                filename = QDir.toNativeSeparators(filename)
                 self.smartcut_monitor.clips.append(filename)
                 self.videoService.smartcut(index=index,
                                            source='{0}{1}'.format(source_file, source_ext),
@@ -1169,7 +1181,7 @@ class VideoCutter(QWidget):
                                            allstreams=True)
 
     @pyqtSlot(bool, str)
-    def smartmonitor(self, success: bool=None, outputfile: str=None) -> None:
+    def smartmonitor(self, success: bool = None, outputfile: str = None) -> None:
         if success is not None:
             if not success:
                 self.logger.error('SmartCut failed for {}'.format(outputfile))
@@ -1200,7 +1212,7 @@ class VideoCutter(QWidget):
         else:
             self.complete(True, filelist[-1])
 
-    def complete(self, rename: bool=True, filename: str=None) -> None:
+    def complete(self, rename: bool = True, filename: str = None) -> None:
         if rename and filename is not None:
             # noinspection PyCallByClass
             QFile.remove(self.finalFilename)

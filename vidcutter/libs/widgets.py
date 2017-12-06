@@ -25,8 +25,9 @@
 import os
 import sys
 
-from PyQt5.QtCore import pyqtSignal, pyqtSlot, QDir, QEvent, QFile, QObject, QPoint, QSize, Qt, QTime, QTimer, QUrl
-from PyQt5.QtGui import QCloseEvent, QShowEvent
+from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QDir, QEvent, QFile, QObject, QPoint, QSize, QStandardPaths, Qt, QTime,
+                          QTimer, QUrl)
+from PyQt5.QtGui import QShowEvent
 from PyQt5.QtWidgets import (qApp, QAbstractSpinBox, QDialog, QDialogButtonBox, QFileDialog, QGridLayout, QHBoxLayout,
                              QLabel, QMessageBox, QProgressBar, QPushButton, QSlider, QSpinBox, QStyle, QStyleFactory,
                              QStyleOptionSlider, QTimeEdit, QToolBox, QToolTip, QVBoxLayout, QWidget)
@@ -441,70 +442,89 @@ class ClipErrorsDialog(QDialog):
                                                                    QMessageBox.Ok))
 
 
-class VCFileDialog(QFileDialog):
-    rootdir = os.path.join(QDir.homePath(), '.cache', 'vidcutter')
-    rootlink = os.path.join(rootdir, 'Root')
+class VCFileDialog(QObject):
+    rootdir = QStandardPaths.writableLocation(QStandardPaths.CacheLocation).lower()
+    rootlink = os.path.join(rootdir, 'Computer')
 
-    def __init__(self, parent=None):
-        super(VCFileDialog, self).__init__(parent)
-        if not sys.platform.startswith('linux'):
-            raise RuntimeError('VCFileDialog() only works on Linux platforms')
-
-    def setup(self, **kwargs):
+    @staticmethod
+    def setup(fd: QFileDialog, **kwargs):
         VCFileDialog.cleanup()
         QDir().mkpath(VCFileDialog.rootdir)
         QFile('/').link(VCFileDialog.rootlink)
-        self.setSidebarUrls([
+        fd.setSidebarUrls([
             QUrl.fromLocalFile(VCFileDialog.rootlink),
             QUrl.fromLocalFile(QDir.homePath())
         ])
+        fd.setOption(QFileDialog.DontUseNativeDialog, True)
+        fd.setOption(QFileDialog.HideNameFilterDetails, False)
+        fd.setWindowFlags(Qt.Dialog | Qt.WindowCloseButtonHint)
         if 'caption' in kwargs.keys():
-            self.setWindowTitle(kwargs.get('caption'))
+            fd.setWindowTitle(kwargs.get('caption'))
         if 'filter' in kwargs.keys():
-            self.setNameFilters(kwargs.get('filter').split(';;'))
-        if 'initialFilter' in kwargs.keys():
-            self.setNameFilter(kwargs.get('initialFilter'))
-        if 'options' in kwargs.keys():
-            self.setOptions(kwargs.get('options'))
+            fd.setNameFilters(kwargs.get('filter'))
 
-    def getOpenFileName(self, **kwargs) -> str:
-        self.setAcceptMode(QFileDialog.AcceptOpen)
-        self.setFileMode(QFileDialog.ExistingFile)
-        self.setup(**kwargs)
+    @staticmethod
+    def getOpenFileName(**kwargs) -> str:
+        filedialog = QFileDialog(kwargs.get('parent'))
+        filedialog.setAcceptMode(QFileDialog.AcceptOpen)
+        filedialog.setFileMode(QFileDialog.ExistingFile)
+        VCFileDialog.setup(filedialog, **kwargs)
         if 'directory' in kwargs.keys():
-            self.setDirectory(kwargs.get('directory'))
-        if self.exec_():
+            filedialog.setDirectory(kwargs.get('directory'))
+        if filedialog.exec_():
+            thefile = filedialog.selectedFiles()
+            if thefile is None:
+                return None
+            realfile = os.path.realpath(thefile[0]) if len(thefile) else ''
             VCFileDialog.cleanup()
-            thefile = self.selectedFiles()
-            return os.path.realpath(thefile[0]) if len(thefile) else ''
+            return QDir.toNativeSeparators(realfile)
+        else:
+            return None            
 
-    def getOpenFileNames(self, **kwargs) -> list:
-        self.setAcceptMode(QFileDialog.AcceptOpen)
-        self.setFileMode(QFileDialog.ExistingFiles)
-        self.setup(**kwargs)
+    @staticmethod
+    def getOpenFileNames(**kwargs) -> list:
+        filedialog = QFileDialog(kwargs.get('parent'))
+        filedialog.setAcceptMode(QFileDialog.AcceptOpen)
+        filedialog.setFileMode(QFileDialog.ExistingFiles)
+        VCFileDialog.setup(filedialog, **kwargs)
         if 'directory' in kwargs.keys():
-            self.setDirectory(kwargs.get('directory'))
-        if self.exec_():
-            VCFileDialog.cleanup()
-            thefiles = self.selectedFiles()
+            filedialog.setDirectory(kwargs.get('directory'))
+        if filedialog.exec_():
+            thefiles = filedialog.selectedFiles()
+            if thefiles is None:
+                return None
             for thefile in thefiles:
-                thefiles[thefiles.index(thefile)] = os.path.realpath(thefile)
+                thefiles[thefiles.index(thefile)] = QDir.toNativeSeparators(os.path.realpath(thefile))
+            VCFileDialog.cleanup()
             return thefiles
+        else:
+            return None
 
-    def getSaveFileName(self, **kwargs) -> str:
-        self.setAcceptMode(QFileDialog.AcceptSave)
-        self.setFileMode(QFileDialog.AnyFile)
-        self.setup(**kwargs)
+    @staticmethod
+    def getSaveFileName(**kwargs) -> (str, str):
+        filedialog = QFileDialog(kwargs.get('parent'))
+        filedialog.setAcceptMode(QFileDialog.AcceptSave)
+        filedialog.setFileMode(QFileDialog.AnyFile)
+        VCFileDialog.setup(filedialog, **kwargs)
         if 'directory' in kwargs.keys():
             dirpath = kwargs.get('directory')
-            self.setDirectory(QDir(dirpath).absolutePath())
-            self.selectFile(QFile(dirpath).fileName())
-        if self.exec_():
+            filedialog.setDirectory(QDir(dirpath).absolutePath())
+            filedialog.selectFile(QFile(dirpath).fileName())
+        if filedialog.exec_():
+            thefile = filedialog.selectedFiles()
+            if thefile is None:
+                return None, None
+            realfile = os.path.realpath(thefile[0]) if len(thefile) else ''
             VCFileDialog.cleanup()
-            thefile = self.selectedFiles()
-            return os.path.realpath(thefile[0]) if len(thefile) else ''
+            return QDir.toNativeSeparators(realfile), filedialog.selectedNameFilter()
+        else:
+            return None, None
 
     @staticmethod
     def cleanup() -> None:
-        if QDir(VCFileDialog.rootdir).exists():
-            QDir(VCFileDialog.rootdir).removeRecursively()
+        # noinspection PyBroadException
+        try:
+            if QDir(VCFileDialog.rootdir).exists():
+                QDir(VCFileDialog.rootdir).removeRecursively()
+        except BaseException:
+            pass

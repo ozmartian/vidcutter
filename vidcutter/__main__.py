@@ -233,7 +233,7 @@ class MainWindow(QMainWindow):
     @staticmethod
     def cleanup():
         shutil.rmtree(MainWindow.WORKING_FOLDER, ignore_errors=True)
-        if sys.platform.startswith('linux') and 'QT_APPIMAGE' in QProcessEnvironment.systemEnvironment().keys():
+        if 'QT_APPIMAGE' in QProcessEnvironment.systemEnvironment().keys():
             from vidcutter.libs.widgets import VCFileDialog
             VCFileDialog.cleanup()
 
