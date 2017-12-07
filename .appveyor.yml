@@ -1,4 +1,4 @@
-version: 5.0.5.{build}
+version: 5.5.0.{build}
 
 pull_requests:
   do_not_increment_build_number: true
@@ -19,13 +19,14 @@ clone_folder: C:\projects\vidcutter
 
 environment:
   # APPVEYOR_RDP_PASSWORD:
-  #   secure: cr6ouL4ybiiKClW/UJwM6g==
+  # PFX_PASSWORD:
+  # PFX_SECRET:
   APPVEYOR_SKIP_FINALIZE_ON_EXIT: false
   PYTHONUNBUFFERED: 1
   PYTHONHOME: C:\Python36-x86
 
-# init:
-#   - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+init:
+  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 install:
   # ---------------------------------------- 64-bit build ----------------------------------------
@@ -59,10 +60,12 @@ install:
   - echo Freezing w/ PyInstaller
   - cd ..
   # - for /f "delims=" %%a in ('C:\Python36-x64\python.exe version.py') do @set APPVER=%%a
-  - call build.pyinstaller.win.bat 64
+  - nuget install secure-file -ExcludeVersion
+  - secure-file\tools\secure-file -decrypt ..\certs\code-sign.pfx.enc -secret %PFX_SECRET%
+  - call build.pyinstaller.win.signed.bat 64 %PFX_PASSWORD%
   - echo.
   - cd ..\InnoSetup\Output
-  - appveyor PushArtifact VidCutter-5.0.5-setup-win64.exe
+  - appveyor PushArtifact VidCutter-5.5.0-setup-win64.exe
   # ---------------------------------------- 32-bit build ----------------------------------------
   - cd ..\..\..
   - set PYTHONHOME=C:\Python35
@@ -96,10 +99,10 @@ install:
   - echo Freezing w/ PyInstaller
   - cd ..
   # - for /f "delims=" %%a in ('C:\Python35\python.exe version.py') do @set APPVER=%%a
-  - call build.pyinstaller.win.bat 32
+  - call build.pyinstaller.win.signed.bat 32 %PFX_PASSWORD%
   - echo.
   - cd ..\InnoSetup\Output
-  - appveyor PushArtifact VidCutter-5.0.5-setup-win32.exe
+  - appveyor PushArtifact VidCutter-5.5.0-setup-win32.exe
   # completion
   - echo.
   - echo SUCCESS
@@ -119,8 +122,8 @@ test: off
 #   name: Extension Module
 #   type: zip
 
-# on_finish:
-#  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+on_finish:
+ - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 
 # deploy:

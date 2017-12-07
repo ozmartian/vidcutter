@@ -1,5 +1,7 @@
 ﻿@echo off
 
+setlocal
+
 REM ......................setup variables......................
 if [%1]==[] (
     SET ARCH=64
@@ -60,3 +62,5 @@ if exist "dist\vidcutter.exe" (
 
     cd ..\pyinstaller
 )
+
+endlocal
