@@ -1,10 +1,10 @@
 Name:           vidcutter
-Version:        5.5.0
-Release:        0
+Version:        5.0.5
+Release:        2
 Summary:        the simplest + fastest video cutter & joiner
 License:        GPL-3.0+
 Group:          Productivity/Multimedia/Video/Editors and Convertors
-Url:            https://vidcutter.ozmartians.com/
+Url:            https://vidcutter.ozmartians.com
 Source0:        https://github.com/ozmartian/%{name}/archive/%{version}.tar.gz#/%{name}-%{version}.tar.gz
 BuildRequires:  desktop-file-utils
 BuildRequires:  hicolor-icon-theme
