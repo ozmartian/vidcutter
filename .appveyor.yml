@@ -18,9 +18,12 @@ clone_depth: 1
 clone_folder: C:\projects\vidcutter
 
 environment:
-  # APPVEYOR_RDP_PASSWORD:
-  # PFX_PASSWORD:
-  # PFX_SECRET:
+  APPVEYOR_RDP_PASSWORD:
+    secure: fyQ/PdSH8g/HZI5F6xy5Cg==
+  PFX_PASSWORD:
+    secure: dU7R+yCfZACwkvslBf988A==
+  PFX_SECRET:
+    secure: yW7xA/TsQ+o3cDamjg5tEg==
   APPVEYOR_SKIP_FINALIZE_ON_EXIT: false
   PYTHONUNBUFFERED: 1
   PYTHONHOME: C:\Python36-x86
@@ -60,8 +63,7 @@ install:
   - echo Freezing w/ PyInstaller
   - cd ..
   # - for /f "delims=" %%a in ('C:\Python36-x64\python.exe version.py') do @set APPVER=%%a
-  - nuget install secure-file -ExcludeVersion
-  - secure-file\tools\secure-file -decrypt ..\certs\code-sign.pfx.enc -secret %PFX_SECRET%
+  - secure-file -decrypt ..\certs\code-sign.pfx.enc -secret %PFX_SECRET%
   - call build.pyinstaller.win.signed.bat 64 %PFX_PASSWORD%
   - echo.
   - cd ..\InnoSetup\Output
