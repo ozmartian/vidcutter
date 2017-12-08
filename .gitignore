@@ -18,7 +18,6 @@ vidcutter/vidcutter.exe
 vidcutter/bin/
 bin/
 .DS_Store
-_packaging/appimage/*/
 _packaging/pyqtdeploy/
 _pyqtdeploy
 testing

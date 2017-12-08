@@ -1,0 +1,19 @@
+#!/usr/bin/env python3.5
+
+import sys
+
+from pkg_resources import load_entry_point, DistributionNotFound
+from signal import SIGINT, SIG_DFL, SIGTERM, signal
+
+
+signal(SIGINT, SIG_DFL)
+signal(SIGTERM, SIG_DFL)
+
+sys.path.insert(0, "/usr/lib/python3.5")
+sys.path.insert(1, "/usr/lib/python3/dist-packages")
+
+try:
+    sys.exit(load_entry_point('vidcutter', 'gui_scripts', 'vidcutter')())
+except DistributionNotFound:
+    from vidcutter.__main__ import main
+    main()    

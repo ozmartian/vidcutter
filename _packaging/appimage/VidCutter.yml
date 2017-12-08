@@ -1,10 +1,10 @@
 app: VidCutter
-union: true
 
 ingredients:
   dist: trusty
   sources: 
-    - deb http://archive.ubuntu.com/ubuntu/ trusty main universe
+    - deb http://mirrors.cn99.com/ubuntu trusty main universe
+    - deb http://mirrors.cn99.com/ubuntu xenial main universe
     - deb http://ppa.launchpad.net/ozmartian/apps/ubuntu xenial main
   ppas:
     - mc3man/testing6
@@ -16,24 +16,20 @@ ingredients:
     - libstdc++6
     - libgcc1
     - libisl15
-    - libmpv-dev
-    - ffmpeg
-    - mediainfo
-  script:
-    - pip3.5 install PyQt5
+    # - libmpv-dev
+    # - ffmpeg
+    # - mediainfo
 
 script:
-  - cat > usr/bin/vidcutter <<\EOF
-  - #!/usr/bin/python3.5
-  - import sys
-  - from pkg_resources import load_entry_point
-  - from signal import SIGINT, SIG_DFL, SIGTERM, signal
-  - signal(SIGINT, SIG_DFL)
-  - signal(SIGTERM, SIG_DFL)
-  - sys.path.insert(0, "/usr/lib/python3/dist-packages/")
-  - sys.exit(load_entry_point('vidcutter', 'gui_scripts', 'vidcutter')())
-  - EOF
   - cp usr/share/icons/hicolor/256x256/apps/vidcutter.png .
   - ln -s vidcutter.png .DirIcon
-  - cp usr/share/applications/com.ozmartians.VidCutter.desktop ./vidcutter.desktop
+  - cp -f usr/share/applications/*id*utter.desktop ./vidcutter.desktop
+  - cp -f ../../scripts/* usr/bin/
+  - rm -f ./AppRun
+  - gcc -fPIC -o ./AppRun ../../AppRun.c
+  - strip ./AppRun
+  - chmod +x ./AppRun
+  - rm -f usr/bin/python3 usr/bin/python3.5
+  - ln -s usr/bin/python3.5m usr/bin/python3
+  - ln -s usr/bin/python3.5m usr/bin/python3.5
   - mv usr/lib/x86_64-linux-gnu/caca/*.so* usr/lib/x86_64-linux-gnu/
