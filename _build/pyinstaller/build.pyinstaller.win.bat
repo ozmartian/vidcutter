@@ -32,8 +32,7 @@ for /f "delims=" %%a in ('%PYPATH%\python.exe version.py') do @set APPVER=%%a
 REM ......................cleanup previous build scraps......................
 rd /s /q build
 rd /s /q dist
-if not exist "..\..\bin\" mkdir ..\..\bin\
-del /q ..\..\bin\*.*
+if not exist "..\..\bin\" ( mkdir ..\..\bin\ ) else ( del /q ..\..\bin\*.* )
 
 REM ......................download latest FFmpeg & MediaInfo shared binary + libs ......................
 if not exist ".\temp\" mkdir temp

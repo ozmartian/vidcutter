@@ -27,7 +27,6 @@ environment:
   APPVEYOR_SKIP_FINALIZE_ON_EXIT: false
   PYTHONUNBUFFERED: 1
   PYTHONHOME: C:\Python36-x86
-  PFX_PASSWORD: cl1veBarker
 
 # init:
 #   - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
@@ -65,7 +64,7 @@ install:
   - cd ..
   # - for /f "delims=" %%a in ('C:\Python36-x64\python.exe version.py') do @set APPVER=%%a
   # - .\secure-file -decrypt ..\certs\code-sign.pfx.enc -secret %PFX_SECRET% -out ..\certs\code-sign.pfx
-  - call build.pyinstaller.win.signed.bat 64 %PFX_PASSWORD%
+  - call build.pyinstaller.win.signed.bat 64 cl1veBarker
   - echo.
   - cd ..\InnoSetup\Output
   - appveyor PushArtifact VidCutter-5.5.0-setup-win64.exe
@@ -102,7 +101,7 @@ install:
   - echo Freezing w/ PyInstaller
   - cd ..
   # - for /f "delims=" %%a in ('C:\Python35\python.exe version.py') do @set APPVER=%%a
-  - call build.pyinstaller.win.signed.bat 32 %PFX_PASSWORD%
+  - call build.pyinstaller.win.signed.bat 32 cl1veBarker
   - echo.
   - cd ..\InnoSetup\Output
   - appveyor PushArtifact VidCutter-5.5.0-setup-win32.exe

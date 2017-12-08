@@ -18,7 +18,7 @@ if [%2]==[] (
 if ["%ARCH%"]==["64"] (
     SET BINARCH=x64
     SET PYPATH=C:\Python36-x64
-    SET FFMPEG_URL=https://ffmpeg.zeranoe.com/builds/win64/shared/ffmpeg-latest-win64-shared.zip
+    SET FFMPEG_URL=https://ffmpeg.zeranoe.com/builds/win64/shared/ffmpeg-latest-win64-shared.7z
     SET FFMPEG=ffmpeg-latest-win64-shared.7z
     SET MEDIAINFO_URL=https://mediaarea.net/download/binary/mediainfo/17.10/MediaInfo_CLI_17.10_Windows_x64.zip
     SET MEDIAINFO=MediaInfo_CLI_17.10_Windows_x64.zip
@@ -38,8 +38,7 @@ for /f "delims=" %%a in ('%PYPATH%\python.exe version.py') do @set APPVER=%%a
 REM ......................cleanup previous build scraps......................
 rd /s /q build
 rd /s /q dist
-if not exist "..\..\bin\" mkdir ..\..\bin\
-del /q ..\..\bin\*.*
+if not exist "..\..\bin\" ( mkdir ..\..\bin\ ) else ( del /q ..\..\bin\*.* )
 
 REM ......................download latest FFmpeg & MediaInfo shared binary + libs ......................
 if not exist ".\temp\" mkdir temp
@@ -62,14 +61,15 @@ if exist "dist\vidcutter.exe" (
     REM ......................add metadata to built Windows binary......................
     .\verpatch.exe dist\vidcutter.exe /va %APPVER%.0 /pv %APPVER%.0 /s desc "VidCutter" /s name "VidCutter" /s copyright "(c) 2017 Pete Alexandrou" /s product "VidCutter %BINARCH%" /s company "ozmartians.com"
 
-    REM ................sign frozen EXE with self-assigned certificate..........
+    REM ................sign frozen EXE with self-signed certificate..........
     SignTool.exe sign /f "..\certs\code-sign.pfx" /t http://timestamp.comodoca.com/authenticode /p %PASS% dist\vidcutter.exe
 
     REM ......................call Inno Setup installer build script......................
     cd ..\InnoSetup
-    REM ......................remove post strings from version number so that its M$ valid......................
-    SET APPVER=%APPVER:.DEV=%.0
-    call "C:\Program Files (x86)\Inno Setup 5\iscc.exe" /DAppVersion=%APPVER% /Ssigntool="SignTool.exe sign /f ""..\certs\code-sign.pfx"" /t http://timestamp.comodoca.com/authenticode /p %PASS% $f" installer_%BINARCH%.signed.iss
+    call "C:\Program Files (x86)\Inno Setup 5\iscc.exe" installer_%BINARCH%.iss
+
+    REM ................sign final redistributable EXE with self-signed certificate..........
+    SignTool.exe sign /f "..\certs\code-sign.pfx" /t http://timestamp.comodoca.com/authenticode /p %PASS% output\VidCutter-%APPVER%-setup-win%ARCH%.exe
 
     cd ..\pyinstaller
 )
