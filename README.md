@@ -10,6 +10,14 @@
 [![Screenshot 3](https://cdn.rawgit.com/ozmartian/vidcutter/gh-pages/images/vidcutter-03-thumb.png)](https://cdn.rawgit.com/ozmartian/vidcutter/gh-pages/images/vidcutter-03.png) 
 [![Screenshot 4](https://cdn.rawgit.com/ozmartian/vidcutter/gh-pages/images/vidcutter-04-thumb.png)](https://cdn.rawgit.com/ozmartian/vidcutter/gh-pages/images/vidcutter-04.png)
 
+### Open Build Service
+
+Prebuilt Linux packages available, click on your distro below.
+
+|[![](https://vidcutter.ozmartians.com/logos/arch.png)](https://software.opensuse.org/download/package?project=home:ozmartian&package=vidcutter)  |  [![](https://vidcutter.ozmartians.com/logos/debian.png)](https://software.opensuse.org/download/package?project=home:ozmartian&package=vidcutter)  |  [![](http://vidcutter.ozmartians.com/logos/fedora.png)](https://copr.fedorainfracloud.org/coprs/suspiria/VidCutter)  |  [![](http://vidcutter.ozmartians.com/logos/opensuse.png)](https://software.opensuse.org/download/package?project=home:ozmartian&package=vidcutter)  |  [![](http://vidcutter.ozmartians.com/logos/ubuntu.png)](https://software.opensuse.org/download/package?project=home:ozmartian&package=vidcutter)
+|--|--|--|--|--|
+|Arch Linux|Debian|Fedora|openSUSE|Ubuntu|
+
 ### Windows + macOS Users
 
 Native installers for Windows and macOS are available on the releases page with every new version, or just click the button below. 
