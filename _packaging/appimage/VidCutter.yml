@@ -4,7 +4,6 @@ ingredients:
   dist: trusty
   sources: 
     - deb http://mirrors.cn99.com/ubuntu trusty main universe
-    - deb http://mirrors.cn99.com/ubuntu xenial main universe
     - deb http://ppa.launchpad.net/ozmartian/apps/ubuntu xenial main
   ppas:
     - mc3man/testing6
@@ -16,6 +15,7 @@ ingredients:
     - libstdc++6
     - libgcc1
     - libisl15
+    - vidcutter
     # - libmpv-dev
     # - ffmpeg
     # - mediainfo
@@ -25,6 +25,7 @@ script:
   - ln -s vidcutter.png .DirIcon
   - cp -f usr/share/applications/*id*utter.desktop ./vidcutter.desktop
   - sed -i -e 's/Exec=vidcutter/Exec=vidcutter.wrapper/g' ./vidcutter.desktop
+  - ln -s com.ozmartians.vidcutter.appdata.xml usr/share/metainfo/vidcutter.appdata.xml
   - cp -f ../../scripts/* usr/bin/
   - rm -f ./AppRun
   - gcc -fPIC -o ./AppRun ../../AppRun.c
