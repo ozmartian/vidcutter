@@ -30,8 +30,6 @@ from PyQt5.QtWidgets import (qApp, QButtonGroup, QCheckBox, QDialog, QDialogButt
                              QGridLayout, QGroupBox, QHBoxLayout, QLabel, QListView, QListWidget, QListWidgetItem,
                              QMessageBox, QRadioButton, QStackedWidget, QStyleFactory, QVBoxLayout, QWidget)
 
-from vidcutter.libs.widgets import VCToolBarButton
-
 
 class LogsPage(QWidget):
     def __init__(self, parent=None):

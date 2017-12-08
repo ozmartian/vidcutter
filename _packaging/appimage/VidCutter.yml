@@ -1,9 +1,11 @@
 app: VidCutter
+union: true
 
 ingredients:
   dist: trusty
   sources: 
     - deb http://archive.ubuntu.com/ubuntu/ trusty main universe
+    - deb http://ppa.launchpad.net/ozmartian/apps/ubuntu xenial main
   ppas:
     - mc3man/testing6
     - ubuntu-toolchain-r/test
@@ -15,25 +17,23 @@ ingredients:
     - libgcc1
     - libisl15
     - libmpv-dev
+    - ffmpeg
+    - mediainfo
   script:
-    - wget https://github.com/ozmartian/vidcutter/archive/4.0.0.tar.gz
-    - tar zxf 4.0.0.tar.gz
+    - pip3.5 install PyQt5
 
 script:
-  - cat > usr/bin/vidcutter <<EOF
+  - cat > usr/bin/vidcutter <<\EOF
   - #!/usr/bin/python3.5
   - import sys
-  - from pkg_resources import load_entry_point, DistributionNotFound
+  - from pkg_resources import load_entry_point
   - from signal import SIGINT, SIG_DFL, SIGTERM, signal
   - signal(SIGINT, SIG_DFL)
   - signal(SIGTERM, SIG_DFL)
   - sys.path.insert(0, "/usr/lib/python3/dist-packages/")
-  - try:
-  -     sys.exit(load_entry_point('vidcutter', 'gui_scripts', 'vidcutter')())
-  - except DistributionNotFound:
-  -     from vidcutter.__main__ import main
-  -     main()    
+  - sys.exit(load_entry_point('vidcutter', 'gui_scripts', 'vidcutter')())
   - EOF
-  - cp ../vidcutter-4.0.0/data/icons/vidcutter.png .
-  - cp ../vidcutter-4.0.0/data/desktop/vidcutter.desktop .
+  - cp usr/share/icons/hicolor/256x256/apps/vidcutter.png .
+  - ln -s vidcutter.png .DirIcon
+  - cp usr/share/applications/com.ozmartians.VidCutter.desktop ./vidcutter.desktop
   - mv usr/lib/x86_64-linux-gnu/caca/*.so* usr/lib/x86_64-linux-gnu/
