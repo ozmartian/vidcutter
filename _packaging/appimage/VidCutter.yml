@@ -24,6 +24,7 @@ script:
   - cp usr/share/icons/hicolor/256x256/apps/vidcutter.png .
   - ln -s vidcutter.png .DirIcon
   - cp -f usr/share/applications/*id*utter.desktop ./vidcutter.desktop
+  - sed -i -e 's/Exec=vidcutter/Exec=vidcutter.wrapper/g' ./vidcutter.desktop
   - cp -f ../../scripts/* usr/bin/
   - rm -f ./AppRun
   - gcc -fPIC -o ./AppRun ../../AppRun.c
