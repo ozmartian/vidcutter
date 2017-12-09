@@ -30,6 +30,21 @@ script:
   - rm ./get-pip.py
   - usr/bin/python3.5 -m pip install -t usr/lib/python3/dist-packages pyqt5
   - find usr/lib/python3/dist-packages/PyQt5 -name "*Qt*WebEngine*" | xargs rm -rf
+  - rm -rf usr/lib/python3/dist-packages/PyQt5/Qt/plugins/audio
+  - rm -rf usr/lib/python3/dist-packages/PyQt5/Qt/plugins/gamepads
+  - rm -rf usr/lib/python3/dist-packages/PyQt5/Qt/plugins/geometry
+  - rm -rf usr/lib/python3/dist-packages/PyQt5/Qt/plugins/geoservices
+  - rm -rf usr/lib/python3/dist-packages/PyQt5/Qt/plugins/iconengines
+  - rm -rf usr/lib/python3/dist-packages/PyQt5/Qt/plugins/mediaservice
+  - rm -rf usr/lib/python3/dist-packages/PyQt5/Qt/plugins/playlistformats
+  - rm -rf usr/lib/python3/dist-packages/PyQt5/Qt/plugins/position
+  - rm -rf usr/lib/python3/dist-packages/PyQt5/Qt/plugins/renderplugins
+  - rm -rf usr/lib/python3/dist-packages/PyQt5/Qt/plugins/sceneparsers
+  - rm -rf usr/lib/python3/dist-packages/PyQt5/Qt/plugins/sensorgestures
+  - rm -rf usr/lib/python3/dist-packages/PyQt5/Qt/plugins/sensors
+  - rm -rf usr/lib/python3/dist-packages/PyQt5/Qt/plugins/sqldrivers
+  - strip usr/lib/python3/dist-packages/PyQt5/*.so
+  - strip usr/lib/python3/dist-packages/PyQt5/Qt/lib/*
   - mv usr/local/lib/python3.5/dist-packages/pkg_resources usr/lib/python3/dist-packages
   - env QT_APPIMAGE=1 usr/bin/python3.5 -m pip install -t usr/lib/python3/dist-packages ../../../..
   - mkdir -p usr/share/pixmaps usr/share/appdata usr/share/applications usr/share/mime/packages usr/share/metainfo 2> /dev/null
@@ -42,16 +57,15 @@ script:
   - usr/bin/python3.5 -m pip uninstall -y pip
   - rm -rf usr/local
   - rm -f usr/bin/ffplay usr/bin/ffserver
-  - cp usr/share/icons/hicolor/256x256/apps/vidcutter.png .
-  - ln -s vidcutter.png .DirIcon
-  - cp -f usr/share/applications/*id*utter.desktop ./vidcutter.desktop
-  # - sed -i -e 's/Exec=vidcutter/Exec=vidcutter.wrapper/g' ./vidcutter.desktop
-  - cp -f ../../scripts/* usr/bin/
-  - cp -f ../../qt5/* usr/lib/python3/dist-packages/PyQt5/Qt/plugins/platformthemes/
-  - strip usr/lib/python3/dist-packages/PyQt5/*.so
-  - strip usr/lib/python3/dist-packages/PyQt5/Qt/lib/*
+  - rm -f usr/lib/x86_64-linux-gnu/*krb5*
+  - rm -f lib/x86_64-linux-gnu/libtinfo.so.5* lib/x86_64-linux-gnu/libncursesw.so.5* lib/x86_64-linux-gnu/libglib-2.0.so.0*
+  - mv usr/lib/x86_64-linux-gnu/caca/*.so* usr/lib/x86_64-linux-gnu/
   - rm -f ./AppRun
   - gcc -fPIC -o ./AppRun ../../AppRun.c
   - strip ./AppRun
   - chmod +x ./AppRun
-  - mv usr/lib/x86_64-linux-gnu/caca/*.so* usr/lib/x86_64-linux-gnu/
+  - cp usr/share/icons/hicolor/256x256/apps/vidcutter.png .
+  - ln -s vidcutter.png .DirIcon
+  - cp -f usr/share/applications/*id*utter.desktop ./vidcutter.desktop
+  - cp -f ../../scripts/* usr/bin/
+  - cp -f ../../qt5/* usr/lib/python3/dist-packages/PyQt5/Qt/plugins/platformthemes/

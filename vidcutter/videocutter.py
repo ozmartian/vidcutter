@@ -30,8 +30,8 @@ import time
 from datetime import timedelta
 from typing import Union
 
-from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QBuffer, QByteArray, QDir, QFile, QFileInfo, QModelIndex, QPoint,
-                          QProcessEnvironment, QSize, Qt, QTextStream, QTime, QTimer, QUrl)
+from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QBuffer, QByteArray, QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize,
+                          Qt, QTextStream, QTime, QTimer, QUrl)
 from PyQt5.QtGui import QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMovie, QPixmap
 from PyQt5.QtWidgets import (QAction, qApp, QApplication, QDialogButtonBox, QFileDialog, QFrame, QGroupBox, QHBoxLayout,
                              QLabel, QListWidgetItem, QMenu, QMessageBox, QPushButton, QSizePolicy, QStyleFactory,
@@ -75,8 +75,8 @@ class VideoCutter(QWidget):
         self.settings = self.parent.settings
         self.currentMedia, self.mediaAvailable, self.mpvError = None, False, False
         self.projectDirty, self.projectSaved = False, False
-        self.initTheme()
 
+        self.initTheme()
         self.updater = Updater(self.parent)
 
         self.seekSlider = VideoSlider(self)
@@ -115,6 +115,10 @@ class VideoCutter(QWidget):
         self.lastFolder = self.settings.value('lastFolder', QDir.homePath(), type=str)
         if not os.path.exists(self.lastFolder):
             self.lastFolder = QDir.homePath()
+
+        self.filedialog_options = QFileDialog.HideNameFilterDetails | (QFileDialog.DontUseNativeDialog
+                                                                       if not self.nativeDialogs
+                                                                       else QFileDialog.Options())
 
         self.edlblock_re = re.compile(r'(\d+(?:\.?\d+)?)\s(\d+(?:\.?\d+)?)\s([01])')
 
@@ -636,7 +640,7 @@ class VideoCutter(QWidget):
             filter=self.mediaFilters(),
             initialFilter=self.mediaFilters(True),
             directory=(self.lastFolder if os.path.exists(self.lastFolder) else QDir.homePath()),
-            options=(QFileDialog.DontUseNativeDialog if not self.nativeDialogs else QFileDialog.Options()))
+            options=self.filedialog_options)
         if filename is not None and len(filename.strip()):
             self.lastFolder = QFileInfo(filename).absolutePath()
             self.loadMedia(filename)
@@ -651,7 +655,7 @@ class VideoCutter(QWidget):
                 filter=self.projectFilters(),
                 initialFilter=initialFilter,
                 directory=(self.lastFolder if os.path.exists(self.lastFolder) else QDir.homePath()),
-                options=(QFileDialog.DontUseNativeDialog if not self.nativeDialogs else QFileDialog.Options()))
+                options=self.filedialog_options)
         if project_file is not None and len(project_file.strip()):
             if project_file != os.path.join(QDir.tempPath(), self.parent.TEMP_PROJECT_FILE):
                 self.lastFolder = QFileInfo(project_file).absolutePath()
@@ -729,7 +733,7 @@ class VideoCutter(QWidget):
                 directory='{}.vcp'.format(project_file),
                 filter=self.projectFilters(True),
                 initialFilter='VidCutter Project (*.vcp)',
-                options=(QFileDialog.DontUseNativeDialog if not self.nativeDialogs else QFileDialog.Options()))
+                options=self.filedialog_options)
         if project_save is not None and len(project_save.strip()):
             file = QFile(project_save)
             if not file.open(QFile.WriteOnly | QFile.Text):
@@ -921,7 +925,7 @@ class VideoCutter(QWidget):
             filter=self.mediaFilters(),
             initialFilter=self.mediaFilters(True),
             directory=(self.lastFolder if os.path.exists(self.lastFolder) else QDir.homePath()),
-            options=(QFileDialog.DontUseNativeDialog if not self.nativeDialogs else QFileDialog.Options()))
+            options=self.filedialog_options)
         if clips is not None and len(clips):
             self.lastFolder = QFileInfo(clips[0]).absolutePath()
             filesadded = False
@@ -1077,7 +1081,7 @@ class VideoCutter(QWidget):
                 caption='{} - Save media file'.format(qApp.applicationName()),
                 directory=suggestedFilename,
                 filter=filefilter,
-                options=(QFileDialog.DontUseNativeDialog if not self.nativeDialogs else QFileDialog.Options()))
+                options=self.filedialog_options)
             if self.finalFilename is None or not len(self.finalFilename.strip()):
                 return
             file, ext = os.path.splitext(self.finalFilename)
