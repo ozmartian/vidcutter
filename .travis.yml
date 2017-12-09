@@ -29,7 +29,6 @@ git:
   depth: 3
 branches:
   only:
-  # - master
   - 5.5.0
 
 before_install:
