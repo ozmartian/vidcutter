@@ -45,7 +45,8 @@ script:
   - rm -rf usr/lib/python3/dist-packages/PyQt5/Qt/plugins/sqldrivers
   - strip usr/lib/python3/dist-packages/PyQt5/*.so
   - strip usr/lib/python3/dist-packages/PyQt5/Qt/lib/*
-  - mv usr/local/lib/python3.5/dist-packages/pkg_resources usr/lib/python3/dist-packages
+  - export PKGRES="$(find ./ -name pkg_resources)"
+  - [ ${PKGRES} != "./usr/lib/python3/dist-packages/pkg_resources" ] && mv ${PKGRES} usr/lib/python3/dist-packages
   - env QT_APPIMAGE=1 usr/bin/python3.5 -m pip install -t usr/lib/python3/dist-packages ../../../..
   - mkdir -p usr/share/pixmaps usr/share/appdata usr/share/applications usr/share/mime/packages usr/share/metainfo 2> /dev/null
   - cp -R ../../../../data/icons/hicolor usr/share/icons
