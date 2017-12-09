@@ -177,8 +177,7 @@ int main(int argc, char *argv[]) {
     old_env = getenv("QT_PLUGIN_PATH") ?: "";
     snprintf(new_env[5], LENGTH, "QT_PLUGIN_PATH=%s/lib/python3/dist-packages/PyQt5/Qt/:%s/usr/lib/i386-linux-gnu/qt4/plugins/:%s/usr/lib/qt5/plugins/:%s/usr/lib/i386-linux-gnu/qt5/plugins/:%s/usr/lib/x86_64-linux-gnu/qt5/plugins/:%s/usr/lib32/qt5/plugins/:%s/usr/lib64/qt5/plugins/:%s", appdir, appdir, appdir, appdir, appdir, appdir, appdir, old_env);
 
-    /* workaround for AppImage sandboxed file dialogs only allowing access to user's home folder */
-    snprintf(new_env[6], LENGTH, "QT_APPIMAGE=%s", "1");
+    snprintf(new_env[6], LENGTH, "NO_AT_BRIDGE=%s", "1");
 
     for (n = 0; n < 7; n++)
         putenv(new_env[n]);

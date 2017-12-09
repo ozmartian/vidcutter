@@ -31,8 +31,8 @@ import signal
 import sys
 import traceback
 
-from PyQt5.QtCore import (pyqtSlot, QCommandLineOption, QCommandLineParser, QCoreApplication, QDir, QFileInfo,
-                          QProcess, QProcessEnvironment, QSettings, QSize, QStandardPaths, QTimerEvent, Qt)
+from PyQt5.QtCore import (pyqtSlot, QCommandLineOption, QCommandLineParser, QCoreApplication, QDir, QFileInfo, QProcess,
+                          QSettings, QSize, QStandardPaths, QTimerEvent, Qt)
 from PyQt5.QtGui import QCloseEvent, QContextMenuEvent, QDragEnterEvent, QDropEvent, QMouseEvent, QResizeEvent
 from PyQt5.QtWidgets import qApp, QApplication, QMainWindow, QMessageBox, QSizePolicy
 
@@ -233,9 +233,6 @@ class MainWindow(QMainWindow):
     @staticmethod
     def cleanup():
         shutil.rmtree(MainWindow.WORKING_FOLDER, ignore_errors=True)
-        if 'QT_APPIMAGE' in QProcessEnvironment.systemEnvironment().keys():
-            from vidcutter.libs.widgets import VCFileDialog
-            VCFileDialog.cleanup()
 
     def contextMenuEvent(self, event: QContextMenuEvent) -> None:
         if event.reason() == QContextMenuEvent.Mouse:

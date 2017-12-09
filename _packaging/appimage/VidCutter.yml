@@ -4,9 +4,9 @@ ingredients:
   dist: trusty
   sources: 
     - deb http://mirrors.cn99.com/ubuntu trusty main universe
-    - deb http://ppa.launchpad.net/ozmartian/apps/ubuntu xenial main
   ppas:
     - mc3man/testing6
+    - jonathonf/ffmpeg-3
     - ubuntu-toolchain-r/test
     - fkrull/deadsnakes
   packages:
@@ -15,23 +15,43 @@ ingredients:
     - libstdc++6
     - libgcc1
     - libisl15
-    - vidcutter
-    # - libmpv-dev
-    # - ffmpeg
-    # - mediainfo
+    - libmpv1
+    - ffmpeg
+    - mediainfo
 
 script:
+  - umask 022
+  - export PYTHONHOME=$(pwd)/usr
+  - rm -f usr/bin/python3 usr/bin/python3.5
+  - ln -s python3.5m usr/bin/python3
+  - ln -s python3.5m usr/bin/python3.5
+  - wget https://bootstrap.pypa.io/get-pip.py
+  - usr/bin/python3.5 ./get-pip.py
+  - rm ./get-pip.py
+  - usr/bin/python3.5 -m pip install -t usr/lib/python3/dist-packages pyqt5
+  - find usr/lib/python3/dist-packages/PyQt5 -name "*Qt*WebEngine*" | xargs rm -rf
+  - mv usr/local/lib/python3.5/dist-packages/pkg_resources usr/lib/python3/dist-packages
+  - env QT_APPIMAGE=1 usr/bin/python3.5 -m pip install -t usr/lib/python3/dist-packages ../../../..
+  - mkdir -p usr/share/pixmaps usr/share/appdata usr/share/applications usr/share/mime/packages usr/share/metainfo 2> /dev/null
+  - cp -R ../../../../data/icons/hicolor usr/share/icons
+  - cp ../../../../data/icons/vidcutter.svg usr/share/pixmaps
+  - cp ../../../../data/desktop/com.ozmartians.vidcutter.desktop usr/share/applications
+  - cp ../../../../data/appdata/com.ozmartians.vidcutter.appdata.xml usr/share/appdata
+  - cp ../../../../data/appdata/com.ozmartians.vidcutter.appdata.xml usr/share/metainfo
+  - cp ../../../../data/mime/x-vidcutter.xml usr/share/mime/packages
+  - usr/bin/python3.5 -m pip uninstall -y pip
+  - rm -rf usr/local
+  - rm -f usr/bin/ffplay usr/bin/ffserver
   - cp usr/share/icons/hicolor/256x256/apps/vidcutter.png .
   - ln -s vidcutter.png .DirIcon
   - cp -f usr/share/applications/*id*utter.desktop ./vidcutter.desktop
-  - sed -i -e 's/Exec=vidcutter/Exec=vidcutter.wrapper/g' ./vidcutter.desktop
-  - ln -s com.ozmartians.vidcutter.appdata.xml usr/share/metainfo/vidcutter.appdata.xml
+  # - sed -i -e 's/Exec=vidcutter/Exec=vidcutter.wrapper/g' ./vidcutter.desktop
   - cp -f ../../scripts/* usr/bin/
+  - cp -f ../../qt5/* usr/lib/python3/dist-packages/PyQt5/Qt/plugins/platformthemes/
+  - strip usr/lib/python3/dist-packages/PyQt5/*.so
+  - strip usr/lib/python3/dist-packages/PyQt5/Qt/lib/*
   - rm -f ./AppRun
   - gcc -fPIC -o ./AppRun ../../AppRun.c
   - strip ./AppRun
   - chmod +x ./AppRun
-  - rm -f usr/bin/python3 usr/bin/python3.5
-  - ln -s usr/bin/python3.5m usr/bin/python3
-  - ln -s usr/bin/python3.5m usr/bin/python3.5
   - mv usr/lib/x86_64-linux-gnu/caca/*.so* usr/lib/x86_64-linux-gnu/
