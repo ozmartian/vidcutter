@@ -58,7 +58,7 @@ script:
   - usr/bin/python3.5 -m pip uninstall -y pip
   - rm -rf usr/local
   - rm -f usr/bin/ffplay usr/bin/ffserver
-  - rm -f usr/lib/x86_64-linux-gnu/*krb5*
+  - rm -rf usr/lib/x86_64-linux-gnu/*krb5*
   - rm -f lib/x86_64-linux-gnu/libtinfo.so.5* lib/x86_64-linux-gnu/libncursesw.so.5* lib/x86_64-linux-gnu/libglib-2.0.so.0*
   - mv usr/lib/x86_64-linux-gnu/caca/*.so* usr/lib/x86_64-linux-gnu/
   - rm -f ./AppRun
