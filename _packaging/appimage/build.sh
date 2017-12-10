@@ -4,8 +4,7 @@ wget https://github.com/AppImage/AppImages/raw/master/pkg2appimage
 chmod +x ./pkg2appimage
 
 export NO_GLIBC_VERSION="1"
+export VERSION="${BUILD_VERSION}"
+
 ./pkg2appimage VidCutter.yml
 rm ./pkg2appimage
-
-[ ! -z ${BUILD_VERSION} ] && export BUILD_VERSION="$(python3.5 ../../_build/pyinstaller/version.py)"
-[ -r out/VidCutter-*.AppImage ] && mv out/VidCutter-*-x86_64.AppImage out/VidCutter-${BUILD_VERSION}-x64.AppImage
