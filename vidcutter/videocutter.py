@@ -67,7 +67,6 @@ class VideoCutter(QWidget):
     def __init__(self, parent: QWidget):
         super(VideoCutter, self).__init__(parent)
         self.setObjectName('videocutter')
-        # self.customFileDialogs = True if 'QT_APPIMAGE' in QProcessEnvironment.systemEnvironment().keys() else False
         self.logger = logging.getLogger(__name__)
         self.parent = parent
         self.theme = self.parent.theme
@@ -115,10 +114,6 @@ class VideoCutter(QWidget):
         self.lastFolder = self.settings.value('lastFolder', QDir.homePath(), type=str)
         if not os.path.exists(self.lastFolder):
             self.lastFolder = QDir.homePath()
-
-        self.filedialog_options = QFileDialog.HideNameFilterDetails | (QFileDialog.DontUseNativeDialog
-                                                                       if not self.nativeDialogs
-                                                                       else QFileDialog.Options())
 
         self.edlblock_re = re.compile(r'(\d+(?:\.?\d+)?)\s(\d+(?:\.?\d+)?)\s([01])')
 
@@ -549,6 +544,13 @@ class VideoCutter(QWidget):
         self.runtimeLabel.setToolTip('total runtime: {}'.format(runtime))
         self.runtimeLabel.setStatusTip('total running time: {}'.format(runtime))
 
+    def getFileDialogOptions(self) -> QFileDialog.Options:
+        options = QFileDialog.HideNameFilterDetails
+        if not self.nativeDialogs:
+            options |= QFileDialog.DontUseNativeDialog
+        # noinspection PyTypeChecker
+        return options
+
     @pyqtSlot()
     def showSettings(self):
         settingsDialog = SettingsDialog(self)
@@ -640,7 +642,7 @@ class VideoCutter(QWidget):
             filter=self.mediaFilters(),
             initialFilter=self.mediaFilters(True),
             directory=(self.lastFolder if os.path.exists(self.lastFolder) else QDir.homePath()),
-            options=self.filedialog_options)
+            options=self.getFileDialogOptions())
         if filename is not None and len(filename.strip()):
             self.lastFolder = QFileInfo(filename).absolutePath()
             self.loadMedia(filename)
@@ -655,7 +657,7 @@ class VideoCutter(QWidget):
                 filter=self.projectFilters(),
                 initialFilter=initialFilter,
                 directory=(self.lastFolder if os.path.exists(self.lastFolder) else QDir.homePath()),
-                options=self.filedialog_options)
+                options=self.getFileDialogOptions())
         if project_file is not None and len(project_file.strip()):
             if project_file != os.path.join(QDir.tempPath(), self.parent.TEMP_PROJECT_FILE):
                 self.lastFolder = QFileInfo(project_file).absolutePath()
@@ -733,7 +735,7 @@ class VideoCutter(QWidget):
                 directory='{}.vcp'.format(project_file),
                 filter=self.projectFilters(True),
                 initialFilter='VidCutter Project (*.vcp)',
-                options=self.filedialog_options)
+                options=self.getFileDialogOptions())
         if project_save is not None and len(project_save.strip()):
             file = QFile(project_save)
             if not file.open(QFile.WriteOnly | QFile.Text):
@@ -925,7 +927,7 @@ class VideoCutter(QWidget):
             filter=self.mediaFilters(),
             initialFilter=self.mediaFilters(True),
             directory=(self.lastFolder if os.path.exists(self.lastFolder) else QDir.homePath()),
-            options=self.filedialog_options)
+            options=self.getFileDialogOptions())
         if clips is not None and len(clips):
             self.lastFolder = QFileInfo(clips[0]).absolutePath()
             filesadded = False
@@ -1081,7 +1083,7 @@ class VideoCutter(QWidget):
                 caption='{} - Save media file'.format(qApp.applicationName()),
                 directory=suggestedFilename,
                 filter=filefilter,
-                options=self.filedialog_options)
+                options=self.getFileDialogOptions())
             if self.finalFilename is None or not len(self.finalFilename.strip()):
                 return
             file, ext = os.path.splitext(self.finalFilename)
