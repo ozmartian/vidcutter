@@ -34,7 +34,7 @@ branches:
 before_install:
   - sudo add-apt-repository ppa:mc3man/testing6 -y
   - sudo apt-get -qq update
-  - sudo apt-get install -y libmpv-dev libmpv1 python3-dev python3-setuptools
+  - sudo apt-get install -y libmpv-dev libmpv1 python3-dev python3-setuptools desktop-file-utils
 
 install:
   - python3.5 setup.py build_ext -i
