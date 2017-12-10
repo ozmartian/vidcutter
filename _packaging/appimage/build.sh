@@ -5,12 +5,6 @@ export NO_GLIBC_VERSION="1"
 wget https://github.com/AppImage/AppImages/raw/master/pkg2appimage
 chmod +x ./pkg2appimage
 
-if [ -z ${BUILD_VERSION} ]; then
-	echo "$(python ../../_build/pyinstaller/version.py)" > VERSION
-else
-    echo "${BUILD_VERSION}" > VERSION
-fi
-
 ./pkg2appimage VidCutter.yml
+mv ./out/VidCutter--x86_64.AppImage ./out/VidCutter-${BUILD_VERSION}-x64.AppImage
 rm ./pkg2appimage
-rm ./VERSION
