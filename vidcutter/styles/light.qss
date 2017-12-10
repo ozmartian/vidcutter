@@ -29,7 +29,7 @@ QWidget#shortcuts {
 }
 
 QWidget#novideoWidget {
-    border-image: url(':/images/startup-backdrop.png') 0 0 0 0 stretch stretch;
+    border-image: url(':/images/light/startup-backdrop.png') 0 0 0 0 stretch stretch;
 }
 
 QWidget#genericdialog {
