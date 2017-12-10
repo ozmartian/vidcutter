@@ -3,7 +3,7 @@ app: VidCutter
 ingredients:
   dist: trusty
   sources: 
-    - deb http://mirrors.cn99.com/ubuntu trusty main universe
+    - deb http://archive.ubuntu.com/ubuntu trusty main universe
   ppas:
     - mc3man/testing6
     - jonathonf/ffmpeg-3
