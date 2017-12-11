@@ -171,14 +171,14 @@ QLabel#logowidget {
 
 QLabel#decodinglabel, QLabel#ratiolabel, QLabel#keepclipslabel, QLabel#singleinstancelabel,
 QLabel#verboselogslabel, QLabel#nativedialogslabel, QLabel#seeksettingslabel, QLabel#zoomlabel,
-QLabel#smartcutlabel {
+QLabel#smartcutlabel, QLabel#ffmpeglabel {
     font-family: "Noto Sans UI", sans-serif;
     font-size: 11px;
     color: #EFF0F1;
 }
 
 QLabel#decodinglabel, QLabel#ratiolabel, QLabel#keepclipslabel, QLabel#singleinstancelabel,
-QLabel#verboselogslabel, QLabel#smartcutlabel, QLabel#nativedialogslabel {
+QLabel#verboselogslabel, QLabel#smartcutlabel, QLabel#nativedialogslabel, QLabel#ffmpeglabel {
     margin: 2px 5px 10px 22px;
 }
 

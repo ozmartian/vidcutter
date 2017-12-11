@@ -69,9 +69,10 @@ class VideoService(QObject):
 
     config = VideoConfig()
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, ffmpegpath: str=None):
         super(VideoService, self).__init__(parent)
         self.parent = parent
+        self.ffmpegpath = ffmpegpath
         self.logger = logging.getLogger(__name__)
         try:
             self.backends = VideoService.findBackends()

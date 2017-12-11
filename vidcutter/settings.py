@@ -22,13 +22,15 @@
 #
 #######################################################################
 
+import os
 import sys
 
-from PyQt5.QtCore import pyqtSlot, QSize, Qt
+from PyQt5.QtCore import pyqtSlot, QObject, QSize, Qt
 from PyQt5.QtGui import QCloseEvent, QIcon, QShowEvent
-from PyQt5.QtWidgets import (qApp, QButtonGroup, QCheckBox, QDialog, QDialogButtonBox, QDoubleSpinBox, QFrame,
-                             QGridLayout, QGroupBox, QHBoxLayout, QLabel, QListView, QListWidget, QListWidgetItem,
-                             QMessageBox, QRadioButton, QStackedWidget, QStyleFactory, QVBoxLayout, QWidget)
+from PyQt5.QtWidgets import (qApp, QButtonGroup, QCheckBox, QDialog, QDialogButtonBox, QDoubleSpinBox, QFormLayout,
+                             QFrame, QGridLayout, QGroupBox, QHBoxLayout, QLabel, QLineEdit, QListView, QListWidget,
+                             QListWidgetItem, QMessageBox, QRadioButton, QSizePolicy, QStackedWidget, QStyleFactory,
+                             QVBoxLayout, QWidget)
 
 
 class LogsPage(QWidget):
@@ -307,6 +309,34 @@ class VideoPage(QWidget):
         self.parent.settings.setValue('videoZoom', level)
 
 
+class FFmpegPage(QWidget):
+    def __init__(self, parent=None):
+        super(FFmpegPage, self).__init__(parent)
+        self.parent = parent
+        self.setObjectName('settingsffmpegpage')
+        self.pathLineEdit = QLineEdit(os.path.dirname(self.parent.service.backends.ffmpeg), self)
+        self.pathLineEdit.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        ffmpegLabel = QLabel('Path to FFmpeg binaries <i>ffmpeg</i> and <i>ffprobe</i>. Change this default value in '
+                             'order to use a different version of FFmpeg, preferably static. This is setting should '
+                             'only be changed if your Linux distribution only offers older FFmpeg versons like 2.8 or '
+                             'below. We recommended the below URL for the very latest static binaries.<br/><br/>'
+                             '<a href="https://www.johnvansickle.com/ffmpeg">https://www.johnvansickle.com/ffmpeg</a>')
+        ffmpegLabel.setObjectName('ffmpeglabel')
+        ffmpegLabel.setTextFormat(Qt.RichText)
+        ffmpegLabel.setOpenExternalLinks(True)
+        ffmpegLabel.setWordWrap(True)
+        ffmpegLayout = QFormLayout()
+        ffmpegLayout.addRow('Path', self.pathLineEdit)
+        ffmpegLayout.addRow(ffmpegLabel)
+        ffmpegGroup = QGroupBox('FFmpeg')
+        ffmpegGroup.setLayout(ffmpegLayout)
+        mainLayout = QVBoxLayout()
+        mainLayout.setSpacing(10)
+        mainLayout.addWidget(ffmpegGroup)
+        mainLayout.addStretch(1)
+        self.setLayout(mainLayout)
+
+
 class GeneralPage(QWidget):
     def __init__(self, parent=None):
         super(GeneralPage, self).__init__(parent)
@@ -455,9 +485,10 @@ class GeneralPage(QWidget):
 
 
 class SettingsDialog(QDialog):
-    def __init__(self, parent=None, flags=Qt.WindowCloseButtonHint):
+    def __init__(self, service: QObject, parent=None, flags=Qt.WindowCloseButtonHint):
         super(SettingsDialog, self).__init__(parent.parent, flags)
         self.parent = parent
+        self.service = service
         self.settings = self.parent.settings
         self.theme = self.parent.theme
         self.setObjectName('settingsdialog')
@@ -475,6 +506,8 @@ class SettingsDialog(QDialog):
         self.categories.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.pages = QStackedWidget(self)
         self.pages.addWidget(GeneralPage(self))
+        if sys.platform.startswith('linux'):
+            self.pages.addWidget(FFmpegPage(self))
         self.pages.addWidget(VideoPage(self))
         self.pages.addWidget(ThemePage(self))
         self.pages.addWidget(LogsPage(self))
@@ -496,6 +529,12 @@ class SettingsDialog(QDialog):
         generalButton.setToolTip('General settings')
         generalButton.setTextAlignment(Qt.AlignHCenter)
         generalButton.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+        ffmpegButton = QListWidgetItem(self.categories)
+        ffmpegButton.setIcon(QIcon(':/images/settings-ffmpeg.png'))
+        ffmpegButton.setText('FFmpeg')
+        ffmpegButton.setToolTip('FFmpeg settings')
+        ffmpegButton.setTextAlignment(Qt.AlignHCenter)
+        ffmpegButton.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
         videoButton = QListWidgetItem(self.categories)
         videoButton.setIcon(QIcon(':/images/settings-video.png'))
         videoButton.setText('Video')

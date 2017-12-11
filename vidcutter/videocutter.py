@@ -83,11 +83,6 @@ class VideoCutter(QWidget):
         self.sliderWidget = VideoSliderWidget(self, self.seekSlider)
         self.sliderWidget.setLoader(True)
 
-        self.videoService = VideoService(self)
-        self.videoService.progress.connect(self.seekSlider.updateProgress)
-        self.videoService.finished.connect(self.smartmonitor)
-        self.videoService.error.connect(self.completeOnError)
-
         if sys.platform.startswith('linux'):
             self.taskbar = TaskbarProgress(self)
 
@@ -99,6 +94,7 @@ class VideoCutter(QWidget):
         self.totalRuntime, self.frameRate = 0, 0
         self.notifyInterval = 1000
 
+        self.ffmpegPath = self.settings.value('ffmpegPath', None, type=str)
         self.enableOSD = self.settings.value('enableOSD', 'on', type=str) in {'on', 'true'}
         self.hardwareDecoding = self.settings.value('hwdec', 'on', type=str) in {'on', 'auto'}
         self.keepRatio = self.settings.value('aspectRatio', 'keep', type=str) == 'keep'
@@ -114,6 +110,11 @@ class VideoCutter(QWidget):
         self.lastFolder = self.settings.value('lastFolder', QDir.homePath(), type=str)
         if not os.path.exists(self.lastFolder):
             self.lastFolder = QDir.homePath()
+
+        self.videoService = VideoService(self, self.ffmpegPath)
+        self.videoService.progress.connect(self.seekSlider.updateProgress)
+        self.videoService.finished.connect(self.smartmonitor)
+        self.videoService.error.connect(self.completeOnError)
 
         self.edlblock_re = re.compile(r'(\d+(?:\.?\d+)?)\s(\d+(?:\.?\d+)?)\s([01])')
 
@@ -553,7 +554,7 @@ class VideoCutter(QWidget):
 
     @pyqtSlot()
     def showSettings(self):
-        settingsDialog = SettingsDialog(self)
+        settingsDialog = SettingsDialog(self.videoService, self)
         settingsDialog.exec_()
 
     @pyqtSlot()
