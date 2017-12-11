@@ -317,7 +317,7 @@ class FFmpegPage(QWidget):
         self.pathLineEdit = QLineEdit(os.path.dirname(self.parent.service.backends.ffmpeg), self)
         self.pathLineEdit.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         ffmpegLabel = QLabel('Path to FFmpeg binaries <i>ffmpeg</i> and <i>ffprobe</i>. Change this default value in '
-                             'order to use a different version of FFmpeg, preferably static. This is setting should '
+                             'order to use a different version of FFmpeg, preferably static. This setting should '
                              'only be changed if your Linux distribution only offers older FFmpeg versons like 2.8 or '
                              'below. We recommended the below URL for the very latest static binaries.<br/><br/>'
                              '<a href="https://www.johnvansickle.com/ffmpeg">https://www.johnvansickle.com/ffmpeg</a>')
@@ -506,7 +506,7 @@ class SettingsDialog(QDialog):
         self.categories.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.pages = QStackedWidget(self)
         self.pages.addWidget(GeneralPage(self))
-        if sys.platform.startswith('linux'):
+        if sys.platform.startswith('linux') and not os.getenv('QT_APPIMAGE', False):
             self.pages.addWidget(FFmpegPage(self))
         self.pages.addWidget(VideoPage(self))
         self.pages.addWidget(ThemePage(self))

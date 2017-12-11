@@ -155,7 +155,7 @@ int main(int argc, char *argv[]) {
     // set environment variables
     char *old_env;
     const int LENGTH = 2047;
-    char new_env[7][LENGTH+1];
+    char new_env[8][LENGTH+1];
 
     /* https://docs.python.org/2/using/cmdline.html#envvar-PYTHONHOME */
     snprintf(new_env[0], LENGTH, "PYTHONHOME=%s/usr/", appdir);
@@ -177,9 +177,10 @@ int main(int argc, char *argv[]) {
     old_env = getenv("QT_PLUGIN_PATH") ?: "";
     snprintf(new_env[5], LENGTH, "QT_PLUGIN_PATH=%s/lib/python3/dist-packages/PyQt5/Qt/:%s/usr/lib/i386-linux-gnu/qt4/plugins/:%s/usr/lib/qt5/plugins/:%s/usr/lib/i386-linux-gnu/qt5/plugins/:%s/usr/lib/x86_64-linux-gnu/qt5/plugins/:%s/usr/lib32/qt5/plugins/:%s/usr/lib64/qt5/plugins/:%s", appdir, appdir, appdir, appdir, appdir, appdir, appdir, old_env);
 
-    snprintf(new_env[6], LENGTH, "NO_AT_BRIDGE=%s", "1");
+    snprintf(new_env[6], LENGTH, "QT_APPIMAGE=%s", "1");
+    snprintf(new_env[7], LENGTH, "NO_AT_BRIDGE=%s", "1");
 
-    for (n = 0; n < 7; n++)
+    for (n = 0; n < 8; n++)
         putenv(new_env[n]);
 
     /* Run */
