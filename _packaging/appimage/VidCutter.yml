@@ -47,7 +47,7 @@ script:
   - strip usr/lib/python3/dist-packages/PyQt5/Qt/lib/*
   - export PKGRES="$(find ./ -name pkg_resources)"
   - [ ${PKGRES} != "./usr/lib/python3/dist-packages/pkg_resources" ] && mv ${PKGRES} usr/lib/python3/dist-packages
-  - cp -R usr/lib/python3/dist-packages usr/lib/python3/dist-packages.BAK
+  - cp -R usr/lib/python3/dist-packages/pkg_resources usr/lib/python3/dist-packages/pkg_resources.BAK
   - env QT_APPIMAGE=1 usr/bin/python3.5 -m pip install -t usr/lib/python3/dist-packages ../../../..
   - mkdir -p usr/share/pixmaps usr/share/appdata usr/share/applications usr/share/mime/packages usr/share/metainfo 2> /dev/null
   - cp -R ../../../../data/icons/hicolor usr/share/icons
@@ -57,7 +57,7 @@ script:
   - cp ../../../../data/appdata/com.ozmartians.vidcutter.appdata.xml usr/share/metainfo
   - cp ../../../../data/mime/x-vidcutter.xml usr/share/mime/packages
   - usr/bin/python3.5 -m pip uninstall -y pip
-  - mv usr/lib/python3/dist-packages.BAK usr/lib/python3/dist-packages
+  - mv usr/lib/python3/dist-packages/pkg_resources.BAK usr/lib/python3/dist-packages/pkg_resources
   - rm -rf usr/local
   - rm -f usr/bin/ffplay usr/bin/ffserver
   - rm -rf usr/lib/x86_64-linux-gnu/*krb5*
