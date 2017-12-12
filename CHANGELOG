@@ -18,12 +18,19 @@ vidcutter (5.5.0-1) stable; urgency=medium
     working pressed states on existing toolbar buttons which QToolBar buttons
     (for reasons I cannot figure out) do not.
 
+  * FFmpeg category added to settings dialog for users on Linux systems
+    excluding AppImage, to cater for releases where the latest FFmpeg binaries
+    are not prebundled. This allows users to set a different path to a newer
+    set of FFmpeg binaries if they are stuck on Linux distros only offering
+    older versions of FFmpeg such as 2.8 and below which prevents SmartCut
+    from working to its full potential.
+
   * Minor changes/improvements to a few other front panel buttons w/ pressed states
     where previously unavailable + minor cosmetic improvements to color schemes
     of hover/active state buttons
 
   * Application desktop and appdata metadata files now using reverse domain
-    notation file names
+    notation for their file names
 
   * Hardened logic for app quit when clips exist to prompt for project save
 
