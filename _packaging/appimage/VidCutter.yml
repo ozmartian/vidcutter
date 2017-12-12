@@ -45,7 +45,7 @@ script:
   - rm -rf usr/lib/python3/dist-packages/PyQt5/Qt/plugins/sqldrivers
   - strip usr/lib/python3/dist-packages/PyQt5/*.so
   - strip usr/lib/python3/dist-packages/PyQt5/Qt/lib/*
-  - export PKGRES="$(find ./ -name pkg_resources)"
+  - export PKGRES="$(find ./ -name pkg_resources | grep -v _vendor)"
   - [ ${PKGRES} != "./usr/lib/python3/dist-packages/pkg_resources" ] && mv ${PKGRES} usr/lib/python3/dist-packages
   - cp -R usr/lib/python3/dist-packages/pkg_resources usr/lib/python3/dist-packages/pkg_resources.BAK
   - env QT_APPIMAGE=1 usr/bin/python3.5 -m pip install -t usr/lib/python3/dist-packages ../../../..
