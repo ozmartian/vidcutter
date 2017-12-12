@@ -63,7 +63,7 @@ class VideoConfig:
                 'mediainfo': ['MediaInfo.exe']
             },
             'posix': {  # Linux + macOS
-                'ffmpeg': ['ffmpeg', 'ffmpeg2.8', 'avconv'],
+                'ffmpeg': ['ffmpeg', 'avconv'],
                 'ffprobe': ['ffprobe', 'avprobe'],
                 'mediainfo': ['mediainfo']
             }

@@ -25,12 +25,12 @@
 import os
 import sys
 
-from PyQt5.QtCore import pyqtSlot, QObject, QSize, Qt
+from PyQt5.QtCore import pyqtSlot, QDir, QObject, QSize, QTimer, Qt
 from PyQt5.QtGui import QCloseEvent, QIcon, QShowEvent
-from PyQt5.QtWidgets import (qApp, QButtonGroup, QCheckBox, QDialog, QDialogButtonBox, QDoubleSpinBox, QFormLayout,
-                             QFrame, QGridLayout, QGroupBox, QHBoxLayout, QLabel, QLineEdit, QListView, QListWidget,
-                             QListWidgetItem, QMessageBox, QRadioButton, QSizePolicy, QStackedWidget, QStyleFactory,
-                             QVBoxLayout, QWidget)
+from PyQt5.QtWidgets import (qApp, QButtonGroup, QCheckBox, QDialog, QDialogButtonBox, QDoubleSpinBox, QFileDialog,
+                             QFormLayout, QFrame, QGridLayout, QGroupBox, QHBoxLayout, QLabel, QLineEdit, QListView,
+                             QListWidget, QListWidgetItem, QMessageBox, QPushButton, QRadioButton, QSizePolicy,
+                             QStackedWidget, QStyleFactory, QVBoxLayout, QWidget)
 
 
 class LogsPage(QWidget):
@@ -316,17 +316,35 @@ class FFmpegPage(QWidget):
         self.setObjectName('settingsffmpegpage')
         self.pathLineEdit = QLineEdit(os.path.dirname(self.parent.service.backends.ffmpeg), self)
         self.pathLineEdit.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        self.pathLineEdit.setClearButtonEnabled(True)
+        pathButton = QPushButton(self)
+        pathButton.setIcon(QIcon(':/images/folder.png'))
+        pathButton.setToolTip('Select FFmpeg path')
+        pathButton.setCursor(Qt.PointingHandCursor)
+        pathButton.clicked.connect(self.setPath)
+        pathLayout = QHBoxLayout()
+        pathLayout.addWidget(self.pathLineEdit)
+        pathLayout.addWidget(pathButton)
+        self.validateButton = QPushButton('Validate', self)
+        self.validateButton.setToolTip('Validate path')
+        self.validateButton.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        self.validateButton.setCursor(Qt.PointingHandCursor)
+        self.validateButton.clicked.connect(self.validatePath)
         ffmpegLabel = QLabel('Path to FFmpeg binaries <i>ffmpeg</i> and <i>ffprobe</i>. Change this default value in '
                              'order to use a different version of FFmpeg, preferably static. This setting should '
-                             'only be changed if your Linux distribution only offers older FFmpeg versons like 2.8 or '
-                             'below. We recommended the below URL for the very latest static binaries.<br/><br/>'
-                             '<a href="https://www.johnvansickle.com/ffmpeg">https://www.johnvansickle.com/ffmpeg</a>')
+                             'only be changed if your Linux distribution only offers FFmpeg versions 2.8 or '
+                             'below. We recommended the below URL for the latest static binaries.<br/><br/>'
+                             '<a href="https://www.johnvansickle.com/ffmpeg">https://www.johnvansickle.com/ffmpeg</a>'
+                             '<br/><br/>Simply extract, place the binaries someplace suitable on your system and input '
+                             'the path in the field above. You then need to validate the new path using the validate '
+                             'button under the field to ensure the path is correct.')
         ffmpegLabel.setObjectName('ffmpeglabel')
         ffmpegLabel.setTextFormat(Qt.RichText)
         ffmpegLabel.setOpenExternalLinks(True)
         ffmpegLabel.setWordWrap(True)
         ffmpegLayout = QFormLayout()
-        ffmpegLayout.addRow('Path', self.pathLineEdit)
+        ffmpegLayout.addRow('Path', pathLayout)
+        ffmpegLayout.addRow('', self.validateButton)
         ffmpegLayout.addRow(ffmpegLabel)
         ffmpegGroup = QGroupBox('FFmpeg')
         ffmpegGroup.setLayout(ffmpegLayout)
@@ -335,6 +353,46 @@ class FFmpegPage(QWidget):
         mainLayout.addWidget(ffmpegGroup)
         mainLayout.addStretch(1)
         self.setLayout(mainLayout)
+
+    @pyqtSlot()
+    def setPath(self) -> None:
+        selectedpath = QFileDialog.getExistingDirectory(
+            self,
+            caption='{} - Select FFmpeg path'.format(qApp.applicationName()),
+            directory=(self.parent.parent.lastFolder
+                       if os.path.exists(self.parent.parent.lastFolder) else QDir.homePath()),
+            options=self.parent.parent.getFileDialogOptions())
+        if selectedpath is not None and os.path.isdir(selectedpath):
+            self.pathLineEdit.setText(selectedpath)
+
+    @pyqtSlot()
+    def validatePath(self) -> None:
+        validpath = False
+        newpath = self.pathLineEdit.text()
+        if newpath is not None and len(newpath):
+            for exe in self.parent.service.config.binaries['posix']['ffmpeg']:
+                validpath = os.path.isfile(os.path.join(newpath, exe))
+                if validpath:
+                    break
+            if validpath:
+                for exe in self.parent.service.config.binaries['posix']['ffprobe']:
+                    validpath = os.path.isfile(os.path.join(newpath, exe))
+                    if validpath:
+                        break
+        self.validateButton.setText('')
+        self.validateButton.setStyleSheet('QPushButton { font-weight: bold; }')
+        if validpath:
+            self.parent.parent.setFFmpegPath(newpath)
+            self.validateButton.setText('VALID PATH - ACCEPTED')
+        else:
+            self.validateButton.setText('INVALID PATH - REJECTED')
+            self.pathLineEdit.setText(os.path.dirname(self.parent.service.backends.ffmpeg))
+        QTimer.singleShot(3000, self.resetButton)
+
+    @pyqtSlot()
+    def resetButton(self) -> None:
+        self.validateButton.setStyleSheet('QPushButton { font-weight: normal; }')
+        self.validateButton.setText('Validate')
 
 
 class GeneralPage(QWidget):
@@ -506,11 +564,11 @@ class SettingsDialog(QDialog):
         self.categories.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.pages = QStackedWidget(self)
         self.pages.addWidget(GeneralPage(self))
-        if sys.platform.startswith('linux') and not os.getenv('QT_APPIMAGE', False):
-            self.pages.addWidget(FFmpegPage(self))
         self.pages.addWidget(VideoPage(self))
         self.pages.addWidget(ThemePage(self))
         self.pages.addWidget(LogsPage(self))
+        if sys.platform.startswith('linux') and not os.getenv('QT_APPIMAGE', False):
+            self.pages.addWidget(FFmpegPage(self))
         self.initCategories()
         horizontalLayout = QHBoxLayout()
         horizontalLayout.addWidget(self.categories)
@@ -529,12 +587,6 @@ class SettingsDialog(QDialog):
         generalButton.setToolTip('General settings')
         generalButton.setTextAlignment(Qt.AlignHCenter)
         generalButton.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
-        ffmpegButton = QListWidgetItem(self.categories)
-        ffmpegButton.setIcon(QIcon(':/images/settings-ffmpeg.png'))
-        ffmpegButton.setText('FFmpeg')
-        ffmpegButton.setToolTip('FFmpeg settings')
-        ffmpegButton.setTextAlignment(Qt.AlignHCenter)
-        ffmpegButton.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
         videoButton = QListWidgetItem(self.categories)
         videoButton.setIcon(QIcon(':/images/settings-video.png'))
         videoButton.setText('Video')
@@ -553,6 +605,13 @@ class SettingsDialog(QDialog):
         logsButton.setToolTip('Logging settings')
         logsButton.setTextAlignment(Qt.AlignHCenter)
         logsButton.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+        if sys.platform.startswith('linux') and not os.getenv('QT_APPIMAGE', False):
+            ffmpegButton = QListWidgetItem(self.categories)
+            ffmpegButton.setIcon(QIcon(':/images/settings-ffmpeg.png'))
+            ffmpegButton.setText('FFmpeg')
+            ffmpegButton.setToolTip('FFmpeg settings')
+            ffmpegButton.setTextAlignment(Qt.AlignHCenter)
+            ffmpegButton.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
         self.categories.currentItemChanged.connect(self.changePage)
         self.categories.setCurrentRow(0)
         self.categories.setMaximumWidth(self.categories.sizeHintForColumn(0) + 2)

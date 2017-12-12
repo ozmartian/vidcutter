@@ -111,10 +111,7 @@ class VideoCutter(QWidget):
         if not os.path.exists(self.lastFolder):
             self.lastFolder = QDir.homePath()
 
-        self.videoService = VideoService(self, self.ffmpegPath)
-        self.videoService.progress.connect(self.seekSlider.updateProgress)
-        self.videoService.finished.connect(self.smartmonitor)
-        self.videoService.error.connect(self.completeOnError)
+        self.setFFmpegPath(self.ffmpegPath)
 
         self.edlblock_re = re.compile(r'(\d+(?:\.?\d+)?)\s(\d+(?:\.?\d+)?)\s([01])')
 
@@ -535,6 +532,17 @@ class VideoCutter(QWidget):
             self.appMenu.setStyle(QStyleFactory.create('Fusion'))
             self.clipindex_contextmenu.setStyle(QStyleFactory.create('Fusion'))
             self.clipindex_removemenu.setStyle(QStyleFactory.create('Fusion'))
+
+    def setFFmpegPath(self, path: str=None) -> None:
+        if path is not None and os.path.isdir(path):
+            self.ffmpegPath = path
+            self.settings.setValue('ffmpegPath', self.ffmpegPath)
+            self.videoService = VideoService(self, self.ffmpegPath)
+        else:
+            self.videoService = VideoService(self)
+        self.videoService.progress.connect(self.seekSlider.updateProgress)
+        self.videoService.finished.connect(self.smartmonitor)
+        self.videoService.error.connect(self.completeOnError)
 
     def setToolBarStyle(self, labelstyle: str = 'beside') -> None:
         buttonlist = self.toolbarGroup.findChildren(VCToolBarButton)

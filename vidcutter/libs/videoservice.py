@@ -75,7 +75,10 @@ class VideoService(QObject):
         self.ffmpegpath = ffmpegpath
         self.logger = logging.getLogger(__name__)
         try:
-            self.backends = VideoService.findBackends()
+            self.backends = VideoService.findBackends(self.ffmpegpath)
+            if self.backends.ffmpeg is not None:
+                self.parent.ffmpegPath = self.backends.ffmpeg
+                self.parent.settings.setValue('ffmpegPath', os.path.dirname(self.backends.ffmpeg))
             self.proc = VideoService.initProc()
             if hasattr(self.proc, 'errorOccurred'):
                 self.proc.errorOccurred.connect(self.cmdError)
@@ -108,21 +111,33 @@ class VideoService(QObject):
                 raise FileNotFoundError(errormsg)
 
     @staticmethod
-    def findBackends() -> Munch:
+    def findBackends(ffmpegpath: str=None) -> Munch:
         tools = Munch(ffmpeg=None, ffprobe=None, mediainfo=None)
+        if ffmpegpath is not None and sys.platform.startswith('linux') and not os.getenv('QT_APPIMAGE', False):
+            for exe in VideoService.config.binaries['posix']['ffmpeg']:
+                binpath = os.path.join(ffmpegpath, exe)
+                if binpath is not None and os.path.isfile(binpath):
+                    tools['ffmpeg'] = binpath
+            for exe in VideoService.config.binaries['posix']['ffprobe']:
+                binpath = os.path.join(ffmpegpath, exe)
+                if binpath is not None and os.path.isfile(binpath):
+                    tools['ffprobe'] = binpath
         for backend in tools.keys():
             for exe in VideoService.config.binaries[os.name][backend]:
-                binpath = QDir.toNativeSeparators('{0}/bin/{1}'.format(VideoService.getAppPath(), exe))
-                if binpath is not None and os.path.isfile(binpath):
-                    tools[backend] = binpath
-                    break
-                else:
-                    binpath = find_executable(exe)
+                if tools[backend] is None:
+                    binpath = QDir.toNativeSeparators('{0}/bin/{1}'.format(VideoService.getAppPath(), exe))
                     if binpath is not None and os.path.isfile(binpath):
                         tools[backend] = binpath
                         break
+                    else:
+                        binpath = find_executable(exe)
+                        if binpath is not None and os.path.isfile(binpath):
+                            tools[backend] = binpath
+                            break
         if tools.ffmpeg is None:
-            raise FFmpegNotFoundException('Could not locate any ffmpeg or libav executable on your operating system')
+            raise FFmpegNotFoundException('Could not locate ffmpeg/avconv on your system')
+        if tools.ffprobe is None:
+            raise FFmpegNotFoundException('Could not locate ffprobe/avprobe on your system')
         return tools
 
     @staticmethod
