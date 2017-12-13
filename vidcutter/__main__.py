@@ -105,14 +105,14 @@ class MainWindow(QMainWindow):
 
     def init_logger(self) -> None:
         try:
-            log_path = QStandardPaths.writableLocation(QStandardPaths.AppConfigLocation).lower()
+            log_path = QStandardPaths.writableLocation(QStandardPaths.AppConfigLocation)
         except AttributeError:
             if sys.platform == 'win32':
                 log_path = os.path.join(QDir.homePath(), 'AppData', 'Local', qApp.applicationName().lower())
             elif sys.platform == 'darwin':
-                log_path = os.path.join(QDir.homePath(), 'Library', 'Preferences', qApp.applicationName()).lower()
+                log_path = os.path.join(QDir.homePath(), 'Library', 'Preferences', qApp.applicationName().lower())
             else:
-                log_path = os.path.join(QDir.homePath(), '.config', qApp.applicationName()).lower()
+                log_path = os.path.join(QDir.homePath(), '.config', qApp.applicationName().lower())
         os.makedirs(log_path, exist_ok=True)
         self.console = ConsoleWidget(self)
         self.consoleLogger = ConsoleHandler(self.console)
@@ -133,15 +133,15 @@ class MainWindow(QMainWindow):
 
     def init_settings(self) -> None:
         try:
-            settings_path = QStandardPaths.writableLocation(QStandardPaths.AppConfigLocation).lower()
+            settings_path = QStandardPaths.writableLocation(QStandardPaths.AppConfigLocation)
         except AttributeError:
             if sys.platform == 'win32':
                 settings_path = os.path.join(QDir.homePath(), 'AppData', 'Local', qApp.applicationName().lower())
             elif sys.platform == 'darwin':
                 settings_path = os.path.join(QDir.homePath(), 'Library', 'Preferences',
-                                             qApp.applicationName()).lower()
+                                             qApp.applicationName().lower())
             else:
-                settings_path = os.path.join(QDir.homePath(), '.config', qApp.applicationName()).lower()
+                settings_path = os.path.join(QDir.homePath(), '.config', qApp.applicationName().lower())
         os.makedirs(settings_path, exist_ok=True)
         settings_file = '%s.ini' % qApp.applicationName().lower()
         self.settings = QSettings(os.path.join(settings_path, settings_file), QSettings.IniFormat)
