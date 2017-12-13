@@ -262,7 +262,7 @@ QDialog#videoinfo QPushButton, QDialog#notification QPushButton {
 
 #clipindextools QPushButton:hover#clipadd,
 #clipindextools QPushButton:pressed#clipadd {
-    background: #642C68 url(:images/dark/clipindex-add-on.png) no-repeat left center;
+    background: #25182F url(:images/dark/clipindex-add-on.png) no-repeat left center;
 }
 
 #clipindextools QPushButton:disabled#clipadd {
@@ -275,7 +275,7 @@ QDialog#videoinfo QPushButton, QDialog#notification QPushButton {
 
 #clipindextools QPushButton:hover#clipremove,
 #clipindextools QPushButton:pressed#clipremove {
-    background: #642C68 url(:images/dark/clipindex-remove-on.png) no-repeat right center;
+    background: #25182F url(:images/dark/clipindex-remove-on.png) no-repeat right center;
 }
 
 #clipindextools QPushButton:disabled#clipremove {
@@ -284,7 +284,7 @@ QDialog#videoinfo QPushButton, QDialog#notification QPushButton {
 
 QDialogButtonBox QPushButton:hover, #clipindextools QPushButton:hover,
 QDialog#videoinfo QPushButton, QDialog#notification QPushButton:hover {
-    border: 1px solid #642C68;
+    border: 1px solid #4D5355;
 }
 
 QDialogButtonBox QPushButton:focus,
