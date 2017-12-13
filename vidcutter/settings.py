@@ -26,7 +26,7 @@ import os
 import sys
 
 from PyQt5.QtCore import pyqtSlot, QDir, QObject, QSize, QTimer, Qt
-from PyQt5.QtGui import QCloseEvent, QIcon, QShowEvent
+from PyQt5.QtGui import QCloseEvent, QColor, QIcon, QPainter, QPen, QPixmap, QShowEvent
 from PyQt5.QtWidgets import (qApp, QButtonGroup, QCheckBox, QDialog, QDialogButtonBox, QDoubleSpinBox, QFileDialog,
                              QFormLayout, QFrame, QGridLayout, QGroupBox, QHBoxLayout, QLabel, QLineEdit, QListView,
                              QListWidget, QListWidgetItem, QMessageBox, QPushButton, QRadioButton, QSizePolicy,
@@ -41,7 +41,7 @@ class LogsPage(QWidget):
         verboseCheckbox = QCheckBox('Enable verbose logging', self)
         verboseCheckbox.setToolTip('Detailed log ouput to log file and console')
         verboseCheckbox.setCursor(Qt.PointingHandCursor)
-        verboseCheckbox.setChecked(self.parent.parent.verboseLogs)
+        verboseCheckbox.setChecked(self.parent.parent.parent.verboseLogs)
         verboseCheckbox.stateChanged.connect(self.setVerboseLogs)
         verboseLabel = QLabel('''
             <b>ON:</b> includes detailed logs from video player (MPV) and backend services
@@ -75,14 +75,26 @@ class ThemePage(QWidget):
         mainLayout = QVBoxLayout()
         mainLayout.setSpacing(10)
         if sys.platform != 'darwin':
+            pen = QPen(QColor('#4D5355' if self.parent.theme == 'dark' else '#B9B9B9'))
+            pen.setWidth(2)
+            theme_light = QPixmap(':/images/theme-light.png', 'PNG')
+            painter = QPainter(theme_light)
+            painter.setPen(pen)
+            painter.setBrush(Qt.NoBrush)
+            painter.drawRect(0, 0, theme_light.width(), theme_light.height())
+            theme_dark = QPixmap(':/images/theme-dark.png', 'PNG')
+            painter = QPainter(theme_dark)
+            painter.setPen(pen)
+            painter.setBrush(Qt.NoBrush)
+            painter.drawRect(0, 0, theme_dark.width(), theme_dark.height())
             self.lightRadio = QRadioButton(self)
-            self.lightRadio.setIcon(QIcon(':/images/%s/theme-light.png' % self.parent.theme))
+            self.lightRadio.setIcon(QIcon(theme_light))
             self.lightRadio.setIconSize(QSize(165, 121))
             self.lightRadio.setCursor(Qt.PointingHandCursor)
             self.lightRadio.clicked.connect(self.switchTheme)
             self.lightRadio.setChecked(self.parent.theme == 'light')
             self.darkRadio = QRadioButton(self)
-            self.darkRadio.setIcon(QIcon(':/images/%s/theme-dark.png' % self.parent.theme))
+            self.darkRadio.setIcon(QIcon(theme_dark))
             self.darkRadio.setIconSize(QSize(165, 121))
             self.darkRadio.setCursor(Qt.PointingHandCursor)
             self.darkRadio.clicked.connect(self.switchTheme)
@@ -330,14 +342,14 @@ class FFmpegPage(QWidget):
         self.validateButton.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         self.validateButton.setCursor(Qt.PointingHandCursor)
         self.validateButton.clicked.connect(self.validatePath)
-        ffmpegLabel = QLabel('Path to FFmpeg binaries <i>ffmpeg</i> and <i>ffprobe</i>. Change this default value in '
-                             'order to use a different version of FFmpeg, preferably static. This setting should '
-                             'only be changed if your Linux distribution only offers FFmpeg versions 2.8 or '
-                             'below. We recommended the below URL for the latest static binaries.<br/><br/>'
-                             '<a href="https://www.johnvansickle.com/ffmpeg">https://www.johnvansickle.com/ffmpeg</a>'
-                             '<br/><br/>Simply extract, place the binaries someplace suitable on your system and input '
-                             'the path in the field above. You then need to validate the new path using the validate '
-                             'button under the field to ensure the path is correct.')
+        ffmpegLabel = QLabel('''Path to FFmpeg binaries <b>ffmpeg</b> and <b>ffprobe</b>. Change this default value in
+            order to use a different version of FFmpeg, preferably static. This setting should only be changed if your
+            Linux distribution only offers FFmpeg versions 2.8 or below. We recommended the below URL for the latest
+            static binaries.<br/><div align="center">
+            <a href="https://www.johnvansickle.com/ffmpeg">https://www.johnvansickle.com/ffmpeg</a>
+            </div><br/>Simply extract, place the binaries someplace suitable on your system and input the path in the
+            field above. You then need to validate the new path using the validate button under the field to ensure the
+            path is correct.''')
         ffmpegLabel.setObjectName('ffmpeglabel')
         ffmpegLabel.setTextFormat(Qt.RichText)
         ffmpegLabel.setOpenExternalLinks(True)

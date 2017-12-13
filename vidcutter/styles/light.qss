@@ -45,6 +45,8 @@ QWidget#genericdialog3, QDialog#notification {
     background: #FFF;
 }
 
+/* -------------------------------------------------------------------------- */
+
 QFrame#videoplayer {
     border: 1px solid #B9B9B9;
     background: #000;
