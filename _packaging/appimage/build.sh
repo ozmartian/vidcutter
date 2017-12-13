@@ -6,4 +6,4 @@ wget https://github.com/AppImage/AppImages/raw/master/pkg2appimage
 chmod +x ./pkg2appimage
 
 bash -ex ./pkg2appimage ./VidCutter.yml
-# rm ./pkg2appimage
+rm ./pkg2appimage

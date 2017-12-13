@@ -1,3 +1,46 @@
+vidcutter (5.5.0-1) unstable; urgency=medium
+
+  * The most requested feature is finally added; media stream mapping! A
+    new media settings button has been added and is enabled for use when
+    clips are all derived from the same source media OR media files added
+    manually all share the same codecs, formats, etc... A view of all
+    detected streams including video, audio, text/subtitles, metadata/chapters
+    will be presented upon which you can enable/disable what you want mapped
+    and carried across to the target media produced for you.
+
+    As always, suggestions for further improvements to this, whether visual
+    or technical via the Issues page; which I definitely, most assuredly,
+    promise to start paying attention to. I'm mearly all out of new app ideas
+    + innovations so I have no choice :-)
+
+  * Migrated main toolbar buttons from QToolBar + QActions to new custom
+    widget VCToolBarButton handling QPushButton with attached. This allows
+    working pressed states on existing toolbar buttons which QToolBar buttons
+    (for reasons I cannot figure out) do not.
+
+  * FFmpeg category added to settings dialog for users on Linux systems
+    excluding AppImage, to cater for releases where the latest FFmpeg binaries
+    are not prebundled. This allows users to set a different path to a newer
+    set of FFmpeg binaries if they are stuck on Linux distros only offering
+    older versions of FFmpeg such as 2.8 and below which prevents SmartCut
+    from working to its full potential.
+
+  * Minor changes/improvements to a few other front panel buttons w/ pressed states
+    where previously unavailable + minor cosmetic improvements to color schemes
+    of hover/active state buttons
+
+  * Application desktop and appdata metadata files now using reverse domain
+    notation for their file names
+
+  * Hardened logic for app quit when clips exist to prompt for project save
+
+  * Better detection and prompting if application exit is attempted while
+    video processing jobs in progress, if user decides to continue quitting
+    then kill all VidCutter associated jobs gracefully and force the usual
+    cleanup routines
+
+ -- Pete Alexandrou <pete@ozmartians.com>  Wed, 11 Dec 2017 19:42:00 +0800
+
 vidcutter (5.0.5-2) stable; urgency=medium
 
   * fixed timeline slider tooltip displaying time position to only appear
@@ -32,30 +75,30 @@ vidcutter (5.0.0-1) stable; urgency=medium
     more accurate and modern way
 
   * thumbnail generation accuracy fixed so thumbnails generated accurately
-  	match frame with timecode placement
+    match frame with timecode placement
 
   * new "View keyframes" button option available under Video Info which
     displays the source video's defined keyframes which are utilised
     by the new SmartCut feature
 
   * improvements made to standard quick cutting to make them as frame
-  	accurate as can be given the source's media codec and container
+    accurate as can be given the source's media codec and container
 
   * improvements to stream mapping to help ensure all source media's
-  	streams (video, audio, text/subtitles) are included in the target
-  	video produced. only if problems are found during the cut/join
-  	process will this be abandoned and FFmpeg then allowed to make its
-  	usual "best choice" in choosing the best streams for you
+    streams (video, audio, text/subtitles) are included in the target
+    video produced. only if problems are found during the cut/join
+    process will this be abandoned and FFmpeg then allowed to make its
+    usual "best choice" in choosing the best streams for you
 
   * single app instance code added along with a settings option to force all
-  	file manager associated tasks to the single already loaded instance of
-  	VidCutter
+    file manager associated tasks to the single already loaded instance of
+    VidCutter
 
   * .vcp registered as "VidCutter Project file" for Linux and Windows
-  	installations
+    installations
 
   * more debugging information available for the console or "--debug"
-  	command-line argument
+    command-line argument
 
   * new verbose logging option added to settings for even more verbose
     logging in the application log file, console window and debug command-
@@ -64,7 +107,7 @@ vidcutter (5.0.0-1) stable; urgency=medium
   * new app icon; hopefully this one sticks :-)
 
   * countless more improvements and fixes that aren't worth documenting but
-  	available in the freely available commit logs if you're interested
+    available in the freely available commit logs if you're interested
 
  -- Pete Alexandrou <pete@ozmartians.com>  Thu, 16 Nov 2017 00:22:00 +0800
 
