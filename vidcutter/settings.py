@@ -337,26 +337,35 @@ class FFmpegPage(QWidget):
         pathLayout = QHBoxLayout()
         pathLayout.addWidget(self.pathLineEdit)
         pathLayout.addWidget(pathButton)
+        resetButton = QPushButton('Reset', self)
+        resetButton.setToolTip('Reset to default path')
+        resetButton.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        resetButton.setCursor(Qt.PointingHandCursor)
+        resetButton.clicked.connect(self.resetToDefault)
         self.validateButton = QPushButton('Validate', self)
-        self.validateButton.setToolTip('Validate path')
+        self.validateButton.setToolTip('Validate new path')
         self.validateButton.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         self.validateButton.setCursor(Qt.PointingHandCursor)
         self.validateButton.clicked.connect(self.validatePath)
+        buttonsLayout = QHBoxLayout()
+        buttonsLayout.addWidget(resetButton)
+        buttonsLayout.addWidget(self.validateButton)
         ffmpegLabel = QLabel('''Path to FFmpeg binaries <b>ffmpeg</b> and <b>ffprobe</b>. Change this default value in
             order to use a different version of FFmpeg, preferably static. This setting should only be changed if your
             Linux distribution only offers FFmpeg versions 2.8 or below. We recommended the below URL for the latest
             static binaries.<br/><div align="center">
             <a href="https://www.johnvansickle.com/ffmpeg">https://www.johnvansickle.com/ffmpeg</a>
             </div><br/>Simply extract, place the binaries someplace suitable on your system and input the path in the
-            field above. You then need to validate the new path using the validate button under the field to ensure the
-            path is correct.''')
+            field above. You then need to validate using the above button and the new path will be in use if the binaries
+            can be found and are executable.<br/><br/>Use the reset button to revert back to the default detected path if
+            you run into any problems.''')
         ffmpegLabel.setObjectName('ffmpeglabel')
         ffmpegLabel.setTextFormat(Qt.RichText)
         ffmpegLabel.setOpenExternalLinks(True)
         ffmpegLabel.setWordWrap(True)
         ffmpegLayout = QFormLayout()
         ffmpegLayout.addRow('Path', pathLayout)
-        ffmpegLayout.addRow('', self.validateButton)
+        ffmpegLayout.addRow('', buttonsLayout)
         ffmpegLayout.addRow(ffmpegLabel)
         ffmpegGroup = QGroupBox('FFmpeg')
         ffmpegGroup.setLayout(ffmpegLayout)
@@ -365,6 +374,12 @@ class FFmpegPage(QWidget):
         mainLayout.addWidget(ffmpegGroup)
         mainLayout.addStretch(1)
         self.setLayout(mainLayout)
+
+    @pyqtSlot()
+    def resetToDefault(self) -> None:
+        self.parent.parent.setFFmpegPath(None)
+        self.parent.service.backends = self.parent.service.findBackends(None)
+        self.pathLineEdit.setText(os.path.dirname(self.parent.service.backends.ffmpeg))
 
     @pyqtSlot()
     def setPath(self) -> None:
@@ -399,10 +414,10 @@ class FFmpegPage(QWidget):
         else:
             self.validateButton.setText('INVALID PATH - REJECTED')
             self.pathLineEdit.setText(os.path.dirname(self.parent.service.backends.ffmpeg))
-        QTimer.singleShot(3000, self.resetButton)
+        QTimer.singleShot(3000, self.resetLabel)
 
     @pyqtSlot()
-    def resetButton(self) -> None:
+    def resetLabel(self) -> None:
         self.validateButton.setStyleSheet('QPushButton { font-weight: normal; }')
         self.validateButton.setText('Validate')
 

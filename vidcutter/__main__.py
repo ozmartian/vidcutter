@@ -104,7 +104,8 @@ class MainWindow(QMainWindow):
 
     def init_logger(self) -> None:
         try:
-            log_path = QStandardPaths.writableLocation(QStandardPaths.AppConfigLocation)
+            log_path = QStandardPaths.writableLocation(QStandardPaths.AppConfigLocation).replace(
+                qApp.applicationName(), qApp.applicationName().lower())
         except AttributeError:
             if sys.platform == 'win32':
                 log_path = os.path.join(QDir.homePath(), 'AppData', 'Local', qApp.applicationName().lower())
@@ -132,7 +133,8 @@ class MainWindow(QMainWindow):
 
     def init_settings(self) -> None:
         try:
-            settings_path = QStandardPaths.writableLocation(QStandardPaths.AppConfigLocation)
+            settings_path = QStandardPaths.writableLocation(QStandardPaths.AppConfigLocation).replace(
+                qApp.applicationName(), qApp.applicationName().lower())
         except AttributeError:
             if sys.platform == 'win32':
                 settings_path = os.path.join(QDir.homePath(), 'AppData', 'Local', qApp.applicationName().lower())

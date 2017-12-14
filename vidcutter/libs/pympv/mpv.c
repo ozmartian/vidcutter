@@ -1490,6 +1490,9 @@ static CYTHON_INLINE int64_t __Pyx_PyInt_As_int64_t(PyObject *);
 /* CIntFromPy.proto */
 static CYTHON_INLINE uintptr_t __Pyx_PyInt_As_uintptr_t(PyObject *);
 
+/* CIntFromPy.proto */
+static CYTHON_INLINE intptr_t __Pyx_PyInt_As_intptr_t(PyObject *);
+
 /* FastTypeChecks.proto */
 #if CYTHON_COMPILING_IN_CPYTHON
 #define __Pyx_TypeCheck(obj, type) __Pyx_IsSubtype(Py_TYPE(obj), (PyTypeObject *)type)
@@ -16669,7 +16672,7 @@ static PyObject *__pyx_pf_3mpv_7Context_50__setstate_cython__(CYTHON_UNUSED stru
  *         self.shutdown()
  * 
  * cdef void *_c_getprocaddress(void *ctx, const char *name) with gil:             # <<<<<<<<<<<<<<
- *     return <void *><uintptr_t>(<object>ctx)(name)
+ *     return <void *><intptr_t>(<object>ctx)(name)
  * 
  */
 
@@ -16681,7 +16684,7 @@ static void *__pyx_f_3mpv__c_getprocaddress(void *__pyx_v_ctx, char const *__pyx
   PyObject *__pyx_t_3 = NULL;
   PyObject *__pyx_t_4 = NULL;
   PyObject *__pyx_t_5 = NULL;
-  uintptr_t __pyx_t_6;
+  intptr_t __pyx_t_6;
   #ifdef WITH_THREAD
   PyGILState_STATE __pyx_gilstate_save = __Pyx_PyGILState_Ensure();
   #endif
@@ -16690,7 +16693,7 @@ static void *__pyx_f_3mpv__c_getprocaddress(void *__pyx_v_ctx, char const *__pyx
   /* "mpv.pyx":1101
  * 
  * cdef void *_c_getprocaddress(void *ctx, const char *name) with gil:
- *     return <void *><uintptr_t>(<object>ctx)(name)             # <<<<<<<<<<<<<<
+ *     return <void *><intptr_t>(<object>ctx)(name)             # <<<<<<<<<<<<<<
  * 
  * cdef void _c_updatecb(void *ctx) with gil:
  */
@@ -16743,16 +16746,16 @@ static void *__pyx_f_3mpv__c_getprocaddress(void *__pyx_v_ctx, char const *__pyx
     }
   }
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_6 = __Pyx_PyInt_As_uintptr_t(__pyx_t_1); if (unlikely((__pyx_t_6 == ((uintptr_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 1101, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyInt_As_intptr_t(__pyx_t_1); if (unlikely((__pyx_t_6 == ((intptr_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 1101, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_r = ((void *)((uintptr_t)__pyx_t_6));
+  __pyx_r = ((void *)((intptr_t)__pyx_t_6));
   goto __pyx_L0;
 
   /* "mpv.pyx":1100
  *         self.shutdown()
  * 
  * cdef void *_c_getprocaddress(void *ctx, const char *name) with gil:             # <<<<<<<<<<<<<<
- *     return <void *><uintptr_t>(<object>ctx)(name)
+ *     return <void *><intptr_t>(<object>ctx)(name)
  * 
  */
 
@@ -16774,7 +16777,7 @@ static void *__pyx_f_3mpv__c_getprocaddress(void *__pyx_v_ctx, char const *__pyx
 }
 
 /* "mpv.pyx":1103
- *     return <void *><uintptr_t>(<object>ctx)(name)
+ *     return <void *><intptr_t>(<object>ctx)(name)
  * 
  * cdef void _c_updatecb(void *ctx) with gil:             # <<<<<<<<<<<<<<
  *     (<object>ctx)()
@@ -16820,7 +16823,7 @@ static void __pyx_f_3mpv__c_updatecb(void *__pyx_v_ctx) {
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "mpv.pyx":1103
- *     return <void *><uintptr_t>(<object>ctx)(name)
+ *     return <void *><intptr_t>(<object>ctx)(name)
  * 
  * cdef void _c_updatecb(void *ctx) with gil:             # <<<<<<<<<<<<<<
  *     (<object>ctx)()
@@ -30155,6 +30158,195 @@ raise_neg_overflow:
     PyErr_SetString(PyExc_OverflowError,
         "can't convert negative value to uintptr_t");
     return (uintptr_t) -1;
+}
+
+/* CIntFromPy */
+            static CYTHON_INLINE intptr_t __Pyx_PyInt_As_intptr_t(PyObject *x) {
+    const intptr_t neg_one = (intptr_t) -1, const_zero = (intptr_t) 0;
+    const int is_unsigned = neg_one > const_zero;
+#if PY_MAJOR_VERSION < 3
+    if (likely(PyInt_Check(x))) {
+        if (sizeof(intptr_t) < sizeof(long)) {
+            __PYX_VERIFY_RETURN_INT(intptr_t, long, PyInt_AS_LONG(x))
+        } else {
+            long val = PyInt_AS_LONG(x);
+            if (is_unsigned && unlikely(val < 0)) {
+                goto raise_neg_overflow;
+            }
+            return (intptr_t) val;
+        }
+    } else
+#endif
+    if (likely(PyLong_Check(x))) {
+        if (is_unsigned) {
+#if CYTHON_USE_PYLONG_INTERNALS
+            const digit* digits = ((PyLongObject*)x)->ob_digit;
+            switch (Py_SIZE(x)) {
+                case  0: return (intptr_t) 0;
+                case  1: __PYX_VERIFY_RETURN_INT(intptr_t, digit, digits[0])
+                case 2:
+                    if (8 * sizeof(intptr_t) > 1 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 2 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(intptr_t, unsigned long, (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(intptr_t) >= 2 * PyLong_SHIFT) {
+                            return (intptr_t) (((((intptr_t)digits[1]) << PyLong_SHIFT) | (intptr_t)digits[0]));
+                        }
+                    }
+                    break;
+                case 3:
+                    if (8 * sizeof(intptr_t) > 2 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 3 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(intptr_t, unsigned long, (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(intptr_t) >= 3 * PyLong_SHIFT) {
+                            return (intptr_t) (((((((intptr_t)digits[2]) << PyLong_SHIFT) | (intptr_t)digits[1]) << PyLong_SHIFT) | (intptr_t)digits[0]));
+                        }
+                    }
+                    break;
+                case 4:
+                    if (8 * sizeof(intptr_t) > 3 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 4 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(intptr_t, unsigned long, (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(intptr_t) >= 4 * PyLong_SHIFT) {
+                            return (intptr_t) (((((((((intptr_t)digits[3]) << PyLong_SHIFT) | (intptr_t)digits[2]) << PyLong_SHIFT) | (intptr_t)digits[1]) << PyLong_SHIFT) | (intptr_t)digits[0]));
+                        }
+                    }
+                    break;
+            }
+#endif
+#if CYTHON_COMPILING_IN_CPYTHON
+            if (unlikely(Py_SIZE(x) < 0)) {
+                goto raise_neg_overflow;
+            }
+#else
+            {
+                int result = PyObject_RichCompareBool(x, Py_False, Py_LT);
+                if (unlikely(result < 0))
+                    return (intptr_t) -1;
+                if (unlikely(result == 1))
+                    goto raise_neg_overflow;
+            }
+#endif
+            if (sizeof(intptr_t) <= sizeof(unsigned long)) {
+                __PYX_VERIFY_RETURN_INT_EXC(intptr_t, unsigned long, PyLong_AsUnsignedLong(x))
+#ifdef HAVE_LONG_LONG
+            } else if (sizeof(intptr_t) <= sizeof(unsigned PY_LONG_LONG)) {
+                __PYX_VERIFY_RETURN_INT_EXC(intptr_t, unsigned PY_LONG_LONG, PyLong_AsUnsignedLongLong(x))
+#endif
+            }
+        } else {
+#if CYTHON_USE_PYLONG_INTERNALS
+            const digit* digits = ((PyLongObject*)x)->ob_digit;
+            switch (Py_SIZE(x)) {
+                case  0: return (intptr_t) 0;
+                case -1: __PYX_VERIFY_RETURN_INT(intptr_t, sdigit, (sdigit) (-(sdigit)digits[0]))
+                case  1: __PYX_VERIFY_RETURN_INT(intptr_t,  digit, +digits[0])
+                case -2:
+                    if (8 * sizeof(intptr_t) - 1 > 1 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 2 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(intptr_t, long, -(long) (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(intptr_t) - 1 > 2 * PyLong_SHIFT) {
+                            return (intptr_t) (((intptr_t)-1)*(((((intptr_t)digits[1]) << PyLong_SHIFT) | (intptr_t)digits[0])));
+                        }
+                    }
+                    break;
+                case 2:
+                    if (8 * sizeof(intptr_t) > 1 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 2 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(intptr_t, unsigned long, (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(intptr_t) - 1 > 2 * PyLong_SHIFT) {
+                            return (intptr_t) ((((((intptr_t)digits[1]) << PyLong_SHIFT) | (intptr_t)digits[0])));
+                        }
+                    }
+                    break;
+                case -3:
+                    if (8 * sizeof(intptr_t) - 1 > 2 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 3 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(intptr_t, long, -(long) (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(intptr_t) - 1 > 3 * PyLong_SHIFT) {
+                            return (intptr_t) (((intptr_t)-1)*(((((((intptr_t)digits[2]) << PyLong_SHIFT) | (intptr_t)digits[1]) << PyLong_SHIFT) | (intptr_t)digits[0])));
+                        }
+                    }
+                    break;
+                case 3:
+                    if (8 * sizeof(intptr_t) > 2 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 3 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(intptr_t, unsigned long, (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(intptr_t) - 1 > 3 * PyLong_SHIFT) {
+                            return (intptr_t) ((((((((intptr_t)digits[2]) << PyLong_SHIFT) | (intptr_t)digits[1]) << PyLong_SHIFT) | (intptr_t)digits[0])));
+                        }
+                    }
+                    break;
+                case -4:
+                    if (8 * sizeof(intptr_t) - 1 > 3 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 4 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(intptr_t, long, -(long) (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(intptr_t) - 1 > 4 * PyLong_SHIFT) {
+                            return (intptr_t) (((intptr_t)-1)*(((((((((intptr_t)digits[3]) << PyLong_SHIFT) | (intptr_t)digits[2]) << PyLong_SHIFT) | (intptr_t)digits[1]) << PyLong_SHIFT) | (intptr_t)digits[0])));
+                        }
+                    }
+                    break;
+                case 4:
+                    if (8 * sizeof(intptr_t) > 3 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 4 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(intptr_t, unsigned long, (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(intptr_t) - 1 > 4 * PyLong_SHIFT) {
+                            return (intptr_t) ((((((((((intptr_t)digits[3]) << PyLong_SHIFT) | (intptr_t)digits[2]) << PyLong_SHIFT) | (intptr_t)digits[1]) << PyLong_SHIFT) | (intptr_t)digits[0])));
+                        }
+                    }
+                    break;
+            }
+#endif
+            if (sizeof(intptr_t) <= sizeof(long)) {
+                __PYX_VERIFY_RETURN_INT_EXC(intptr_t, long, PyLong_AsLong(x))
+#ifdef HAVE_LONG_LONG
+            } else if (sizeof(intptr_t) <= sizeof(PY_LONG_LONG)) {
+                __PYX_VERIFY_RETURN_INT_EXC(intptr_t, PY_LONG_LONG, PyLong_AsLongLong(x))
+#endif
+            }
+        }
+        {
+#if CYTHON_COMPILING_IN_PYPY && !defined(_PyLong_AsByteArray)
+            PyErr_SetString(PyExc_RuntimeError,
+                            "_PyLong_AsByteArray() not available in PyPy, cannot convert large numbers");
+#else
+            intptr_t val;
+            PyObject *v = __Pyx_PyNumber_IntOrLong(x);
+ #if PY_MAJOR_VERSION < 3
+            if (likely(v) && !PyLong_Check(v)) {
+                PyObject *tmp = v;
+                v = PyNumber_Long(tmp);
+                Py_DECREF(tmp);
+            }
+ #endif
+            if (likely(v)) {
+                int one = 1; int is_little = (int)*(unsigned char *)&one;
+                unsigned char *bytes = (unsigned char *)&val;
+                int ret = _PyLong_AsByteArray((PyLongObject *)v,
+                                              bytes, sizeof(val),
+                                              is_little, !is_unsigned);
+                Py_DECREF(v);
+                if (likely(!ret))
+                    return val;
+            }
+#endif
+            return (intptr_t) -1;
+        }
+    } else {
+        intptr_t val;
+        PyObject *tmp = __Pyx_PyNumber_IntOrLong(x);
+        if (!tmp) return (intptr_t) -1;
+        val = __Pyx_PyInt_As_intptr_t(tmp);
+        Py_DECREF(tmp);
+        return val;
+    }
+raise_overflow:
+    PyErr_SetString(PyExc_OverflowError,
+        "value too large to convert to intptr_t");
+    return (intptr_t) -1;
+raise_neg_overflow:
+    PyErr_SetString(PyExc_OverflowError,
+        "can't convert negative value to intptr_t");
+    return (intptr_t) -1;
 }
 
 /* FastTypeChecks */
