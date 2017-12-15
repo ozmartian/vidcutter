@@ -494,11 +494,6 @@ class GeneralPage(QWidget):
         seek1SpinBox.setValue(self.parent.parent.level1Seek)
         # noinspection PyUnresolvedReferences
         seek1SpinBox.valueChanged[float].connect(lambda d: self.setSpinnerValue(1, d))
-        seek1Layout = QHBoxLayout()
-        seek1Layout.addStretch(1)
-        seek1Layout.addWidget(QLabel('Level #1'))
-        seek1Layout.addWidget(seek1SpinBox)
-        seek1Layout.addStretch(1)
         seek2SpinBox = QDoubleSpinBox(self)
         seek2SpinBox.setDecimals(1)
         seek2SpinBox.setRange(0.1, 999.9)
@@ -507,24 +502,22 @@ class GeneralPage(QWidget):
         seek2SpinBox.setValue(self.parent.parent.level2Seek)
         # noinspection PyUnresolvedReferences
         seek2SpinBox.valueChanged[float].connect(lambda d: self.setSpinnerValue(2, d))
-        seekLabel = QLabel('''
-            <b>NOTE:</b> these settings affect the seeking time forwards and backwards
-            via the UP/DOWN and SHIFT + UP/DOWN keys. see the <i>Keyboard shortcuts</i> menu
-            option for a full list of available shortcuts
-        ''', self)
+        seekLabel = QLabel('''<b>NOTE:</b> these settings affect the seeking time forwards
+            and backwards via the UP/DOWN and SHIFT + UP/DOWN keys. see the
+            <i>Keyboard shortcuts</i> menu option for a full list of available shortcuts''', self)
         seekLabel.setObjectName('seeksettingslabel')
         seekLabel.setTextFormat(Qt.RichText)
         seekLabel.setWordWrap(True)
-        seek2Layout = QHBoxLayout()
-        seek2Layout.addStretch(1)
-        seek2Layout.addWidget(QLabel('Level #2'))
-        seek2Layout.addWidget(seek2SpinBox)
-        seek2Layout.addStretch(1)
-        seekWidgetsLayout = QHBoxLayout()
-        seekWidgetsLayout.addLayout(seek1Layout)
-        seekWidgetsLayout.addLayout(seek2Layout)
+        spinnersLayout = QHBoxLayout()
+        spinnersLayout.addStretch(1)
+        spinnersLayout.addWidget(QLabel('Level #1', self))
+        spinnersLayout.addWidget(seek1SpinBox)
+        spinnersLayout.addStretch(1)
+        spinnersLayout.addWidget(QLabel('Level #2', self))
+        spinnersLayout.addWidget(seek2SpinBox)
+        spinnersLayout.addStretch(1)
         seekLayout = QVBoxLayout()
-        seekLayout.addLayout(seekWidgetsLayout)
+        seekLayout.addLayout(spinnersLayout)
         seekLayout.addWidget(seekLabel)
         self.seekGroup = QGroupBox('Seeking')
         self.seekGroup.setLayout(seekLayout)

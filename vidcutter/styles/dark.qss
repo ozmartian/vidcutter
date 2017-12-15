@@ -294,6 +294,7 @@ QDialogButtonBox QPushButton:pressed,
 #clipindextools QPushButton:pressed,
 QDialog#videoinfo QPushButton:focus,
 QDialog#videoinfo QPushButton:pressed,
+QDialog#settingsdialog QPushButton:pressed,
 QDialog#notification QPushButton,
 QDialog#notification QPushButton:focus,
 QDialog#notification QPushButton:pressed {

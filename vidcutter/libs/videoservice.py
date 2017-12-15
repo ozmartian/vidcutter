@@ -76,7 +76,7 @@ class VideoService(QObject):
         self.logger = logging.getLogger(__name__)
         try:
             self.backends = VideoService.findBackends(self.ffmpegpath)
-            if self.backends.ffmpeg is not None:
+            if self.backends.ffmpeg is not None and self.parent is not None:
                 self.parent.ffmpegPath = self.backends.ffmpeg
                 self.parent.settings.setValue('ffmpegPath', os.path.dirname(self.backends.ffmpeg))
             self.proc = VideoService.initProc()
@@ -118,10 +118,12 @@ class VideoService(QObject):
                 binpath = os.path.join(ffmpegpath, exe)
                 if binpath is not None and os.path.isfile(binpath):
                     tools['ffmpeg'] = binpath
+                    break
             for exe in VideoService.config.binaries['posix']['ffprobe']:
                 binpath = os.path.join(ffmpegpath, exe)
                 if binpath is not None and os.path.isfile(binpath):
                     tools['ffprobe'] = binpath
+                    break
         for backend in tools.keys():
             for exe in VideoService.config.binaries[os.name][backend]:
                 if tools[backend] is None:
