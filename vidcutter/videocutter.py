@@ -496,7 +496,7 @@ class VideoCutter(QWidget):
         self.settingsAction = QAction(self.settingsIcon, 'Settings', self, triggered=self.showSettings,
                                       statusTip='Configure application settings')
         self.fullscreenAction = QAction(self.fullscreenIcon, 'Toggle fullscreen', self, triggered=self.toggleFullscreen,
-                                        statusTip='Switch to fullscreen video', enabled=False)
+                                        statusTip='Toggle fullscreen display mode', enabled=False)
         self.quitAction = QAction(self.quitIcon, 'Quit', self, triggered=self.parent.close,
                                   statusTip='Quit the application')
 
@@ -827,8 +827,8 @@ class VideoCutter(QWidget):
         self.toolbar_save.setEnabled(False)
         self.mediaInfoAction.setEnabled(flag)
         self.mediainfoButton.setEnabled(flag)
-        # self.fullscreenButton.setEnabled(flag)
-        # self.fullscreenAction.setEnabled(flag)
+        self.fullscreenButton.setEnabled(flag)
+        self.fullscreenAction.setEnabled(flag)
         self.seekSlider.clearRegions()
         if flag:
             self.seekSlider.setRestrictValue(0)
@@ -1303,20 +1303,19 @@ class VideoCutter(QWidget):
 
     @pyqtSlot()
     def toggleFullscreen(self) -> None:
-        return
-        # if self.mediaAvailable:
-        #     if self.mpvWidget.originalParent is not None:
-        #         self.videoplayerLayout.insertWidget(0, self.mpvWidget)
-        #         self.mpvWidget.originalParent = None
-        #         self.parent.show()
-        #     elif self.mpvWidget.parentWidget() != 0:
-        #         self.parent.hide()
-        #         self.videoplayerLayout.removeWidget(self.mpvWidget)
-        #         self.mpvWidget.originalParent = self
-        #         self.mpvWidget.setGeometry(qApp.desktop().screenGeometry(self))
-        #         # noinspection PyTypeChecker
-        #         self.mpvWidget.setParent(None)
-        #         self.mpvWidget.showFullScreen()
+        if self.mediaAvailable:
+            if self.mpvWidget.originalParent is not None:
+                self.videoplayerLayout.insertWidget(0, self.mpvWidget)
+                self.mpvWidget.originalParent = None
+                self.parent.show()
+            elif self.mpvWidget.parentWidget() != 0:
+                self.parent.hide()
+                self.videoplayerLayout.removeWidget(self.mpvWidget)
+                self.mpvWidget.originalParent = self
+                self.mpvWidget.setGeometry(qApp.desktop().screenGeometry(self))
+                # noinspection PyTypeChecker
+                self.mpvWidget.setParent(None)
+                self.mpvWidget.showFullScreen()
 
     def toggleOSD(self, checked: bool) -> None:
         self.showText('On screen display {}'.format('enabled' if checked else 'disabled'), override=True)
@@ -1329,9 +1328,9 @@ class VideoCutter(QWidget):
                 self.playMedia()
                 return
 
-            # if event.key() in {Qt.Key_F, Qt.Key_Escape}:
-            #     self.mpvWidget.keyPressEvent(event)
-            #     return
+            if event.key() in {Qt.Key_F, Qt.Key_Escape}:
+                self.mpvWidget.keyPressEvent(event)
+                return
 
             if event.key() == Qt.Key_Home:
                 self.setPosition(self.seekSlider.minimum())

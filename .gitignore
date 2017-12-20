@@ -30,3 +30,4 @@ MediaInfo.dll
 *.so
 *.pyd
 *.pyc
+pkg2appimage

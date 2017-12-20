@@ -13,24 +13,12 @@ from PyQt5.QtWidgets import QOpenGLWidget
 
 import vidcutter.libs.mpv as mpv
 
-# use try catch to allow Python versions below 3.5.3 without typing.Optional to still work
-try:
-    # noinspection PyUnresolvedReferences
-    from typing import Optional
-    # noinspection PyUnresolvedReferences
-    from sip import voidptr
 
-    def get_proc_address(proc) -> Optional[voidptr]:
-        glctx = QGLContext.currentContext()
-        if glctx is None:
-            return None
-        return glctx.getProcAddress(proc.decode())
-except ImportError:
-    def get_proc_address(proc):
-        glctx = QGLContext.currentContext()
-        if glctx is None:
-            return None
-        return glctx.getProcAddress(proc.decode())
+def get_proc_address(name):
+    glctx = QGLContext.currentContext()
+    if glctx is None:
+        return None
+    return glctx.getProcAddress(name.decode())
 
 
 class mpvWidget(QOpenGLWidget):
@@ -101,7 +89,7 @@ class mpvWidget(QOpenGLWidget):
 
     def initializeGL(self):
         if self.opengl:
-            self.opengl.init_gl(None, get_proc_address)
+            self.opengl.init_gl('GL_MP_MPGetNativeDisplay' if os.name == 'posix' else None, get_proc_address)
 
     def paintGL(self):
         if self.opengl:
@@ -190,37 +178,37 @@ class mpvWidget(QOpenGLWidget):
     def property(self, prop: str):
         return self.mpv.get_property(prop)
 
-    # def _exitFullScreen(self) -> None:
-    #     self.setParent(self.originalParent)
-    #     self.showNormal()
+    def _exitFullScreen(self) -> None:
+        self.setParent(self.originalParent)
+        self.showNormal()
 
-    # def changeEvent(self, event: QEvent) -> None:
-    #     if event.type() == QEvent.WindowStateChange and self.isFullScreen():
-    #         self.mpv.set_option('osd-align-x', 'center')
-    #         self.showText('Press ESC key to exit full screen')
-    #         QTimer.singleShot(5000, self.resetOSD)
+    def changeEvent(self, event: QEvent) -> None:
+        if event.type() == QEvent.WindowStateChange and self.isFullScreen():
+            self.mpv.set_option('osd-align-x', 'center')
+            self.showText('Press ESC key to exit full screen')
+            QTimer.singleShot(5000, self.resetOSD)
 
-    # def resetOSD(self) -> None:
-    #     self.showText('')
-    #     self.mpv.set_option('osd-align-x', 'left')
+    def resetOSD(self) -> None:
+        self.showText('')
+        self.mpv.set_option('osd-align-x', 'left')
 
-    # def keyPressEvent(self, event: QKeyEvent) -> None:
-    #     if event.key() in {Qt.Key_F, Qt.Key_Escape}:
-    #         event.accept()
-    #         if self.isFullScreen():
-    #             self._exitFullScreen()
-    #         self.parent.toggleFullscreen()
-    #     elif self.isFullScreen():
-    #         self.parent.keyPressEvent(event)
-    #     else:
-    #         super(mpvWidget, self).keyPressEvent(event)
+    def keyPressEvent(self, event: QKeyEvent) -> None:
+        if event.key() in {Qt.Key_F, Qt.Key_Escape}:
+            event.accept()
+            if self.isFullScreen():
+                self._exitFullScreen()
+            self.parent.toggleFullscreen()
+        elif self.isFullScreen():
+            self.parent.keyPressEvent(event)
+        else:
+            super(mpvWidget, self).keyPressEvent(event)
 
-    # def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
-    #     event.accept()
-    #     if self.isFullScreen():
-    #         self._exitFullScreen()
-    #     self.parent.toggleFullscreen()
-    #     # super(mpvWidget, self).mouseDoubleClickEvent(event)
+    def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
+        event.accept()
+        if self.isFullScreen():
+            self._exitFullScreen()
+        self.parent.toggleFullscreen()
+        # super(mpvWidget, self).mouseDoubleClickEvent(event)
 
     def wheelEvent(self, event: QWheelEvent) -> None:
         self.parent.seekSlider.wheelEvent(event)

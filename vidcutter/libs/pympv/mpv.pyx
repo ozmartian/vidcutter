@@ -1,5 +1,3 @@
-# coding=utf-8
-
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
@@ -27,7 +25,7 @@ from libc.string cimport strcpy
 
 # from client cimport *
 
-############################################################################
+# #############################################################################################
 
 cdef extern from "mpv/client.h":
 
@@ -79,9 +77,9 @@ cdef extern from "mpv/client.h":
 
     ctypedef unsigned long uint_fast64_t
 
-    ctypedef long long intptr_t
+    ctypedef long intptr_t
 
-    ctypedef unsigned long long uintptr_t
+    ctypedef unsigned long uintptr_t
 
     ctypedef long intmax_t
 
@@ -308,9 +306,9 @@ cdef extern from "mpv/opengl_cb.h":
                                            mpv_opengl_cb_update_fn callback,
                                            void *callback_ctx) nogil
 
-    long long mpv_opengl_cb_init_gl(mpv_opengl_cb_context *ctx, const char *exts,
-                                    mpv_opengl_cb_get_proc_address_fn get_proc_address,
-                                    void *get_proc_address_ctx) nogil
+    int mpv_opengl_cb_init_gl(mpv_opengl_cb_context *ctx, const char *exts,
+                              mpv_opengl_cb_get_proc_address_fn get_proc_address,
+                              void *get_proc_address_ctx) nogil
 
     int mpv_opengl_cb_draw(mpv_opengl_cb_context *ctx, int fbo, int w, int h) nogil
 
@@ -318,7 +316,7 @@ cdef extern from "mpv/opengl_cb.h":
 
     int mpv_opengl_cb_uninit_gl(mpv_opengl_cb_context *ctx) nogil
 
-############################################################################
+# #############################################################################################
 
 __version__ = "0.3.0"
 __author__ = "Andre D"
@@ -825,7 +823,7 @@ cdef class Context(object):
         async: True will return right away, status comes in as MPV_EVENT_COMMAND_REPLY
         data: Only valid if async, gets sent back as reply_userdata in the Event
 
-        Wraps: mpv_f and mpv_command_node_async
+        Wraps: mpv_command_node and mpv_command_node_async
         """
         assert self._ctx
         cdef mpv_node node = self._prep_native_value(cmdlist, self._format_for(cmdlist))
@@ -1005,7 +1003,7 @@ cdef class Context(object):
     def set_wakeup_callback(self, callback):
         """Wraps: mpv_set_wakeup_callback"""
         assert self._ctx
-        cdef uintptr_t name = <uintptr_t>id(self)
+        cdef uint64_t name = <uint64_t>id(self)
         self.callback = callback
         self.callbackthread.set(callback)
         with nogil:
@@ -1129,7 +1127,7 @@ cdef class OpenGLContext(object):
         if cb is None:
             with nogil:
                 mpv_opengl_cb_set_update_callback(self._ctx, NULL, NULL)
-        else:
+        else:            
             self.update_cb = cb
             with nogil:
                 mpv_opengl_cb_set_update_callback(self._ctx, &_c_updatecb, <void *>cb)
@@ -1195,6 +1193,6 @@ class CallbackThread(Thread):
             sys.stderr.write("pympv error during callback: %s\n" % e)
 
 cdef void _c_callback(void* d) with gil:
-    cdef uintptr_t name = <uintptr_t>d
+    cdef intptr_t name = <intptr_t>d
     callback = _callbacks.get(name)
     callback.call()

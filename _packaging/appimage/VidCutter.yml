@@ -1,9 +1,10 @@
 app: VidCutter
+binpatch: true
 
 ingredients:
   dist: trusty
   sources: 
-    - deb http://archive.ubuntu.com/ubuntu trusty main universe
+    - deb http://mirrors.cn99.com/ubuntu trusty main universe
   ppas:
     - mc3man/testing6
     - jonathonf/ffmpeg-3
@@ -18,6 +19,7 @@ ingredients:
     - libmpv1
     - ffmpeg
     - mediainfo
+    - libcairo2
 
 script:
   - umask 022
@@ -60,7 +62,9 @@ script:
   - mv usr/lib/python3/dist-packages/pkg_resources.BAK usr/lib/python3/dist-packages/pkg_resources
   - rm -rf usr/local
   - rm -f usr/bin/ffplay usr/bin/ffserver
+  - mv usr/lib/x86_64-linux-gnu/libkrb5.so.26 /tmp
   - rm -rf usr/lib/x86_64-linux-gnu/*krb5*
+  - mv /tmp/libkrb5.so.26 usr/lib/x86_64-linux-gnu/
   - rm -f lib/x86_64-linux-gnu/libtinfo.so.5* lib/x86_64-linux-gnu/libncursesw.so.5* lib/x86_64-linux-gnu/libglib-2.0.so.0*
   - mv usr/lib/x86_64-linux-gnu/caca/*.so* usr/lib/x86_64-linux-gnu/
   - rm -f ./AppRun

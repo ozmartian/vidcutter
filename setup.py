@@ -31,7 +31,6 @@
 
 
 import os
-import sys
 
 from setuptools import setup
 from setuptools.extension import Extension
@@ -43,15 +42,14 @@ setup_requires = ['setuptools']
 
 # Cython override; default to building extension module from pre-Cythonized .c file
 USE_CYTHON = True if not os.path.isfile(os.path.join('vidcutter', 'libs', 'pympv', 'mpv.c')) else False
-ext = '.pyx' if USE_CYTHON else '.c'
-extensions = [Extension(
-    'vidcutter.libs.mpv',
-    ['vidcutter/libs/pympv/mpv{0}'.format(ext)],
-    include_dirs=['vidcutter/libs/pympv/mpv'],
-    libraries=['mpv'],
-    library_dirs=SetupHelpers.get_library_dirs(),
-    extra_compile_args=['-g0' if sys.platform != 'win32' else '']
-)]
+extensions = [
+    Extension(name='vidcutter.libs.mpv',
+              sources=['vidcutter/libs/pympv/mpv.{}'.format('c' if not USE_CYTHON else 'pyx')],
+              include_dirs=['vidcutter/libs/pympv/mpv'],
+              libraries=['mpv'],
+              library_dirs=SetupHelpers.get_library_dirs(),
+              extra_compile_args=['-g0' if os.name == 'posix' else ''])
+]
 if USE_CYTHON:
     from Cython.Build import cythonize
     extensions = cythonize(extensions)
