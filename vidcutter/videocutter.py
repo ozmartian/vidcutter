@@ -288,19 +288,19 @@ class VideoCutter(QWidget):
 
         # noinspection PyArgumentList
         self.settingsButton = QPushButton(self, toolTip='Settings', cursor=Qt.PointingHandCursor, flat=True,
-                                          statusTip='Click to configure application settings',
+                                          statusTip='Configure application settings',
                                           objectName='settingsButton', clicked=self.showSettings)
         self.settingsButton.setFixedSize(QSize(33, 32))
 
         # noinspection PyArgumentList
-        self.mediainfoButton = QPushButton(self, toolTip='MediaInfo', cursor=Qt.PointingHandCursor, flat=True,
-                                           statusTip='Click to view technical information on currently loaded media',
+        self.mediainfoButton = QPushButton(self, toolTip='Media Info', cursor=Qt.PointingHandCursor, flat=True,
+                                           statusTip='View current file\'s detailed media information',
                                            objectName='mediainfoButton', clicked=self.mediaInfo, enabled=False)
         self.mediainfoButton.setFixedSize(QSize(33, 32))
 
         # noinspection PyArgumentList
         self.menuButton = QPushButton(self, toolTip='Menu', cursor=Qt.PointingHandCursor, flat=True,
-                                      objectName='menuButton', statusTip='Click to view menu options')
+                                      objectName='menuButton', statusTip='View menu options')
         self.menuButton.setFixedSize(QSize(33, 32))
         self.menuButton.setLayoutDirection(Qt.RightToLeft)
         self.menuButton.setMenu(self.appMenu)
@@ -646,7 +646,7 @@ class VideoCutter(QWidget):
 
     def openMedia(self) -> None:
         filename, _ = QFileDialog.getOpenFileName(
-            self.parent,
+            parent=self.parent,
             caption='{} - Open media file'.format(qApp.applicationName()),
             filter=self.mediaFilters(),
             initialFilter=self.mediaFilters(True),
@@ -661,7 +661,7 @@ class VideoCutter(QWidget):
         initialFilter = 'Project files (*.edl *.vcp)' if self.mediaAvailable else 'VidCutter Project (*.vcp)'
         if project_file is None:
             project_file, _ = QFileDialog.getOpenFileName(
-                self.parent,
+                parent=self.parent,
                 caption='{} - Open project file'.format(qApp.applicationName()),
                 filter=self.projectFilters(),
                 initialFilter=initialFilter,
@@ -739,7 +739,7 @@ class VideoCutter(QWidget):
             ptype = 'VidCutter Project (*.vcp)'
         else:
             project_save, ptype = QFileDialog.getSaveFileName(
-                self.parent,
+                parent=self.parent,
                 caption='{} - Save project'.format(qApp.applicationName()),
                 directory='{}.vcp'.format(project_file),
                 filter=self.projectFilters(True),
@@ -931,7 +931,7 @@ class VideoCutter(QWidget):
     @pyqtSlot()
     def addExternalClips(self):
         clips, _ = QFileDialog.getOpenFileNames(
-            self.parent,
+            parent=self.parent,
             caption='{} - Add media files'.format(qApp.applicationName()),
             filter=self.mediaFilters(),
             initialFilter=self.mediaFilters(True),
@@ -1088,7 +1088,7 @@ class VideoCutter(QWidget):
         filefilter = 'Video files (*{0})'.format(source_ext)
         if clips > 0:
             self.finalFilename, _ = QFileDialog.getSaveFileName(
-                self.parent,
+                parent=self.parent,
                 caption='{} - Save media file'.format(qApp.applicationName()),
                 directory=suggestedFilename,
                 filter=filefilter,

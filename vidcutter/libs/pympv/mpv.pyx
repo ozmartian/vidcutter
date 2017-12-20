@@ -35,7 +35,7 @@ cdef extern from "mpv/client.h":
 
     ctypedef int int32_t
 
-    ctypedef long int64_t
+    ctypedef long long int64_t
 
     ctypedef unsigned char uint8_t
 
@@ -43,7 +43,7 @@ cdef extern from "mpv/client.h":
 
     ctypedef unsigned int uint32_t
 
-    ctypedef unsigned long uint64_t
+    ctypedef unsigned long long uint64_t
 
     ctypedef signed char int_least8_t
 

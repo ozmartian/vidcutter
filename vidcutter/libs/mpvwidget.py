@@ -13,7 +13,6 @@ from PyQt5.QtWidgets import QOpenGLWidget
 
 import vidcutter.libs.mpv as mpv
 
-
 def get_proc_address(name):
     glctx = QGLContext.currentContext()
     if glctx is None:

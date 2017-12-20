@@ -75,7 +75,7 @@ class VideoSlider(QSlider):
         self._regionHeight = 32
         self._regionSelected = -1
         self._cutStarted = False
-        self._showSeekToolTip = True
+        self._showSeekToolTip = False
         self._mouseOver = False
         self.showThumbs = True
         self.thumbnailsOn = False
@@ -363,8 +363,8 @@ class VideoSlider(QSlider):
             opt = QStyleOptionSlider()
             self.initStyleOption(opt)
             handle = self.style().subControlRect(QStyle.CC_Slider, opt, QStyle.SC_SliderHandle, self)
-            pos = handle.topRight()
-            pos += QPoint(5, 13)
+            pos = handle.topLeft()
+            pos += QPoint(-90, 14)
             globalPos = self.mapToGlobal(pos)
             timecode = self.parent.delta2QTime(value).toString(self.parent.timeformat)
             QToolTip.showText(globalPos, str(timecode), self)

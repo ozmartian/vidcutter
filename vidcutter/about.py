@@ -27,11 +27,10 @@ import platform
 import sys
 from datetime import datetime
 
-from PyQt5.Qt import PYQT_VERSION_STR
-from PyQt5.QtCore import QPoint, QSize, Qt, QUrl
-from PyQt5.QtGui import QCloseEvent, QPixmap
+from PyQt5.Qt import PYQT_VERSION_STR, QT_VERSION_STR
+from PyQt5.QtCore import QSize, Qt, QUrl
+from PyQt5.QtGui import QCloseEvent
 from PyQt5.QtWidgets import qApp, QDialog, QDialogButtonBox, QLabel, QTabWidget, QTextBrowser, QVBoxLayout
-from sip import SIP_VERSION_STR
 
 import vidcutter
 import vidcutter.libs.mpv as mpv
@@ -137,7 +136,7 @@ class AboutTab(BaseTab):
     def __init__(self, parent=None):
         super(AboutTab, self).__init__(parent)
         self.parent = parent
-        linebreak = '<br/>' if sys.platform == 'win32' else '&nbsp;&nbsp;&nbsp;'
+        spacer = '&nbsp;&nbsp;&nbsp;'
         # noinspection PyBroadException
         try:
             ffmpeg_version = self.parent.parent.videoService.version()
@@ -161,9 +160,9 @@ class AboutTab(BaseTab):
                             <br/>
                             <b>Python:</b> %s
                             &nbsp;&nbsp;&nbsp;
-                            <b>PyQt5:</b> %s
+                            <b>Qt:</b> %s
                             &nbsp;&nbsp;&nbsp;
-                            <b>SIP:</b> %s
+                            <b>PyQt:</b> %s
                         </p>
                         <p style="font-size:13px;">
                             Copyright &copy; %s <a href="mailto:%s">%s</a>
@@ -197,8 +196,8 @@ class AboutTab(BaseTab):
         </td>
     </tr>
 </table>''' % ('#EA95FF' if self.parent.parent.theme == 'dark' else '#441D4E',
-               self.parent.parent.mpvWidget.mpv.get_property('mpv-version').replace('mpv ', ''), linebreak,
-               ffmpeg_version, sys.version.split(' ')[0], PYQT_VERSION_STR, SIP_VERSION_STR, datetime.now().year,
+               self.parent.parent.mpvWidget.mpv.get_property('mpv-version').replace('mpv ', ''), spacer,
+               ffmpeg_version, sys.version.split(' ')[0], QT_VERSION_STR, PYQT_VERSION_STR, datetime.now().year,
                vidcutter.__email__, vidcutter.__author__, vidcutter.__website__, vidcutter.__website__,
                vidcutter.__bugreport__)
         self.setHtml(html)
