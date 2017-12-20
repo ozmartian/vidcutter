@@ -4,11 +4,11 @@
 {
     "distutils": {
         "depends": [
-            "vidcutter/libs/pympv/mpv/client.h",
-            "vidcutter/libs/pympv/mpv/opengl_cb.h"
+            "vidcutter\\libs\\pympv\\mpv\\client.h",
+            "vidcutter\\libs\\pympv\\mpv\\opengl_cb.h"
         ],
         "extra_compile_args": [
-            "-g0"
+            ""
         ],
         "include_dirs": [
             "vidcutter/libs/pympv",
@@ -16,6 +16,9 @@
         ],
         "libraries": [
             "mpv"
+        ],
+        "library_dirs": [
+            "vidcutter/libs/pympv/win64"
         ],
         "name": "vidcutter.libs.mpv",
         "sources": [
@@ -753,7 +756,7 @@ static const char *__pyx_filename;
 
 
 static const char *__pyx_f[] = {
-  "vidcutter/libs/pympv/mpv.pyx",
+  "vidcutter\\libs\\pympv\\mpv.pyx",
   "stringsource",
 };
 /* NoFastGil.proto */
@@ -1750,7 +1753,7 @@ static const char __pyx_k_pyx_unpickle_LogMessage[] = "__pyx_unpickle_LogMessage
 static const char __pyx_k_OpenGL_API_not_available[] = "OpenGL API not available";
 static const char __pyx_k_pyx_unpickle_InputDispatch[] = "__pyx_unpickle_InputDispatch";
 static const char __pyx_k_CallbackThread_mpv_callback[] = "CallbackThread.mpv_callback";
-static const char __pyx_k_vidcutter_libs_pympv_mpv_pyx[] = "vidcutter/libs/pympv/mpv.pyx";
+static const char __pyx_k_vidcutter_libs_pympv_mpv_pyx[] = "vidcutter\\libs\\pympv\\mpv.pyx";
 static const char __pyx_k_pympv_error_during_callback_s[] = "pympv error during callback: %s\n";
 static const char __pyx_k_pyx_unpickle_EndOfFileReached[] = "__pyx_unpickle_EndOfFileReached";
 static const char __pyx_k_pympv_Python_wrapper_for_libmpv[] = "pympv - Python wrapper for libmpv\n\nlibmpv is a client library for the media player mpv\n\nFor more info see: https://github.com/mpv-player/mpv/blob/master/libmpv/client.h\n";
