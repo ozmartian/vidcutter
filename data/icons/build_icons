@@ -23,6 +23,7 @@ cp ${SVG_SOURCE} ./hicolor/scalable/apps/
 echo -e "\n[ creating Windows icon ]\n"
 icotool -c -o vidcutter.ico \
               ./hicolor/16x16/apps/vidcutter.png \
+              ./hicolor/24x24/apps/vidcutter.png \
               ./hicolor/32x32/apps/vidcutter.png \
               ./hicolor/128x128/apps/vidcutter.png \
               ./hicolor/256x256/apps/vidcutter.png

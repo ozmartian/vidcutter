@@ -53,11 +53,6 @@ class mpvWidget(QOpenGLWidget):
         self.opengl = self.mpv.opengl_cb_api()
         self.opengl.set_update_callback(self.updateHandler)
 
-        try:
-            self.mpv.set_option('opengl-hwdec-interop', 'auto')
-        except mpv.MPVError:
-            pass
-
         if sys.platform == 'win32':
             try:
                 self.mpv.set_option('gpu-context', 'angle')
