@@ -47,8 +47,8 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 [Files]
 Source: "..\pyinstaller\dist\vidcutter.exe"; DestDir: "{app}"
 Source: "..\..\data\icons\uninstall.ico"; DestDir: "{app}"
-Source: "assets\VidCutter.VisualElementsManifest.xml"; DestDir: "{app}"
-Source: "assets\VidCutterTile.png"; DestDir: "{app}"
+Source: "assets\vidcutter.visualelementsmanifest.xml"; DestDir: "{app}"
+Source: "assets\tile.png"; DestDir: "{app}"
 
 [Icons]
 Name: "{group}\VidCutter"; Filename: "{app}\vidcutter.exe"
