@@ -41,7 +41,7 @@ import vidcutter
 setup_requires = ['setuptools']
 
 # Cython override; default to building extension module from pre-Cythonized .c file
-USE_CYTHON = True if not os.path.isfile('vidcutter/pympv/mpv.c') else False
+USE_CYTHON = True if not os.path.isfile('vidcutter/libs/pympv/mpv.c') else False
 
 extensions = [Extension(name='vidcutter.libs.mpv',
                         sources=['vidcutter/libs/pympv/mpv.{}'.format('c' if not USE_CYTHON else 'pyx')],
