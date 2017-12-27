@@ -21,6 +21,7 @@ if os.name == 'posix' and sys.platform != 'darwin':
 def glMPGetNativeDisplay(name):
     if os.name == 'posix' and sys.platform != 'darwin':
         return QX11Info.display()
+    return None
 
 
 def get_proc_address(name) -> int:
@@ -99,8 +100,7 @@ class mpvWidget(QOpenGLWidget):
 
     def initializeGL(self):
         if self.opengl:
-            self.opengl.init_gl('GL_MP_MPGetNativeDisplay' if os.name == 'posix' and sys.platform != 'darwin' else None,
-                                get_proc_address)
+            self.opengl.init_gl('GL_MP_MPGetNativeDisplay', get_proc_address)
 
     def paintGL(self):
         if self.opengl:
