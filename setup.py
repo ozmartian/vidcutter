@@ -41,15 +41,15 @@ import vidcutter
 setup_requires = ['setuptools']
 
 # Cython override; default to building extension module from pre-Cythonized .c file
-USE_CYTHON = True if not os.path.isfile(os.path.join('vidcutter', 'libs', 'pympv', 'mpv.c')) else False
-extensions = [
-    Extension(name='vidcutter.libs.mpv',
-              sources=['vidcutter/libs/pympv/mpv.{}'.format('c' if not USE_CYTHON else 'pyx')],
-              include_dirs=['vidcutter/libs/pympv/mpv'],
-              libraries=['mpv'],
-              library_dirs=SetupHelpers.get_library_dirs(),
-              extra_compile_args=['-g0' if os.name == 'posix' else ''])
-]
+USE_CYTHON = True if not os.path.isfile('vidcutter/pympv/mpv.c') else False
+
+extensions = [Extension(name='vidcutter.libs.mpv',
+                        sources=['vidcutter/libs/pympv/mpv.{}'.format('c' if not USE_CYTHON else 'pyx')],
+                        include_dirs=['vidcutter/libs/pympv/mpv'],
+                        libraries=['mpv'],
+                        library_dirs=SetupHelpers.get_library_dirs(),
+                        extra_compile_args=['-g0' if os.name == 'posix' else ''])]
+
 if USE_CYTHON:
     from Cython.Build import cythonize
     extensions = cythonize(extensions)
@@ -62,7 +62,7 @@ try:
         version=vidcutter.__version__,
         author=vidcutter.__author__,
         author_email=vidcutter.__email__,
-        description='the simplest + fastest video cutter and joiner',
+        description='the simplest + fastest media cutter and joiner',
         long_description=SetupHelpers.get_description(),
         url=vidcutter.__website__,
         license='GPLv3+',

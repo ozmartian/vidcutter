@@ -56,11 +56,8 @@ class VideoStyle(QProxyStyle):
         return super(VideoStyle, self).styleHint(hint, option, widget, returnData)
 
     @staticmethod
-    def loadQSS(theme, devmode: bool = False) -> str:
-        if devmode:
-            filename = os.path.join(QFileInfo(__file__).absolutePath(), 'vidcutter/styles/{}.qss'.format(theme))
-        else:
-            filename = ':/styles/{}.qss'.format(theme)
+    def loadQSS(theme) -> str:
+        filename = ':/styles/{}.qss'.format(theme)
         if QFileInfo(filename).exists():
             qssfile = QFile(filename)
             qssfile.open(QFile.ReadOnly | QFile.Text)

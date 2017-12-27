@@ -32,7 +32,7 @@ from PyQt5.QtWidgets import (QDialog, QDialogButtonBox, QHBoxLayout, QLabel, QPu
                              QVBoxLayout, qApp)
 
 
-class VideoInfo(QDialog):
+class MediaInfo(QDialog):
     modes = {
         'LOW': QSize(450, 300),
         'NORMAL': QSize(600, 450),
@@ -40,42 +40,47 @@ class VideoInfo(QDialog):
     }
 
     def __init__(self, media, parent=None, flags=Qt.Dialog | Qt.WindowCloseButtonHint):
-        super(VideoInfo, self).__init__(parent, flags)
+        super(MediaInfo, self).__init__(parent, flags)
         self.logger = logging.getLogger(__name__)
         self.media = media
         self.parent = parent
-        self.setObjectName('videoinfo')
+        self.setObjectName('mediainfo')
         self.setContentsMargins(0, 0, 0, 0)
         self.setWindowModality(Qt.ApplicationModal)
         self.setWindowTitle('Media information - {}'.format(os.path.basename(self.media)))
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         self.setMinimumSize(self.modes.get(self.parent.parent.scale))
         metadata = '''<style>
-    table {
+    table {{
         font-family: "Noto Sans UI", sans-serif;
         font-size: 13px;
-        margin-top: -10px;
-    }
-    td i {
+        border: 1px solid #999;
+    }}
+    td i {{
         font-family: "Noto Sans UI", sans-serif;
         font-weight: normal;
         font-style: normal;
         text-align: right;
-        color: %s;
+        color: {pencolor};
         white-space: nowrap;
-    }
-    td {
+    }}
+    td {{
         font-weight: normal;
         text-align: right;
-    }
-    td + td { text-align: left; }
-    h1, h2, h3 { color: %s; }
+    }}
+    td + td {{ text-align: left; }}
+    h1, h2, h3 {{ color: {pencolor}; }}
 </style>
-<div align="center">%s</div>''' % ('#C681D5' if self.parent.theme == 'dark' else '#642C68',
-                                   '#C681D5' if self.parent.theme == 'dark' else '#642C68',
-                                   self.parent.videoService.mediainfo(self.media))
+<div align="center">{info}</div>'''.format(pencolor='#C681D5' if self.parent.theme == 'dark' else '#642C68',
+                                           info=self.parent.videoService.mediainfo(self.media))
         content = QTextBrowser(self.parent)
-        content.setStyleSheet('QTextBrowser { border: none; background-color: transparent; }')
+        content.setStyleSheet('''
+            QTextBrowser {{
+                background-color: {bgcolor};
+                color: {pencolor};
+                border: 1px solid #999;
+            }}'''.format(bgcolor='rgba(12, 15, 16, 210)' if self.parent.theme == 'dark' else 'rgba(255, 255, 255, 150)',
+                         pencolor='#FFF' if self.parent.theme == 'dark' else '#000'))
         content.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         content.setHtml(metadata)
         keyframesButton = QPushButton('View keyframes', self)
@@ -107,7 +112,7 @@ class VideoInfo(QDialog):
 
     def closeEvent(self, event: QCloseEvent) -> None:
         self.deleteLater()
-        super(VideoInfo, self).closeEvent(event)
+        super(MediaInfo, self).closeEvent(event)
 
 
 class KeyframesDialog(QDialog):

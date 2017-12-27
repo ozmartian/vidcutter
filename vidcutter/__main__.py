@@ -54,7 +54,7 @@ class MainWindow(QMainWindow):
 
     def __init__(self):
         super(MainWindow, self).__init__()
-        self.video, self.devmode, self.resizeTimer = '', False, 0
+        self.video, self.resizeTimer = '', 0
         self.parse_cmdline()
         self.init_settings()
         self.init_logger()
@@ -161,29 +161,20 @@ class MainWindow(QMainWindow):
 
     def parse_cmdline(self) -> None:
         self.parser = QCommandLineParser()
-        self.parser.setApplicationDescription('\nVidCutter - the simplest + fastest video cutter & joiner')
+        self.parser.setApplicationDescription('\nVidCutter - the simplest + fastest media cutter & joiner')
         self.parser.addPositionalArgument('video', 'Preload video file', '[video]')
         self.parser.addPositionalArgument('project', 'Open VidCutter project file (.vcp)', '[project]')
         self.debug_option = QCommandLineOption(['debug'], 'debug mode; verbose console output & logging. '
                                                'This will basically output what is being logged to file to the '
                                                'console stdout. Mainly useful for debugging problems with your '
                                                'system video and/or audio stack and codec configuration.')
-        self.dev_option = QCommandLineOption(['dev'], 'developer mode; disables the use of compiled resource files '
-                                             'so that all app resources & assets are accessed directly from the file '
-                                             'system allowing you to see UI changes immediately. this typically '
-                                             'relates to changes made to Qt stylesheets (.qss), layout/templates, '
-                                             'content includes and images. basically all assets defined in .qrc '
-                                             'files throughout the codebase.')
         self.parser.addOption(self.debug_option)
-        self.parser.addOption(self.dev_option)
         self.parser.addVersionOption()
         self.parser.addHelpOption()
         self.parser.process(qApp)
         self.args = self.parser.positionalArguments()
         if self.parser.isSet(self.debug_option):
             os.environ['DEBUG'] = '1'
-        if self.parser.isSet(self.dev_option):
-            self.devmode = True
         if len(self.args) > 0:
             file_path = QFileInfo(self.args[0]).absoluteFilePath()
             if not os.path.exists(file_path):

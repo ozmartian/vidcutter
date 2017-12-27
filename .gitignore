@@ -3,6 +3,7 @@ __pycache__
 .directory
 .vscode
 .vs
+.old
 build
 dist
 vidcutter.egg*

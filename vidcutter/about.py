@@ -127,9 +127,16 @@ class BaseTab(QTextBrowser):
         super(BaseTab, self).__init__(parent)
         self.setOpenExternalLinks(True)
         if parent.parent.theme == 'dark':
-            self.setStyleSheet('QTextBrowser { background-color: rgba(12, 15, 16, 210); color: #FFF; }')
+            bgcolor = 'rgba(12, 15, 16, 210)'
+            pencolor = '#FFF'
         else:
-            self.setStyleSheet('QTextBrowser { background-color: rgba(255, 255, 255, 200); color: #000; }')
+            bgcolor = 'rgba(255, 255, 255, 200)'
+            pencolor = '#000'
+        self.setStyleSheet('''
+            QTextBrowser {{
+                background-color: {bgcolor};
+                color: {pencolor};
+            }}'''.format(**locals()))
 
 
 class AboutTab(BaseTab):
@@ -137,6 +144,9 @@ class AboutTab(BaseTab):
         super(AboutTab, self).__init__(parent)
         self.parent = parent
         spacer = '&nbsp;&nbsp;&nbsp;'
+        mpv_version = self.parent.parent.mpvWidget.mpv.get_property('mpv-version').replace('mpv ', '')
+        mpv_version = mpv_version.split('-')[0:2]
+        mpv_version = '-'.join(mpv_version)        
         # noinspection PyBroadException
         try:
             ffmpeg_version = self.parent.parent.videoService.version()
@@ -144,7 +154,7 @@ class AboutTab(BaseTab):
             ffmpeg_version = '<span style="color:red;">MISSING</span>'
         html = '''
 <style>
-    table { width: 100%%; font-family: "Noto Sans UI", sans-serif; }
+    table { width: 100%%; font-family: "Noto Sans UI", sans-serif; background-color: transparent; }
     a { color: %s; text-decoration: none; font-weight: bold; }
 </style>
 <table border="0" cellpadding="8" cellspacing="4">
@@ -196,10 +206,9 @@ class AboutTab(BaseTab):
         </td>
     </tr>
 </table>''' % ('#EA95FF' if self.parent.parent.theme == 'dark' else '#441D4E',
-               self.parent.parent.mpvWidget.mpv.get_property('mpv-version').replace('mpv ', ''), spacer,
-               ffmpeg_version, sys.version.split(' ')[0], QT_VERSION_STR, PYQT_VERSION_STR, datetime.now().year,
-               vidcutter.__email__, vidcutter.__author__, vidcutter.__website__, vidcutter.__website__,
-               vidcutter.__bugreport__)
+               mpv_version, spacer, ffmpeg_version, sys.version.split(' ')[0], QT_VERSION_STR,
+               PYQT_VERSION_STR, datetime.now().year, vidcutter.__email__, vidcutter.__author__,
+               vidcutter.__website__, vidcutter.__website__, vidcutter.__bugreport__)
         self.setHtml(html)
 
 
@@ -208,8 +217,12 @@ class CreditsTab(BaseTab):
         super(CreditsTab, self).__init__(parent)
         self.parent = parent
         self.setObjectName('credits')
-        self.setHtml('''<style>a { color:%s; text-decoration:none; font-weight:bold; }
-        a:hover { text-decoration:underline; }</style>
+        self.setHtml('''
+        <style>
+            table { background-color: transparent; }
+            a { color:%s; text-decoration:none; font-weight:bold; }
+            a:hover { text-decoration:underline; }
+        </style>
         <h3 style="text-align:center;">CREDITS</h3>
         <p>
             This application either uses code and tools from the following projects in part or in their entirety as

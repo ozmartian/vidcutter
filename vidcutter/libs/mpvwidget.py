@@ -13,11 +13,23 @@ from PyQt5.QtWidgets import QOpenGLWidget
 
 import vidcutter.libs.mpv as mpv
 
-def get_proc_address(name):
+if os.name == 'posix' and sys.platform != 'darwin':
+    from PyQt5.QtX11Extras import QX11Info
+
+
+# noinspection PyUnusedLocal
+def glMPGetNativeDisplay(name):
+    if os.name == 'posix' and sys.platform != 'darwin':
+        return QX11Info.display()
+
+
+def get_proc_address(name) -> int:
     glctx = QGLContext.currentContext()
-    if glctx is None:
-        return None
-    return glctx.getProcAddress(name.decode())
+    name = name.decode()
+    res = glctx.getProcAddress(name)
+    if name == 'glMPGetNativeDisplay' and res is None:
+        return id(glMPGetNativeDisplay)
+    return 0 if glctx is None else res.__int__()
 
 
 class mpvWidget(QOpenGLWidget):
@@ -33,6 +45,7 @@ class mpvWidget(QOpenGLWidget):
         locale.setlocale(locale.LC_NUMERIC, 'C')
 
         self.mpv = mpv.Context()
+
         self.setLogLevel('terminal-default')
         self.mpv.set_option('msg-level', self.msglevel)
         self.mpv.set_option('config', False)
@@ -72,6 +85,9 @@ class mpvWidget(QOpenGLWidget):
         else:
             return 'all=error'
 
+    def setLogLevel(self, loglevel):
+        self.mpv.set_log_level(loglevel)
+
     def shutdown(self):
         self.makeCurrent()
         if self.opengl:
@@ -83,7 +99,8 @@ class mpvWidget(QOpenGLWidget):
 
     def initializeGL(self):
         if self.opengl:
-            self.opengl.init_gl('GL_MP_MPGetNativeDisplay' if os.name == 'posix' else None, get_proc_address)
+            self.opengl.init_gl('GL_MP_MPGetNativeDisplay' if os.name == 'posix' and sys.platform != 'darwin' else None,
+                                get_proc_address)
 
     def paintGL(self):
         if self.opengl:
@@ -134,9 +151,6 @@ class mpvWidget(QOpenGLWidget):
             except mpv.MPVError as e:
                 if e.code != -10:
                     raise e
-
-    def setLogLevel(self, loglevel):
-        self.mpv.set_log_level(loglevel)
 
     def showText(self, msg: str, duration: int=5, level: int=0):
         self.mpv.command('show-text', msg, duration * 1000, level)

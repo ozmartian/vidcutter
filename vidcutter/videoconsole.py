@@ -37,7 +37,7 @@ class VideoConsole(QTextEdit):
         super(VideoConsole, self).__init__(parent)
         self._buffer = StringIO()
         self.setReadOnly(True)
-        self.setWordWrapMode(QTextOption.NoWrap)
+        self.setWordWrapMode(QTextOption.WordWrap)
         self.setStyleSheet('QTextEdit { font-family:monospace; font-size:%s; }'
                            % ('10pt' if sys.platform == 'darwin' else '8pt'))
 

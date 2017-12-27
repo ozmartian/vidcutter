@@ -59,7 +59,7 @@ QDialog#aboutwidget {
     background-color: #1B2326;
 }
 
-QDialog#videoinfo {
+QDialog#mediainfo {
     border-image: url(':/images/dialog-backdrop-02.png') 0 0 0 0 stretch stretch;
     background-color: #1B2326;
 }
@@ -237,12 +237,12 @@ QMessageBox {
 
 /* -------------------------------------------------------------------------- */
 
-QDialogButtonBox QPushButton, QDialog#notification QPushButton, QDialog#videoinfo QPushButton {
+QDialogButtonBox QPushButton, QDialog#notification QPushButton, QDialog#mediainfo QPushButton {
     padding: 5px 8px;
 }
 
 QDialogButtonBox QPushButton, #clipindextools QPushButton,
-QDialog#videoinfo QPushButton, QDialog#notification QPushButton {
+QDialog#mediainfo QPushButton, QDialog#notification QPushButton {
     color: #EFF0F1;
     background-color: #31363B;
     border: 1px solid #4D5355;
@@ -285,15 +285,15 @@ QDialog#videoinfo QPushButton, QDialog#notification QPushButton {
 }
 
 QDialogButtonBox QPushButton:hover, #clipindextools QPushButton:hover,
-QDialog#videoinfo QPushButton, QDialog#notification QPushButton:hover {
+QDialog#mediainfo QPushButton, QDialog#notification QPushButton:hover {
     border: 1px solid #4D5355;
 }
 
 QDialogButtonBox QPushButton:focus,
 QDialogButtonBox QPushButton:pressed,
 #clipindextools QPushButton:pressed,
-QDialog#videoinfo QPushButton:focus,
-QDialog#videoinfo QPushButton:pressed,
+QDialog#mediainfo QPushButton:focus,
+QDialog#mediainfo QPushButton:pressed,
 QDialog#settingsdialog QPushButton:pressed,
 QDialog#notification QPushButton,
 QDialog#notification QPushButton:focus,
@@ -493,7 +493,7 @@ QStatusBar::item {
 /* -------------------------------------------------------------------------- */
 
 QTabWidget::pane {
-    border: 1px solid #FFF;
+    border: 1px solid #999;
 }
 
 QTabWidget::tab-bar:top {

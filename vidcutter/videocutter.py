@@ -46,9 +46,9 @@ from vidcutter.libs.notifications import JobCompleteNotification
 from vidcutter.libs.videoconfig import InvalidMediaException
 from vidcutter.libs.videoservice import VideoService
 from vidcutter.libs.widgets import ClipErrorsDialog, FrameCounter, TimeCounter, VolumeSlider, VCToolBarButton
+from vidcutter.mediainfo import MediaInfo
 from vidcutter.settings import SettingsDialog
 from vidcutter.updater import Updater
-from vidcutter.videoinfo import VideoInfo
 from vidcutter.videolist import VideoList
 from vidcutter.videoslider import VideoSlider
 from vidcutter.videosliderwidget import VideoSliderWidget
@@ -401,17 +401,17 @@ class VideoCutter(QWidget):
             QFontDatabase.addApplicationFont(':/fonts/FuturaLT.ttf'),
             QFontDatabase.addApplicationFont(':/fonts/NotoSans.ttc')
         ]
-        self.style().loadQSS(self.theme, self.parent.devmode)
+        self.style().loadQSS(self.theme)
         QApplication.setFont(QFont('Noto Sans UI', 12 if sys.platform == 'darwin' else 10, 300))
 
     def getMPV(self, ) -> mpvWidget:
         return mpvWidget(
             parent=self,
             vo='opengl-cb',
-            ytdl=False,
             pause=True,
             keep_open='always',
             idle=True,
+            ytdl=False,
             osc=False,
             osd_font='Noto Sans UI',
             osd_level=0,
@@ -427,7 +427,6 @@ class VideoCutter(QWidget):
             video_sync='display-vdrop',
             audio_file_auto=False,
             quiet=True,
-            # msg_level=('all=v' if self.verboseLogs else 'error'),
             volume=self.parent.startupvol,
             keepaspect=self.keepRatio,
             hwdec=('auto' if self.hardwareDecoding else 'no'))
@@ -1238,15 +1237,13 @@ class VideoCutter(QWidget):
         if self.mediaAvailable:
             if self.videoService.mediainfo is None:
                 self.logger.error('Error trying to load media information. mediainfo could not be found')
-                sys.stderr.write('Error trying to load media information. mediainfo could not be found')
-                QMessageBox.critical(self.parent, 'Could not find mediainfo tool',
-                                     'The <b>mediainfo</b> command line tool could not be found on your system. '
-                                     'This is required for the Media Information option '
-                                     'to work.<br/><br/>If you are on Linux, you can solve '
-                                     'this by installing the <b>mediainfo</b> package via your '
-                                     'package manager.')
+                QMessageBox.critical(self.parent, 'Missing mediainfo utility',
+                                     'The <b>mediainfo</b> command line utility could not be found on your system. '
+                                     'and is required for media information to work.<br/><br/>Linux users can simply '
+                                     'simply install the <b>mediainfo</b> package using your package management'
+                                     'tool e.g. apt, pacman, dnf, zypper, etc.')
                 return
-            mediainfo = VideoInfo(media=self.currentMedia, parent=self)
+            mediainfo = MediaInfo(media=self.currentMedia, parent=self)
             mediainfo.show()
 
     @pyqtSlot()
