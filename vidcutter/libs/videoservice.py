@@ -29,12 +29,11 @@ import re
 import shlex
 import sys
 from bisect import bisect_left
-from distutils.spawn import find_executable
 from enum import Enum
 from functools import partial
 
 from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QDir, QFile, QFileInfo, QObject, QProcess, QProcessEnvironment, QSize,
-                          QStorageInfo, QTemporaryFile, QTime)
+                          QStandardPaths, QStorageInfo, QTemporaryFile, QTime)
 from PyQt5.QtGui import QPainter, QPixmap
 from PyQt5.QtWidgets import QMessageBox
 
@@ -132,7 +131,8 @@ class VideoService(QObject):
                         tools[backend] = binpath
                         break
                     else:
-                        binpath = find_executable(exe)
+                        binpath = QStandardPaths.findExecutable(exe)
+                        # binpath = find_executable(exe)
                         if binpath is not None and os.path.isfile(binpath):
                             tools[backend] = binpath
                             break

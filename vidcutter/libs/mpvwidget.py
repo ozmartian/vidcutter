@@ -77,6 +77,7 @@ class mpvWidget(QOpenGLWidget):
 
         self.mpv.observe_property('time-pos')
         self.mpv.observe_property('duration')
+        self.mpv.observe_property('eof-reached')
         self.mpv.set_wakeup_callback(self.eventHandler)
 
     @property
@@ -125,14 +126,13 @@ class mpvWidget(QOpenGLWidget):
         while self.mpv:
             try:
                 event = self.mpv.wait_event(.01)
-                if event.id in {mpv.Events.none, mpv.Events.shutdown, mpv.Events.end_file}:
+                if event.id in {mpv.Events.none, mpv.Events.shutdown}:
                     break
                 elif event.id == mpv.Events.log_message:
                     event_log = event.data
                     log_msg = '[%s] %s' % (event_log.prefix, event_log.text.strip())
                     if event_log.level in (mpv.LogLevels.fatal, mpv.LogLevels.error):
                         self.logger.critical(log_msg)
-                        sys.stderr.write(log_msg)
                         if event_log.level == mpv.LogLevels.fatal or 'file format' in event_log.text:
                             self.parent.errorOccurred.emit(log_msg)
                             self.parent.initMediaControls(False)
@@ -140,7 +140,10 @@ class mpvWidget(QOpenGLWidget):
                         self.logger.info(log_msg)
                 elif event.id == mpv.Events.property_change:
                     event_prop = event.data
-                    if event_prop.name == 'time-pos':
+                    if event_prop.name == 'eof-reached' and event_prop.data:
+                        self.parent.setPlayButton(False)
+                        self.parent.setPosition(0)
+                    elif event_prop.name == 'time-pos':
                         # if os.getenv('DEBUG', False) or getattr(self.parent, 'verboseLogs', False):
                         #     self.logger.info('time-pos property event')
                         self.positionChanged.emit(event_prop.data, self.mpv.get_property('estimated-frame-number'))

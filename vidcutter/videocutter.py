@@ -30,8 +30,8 @@ import time
 from datetime import timedelta
 from typing import Union
 
-from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QBuffer, QByteArray, QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize,
-                          Qt, QTextStream, QTime, QTimer, QUrl)
+from PyQt5.QtCore import (pyqtSignal, pyqtSlot, Q_ARG, QBuffer, QByteArray, QDir, QFile, QFileInfo, QMetaObject,
+                          QModelIndex, QPoint, QSize, Qt, QTextStream, QTime, QTimer, QUrl)
 from PyQt5.QtGui import QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMovie, QPixmap
 from PyQt5.QtWidgets import (QAction, qApp, QApplication, QDialogButtonBox, QFileDialog, QFrame, QGroupBox, QHBoxLayout,
                              QLabel, QListWidgetItem, QMenu, QMessageBox, QPushButton, QSizePolicy, QStyleFactory,
@@ -43,6 +43,7 @@ from vidcutter.about import About
 from vidcutter.libs.mpvwidget import mpvWidget
 from vidcutter.libs.munch import Munch
 from vidcutter.libs.notifications import JobCompleteNotification
+from vidcutter.libs.taskbarprogress import TaskbarProgress
 from vidcutter.libs.videoconfig import InvalidMediaException
 from vidcutter.libs.videoservice import VideoService
 from vidcutter.libs.widgets import ClipErrorsDialog, FrameCounter, TimeCounter, VolumeSlider, VCToolBarButton
@@ -53,9 +54,6 @@ from vidcutter.videolist import VideoList
 from vidcutter.videoslider import VideoSlider
 from vidcutter.videosliderwidget import VideoSliderWidget
 from vidcutter.videostyle import VideoStyleDark, VideoStyleLight
-
-if sys.platform.startswith('linux'):
-    from vidcutter.libs.taskbarprogress import TaskbarProgress
 
 
 class VideoCutter(QWidget):
@@ -83,8 +81,7 @@ class VideoCutter(QWidget):
         self.sliderWidget = VideoSliderWidget(self, self.seekSlider)
         self.sliderWidget.setLoader(True)
 
-        if sys.platform.startswith('linux'):
-            self.taskbar = TaskbarProgress(self)
+        self.taskbar = TaskbarProgress(self)
 
         self.latest_release_url = 'https://github.com/ozmartian/vidcutter/releases/latest'
 
@@ -778,8 +775,7 @@ class VideoCutter(QWidget):
         self.totalRuntime = 0
         self.setRunningTime(self.delta2QTime(self.totalRuntime).toString(self.runtimeformat))
         self.seekSlider.clearRegions()
-        if sys.platform.startswith('linux'):
-            self.taskbar.clear()
+        self.taskbar.init()
         self.parent.setWindowTitle('{0} - {1}'.format(qApp.applicationName(), os.path.basename(self.currentMedia)))
         if not self.mediaAvailable:
             self.videoLayout.replaceWidget(self.novideoWidget, self.videoplayerWidget)
@@ -803,11 +799,13 @@ class VideoCutter(QWidget):
                                  'and make sure to include your operating system, video card, the invalid media file '
                                  'and the version of VidCutter you are currently using.</p>')
 
+    def setPlayButton(self, paused: bool=False) -> None:
+        self.toolbar_play.setup('{} Media'.format('Pause' if paused else 'Play'),
+                                'Pause currently playing media' if paused else 'Play currently loaded media',
+                                True)
+
     def playMedia(self) -> None:
-        if self.mpvWidget.mpv.get_property('pause'):
-            self.toolbar_play.setup('Pause Media', 'Pause currently playing media file', True)
-        else:
-            self.toolbar_play.setup('Play Media', 'Play currently loaded media file', True)
+        self.setPlayButton(self.mpvWidget.mpv.get_property('pause'))
         self.timeCounter.clearFocus()
         self.frameCounter.clearFocus()
         self.mpvWidget.pause()
@@ -843,8 +841,9 @@ class VideoCutter(QWidget):
     def setPosition(self, position: int) -> None:
         if position >= self.seekSlider.restrictValue:
             self.mpvWidget.seek(position / 1000)
-            if sys.platform.startswith('linux'):
-                self.taskbar.setProgress(float(position / self.seekSlider.maximum()))
+            self.taskbar.setProgress(float(position / self.seekSlider.maximum()), True)
+            QMetaObject.invokeMethod(self.taskbar, 'setProgress', Qt.QueuedConnection,
+                                     Q_ARG(float, float(position / self.seekSlider.maximum())), Q_ARG(bool, True))
 
     @pyqtSlot(float, int)
     def on_positionChanged(self, progress: float, frame: int) -> None:
@@ -1339,7 +1338,7 @@ class VideoCutter(QWidget):
 
             if event.key() == Qt.Key_Left:
                 self.mpvWidget.frameBackStep()
-                self.toolbar_play.setup('Play Media', 'Play currently loaded media file', True)
+                self.setPlayButton(False)
                 return
 
             if event.key() == Qt.Key_Down:
@@ -1351,7 +1350,7 @@ class VideoCutter(QWidget):
 
             if event.key() == Qt.Key_Right:
                 self.mpvWidget.frameStep()
-                self.toolbar_play.setup('Play Media', 'Play currently loaded media file', True)
+                self.setPlayButton(False)
                 return
 
             if event.key() == Qt.Key_Up:
