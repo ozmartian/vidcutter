@@ -842,8 +842,6 @@ class VideoCutter(QWidget):
         if position >= self.seekSlider.restrictValue:
             self.mpvWidget.seek(position / 1000)
             self.taskbar.setProgress(float(position / self.seekSlider.maximum()), True)
-            QMetaObject.invokeMethod(self.taskbar, 'setProgress', Qt.QueuedConnection,
-                                     Q_ARG(float, float(position / self.seekSlider.maximum())), Q_ARG(bool, True))
 
     @pyqtSlot(float, int)
     def on_positionChanged(self, progress: float, frame: int) -> None:
@@ -852,6 +850,7 @@ class VideoCutter(QWidget):
             self.seekSlider.setValue(int(progress))
             self.timeCounter.setTime(self.delta2QTime(int(progress)).toString(self.timeformat))
             self.frameCounter.setFrame(frame)
+            self.taskbar.setProgress(float(progress / self.seekSlider.maximum()), True)
 
     @pyqtSlot(float, int)
     def on_durationChanged(self, duration: float, frames: int) -> None:

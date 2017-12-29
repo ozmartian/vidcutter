@@ -132,7 +132,6 @@ class VideoService(QObject):
                         break
                     else:
                         binpath = QStandardPaths.findExecutable(exe)
-                        # binpath = find_executable(exe)
                         if binpath is not None and os.path.isfile(binpath):
                             tools[backend] = binpath
                             break

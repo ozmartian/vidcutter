@@ -9,17 +9,19 @@ import sys
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QEvent, QTimer
 from PyQt5.QtGui import QKeyEvent, QMouseEvent, QWheelEvent
 from PyQt5.QtOpenGL import QGLContext
-from PyQt5.QtWidgets import QOpenGLWidget
+from PyQt5.QtWidgets import QOpenGLWidget, qApp
 
 import vidcutter.libs.mpv as mpv
 
-if os.name == 'posix' and sys.platform != 'darwin':
-    from PyQt5.QtX11Extras import QX11Info
 
-
-# noinspection PyUnusedLocal
 def glMPGetNativeDisplay(name):
-    if os.name == 'posix' and sys.platform != 'darwin':
+    from PyQt5.QtGui import QOpenGLContext
+    from PyQt5.QtX11Extras import QX11Info
+    if name == 'wl' and qApp.platformName().lower().startswith('wayland'):
+        glctx = QOpenGLContext.currentContext()
+        return glctx.nativeHandle()
+    elif QX11Info.isPlatformX11():
+        from PyQt5.QtX11Extras import QX11Info
         return QX11Info.display()
     return None
 
@@ -101,7 +103,8 @@ class mpvWidget(QOpenGLWidget):
 
     def initializeGL(self):
         if self.opengl:
-            self.opengl.init_gl('GL_MP_MPGetNativeDisplay', get_proc_address)
+            self.opengl.init_gl('GL_MP_MPGetNativeDisplay' if os.name == 'posix' and sys.platform != 'darwin' else None,
+                                get_proc_address)
 
     def paintGL(self):
         if self.opengl:

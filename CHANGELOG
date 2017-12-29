@@ -16,7 +16,7 @@ vidcutter (5.5.0-1) stable; urgency=medium
   * Migrated main toolbar buttons from QToolBar + QActions to new custom
     widget VCToolBarButton handling QPushButton with attached. This allows
     working pressed states on existing toolbar buttons which QToolBar buttons
-    (for reasons I cannot figure out) do not.
+    (for reasons I cannot fathom) do not.
 
   * FFmpeg category added to settings dialog for users on Linux systems
     excluding AppImage, to cater for releases where the latest FFmpeg binaries
@@ -24,6 +24,10 @@ vidcutter (5.5.0-1) stable; urgency=medium
     set of FFmpeg binaries if they are stuck on Linux distros only offering
     older versions of FFmpeg such as 2.8 and below which prevents SmartCut
     from working to its full potential.
+
+  * End of file is now being observed in the mpv library event pool so that
+    playback state resets position back to the start, in pause and all
+    controls in their default states.
 
   * Minor changes/improvements to a few other front panel buttons w/ pressed states
     where previously unavailable + minor cosmetic improvements to color schemes
