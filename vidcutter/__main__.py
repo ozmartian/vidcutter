@@ -66,6 +66,7 @@ class MainWindow(QMainWindow):
         self.statusBar().setStyleSheet('border: none; padding: 0; margin: 0;')
         self.setAcceptDrops(True)
         self.show()
+        self.cutter.taskbar.init()
         self.console.setGeometry(int(self.x() - (self.width() / 2)), self.y() + int(self.height() / 3), 750, 300)
         if not self.video and os.path.isfile(os.path.join(QDir.tempPath(), MainWindow.TEMP_PROJECT_FILE)):
             self.video = os.path.join(QDir.tempPath(), MainWindow.TEMP_PROJECT_FILE)

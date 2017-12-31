@@ -775,7 +775,7 @@ class VideoCutter(QWidget):
         self.totalRuntime = 0
         self.setRunningTime(self.delta2QTime(self.totalRuntime).toString(self.runtimeformat))
         self.seekSlider.clearRegions()
-        self.taskbar.init()
+        # self.taskbar.init()
         self.parent.setWindowTitle('{0} - {1}'.format(qApp.applicationName(), os.path.basename(self.currentMedia)))
         if not self.mediaAvailable:
             self.videoLayout.replaceWidget(self.novideoWidget, self.videoplayerWidget)

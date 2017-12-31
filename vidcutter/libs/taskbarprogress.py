@@ -31,24 +31,29 @@ from PyQt5.QtWidgets import QWidget
 import vidcutter
 
 if sys.platform == 'win32':
+    # noinspection PyUnresolvedReferences
     from PyQt5.QtWinExtras import QWinTaskbarButton
 
 
 class TaskbarProgress(QWidget):
     def __init__(self, parent=None):
         super(TaskbarProgress, self).__init__(parent)
+        self.parent = parent
         self._sessionbus = QDBusConnection.sessionBus()
         if self._sessionbus.isConnected():
             self._desktopfile = 'application://{}.desktop'.format(vidcutter.__desktopid__)
             self.init()
         elif sys.platform == 'win32' and TaskbarProgress.isValidWinVer():
-            self._taskbarbutton = QWinTaskbarButton(self)
-            self._taskbarprogress = self._taskbarbutton.progress()
-            self._taskbarprogress.setRange(0, 100)
+            self._taskbarbutton = QWinTaskbarButton(self.parent)
 
     @pyqtSlot()
     def init(self) -> bool:
-        return self.setProgress(0.0, False)
+        if self._sessionbus.isConnected():
+            return self.setProgress(0.0, False)
+        elif sys.platform == 'win32' and TaskbarProgress.isValidWinVer():
+            self._taskbarbutton.setWindow(self.parent.windowHandle())
+            self._taskbarprogress = self._taskbarbutton.progress()
+            return self.setProgress(0, True)
 
     @pyqtSlot(float, bool)
     def setProgress(self, value: float, visible: bool=True) -> bool:
@@ -58,12 +63,11 @@ class TaskbarProgress(QWidget):
             message = signal << self._desktopfile << {'progress-visible': visible, 'progress': value}
             return self._sessionbus.send(message)
         elif sys.platform == 'win32' and TaskbarProgress.isValidWinVer():
-            self._taskbarbutton.setWindow(self.windowHandle())
             self._taskbarprogress.setVisible(visible)
-            self._taskbarprogress.setValue(int(value * 100))
+            self._taskbarprogress.setValue(value)
             return True
 
     @staticmethod
     def isValidWinVer() -> bool:
         ver = QSysInfo.productVersion()
-        return True if 'XP' not in ver and 'Vista' not in ver else False
+        return True if ver not in {'XP', 'Vista'} else False
