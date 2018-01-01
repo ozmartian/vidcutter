@@ -54,7 +54,7 @@ class TaskbarProgress(QWidget):
             message = signal << self._desktopfile << {'progress-visible': visible, 'progress': value}
             return self._sessionbus.send(message)
         elif sys.platform == 'win32' and TaskbarProgress.isValidWinVer():
-            self.parent.win_taskbar_button.setValue(int(value * 100))
+            self.parent.win_taskbar_button.progress().setValue(int(value * 100))
             return True
 
     @staticmethod
