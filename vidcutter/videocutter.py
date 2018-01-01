@@ -28,10 +28,9 @@ import re
 import sys
 import time
 from datetime import timedelta
-from typing import Union
 
-from PyQt5.QtCore import (pyqtSignal, pyqtSlot, Q_ARG, QBuffer, QByteArray, QDir, QFile, QFileInfo, QMetaObject,
-                          QModelIndex, QPoint, QSize, Qt, QTextStream, QTime, QTimer, QUrl)
+from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QBuffer, QByteArray, QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize,
+                          Qt, QTextStream, QTime, QTimer, QUrl)
 from PyQt5.QtGui import QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMovie, QPixmap
 from PyQt5.QtWidgets import (QAction, qApp, QApplication, QDialogButtonBox, QFileDialog, QFrame, QGroupBox, QHBoxLayout,
                              QLabel, QListWidgetItem, QMenu, QMessageBox, QPushButton, QSizePolicy, QStyleFactory,
@@ -81,7 +80,7 @@ class VideoCutter(QWidget):
         self.sliderWidget = VideoSliderWidget(self, self.seekSlider)
         self.sliderWidget.setLoader(True)
 
-        self.taskbar = TaskbarProgress(self)
+        self.taskbar = TaskbarProgress(self.parent)
 
         self.latest_release_url = 'https://github.com/ozmartian/vidcutter/releases/latest'
 
@@ -775,7 +774,7 @@ class VideoCutter(QWidget):
         self.totalRuntime = 0
         self.setRunningTime(self.delta2QTime(self.totalRuntime).toString(self.runtimeformat))
         self.seekSlider.clearRegions()
-        # self.taskbar.init()
+        self.taskbar.init()
         self.parent.setWindowTitle('{0} - {1}'.format(qApp.applicationName(), os.path.basename(self.currentMedia)))
         if not self.mediaAvailable:
             self.videoLayout.replaceWidget(self.novideoWidget, self.videoplayerWidget)
@@ -841,7 +840,6 @@ class VideoCutter(QWidget):
     def setPosition(self, position: int) -> None:
         if position >= self.seekSlider.restrictValue:
             self.mpvWidget.seek(position / 1000)
-            self.taskbar.setProgress(float(position / self.seekSlider.maximum()), True)
 
     @pyqtSlot(float, int)
     def on_positionChanged(self, progress: float, frame: int) -> None:
@@ -1270,7 +1268,7 @@ class VideoCutter(QWidget):
         appInfo.exec_()
 
     @staticmethod
-    def getAppIcon(encoded: bool = False) -> Union[QIcon, str]:
+    def getAppIcon(encoded: bool = False):
         icon = QIcon.fromTheme(qApp.applicationName().lower(), QIcon(':/images/vidcutter-small.png'))
         if not encoded:
             return icon

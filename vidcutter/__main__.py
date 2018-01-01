@@ -43,6 +43,11 @@ from vidcutter.videocutter import VideoCutter
 import vidcutter
 import vidcutter.libs.mpv as mpv
 
+if sys.platform == 'win32':
+    from vidcutter.libs.taskbarprogress import TaskbarProgress
+    # noinspection PyUnresolvedReferences
+    from PyQt5.QtWinExtras import QWinTaskbarButton
+
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 signal.signal(signal.SIGTERM, signal.SIG_DFL)
 
@@ -66,7 +71,11 @@ class MainWindow(QMainWindow):
         self.statusBar().setStyleSheet('border: none; padding: 0; margin: 0;')
         self.setAcceptDrops(True)
         self.show()
-        self.cutter.taskbar.init()
+        if sys.platform == 'win32' and TaskbarProgress.isValidWinVer():
+            self.win_taskbar_button = QWinTaskbarButton(self)
+            self.win_taskbar_button.setWindow(self.windowHandle())
+            self.win_taskbar_button.progress().setVisible(True)
+            self.win_taskbar_button.progress().setValue(0)
         self.console.setGeometry(int(self.x() - (self.width() / 2)), self.y() + int(self.height() / 3), 750, 300)
         if not self.video and os.path.isfile(os.path.join(QDir.tempPath(), MainWindow.TEMP_PROJECT_FILE)):
             self.video = os.path.join(QDir.tempPath(), MainWindow.TEMP_PROJECT_FILE)

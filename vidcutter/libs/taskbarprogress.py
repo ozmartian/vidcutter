@@ -30,10 +30,6 @@ from PyQt5.QtWidgets import QWidget
 
 import vidcutter
 
-if sys.platform == 'win32':
-    # noinspection PyUnresolvedReferences
-    from PyQt5.QtWinExtras import QWinTaskbarButton
-
 
 class TaskbarProgress(QWidget):
     def __init__(self, parent=None):
@@ -42,18 +38,13 @@ class TaskbarProgress(QWidget):
         self._sessionbus = QDBusConnection.sessionBus()
         if self._sessionbus.isConnected():
             self._desktopfile = 'application://{}.desktop'.format(vidcutter.__desktopid__)
-            self.init()
-        elif sys.platform == 'win32' and TaskbarProgress.isValidWinVer():
-            self._taskbarbutton = QWinTaskbarButton(self.parent)
 
     @pyqtSlot()
-    def init(self) -> bool:
+    def init(self) -> None:
         if self._sessionbus.isConnected():
-            return self.setProgress(0.0, False)
+            self.setProgress(0.0, False)
         elif sys.platform == 'win32' and TaskbarProgress.isValidWinVer():
-            self._taskbarbutton.setWindow(self.parent.windowHandle())
-            self._taskbarprogress = self._taskbarbutton.progress()
-            return self.setProgress(0, True)
+            self.parent.win_taskbar_button.progress().reset()
 
     @pyqtSlot(float, bool)
     def setProgress(self, value: float, visible: bool=True) -> bool:
@@ -63,8 +54,7 @@ class TaskbarProgress(QWidget):
             message = signal << self._desktopfile << {'progress-visible': visible, 'progress': value}
             return self._sessionbus.send(message)
         elif sys.platform == 'win32' and TaskbarProgress.isValidWinVer():
-            self._taskbarprogress.setVisible(visible)
-            self._taskbarprogress.setValue(value)
+            self.parent.win_taskbar_button.setValue(int(value * 100))
             return True
 
     @staticmethod
