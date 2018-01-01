@@ -22,13 +22,14 @@
 #
 #######################################################################
 
+#
 # *** IMPORTANT IF YOU ARE INSTALLING VIA PyPi (Python Pip) ***
 #
 # no longer enforcing dependencies via setuptools
 # a notifcation msg is now displayed detailing requirements so users from PyPi,
 # Conda or obscure distros can get them installed however they like.
 # Distro targetted packages will always be the recommended approach
-
+#
 
 import os
 

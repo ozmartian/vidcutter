@@ -1,6 +1,27 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+#######################################################################
+#
+# VidCutter - media cutter & joiner
+#
+# copyright © 2018 Pete Alexandrou
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+#######################################################################
+
 import locale
 import logging
 import os
@@ -17,10 +38,8 @@ import vidcutter.libs.mpv as mpv
 # noinspection PyUnusedLocal
 def glMPGetNativeDisplay(name):
     # if name == 'wl' and qApp.platformName().lower().startswith('wayland'):
-    #     from PyQt5.QtGui import QOpenGLContext
-    #     from PyQt5.QtX11Extras import QX11Info
-    #     glctx = QOpenGLContext.currentContext()
-    #     return glctx.nativeHandle()
+    #     native = qApp.platformNativeInterface()
+    #     return native.nativeResourceForWindow('display', None)
     from PyQt5.QtX11Extras import QX11Info
     if QX11Info.isPlatformX11():
         return QX11Info.display()

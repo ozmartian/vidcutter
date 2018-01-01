@@ -5,7 +5,7 @@
 #
 # VidCutter - media cutter & joiner
 #
-# copyright © 2017 Pete Alexandrou
+# copyright © 2018 Pete Alexandrou
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,7 +23,6 @@
 #######################################################################
 
 import functools
-import os
 
 from PyQt5.QtCore import Qt, QFile, QFileInfo, QTextStream
 from PyQt5.QtGui import QColor, QPalette
