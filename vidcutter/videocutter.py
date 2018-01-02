@@ -414,6 +414,7 @@ class VideoCutter(QWidget):
             osd_align_x='left',
             osd_align_y='top',
             cursor_autohide=False,
+            load_scripts=False,
             input_cursor=False,
             input_default_bindings=False,
             stop_playback_on_init_failure=False,
@@ -848,7 +849,8 @@ class VideoCutter(QWidget):
             self.seekSlider.setValue(int(progress))
             self.timeCounter.setTime(self.delta2QTime(int(progress)).toString(self.timeformat))
             self.frameCounter.setFrame(frame)
-            self.taskbar.setProgress(float(progress / self.seekSlider.maximum()), True)
+            if self.seekSlider.maximum() > 0:
+                self.taskbar.setProgress(float(progress / self.seekSlider.maximum()), True)
 
     @pyqtSlot(float, int)
     def on_durationChanged(self, duration: float, frames: int) -> None:

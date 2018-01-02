@@ -36,7 +36,7 @@ import vidcutter.libs.mpv as mpv
 
 
 # noinspection PyUnusedLocal
-def glMPGetNativeDisplay(name):
+def MPGetNativeDisplay(name):
     # if name == 'wl' and qApp.platformName().lower().startswith('wayland'):
     #     native = qApp.platformNativeInterface()
     #     return native.nativeResourceForWindow('display', None)
@@ -46,13 +46,26 @@ def glMPGetNativeDisplay(name):
     return None
 
 
-def get_proc_address(name) -> int:
+def get_proc_address(name):
     glctx = QGLContext.currentContext()
+    if glctx is None:
+        return 0
     name = name.decode()
     res = glctx.getProcAddress(name)
+    
     if name == 'glMPGetNativeDisplay' and res is None:
-        return id(glMPGetNativeDisplay)
-    return 0 if glctx is None else res.__int__()
+        return id(MPGetNativeDisplay)
+
+    try:
+        if sys.platform == 'win32' and res is None:
+            from PyQt5.QtWidgets import QOpenGLContext
+            from win32api import GetProcAddress
+            handle = QOpenGLContext.openGLModuleHandle()
+            if handle is not None:
+                res = GetProcAddress(handle, name)
+    except ImportError:
+        return 0
+    return res.__int__()
 
 
 class mpvWidget(QOpenGLWidget):
@@ -123,12 +136,12 @@ class mpvWidget(QOpenGLWidget):
 
     def initializeGL(self):
         if self.opengl:
-            if os.name == 'posix' and sys.platform != 'darwin' \
-                    and not qApp.platformName().lower().startswith('wayland'):
-                callback = 'GL_MP_MPGetNativeDisplay'
-            else:
-                callback = None
-            self.opengl.init_gl(callback, get_proc_address)
+            # if os.name == 'posix' and sys.platform != 'darwin' \
+            #         and not qApp.platformName().lower().startswith('wayland'):
+            #     callback = 'GL_MP_MPGetNativeDisplay'
+            # else:
+            #     callback = None
+            self.opengl.init_gl('GL_MP_MPGetNativeDisplay', get_proc_address)
 
     def paintGL(self):
         if self.opengl:
