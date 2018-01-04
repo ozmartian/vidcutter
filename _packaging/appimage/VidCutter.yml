@@ -4,7 +4,7 @@ binpatch: true
 ingredients:
   dist: trusty
   sources: 
-    - deb https://archive.ubuntu.com/ubuntu trusty main universe
+    - deb http://mirrors.cn99.com/ubuntu trusty main universe
   ppas:
     - mc3man/testing6
     - jonathonf/ffmpeg-3
@@ -19,7 +19,6 @@ ingredients:
     - libmpv1
     - ffmpeg
     - mediainfo
-    - libcairo2
 
 script:
   - umask 022
@@ -76,3 +75,17 @@ script:
   - cp -f usr/share/applications/*id*utter.desktop ./vidcutter.desktop
   - cp -f ../../scripts/* usr/bin/
   - cp -f ../../qt5/* usr/lib/python3/dist-packages/PyQt5/Qt/plugins/platformthemes/
+
+post:
+  - find /usr/lib/x86_64-linux-gnu/ -name libcairo.so.2* | xargs -I{} cp -P {} usr/lib/x86_64-linux-gnu
+  - find /usr/lib/x86_64-linux-gnu/ -name libpangoft2* | xargs -I{} cp -P {} usr/lib/x86_64-linux-gnu
+  - rm -f ./AppRun
+  - gcc -fPIC -o ./AppRun ../../AppRun.c
+  - strip ./AppRun
+  - chmod +x ./AppRun
+  - cp usr/share/icons/hicolor/256x256/apps/vidcutter.png .
+  - ln -sf vidcutter.png .DirIcon
+  - cp -f usr/share/applications/*id*utter.desktop ./vidcutter.desktop
+  - cp -f ../../scripts/* usr/bin/
+  - cp -f ../../qt5/* usr/lib/python3/dist-packages/PyQt5/Qt/plugins/platformthemes/
+  

@@ -10,8 +10,8 @@ from signal import SIGINT, SIG_DFL, SIGTERM, signal
 signal(SIGINT, SIG_DFL)
 signal(SIGTERM, SIG_DFL)
 
-sys.path.insert(0, "/usr/lib/python3.5")
-sys.path.insert(1, "/usr/lib/python3/dist-packages")
+sys.path.insert(0, "../lib/python3.5")
+sys.path.insert(1, "../lib/python3/dist-packages")
 
 try:
     sys.exit(load_entry_point('vidcutter', 'gui_scripts', 'vidcutter')())
