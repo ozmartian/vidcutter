@@ -52,10 +52,8 @@ def get_proc_address(name):
         return 0
     name = name.decode()
     res = glctx.getProcAddress(name)
-    
     if name == 'glMPGetNativeDisplay' and res is None:
         return id(MPGetNativeDisplay)
-
     try:
         if sys.platform == 'win32' and res is None:
             from PyQt5.QtWidgets import QOpenGLContext
@@ -136,12 +134,11 @@ class mpvWidget(QOpenGLWidget):
 
     def initializeGL(self):
         if self.opengl:
-            # if os.name == 'posix' and sys.platform != 'darwin' \
-            #         and not qApp.platformName().lower().startswith('wayland'):
-            #     callback = 'GL_MP_MPGetNativeDisplay'
-            # else:
-            #     callback = None
-            self.opengl.init_gl('GL_MP_MPGetNativeDisplay', get_proc_address)
+            callback = None
+            if os.name == 'posix' and sys.platform != 'darwin' \
+                    and not qApp.platformName().lower().startswith('wayland'):
+                callback = 'GL_MP_MPGetNativeDisplay'
+            self.opengl.init_gl(callback, get_proc_address)
 
     def paintGL(self):
         if self.opengl:
@@ -229,10 +226,6 @@ class mpvWidget(QOpenGLWidget):
     def property(self, prop: str):
         return self.mpv.get_property(prop)
 
-    def _exitFullScreen(self) -> None:
-        self.setParent(self.originalParent)
-        self.showNormal()
-
     def changeEvent(self, event: QEvent) -> None:
         if event.type() == QEvent.WindowStateChange and self.isFullScreen():
             self.mpv.set_option('osd-align-x', 'center')
@@ -246,20 +239,25 @@ class mpvWidget(QOpenGLWidget):
     def keyPressEvent(self, event: QKeyEvent) -> None:
         if event.key() in {Qt.Key_F, Qt.Key_Escape}:
             event.accept()
-            if self.isFullScreen():
-                self._exitFullScreen()
-            self.parent.toggleFullscreen()
+            if self.parent is None:
+                self.originalParent.toggleFullscreen()
+            else:
+                self.parent.toggleFullscreen()
         elif self.isFullScreen():
-            self.parent.keyPressEvent(event)
+            self.originalParent.keyPressEvent(event)
         else:
             super(mpvWidget, self).keyPressEvent(event)
 
+    def mousePressEvent(self, event: QMouseEvent) -> None:
+        self.pause()
+        event.accept()
+
     def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
         event.accept()
-        if self.isFullScreen():
-            self._exitFullScreen()
-        self.parent.toggleFullscreen()
-        # super(mpvWidget, self).mouseDoubleClickEvent(event)
+        if self.parent is None:
+            self.originalParent.toggleFullscreen()
+        else:
+            self.parent.toggleFullscreen()
 
     def wheelEvent(self, event: QWheelEvent) -> None:
         self.parent.seekSlider.wheelEvent(event)
