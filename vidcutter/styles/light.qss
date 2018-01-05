@@ -29,7 +29,7 @@ QWidget#shortcuts {
 }
 
 QWidget#novideoWidget {
-    border-image: url(':/images/light/startup-backdrop.png') 0 0 0 0 stretch stretch;
+    border-image: url(':/images/startup-backdrop.jpg') 0 0 0 0 stretch stretch;
 }
 
 QWidget#genericdialog {
@@ -131,6 +131,10 @@ QListView::item:selected#settingsmenu {
 }
 
 /* -------------------------------------------------------------------------- */
+
+#novideoWidget QLabel {
+    padding-right: 40px;
+}
 
 QLabel#listHeader {
     padding: 8px 5px 5px;

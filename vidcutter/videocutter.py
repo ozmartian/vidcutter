@@ -438,15 +438,15 @@ class VideoCutter(QWidget):
         self.novideoWidget.setObjectName('novideoWidget')
         self.novideoWidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.MinimumExpanding)
         self.novideoLabel = QLabel(self)
-        self.novideoLabel.setAlignment(Qt.AlignCenter)
+        self.novideoLabel.setAlignment(Qt.AlignRight)
         self.novideoMovie = QMovie(':/images/novideotext.gif', b'GIF', self)
         self.novideoMovie.setScaledSize(QSize(250, 30))
         self.novideoMovie.frameChanged.connect(lambda: self.novideoLabel.setPixmap(self.novideoMovie.currentPixmap()))
         self.novideoMovie.start()
         novideoLayout = QVBoxLayout()
-        novideoLayout.addStretch(3)
+        novideoLayout.addStretch(2)
         novideoLayout.addWidget(self.novideoLabel)
-        novideoLayout.addStretch(1)
+        novideoLayout.addStretch(3)
         self.novideoWidget.setLayout(novideoLayout)
 
     def initIcons(self) -> None:
