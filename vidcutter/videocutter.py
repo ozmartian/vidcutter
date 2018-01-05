@@ -399,13 +399,14 @@ class VideoCutter(QWidget):
         self.style().loadQSS(self.theme)
         QApplication.setFont(QFont('Noto Sans UI', 12 if sys.platform == 'darwin' else 10, 300))
 
-    def getMPV(self, parent: QWidget=None, file: str=None, start: float=0, pause: bool=True) -> mpvWidget:
+    def getMPV(self, parent: QWidget=None, file: str=None, start: float=0, pause: bool=True, mute: bool=False) -> mpvWidget:
         widget = mpvWidget(
             parent=parent,
             file=file,
             vo='opengl-cb',
             pause=pause,
             start=start,
+            mute=mute,
             keep_open='always',
             idle=True,
             ytdl=False,
@@ -1304,12 +1305,13 @@ class VideoCutter(QWidget):
     def toggleFullscreen(self) -> None:
         if self.mediaAvailable:
             pause = self.mpvWidget.property('pause')
+            mute = self.mpvWidget.property('mute')
             pos = self.seekSlider.value() / 1000
             if self.mpvWidget.originalParent is not None:
                 self.mpvWidget.shutdown()
                 sip.delete(self.mpvWidget)
                 del self.mpvWidget
-                self.mpvWidget = self.getMPV(parent=self, file=self.currentMedia, start=pos, pause=pause)
+                self.mpvWidget = self.getMPV(parent=self, file=self.currentMedia, start=pos, pause=pause, mute=mute)
                 self.videoplayerLayout.insertWidget(0, self.mpvWidget)
                 self.mpvWidget.originalParent = None
                 self.parent.show()
@@ -1319,7 +1321,7 @@ class VideoCutter(QWidget):
                 self.videoplayerLayout.removeWidget(self.mpvWidget)
                 sip.delete(self.mpvWidget)
                 del self.mpvWidget
-                self.mpvWidget = self.getMPV(file=self.currentMedia, start=pos, pause=pause)
+                self.mpvWidget = self.getMPV(file=self.currentMedia, start=pos, pause=pause, mute=mute)
                 self.mpvWidget.originalParent = self
                 self.mpvWidget.setGeometry(qApp.desktop().screenGeometry(self))
                 self.mpvWidget.showFullScreen()
