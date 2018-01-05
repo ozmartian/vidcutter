@@ -36,6 +36,14 @@ vidcutter (5.5.0-1) stable; urgency=medium
   * Application desktop and appdata metadata files now using reverse domain
     notation for their file names
 
+  * Complete rework of fullscreen code to work with Qt 5.10 changes. New
+    code guarantees fullscreen from Qt 5.5 and up + should not result in 
+    the occassional lost window
+
+  * OpenGL helpers added to X11 and Wayland based Linux platforms to better
+    assist with fullscreen functionality and video render compatibility any
+    where an OpenGL context can be created.
+
   * Hardened logic for app quit when clips exist to prompt for project save
 
   * Better detection and prompting if application exit is attempted while

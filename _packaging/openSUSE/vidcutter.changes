@@ -1,4 +1,60 @@
 -------------------------------------------------------------------
+Fri Jan 05 12:21:00 UTC 2018 - pete@ozmartians.com
+
+- Development snapshot for the upcoming 5.5.0 release
+
+- The most requested feature is finally added; media stream mapping! A
+  new media settings button has been added and is enabled for use when
+  clips are all derived from the same source media OR media files added
+  manually all share the same codecs, formats, etc... A view of all
+  detected streams including video, audio, text/subtitles, metadata/chapters
+  will be presented upon which you can enable/disable what you want mapped
+  and carried across to the target media produced for you.
+
+  As always, suggestions for further improvements to this, whether visual
+  or technical via the Issues page; which I definitely, most assuredly,
+  promise to start paying attention to. I'm mearly all out of new app ideas
+  + innovations so I have no choice :-)
+
+- Migrated main toolbar buttons from QToolBar + QActions to new custom
+  widget VCToolBarButton handling QPushButton with attached. This allows
+  working pressed states on existing toolbar buttons which QToolBar buttons
+  (for reasons I cannot fathom) do not.
+
+- FFmpeg category added to settings dialog for users on Linux systems
+  excluding AppImage, to cater for releases where the latest FFmpeg binaries
+  are not prebundled. This allows users to set a different path to a newer
+  set of FFmpeg binaries if they are stuck on Linux distros only offering
+  older versions of FFmpeg such as 2.8 and below which prevents SmartCut
+  from working to its full potential.
+
+- End of file is now being observed in the mpv library event pool so that
+  playback state resets position back to the start, in pause and all
+  controls in their default states.
+
+- Minor changes/improvements to a few other front panel buttons w/ pressed states
+  where previously unavailable + minor cosmetic improvements to color schemes
+  of hover/active state buttons
+
+- Application desktop and appdata metadata files now using reverse domain
+  notation for their file names
+
+- Complete rework of fullscreen code to work with Qt 5.10 changes. New
+  code guarantees fullscreen from Qt 5.5 and up + should not result in 
+  the occassional lost window
+
+- OpenGL helpers added to X11 and Wayland based Linux platforms to better
+  assist with fullscreen functionality and video render compatibility any
+  where an OpenGL context can be created.
+
+- Hardened logic for app quit when clips exist to prompt for project save
+
+- Better detection and prompting if application exit is attempted while
+  video processing jobs in progress, if user decides to continue quitting
+  then kill all VidCutter associated jobs gracefully and force the usual
+  cleanup routines
+
+-------------------------------------------------------------------
 Thu Nov 30 09:20:00 UTC 2017 - pete@ozmartians.com
 
 - Update to version 5.0.5
