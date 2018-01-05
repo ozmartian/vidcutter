@@ -4,7 +4,7 @@ binpatch: true
 ingredients:
   dist: trusty
   sources: 
-    - deb http://mirrors.cn99.com/ubuntu trusty main universe
+    - deb http://archive.ubuntu.com/ubuntu/ trusty main universe
   ppas:
     - mc3man/testing6
     - jonathonf/ffmpeg-3
@@ -19,10 +19,12 @@ ingredients:
     - libmpv1
     - ffmpeg
     - mediainfo
+  script:
+    - set +e
 
 script:
   - umask 022
-  - export PYTHONHOME=$(pwd)/usr
+  - PYTHONHOME=$(pwd)/usr
   - rm -f usr/bin/python3 usr/bin/python3.5
   - ln -s python3.5m usr/bin/python3
   - ln -s python3.5m usr/bin/python3.5
@@ -46,7 +48,7 @@ script:
   - rm -rf usr/lib/python3/dist-packages/PyQt5/Qt/plugins/sqldrivers
   - strip usr/lib/python3/dist-packages/PyQt5/*.so
   - strip usr/lib/python3/dist-packages/PyQt5/Qt/lib/*
-  - export PKGRES="$(find ./ -name pkg_resources | grep -v _vendor)"
+  - PKGRES=$(find . -name pkg_resources \! -path "*_vendor*")
   - [ ${PKGRES} != "./usr/lib/python3/dist-packages/pkg_resources" ] && mv ${PKGRES} usr/lib/python3/dist-packages
   - cp -R usr/lib/python3/dist-packages/pkg_resources usr/lib/python3/dist-packages/pkg_resources.BAK
   - env QT_APPIMAGE=1 usr/bin/python3.5 -m pip install -t usr/lib/python3/dist-packages ../../../..
