@@ -9,5 +9,3 @@ chmod +x ./pkg2appimage
 
 ./pkg2appimage ./VidCutter.yml
 rm ./pkg2appimage
-
-[ -f "out/VidCutter--${ARCH}.AppImage" ] && mv out/VidCutter--${ARCH}.AppImage out/VidCutter-${VERSION}-x64.AppImage
