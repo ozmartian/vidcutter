@@ -69,10 +69,12 @@ def get_proc_address(name):
 class mpvWidget(QOpenGLWidget):
     positionChanged = pyqtSignal(float, int)
     durationChanged = pyqtSignal(float, int)
+    initialized = pyqtSignal(str)
 
-    def __init__(self, parent=None, **mpv_opts):
+    def __init__(self, parent=None, file=None, **mpv_opts):
         super(mpvWidget, self).__init__(parent)
         self.parent = parent
+        self.filename = file
         self.mpvError = mpv.MPVError
         self.originalParent = None
         self.logger = logging.getLogger(__name__)
@@ -113,6 +115,9 @@ class mpvWidget(QOpenGLWidget):
         self.mpv.observe_property('eof-reached')
         self.mpv.set_wakeup_callback(self.eventHandler)
 
+        if file is not None:
+            self.initialized.connect(self.play)
+
     @property
     def msglevel(self):
         if os.getenv('DEBUG', False) or getattr(self.parent, 'verboseLogs', False):
@@ -139,6 +144,8 @@ class mpvWidget(QOpenGLWidget):
                     and not qApp.platformName().lower().startswith('wayland'):
                 callback = 'GL_MP_MPGetNativeDisplay'
             self.opengl.init_gl(callback, get_proc_address)
+            if self.filename is not None:
+                self.initialized.emit(self.filename)
 
     def paintGL(self):
         if self.opengl:
@@ -195,6 +202,7 @@ class mpvWidget(QOpenGLWidget):
     def showText(self, msg: str, duration: int=5, level: int=0):
         self.mpv.command('show-text', msg, duration * 1000, level)
 
+    @pyqtSlot(str)
     def play(self, filepath) -> None:
         if os.path.isfile(filepath):
             self.mpv.command('loadfile', filepath, 'replace')
@@ -249,8 +257,11 @@ class mpvWidget(QOpenGLWidget):
             super(mpvWidget, self).keyPressEvent(event)
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
-        self.pause()
         event.accept()
+        if self.parent is None:
+            self.originalParent.playMedia()
+        else:
+            self.parent.playMedia()
 
     def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
         event.accept()

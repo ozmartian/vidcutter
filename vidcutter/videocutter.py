@@ -205,8 +205,6 @@ class VideoCutter(QWidget):
         countersWidget.setMaximumHeight(28)
 
         self.mpvWidget = self.getMPV(self)
-        self.mpvWidget.durationChanged.connect(self.on_durationChanged)
-        self.mpvWidget.positionChanged.connect(self.on_positionChanged)
 
         self.videoplayerLayout = QVBoxLayout()
         self.videoplayerLayout.setSpacing(0)
@@ -401,32 +399,38 @@ class VideoCutter(QWidget):
         self.style().loadQSS(self.theme)
         QApplication.setFont(QFont('Noto Sans UI', 12 if sys.platform == 'darwin' else 10, 300))
 
-    def getMPV(self, parent: QWidget=None) -> mpvWidget:
-        return mpvWidget(parent=parent,
-                         vo='opengl-cb',
-                         pause=True,
-                         keep_open='always',
-                         idle=True,
-                         ytdl=False,
-                         osc=False,
-                         osd_font='Noto Sans UI',
-                         osd_level=0,
-                         osd_align_x='left',
-                         osd_align_y='top',
-                         cursor_autohide=False,
-                         load_scripts=False,
-                         input_cursor=False,
-                         input_default_bindings=False,
-                         stop_playback_on_init_failure=False,
-                         input_vo_keyboard=False,
-                         sub_auto=False,
-                         sid=False,
-                         video_sync='display-vdrop',
-                         audio_file_auto=False,
-                         quiet=True,
-                         volume=self.parent.startupvol,
-                         keepaspect=self.keepRatio,
-                         hwdec=('auto' if self.hardwareDecoding else 'no'))
+    def getMPV(self, parent: QWidget=None, file: str=None, start: float=0, pause: bool=True) -> mpvWidget:
+        widget = mpvWidget(
+            parent=parent,
+            file=file,
+            vo='opengl-cb',
+            pause=pause,
+            start=start,
+            keep_open='always',
+            idle=True,
+            ytdl=False,
+            osc=False,
+            osd_font='Noto Sans UI',
+            osd_level=0,
+            osd_align_x='left',
+            osd_align_y='top',
+            cursor_autohide=False,
+            load_scripts=False,
+            input_cursor=False,
+            input_default_bindings=False,
+            stop_playback_on_init_failure=False,
+            input_vo_keyboard=False,
+            sub_auto=False,
+            sid=False,
+            video_sync='display-vdrop',
+            audio_file_auto=False,
+            quiet=True,
+            volume=self.parent.startupvol,
+            keepaspect=self.keepRatio,
+            hwdec=('auto' if self.hardwareDecoding else 'no'))
+        widget.durationChanged.connect(self.on_durationChanged)
+        widget.positionChanged.connect(self.on_positionChanged)
+        return widget
 
     def initNoVideo(self) -> None:
         self.novideoWidget = QWidget(self)
@@ -805,7 +809,7 @@ class VideoCutter(QWidget):
                                 True)
 
     def playMedia(self) -> None:
-        self.setPlayButton(self.mpvWidget.mpv.get_property('pause'))
+        self.setPlayButton(self.mpvWidget.property('pause'))
         self.timeCounter.clearFocus()
         self.frameCounter.clearFocus()
         self.mpvWidget.pause()
@@ -874,7 +878,7 @@ class VideoCutter(QWidget):
             pass
 
     def muteAudio(self) -> None:
-        if self.mpvWidget.mpv.get_property('mute'):
+        if self.mpvWidget.property('mute'):
             self.showText('Audio enabled')
             self.muteButton.setIcon(self.unmuteIcon)
             self.muteButton.setToolTip('Mute')
@@ -1299,11 +1303,13 @@ class VideoCutter(QWidget):
     @pyqtSlot()
     def toggleFullscreen(self) -> None:
         if self.mediaAvailable:
+            pause = self.mpvWidget.property('pause')
+            pos = self.seekSlider.value() / 1000
             if self.mpvWidget.originalParent is not None:
                 self.mpvWidget.shutdown()
                 sip.delete(self.mpvWidget)
                 del self.mpvWidget
-                self.mpvWidget = self.getMPV(self)
+                self.mpvWidget = self.getMPV(parent=self, file=self.currentMedia, start=pos, pause=pause)
                 self.videoplayerLayout.insertWidget(0, self.mpvWidget)
                 self.mpvWidget.originalParent = None
                 self.parent.show()
@@ -1313,13 +1319,10 @@ class VideoCutter(QWidget):
                 self.videoplayerLayout.removeWidget(self.mpvWidget)
                 sip.delete(self.mpvWidget)
                 del self.mpvWidget
-                self.mpvWidget = self.getMPV()
+                self.mpvWidget = self.getMPV(file=self.currentMedia, start=pos, pause=pause)
                 self.mpvWidget.originalParent = self
                 self.mpvWidget.setGeometry(qApp.desktop().screenGeometry(self))
                 self.mpvWidget.showFullScreen()
-            self.mpvWidget.play(self.currentMedia)
-            # self.mpvWidget.pause()
-            QTimer.singleShot(100, lambda: self.mpvWidget.seek(self.seekSlider.value() / 1000))
 
     def toggleOSD(self, checked: bool) -> None:
         self.showText('On screen display {}'.format('enabled' if checked else 'disabled'), override=True)
