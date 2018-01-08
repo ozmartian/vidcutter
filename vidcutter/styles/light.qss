@@ -223,7 +223,6 @@ QGroupBox#counterwidgets {
 #settingsdialog QGroupBox::title {
     subcontrol-origin: margin;
     subcontrol-position: top left;
-    padding: 0 3px;
     background-color: #444;
 }
 

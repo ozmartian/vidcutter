@@ -238,10 +238,6 @@ class VideoCutter(QWidget):
         if self.enableOSD:
             self.osdButton.setChecked(True)
 
-        if sys.platform == 'darwin':
-            self.osdButton.setChecked(False)
-            self.osdButton.hide()
-
         # noinspection PyArgumentList
         self.consoleButton = QPushButton(self, flat=True, checkable=True, objectName='consoleButton',
                                          statusTip='Toggle console window', toolTip='Toggle console',
