@@ -29,6 +29,10 @@ vidcutter (5.5.0-1) stable; urgency=medium
     playback state resets position back to the start, in pause and all
     controls in their default states.
 
+  * Clip index can be positioned on left or right hand side of the video
+    player container. Configured via new layout subsection on the Theme page
+    of the Settings dialog. User's choice is persistent.
+
   * Minor changes/improvements to a few other front panel buttons w/ pressed states
     where previously unavailable + minor cosmetic improvements to color schemes
     of hover/active state buttons

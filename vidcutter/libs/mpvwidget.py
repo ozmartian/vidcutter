@@ -40,10 +40,13 @@ def MPGetNativeDisplay(name):
     # if name == 'wl' and qApp.platformName().lower().startswith('wayland'):
     #     native = qApp.platformNativeInterface()
     #     return native.nativeResourceForWindow('display', None)
-    from PyQt5.QtX11Extras import QX11Info
-    if QX11Info.isPlatformX11():
-        return QX11Info.display()
-    return None
+    try:
+        from PyQt5.QtX11Extras import QX11Info
+        if QX11Info.isPlatformX11():
+            return id(QX11Info.display())
+    except ImportError:
+        return 0
+    return 0
 
 
 def get_proc_address(name):
@@ -53,7 +56,7 @@ def get_proc_address(name):
     name = name.decode()
     res = glctx.getProcAddress(name)
     if name == 'glMPGetNativeDisplay' and res is None:
-        return id(MPGetNativeDisplay)
+        return MPGetNativeDisplay
     try:
         if sys.platform == 'win32' and res is None:
             from PyQt5.QtWidgets import QOpenGLContext

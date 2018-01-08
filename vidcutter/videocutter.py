@@ -97,6 +97,7 @@ class VideoCutter(QWidget):
         self.keepRatio = self.settings.value('aspectRatio', 'keep', type=str) == 'keep'
         self.keepClips = self.settings.value('keepClips', 'off', type=str) in {'on', 'true'}
         self.nativeDialogs = self.settings.value('nativeDialogs', 'on', type=str) in {'on', 'true'}
+        self.indexLayout = self.settings.value('indexLayout', 'right', type=str)
         self.timelineThumbs = self.settings.value('timelineThumbs', 'on', type=str) in {'on', 'true'}
         self.showConsole = self.settings.value('showConsole', 'off', type=str) in {'on', 'true'}
         self.smartcut = self.settings.value('smartcut', 'off', type=str) in {'on', 'true'}
@@ -177,9 +178,14 @@ class VideoCutter(QWidget):
 
         self.videoLayout = QHBoxLayout()
         self.videoLayout.setContentsMargins(0, 0, 0, 0)
-        self.videoLayout.addWidget(self.novideoWidget)
-        self.videoLayout.addSpacing(10)
-        self.videoLayout.addLayout(self.clipindexLayout)
+        if self.indexLayout == 'left':
+            self.videoLayout.addLayout(self.clipindexLayout)
+            self.videoLayout.addSpacing(10)
+            self.videoLayout.addWidget(self.novideoWidget)
+        else:
+            self.videoLayout.addWidget(self.novideoWidget)
+            self.videoLayout.addSpacing(10)
+            self.videoLayout.addLayout(self.clipindexLayout)
 
         self.timeCounter = TimeCounter(self)
         self.timeCounter.timeChanged.connect(lambda newtime: self.setPosition(newtime.msecsSinceStartOfDay()))
@@ -386,6 +392,8 @@ class VideoCutter(QWidget):
         self.setLayout(layout)
         self.seekSlider.initStyle()
 
+        pass
+
     def initTheme(self) -> None:
         qApp.setStyle(VideoStyleDark() if self.theme == 'dark' else VideoStyleLight())
         self.fonts = [
@@ -541,6 +549,31 @@ class VideoCutter(QWidget):
         self.videoService.progress.connect(self.seekSlider.updateProgress)
         self.videoService.finished.connect(self.smartmonitor)
         self.videoService.error.connect(self.completeOnError)
+
+    def setClipIndexLayout(self, side: str='right'):
+        self.indexLayout = side
+        self.settings.setValue('indexLayout', self.indexLayout)
+        left = self.videoLayout.takeAt(0)
+        spacer = self.videoLayout.takeAt(0)
+        right = self.videoLayout.takeAt(0)
+        if type(left) == QVBoxLayout:
+            if side == 'left':
+                self.videoLayout.addItem(left)
+                self.videoLayout.addItem(spacer)
+                self.videoLayout.addItem(right)
+            else:
+                self.videoLayout.addItem(right)
+                self.videoLayout.addItem(spacer)
+                self.videoLayout.addItem(left)
+        else:
+            if side == 'left':
+                self.videoLayout.addItem(right)
+                self.videoLayout.addItem(spacer)
+                self.videoLayout.addItem(left)
+            else:
+                self.videoLayout.addItem(left)
+                self.videoLayout.addItem(spacer)
+                self.videoLayout.addItem(right)
 
     def setToolBarStyle(self, labelstyle: str = 'beside') -> None:
         buttonlist = self.toolbarGroup.findChildren(VCToolBarButton)

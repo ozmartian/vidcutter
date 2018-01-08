@@ -109,6 +109,25 @@ class ThemePage(QWidget):
         themeGroup = QGroupBox('Theme')
         themeGroup.setLayout(themeLayout)
         mainLayout.addWidget(themeGroup)
+        index_leftRadio = QRadioButton('Clip Index on left')
+        index_leftRadio.setToolTip('Display Clip Index on the left hand side')
+        index_leftRadio.setCursor(Qt.PointingHandCursor)
+        index_leftRadio.setChecked(self.parent.parent.indexLayout == 'left')
+        index_rightRadio = QRadioButton('Clip Index on right')
+        index_rightRadio.setToolTip('Display Clip Index on the right hand side')
+        index_rightRadio.setCursor(Qt.PointingHandCursor)
+        index_rightRadio.setChecked(self.parent.parent.indexLayout == 'right')
+        index_buttonGroup = QButtonGroup(self)
+        index_buttonGroup.addButton(index_leftRadio, 1)
+        index_buttonGroup.addButton(index_rightRadio, 2)
+        # noinspection PyUnresolvedReferences
+        index_buttonGroup.buttonClicked[int].connect(self.setIndexLayout)
+        indexLayout = QHBoxLayout()
+        indexLayout.addWidget(index_leftRadio)
+        indexLayout.addWidget(index_rightRadio)
+        layoutGroup = QGroupBox('Layout')
+        layoutGroup.setLayout(indexLayout)
+        mainLayout.addWidget(layoutGroup)
         toolbar_labels = self.parent.settings.value('toolbarLabels', 'beside', type=str)
         toolbar_notextRadio = QRadioButton('No text (buttons only)', self)
         toolbar_notextRadio.setToolTip('No text (buttons only)')
@@ -158,6 +177,10 @@ class ThemePage(QWidget):
         mainLayout.addWidget(advancedGroup)
         mainLayout.addStretch(1)
         self.setLayout(mainLayout)
+
+    @pyqtSlot(int)
+    def setIndexLayout(self, button_id: int) -> None:
+        self.parent.parent.setClipIndexLayout('left' if button_id == 1 else 'right')
 
     @pyqtSlot(int)
     def setLabelStyle(self, button_id: int) -> None:
