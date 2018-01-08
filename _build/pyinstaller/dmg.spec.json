@@ -1,5 +1,6 @@
 {
   "title": "VidCutter",
+  "icon": "../../data/icons/vidcutter.icns",
   "background": "../../vidcutter/images/_originals/vidcutter-dmg.png",
   "icon-size": 80,
   "contents": [
