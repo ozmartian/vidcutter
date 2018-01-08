@@ -4,14 +4,14 @@
   "icon-size": 80,
   "contents": [
     {
-      "x": 192,
-      "y": 344,
+      "x": 167,
+      "y": 245,
       "type": "file",
       "path": "dist/VidCutter.app"
     },
     {
-      "x": 448,
-      "y": 344,
+      "x": 495,
+      "y": 245,
       "type": "link",
       "path": "/Applications"
     }
