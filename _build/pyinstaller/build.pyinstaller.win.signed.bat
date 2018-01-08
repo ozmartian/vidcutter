@@ -18,18 +18,18 @@ if [%2]==[] (
 if ["%ARCH%"]==["64"] (
     SET BINARCH=x64
     SET PYPATH=C:\Python36-x64
-    SET FFMPEG_URL=https://ffmpeg.zeranoe.com/builds/win64/shared/ffmpeg-latest-win64-shared.7z
-    SET FFMPEG=ffmpeg-latest-win64-shared.7z
-    SET MEDIAINFO_URL=https://mediaarea.net/download/binary/mediainfo/17.10/MediaInfo_CLI_17.10_Windows_x64.zip
-    SET MEDIAINFO=MediaInfo_CLI_17.10_Windows_x64.zip
+    SET FFMPEG_URL=https://ffmpeg.zeranoe.com/builds/win64/shared/ffmpeg-latest-win64-shared.zip
+    SET FFMPEG=ffmpeg-latest-win64-shared.zip
+    SET MEDIAINFO_URL=https://mediaarea.net/download/binary/mediainfo/17.12/MediaInfo_CLI_17.12_Windows_x64.zip
+    SET MEDIAINFO=MediaInfo_CLI_17.12_Windows_x64.zip
 )
 if ["%ARCH%"]==["32"] (
     SET BINARCH=x86
     SET PYPATH=C:\Python35
-    SET FFMPEG_URL=https://ffmpeg.zeranoe.com/builds/win32/shared/ffmpeg-latest-win32-shared.7z
-    SET FFMPEG=ffmpeg-latest-win32-shared.7z
-    SET MEDIAINFO_URL=https://mediaarea.net/download/binary/mediainfo/17.10/MediaInfo_CLI_17.10_Windows_i386.zip
-    SET MEDIAINFO=MediaInfo_CLI_17.10_Windows_i386.zip
+    SET FFMPEG_URL=https://ffmpeg.zeranoe.com/builds/win32/shared/ffmpeg-latest-win32-shared.zip
+    SET FFMPEG=ffmpeg-latest-win32-shared.zip
+    SET MEDIAINFO_URL=https://mediaarea.net/download/binary/mediainfo/17.12/MediaInfo_CLI_17.12_Windows_i386.zip
+    SET MEDIAINFO=MediaInfo_CLI_17.12_Windows_i386.zip
 )
 
 REM ......................get latest version number......................
@@ -49,6 +49,7 @@ REM ......................extract files & move them to top-level binary folder .
 cd temp\
 7z x ffmpeg-latest-win%ARCH%-shared.7z ffmpeg-latest-win%ARCH%-shared\bin
 del /q ffmpeg-latest-win%ARCH%-shared\bin\ffplay.exe
+del /q ffmpeg-latest-win%ARCH%-shared\bin\ffserver.exe
 unzip %MEDIAINFO% MediaInfo.exe
 move ffmpeg-latest-win%ARCH%-shared\bin\*.* ..\..\..\bin\
 move MediaInfo.exe ..\..\..\bin\
