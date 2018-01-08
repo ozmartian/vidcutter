@@ -257,10 +257,11 @@ class mpvWidget(QOpenGLWidget):
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
         event.accept()
-        if self.parent is None:
-            self.originalParent.playMedia()
-        else:
-            self.parent.playMedia()
+        if event.button() == Qt.LeftButton:
+            if self.parent is None:
+                self.originalParent.playMedia()
+            else:
+                self.parent.playMedia()
 
     def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
         event.accept()

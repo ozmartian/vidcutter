@@ -395,7 +395,8 @@ class VideoCutter(QWidget):
         self.style().loadQSS(self.theme)
         QApplication.setFont(QFont('Noto Sans UI', 12 if sys.platform == 'darwin' else 10, 300))
 
-    def getMPV(self, parent: QWidget=None, file: str=None, start: float=0, pause: bool=True, mute: bool=False) -> mpvWidget:
+    def getMPV(self, parent: QWidget=None, file: str=None, start: float=0, pause: bool=True, mute: bool=False,
+               volume: int=None) -> mpvWidget:
         widget = mpvWidget(
             parent=parent,
             file=file,
@@ -422,7 +423,7 @@ class VideoCutter(QWidget):
             video_sync='display-vdrop',
             audio_file_auto=False,
             quiet=True,
-            volume=self.parent.startupvol,
+            volume=volume if volume is not None else self.parent.startupvol,
             keepaspect=self.keepRatio,
             hwdec=('auto' if self.hardwareDecoding else 'no'))
         widget.durationChanged.connect(self.on_durationChanged)
@@ -1302,12 +1303,14 @@ class VideoCutter(QWidget):
         if self.mediaAvailable:
             pause = self.mpvWidget.property('pause')
             mute = self.mpvWidget.property('mute')
+            vol = self.mpvWidget.property('volume')
             pos = self.seekSlider.value() / 1000
             if self.mpvWidget.originalParent is not None:
                 self.mpvWidget.shutdown()
                 sip.delete(self.mpvWidget)
                 del self.mpvWidget
-                self.mpvWidget = self.getMPV(parent=self, file=self.currentMedia, start=pos, pause=pause, mute=mute)
+                self.mpvWidget = self.getMPV(parent=self, file=self.currentMedia, start=pos, pause=pause, mute=mute,
+                                             volume=vol)
                 self.videoplayerLayout.insertWidget(0, self.mpvWidget)
                 self.mpvWidget.originalParent = None
                 self.parent.show()
@@ -1317,7 +1320,7 @@ class VideoCutter(QWidget):
                 self.videoplayerLayout.removeWidget(self.mpvWidget)
                 sip.delete(self.mpvWidget)
                 del self.mpvWidget
-                self.mpvWidget = self.getMPV(file=self.currentMedia, start=pos, pause=pause, mute=mute)
+                self.mpvWidget = self.getMPV(file=self.currentMedia, start=pos, pause=pause, mute=mute, volume=vol)
                 self.mpvWidget.originalParent = self
                 self.mpvWidget.setGeometry(qApp.desktop().screenGeometry(self))
                 self.mpvWidget.showFullScreen()
