@@ -81,8 +81,12 @@ class SetupHelpers:
     @staticmethod
     def get_latest_win32_libmpv(arch: int=64):
         from urllib.request import urlopen
+        import ssl
         import xmltodict
-        xml = urlopen('https://sourceforge.net/projects/mpv-player-windows/rss?path=/libmpv').read()
+        ctx = ssl.create_default_context()
+        ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
+        xml = urlopen('https://sourceforge.net/projects/mpv-player-windows/rss?path=/libmpv', context=ctx).read()
         data = xml.decode('utf-8')
         datadict = xmltodict.parse(data)
         link = datadict['rss']['channel']['item'][1 if arch == 32 else 0]['title']
