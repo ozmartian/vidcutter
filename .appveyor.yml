@@ -46,7 +46,6 @@ install:
   - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
   # Build Cython/C extension for libmpv binding...
   - C:\Python36-x64\python.exe setup.py build_ext -i
-  - appveyor PushArtifact vidcutter\libs\mpv.cp36-win_amd64.pyd
   # Retrieve URL for latest available version of libmpv
   - for /f "delims=" %%a in ('C:\Python36-x64\python.exe helpers.py get_latest_win32_libmpv_64') do @set LIBMPV=%%a
   # Downloading latest libmpv 64-bit build...
@@ -82,7 +81,6 @@ install:
   - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
   # Build Cython/C extension for libmpv binding...
   - C:\Python35\python.exe setup.py build_ext -i
-  # - appveyor PushArtifact vidcutter\libs\mpv.cp36-win32.pyd
   # Retrieve URL for latest available version of libmpv
   - for /f "delims=" %%a in ('C:\Python35\python.exe helpers.py get_latest_win32_libmpv_32') do @set LIBMPV=%%a
   # Downloading latest libmpv 32-bit build...
