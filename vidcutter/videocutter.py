@@ -31,7 +31,7 @@ from datetime import timedelta
 
 from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QBuffer, QByteArray, QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize,
                           Qt, QTextStream, QTime, QTimer, QUrl)
-from PyQt5.QtGui import QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QMovie, QPixmap
+from PyQt5.QtGui import QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QPixmap
 from PyQt5.QtWidgets import (QAction, qApp, QApplication, QDialogButtonBox, QFileDialog, QFrame, QGroupBox, QHBoxLayout,
                              QLabel, QListWidgetItem, QMenu, QMessageBox, QPushButton, QSizePolicy, QStyleFactory,
                              QVBoxLayout, QWidget)
@@ -46,7 +46,8 @@ from vidcutter.libs.notifications import JobCompleteNotification
 from vidcutter.libs.taskbarprogress import TaskbarProgress
 from vidcutter.libs.videoconfig import InvalidMediaException
 from vidcutter.libs.videoservice import VideoService
-from vidcutter.libs.widgets import ClipErrorsDialog, FrameCounter, TimeCounter, VolumeSlider, VCToolBarButton
+from vidcutter.libs.widgets import (ClipErrorsDialog, VCBlinkText, VCFrameCounter, VCTimeCounter, VCToolBarButton,
+                                    VCVolumeSlider)
 from vidcutter.mediainfo import MediaInfo
 from vidcutter.settings import SettingsDialog
 from vidcutter.updater import Updater
@@ -187,9 +188,9 @@ class VideoCutter(QWidget):
             self.videoLayout.addSpacing(10)
             self.videoLayout.addLayout(self.clipindexLayout)
 
-        self.timeCounter = TimeCounter(self)
+        self.timeCounter = VCTimeCounter(self)
         self.timeCounter.timeChanged.connect(lambda newtime: self.setPosition(newtime.msecsSinceStartOfDay()))
-        self.frameCounter = FrameCounter(self)
+        self.frameCounter = VCFrameCounter(self)
         self.frameCounter.setReadOnly(True)
 
         countersLayout = QHBoxLayout()
@@ -269,9 +270,9 @@ class VideoCutter(QWidget):
                                       cursor=Qt.PointingHandCursor)
 
         # noinspection PyArgumentList
-        self.volSlider = VolumeSlider(orientation=Qt.Horizontal, toolTip='Volume', statusTip='Adjust volume level',
-                                      cursor=Qt.PointingHandCursor, value=self.parent.startupvol, minimum=0,
-                                      maximum=130, sliderMoved=self.setVolume)
+        self.volSlider = VCVolumeSlider(orientation=Qt.Horizontal, toolTip='Volume', statusTip='Adjust volume level',
+                                        cursor=Qt.PointingHandCursor, value=self.parent.startupvol, minimum=0,
+                                        maximum=130, sliderMoved=self.setVolume)
 
         self.volSlider.setMinimumHeight(22)
         if sys.platform == 'darwin':
@@ -392,8 +393,6 @@ class VideoCutter(QWidget):
         self.setLayout(layout)
         self.seekSlider.initStyle()
 
-        pass
-
     def initTheme(self) -> None:
         qApp.setStyle(VideoStyleDark() if self.theme == 'dark' else VideoStyleLight())
         self.fonts = [
@@ -442,16 +441,23 @@ class VideoCutter(QWidget):
         self.novideoWidget = QWidget(self)
         self.novideoWidget.setObjectName('novideoWidget')
         self.novideoWidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.MinimumExpanding)
-        self.novideoLabel = QLabel(self)
+        self.novideoLabel = VCBlinkText('open media to begin', self)
         self.novideoLabel.setAlignment(Qt.AlignRight)
-        self.novideoMovie = QMovie(':/images/novideotext.gif', b'GIF', self)
-        self.novideoMovie.setScaledSize(QSize(250, 30))
-        self.novideoMovie.frameChanged.connect(lambda: self.novideoLabel.setPixmap(self.novideoMovie.currentPixmap()))
-        self.novideoMovie.start()
+        startupLayout = QHBoxLayout()
+        startupLayout.addStretch(9)
+        startupLayout.addWidget(self.novideoLabel)
+        startupLayout.addStretch(1)
+        versionLabel = QLabel('v{}'.format(qApp.applicationVersion()), self)
+        versionLabel.setObjectName('novideoversion')
+        versionLabel.setAlignment(Qt.AlignRight)
+        versionLayout = QHBoxLayout()
+        versionLayout.addStretch(1)
+        versionLayout.addWidget(versionLabel)
         novideoLayout = QVBoxLayout()
         novideoLayout.addStretch(2)
-        novideoLayout.addWidget(self.novideoLabel)
+        novideoLayout.addLayout(startupLayout)
         novideoLayout.addStretch(3)
+        novideoLayout.addLayout(versionLayout)
         self.novideoWidget.setLayout(novideoLayout)
 
     def initIcons(self) -> None:
@@ -815,8 +821,8 @@ class VideoCutter(QWidget):
         if not self.mediaAvailable:
             self.videoLayout.replaceWidget(self.novideoWidget, self.videoplayerWidget)
             self.novideoWidget.hide()
-            self.novideoMovie.stop()
-            self.novideoMovie.deleteLater()
+            self.novideoLabel.stop()
+            self.novideoLabel.deleteLater()
             self.novideoWidget.deleteLater()
             self.videoplayerWidget.show()
             self.mediaAvailable = True

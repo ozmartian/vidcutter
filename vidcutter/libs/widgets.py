@@ -25,11 +25,12 @@
 import os
 import sys
 
-from PyQt5.QtCore import pyqtSignal, pyqtSlot, QEvent, QObject, QPoint, QSize, Qt, QTime, QTimer
+from PyQt5.QtCore import (pyqtProperty, pyqtSignal, pyqtSlot, QEasingCurve, QEvent, QObject, QPoint, QPropertyAnimation,
+                          QSize, Qt, QTime, QTimer)
 from PyQt5.QtGui import QShowEvent
-from PyQt5.QtWidgets import (qApp, QAbstractSpinBox, QDialog, QDialogButtonBox, QGridLayout, QHBoxLayout,
-                             QLabel, QMessageBox, QProgressBar, QPushButton, QSlider, QSpinBox, QStyle, QStyleFactory,
-                             QStyleOptionSlider, QTimeEdit, QToolBox, QToolTip, QVBoxLayout, QWidget)
+from PyQt5.QtWidgets import (qApp, QAbstractSpinBox, QDialog, QDialogButtonBox, QGraphicsOpacityEffect, QGridLayout,
+                             QHBoxLayout, QLabel, QMessageBox, QProgressBar, QPushButton, QSlider, QSpinBox, QStyle,
+                             QStyleFactory, QStyleOptionSlider, QTimeEdit, QToolBox, QToolTip, QVBoxLayout, QWidget)
 
 
 class VCToolBarButton(QWidget):
@@ -79,11 +80,11 @@ class VCToolBarButton(QWidget):
         return super(VCToolBarButton, self).eventFilter(obj, event)
 
 
-class TimeCounter(QWidget):
+class VCTimeCounter(QWidget):
     timeChanged = pyqtSignal(QTime)
 
     def __init__(self, parent=None):
-        super(TimeCounter, self).__init__(parent)
+        super(VCTimeCounter, self).__init__(parent)
         self.parent = parent
         self.timeedit = QTimeEdit(QTime(0, 0))
         self.timeedit.setObjectName('timeCounter')
@@ -128,7 +129,7 @@ class TimeCounter(QWidget):
     def hasFocus(self) -> bool:
         if self.timeedit.hasFocus():
             return True
-        return super(TimeCounter, self).hasFocus()
+        return super(VCTimeCounter, self).hasFocus()
 
     def reset(self) -> None:
         self.timeedit.setTime(QTime(0, 0))
@@ -147,11 +148,11 @@ class TimeCounter(QWidget):
             self.timeChanged.emit(newtime)
 
 
-class FrameCounter(QWidget):
+class VCFrameCounter(QWidget):
     frameChanged = pyqtSignal(int)
 
     def __init__(self, parent=None):
-        super(FrameCounter, self).__init__(parent)
+        super(VCFrameCounter, self).__init__(parent)
         self.parent = parent
         self.currentframe = QSpinBox(self)
         self.currentframe.setObjectName('frameCounter')
@@ -189,7 +190,7 @@ class FrameCounter(QWidget):
     def hasFocus(self) -> bool:
         if self.currentframe.hasFocus():
             return True
-        return super(FrameCounter, self).hasFocus()
+        return super(VCFrameCounter, self).hasFocus()
 
     def clearFocus(self) -> None:
         self.currentframe.clearFocus()
@@ -315,9 +316,9 @@ class VCProgressBar(QDialog):
         super(VCProgressBar, self).close()
 
 
-class VolumeSlider(QSlider):
+class VCVolumeSlider(QSlider):
     def __init__(self, parent=None, **kwargs):
-        super(VolumeSlider, self).__init__(parent, **kwargs)
+        super(VCVolumeSlider, self).__init__(parent, **kwargs)
         self.setObjectName('volumeslider')
         self.setFocusPolicy(Qt.NoFocus)
         self.valueChanged.connect(self.showTooltip)
@@ -334,6 +335,31 @@ class VolumeSlider(QSlider):
         pos += self.offset
         globalPos = self.mapToGlobal(pos)
         QToolTip.showText(globalPos, str('{0}%'.format(value)), self)
+
+
+class VCBlinkText(QWidget):
+    def __init__(self, text: str, parent=None):
+        super(VCBlinkText, self).__init__(parent)
+        self.label = QLabel(text)
+        self.label.setMinimumHeight(self.label.sizeHint().height() + 20)
+        layout = QHBoxLayout(self)
+        layout.addWidget(self.label)
+        self.effect = QGraphicsOpacityEffect(self.label)
+        self.label.setGraphicsEffect(self.effect)
+        self.anim = QPropertyAnimation(self.effect, b'opacity')
+        self.anim.setDuration(2000)
+        self.anim.setLoopCount(-1)
+        self.anim.setStartValue(1.0)
+        self.anim.setKeyValueAt(0.5, 0.0)
+        self.anim.setEndValue(1.0)
+        self.anim.setEasingCurve(QEasingCurve.OutQuad)
+        self.anim.start(QPropertyAnimation.DeleteWhenStopped)
+
+    def setAlignment(self, alignment: Qt.AlignmentFlag) -> None:
+        self.label.setAlignment(alignment)
+
+    def stop(self) -> None:
+        self.anim.stop()
 
 
 class ClipErrorsDialog(QDialog):
