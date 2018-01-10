@@ -347,7 +347,7 @@ class VCBlinkText(QWidget):
         self.effect = QGraphicsOpacityEffect(self.label)
         self.label.setGraphicsEffect(self.effect)
         self.anim = QPropertyAnimation(self.effect, b'opacity')
-        self.anim.setDuration(2000)
+        self.anim.setDuration(3500)
         self.anim.setLoopCount(-1)
         self.anim.setStartValue(1.0)
         self.anim.setKeyValueAt(0.5, 0.0)

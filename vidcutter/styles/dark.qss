@@ -202,11 +202,11 @@ QLabel#filmstrip {
 }
 
 QLabel#novideoversion {
-    font-size: 18px;
-    font-weight: 300;
-    font-family: "Noto Sans UI", sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: "Futura-Light", sans-serif;
     padding-right: 4px;
-    padding-bottom: 2px;
+    padding-bottom: 4px;
     color: #FFF;
 }
 
@@ -566,7 +566,7 @@ QToolTip {
 /* -------------------------------------------------------------------------- */
 
 VCToolBarButton QLabel {
-    color: #444;
+    color: #FFF;
     font-size: 13px;
     font-weight: 400;
     font-family: "Noto Sans UI", sans-serif;    
@@ -717,7 +717,7 @@ VCProgressBar QLabel#progresstimer {
 
 VCBlinkText QLabel {
     font-family: "Futura-Light", sans-serif;
-    font-weight: 550;
+    font-weight: 400;
     font-size: 26px;
     color: #FFF;
 }
