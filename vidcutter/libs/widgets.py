@@ -97,6 +97,7 @@ class VCTimeCounter(QWidget):
         self.duration = QLabel('00:00:00.000')
         self.duration.setObjectName('timeDuration')
         layout = QHBoxLayout()
+        layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(5)
         layout.addWidget(self.timeedit)
         layout.addWidget(separator)

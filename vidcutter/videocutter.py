@@ -154,7 +154,7 @@ class VideoCutter(QWidget):
         self.clipindex_remove.setLayoutDirection(Qt.RightToLeft)
         self.clipindex_remove.setMenu(self.clipindex_removemenu)
         self.clipindex_remove.setCursor(Qt.PointingHandCursor)
-        if sys.platform == 'win32':
+        if sys.platform in {'win32', 'darwin'}:
             self.clipindex_add.setStyle(QStyleFactory.create('Fusion'))
             self.clipindex_remove.setStyle(QStyleFactory.create('Fusion'))
 
