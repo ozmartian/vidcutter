@@ -143,7 +143,7 @@ class mpvWidget(QOpenGLWidget):
     def initializeGL(self):
         if self.opengl:
             callback = 'GL_MP_MPGetNativeDisplay'
-            if qApp.platformName().lower().startswith('wayland'):
+            if os.name != 'posix' or qApp.platformName().lower().startswith('wayland'):
                 callback = None
             self.opengl.init_gl(callback, get_proc_address)
             if self.filename is not None:
