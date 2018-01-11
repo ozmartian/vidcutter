@@ -544,7 +544,7 @@ class VideoCutter(QWidget):
         self.clipindex_removemenu.addActions([self.removeItemAction, self.removeAllAction])
         self.clipindex_removemenu.aboutToShow.connect(self.initRemoveMenu)
 
-        if sys.platform == 'win32':
+        if sys.platform in {'win32', 'darwin'}:
             self.appMenu.setStyle(QStyleFactory.create('Fusion'))
             self.clipindex_contextmenu.setStyle(QStyleFactory.create('Fusion'))
             self.clipindex_removemenu.setStyle(QStyleFactory.create('Fusion'))
