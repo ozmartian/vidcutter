@@ -28,6 +28,7 @@ import logging.handlers
 import os
 import shutil
 import signal
+import subprocess
 import sys
 import traceback
 
@@ -392,7 +393,14 @@ def main():
                 win.close()
             QProcess.startDetached('"{}"'.format(qApp.applicationFilePath()))
         else:
-            os.execl(sys.executable, sys.executable, *sys.argv)
+            # os.execl(sys.executable, sys.executable, *sys.argv)
+            try:
+                subprocess.Popen([sys.executable, os.path.abspath(__file__)])
+            except OSError as exc:
+                logging.getLogger(__name__).error('ERROR: Could not restart application:')
+                logging.getLogger(__name__).error(' {}'.format(exc))
+            else:
+                qApp.quit()
     sys.exit(exit_code)
 
 

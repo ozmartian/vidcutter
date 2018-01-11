@@ -453,8 +453,9 @@ class VideoCutter(QWidget):
         versionLayout.addStretch(1)
         versionLayout.addWidget(versionLabel)
         novideoLayout = QVBoxLayout()
-        novideoLayout.setSpacing(0)
-        novideoLayout.setContentsMargins(0, 0, 0, 0)
+        if sys.platform == 'darwin':
+            novideoLayout.setSpacing(0)
+            novideoLayout.setContentsMargins(0, 0, 0, 0)
         novideoLayout.addStretch(6)
         novideoLayout.addWidget(self.novideoLogo)
         novideoLayout.addStretch(3)
