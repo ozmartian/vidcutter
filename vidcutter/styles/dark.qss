@@ -566,7 +566,7 @@ QToolTip {
 /* -------------------------------------------------------------------------- */
 
 VCToolBarButton QLabel {
-    color: #FFF;
+    color: #BFBFBF;
     font-size: 13px;
     font-weight: 400;
     font-family: "Noto Sans UI", sans-serif;    
