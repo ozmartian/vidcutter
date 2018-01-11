@@ -28,7 +28,6 @@ import logging.handlers
 import os
 import shutil
 import signal
-import subprocess
 import sys
 import traceback
 
@@ -51,7 +50,6 @@ if sys.platform == 'win32':
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 signal.signal(signal.SIGTERM, signal.SIG_DFL)
-
 
 class MainWindow(QMainWindow):
     EXIT_CODE_REBOOT = 666
@@ -392,15 +390,10 @@ def main():
             if hasattr(win.cutter, 'mpvWidget'):
                 win.close()
             QProcess.startDetached('"{}"'.format(qApp.applicationFilePath()))
+        elif sys.platform == 'darwin' and getattr(sys, 'frozen', False):
+            os.execl(sys.executable, sys.executable, *sys.argv[1:])
         else:
-            # os.execl(sys.executable, sys.executable, *sys.argv)
-            try:
-                subprocess.Popen([sys.executable, os.path.abspath(__file__)])
-            except OSError as exc:
-                logging.getLogger(__name__).error('ERROR: Could not restart application:')
-                logging.getLogger(__name__).error(' {}'.format(exc))
-            else:
-                qApp.quit()
+            os.execl(sys.executable, sys.executable, *sys.argv)
     sys.exit(exit_code)
 
 
