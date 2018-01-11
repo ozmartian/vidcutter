@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
-# -*- mode: python -*-
+# -*- coding: utf-8 -*-
 
 import os
-import sys
+# noinspection PyUnresolvedReferences
 import PyQt5
+import sys
+sys.path.insert(0, "../..")
+
+import vidcutter
 
 block_cipher = None
 
-
+# noinspection PyUnresolvedReferences
 a = Analysis(['../../vidcutter/__main__.py'],
              pathex=[
                  os.path.join(sys.modules['PyQt5'].__path__[0], 'Qt', 'bin'),
@@ -25,24 +29,36 @@ a = Analysis(['../../vidcutter/__main__.py'],
              win_no_prefer_redirects=False,
              win_private_assemblies=False,
              cipher=block_cipher)
-pyz = PYZ(a.pure, a.zipped_data,
-             cipher=block_cipher)
+
+# noinspection PyUnresolvedReferences
+pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
+
+# noinspection PyUnresolvedReferences
 exe = EXE(pyz,
           a.scripts,
           exclude_binaries=True,
-          name='VidCutter',
+          name=vidcutter.__appname__,
           debug=False,
           strip=True,
           upx=False,
-          console=False , icon='../../data/icons/vidcutter.icns')
+          console=False,
+          icon='../../data/icons/vidcutter.icns')
+
+# noinspection PyUnresolvedReferences
 coll = COLLECT(exe,
                a.binaries,
                a.zipfiles,
                a.datas,
                strip=True,
                upx=False,
-               name='VidCutter')
+               name=vidcutter.__appname__)
+
+# noinspection PyUnresolvedReferences
 app = BUNDLE(coll,
-             name='VidCutter.app',
+             name='{}.app'.format(vidcutter.__appname__),
              icon='../../data/icons/vidcutter.icns',
-             bundle_identifier='com.ozmartians.vidcutter')
+             bundle_identifier=vidcutter.__desktopid__,
+             info_plist={
+                'CFBundleShortVersionString': vidcutter.__version__,
+                'NSHighResolutionCapable': 'True'
+             })
