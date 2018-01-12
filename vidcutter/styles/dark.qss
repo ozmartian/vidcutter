@@ -205,8 +205,6 @@ QLabel#novideoversion {
     font-size: 14px;
     font-weight: 500;
     font-family: "Futura-Light", sans-serif;
-    padding-right: 4px;
-    padding-bottom: 4px;
     color: #FFF;
 }
 

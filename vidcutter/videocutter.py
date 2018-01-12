@@ -31,7 +31,7 @@ from datetime import timedelta
 
 from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QBuffer, QByteArray, QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize,
                           Qt, QTextStream, QTime, QTimer, QUrl)
-from PyQt5.QtGui import QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QPixmap
+from PyQt5.QtGui import QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QPixmap, QResizeEvent
 from PyQt5.QtWidgets import (QAction, qApp, QApplication, QDialogButtonBox, QFileDialog, QFrame, QGroupBox, QHBoxLayout,
                              QLabel, QListWidgetItem, QMenu, QMessageBox, QPushButton, QSizePolicy, QStyleFactory,
                              QVBoxLayout, QWidget)
@@ -114,13 +114,13 @@ class VideoCutter(QWidget):
 
         self.edlblock_re = re.compile(r'(\d+(?:\.?\d+)?)\s(\d+(?:\.?\d+)?)\s([01])')
 
-        self.initIcons()
-        self.initActions()
+        self._initIcons()
+        self._initActions()
 
         self.appMenu, self.clipindex_removemenu, self.clipindex_contextmenu = QMenu(self), QMenu(self), QMenu(self)
-        self.initMenus()
 
-        self.initNoVideo()
+        self._initMenus()
+        self._initNoVideo()
 
         self.cliplist = VideoList(self)
         self.cliplist.customContextMenuRequested.connect(self.itemMenu)
@@ -130,10 +130,22 @@ class VideoCutter(QWidget):
         self.cliplist.model().rowsMoved.connect(self.setProjectDirty)
         self.cliplist.model().rowsMoved.connect(self.syncClipList)
 
-        listHeader = QLabel(self)
-        listHeader.setPixmap(QPixmap(':/images/{}/clipindex.png'.format(self.theme), 'PNG'))
-        listHeader.setAlignment(Qt.AlignCenter)
-        listHeader.setObjectName('listHeader')
+        self.listHeaderButton = QPushButton(QIcon(':images/light/arrow-left.png'), '', self)
+        self.listHeaderButton.setFlat(True)
+        self.listHeaderButton.setCursor(Qt.PointingHandCursor)
+        self.listHeaderButton.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        self.listHeaderButton.setFixedSize(QSize(18, 14))
+
+        self.listHeaderLabel = QLabel(self)
+        self.listHeaderLabel.setPixmap(QPixmap(':/images/{}/clipindex.png'.format(self.theme), 'PNG'))
+        self.listHeaderLabel.setAlignment(Qt.AlignCenter)
+        self.listHeaderLabel.setObjectName('listHeader')
+
+        self.listHeader = QHBoxLayout()
+        self.listHeader.setContentsMargins(0, 0, 0, 0)
+        self.listHeader.setSpacing(0)
+
+        self._initClipIndexHeader()
 
         self.runtimeLabel = QLabel('<div align="right">00:00:00</div>', self)
         self.runtimeLabel.setObjectName('runtimeLabel')
@@ -171,7 +183,7 @@ class VideoCutter(QWidget):
         self.clipindexLayout = QVBoxLayout()
         self.clipindexLayout.setSpacing(0)
         self.clipindexLayout.setContentsMargins(0, 0, 0, 0)
-        self.clipindexLayout.addWidget(listHeader)
+        self.clipindexLayout.addLayout(self.listHeader)
         self.clipindexLayout.addWidget(self.cliplist)
         self.clipindexLayout.addWidget(self.runtimeLabel)
         self.clipindexLayout.addSpacing(3)
@@ -437,34 +449,42 @@ class VideoCutter(QWidget):
         widget.positionChanged.connect(self.on_positionChanged)
         return widget
 
-    def initNoVideo(self) -> None:
+    def _initNoVideo(self) -> None:
+
+        class LogoLabel(QLabel):
+            def __init__(self, parent=None):
+                super(LogoLabel, self).__init__(parent)
+                self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+                self.logo = QPixmap(':/images/startup-logo.jpg', 'JPG')
+                self.setPixmap(self.logo)
+
+            def resizeEvent(self, event: QResizeEvent) -> None:
+                self.setPixmap(self.logo.scaledToWidth(event.size().width(), Qt.SmoothTransformation))
+                event.accept()
+
         self.novideoWidget = QWidget(self)
         self.novideoWidget.setObjectName('novideoWidget')
         self.novideoWidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        self.novideoLogo = QLabel(self)
-        self.novideoLogo.setPixmap(QPixmap(':/images/startup-logo.png'))
-        self.novideoLogo.setAlignment(Qt.AlignCenter)
-        self.novideoLabel = VCBlinkText('open media to begin', self)
-        self.novideoLabel.setAlignment(Qt.AlignHCenter)
+        openmediaLabel = VCBlinkText('open media to begin', self)
+        openmediaLabel.setAlignment(Qt.AlignHCenter)
         versionLabel = QLabel('v{}'.format(qApp.applicationVersion()), self)
         versionLabel.setObjectName('novideoversion')
         versionLabel.setAlignment(Qt.AlignRight)
+        versionLabel.setContentsMargins(0, 0, 10, 10)
         versionLayout = QHBoxLayout()
         versionLayout.addStretch(1)
         versionLayout.addWidget(versionLabel)
-        novideoLayout = QVBoxLayout()
-        if sys.platform == 'darwin':
-            novideoLayout.setSpacing(0)
-            novideoLayout.setContentsMargins(0, 0, 0, 0)
+        novideoLayout = QVBoxLayout(self.novideoWidget)
+        novideoLayout.setSpacing(0)
+        novideoLayout.setContentsMargins(0, 0, 0, 0)
         novideoLayout.addStretch(6)
-        novideoLayout.addWidget(self.novideoLogo)
-        novideoLayout.addStretch(3)
-        novideoLayout.addWidget(self.novideoLabel)
+        novideoLayout.addWidget(LogoLabel(self))
+        novideoLayout.addStretch(2)
+        novideoLayout.addWidget(openmediaLabel)
         novideoLayout.addStretch(1)
         novideoLayout.addLayout(versionLayout)
-        self.novideoWidget.setLayout(novideoLayout)
 
-    def initIcons(self) -> None:
+    def _initIcons(self) -> None:
         self.appIcon = qApp.windowIcon()
         self.muteIcon = QIcon(':/images/{}/muted.png'.format(self.theme))
         self.unmuteIcon = QIcon(':/images/{}/unmuted.png'.format(self.theme))
@@ -483,7 +503,7 @@ class VideoCutter(QWidget):
         self.quitIcon = QIcon(':/images/quit.png')
 
     # noinspection PyArgumentList
-    def initActions(self) -> None:
+    def _initActions(self) -> None:
         self.moveItemUpAction = QAction(self.upIcon, 'Move up', self, statusTip='Move clip position up in list',
                                         triggered=self.moveItemUp, enabled=False)
         self.moveItemDownAction = QAction(self.downIcon, 'Move down', self, statusTip='Move clip position down in list',
@@ -516,7 +536,7 @@ class VideoCutter(QWidget):
         self.quitAction = QAction(self.quitIcon, 'Quit', self, triggered=self.parent.close,
                                   statusTip='Quit the application')
 
-    def initMenus(self) -> None:
+    def _initMenus(self) -> None:
         self.appMenu.setLayoutDirection(Qt.LeftToRight)
         self.appMenu.addAction(self.openProjectAction)
         self.appMenu.addAction(self.saveProjectAction)
@@ -560,14 +580,33 @@ class VideoCutter(QWidget):
         self.videoService.finished.connect(self.smartmonitor)
         self.videoService.error.connect(self.completeOnError)
 
-    def setClipIndexLayout(self, side: str='right'):
-        self.indexLayout = side
+    def _initClipIndexHeader(self) -> None:
+        if self.listHeader.count():
+            self.listHeader.removeWidget(self.listHeaderButton)
+            self.listHeader.removeWidget(self.listHeaderLabel)
+        if self.indexLayout == 'left':
+            self.listHeaderButton.setObjectName('clipindexright')
+            self.listHeaderButton.clicked.connect(self.setClipIndexLayout)
+            self.listHeaderButton.setToolTip('Move to right')
+            self.listHeaderButton.setStatusTip('Move the Clip Index list to the right side of player')
+            self.listHeader.addWidget(self.listHeaderLabel)
+            self.listHeader.addWidget(self.listHeaderButton)
+        else:
+            self.listHeaderButton.setObjectName('clipindexleft')
+            self.listHeaderButton.clicked.connect(self.setClipIndexLayout)
+            self.listHeaderButton.setToolTip('Move to left')
+            self.listHeaderButton.setStatusTip('Move the Clip Index list to the left side of player')
+            self.listHeader.addWidget(self.listHeaderButton)
+            self.listHeader.addWidget(self.listHeaderLabel)
+
+    def setClipIndexLayout(self) -> None:
+        self.indexLayout = 'left' if self.indexLayout == 'right' else 'right'
         self.settings.setValue('indexLayout', self.indexLayout)
         left = self.videoLayout.takeAt(0)
         spacer = self.videoLayout.takeAt(0)
         right = self.videoLayout.takeAt(0)
         if type(left) == QVBoxLayout:
-            if side == 'left':
+            if self.indexLayout == 'left':
                 self.videoLayout.addItem(left)
                 self.videoLayout.addItem(spacer)
                 self.videoLayout.addItem(right)
@@ -576,7 +615,7 @@ class VideoCutter(QWidget):
                 self.videoLayout.addItem(spacer)
                 self.videoLayout.addItem(left)
         else:
-            if side == 'left':
+            if self.indexLayout == 'left':
                 self.videoLayout.addItem(right)
                 self.videoLayout.addItem(spacer)
                 self.videoLayout.addItem(left)
@@ -825,8 +864,6 @@ class VideoCutter(QWidget):
         if not self.mediaAvailable:
             self.videoLayout.replaceWidget(self.novideoWidget, self.videoplayerWidget)
             self.novideoWidget.hide()
-            self.novideoLabel.stop()
-            self.novideoLabel.deleteLater()
             self.novideoWidget.deleteLater()
             self.videoplayerWidget.show()
             self.mediaAvailable = True

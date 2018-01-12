@@ -205,7 +205,7 @@ extern "C" {
  * relational operators (<, >, <=, >=).
  */
 #define MPV_MAKE_VERSION(major, minor) (((major) << 16) | (minor) | 0UL)
-#define MPV_CLIENT_API_VERSION MPV_MAKE_VERSION(1, 25)
+#define MPV_CLIENT_API_VERSION MPV_MAKE_VERSION(1, 26)
 
 /**
  * The API user is allowed to "#define MPV_ENABLE_DEPRECATED 0" before
@@ -385,10 +385,14 @@ const char *mpv_client_name(mpv_handle *ctx);
  *   equivalent to setting the --no-terminal option.
  *   (Technically, this also suppresses C signal handling.)
  * - No config files will be loaded. This is roughly equivalent to using
- *   --no-config. Since libmpv 1.15, you can actually re-enable this option,
+ *   --config=no. Since libmpv 1.15, you can actually re-enable this option,
  *   which will make libmpv load config files during mpv_initialize(). If you
  *   do this, you are strongly encouraged to set the "config-dir" option too.
  *   (Otherwise it will load the mpv command line player's config.)
+ *   For example:
+ *      mpv_set_option_string(mpv, "config-dir", "/my/path"); // set config root
+ *      mpv_set_option_string(mpv, "config", "yes"); // enable config loading
+ *      (call mpv_initialize() _after_ this)
  * - Idle mode is enabled, which means the playback core will enter idle mode
  *   if there are no more files to play on the internal playlist, instead of
  *   exiting. This is equivalent to the --idle option.
