@@ -450,18 +450,6 @@ class VideoCutter(QWidget):
         return widget
 
     def _initNoVideo(self) -> None:
-
-        class LogoLabel(QLabel):
-            def __init__(self, parent=None):
-                super(LogoLabel, self).__init__(parent)
-                self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
-                self.logo = QPixmap(':/images/startup-logo.jpg', 'JPG')
-                self.setPixmap(self.logo)
-
-            def resizeEvent(self, event: QResizeEvent) -> None:
-                self.setPixmap(self.logo.scaledToWidth(event.size().width(), Qt.SmoothTransformation))
-                event.accept()
-
         self.novideoWidget = QWidget(self)
         self.novideoWidget.setObjectName('novideoWidget')
         self.novideoWidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -470,16 +458,14 @@ class VideoCutter(QWidget):
         versionLabel = QLabel('v{}'.format(qApp.applicationVersion()), self)
         versionLabel.setObjectName('novideoversion')
         versionLabel.setAlignment(Qt.AlignRight)
-        versionLabel.setContentsMargins(0, 0, 10, 10)
         versionLayout = QHBoxLayout()
+        versionLayout.setContentsMargins(0, 0, 6, 4)
         versionLayout.addStretch(1)
         versionLayout.addWidget(versionLabel)
         novideoLayout = QVBoxLayout(self.novideoWidget)
         novideoLayout.setSpacing(0)
         novideoLayout.setContentsMargins(0, 0, 0, 0)
-        novideoLayout.addStretch(6)
-        novideoLayout.addWidget(LogoLabel(self))
-        novideoLayout.addStretch(2)
+        novideoLayout.addStretch(20)
         novideoLayout.addWidget(openmediaLabel)
         novideoLayout.addStretch(1)
         novideoLayout.addLayout(versionLayout)

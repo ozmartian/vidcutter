@@ -37,7 +37,6 @@
         <file>images/slider-knob.png</file>
         <file>images/slider-knob-active.png</file>
         <file>images/startup-backdrop.jpg</file>
-        <file>images/startup-logo.jpg</file>
         <file>images/theme-dark.png</file>
         <file>images/theme-light.png</file>
         <file>images/up.png</file>
@@ -85,7 +84,6 @@
         <file>images/dark/smartcut-hover.png</file>
         <file>images/dark/smartcut-off.png</file>
         <file>images/dark/smartcut-on.png</file>
-        <file>images/dark/startup-backdrop.png</file>
         <file>images/dark/thumbnails-disabled.png</file>
         <file>images/dark/thumbnails-hover.png</file>
         <file>images/dark/thumbnails-off.png</file>
@@ -154,7 +152,6 @@
         <file>images/light/smartcut-hover.png</file>
         <file>images/light/smartcut-off.png</file>
         <file>images/light/smartcut-on.png</file>
-        <file>images/light/startup-backdrop.png</file>
         <file>images/light/thumbnails-disabled.png</file>
         <file>images/light/thumbnails-hover.png</file>
         <file>images/light/thumbnails-off.png</file>
