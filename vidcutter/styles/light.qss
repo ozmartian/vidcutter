@@ -260,40 +260,41 @@ QDialog#mediainfo QPushButton, #clipindextools QPushButton {
     padding-left: 5px;
 }
 
-#clipindextools QPushButton#clipadd {
+#clipindextools QPushButton#clipadd, #clipindextools QPushButton:hover#clipadd {
     background: #E1E1E1 url(:images/light/clipindex-add.png) no-repeat left center;
 }
 
-#clipindextools QPushButton:hover#clipadd,
 #clipindextools QPushButton:pressed#clipadd {
-    background: #DACFDB url(:images/light/clipindex-add-on.png) no-repeat left center;
+    background: #E1E1E1 url(:images/light/clipindex-add-on.png) no-repeat left center;
 }
 
 #clipindextools QPushButton:disabled#clipadd {
     background: #E1E1E1 url(:images/light/clipindex-add-disabled.png) no-repeat left center;
 }
 
-#clipindextools QPushButton#clipremove {
+#clipindextools QPushButton#clipremove, #clipindextools QPushButton:hover#clipremove {
     background: #E1E1E1 url(:images/light/clipindex-remove.png) no-repeat right center;
 }
 
-#clipindextools QPushButton:hover#clipremove,
 #clipindextools QPushButton:pressed#clipremove {
-    background: #DACFDB url(:images/light/clipindex-remove-on.png) no-repeat right center;
+    background: #E1E1E1 url(:images/light/clipindex-remove-on.png) no-repeat right center;
 }
 
 #clipindextools QPushButton:disabled#clipremove {
     background: #E1E1E1 url(:images/light/clipindex-remove-disabled.png) no-repeat right center;
 }
 
-QDialogButtonBox QPushButton:hover, #clipindextools QPushButton:hover,
+#clipindextools QPushButton:hover {
+    border: 1px solid #E1E1E1;
+}
+
+QDialogButtonBox QPushButton:hover,
 QDialog#mediainfo QPushButton, QDialog#notification QPushButton:hover {
     border: 1px solid #642C68;
 }
 
 QDialogButtonBox QPushButton:focus,
 QDialogButtonBox QPushButton:pressed,
-#clipindextools QPushButton:pressed,
 QDialog#mediainfo QPushButton:focus,
 QDialog#mediainfo QPushButton:pressed,
 QDialog#settingsdialog QPushButton:pressed,
@@ -364,7 +365,8 @@ QPushButton::menu-indicator#menuButton, #clipindextools QPushButton::menu-indica
 }
 
 QPushButton#thumbnailsButton, QPushButton#osdButton, QPushButton#consoleButton, QPushButton#smartcutButton,
-QPushButton#muteButton, QPushButton#settingsButton, QPushButton#menuButton, QPushButton#fullscreenButton {
+QPushButton#muteButton, QPushButton#settingsButton, QPushButton#menuButton, QPushButton#fullscreenButton,
+ QPushButton#listheaderbutton {
     background-color: transparent;
     border: none;
     outline: none;

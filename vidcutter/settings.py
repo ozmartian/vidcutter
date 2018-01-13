@@ -121,7 +121,7 @@ class ThemePage(QWidget):
         index_buttonGroup.addButton(index_leftRadio, 1)
         index_buttonGroup.addButton(index_rightRadio, 2)
         # noinspection PyUnresolvedReferences
-        index_buttonGroup.buttonClicked[int].connect(self.setIndexLayout)
+        index_buttonGroup.buttonClicked[int].connect(self.parent.parent.setClipIndexLayout)
         indexLayout = QHBoxLayout()
         indexLayout.addWidget(index_leftRadio)
         indexLayout.addWidget(index_rightRadio)
@@ -177,10 +177,6 @@ class ThemePage(QWidget):
         mainLayout.addWidget(advancedGroup)
         mainLayout.addStretch(1)
         self.setLayout(mainLayout)
-
-    @pyqtSlot(int)
-    def setIndexLayout(self, button_id: int) -> None:
-        self.parent.parent.setClipIndexLayout('left' if button_id == 1 else 'right')
 
     @pyqtSlot(int)
     def setLabelStyle(self, button_id: int) -> None:
