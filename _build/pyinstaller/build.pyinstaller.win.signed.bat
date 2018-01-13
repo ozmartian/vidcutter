@@ -42,15 +42,15 @@ if not exist "..\..\bin\" ( mkdir ..\..\bin\ ) else ( del /q ..\..\bin\*.* )
 
 REM ......................download latest FFmpeg & MediaInfo shared binary + libs ......................
 if not exist ".\temp\" mkdir temp
-if not exist "temp\ffmpeg-latest-win%ARCH%-shared.7z" ( call curl -k -L -# -o temp\%FFMPEG% "%FFMPEG_URL%" )
+if not exist "temp\%FFMPEG%" ( call curl -k -L -# -o temp\%FFMPEG% "%FFMPEG_URL%" )
 if not exist "temp\%MEDIAINFO%" ( call curl -k -L -# -o temp\%MEDIAINFO% "%MEDIAINFO_URL%" )
 
 REM ......................extract files & move them to top-level binary folder ......................
 cd temp\
-7z x ffmpeg-latest-win%ARCH%-shared.7z ffmpeg-latest-win%ARCH%-shared\bin
+7z x "%FFMPEG%" ffmpeg-latest-win%ARCH%-shared\bin
 del /q ffmpeg-latest-win%ARCH%-shared\bin\ffplay.exe
 del /q ffmpeg-latest-win%ARCH%-shared\bin\ffserver.exe
-unzip %MEDIAINFO% MediaInfo.exe
+unzip "%MEDIAINFO%" MediaInfo.exe
 move ffmpeg-latest-win%ARCH%-shared\bin\*.* ..\..\..\bin\
 move MediaInfo.exe ..\..\..\bin\
 cd ..
