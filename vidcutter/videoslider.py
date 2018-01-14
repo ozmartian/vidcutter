@@ -188,7 +188,7 @@ class VideoSlider(QSlider):
                 x += 15
         opt.subControls = QStyle.SC_SliderGroove
         painter.drawComplexControl(QStyle.CC_Slider, opt)
-        if not len(self._progressbars):
+        if not len(self._progressbars) and (not self.parent.thumbnailsButton.isChecked() or self.thumbnailsOn):
             for rect in self._regions:
                 rect.setY(int((self.height() - self._regionHeight) / 2) - 8)
                 rect.setHeight(self._regionHeight)

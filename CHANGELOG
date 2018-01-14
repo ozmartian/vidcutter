@@ -48,7 +48,12 @@ vidcutter (5.5.0-1) stable; urgency=medium
     assist with fullscreen functionality and video render compatibility any
     where an OpenGL context can be created.
 
-  * Hardened logic for app quit when clips exist to prompt for project save
+  * Updated keyboard shortcuts information to include some added keyboard
+    and mouse based shortcuts.
+
+  * Defined cutting regions shown on the timeline are now hidden during
+    the "generating thumbnails" process (mainly evident when turning
+    thumbnails on/off or resizing the application's window)
 
   * Better detection and prompting if application exit is attempted while
     video processing jobs in progress, if user decides to continue quitting
@@ -282,7 +287,8 @@ vidcutter (3.2.0-1) stable; urgency=medium
     disturb the user if an update has been released AND it has been at least one
     week since the last time updates were checked for.
 
- * new startup graphic.
+ * new graphic + version number exposed on startup view within the player
+   component.
 
  * new look dialogs including updater and about.
 
