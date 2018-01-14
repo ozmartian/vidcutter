@@ -458,7 +458,7 @@ class VideoCutter(QWidget):
         versionLabel.setObjectName('novideoversion')
         versionLabel.setAlignment(Qt.AlignRight)
         versionLayout = QHBoxLayout()
-        versionLayout.setContentsMargins(0, 0, 6, 8)
+        versionLayout.setContentsMargins(0, 0, 10, 8)
         versionLayout.addWidget(versionLabel)
         novideoLayout = QVBoxLayout(self.novideoWidget)
         novideoLayout.setSpacing(0)

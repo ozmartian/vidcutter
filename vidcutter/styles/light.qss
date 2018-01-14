@@ -285,7 +285,7 @@ QDialog#mediainfo QPushButton, #clipindextools QPushButton {
 }
 
 #clipindextools QPushButton:hover {
-    border: 1px solid #E1E1E1;
+    border: 1px solid #FEFEFE;
 }
 
 QDialogButtonBox QPushButton:hover,
