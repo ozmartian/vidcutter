@@ -45,6 +45,16 @@ QWidget#genericdialog3, QDialog#notification {
     background: #000;
 }
 
+QWidget#listheader {
+    padding: 8px 5px 5px;
+    border: 1px solid #4D5355;
+    background-image: url(:images/dark/clipindex.png);
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+        stop: 0 #333, stop: 0.5 #1B2326, stop: 0.6 #1B2326, stop: 1 #333);
+}
+
 /* -------------------------------------------------------------------------- */
 
 QFrame#videoplayer {
@@ -136,13 +146,6 @@ QListView::item:selected#settingsmenu {
 }
 
 /* -------------------------------------------------------------------------- */
-
-QLabel#listHeader {
-    padding: 8px 5px 5px;
-    border: 1px solid #4D5355;
-    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-        stop: 0 #333, stop: 0.5 #1B2326, stop: 0.6 #1B2326, stop: 1 #333);
-}
 
 QLabel#runtimeLabel {
     font-size: 10pt;
@@ -368,8 +371,7 @@ QPushButton::menu-indicator#menuButton, #clipindextools QPushButton::menu-indica
 }
 
 QPushButton#thumbnailsButton, QPushButton#osdButton, QPushButton#consoleButton, QPushButton#smartcutButton,
-QPushButton#muteButton, QPushButton#settingsButton, QPushButton#menuButton, QPushButton#fullscreenButton,
-QPushButton#listheaderbutton {
+QPushButton#muteButton, QPushButton#settingsButton, QPushButton#menuButton, QPushButton#fullscreenButton {
     background-color: transparent;
     border: none;
     outline: none;
@@ -450,6 +452,26 @@ QPushButton:disabled#smartcutButton {
 
 QPushButton:pressed#smartcutButton, QPushButton:checked#smartcutButton {
     border-image: url(:/images/dark/smartcut-on.png);
+}
+
+QPushButton#listheaderbutton-left {
+    outline: none;
+    border: none;
+    background: transparent url(:images/arrow-left.png) no-repeat 0 0;
+}
+
+QPushButton:hover#listheaderbutton-left, QPushButton:pressed#listheaderbutton-left {
+    background-image: url(:images/arrow-left-on.png);
+}
+
+QPushButton#listheaderbutton-right {
+    outline: none;
+    border: none;
+    background: transparent url(:images/arrow-right.png) no-repeat 0 0;
+}
+
+QPushButton:hover#listheaderbutton-right, QPushButton:pressed#listheaderbutton-right {
+    background-image: url(:images/arrow-right-on.png);
 }
 
 /* -------------------------------------------------------------------------- */

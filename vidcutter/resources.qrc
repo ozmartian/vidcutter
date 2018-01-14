@@ -2,6 +2,10 @@
     <qresource prefix="/">
         <file>fonts/FuturaLT.ttf</file>
         <file>fonts/NotoSans.ttc</file>
+        <file>images/arrow-left.png</file>
+        <file>images/arrow-left-on.png</file>
+        <file>images/arrow-right.png</file>
+        <file>images/arrow-right-on.png</file>
         <file>images/complete-play.png</file>
         <file>images/dialog-backdrop.png</file>
         <file>images/dialog-backdrop-02.png</file>
@@ -46,8 +50,6 @@
         <file>images/viewlogs.png</file>
         <file>images/watermark.png</file>
         <file>images/dark/about-background.png</file>
-        <file>images/dark/arrow-left.png</file>
-        <file>images/dark/arrow-right.png</file>
         <file>images/dark/background_complete.png</file>
         <file>images/dark/clipindex.png</file>
         <file>images/dark/clipindex-add.png</file>
@@ -114,8 +116,6 @@
         <file>images/dark/toolbar-start-pressed.png</file>
         <file>images/dark/unmuted.png</file>
         <file>images/light/about-background.png</file>
-        <file>images/light/arrow-left.png</file>
-        <file>images/light/arrow-right.png</file>
         <file>images/light/background_complete.png</file>
         <file>images/light/clipindex.png</file>
         <file>images/light/clipindex-add.png</file>

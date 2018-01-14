@@ -32,9 +32,9 @@ from datetime import timedelta
 from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QBuffer, QByteArray, QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize,
                           Qt, QTextStream, QTime, QTimer, QUrl)
 from PyQt5.QtGui import QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QPixmap
-from PyQt5.QtWidgets import (QAction, qApp, QApplication, QDialogButtonBox, QFileDialog, QFrame, QGridLayout, QGroupBox,
-                             QHBoxLayout, QLabel, QListWidgetItem, QMenu, QMessageBox, QPushButton, QSizePolicy,
-                             QStyleFactory, QVBoxLayout, QWidget)
+from PyQt5.QtWidgets import (QAction, qApp, QApplication, QDialogButtonBox, QFileDialog, QFrame, QGroupBox, QHBoxLayout,
+                             QLabel, QListWidgetItem, QMenu, QMessageBox, QPushButton, QSizePolicy, QStyleFactory,
+                             QVBoxLayout, QWidget)
 import sip
 
 # noinspection PyUnresolvedReferences
@@ -130,20 +130,32 @@ class VideoCutter(QWidget):
         self.cliplist.model().rowsMoved.connect(self.setProjectDirty)
         self.cliplist.model().rowsMoved.connect(self.syncClipList)
 
-        self.listHeaderButton = QPushButton(self)
-        self.listHeaderButton.setObjectName('listheaderbutton')
-        self.listHeaderButton.setFlat(True)
-        self.listHeaderButton.clicked.connect(self.setClipIndexLayout)
-        self.listHeaderButton.setCursor(Qt.PointingHandCursor)
-        self.listHeaderButton.setFixedSize(18, 15)
-        self.listHeaderLabel = QLabel(self)
-        self.listHeaderLabel.setPixmap(QPixmap(':/images/{}/clipindex.png'.format(self.theme), 'PNG'))
-        self.listHeaderLabel.setAlignment(Qt.AlignCenter)
-        self.listHeaderLabel.setObjectName('listHeader')
-        self.listHeaderLayout = QGridLayout()
-        self.listHeaderLayout.setContentsMargins(0, 0, 0, 0)
-        self.listHeaderLayout.setSpacing(0)
-        self.listHeaderLayout.addWidget(self.listHeaderLabel, 0, 0)
+        self.listHeaderButtonL = QPushButton(self)
+        self.listHeaderButtonL.setObjectName('listheaderbutton-left')
+        self.listHeaderButtonL.setFlat(True)
+        self.listHeaderButtonL.clicked.connect(self.setClipIndexLayout)
+        self.listHeaderButtonL.setCursor(Qt.PointingHandCursor)
+        self.listHeaderButtonL.setFixedSize(14, 14)
+        self.listHeaderButtonL.setToolTip('Move to left')
+        self.listHeaderButtonL.setStatusTip('Move the Clip Index list to the left side of player')
+        self.listHeaderButtonR = QPushButton(self)
+        self.listHeaderButtonR.setObjectName('listheaderbutton-right')
+        self.listHeaderButtonR.setFlat(True)
+        self.listHeaderButtonR.clicked.connect(self.setClipIndexLayout)
+        self.listHeaderButtonR.setCursor(Qt.PointingHandCursor)
+        self.listHeaderButtonR.setFixedSize(14, 14)
+        self.listHeaderButtonR.setToolTip('Move to right')
+        self.listHeaderButtonR.setStatusTip('Move the Clip Index list to the right side of player')
+        listheaderLayout = QHBoxLayout()
+        listheaderLayout.setContentsMargins(6, 5, 6, 5)
+        listheaderLayout.addWidget(self.listHeaderButtonL)
+        listheaderLayout.addStretch(1)
+        listheaderLayout.addWidget(self.listHeaderButtonR)
+        self.listheader = QWidget(self)
+        self.listheader = QWidget(self)
+        self.listheader.setObjectName('listheader')
+        self.listheader.setFixedWidth(self.cliplist.width())
+        self.listheader.setLayout(listheaderLayout)
         self._initClipIndexHeader()
 
         self.runtimeLabel = QLabel('<div align="right">00:00:00</div>', self)
@@ -182,7 +194,7 @@ class VideoCutter(QWidget):
         self.clipindexLayout = QVBoxLayout()
         self.clipindexLayout.setSpacing(0)
         self.clipindexLayout.setContentsMargins(0, 0, 0, 0)
-        self.clipindexLayout.addLayout(self.listHeaderLayout)
+        self.clipindexLayout.addWidget(self.listheader)
         self.clipindexLayout.addWidget(self.cliplist)
         self.clipindexLayout.addWidget(self.runtimeLabel)
         self.clipindexLayout.addSpacing(3)
@@ -458,6 +470,7 @@ class VideoCutter(QWidget):
         versionLabel.setObjectName('novideoversion')
         versionLabel.setAlignment(Qt.AlignRight)
         versionLayout = QHBoxLayout()
+        versionLayout.setSpacing(0)
         versionLayout.setContentsMargins(0, 0, 10, 8)
         versionLayout.addWidget(versionLabel)
         novideoLayout = QVBoxLayout(self.novideoWidget)
@@ -485,8 +498,6 @@ class VideoCutter(QWidget):
         self.fullscreenIcon = QIcon(':/images/{}/fullscreen.png'.format(self.theme))
         self.settingsIcon = QIcon(':/images/settings.png')
         self.quitIcon = QIcon(':/images/quit.png')
-        self.arrowLeftIcon = QIcon(':images/{}/arrow-left.png'.format(self.theme))
-        self.arrowRightIcon = QIcon(':images/{}/arrow-right.png'.format(self.theme))
 
     # noinspection PyArgumentList
     def _initActions(self) -> None:
@@ -567,21 +578,12 @@ class VideoCutter(QWidget):
         self.videoService.error.connect(self.completeOnError)
 
     def _initClipIndexHeader(self) -> None:
-        if self.listHeaderLayout.count():
-            self.listHeaderLayout.removeWidget(self.listHeaderButton)
         if self.indexLayout == 'left':
-            self.listHeaderButton.setIcon(self.arrowRightIcon)
-            self.listHeaderButton.setToolTip('Move to right')
-            self.listHeaderButton.setStatusTip('Move the Clip Index list to the right side of player')
-            self.listHeaderLayout.addWidget(self.listHeaderButton, 0, 0, Qt.AlignRight)
-            self.listHeaderButton.setStyleSheet('margin-right: 10px;')
+            self.listHeaderButtonL.setVisible(False)
+            self.listHeaderButtonR.setVisible(True)
         else:
-            self.listHeaderButton.setIcon(self.arrowLeftIcon)
-            self.listHeaderButton.setToolTip('Move to left')
-            self.listHeaderButton.setStatusTip('Move the Clip Index list to the left side of player')
-            self.listHeaderLayout.addWidget(self.listHeaderButton, 0, 0, Qt.AlignLeft)
-            self.listHeaderButton.setStyleSheet('margin-left: 10px;')
-        self.listHeaderButton.raise_()
+            self.listHeaderButtonL.setVisible(True)
+            self.listHeaderButtonR.setVisible(False)
 
     @pyqtSlot()
     def setClipIndexLayout(self) -> None:
