@@ -30,7 +30,7 @@ from PyQt5.QtGui import QCloseEvent, QColor, QIcon, QPainter, QPen, QPixmap, QSh
 from PyQt5.QtWidgets import (qApp, QButtonGroup, QCheckBox, QDialog, QDialogButtonBox, QDoubleSpinBox, QFileDialog,
                              QFormLayout, QFrame, QGridLayout, QGroupBox, QHBoxLayout, QLabel, QLineEdit, QListView,
                              QListWidget, QListWidgetItem, QMessageBox, QPushButton, QRadioButton, QSizePolicy,
-                             QStackedWidget, QStyleFactory, QVBoxLayout, QWidget)
+                             QSpacerItem, QStackedWidget, QStyleFactory, QVBoxLayout, QWidget)
 
 
 class LogsPage(QWidget):
@@ -450,22 +450,27 @@ class GeneralPage(QWidget):
         smartCutCheckbox.setCursor(Qt.PointingHandCursor)
         smartCutCheckbox.setChecked(self.parent.parent.smartcut)
         smartCutCheckbox.stateChanged.connect(self.setSmartCut)
-        self.smartCutLabel = QLabel('''
-            <b>ON:</b> re-encode start + end portions of each clip at valid GOP (IDR) keyframes
-            <br/>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            - slowest + most accurate mode
-            <br/>
-            <b>OFF:</b> cut at nearest keyframe before/after your start/end markers
-            <br/>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            - fastest + less precise mode''', self)
-        self.smartCutLabel.setObjectName('smartcutlabel')
-        self.smartCutLabel.setTextFormat(Qt.RichText)
-        self.smartCutLabel.setAlignment(Qt.AlignTop)
-        self.smartCutLabel.setWordWrap(True)
-        if sys.platform != 'win32':
-            self.smartCutLabel.setMinimumHeight(self.smartCutLabel.heightForWidth(self.sizeHint().width()))
+        smartCutLabel1 = QLabel('<b>ON:</b> re-encode start + end portions of each clip at valid GOP (IDR) '
+                                'keyframes')
+        smartCutLabel1.setObjectName('smartcutlabel')
+        smartCutLabel1.setWordWrap(True)
+        smartCutLabel2 = QLabel('- slowest + most accurate mode')
+        smartCutLabel2.setObjectName('smartcutlabel')
+        smartCutLabel3 = QLabel('<b>OFF:</b> cut at nearest keyframe before/after your start/end markers')
+        smartCutLabel3.setObjectName('smartcutlabel')
+        smartCutLabel3.setWordWrap(True)
+        smartCutLabel4 = QLabel('- fastest + less precise mode')
+        smartCutLabel4.setObjectName('smartcutlabel')
+        smartCutLayout = QGridLayout()
+        smartCutLayout.setSpacing(0)
+        smartCutLayout.setContentsMargins(25, 0, 5, 10)
+        smartCutLayout.addWidget(smartCutLabel1, 0, 0, 1, 2)
+        smartCutLayout.addItem(QSpacerItem(25, 1), 1, 0)
+        smartCutLayout.addWidget(smartCutLabel2, 1, 1)
+        smartCutLayout.addWidget(smartCutLabel3, 2, 0, 1, 2)
+        smartCutLayout.addItem(QSpacerItem(25, 1), 3, 0)
+        smartCutLayout.addWidget(smartCutLabel4, 3, 1)
+        smartCutLayout.setColumnStretch(1, 1)
         self.singleInstance = self.parent.settings.value('singleInstance', 'on', type=str) in {'on', 'true'}
         singleInstanceCheckbox = QCheckBox('Allow only one running instance', self)
         singleInstanceCheckbox.setToolTip('Allow just one single %s instance to be running' % qApp.applicationName())
@@ -495,7 +500,7 @@ class GeneralPage(QWidget):
         keepClipsLabel.setWordWrap(True)
         generalLayout = QVBoxLayout()
         generalLayout.addWidget(smartCutCheckbox)
-        generalLayout.addWidget(self.smartCutLabel)
+        generalLayout.addLayout(smartCutLayout)
         generalLayout.addWidget(SettingsDialog.lineSeparator())
         generalLayout.addWidget(keepClipsCheckbox)
         generalLayout.addWidget(keepClipsLabel)

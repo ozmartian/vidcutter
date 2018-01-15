@@ -178,7 +178,7 @@ QLabel#smartcutlabel, QLabel#ffmpeglabel {
 }
 
 QLabel#decodinglabel, QLabel#ratiolabel, QLabel#keepclipslabel, QLabel#singleinstancelabel,
-QLabel#verboselogslabel, QLabel#smartcutlabel, QLabel#nativedialogslabel, QLabel#ffmpeglabel {
+QLabel#verboselogslabel, QLabel#nativedialogslabel, QLabel#ffmpeglabel {
     margin: 2px 5px 10px 22px;
 }
 
