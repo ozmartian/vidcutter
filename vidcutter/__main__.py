@@ -386,15 +386,18 @@ def main():
 
     exit_code = app.exec_()
     if exit_code == MainWindow.EXIT_CODE_REBOOT:
-        if sys.platform == 'win32':
-            if hasattr(win.cutter, 'mpvWidget'):
-                win.close()
-            QProcess.startDetached('"{}"'.format(qApp.applicationFilePath()))
-        elif sys.platform == 'darwin' and getattr(sys, 'frozen', False):
-            os.execl(sys.executable, sys.executable, *sys.argv[1:])
-        else:
-            os.execl(sys.executable, sys.executable, *sys.argv)
-    sys.exit(exit_code)
+        if QProcess.startDetached(' '.join(sys.argv)):
+            sys.exit(exit_code)
+        # if sys.platform == 'win32':
+        #     if hasattr(win.cutter, 'mpvWidget'):
+        #         win.close()
+        #     QProcess.startDetached('"{}"'.format(qApp.applicationFilePath()))
+        # elif sys.platform == 'darwin' and getattr(sys, 'frozen', False):
+        #     os.execl(sys.executable, sys.executable, *sys.argv[1:])
+        # else:
+        #     os.execl(sys.executable, sys.executable, *sys.argv)
+    else:
+        sys.exit(exit_code)
 
 
 if __name__ == '__main__':
