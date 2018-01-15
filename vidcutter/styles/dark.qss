@@ -267,32 +267,37 @@ QDialog#mediainfo QPushButton, QDialog#notification QPushButton {
     padding-left: 5px;
 }
 
+#clipindextools QPushButton:hover {
+    border-color: #382F4B;
+    background-color: #191521;
+}
+
 #clipindextools QPushButton#clipadd, #clipindextools QPushButton:hover#clipadd {
-    background: #31363B url(:images/dark/clipindex-add.png) no-repeat left center;
+    background-image: url(:images/dark/clipindex-add.png);
+    background-repeat: no-repeat;
+    background-position: left center;
 }
 
 #clipindextools QPushButton:pressed#clipadd {
-    background: #31363B url(:images/dark/clipindex-add-on.png) no-repeat left center;
+    background-image: url(:images/dark/clipindex-add-on.png);
 }
 
 #clipindextools QPushButton:disabled#clipadd {
-    background: #31363B url(:images/dark/clipindex-add-disabled.png) no-repeat left center;
+    background-image: url(:images/dark/clipindex-add-disabled.png);
 }
 
-#clipindextools QPushButton#clipremove, #clipindextools QPushButton#clipremove {
-    background: #31363B url(:images/dark/clipindex-remove.png) no-repeat right center;
+#clipindextools QPushButton#clipremove, #clipindextools QPushButton:hover#clipremove {
+    background-image: url(:images/dark/clipindex-remove.png);
+    background-repeat: no-repeat;
+    background-position: right center;
 }
 
 #clipindextools QPushButton:pressed#clipremove {
-    background: #31363B url(:images/dark/clipindex-remove-on.png) no-repeat right center;
+    background-image: url(:images/dark/clipindex-remove-on.png);
 }
 
 #clipindextools QPushButton:disabled#clipremove {
-    background: #31363B url(:images/dark/clipindex-remove-disabled.png) no-repeat right center;
-}
-
-#clipindextools QPushButton:hover {
-    border: 1px solid #2F3234;
+    background-image: url(:images/dark/clipindex-remove-disabled.png);
 }
 
 QDialogButtonBox QPushButton:hover,
