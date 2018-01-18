@@ -115,17 +115,18 @@ class UpdaterMsgBox(QDialog):
             }
             table {
                 color: %s;
-                font-size: 15px;
                 margin: 10px 0 0 0;
             }
             td.label {
                 font-family: "Futura-Light", san-serif;
                 text-align: right;
+                font-size: 17px;
             }
             td.value {
                 font-family: "Noto Sans UI", sans-serif;
                 color: %s;
                 font-weight: 500;
+                font-size: 15px;
             }
         </style>''' % (pencolor1, pencolor2, pencolor2, pencolor1)
         if update_available:

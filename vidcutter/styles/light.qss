@@ -208,6 +208,10 @@ QLabel#novideoversion {
 
 /* -------------------------------------------------------------------------- */
 
+#streamselector QGroupBox {
+    padding-bottom: 10px;
+}
+
 QGroupBox#counterwidgets {
     border: none;
     background-color: #000;
@@ -216,7 +220,7 @@ QGroupBox#counterwidgets {
     padding: 0;
 }
 
-#settingsdialog QGroupBox {
+#settingsdialog QGroupBox, #streamselector QGroupBox {
     font-weight: bold;
     border: 1px solid #C0C2C3;
     border-radius: 3px;
@@ -226,10 +230,11 @@ QGroupBox#counterwidgets {
     color: #FFF;
 }
 
-#settingsdialog QGroupBox::title {
+#settingsdialog QGroupBox::title, #streamselector QGroupBox::title {
     subcontrol-origin: margin;
     subcontrol-position: top left;
     background-color: #444;
+    padding: 2px 5px;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -314,21 +319,21 @@ QDialog#notification QPushButton:pressed {
     border: 1px solid #FFF;
 }
 
-QPushButton#streamselectButton {
+QPushButton#streamsButton {
     border-image: url(:/images/light/streams.png);
     width: 33px;
     height: 32px;
 }
 
-QPushButton:hover#streamselectButton {
+QPushButton:hover#streamsButton {
     border-image: url(:/images/light/streams-hover.png);
 }
 
-QPushButton:pressed#streamselectButton {
+QPushButton:pressed#streamsButton {
     border-image: url(:/images/light/streams-active.png);
 }
 
-QPushButton:disabled#streamselectButton {
+QPushButton:disabled#streamsButton {
     border-image: url(:/images/light/streams-disabled.png);
 }
 

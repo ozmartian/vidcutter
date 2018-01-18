@@ -296,9 +296,7 @@ class VideoCutter(QWidget):
         # noinspection PyArgumentList
         self.volSlider = VCVolumeSlider(orientation=Qt.Horizontal, toolTip='Volume', statusTip='Adjust volume level',
                                         cursor=Qt.PointingHandCursor, value=self.parent.startupvol, minimum=0,
-                                        maximum=130, sliderMoved=self.setVolume)
-
-        self.volSlider.setMinimumHeight(22)
+                                        maximum=130, minimumHeight=22, sliderMoved=self.setVolume)
         if sys.platform == 'darwin':
             self.volSlider.setStyle(QStyleFactory.create('Macintosh'))
 
@@ -315,16 +313,17 @@ class VideoCutter(QWidget):
         self.settingsButton.setFixedSize(QSize(33, 32))
 
         # noinspection PyArgumentList
-        self.mediainfoButton = QPushButton(self, toolTip='Media Info', cursor=Qt.PointingHandCursor, flat=True,
-                                           statusTip='View current file\'s detailed media information',
-                                           objectName='mediainfoButton', clicked=self.mediaInfo, enabled=False)
-        self.mediainfoButton.setFixedSize(QSize(33, 32))
+        self.streamsButton = QPushButton(self, toolTip='Media streams', cursor=Qt.PointingHandCursor, flat=True,
+                                         statusTip='Select the media streams to be included',
+                                         objectName='streamsButton', clicked=self.selectStreams,
+                                         enabled=False)
+        self.streamsButton.setFixedSize(QSize(33, 32))
 
         # noinspection PyArgumentList
-        self.streamselectButton = QPushButton(self, toolTip='Select Streams', cursor=Qt.PointingHandCursor, flat=True,
-                                              statusTip='Select media streams to include in your target media',
-                                              objectName='streamselectButton', enabled=False)
-        self.streamselectButton.setFixedSize(QSize(33, 32))
+        self.mediainfoButton = QPushButton(self, toolTip='Media information', cursor=Qt.PointingHandCursor, flat=True,
+                                           statusTip='View technical details about current media',
+                                           objectName='mediainfoButton', clicked=self.mediaInfo, enabled=False)
+        self.mediainfoButton.setFixedSize(QSize(33, 32))
 
         # noinspection PyArgumentList
         self.menuButton = QPushButton(self, toolTip='Menu', cursor=Qt.PointingHandCursor, flat=True,
@@ -392,9 +391,9 @@ class VideoCutter(QWidget):
         settingsLayout.setContentsMargins(0, 0, 0, 0)
         settingsLayout.addWidget(self.settingsButton)
         settingsLayout.addSpacing(5)
-        settingsLayout.addWidget(self.mediainfoButton)
+        settingsLayout.addWidget(self.streamsButton)
         settingsLayout.addSpacing(5)
-        settingsLayout.addWidget(self.streamselectButton)
+        settingsLayout.addWidget(self.mediainfoButton)
         settingsLayout.addSpacing(5)
         settingsLayout.addWidget(self.menuButton)
 
@@ -501,6 +500,7 @@ class VideoCutter(QWidget):
         self.openProjectIcon = QIcon(':/images/open.png')
         self.saveProjectIcon = QIcon(':/images/save.png')
         self.mediaInfoIcon = QIcon(':/images/info.png')
+        self.streamsIcon = QIcon(':/images/streams.png')
         self.viewLogsIcon = QIcon(':/images/viewlogs.png')
         self.updateCheckIcon = QIcon(':/images/update.png')
         self.keyRefIcon = QIcon(':/images/keymap.png')
@@ -518,8 +518,10 @@ class VideoCutter(QWidget):
                                         statusTip='Remove selected clip from list', enabled=False)
         self.removeAllAction = QAction(self.removeAllIcon, 'Remove all', self, statusTip='Remove all clips from list',
                                        triggered=self.clearList, enabled=False)
-        self.mediaInfoAction = QAction(self.mediaInfoIcon, 'Media information', self, triggered=self.mediaInfo,
-                                       statusTip='View current media file\'s technical properties', enabled=False)
+        self.streamsAction = QAction(self.streamsIcon, 'Media streams', self, triggered=self.selectStreams,
+                                     statusTip='Select the media streams to be included', enabled=False)
+        self.mediainfoAction = QAction(self.mediaInfoIcon, 'Media information', self, triggered=self.mediaInfo,
+                                       statusTip='View technical details about current media', enabled=False)
         self.openProjectAction = QAction(self.openProjectIcon, 'Open project file', self, triggered=self.openProject,
                                          statusTip='Open a previously saved project file (*.vcp or *.edl)',
                                          enabled=True)
@@ -550,7 +552,8 @@ class VideoCutter(QWidget):
         self.appMenu.addAction(self.settingsAction)
         self.appMenu.addSeparator()
         self.appMenu.addAction(self.fullscreenAction)
-        self.appMenu.addAction(self.mediaInfoAction)
+        self.appMenu.addAction(self.streamsAction)
+        self.appMenu.addAction(self.mediainfoAction)
         self.appMenu.addAction(self.keyRefAction)
         self.appMenu.addSeparator()
         self.appMenu.addAction(self.viewLogsAction)
@@ -901,9 +904,10 @@ class VideoCutter(QWidget):
         self.toolbar_start.setEnabled(flag)
         self.toolbar_end.setEnabled(False)
         self.toolbar_save.setEnabled(False)
-        self.mediaInfoAction.setEnabled(flag)
+        self.streamsAction.setEnabled(flag)
+        self.streamsButton.setEnabled(flag)
+        self.mediainfoAction.setEnabled(flag)
         self.mediainfoButton.setEnabled(flag)
-        self.streamselectButton.setEnabled(flag)
         self.fullscreenButton.setEnabled(flag)
         self.fullscreenAction.setEnabled(flag)
         self.seekSlider.clearRegions()
