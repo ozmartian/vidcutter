@@ -372,6 +372,8 @@ class VideoSlider(QSlider):
     @pyqtSlot()
     def on_rangeChanged(self) -> None:
         if self.parent.thumbnailsButton.isChecked():
+            self.parent.sliderWidget.setLoader(True)
+            self.parent.sliderWidget.hideThumbs()
             self.initThumbs()
         else:
             self.parent.sliderWidget.setLoader(False)
