@@ -103,6 +103,13 @@ class VideoService(QObject):
                     self.streams.video = self.streams.video[0]  # we always assume one video stream per media file
                 else:
                     raise InvalidMediaException('Could not load video stream for {}'.format(source))
+
+                try:
+                    import objbrowser
+                    objbrowser.browse(self.streams)
+                except:
+                    pass
+
         except OSError as e:
             if e.errno == errno.ENOENT:
                 errormsg = '{0}: {1}'.format(os.strerror(errno.ENOENT), source)

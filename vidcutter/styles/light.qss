@@ -314,6 +314,24 @@ QDialog#notification QPushButton:pressed {
     border: 1px solid #FFF;
 }
 
+QPushButton#streamselectButton {
+    border-image: url(:/images/light/streams.png);
+    width: 33px;
+    height: 32px;
+}
+
+QPushButton:hover#streamselectButton {
+    border-image: url(:/images/light/streams-hover.png);
+}
+
+QPushButton:pressed#streamselectButton {
+    border-image: url(:/images/light/streams-active.png);
+}
+
+QPushButton:disabled#streamselectButton {
+    border-image: url(:/images/light/streams-disabled.png);
+}
+
 QPushButton#mediainfoButton {
     border-image: url(:/images/light/info.png);
     width: 33px;

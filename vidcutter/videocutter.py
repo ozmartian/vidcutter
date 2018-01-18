@@ -49,6 +49,7 @@ from vidcutter.libs.videoservice import VideoService
 from vidcutter.libs.widgets import (ClipErrorsDialog, VCBlinkText, VCFrameCounter, VCTimeCounter, VCToolBarButton,
                                     VCVolumeSlider)
 from vidcutter.mediainfo import MediaInfo
+from vidcutter.mediastream import StreamSelector
 from vidcutter.settings import SettingsDialog
 from vidcutter.updater import Updater
 from vidcutter.videolist import VideoList
@@ -320,6 +321,12 @@ class VideoCutter(QWidget):
         self.mediainfoButton.setFixedSize(QSize(33, 32))
 
         # noinspection PyArgumentList
+        self.streamselectButton = QPushButton(self, toolTip='Select Streams', cursor=Qt.PointingHandCursor, flat=True,
+                                              statusTip='Select media streams to include in your target media',
+                                              objectName='streamselectButton', enabled=False)
+        self.streamselectButton.setFixedSize(QSize(33, 32))
+
+        # noinspection PyArgumentList
         self.menuButton = QPushButton(self, toolTip='Menu', cursor=Qt.PointingHandCursor, flat=True,
                                       objectName='menuButton', statusTip='View menu options')
         self.menuButton.setFixedSize(QSize(33, 32))
@@ -386,6 +393,8 @@ class VideoCutter(QWidget):
         settingsLayout.addWidget(self.settingsButton)
         settingsLayout.addSpacing(5)
         settingsLayout.addWidget(self.mediainfoButton)
+        settingsLayout.addSpacing(5)
+        settingsLayout.addWidget(self.streamselectButton)
         settingsLayout.addSpacing(5)
         settingsLayout.addWidget(self.menuButton)
 
@@ -894,6 +903,7 @@ class VideoCutter(QWidget):
         self.toolbar_save.setEnabled(False)
         self.mediaInfoAction.setEnabled(flag)
         self.mediainfoButton.setEnabled(flag)
+        self.streamselectButton.setEnabled(flag)
         self.fullscreenButton.setEnabled(flag)
         self.fullscreenAction.setEnabled(flag)
         self.seekSlider.clearRegions()
@@ -1313,6 +1323,12 @@ class VideoCutter(QWidget):
                 return
             mediainfo = MediaInfo(media=self.currentMedia, parent=self)
             mediainfo.show()
+
+    @pyqtSlot()
+    def selectStreams(self) -> None:
+        if self.mediaAvailable and self.videoService.streams:
+            streamSelector = StreamSelector(self.videoService.streams, self)
+            streamSelector.show()
 
     @pyqtSlot()
     def showKeyRef(self) -> None:

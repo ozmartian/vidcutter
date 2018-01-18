@@ -24,15 +24,38 @@
 
 from enum import Enum
 
-from PyQt5.QtWidgets import QDialog
+from PyQt5.QtCore import QObject
+from PyQt5.QtWidgets import QDialog, QGroupBox, QHBoxLayout, QVBoxLayout
 
 
-class StreamEditor(QDialog):
+class StreamSelector(QDialog):
 
     class Stream(Enum):
         VIDEO = 0,
         AUDIO = 1,
-        TEXT = 2
+        TEXT = 2,
+        METADATA = 3
 
-    def __init__(self, parent=None):
-        super(StreamEditor, self).__init__(parent)
+    def __init__(self, streams: dict, parent=None):
+        super(StreamSelector, self).__init__(parent)
+        self.parent = parent
+        self.streams = streams
+        layout = QVBoxLayout()
+        layout.setSpacing(10)
+        layout.addWidget(self.video())
+        layout.addWidget(self.audio())
+        layout.addWidget(self.subtitles())
+        layout.addWidget(self.metadata())
+        self.setLayout(layout)
+
+    def video(self) -> QGroupBox:
+        return QGroupBox('Video')
+
+    def audio(self) -> QGroupBox:
+        return QGroupBox('Audio')
+
+    def subtitles(self) -> QGroupBox:
+        return QGroupBox('Subtitles')
+
+    def metadata(self) -> QGroupBox:
+        return QGroupBox('Metadata')
