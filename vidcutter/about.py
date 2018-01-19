@@ -43,7 +43,8 @@ class About(QDialog):
         self.setObjectName('aboutwidget')
         self.setContentsMargins(0, 0, 0, 0)
         self.setWindowModality(Qt.ApplicationModal)
-        builddate = datetime.fromtimestamp(os.path.getmtime(mpv.__file__)).strftime('%d %b %Y')
+     
+        builddate = datetime.fromtimestamp(os.path.getmtime(About.getBinPath())).strftime('%d %b %Y')
         pencolor1 = '#9A45A2' if self.parent.theme == 'dark' else '#642C68'
         pencolor2 = '#FFF' if self.parent.theme == 'dark' else '#000'
         appicon = self.parent.getAppIcon(encoded=True)
@@ -104,6 +105,13 @@ class About(QDialog):
         self.setWindowTitle('About %s' % qApp.applicationName())
         self.setWindowIcon(self.parent.windowIcon())
         self.setMinimumSize(self.get_size(self.parent.parent.scale))
+
+    @staticmethod
+    def getBinPath() -> str:
+    	if getattr(sys, 'frozen', False) and not getattr(sys, '_MEIPASS', False):
+    		return os.path.realpath(sys.argv[0])
+    	else:
+    		return sys.modules['mpv'].__file__
 
     @staticmethod
     def get_size(mode: str = 'NORMAL') -> QSize:
