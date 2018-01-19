@@ -33,7 +33,6 @@ from PyQt5.QtGui import QCloseEvent
 from PyQt5.QtWidgets import qApp, QDialog, QDialogButtonBox, QLabel, QTabWidget, QTextBrowser, QVBoxLayout
 
 import vidcutter
-import vidcutter.libs.mpv as mpv
 
 
 class About(QDialog):
@@ -43,7 +42,6 @@ class About(QDialog):
         self.setObjectName('aboutwidget')
         self.setContentsMargins(0, 0, 0, 0)
         self.setWindowModality(Qt.ApplicationModal)
-     
         builddate = datetime.fromtimestamp(os.path.getmtime(About.getBinPath())).strftime('%d %b %Y')
         pencolor1 = '#9A45A2' if self.parent.theme == 'dark' else '#642C68'
         pencolor2 = '#FFF' if self.parent.theme == 'dark' else '#000'
@@ -108,10 +106,10 @@ class About(QDialog):
 
     @staticmethod
     def getBinPath() -> str:
-    	if getattr(sys, 'frozen', False) and not getattr(sys, '_MEIPASS', False):
-    		return os.path.realpath(sys.argv[0])
-    	else:
-    		return sys.modules['mpv'].__file__
+        if getattr(sys, 'frozen', False) and not getattr(sys, '_MEIPASS', False):
+            return os.path.realpath(sys.argv[0])
+        else:
+            return sys.modules['mpv'].__file__
 
     @staticmethod
     def get_size(mode: str = 'NORMAL') -> QSize:
@@ -154,7 +152,7 @@ class AboutTab(BaseTab):
         spacer = '&nbsp;&nbsp;&nbsp;'
         mpv_version = self.parent.parent.mpvWidget.mpv.get_property('mpv-version').replace('mpv ', '')
         mpv_version = mpv_version.split('-')[0:2]
-        mpv_version = '-'.join(mpv_version)        
+        mpv_version = '-'.join(mpv_version)
         # noinspection PyBroadException
         try:
             ffmpeg_version = self.parent.parent.videoService.version()
