@@ -26,7 +26,6 @@ import json
 import logging
 import os
 import sys
-from pkg_resources import parse_version
 
 from PyQt5.QtCore import Qt, QUrl
 from PyQt5.QtGui import QDesktopServices
@@ -59,8 +58,8 @@ class Updater(QDialog):
         # noinspection PyTypeChecker
         jsonobj = json.loads(str(reply.readAll(), 'utf-8'))
         reply.deleteLater()
-        latest = parse_version(jsonobj.get('tag_name'))
-        current = parse_version(qApp.applicationVersion())
+        latest = jsonobj.get('tag_name')
+        current = qApp.applicationVersion()
         self.mbox.show_result(latest, current)
 
     def check(self) -> None:

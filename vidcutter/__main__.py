@@ -219,7 +219,7 @@ class MainWindow(QMainWindow):
     @staticmethod
     def get_path(path: str=None, override: bool=False) -> str:
         if override:
-            if getattr(sys, 'frozen', False):
+            if getattr(sys, 'frozen', False) and getattr(sys, '_MEIPASS', False):
                 # noinspection PyProtectedMember, PyUnresolvedReferences
                 return os.path.join(sys._MEIPASS, path)
             return os.path.join(os.path.dirname(os.path.realpath(sys.argv[0])), path)

@@ -610,6 +610,6 @@ class VideoService(QObject):
     # noinspection PyUnresolvedReferences, PyProtectedMember
     @staticmethod
     def getAppPath() -> str:
-        if VideoService.frozen:
+        if VideoService.frozen and getattr(sys, '_MEIPASS', False):
             return sys._MEIPASS
         return os.path.dirname(os.path.realpath(sys.argv[0]))
