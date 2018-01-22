@@ -22,7 +22,6 @@
         <file>images/handle-nothumbs-select.png</file>
         <file>images/info.png</file>
         <file>images/keymap.png</file>
-        <file>images/mpv.png</file>
         <file>images/open.png</file>
         <file>images/pycharm.png</file>
         <file>images/qt.png</file>
@@ -41,8 +40,6 @@
         <file>images/slider-knob-active.png</file>
         <file>images/startup-backdrop.jpg</file>
         <file>images/streams.png</file>
-        <file>images/streams-audio.png</file>
-        <file>images/streams-video.png</file>
         <file>images/theme-dark.png</file>
         <file>images/theme-light.png</file>
         <file>images/up.png</file>
@@ -90,8 +87,11 @@
         <file>images/dark/smartcut-on.png</file>
         <file>images/dark/streams.png</file>
         <file>images/dark/streams-active.png</file>
+        <file>images/dark/streams-audio.png</file>
         <file>images/dark/streams-disabled.png</file>
         <file>images/dark/streams-hover.png</file>
+        <file>images/dark/streams-subtitle.png</file>
+        <file>images/dark/streams-video.png</file>
         <file>images/dark/thumbnails-disabled.png</file>
         <file>images/dark/thumbnails-hover.png</file>
         <file>images/dark/thumbnails-off.png</file>
@@ -160,8 +160,11 @@
         <file>images/light/smartcut-on.png</file>
         <file>images/light/streams.png</file>
         <file>images/light/streams-active.png</file>
+        <file>images/light/streams-audio.png</file>
         <file>images/light/streams-disabled.png</file>
         <file>images/light/streams-hover.png</file>
+        <file>images/light/streams-subtitle.png</file>
+        <file>images/light/streams-video.png</file>
         <file>images/light/thumbnails-disabled.png</file>
         <file>images/light/thumbnails-hover.png</file>
         <file>images/light/thumbnails-off.png</file>

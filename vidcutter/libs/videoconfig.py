@@ -76,7 +76,7 @@ class VideoConfig:
                 '3g2', '3gp', 'amv', 'asf', 'asx', 'avi', 'bin', 'dat', 'div', 'divx', 'f4v', 'flv',
                 'm1v', 'm2t', 'm2ts', 'm2v', 'm4v', 'mjpeg', 'mjpg', 'mkv', 'mod', 'mov', 'mp1', 'mp3',
                 'mp4', 'mpa', 'mpe', 'mpeg', 'mpg', 'mpv', 'mpv4', 'qt', 'rm', 'rmvb', 'tod', 'ts',
-                'vob', 'wav', 'webm', 'wma', 'wmv', 'xvid'
+                'vob', 'wav', 'webm', 'wma', 'wmv', 'wtv', 'xvid'
             ],
             'types': [
                 '3GPP files (*.3gp *.3g2)', 'AMV files (*.amv)', 'AVI files (*.avi)', 'DivX files (*.divx *.div)',
@@ -86,7 +86,7 @@ class VideoConfig:
                 'MOD files (*.mod)', 'MJPEG files (*.mjpg *.mjpeg)', 'QuickTime files (*.mov *.qt)',
                 'RealMedia files (*.rm *.rmvb)', 'VCD DAT files (*.dat)', 'VCD SVCD BIN/CUE images (*.bin)',
                 'VOB files (*.vob)', 'Wave Audio files (*.wav)', 'Windows Media audio (*.wma)',
-                'Windows Media files (*.asf *.asx *.wmv)', 'Xvid files (*.xvid)'
+                'Windows Media files (*.asf *.asx *.wmv)', 'Windows Recorded TV files (*.wtv)', 'Xvid files (*.xvid)'
             ]
         }
 

@@ -85,6 +85,7 @@ class VideoService(QObject):
             self.media, self.source = None, None
             self.keyframes = []
             self.streams = Munch()
+            self.mappings = []
         except FFmpegNotFoundException as e:
             self.logger.exception(e.msg, exc_info=True)
             QMessageBox.critical(getattr(self, 'parent', None), 'Missing libraries', e.msg, QMessageBox.Ok)
@@ -103,6 +104,8 @@ class VideoService(QObject):
                     self.streams.video = self.streams.video[0]  # we always assume one video stream per media file
                 else:
                     raise InvalidMediaException('Could not load video stream for {}'.format(source))
+                for index in range(int(self.media.format.nb_streams)):
+                    self.mappings.append(True)
         except OSError as e:
             if e.errno == errno.ENOENT:
                 errormsg = '{0}: {1}'.format(os.strerror(errno.ENOENT), source)
@@ -368,7 +371,6 @@ class VideoService(QObject):
                          run=False)))
             self.smartcut_jobs[index].procs.update(end=endproc)
             self.smartcut_jobs[index].results.update(end=False)
-            # endproc.start()
 
     @pyqtSlot(int, QProcess.ExitStatus)
     def smartcheck(self, code: int, status: QProcess.ExitStatus) -> None:

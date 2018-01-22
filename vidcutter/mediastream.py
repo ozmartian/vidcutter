@@ -24,34 +24,38 @@
 
 import os
 
-from PyQt5.QtCore import pyqtSlot, Qt
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import (QCheckBox, QDialog, QDialogButtonBox, QFrame, QGridLayout, QGroupBox, QHBoxLayout, QLabel,
-                             QSpacerItem, QVBoxLayout)
+                             QScrollArea, QSizePolicy, QSpacerItem, QVBoxLayout, QWidget)
 
 from vidcutter.libs.munch import Munch
+from vidcutter.libs.iso639 import ISO639_2
 
 
 class StreamSelector(QDialog):
-    def __init__(self, streams: Munch, parent=None):
+    def __init__(self, streams: Munch, mappings: list, parent=None):
         super(StreamSelector, self).__init__(parent)
         self.parent = parent
         self.streams = streams
+        self.config = mappings
+        self.service = self.parent.videoService
         self.setObjectName('streamselector')
         self.setWindowModality(Qt.ApplicationModal)
         self.setWindowTitle('Media streams - {}'.format(os.path.basename(self.parent.currentMedia)))
         buttons = QDialogButtonBox(QDialogButtonBox.Ok, self)
         buttons.accepted.connect(self.close)
         layout = QVBoxLayout()
-        layout.setSpacing(10)
-        layout.addWidget(self.video())
-        layout.addWidget(self.audio())
-        layout.addWidget(self.subtitles())
-        layout.addWidget(self.metadata())
+        layout.setSpacing(15)
+        if len(self.streams.video):
+            layout.addWidget(self.video())
+        if len(self.streams.audio):
+            layout.addWidget(self.audio())
+        if len(self.streams.subtitle):
+            layout.addWidget(self.subtitles())
         layout.addWidget(buttons)
         self.setLayout(layout)
-        self.setMinimumSize(415, 400)
-        self.setFixedSize(self.minimumSizeHint())
+        self.setMaximumSize(500, 600)
 
     @staticmethod
     def lineSeparator() -> QFrame:
@@ -64,14 +68,15 @@ class StreamSelector(QDialog):
         framerate = round(eval(self.streams.video.avg_frame_rate), 3)
         ratio = self.streams.video.display_aspect_ratio.split(':')
         ratio = round(int(ratio[0]) / int(ratio[1]), 3)
+        index = self.streams.video.get('index')
         videoCheckbox = QCheckBox(self)
         videoCheckbox.setToolTip('Toggle video stream')
         videoCheckbox.setCursor(Qt.PointingHandCursor)
         videoCheckbox.setChecked(True)
-        videoCheckbox.stateChanged.connect(lambda: self.updateMapping('video'))
+        videoCheckbox.stateChanged.connect(lambda state, idx=index: self.setConfig(idx, state == Qt.Checked))
         iconLabel = QLabel(self)
-        iconLabel.setPixmap(QPixmap(':images/streams-video.png'))
-        iconLabel.setFixedWidth(25)
+        iconLabel.setPixmap(QPixmap(':images/{}/streams-video.png'.format(self.parent.theme)))
+        iconLabel.setFixedSize(18, 18)
         videoLabel = QLabel('''
             <b>codec:</b> {codec}
             <br/>
@@ -88,6 +93,7 @@ class StreamSelector(QDialog):
                    framerate=framerate,
                    ratio=ratio,
                    pixfmt=self.streams.video.pix_fmt), self)
+        videoLabel.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         videolayout = QHBoxLayout()
         videolayout.setSpacing(15)
         videolayout.addWidget(videoCheckbox)
@@ -95,84 +101,120 @@ class StreamSelector(QDialog):
         videolayout.addWidget(iconLabel)
         videolayout.addSpacing(10)
         videolayout.addWidget(videoLabel)
+        self.config[self.streams.video.get('index')] = True
         videogroup = QGroupBox('Video')
         videogroup.setLayout(videolayout)
         return videogroup
 
     def audio(self) -> QGroupBox:
-        # for stream in self.streams.audio:
-
-        # try:
-        #     import objbrowser
-        #     objbrowser.browse(stream)
-        #     break
-        # except:
-        #     pass
-
-        audioCheckbox1 = QCheckBox(self)
-        audioCheckbox1.setToolTip('Toggle audio stream')
-        audioCheckbox1.setCursor(Qt.PointingHandCursor)
-        audioCheckbox1.setChecked(True)
-        audioCheckbox1.stateChanged.connect(lambda: self.updateMapping('audio-1'))
-        iconLabel1 = QLabel(self)
-        iconLabel1.setPixmap(QPixmap(':images/streams-audio.png'))
-        iconLabel1.setFixedWidth(25)
-        audioLabel1 = QLabel('''
-            <b>codec:</b> {codec}
-            &nbsp;
-            <b>lang:</b> {language}
-            <br/>
-            <b>channels:</b> {channels}
-            &nbsp;
-            <b>rate:</b> {samplerate}
-        '''.format(codec='Advanced Audio Codec (AAC)',
-                   language='ENG',
-                   channels=6,
-                   samplerate='48.0 kHz'), self)
-        audioCheckbox2 = QCheckBox(self)
-        audioCheckbox2.setToolTip('Toggle audio stream')
-        audioCheckbox2.setCursor(Qt.PointingHandCursor)
-        audioCheckbox2.setChecked(True)
-        audioCheckbox2.stateChanged.connect(lambda: self.updateMapping('audio-2'))
-        iconLabel2 = QLabel(self)
-        iconLabel2.setPixmap(QPixmap(':images/streams-audio.png'))
-        iconLabel2.setFixedWidth(25)
-        audioLabel2 = QLabel('''
-            <b>codec:</b> {codec}
-            &nbsp;
-            <b>lang:</b> {language}
-            <br/>
-            <b>channels:</b> {channels}
-            &nbsp;
-            <b>rate:</b> {samplerate}
-        '''.format(codec='MPEG1 Layer-3 (MP3)',
-                   language='ENG',
-                   channels=2,
-                   samplerate='48.0 kHz'), self)
         audiolayout = QGridLayout()
-        audiolayout.setSpacing(10)
-        audiolayout.addWidget(audioCheckbox1, 0, 0)
-        audiolayout.addItem(QSpacerItem(5, 1), 0, 1)
-        audiolayout.addWidget(iconLabel1, 0, 2)
-        audiolayout.addItem(QSpacerItem(10, 1), 0, 3)
-        audiolayout.addWidget(audioLabel1, 0, 4)
-        audiolayout.addWidget(StreamSelector.lineSeparator(), 1, 0, 1, 5)
-        audiolayout.addWidget(audioCheckbox2, 2, 0)
-        audiolayout.addItem(QSpacerItem(5, 1), 2, 1)
-        audiolayout.addWidget(iconLabel2, 2, 2)
-        audiolayout.addItem(QSpacerItem(10, 1), 2, 3)
-        audiolayout.addWidget(audioLabel2, 2, 4)
+        audiolayout.setSpacing(15)
+        for stream in self.streams.audio:
+            index = stream.get('index')
+            checkbox = QCheckBox(self)
+            checkbox.setToolTip('Toggle audio stream')
+            checkbox.setCursor(Qt.PointingHandCursor)
+            checkbox.setChecked(True)
+            checkbox.stateChanged.connect(lambda state, idx=index: self.setConfig(idx, state == Qt.Checked))
+            icon = QLabel(self)
+            icon.setPixmap(QPixmap(':images/{}/streams-audio.png'.format(self.parent.theme)))
+            icon.setFixedSize(18, 18)
+            if hasattr(stream, 'tags') and hasattr(stream.tags, 'language'):
+                label = QLabel('''
+                    <b>title:</b> {title}
+                    <br/>
+                    <b>codec:</b> {codec}
+                    <br/>
+                    <b>lang:</b> {language}
+                    &nbsp;
+                    <b>channels:</b> {channels}
+                    &nbsp;
+                    <b>rate:</b> {samplerate} kHz
+                '''.format(title=ISO639_2[stream.tags.language],
+                           codec=stream.codec_long_name,
+                           language=stream.tags.language,
+                           channels=stream.channels,
+                           samplerate=round(int(stream.sample_rate) / 1000, 1)), self)
+            else:
+                label = QLabel('''
+                    <b>codec:</b> {codec}
+                    <br/>
+                    <b>channels:</b> {channels}
+                    &nbsp;
+                    <b>rate:</b> {samplerate} kHz
+                '''.format(codec=stream.codec_long_name,
+                           channels=stream.channels,
+                           samplerate=round(int(stream.sample_rate) / 1000, 1)), self)
+            rows = audiolayout.rowCount()
+            audiolayout.addWidget(checkbox, rows, 0)
+            audiolayout.addItem(QSpacerItem(5, 1), rows, 1)
+            audiolayout.addWidget(icon, rows, 2)
+            audiolayout.addItem(QSpacerItem(10, 1), rows, 3)
+            audiolayout.addWidget(label, rows, 4)
+            if self.streams.audio.index(stream) < len(self.streams.audio) - 1:
+                audiolayout.addWidget(StreamSelector.lineSeparator(), rows + 1, 0, 1, 5)
         audiolayout.setColumnStretch(4, 1)
+        audiolayout.setSizeConstraint(QVBoxLayout.SetMinAndMaxSize)
+        widget = QWidget(self)
+        widget.setLayout(audiolayout)
+        scroll = QScrollArea(self)
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        # scroll.setWidgetResizable(True)
+        scroll.setStyleSheet('QScrollArea { border: none; }')
+        scroll.setWidget(widget)
+        scrolllayout = QHBoxLayout()
+        scrolllayout.addWidget(scroll)
         audiogroup = QGroupBox('Audio')
-        audiogroup.setLayout(audiolayout)
+        audiogroup.setLayout(scrolllayout)
         return audiogroup
 
     def subtitles(self) -> QGroupBox:
-        return QGroupBox('Subtitles')
+        subtitlelayout = QGridLayout()
+        subtitlelayout.setSpacing(15)
+        for stream in self.streams.subtitle:
+            index = stream.get('index')
+            checkbox = QCheckBox(self)
+            checkbox.setToolTip('Toggle subtitle stream')
+            checkbox.setCursor(Qt.PointingHandCursor)
+            checkbox.setChecked(True)
+            checkbox.stateChanged.connect(lambda state, idx=index: self.setConfig(idx, state == Qt.Checked))
+            icon = QLabel(self)
+            icon.setPixmap(QPixmap(':images/{}/streams-subtitle.png'.format(self.parent.theme)))
+            icon.setFixedSize(18, 18)
+            label = QLabel('''
+                <b>title:</b> {title}
+                <br/>
+                <b>lang:</b> {language}
+                &nbsp;
+                <b>codec:</b> {codec}
+            '''.format(title=ISO639_2[stream.tags.language],
+                       language=stream.tags.language,
+                       codec=stream.codec_long_name), self)
+            rows = subtitlelayout.rowCount()
+            subtitlelayout.addWidget(checkbox, rows, 0)
+            subtitlelayout.addItem(QSpacerItem(5, 1), rows, 1)
+            subtitlelayout.addWidget(icon, rows, 2)
+            subtitlelayout.addItem(QSpacerItem(10, 1), rows, 3)
+            subtitlelayout.addWidget(label, rows, 4)
+            if self.streams.subtitle.index(stream) < len(self.streams.subtitle) - 1:
+                subtitlelayout.addWidget(StreamSelector.lineSeparator(), rows + 1, 0, 1, 5)
+        subtitlelayout.setColumnStretch(4, 1)
+        subtitlelayout.setSizeConstraint(QVBoxLayout.SetMinAndMaxSize)
+        widget = QWidget(self)
+        widget.setLayout(subtitlelayout)
+        scroll = QScrollArea(self)
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        # scroll.setWidgetResizable(True)
+        scroll.setStyleSheet('QScrollArea { border: none; }')
+        scroll.setWidget(widget)
+        scrolllayout = QHBoxLayout()
+        scrolllayout.addWidget(scroll)
+        subtitlegroup = QGroupBox('Subtitles')
+        subtitlegroup.setLayout(scrolllayout)
+        return subtitlegroup
 
-    def metadata(self) -> QGroupBox:
-        return QGroupBox('Metadata')
-
-    @pyqtSlot(str)
-    def updateMapping(self, stream_id: str) -> bool:
-        return len(stream_id) > 0
+    def setConfig(self, index: int, checked: bool) -> None:
+        self.config[index] = checked
+        print(self.config)

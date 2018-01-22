@@ -1331,7 +1331,7 @@ class VideoCutter(QWidget):
     @pyqtSlot()
     def selectStreams(self) -> None:
         if self.mediaAvailable and self.videoService.streams:
-            streamSelector = StreamSelector(self.videoService.streams, self)
+            streamSelector = StreamSelector(self.videoService.streams, self.videoService.mappings, self)
             streamSelector.show()
 
     @pyqtSlot()

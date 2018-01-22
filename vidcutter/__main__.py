@@ -22,7 +22,6 @@
 #
 #######################################################################
 
-import atexit
 import logging
 import logging.handlers
 import os
@@ -31,8 +30,8 @@ import signal
 import sys
 import traceback
 
-from PyQt5.QtCore import (pyqtSlot, QCommandLineOption, QCommandLineParser, QCoreApplication, QDir, QFileInfo, QProcess,
-                          QSettings, QSize, QStandardPaths, QTimerEvent, Qt)
+from PyQt5.QtCore import (pyqtSlot, QCommandLineOption, QCommandLineParser, QCoreApplication, QDir, QFileInfo, QObject,
+                          QProcess, QSettings, QSize, QStandardPaths, QTimerEvent, Qt)
 from PyQt5.QtGui import QCloseEvent, QContextMenuEvent, QDragEnterEvent, QDropEvent, QMouseEvent, QResizeEvent
 from PyQt5.QtWidgets import qApp, QApplication, QMainWindow, QMessageBox, QSizePolicy
 
@@ -50,6 +49,7 @@ if sys.platform == 'win32':
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 signal.signal(signal.SIGTERM, signal.SIG_DFL)
+
 
 class MainWindow(QMainWindow):
     EXIT_CODE_REBOOT = 666
@@ -232,6 +232,7 @@ class MainWindow(QMainWindow):
         logging.error(msg)
 
     @staticmethod
+    @pyqtSlot()
     def cleanup():
         shutil.rmtree(MainWindow.WORKING_FOLDER, ignore_errors=True)
 
@@ -372,8 +373,6 @@ def main():
     if sys.platform == 'darwin':
         QApplication.setStyle('Fusion')
 
-    atexit.register(MainWindow.cleanup)
-
     app = SingleApplication(vidcutter.__appid__, sys.argv)
     app.setApplicationName(vidcutter.__appname__)
     app.setApplicationVersion(vidcutter.__version__)
@@ -383,19 +382,12 @@ def main():
     win = MainWindow()
     app.setActivationWindow(win)
     app.messageReceived.connect(win.file_opener)
+    app.aboutToQuit.connect(MainWindow.cleanup)
 
     exit_code = app.exec_()
     if exit_code == MainWindow.EXIT_CODE_REBOOT:
         if QProcess.startDetached(' '.join(sys.argv)):
             sys.exit(exit_code)
-        # if sys.platform == 'win32':
-        #     if hasattr(win.cutter, 'mpvWidget'):
-        #         win.close()
-        #     QProcess.startDetached('"{}"'.format(qApp.applicationFilePath()))
-        # elif sys.platform == 'darwin' and getattr(sys, 'frozen', False):
-        #     os.execl(sys.executable, sys.executable, *sys.argv[1:])
-        # else:
-        #     os.execl(sys.executable, sys.executable, *sys.argv)
     else:
         sys.exit(exit_code)
 
