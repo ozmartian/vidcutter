@@ -57,6 +57,8 @@ from vidcutter.videoslider import VideoSlider
 from vidcutter.videosliderwidget import VideoSliderWidget
 from vidcutter.videostyle import VideoStyleDark, VideoStyleLight
 
+import vidcutter
+
 
 class VideoCutter(QWidget):
     errorOccurred = pyqtSignal(str)
@@ -806,13 +808,42 @@ class VideoCutter(QWidget):
     def saveProject(self, reboot: bool = False) -> None:
         if self.currentMedia is None:
             return
-        for item in self.clipTimes:
-            if len(item[3]):
-                QMessageBox.critical(self.parent, 'Cannot save project',
-                                     'The clip index currently contains at least one external media file which is '
-                                     'not supported by current project file standards.\n\nSupport for external media '
-                                     'may be added to the VCP (VidCutter Project file) format in the near future.')
-                return
+        if self.hasExternals():
+            nosavetext = '''
+                <style>
+                    h2 {{
+                        color: {0};
+                        font-family: "Futura-Light", sans-serif;
+                        font-weight: 400;
+                    }}
+                    a {{
+                        color: {1};
+                        text-decoration: none;
+                        font-weight: bold;
+                    }}
+                </style>
+                <table border="0" cellpadding="6" cellspacing="0" width="350">
+                    <tr>
+                        <td><h2>Cannot save your current project</h2></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p>Your clip index contains external media files which is not
+                            supported by the current project file format. Remove all external
+                            files from your clip index and try again.</p>
+                            <p>Support for external files may be added to the VidCutter Project
+                            (VCP) file format in a future update. Submit a feature request for
+                            this on our <a href="{2}">GitHub Issues page</a> if you would like
+                            this feature added sooner rather than later.</p>
+                        </td>
+                    </tr>
+                </table>'''.format('#C681D5' if self.theme == 'dark' else '#642C68',
+                                   '#EA95FF' if self.theme == 'dark' else '#441D4E',
+                                   vidcutter.__bugreport__)
+            nosave = QMessageBox(QMessageBox.Critical, 'Cannot save project', nosavetext, parent=self.parent)
+            nosave.setStandardButtons(QMessageBox.Ok)
+            nosave.exec_()
+            return
         project_file, _ = os.path.splitext(self.currentMedia)
         if reboot:
             project_save = os.path.join(QDir.tempPath(), self.parent.TEMP_PROJECT_FILE)
@@ -1055,6 +1086,9 @@ class VideoCutter(QWidget):
             if filesadded:
                 self.showText('media file(s) added to index')
                 self.renderClipIndex()
+
+    def hasExternals(self) -> bool:
+        return True in [len(item[3]) > 0 for item in self.clipTimes]
 
     def clipStart(self) -> None:
         # if os.getenv('DEBUG', False):
@@ -1331,6 +1365,34 @@ class VideoCutter(QWidget):
     @pyqtSlot()
     def selectStreams(self) -> None:
         if self.mediaAvailable and self.videoService.streams:
+            if self.hasExternals():
+                nostreamstext = '''
+                    <style>
+                        h2 {{
+                            color: {0};
+                            font-family: "Futura-Light", sans-serif;
+                            font-weight: 400;
+                        }}
+                    </style>
+                    <table border="0" cellpadding="6" cellspacing="0" width="350">
+                        <tr>
+                            <td><h2>Cannot configure stream selection</h2></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Stream selection cannot be configured when external media files
+                                are added to your clip index. Remove all external files from your
+                                clip index and try again.
+                            </td>
+                        </tr>
+                    </table>'''.format('#C681D5' if self.theme == 'dark' else '#642C68')
+                nostreams = QMessageBox(QMessageBox.Critical,
+                                        'Stream selection is unavailable',
+                                        nostreamstext,
+                                        parent=self.parent)
+                nostreams.setStandardButtons(QMessageBox.Ok)
+                nostreams.exec_()
+                return
             streamSelector = StreamSelector(self.videoService.streams, self.videoService.mappings, self)
             streamSelector.show()
 

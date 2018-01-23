@@ -98,6 +98,7 @@ class StreamSelector(QDialog):
         videoLabel.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         videolayout = QHBoxLayout()
         videolayout.setSpacing(15)
+        videolayout.setContentsMargins(15, 10, 15, 10)
         videolayout.addWidget(videoCheckbox)
         videolayout.addSpacing(5)
         videolayout.addWidget(iconLabel)
@@ -174,6 +175,7 @@ class StreamSelector(QDialog):
             scrolllayout.addWidget(scroll)
             audiogroup.setLayout(scrolllayout)
         else:
+            audiolayout.setContentsMargins(15, 10, 15, 10)
             audiogroup.setLayout(audiolayout)
         return audiogroup
 
@@ -227,6 +229,7 @@ class StreamSelector(QDialog):
             scrolllayout.addWidget(scroll)
             subtitlegroup.setLayout(scrolllayout)
         else:
+            subtitlelayout.setContentsMargins(15, 10, 15, 10)
             subtitlegroup.setLayout(subtitlelayout)
         return subtitlegroup
 
@@ -237,10 +240,10 @@ class StreamSelector(QDialog):
     def closeEvent(self, event: QCloseEvent) -> None:
         # check if all audio streams are off
         idx = [stream.index for stream in self.streams.audio]
-        no_audio = True not in [self.config[i] for i in idx]
+        no_audio = len(self.streams.audio) and True not in [self.config[i] for i in idx]
         # check if all subtitle streams are off
         idx = [stream.index for stream in self.streams.subtitle]
-        no_subtitles = True not in [self.config[i] for i in idx]
+        no_subtitles = len(self.streams.subtitle) and True not in [self.config[i] for i in idx]
         # warn user if all audio and/or subtitle streams are off
         if no_audio or no_subtitles:
             if no_audio and not no_subtitles:
