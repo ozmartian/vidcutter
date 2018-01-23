@@ -37,8 +37,8 @@ from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QDir, QFile, QFileInfo, QObject,
 from PyQt5.QtGui import QPainter, QPixmap
 from PyQt5.QtWidgets import QMessageBox
 
+from vidcutter.libs.config import Config, FFmpegNotFoundException, InvalidMediaException, Streams
 from vidcutter.libs.munch import Munch
-from vidcutter.libs.videoconfig import FFmpegNotFoundException, InvalidMediaException, VideoConfig
 
 try:
     # noinspection PyPackageRequirements
@@ -61,12 +61,7 @@ class VideoService(QObject):
         INDEX = QSize(100, 70)
         TIMELINE = QSize(105, 60)
 
-    class StreamType(Enum):
-        AUDIO = 0
-        VIDEO = 1
-        SUBTITLE = 2
-
-    config = VideoConfig()
+    config = Config()
 
     def __init__(self, parent=None, ffmpegpath: str=None):
         super(VideoService, self).__init__(parent)
@@ -97,7 +92,7 @@ class VideoService(QObject):
             if self.media is not None:
                 if getattr(self.parent, 'verboseLogs', False):
                     self.logger.info(self.media)
-                for codec_type in VideoService.StreamType.__members__:
+                for codec_type in Streams.__members__:
                     setattr(self.streams, codec_type.lower(),
                             [stream for stream in self.media.streams if stream.codec_type == codec_type.lower()])
                 if len(self.streams.video):

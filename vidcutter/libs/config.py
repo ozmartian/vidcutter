@@ -22,8 +22,10 @@
 #
 #######################################################################
 
+from enum import Enum
 
-class VideoConfig:
+
+class Config:
     @property
     def video_codecs(self) -> list:
         return ['flv', 'h263', 'libvpx', 'libx264', 'libx265', 'libxvid', 'mpeg2video', 'mpeg4', 'msmpeg4', 'wmv2']
@@ -89,6 +91,12 @@ class VideoConfig:
                 'Windows Media files (*.asf *.asx *.wmv)', 'Windows Recorded TV files (*.wtv)', 'Xvid files (*.xvid)'
             ]
         }
+
+
+class Streams(Enum):
+    VIDEO = 0
+    AUDIO = 1
+    SUBTITLE = 2
 
 
 class VidCutterException(Exception):

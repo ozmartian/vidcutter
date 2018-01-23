@@ -40,11 +40,11 @@ import sip
 # noinspection PyUnresolvedReferences
 from vidcutter import resources
 from vidcutter.about import About
+from vidcutter.libs.config import InvalidMediaException
 from vidcutter.libs.mpvwidget import mpvWidget
 from vidcutter.libs.munch import Munch
 from vidcutter.libs.notifications import JobCompleteNotification
 from vidcutter.libs.taskbarprogress import TaskbarProgress
-from vidcutter.libs.videoconfig import InvalidMediaException
 from vidcutter.libs.videoservice import VideoService
 from vidcutter.libs.widgets import (ClipErrorsDialog, VCBlinkText, VCFrameCounter, VCTimeCounter, VCToolBarButton,
                                     VCVolumeSlider)

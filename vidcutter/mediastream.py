@@ -25,13 +25,13 @@
 import os
 import sys
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtCore import pyqtSlot, Qt
+from PyQt5.QtGui import QCloseEvent, QPixmap
 from PyQt5.QtWidgets import (QCheckBox, QDialog, QDialogButtonBox, QFrame, QGridLayout, QGroupBox, QHBoxLayout, QLabel,
-                             QScrollArea, QSizePolicy, QSpacerItem, QStyleFactory, QVBoxLayout, QWidget)
+                             QMessageBox, QScrollArea, QSizePolicy, QSpacerItem, QStyleFactory, QVBoxLayout, QWidget)
 
-from vidcutter.libs.munch import Munch
 from vidcutter.libs.iso639 import ISO639_2
+from vidcutter.libs.munch import Munch
 
 
 class StreamSelector(QDialog):
@@ -111,12 +111,11 @@ class StreamSelector(QDialog):
         audiolayout = QGridLayout()
         audiolayout.setSpacing(15)
         for stream in self.streams.audio:
-            index = stream.get('index')
             checkbox = QCheckBox(self)
             checkbox.setToolTip('Toggle audio stream')
             checkbox.setCursor(Qt.PointingHandCursor)
-            checkbox.setChecked(True)
-            checkbox.stateChanged.connect(lambda state, idx=index: self.setConfig(idx, state == Qt.Checked))
+            checkbox.setChecked(self.config[stream.index])
+            checkbox.stateChanged.connect(lambda state, index=stream.index: self.setConfig(index, state == Qt.Checked))
             icon = QLabel(self)
             icon.setPixmap(QPixmap(':images/{}/streams-audio.png'.format(self.parent.theme)))
             icon.setFixedSize(18, 18)
@@ -155,6 +154,7 @@ class StreamSelector(QDialog):
             if self.streams.audio.index(stream) < len(self.streams.audio) - 1:
                 audiolayout.addWidget(StreamSelector.lineSeparator(), rows + 1, 0, 1, 5)
         audiolayout.setColumnStretch(4, 1)
+        audiogroup = QGroupBox('Audio')
         if len(self.streams.audio) > 2:
             audiolayout.setSizeConstraint(QGridLayout.SetMinAndMaxSize)
             widget = QWidget(self)
@@ -172,10 +172,8 @@ class StreamSelector(QDialog):
             scroll.setWidget(widget)
             scrolllayout = QHBoxLayout()
             scrolllayout.addWidget(scroll)
-            audiogroup = QGroupBox('Audio')
             audiogroup.setLayout(scrolllayout)
         else:
-            audiogroup = QGroupBox('Audio')
             audiogroup.setLayout(audiolayout)
         return audiogroup
 
@@ -183,12 +181,11 @@ class StreamSelector(QDialog):
         subtitlelayout = QGridLayout()
         subtitlelayout.setSpacing(15)
         for stream in self.streams.subtitle:
-            index = stream.get('index')
             checkbox = QCheckBox(self)
             checkbox.setToolTip('Toggle subtitle stream')
             checkbox.setCursor(Qt.PointingHandCursor)
-            checkbox.setChecked(True)
-            checkbox.stateChanged.connect(lambda state, idx=index: self.setConfig(idx, state == Qt.Checked))
+            checkbox.setChecked(self.config[stream.index])
+            checkbox.stateChanged.connect(lambda state, index=stream.index: self.setConfig(index, state == Qt.Checked))
             icon = QLabel(self)
             icon.setPixmap(QPixmap(':images/{}/streams-subtitle.png'.format(self.parent.theme)))
             icon.setFixedSize(18, 18)
@@ -210,6 +207,7 @@ class StreamSelector(QDialog):
             if self.streams.subtitle.index(stream) < len(self.streams.subtitle) - 1:
                 subtitlelayout.addWidget(StreamSelector.lineSeparator(), rows + 1, 0, 1, 5)
         subtitlelayout.setColumnStretch(4, 1)
+        subtitlegroup = QGroupBox('Subtitles')
         if len(self.streams.subtitle) > 2:
             subtitlelayout.setSizeConstraint(QVBoxLayout.SetMinAndMaxSize)
             widget = QWidget(self)
@@ -227,12 +225,59 @@ class StreamSelector(QDialog):
             scroll.setWidget(widget)
             scrolllayout = QHBoxLayout()
             scrolllayout.addWidget(scroll)
-            subtitlegroup = QGroupBox('Subtitles')
             subtitlegroup.setLayout(scrolllayout)
         else:
-            subtitlegroup = QGroupBox('Subtitles')
             subtitlegroup.setLayout(subtitlelayout)
         return subtitlegroup
 
     def setConfig(self, index: int, checked: bool) -> None:
         self.config[index] = checked
+
+    @pyqtSlot()
+    def closeEvent(self, event: QCloseEvent) -> None:
+        # check if all audio streams are off
+        idx = [stream.index for stream in self.streams.audio]
+        no_audio = True not in [self.config[i] for i in idx]
+        # check if all subtitle streams are off
+        idx = [stream.index for stream in self.streams.subtitle]
+        no_subtitles = True not in [self.config[i] for i in idx]
+        # warn user if all audio and/or subtitle streams are off
+        if no_audio or no_subtitles:
+            if no_audio and not no_subtitles:
+                warnsubtext = 'All audio streams have been deselected which will produce a file with <b>NO AUDIO</b> ' \
+                              'when you save.'
+            elif not no_audio and no_subtitles:
+                warnsubtext = 'All subtitle streams have been deselected which will produce a file with ' \
+                              '<b>NO SUBTITLES</b> when you save.'
+            else:
+                warnsubtext = 'All audio and subtitle streams have been deselected which will produce a file ' \
+                              'with <b>NO AUDIO</b> and <b>NO SUBTITLES</b> when you save.'
+            warntext = '''
+                <style>
+                    h2 {{
+                        color: {};
+                        font-family: "Futura-Light", sans-serif;
+                        font-weight: 400;
+                    }}
+                </style>
+                <table border="0" cellpadding="6" cellspacing="0" width="350">
+                    <tr>
+                        <td><h2>A friendly configuration warning</h2></td>
+                    </tr>
+                    <tr>
+                        <td>{}</td>
+                    </tr>
+                    <tr>
+                        <td>Are you sure this is what you want?</td>
+                    </tr>
+                </table>'''.format('#C681D5' if self.parent.theme == 'dark' else '#642C68', warnsubtext)
+            warnmsg = QMessageBox(QMessageBox.Warning, 'Warning', warntext, parent=self)
+            warnmsg.addButton('Yes', QMessageBox.YesRole)
+            cancelbtn = warnmsg.addButton('No', QMessageBox.RejectRole)
+            warnmsg.exec_()
+            res = warnmsg.clickedButton()
+            if res == cancelbtn:
+                event.ignore()
+                return
+        event.accept()
+        super(StreamSelector, self).closeEvent(event)
