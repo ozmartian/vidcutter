@@ -29,7 +29,7 @@ from io import StringIO
 
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QObject
 from PyQt5.QtGui import QCloseEvent, QShowEvent, QTextCursor, QTextOption
-from PyQt5.QtWidgets import qApp, QDialog, QDialogButtonBox, QTextEdit, QVBoxLayout
+from PyQt5.QtWidgets import qApp, QDialog, QDialogButtonBox, QStyleFactory, QTextEdit, QVBoxLayout
 
 
 class VideoConsole(QTextEdit):
@@ -40,6 +40,8 @@ class VideoConsole(QTextEdit):
         self.setWordWrapMode(QTextOption.WordWrap)
         self.setStyleSheet('QTextEdit { font-family:monospace; font-size:%s; }'
                            % ('10pt' if sys.platform == 'darwin' else '8pt'))
+        if sys.platform in {'win32', 'darwin'}:
+            self.setStyle(QStyleFactory.create('Fusion'))
 
     @pyqtSlot(str)
     def write(self, msg):

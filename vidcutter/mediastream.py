@@ -23,11 +23,12 @@
 #######################################################################
 
 import os
+import sys
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import (QCheckBox, QDialog, QDialogButtonBox, QFrame, QGridLayout, QGroupBox, QHBoxLayout, QLabel,
-                             QScrollArea, QSizePolicy, QSpacerItem, QVBoxLayout, QWidget)
+                             QScrollArea, QSizePolicy, QSpacerItem, QStyleFactory, QVBoxLayout, QWidget)
 
 from vidcutter.libs.munch import Munch
 from vidcutter.libs.iso639 import ISO639_2
@@ -73,6 +74,7 @@ class StreamSelector(QDialog):
         videoCheckbox.setToolTip('Toggle video stream')
         videoCheckbox.setCursor(Qt.PointingHandCursor)
         videoCheckbox.setChecked(True)
+        videoCheckbox.setEnabled(False)
         videoCheckbox.stateChanged.connect(lambda state, idx=index: self.setConfig(idx, state == Qt.Checked))
         iconLabel = QLabel(self)
         iconLabel.setPixmap(QPixmap(':images/{}/streams-video.png'.format(self.parent.theme)))
@@ -161,6 +163,8 @@ class StreamSelector(QDialog):
             widget.setLayout(audiolayout)
             scroll = QScrollArea(self)
             scroll.setStyleSheet('QScrollArea { background-color: transparent; }')
+            if sys.platform in {'win32', 'darwin'}:
+                scroll.setStyle(QStyleFactory.create('Fusion'))
             scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
             scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
             scroll.setFrameShape(QFrame.NoFrame)
@@ -214,6 +218,8 @@ class StreamSelector(QDialog):
             widget.setLayout(subtitlelayout)
             scroll = QScrollArea(self)
             scroll.setStyleSheet('QScrollArea { background-color: transparent; }')
+            if sys.platform in {'win32', 'darwin'}:
+                scroll.setStyle(QStyleFactory.create('Fusion'))
             scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
             scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
             scroll.setFrameShape(QFrame.NoFrame)

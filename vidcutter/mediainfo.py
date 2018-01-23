@@ -25,11 +25,12 @@
 import logging
 import math
 import os
+import sys
 
 from PyQt5.QtCore import QSize, Qt
 from PyQt5.QtGui import QCloseEvent
-from PyQt5.QtWidgets import (QDialog, QDialogButtonBox, QHBoxLayout, QLabel, QPushButton, QSizePolicy, QTextBrowser,
-                             QVBoxLayout, qApp)
+from PyQt5.QtWidgets import (QDialog, QDialogButtonBox, QHBoxLayout, QLabel, QPushButton, QSizePolicy, QStyleFactory,
+                             QTextBrowser, QVBoxLayout, qApp)
 
 
 class MediaInfo(QDialog):
@@ -50,6 +51,8 @@ class MediaInfo(QDialog):
         self.setWindowTitle('Media information - {}'.format(os.path.basename(self.media)))
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         self.setMinimumSize(self.modes.get(self.parent.parent.scale))
+        if sys.platform in {'win32', 'darwin'}:
+            self.setStyle(QStyleFactory.create('Fusion'))
         metadata = '''<style>
     table {{
         font-family: "Noto Sans UI", sans-serif;
@@ -74,6 +77,8 @@ class MediaInfo(QDialog):
 <div align="center">{info}</div>'''.format(pencolor='#C681D5' if self.parent.theme == 'dark' else '#642C68',
                                            info=self.parent.videoService.mediainfo(self.media))
         content = QTextBrowser(self.parent)
+        if sys.platform in {'win32', 'darwin'}:
+            content.setStyle(QStyleFactory.create('Fusion'))
         content.setStyleSheet('''
             QTextBrowser {{
                 background-color: {bgcolor};

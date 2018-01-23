@@ -30,7 +30,8 @@ from datetime import datetime
 from PyQt5.Qt import PYQT_VERSION_STR, QT_VERSION_STR
 from PyQt5.QtCore import QSize, Qt, QUrl
 from PyQt5.QtGui import QCloseEvent
-from PyQt5.QtWidgets import qApp, QDialog, QDialogButtonBox, QLabel, QTabWidget, QTextBrowser, QVBoxLayout
+from PyQt5.QtWidgets import (qApp, QDialog, QDialogButtonBox, QLabel, QStyleFactory, QTabWidget, QTextBrowser,
+                             QVBoxLayout)
 
 import vidcutter
 
@@ -279,3 +280,5 @@ class LicenseTab(BaseTab):
         super(LicenseTab, self).__init__(parent)
         self.setObjectName('license')
         self.setSource(QUrl('qrc:/license.html'))
+        if sys.platform in {'win32', 'darwin'}:
+            self.setStyle(QStyleFactory.create('Fusion'))        
