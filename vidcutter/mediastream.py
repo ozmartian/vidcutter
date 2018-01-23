@@ -34,8 +34,8 @@ from vidcutter.libs.iso639 import ISO639_2
 
 
 class StreamSelector(QDialog):
-    def __init__(self, streams: Munch, mappings: list, parent=None):
-        super(StreamSelector, self).__init__(parent)
+    def __init__(self, streams: Munch, mappings: list, parent=None, flags=Qt.Dialog | Qt.WindowCloseButtonHint):
+        super(StreamSelector, self).__init__(parent, flags)
         self.parent = parent
         self.streams = streams
         self.config = mappings
@@ -101,7 +101,6 @@ class StreamSelector(QDialog):
         videolayout.addWidget(iconLabel)
         videolayout.addSpacing(10)
         videolayout.addWidget(videoLabel)
-        self.config[self.streams.video.get('index')] = True
         videogroup = QGroupBox('Video')
         videogroup.setLayout(videolayout)
         return videogroup
@@ -154,19 +153,26 @@ class StreamSelector(QDialog):
             if self.streams.audio.index(stream) < len(self.streams.audio) - 1:
                 audiolayout.addWidget(StreamSelector.lineSeparator(), rows + 1, 0, 1, 5)
         audiolayout.setColumnStretch(4, 1)
-        audiolayout.setSizeConstraint(QVBoxLayout.SetMinAndMaxSize)
-        widget = QWidget(self)
-        widget.setLayout(audiolayout)
-        scroll = QScrollArea(self)
-        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-        # scroll.setWidgetResizable(True)
-        scroll.setStyleSheet('QScrollArea { border: none; }')
-        scroll.setWidget(widget)
-        scrolllayout = QHBoxLayout()
-        scrolllayout.addWidget(scroll)
-        audiogroup = QGroupBox('Audio')
-        audiogroup.setLayout(scrolllayout)
+        if len(self.streams.audio) > 2:
+            audiolayout.setSizeConstraint(QGridLayout.SetMinAndMaxSize)
+            widget = QWidget(self)
+            widget.setObjectName('audiowidget')
+            widget.setStyleSheet('QWidget#audiowidget { background-color: transparent; }')
+            widget.setLayout(audiolayout)
+            scroll = QScrollArea(self)
+            scroll.setStyleSheet('QScrollArea { background-color: transparent; }')
+            scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+            scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+            scroll.setFrameShape(QFrame.NoFrame)
+            scroll.setMinimumHeight(165)
+            scroll.setWidget(widget)
+            scrolllayout = QHBoxLayout()
+            scrolllayout.addWidget(scroll)
+            audiogroup = QGroupBox('Audio')
+            audiogroup.setLayout(scrolllayout)
+        else:
+            audiogroup = QGroupBox('Audio')
+            audiogroup.setLayout(audiolayout)
         return audiogroup
 
     def subtitles(self) -> QGroupBox:
@@ -200,21 +206,27 @@ class StreamSelector(QDialog):
             if self.streams.subtitle.index(stream) < len(self.streams.subtitle) - 1:
                 subtitlelayout.addWidget(StreamSelector.lineSeparator(), rows + 1, 0, 1, 5)
         subtitlelayout.setColumnStretch(4, 1)
-        subtitlelayout.setSizeConstraint(QVBoxLayout.SetMinAndMaxSize)
-        widget = QWidget(self)
-        widget.setLayout(subtitlelayout)
-        scroll = QScrollArea(self)
-        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-        # scroll.setWidgetResizable(True)
-        scroll.setStyleSheet('QScrollArea { border: none; }')
-        scroll.setWidget(widget)
-        scrolllayout = QHBoxLayout()
-        scrolllayout.addWidget(scroll)
-        subtitlegroup = QGroupBox('Subtitles')
-        subtitlegroup.setLayout(scrolllayout)
+        if len(self.streams.subtitle) > 2:
+            subtitlelayout.setSizeConstraint(QVBoxLayout.SetMinAndMaxSize)
+            widget = QWidget(self)
+            widget.setObjectName('subtitlewidget')
+            widget.setStyleSheet('QWidget#subtitlewidget { background-color: transparent; }')
+            widget.setLayout(subtitlelayout)
+            scroll = QScrollArea(self)
+            scroll.setStyleSheet('QScrollArea { background-color: transparent; }')
+            scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+            scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+            scroll.setFrameShape(QFrame.NoFrame)
+            scroll.setMinimumHeight(150)
+            scroll.setWidget(widget)
+            scrolllayout = QHBoxLayout()
+            scrolllayout.addWidget(scroll)
+            subtitlegroup = QGroupBox('Subtitles')
+            subtitlegroup.setLayout(scrolllayout)
+        else:
+            subtitlegroup = QGroupBox('Subtitles')
+            subtitlegroup.setLayout(subtitlelayout)
         return subtitlegroup
 
     def setConfig(self, index: int, checked: bool) -> None:
         self.config[index] = checked
-        print(self.config)
