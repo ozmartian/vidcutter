@@ -1317,13 +1317,13 @@ class VideoCutter(QWidget):
     @pyqtSlot()
     def mediaInfo(self) -> None:
         if self.mediaAvailable:
-            if self.videoService.mediainfo is None:
-                self.logger.error('Error trying to load media information. mediainfo could not be found')
+            if self.videoService.backends.mediainfo is None:
+                self.logger.error('mediainfo could not be found on the system')
                 QMessageBox.critical(self.parent, 'Missing mediainfo utility',
-                                     'The <b>mediainfo</b> command line utility could not be found on your system. '
-                                     'and is required for media information to work.<br/><br/>Linux users can simply '
-                                     'simply install the <b>mediainfo</b> package using your package management'
-                                     'tool e.g. apt, pacman, dnf, zypper, etc.')
+                                     'The <b>mediainfo</b> command could not be found on your system which '
+                                     'is required for this feature to work.<br/><br/>Linux users can simply '
+                                     'install the <b>mediainfo</b> package using the package manager you use to '
+                                     'install software (e.g. apt, pacman, dnf, zypper, etc.)')
                 return
             mediainfo = MediaInfo(media=self.currentMedia, parent=self)
             mediainfo.show()
