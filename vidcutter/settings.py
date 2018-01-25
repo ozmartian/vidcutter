@@ -344,9 +344,16 @@ class FFmpegPage(QWidget):
         super(FFmpegPage, self).__init__(parent)
         self.parent = parent
         self.setObjectName('settingsffmpegpage')
-        self.pathLineEdit = QLineEdit(os.path.dirname(self.parent.service.backends.ffmpeg), self)
+        self.pathLineEdit = QLineEdit(self)
         self.pathLineEdit.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         self.pathLineEdit.setClearButtonEnabled(True)
+        servicepath = self.parent.parent.ffmpegPath
+        if hasattr(sys, 'frozen') and os.path.join(self.parent.service.getAppPath(), 'bin') in servicepath:
+            servicepath = 'built-in version'
+            self.pathLineEdit.setStyleSheet('QLineEdit { font-style: italic; }')
+        else:
+            servicepath = os.path.dirname(servicepath)
+        self.pathLineEdit.setText(servicepath)
         pathButton = QPushButton(self)
         pathButton.setIcon(QIcon(':/images/folder.png'))
         pathButton.setToolTip('Select FFmpeg path')
@@ -355,13 +362,13 @@ class FFmpegPage(QWidget):
         pathLayout = QHBoxLayout()
         pathLayout.addWidget(self.pathLineEdit)
         pathLayout.addWidget(pathButton)
-        resetButton = QPushButton('Reset', self)
-        resetButton.setToolTip('Reset to default path')
+        resetButton = QPushButton('Reset to Default', self)
+        resetButton.setToolTip('Reset to default detected path')
         resetButton.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         resetButton.setCursor(Qt.PointingHandCursor)
         resetButton.clicked.connect(self.resetToDefault)
-        self.validateButton = QPushButton('Validate', self)
-        self.validateButton.setToolTip('Validate new path')
+        self.validateButton = QPushButton('Validate Path', self)
+        self.validateButton.setToolTip('Validate and accept new path')
         self.validateButton.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         self.validateButton.setCursor(Qt.PointingHandCursor)
         self.validateButton.clicked.connect(self.validatePath)
@@ -373,7 +380,7 @@ class FFmpegPage(QWidget):
             Linux distribution only offers FFmpeg versions 2.8 or below. We recommended the below URL for the latest
             static binaries.<br/><div align="center">
             <a href="https://www.johnvansickle.com/ffmpeg">https://www.johnvansickle.com/ffmpeg</a>
-            </div><br/>Simply extract, place the binaries someplace suitable on your system and input the path in the
+            </div><br/>Extract the binaries on your system and update the field aboce
             field above. You then need to validate using the above button and the new path will be in use if the
             binaries can be found and are executable.<br/><br/>Use the reset button to revert back to the default
             detected path if you run into any problems.''')
@@ -397,7 +404,14 @@ class FFmpegPage(QWidget):
     def resetToDefault(self) -> None:
         self.parent.parent.setFFmpegPath(None)
         self.parent.service.backends = self.parent.service.findBackends(None)
-        self.pathLineEdit.setText(os.path.dirname(self.parent.service.backends.ffmpeg))
+        servicepath = os.path.dirname(self.parent.service.backends.ffmpeg)
+        if hasattr(sys, 'frozen') and os.path.join(self.parent.service.getAppPath(), 'bin') in servicepath:
+            servicepath = 'built-in version'
+            self.pathLineEdit.setStyleSheet('QLineEdit { font-style: italic; }')
+        else:
+            self.pathLineEdit.setStyleSheet('QLineEdit { font-style: normal; }')
+        self.pathLineEdit.setText(servicepath)
+        self.parent.parent.setFFmpegPath(self.pathLineEdit.text())
 
     @pyqtSlot()
     def setPath(self) -> None:
@@ -428,16 +442,16 @@ class FFmpegPage(QWidget):
         self.validateButton.setStyleSheet('QPushButton { font-weight: bold; }')
         if validpath:
             self.parent.parent.setFFmpegPath(newpath)
-            self.validateButton.setText('VALID PATH - ACCEPTED')
+            self.validateButton.setText('ACCEPTED - FFMPEG FOUND')
         else:
-            self.validateButton.setText('INVALID PATH - REJECTED')
+            self.validateButton.setText('INVALID - FFMPEG NOT FOUND')
             self.pathLineEdit.setText(os.path.dirname(self.parent.service.backends.ffmpeg))
         QTimer.singleShot(3000, self.resetLabel)
 
     @pyqtSlot()
     def resetLabel(self) -> None:
         self.validateButton.setStyleSheet('QPushButton { font-weight: normal; }')
-        self.validateButton.setText('Validate')
+        self.validateButton.setText('Validate Path')
 
 
 class GeneralPage(QWidget):
@@ -648,13 +662,12 @@ class SettingsDialog(QDialog):
         logsButton.setToolTip('Logging settings')
         logsButton.setTextAlignment(Qt.AlignHCenter)
         logsButton.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
-        if sys.platform.startswith('linux') and not os.getenv('QT_APPIMAGE', False):
-            ffmpegButton = QListWidgetItem(self.categories)
-            ffmpegButton.setIcon(QIcon(':/images/settings-ffmpeg.png'))
-            ffmpegButton.setText('FFmpeg')
-            ffmpegButton.setToolTip('FFmpeg settings')
-            ffmpegButton.setTextAlignment(Qt.AlignHCenter)
-            ffmpegButton.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+        ffmpegButton = QListWidgetItem(self.categories)
+        ffmpegButton.setIcon(QIcon(':/images/settings-ffmpeg.png'))
+        ffmpegButton.setText('FFmpeg')
+        ffmpegButton.setToolTip('FFmpeg settings')
+        ffmpegButton.setTextAlignment(Qt.AlignHCenter)
+        ffmpegButton.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
         self.categories.currentItemChanged.connect(self.changePage)
         self.categories.setCurrentRow(0)
         self.categories.setMaximumWidth(self.categories.sizeHintForColumn(0) + 2)

@@ -99,8 +99,9 @@ class VideoService(QObject):
                     self.streams.video = self.streams.video[0]  # we always assume one video stream per media file
                 else:
                     raise InvalidMediaException('Could not load video stream for {}'.format(source))
-                for index in range(int(self.media.format.nb_streams)):
-                    self.mappings.append(True)
+                self.mappings.clear()
+                # noinspection PyUnusedLocal
+                [self.mappings.append(True) for i in range(int(self.media.format.nb_streams))]
         except OSError as e:
             if e.errno == errno.ENOENT:
                 errormsg = '{0}: {1}'.format(os.strerror(errno.ENOENT), source)
@@ -124,7 +125,7 @@ class VideoService(QObject):
         for backend in tools.keys():
             for exe in VideoService.config.binaries[os.name][backend]:
                 if tools[backend] is None:
-                    binpath = QDir.toNativeSeparators('{0}/bin/{1}'.format(VideoService.getAppPath(), exe))
+                    binpath = os.path.join(VideoService.getAppPath(), 'bin', exe)
                     if binpath is not None and os.path.isfile(binpath):
                         tools[backend] = binpath
                         break
@@ -269,11 +270,22 @@ class VideoService(QObject):
             acodec = re.search(r'Stream.*Audio:\s(\w+)', result).group(1)
             return vcodec, acodec
 
+    def parseMappings(self, allstreams: bool=True) -> str:
+        if not len(self.mappings) or (self.parent is not None and self.parent.hasExternals()):
+            return '-map 0 ' if allstreams else ''
+        if False not in self.mappings:
+            return '-map 0 '
+        output = ''
+        for stream_id in range(len(self.mappings)):
+            if self.mappings[stream_id]:
+                output += '-map 0:{} '.format(stream_id)
+        return output
+
     def cut(self, source: str, output: str, frametime: str, duration: str, allstreams: bool=True, vcodec: str=None,
             run: bool=True):
         self.checkDiskSpace(output)
         source = QDir.toNativeSeparators(source)
-        stream_map = '-map 0 ' if allstreams else ''
+        stream_map = self.parseMappings(allstreams)
         if vcodec is not None:
             encode_options = VideoService.config.encoding.get(vcodec, vcodec)
             args = '-v 32 -i "{}" -ss {} -t {} -c:v {} -c:a copy -c:s copy {}-avoid_negative_ts 1 ' \
@@ -281,6 +293,8 @@ class VideoService(QObject):
         else:
             args = '-v error -ss {} -t {} -i "{}" -c copy {}-avoid_negative_ts 1 -copyinkf -y "{}"' \
                    .format(frametime, duration, source, stream_map, output)
+        # print(self.mappings)
+        # print(args)
         if run:
             result = self.cmdExec(self.backends.ffmpeg, args)
             if not result or os.path.getsize(output) < 1000:

@@ -253,6 +253,7 @@ class MainWindow(QMainWindow):
                     self.cutter.notify.fadeOut()
             except BaseException:
                 pass
+            event.accept()
 
     def dragEnterEvent(self, event: QDragEnterEvent) -> None:
         if event.mimeData().hasUrls():

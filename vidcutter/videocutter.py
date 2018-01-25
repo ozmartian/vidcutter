@@ -587,6 +587,9 @@ class VideoCutter(QWidget):
             self.videoService = VideoService(self, self.ffmpegPath)
         else:
             self.videoService = VideoService(self)
+            if self.videoService.backends.ffmpeg is not None:
+                self.ffmpegPath = self.videoService.backends.ffmpeg
+                self.settings.setValue('ffmpegPath', self.videoService.backends.ffmpeg)
         self.videoService.progress.connect(self.seekSlider.updateProgress)
         self.videoService.finished.connect(self.smartmonitor)
         self.videoService.error.connect(self.completeOnError)
@@ -1244,12 +1247,12 @@ class VideoCutter(QWidget):
                                                  frametime=clip[0].toString(self.timeformat),
                                                  duration=duration,
                                                  allstreams=True):
-                        self.completeOnError('Failed to cut media file, assuming media is invalid or corrupt. '
-                                             'Attempts are made to reindex and repair problematic media files even '
-                                             'when keyframes are incorrectly set or missing.\n\nIf you feel this '
-                                             'is a bug in the software then please let us know using the '
-                                             'information provided in the About {} menu option so we may '
-                                             'fix and improve for all users.'.format(qApp.applicationName()))
+                        self.completeOnError('<p>Failed to cut media file, assuming media is invalid or corrupt. '
+                                             'Attempts are made to work around problematic media files, even '
+                                             'when keyframes are incorrectly set or missing.</p><p>If you feel this '
+                                             'is a bug in the software then please take the time to report it '
+                                             'at our <a href="{}">GitHub Issues page</a> so that it can be fixed.</p>'
+                                             .format(vidcutter.__bugreport__))
                         return
             self.joinMedia(filelist)
 
@@ -1323,7 +1326,7 @@ class VideoCutter(QWidget):
             self.getAppIcon(encoded=True),
             self)
         self.notify.closed.connect(self.seekSlider.clearProgress)
-        self.notify.exec_()
+        self.notify.show()
         if self.smartcut:
             QTimer.singleShot(1000, self.cleanup)
         self.setProjectDirty(False)
@@ -1393,28 +1396,18 @@ class VideoCutter(QWidget):
                 nostreams.setStandardButtons(QMessageBox.Ok)
                 nostreams.exec_()
                 return
-            streamSelector = StreamSelector(self.videoService.streams, self.videoService.mappings, self)
+            streamSelector = StreamSelector(self.videoService, self)
             streamSelector.show()
 
     @pyqtSlot()
     def showKeyRef(self) -> None:
-        shortcuts = QWidget(self)
-        shortcuts.setWindowFlags(Qt.Dialog | Qt.WindowCloseButtonHint)
-        shortcuts.setObjectName('shortcuts')
-        shortcuts.setAttribute(Qt.WA_DeleteOnClose, True)
-        buttons = QDialogButtonBox(QDialogButtonBox.Ok)
-        buttons.accepted.connect(shortcuts.close)
-        layout = QVBoxLayout()
-        # noinspection PyArgumentList
-        layout.addWidget(QLabel(pixmap=QPixmap(':/images/{}/shortcuts.png'.format(self.theme))))
-        layout.addWidget(buttons)
-        shortcuts.setLayout(layout)
-        shortcuts.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-        shortcuts.setContentsMargins(10, 10, 10, 10)
-        shortcuts.setWindowModality(Qt.NonModal)
-        shortcuts.setWindowTitle('Keyboard shortcuts')
-        shortcuts.setMinimumWidth(400 if self.parent.scale == 'LOW' else 600)
-        shortcuts.show()
+        msgtext = '<img src=":/images/{}/shortcuts.png" />'.format(self.theme)
+        msgbox = QMessageBox(QMessageBox.NoIcon, 'Keyboard shortcuts', msgtext, QMessageBox.Ok, self,
+                             Qt.Window | Qt.Dialog | Qt.WindowCloseButtonHint)
+        msgbox.setObjectName('shortcuts')
+        msgbox.setContentsMargins(10, 10, 10, 10)
+        msgbox.setMinimumWidth(400 if self.parent.scale == 'LOW' else 600)
+        msgbox.exec_()
 
     @pyqtSlot()
     def aboutApp(self) -> None:

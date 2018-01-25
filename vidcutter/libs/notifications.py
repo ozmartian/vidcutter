@@ -33,17 +33,18 @@ from PyQt5.QtWidgets import qApp, QDialog, QHBoxLayout, QLabel, QPushButton, QVB
 class Notification(QDialog):
     shown = pyqtSignal()
     closed = pyqtSignal()
-    duration = 10
+    duration = 6
 
-    def __init__(self, icon: str, parent=None, f=Qt.Dialog | Qt.FramelessWindowHint):
-        super(Notification, self).__init__(parent, f)
+    def __init__(self, icon: str, parent=None):
+        super(Notification, self).__init__(parent)
         self.parent = parent
         self.theme = self.parent.theme
         self.setObjectName('notification')
         self.setContentsMargins(10, 10, 10, 10)
-        self.shown.connect(lambda: QTimer.singleShot(self.duration * 1000, self.fadeOut))
-        self.setWindowModality(Qt.ApplicationModal)
+        self.setModal(True)
+        self.setWindowFlags(Qt.Window | Qt.Dialog | Qt.FramelessWindowHint)
         self.setMinimumWidth(550)
+        self.shown.connect(lambda: QTimer.singleShot(self.duration * 1000, self.close))
         self._title, self._message = '', ''
         self.buttons = []
         self.msgLabel = QLabel(self._message, self)
@@ -77,19 +78,11 @@ class Notification(QDialog):
         self.msgLabel.setText(value)
         self._message = value
 
-    @pyqtSlot()
-    def fadeOut(self):
-        for step in range(100, 0, -10):
-            self.setWindowOpacity(step / 100)
-            qApp.processEvents()
-            time.sleep(0.085)
-        self.close()
-
     def mousePressEvent(self, event: QMouseEvent):
         if event.button() == Qt.LeftButton:
-            self.fadeOut()
+            self.close()
 
-    # noinspection PyTypeChecker
+    @pyqtSlot()
     def showEvent(self, event):
         if self.isVisible():
             self.shown.emit()
@@ -97,8 +90,14 @@ class Notification(QDialog):
         super(Notification, self).showEvent(event)
 
     def closeEvent(self, event):
+        event.accept()
+        for step in range(100, 0, -10):
+            self.setWindowOpacity(step / 100)
+            qApp.processEvents()
+            time.sleep(0.085)
         self.closed.emit()
         self.deleteLater()
+        super(Notification, self).closeEvent(event)
 
 
 class JobCompleteNotification(Notification):
