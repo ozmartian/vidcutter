@@ -1,14 +1,28 @@
 ![VidCutter](http://vidcutter.ozmartians.com/vidcutter-banner.png)
 
 [![AUR](https://img.shields.io/aur/version/vidcutter.svg)](https://aur.archlinux.org/packages/vidcutter)
-[![AUR-GIT](https://img.shields.io/aur/version/vidcutter-git.svg)](https://aur.archlinux.org/packages/vidcutter-git) [![Build Status](https://travis-ci.org/ozmartian/vidcutter.svg?branch=5.5.0)](https://travis-ci.org/ozmartian/vidcutter) 
-[![Build Status](https://ci.appveyor.com/api/projects/status/jgasythb2vqsxy7v?svg=true)](https://ci.appveyor.com/project/ozmartian/vidcutter)
+[![AUR-GIT](https://img.shields.io/aur/version/vidcutter-git.svg)](https://aur.archlinux.org/packages/vidcutter-git)
+[![Build Status](https://travis-ci.org/ozmartian/vidcutter-appimage.svg)](https://github.com/ozmartian/vidcutter-appimage/releases/latest) 
+[![Build Status](https://travis-ci.org/ozmartian/vidcutter-osx.svg?branch=master)](https://github.com/ozmartian/vidcutter-osx/releases/latest)
+[![Build Status](https://ci.appveyor.com/api/projects/status/jgasythb2vqsxy7v?svg=true)](https://ci.appveyor.com/project/ozmartian/vidcutter/build/artifacts)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/425a00c7c6af446ba87c6152567d9f7e)](https://www.codacy.com/app/ozmartian/vidcutter)
 
 [![Screenshot 1](https://cdn.rawgit.com/ozmartian/vidcutter/gh-pages/images/vidcutter-01-thumb.png)](https://cdn.rawgit.com/ozmartian/vidcutter/gh-pages/images/vidcutter-01.png) 
 [![Screenshot 2](https://cdn.rawgit.com/ozmartian/vidcutter/gh-pages/images/vidcutter-02-thumb.png)](https://cdn.rawgit.com/ozmartian/vidcutter/gh-pages/images/vidcutter-02.png) 
 [![Screenshot 3](https://cdn.rawgit.com/ozmartian/vidcutter/gh-pages/images/vidcutter-03-thumb.png)](https://cdn.rawgit.com/ozmartian/vidcutter/gh-pages/images/vidcutter-03.png) 
 [![Screenshot 4](https://cdn.rawgit.com/ozmartian/vidcutter/gh-pages/images/vidcutter-04-thumb.png)](https://cdn.rawgit.com/ozmartian/vidcutter/gh-pages/images/vidcutter-04.png)
+
+### Latest DEV Builds Available
+
+Automated deployments from VidCutter CI servers have been setup together with new repos to host the latest builds produced. If you want to check out the very latest DEV builds of VidCutter then follow the links below. Do keep in mind that these are considered unstable so there is a small risk of things not working but care is taken to ensure only complete and working code is pushed to Git, but sometimes mistakes can happen.
+
+&nbsp; | VidCutter DEV Builds |
+--- | --- |
+**Linux** | https://github.com/ozmartian/vidcutter-appimage/releases/latest |
+**Windows** | https://ci.appveyor.com/project/ozmartian/vidcutter/build/artifacts |
+**macOS** | https://github.com/ozmartian/vidcutter-osx/releases/latest |
+
+***
 
 ### Open Build Service
 
@@ -17,6 +31,8 @@ Prebuilt Linux packages available, click on your distro below.
 |[![](https://vidcutter.ozmartians.com/logos/arch.png "Arch Linux")](https://software.opensuse.org/download/package?project=home:ozmartian&package=vidcutter)|  [![](https://vidcutter.ozmartians.com/logos/debian.png)](https://software.opensuse.org/download/package?project=home:ozmartian&package=vidcutter "Debian")|[![](http://vidcutter.ozmartians.com/logos/fedora.png)](https://copr.fedorainfracloud.org/coprs/suspiria/VidCutter "Fedora")|[![](http://vidcutter.ozmartians.com/logos/opensuse.png)](https://software.opensuse.org/download/package?project=home:ozmartian&package=vidcutter "openSUSE")|[![](http://vidcutter.ozmartians.com/logos/ubuntu.png)](https://software.opensuse.org/download/package?project=home:ozmartian&package=vidcutter "Ubuntu")
 |:---:|:---:|:---:|:---:|:---:|
 |Arch Linux|Debian|Fedora|openSUSE|Ubuntu|
+
+***
 
 ### Windows + macOS Users
 
