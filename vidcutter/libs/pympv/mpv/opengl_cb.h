@@ -53,9 +53,10 @@ extern "C" {
  * pointers returned by the get_proc_address callback in mpv_opengl_cb_init_gl.
  * Generally, mpv will not load the system OpenGL library when using this API.
  *
- * Only "desktop" OpenGL version 2.1 or later is supported. With OpenGL 2.1,
- * the GL_ARB_texture_rg is required. The renderer was written against
- * OpenGL 3.x core profile, with additional support for OpenGL 2.1.
+ * Only "desktop" OpenGL version 2.1 and later and OpenGL ES version 2.0 and
+ * later are supported. With OpenGL 2.1, the GL_ARB_texture_rg is required. The
+ * renderer was written for the OpenGL 3.x core profile, with additional support
+ * for OpenGL 2.1 and OpenGL ES 2.0.
  *
  * Note that some hardware decoding interop API (as set with the "hwdec" option)
  * may actually access
@@ -251,7 +252,8 @@ typedef void *(*mpv_opengl_cb_get_proc_address_fn)(void *fn_ctx, const char *nam
  * Set the callback that notifies you when a new video frame is available, or
  * if the video display configuration somehow changed and requires a redraw.
  * Similar to mpv_set_wakeup_callback(), you must not call any mpv API from
- * the callback.
+ * the callback, and all the other listed restrictions apply (such as not
+ * exiting the callback by throwing exceptions).
  *
  * @param callback callback(callback_ctx) is called if the frame should be
  *                 redrawn

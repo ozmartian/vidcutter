@@ -158,7 +158,7 @@ class AboutTab(BaseTab):
         try:
             ffmpeg_version = self.parent.parent.videoService.version()
         except BaseException:
-            ffmpeg_version = '<span style="color:red;">MISSING</span>'
+            ffmpeg_version = '<span style="color:maroon; font-weight:bold;">MISSING</span>'
         html = '''
 <style>
     table { width: 100%%; font-family: "Noto Sans UI", sans-serif; background-color: transparent; }

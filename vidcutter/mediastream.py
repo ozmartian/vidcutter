@@ -26,7 +26,7 @@ import os
 import sys
 
 from PyQt5.QtCore import pyqtSlot, Qt
-from PyQt5.QtGui import QCloseEvent, QMouseEvent, QPixmap
+from PyQt5.QtGui import QCloseEvent, QMouseEvent
 from PyQt5.QtWidgets import (QCheckBox, QDialog, QDialogButtonBox, QFrame, QGridLayout, QGroupBox, QHBoxLayout, QLabel,
                              QMessageBox, QScrollArea, QSizePolicy, QSpacerItem, QStyleFactory, QVBoxLayout, QWidget)
 
@@ -63,35 +63,40 @@ class StreamSelector(QDialog):
         line = QFrame()
         line.setFrameShape(QFrame.HLine)
         line.setFrameShadow(QFrame.Sunken)
+        line.setLineWidth(1)
+        line.setMidLineWidth(0)
+        line.setMinimumSize(0, 2)
         return line
 
     def video(self) -> QGroupBox:
         framerate = round(eval(self.streams.video.avg_frame_rate), 3)
         ratio = self.streams.video.display_aspect_ratio.split(':')
         ratio = round(int(ratio[0]) / int(ratio[1]), 3)
-        index = self.streams.video.get('index')
-        checkbox = StreamSelectorCheckBox(index, 'Toggle video stream', self)
+        checkbox = QCheckBox(self)
+        checkbox.setToolTip('Toggle video stream')
+        checkbox.setChecked(True)
         checkbox.setEnabled(False)
-        icon = StreamSelectorLabel(self)
-        icon.setPixmap(QPixmap(':images/{}/streams-video.png'.format(self.parent.theme)))
-        icon.setFixedSize(18, 18)
-        label = StreamSelectorLabel(self)
-        label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
-        label.setText('''
+        icon = QLabel('<img src=":images/{}/streams-video.png" />'.format(self.parent.theme), self)
+        # icon.setFixedSize(18, 18)
+        label = QLabel('''
+            <b>index:</b> {index}
+            <br/>
             <b>codec:</b> {codec}
             <br/>
             <b>size:</b> {width} x {height}
             &nbsp;
             <b>ratio:</b> {ratio}
             <br/>
-            <b>rate:</b> {framerate} fps
+            <b>frame rate:</b> {framerate} fps
             &nbsp;
-            <b>color:</b> {pixfmt}'''.format(codec=self.streams.video.codec_long_name,
-                                             width=self.streams.video.width,
-                                             height=self.streams.video.height,
-                                             framerate=framerate,
-                                             ratio=ratio,
-                                             pixfmt=self.streams.video.pix_fmt))
+            <b>color format:</b> {pixfmt}'''.format(index=self.streams.video.index,
+                                                    codec=self.streams.video.codec_long_name,
+                                                    width=self.streams.video.width,
+                                                    height=self.streams.video.height,
+                                                    framerate=framerate,
+                                                    ratio=ratio,
+                                                    pixfmt=self.streams.video.pix_fmt), self)
+        label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         videolayout = QHBoxLayout()
         videolayout.setSpacing(15)
         videolayout.setContentsMargins(15, 10, 15, 10)
@@ -109,34 +114,16 @@ class StreamSelector(QDialog):
         audiolayout.setSpacing(15)
         for stream in self.streams.audio:
             checkbox = StreamSelectorCheckBox(stream.index, 'Toggle audio stream', self)
-            icon = StreamSelectorLabel(self, checkbox)
-            icon.setPixmap(QPixmap(':images/{}/streams-audio.png'.format(self.parent.theme)))
-            icon.setFixedSize(18, 18)
-            label = StreamSelectorLabel(self, checkbox)
+            icon = StreamSelectorLabel('<img src=":images/{}/streams-audio.png" />'.format(self.parent.theme),
+                                       checkbox, self)
+            # icon.setFixedSize(18, 18)
+            labeltext = '<b>index:</b> {}<br/>'.format(stream.index)
             if hasattr(stream, 'tags') and hasattr(stream.tags, 'language'):
-                label.setText('''
-                    <b>title:</b> {title}
-                    <br/>
-                    <b>codec:</b> {codec}
-                    <br/>
-                    <b>lang:</b> {language}
-                    &nbsp;
-                    <b>channels:</b> {channels}
-                    &nbsp;
-                    <b>rate:</b> {samplerate} kHz'''.format(title=ISO639_2[stream.tags.language],
-                                                            codec=stream.codec_long_name,
-                                                            language=stream.tags.language,
-                                                            channels=stream.channels,
-                                                            samplerate=round(int(stream.sample_rate) / 1000, 1)))
-            else:
-                label.setText('''
-                    <b>codec:</b> {codec}
-                    <br/>
-                    <b>channels:</b> {channels}
-                    &nbsp;
-                    <b>rate:</b> {samplerate} kHz'''.format(codec=stream.codec_long_name,
-                                                            channels=stream.channels,
-                                                            samplerate=round(int(stream.sample_rate) / 1000, 1)))
+                labeltext += '<b>language:</b> {}<br/>'.format(ISO639_2[stream.tags.language])
+            labeltext += '<b>codec:</b> {}<br/>'.format(stream.codec_long_name)
+            labeltext += '<b>channels:</b> {} &nbsp; <b>sample rate:</b> {} kHz' \
+                         .format(stream.channels, round(int(stream.sample_rate) / 1000, 1))
+            label = StreamSelectorLabel(labeltext, checkbox, self)
             rows = audiolayout.rowCount()
             audiolayout.addWidget(checkbox, rows, 0)
             audiolayout.addItem(QSpacerItem(5, 1), rows, 1)
@@ -166,18 +153,14 @@ class StreamSelector(QDialog):
         subtitlelayout.setSpacing(15)
         for stream in self.streams.subtitle:
             checkbox = StreamSelectorCheckBox(stream.index, 'Toggle subtitle stream', self)
-            icon = StreamSelectorLabel(self, checkbox)
-            icon.setPixmap(QPixmap(':images/{}/streams-subtitle.png'.format(self.parent.theme)))
-            icon.setFixedSize(18, 18)
-            label = StreamSelectorLabel(self, checkbox)
-            label.setText('''
-                <b>title:</b> {title}
-                <br/>
-                <b>lang:</b> {language}
-                &nbsp;
-                <b>codec:</b> {codec}'''.format(title=ISO639_2[stream.tags.language],
-                                                language=stream.tags.language,
-                                                codec=stream.codec_long_name))
+            icon = StreamSelectorLabel('<img src=":images/{}/streams-subtitle.png" />'.format(self.parent.theme),
+                                       checkbox, self)
+            # icon.setFixedSize(18, 18)
+            labeltext = '<b>index:</b> {}<br/>'.format(stream.index)
+            if hasattr(stream, 'tags') and hasattr(stream.tags, 'language'):
+                labeltext += '<b>language:</b> {}<br/>'.format(ISO639_2[stream.tags.language])
+            labeltext += '<b>codec:</b> {}'.format(stream.codec_long_name)
+            label = StreamSelectorLabel(labeltext, checkbox, self)
             rows = subtitlelayout.rowCount()
             subtitlelayout.addWidget(checkbox, rows, 0)
             subtitlelayout.addItem(QSpacerItem(5, 1), rows, 1)
@@ -279,11 +262,13 @@ class StreamSelectorCheckBox(QCheckBox):
 
 
 class StreamSelectorLabel(QLabel):
-    def __init__(self, parent=None, checkbox: StreamSelectorCheckBox=None):
+    def __init__(self, text: str, checkbox: StreamSelectorCheckBox, parent=None):
         super(StreamSelectorLabel, self).__init__(parent)
         self.checkbox = checkbox
+        self.setText(text)
         self.setCursor(Qt.PointingHandCursor)
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
         if event.button() == Qt.LeftButton and self.checkbox is not None:
             self.checkbox.toggle()
+        super(StreamSelectorLabel, self).mousePressEvent(event)

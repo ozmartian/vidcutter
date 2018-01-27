@@ -217,6 +217,12 @@ QLabel#novideoversion {
     padding-bottom: 10px;
 }
 
+#settingsffmpegpage QGroupBox {
+    background-image: url(:images/watermark-ffmpeg.png);
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
 QGroupBox#counterwidgets {
     border: none;
     background-color: #000;
