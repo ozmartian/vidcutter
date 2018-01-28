@@ -586,7 +586,7 @@ class VideoService(QObject):
 
     def cmdExec(self, cmd: str, args: str=None, output: bool=False, suppresslog: bool=False):
         if self.proc.state() == QProcess.NotRunning:
-            if cmd == self.backends.mediainfo:
+            if cmd in {self.backends.ffprobe, self.backends.mediainfo}:
                 self.proc.setProcessChannelMode(QProcess.SeparateChannels)
             if cmd in {self.backends.ffmpeg, self.backends.ffprobe}:
                 args = '-hide_banner {}'.format(args)
