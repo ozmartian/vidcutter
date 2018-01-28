@@ -25,7 +25,7 @@
 import os
 import sys
 
-from PyQt5.QtCore import pyqtSlot, Qt
+from PyQt5.QtCore import pyqtSlot, Qt, QEvent
 from PyQt5.QtGui import QCloseEvent, QMouseEvent
 from PyQt5.QtWidgets import (QCheckBox, QDialog, QDialogButtonBox, QFrame, QGridLayout, QGroupBox, QHBoxLayout, QLabel,
                              QMessageBox, QScrollArea, QSizePolicy, QSpacerItem, QStyleFactory, QVBoxLayout, QWidget)
@@ -56,6 +56,7 @@ class StreamSelector(QDialog):
             layout.addWidget(self.subtitles())
         layout.addWidget(buttons)
         self.setLayout(layout)
+        self.setMinimumSize(500, 300)
         self.setMaximumSize(500, 600)
 
     @staticmethod
@@ -77,7 +78,6 @@ class StreamSelector(QDialog):
         checkbox.setChecked(True)
         checkbox.setEnabled(False)
         icon = QLabel('<img src=":images/{}/streams-video.png" />'.format(self.parent.theme), self)
-        # icon.setFixedSize(18, 18)
         label = QLabel('''
             <b>index:</b> {index}
             <br/>
@@ -116,7 +116,6 @@ class StreamSelector(QDialog):
             checkbox = StreamSelectorCheckBox(stream.index, 'Toggle audio stream', self)
             icon = StreamSelectorLabel('<img src=":images/{}/streams-audio.png" />'.format(self.parent.theme),
                                        checkbox, self)
-            # icon.setFixedSize(18, 18)
             labeltext = '<b>index:</b> {}<br/>'.format(stream.index)
             if hasattr(stream, 'tags') and hasattr(stream.tags, 'language'):
                 labeltext += '<b>language:</b> {}<br/>'.format(ISO639_2[stream.tags.language])
@@ -141,10 +140,9 @@ class StreamSelector(QDialog):
             widget.setStyleSheet('QWidget#audiowidget { background-color: transparent; }')
             widget.setLayout(audiolayout)
             scrolllayout = QHBoxLayout()
-            scrolllayout.addWidget(StreamSelectorScrollArea(widget, 165, self))
+            scrolllayout.addWidget(StreamSelectorScrollArea(widget, 200, self))
             audiogroup.setLayout(scrolllayout)
         else:
-            audiolayout.setContentsMargins(15, 10, 15, 10)
             audiogroup.setLayout(audiolayout)
         return audiogroup
 
@@ -176,12 +174,14 @@ class StreamSelector(QDialog):
             widget = QWidget(self)
             widget.setObjectName('subtitlewidget')
             widget.setStyleSheet('QWidget#subtitlewidget { background-color: transparent; }')
+            widget.setMinimumWidth(400)
             widget.setLayout(subtitlelayout)
             scrolllayout = QHBoxLayout()
-            scrolllayout.addWidget(StreamSelectorScrollArea(widget, 150, self))
+            scrolllayout.addWidget(StreamSelectorScrollArea(widget, 170, self))
+            subtitlegroup.setStyleSheet('QGroupBox { padding-right: 0; }')
             subtitlegroup.setLayout(scrolllayout)
+            subtitlegroup.adjustSize()
         else:
-            subtitlelayout.setContentsMargins(15, 10, 15, 10)
             subtitlegroup.setLayout(subtitlelayout)
         return subtitlegroup
 
@@ -238,7 +238,7 @@ class StreamSelector(QDialog):
 class StreamSelectorScrollArea(QScrollArea):
     def __init__(self, widget: QWidget, minHeight: int, parent=None):
         super(StreamSelectorScrollArea, self).__init__(parent)
-        self.setStyleSheet('QScrollArea { background-color: transparent; }')
+        self.setStyleSheet('QScrollArea { background-color: transparent; margin-bottom: 20px; }')
         if sys.platform in {'win32', 'darwin'}:
             self.setStyle(QStyleFactory.create('Fusion'))
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)

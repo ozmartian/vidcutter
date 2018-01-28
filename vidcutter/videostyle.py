@@ -50,7 +50,11 @@ except ImportError:
 class VideoStyle(QProxyStyle):
     # noinspection PyMethodOverriding
     def styleHint(self, hint, option, widget, returnData) -> int:
-        if hint == QStyle.SH_UnderlineShortcut:
+        if hint in {
+            QStyle.SH_UnderlineShortcut,
+            QStyle.SH_DialogButtons_DefaultButton,
+            QStyle.SH_DialogButtonBox_ButtonsHaveIcons
+        }:
             return 0
         return super(VideoStyle, self).styleHint(hint, option, widget, returnData)
 

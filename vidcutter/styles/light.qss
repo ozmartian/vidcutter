@@ -200,8 +200,8 @@ QLabel#filmstrip {
 }
 
 QLabel#novideoversion {
-    font-size: 14px;
-    font-weight: 500;
+    font-size: 13px;
+    font-weight: bold;
     font-family: "Futura-Light", sans-serif;
     color: #FFF;
 }
@@ -209,7 +209,7 @@ QLabel#novideoversion {
 /* -------------------------------------------------------------------------- */
 
 #streamselector QGroupBox {
-    padding-bottom: 10px;
+    padding: 10px 15px;
 }
 
 #settingsffmpegpage QGroupBox {
