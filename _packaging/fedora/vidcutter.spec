@@ -3,17 +3,25 @@
 
 Name:           %{pkg_name}
 Version:        5.0.5
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        the simplest + fastest video cutter & joiner
 Group:          Applications/Multimedia
 License:        GPLv3+
 URL:            https://vidcutter.ozmartians.com
 
 Source0:        https://github.com/ozmartian/%{pkg_name}/archive/%{version}.tar.gz
-BuildArch:      i686 x86_64
- 
-BuildRequires:  python3-devel, python3-setuptools, mpv-libs-devel
-Requires:       python3-qt5, mpv-libs, mediainfo, ffmpeg
+
+ExclusiveArch:	%{ix86} x86_64	
+
+BuildRequires:  python3-devel
+BuildRequires:  python3-setuptools
+BuildRequires:  mpv-libs-devel
+
+Requires:       python3-qt5
+Requires:       mpv-libs
+Requires:       mediainfo
+Requires:       ffmpeg
+
 
 %description
     A modern, simple to use, constantly evolving and hella fast MEDIA CUTTER + JOINER
