@@ -26,6 +26,7 @@ import locale
 import logging
 import os
 import sys
+from OpenGL import GL
 
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QEvent, QTimer
 from PyQt5.QtGui import QKeyEvent, QMouseEvent, QWheelEvent
