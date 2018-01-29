@@ -35,11 +35,18 @@ from PyQt5.QtWidgets import QOpenGLWidget, qApp
 import vidcutter.libs.mpv as mpv
 
 
-# noinspection PyUnusedLocal
 def MPGetNativeDisplay(name):
     # if name == 'wl' and qApp.platformName().lower().startswith('wayland'):
     #     native = qApp.platformNativeInterface()
     #     return native.nativeResourceForWindow('display', None)
+    name = name.decode()
+    if name == 'opengl-cb-window-pos' and qApp.focusWindow() is not None:
+        class opengl_cb_window_pos:
+            x = qApp.focusWindow().x()
+            y = qApp.focusWindow().y()
+            width = qApp.focusWindow().width()
+            height = qApp.focusWindow().height()
+        return id(opengl_cb_window_pos())
     try:
         from PyQt5.QtX11Extras import QX11Info
         if QX11Info.isPlatformX11():
