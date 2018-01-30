@@ -385,7 +385,6 @@ class FFmpegPage(QWidget):
             binaries can be found and are executable.<br/><br/>Use the reset button to revert back to the default
             detected path if you run into any problems.''')
         ffmpegLabel.setObjectName('ffmpeglabel')
-        ffmpegLabel.setTextFormat(Qt.RichText)
         ffmpegLabel.setOpenExternalLinks(True)
         ffmpegLabel.setWordWrap(True)
         ffmpegLayout = QFormLayout()
@@ -429,12 +428,12 @@ class FFmpegPage(QWidget):
         validpath = False
         newpath = self.pathLineEdit.text()
         if newpath is not None and len(newpath):
-            for exe in self.parent.service.config.binaries['posix']['ffmpeg']:
+            for exe in self.parent.service.config.binaries[os.name]['ffmpeg']:
                 validpath = os.path.isfile(os.path.join(newpath, exe))
                 if validpath:
                     break
             if validpath:
-                for exe in self.parent.service.config.binaries['posix']['ffprobe']:
+                for exe in self.parent.service.config.binaries[os.name]['ffprobe']:
                     validpath = os.path.isfile(os.path.join(newpath, exe))
                     if validpath:
                         break
@@ -624,8 +623,8 @@ class SettingsDialog(QDialog):
         self.pages.addWidget(VideoPage(self))
         self.pages.addWidget(ThemePage(self))
         self.pages.addWidget(LogsPage(self))
-        if sys.platform.startswith('linux') and not os.getenv('QT_APPIMAGE', False):
-            self.pages.addWidget(FFmpegPage(self))
+        # if sys.platform.startswith('linux') and not os.getenv('QT_APPIMAGE', False):
+        self.pages.addWidget(FFmpegPage(self))
         self.initCategories()
         horizontalLayout = QHBoxLayout()
         horizontalLayout.addWidget(self.categories)
