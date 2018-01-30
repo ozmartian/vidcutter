@@ -29,14 +29,30 @@ vidcutter (5.5.0-1) stable; urgency=medium
     playback state resets position back to the start, in pause and all
     controls in their default states.
 
-  * Movable Clip index to left or right of player container.
+  * Ability to set clip index list to the left or right (default) of main
+    window.
+
+  * Support for WTV (.wtv - Windows Recorded TV Show) media files
+    (playback and cutting/joining)
+
+  * Required dependency of PyOpenGL python module introduced for users on slightly
+    older Ubuntu, Fedora and Ubuntu based Linux distributions. such as Mint or
+    ElementaryOS. This now fixes things if you were experiencing immediate
+    segmentation faults when launching. no OpenGL context could be created. Again,
+    this only applies to Linux and only to those distro mentioned above. No user
+    manual tasks needed, Ubuntu and Fedora packaging scripts already updated so 
+    it should all be seamless to the end user.
+
+  * ffprobe code fixed for media that is either problematic or imperfect. stdout 
+    and stderr streams separated for ffprobe calls, thus fixing ffprobe JSON parsing
+    errors and allowing the addition of the new .WTV media file format.
 
   * Minor changes/improvements to a few other front panel buttons w/ pressed states
     where previously unavailable + minor cosmetic improvements to color schemes
     of hover/active state buttons
 
   * Linux desktop and appdata metadata files switched to reverse domain
-    notation file names as per
+    notation file names as per freedesktop.org specs
 
   * Fullscreen mode rewrite for Qt 5.10 changes + better support in wayland.
 
