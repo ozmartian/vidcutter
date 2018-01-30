@@ -13,8 +13,16 @@ Source0:        https://github.com/ozmartian/%{pkg_name}/archive/%{version}.tar.
 
 ExclusiveArch:	%{ix86} x86_64	
 
-BuildRequires:  python3-devel, python3-setuptools, mpv-libs-devel
-Requires:       python3-qt5, mpv-libs, mediainfo, ffmpeg
+BuildRequires:  python3-devel
+BuildRequires:  python3-setuptools
+BuildRequires:  mpv-libs-devel
+
+Requires:       python3-qt5
+Requires:       mpv-libs
+Requires:       mediainfo
+Requires:       ffmpeg
+Requires:		python3-pyopengl
+
 
 %description
     A modern, simple to use, constantly evolving and hella fast MEDIA CUTTER + JOINER

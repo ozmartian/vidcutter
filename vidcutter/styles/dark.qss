@@ -615,6 +615,20 @@ QSlider::handle:hover#volumeslider, QSlider::handle:pressed#volumeslider {
 
 /* -------------------------------------------------------------------------- */
 
+QCheckBox::indicator:unchecked#streamcheckbox {
+    image: url(:images/dark/checkbox.png);
+}
+
+QCheckBox::indicator:unchecked:hover#streamcheckbox {
+    image: url(:images/dark/checkbox-hover.png);
+}
+
+QCheckBox::indicator:checked#streamcheckbox {
+    image: url(:images/dark/checkbox-checked.png);
+}
+
+/* -------------------------------------------------------------------------- */
+
 QToolTip {
     border: 1px solid #101517;
 }

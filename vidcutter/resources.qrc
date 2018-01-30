@@ -51,6 +51,9 @@
         <file>images/watermark-ffmpeg.png</file>
         <file>images/dark/about-background.png</file>
         <file>images/dark/background_complete.png</file>
+        <file>images/dark/checkbox.png</file>
+        <file>images/dark/checkbox-hover.png</file>
+        <file>images/dark/checkbox-checked.png</file>
         <file>images/dark/clipindex.png</file>
         <file>images/dark/clipindex-add.png</file>
         <file>images/dark/clipindex-add-disabled.png</file>
@@ -124,6 +127,9 @@
         <file>images/dark/unmuted.png</file>
         <file>images/light/about-background.png</file>
         <file>images/light/background_complete.png</file>
+        <file>images/light/checkbox.png</file>
+        <file>images/light/checkbox-hover.png</file>
+        <file>images/light/checkbox-checked.png</file>
         <file>images/light/clipindex.png</file>
         <file>images/light/clipindex-add.png</file>
         <file>images/light/clipindex-add-disabled.png</file>

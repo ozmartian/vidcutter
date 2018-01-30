@@ -19,6 +19,7 @@ ingredients:
     - libmpv1
     - ffmpeg
     - mediainfo
+    - python3-opengl
 
 script:
   - umask 022

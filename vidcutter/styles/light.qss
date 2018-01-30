@@ -612,6 +612,20 @@ QSlider::handle:hover#volumeslider, QSlider::handle:pressed#volumeslider {
 
 /* -------------------------------------------------------------------------- */
 
+QCheckBox::indicator:unchecked#streamcheckbox {
+    image: url(:images/light/checkbox.png);
+}
+
+QCheckBox::indicator:unchecked:hover#streamcheckbox {
+    image: url(:images/light/checkbox-hover.png);
+}
+
+QCheckBox::indicator:checked#streamcheckbox {
+    image: url(:images/light/checkbox-checked.png);
+}
+
+/* -------------------------------------------------------------------------- */
+
 VCToolBarButton QLabel {
     color: #444;
     font-size: 13px;

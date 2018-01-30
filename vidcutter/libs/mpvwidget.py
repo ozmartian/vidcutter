@@ -26,13 +26,23 @@ import locale
 import logging
 import os
 import sys
-from OpenGL import GL
+
+if sys.platform.startswith('linux'):
+    # noinspection PyBroadException
+    try:
+        import vidcutter.libs.distro as distro
+        if distro.id().lower() in {'ubuntu', 'fedora'}:
+            # noinspection PyUnresolvedReferences
+            from OpenGL import GL
+    except BaseException:
+        pass
 
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QEvent, QTimer
 from PyQt5.QtGui import QKeyEvent, QMouseEvent, QWheelEvent
 from PyQt5.QtOpenGL import QGLContext
 from PyQt5.QtWidgets import QOpenGLWidget, qApp
 
+# noinspection PyUnresolvedReferences
 import vidcutter.libs.mpv as mpv
 
 
