@@ -74,7 +74,7 @@ class SetupHelpers:
                 ('/usr/share/applications', ['data/desktop/com.ozmartians.vidcutter.desktop']),
                 ('/usr/share/appdata', ['data/appdata/com.ozmartians.vidcutter.appdata.xml']),
                 ('/usr/share/metainfo', ['data/appdata/com.ozmartians.vidcutter.appdata.xml']),
-                ('/usr/share/mime/packages', ['data/mime/x-vidcutter.xml'])
+                ('/usr/share/mime/packages', ['data/mime/wtv.xml', 'data/mime/x-vidcutter.xml'])
             ]
         return files
 
