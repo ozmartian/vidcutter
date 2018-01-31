@@ -614,16 +614,30 @@ QSlider::handle:hover#volumeslider, QSlider::handle:pressed#volumeslider {
 
 /* -------------------------------------------------------------------------- */
 
-QCheckBox::indicator:unchecked#streamcheckbox {
+QCheckBox::indicator:unchecked {
     image: url(:images/light/checkbox.png);
 }
 
-QCheckBox::indicator:unchecked:hover#streamcheckbox {
+QCheckBox::indicator:unchecked:hover {
     image: url(:images/light/checkbox-hover.png);
 }
 
-QCheckBox::indicator:checked#streamcheckbox {
+QCheckBox::indicator:checked {
     image: url(:images/light/checkbox-checked.png);
+}
+
+/* -------------------------------------------------------------------------- */
+
+QRadioButton::indicator:unchecked {
+    image: url(:images/light/radio.png);
+}
+
+QRadioButton::indicator:unchecked:hover {
+    image: url(:images/light/radio-hover.png);
+}
+
+QRadioButton::indicator:checked {
+    image: url(:images/light/radio-checked.png);
 }
 
 /* -------------------------------------------------------------------------- */

@@ -81,6 +81,9 @@
         <file>images/dark/osd-off.png</file>
         <file>images/dark/osd-on.png</file>
         <file>images/dark/python.png</file>
+        <file>images/dark/radio.png</file>
+        <file>images/dark/radio-checked.png</file>
+        <file>images/dark/radio-hover.png</file>
         <file>images/dark/settings.png</file>
         <file>images/dark/settings-active.png</file>
         <file>images/dark/settings-disabled.png</file>
@@ -157,6 +160,9 @@
         <file>images/light/osd-off.png</file>
         <file>images/light/osd-on.png</file>
         <file>images/light/python.png</file>
+        <file>images/light/radio.png</file>
+        <file>images/light/radio-checked.png</file>
+        <file>images/light/radio-hover.png</file>
         <file>images/light/settings.png</file>
         <file>images/light/settings-active.png</file>
         <file>images/light/settings-disabled.png</file>
