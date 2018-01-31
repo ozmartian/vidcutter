@@ -66,27 +66,25 @@ class VideoSlider(QSlider):
             width: 15px;
             height: {handleHeight}px;
             margin: -12px -8px -20px;
-        }}
-        QSlider::handle:horizontal:hover {{
-            background: transparent url(:images/{handleImageSelected}) no-repeat top center;
         }}'''
         self._progressbars = []
         self._regions = []
         self._regionHeight = 32
         self._regionSelected = -1
+        self._handleHover = False
         self._cutStarted = False
         self.showThumbs = True
         self.thumbnailsOn = False
         self.offset = 8
         self.setOrientation(Qt.Horizontal)
         self.setObjectName('videoslider')
-        # self.setCursor(Qt.PointingHandCursor)
         self.setStatusTip('Set clip start and end points')
         self.setFocusPolicy(Qt.StrongFocus)
         self.setRange(0, 0)
         self.setSingleStep(1)
         self.setTickInterval(100000)
         self.setTracking(True)
+        self.setMouseTracking(True)
         self.setTickPosition(QSlider.TicksBelow)
         self.restrictValue = 0
         self.valueChanged.connect(self.on_valueChanged)
@@ -97,8 +95,7 @@ class VideoSlider(QSlider):
     def initStyle(self) -> None:
         bground = 'rgba(200, 213, 236, 0.85)' if self._cutStarted else 'transparent'
         height = 60
-        handle = 'handle.png'
-        handleSelect = 'handle-select.png'
+        handle = 'handle-select.png' if self._handleHover else 'handle.png'
         handleHeight = 85
         margin = 0
         timeline = ''
@@ -110,8 +107,7 @@ class VideoSlider(QSlider):
                 timeline = 'background: #000 url(:images/filmstrip-nothumbs.png) repeat-x left;'
                 handleHeight = 42
                 height = 15
-                handle = 'handle-nothumbs.png'
-                handleSelect = 'handle-nothumbs-select.png'
+                handle = 'handle-nothumbs-select.png' if self._handleHover else 'handle-nothumbs.png'
                 self._regionHeight = 12
             self._styles += '''
             QSlider::groove:horizontal {{
@@ -128,7 +124,6 @@ class VideoSlider(QSlider):
                 margin: 0;
             }}'''
         if self._cutStarted:
-            handle = handleSelect
             opt = QStyleOptionSlider()
             self.initStyleOption(opt)
             control = self.style().subControlRect(QStyle.CC_Slider, opt, QStyle.SC_SliderHandle, self)
@@ -139,7 +134,6 @@ class VideoSlider(QSlider):
             subpageHeight=height + 2,
             subpageLeftMargin=margin,
             handleImage=handle,
-            handleImageSelected=handleSelect,
             handleHeight=handleHeight,
             timelineBackground=timeline))
 
@@ -147,8 +141,10 @@ class VideoSlider(QSlider):
         self.restrictValue = value
         if value > 0 or force:
             self._cutStarted = True
+            self._handleHover = True
         else:
             self._cutStarted = False
+            self._handleHover = False
         self.initStyle()
 
     def paintEvent(self, event: QPaintEvent) -> None:
@@ -385,8 +381,11 @@ class VideoSlider(QSlider):
         handle = self.style().subControlRect(QStyle.CC_Slider, opt, QStyle.SC_SliderHandle, self)
         if handle.x() <= event.pos().x() <= (handle.x() + handle.width()):
             self.setCursor(Qt.PointingHandCursor)
+            self._handleHover = True
         else:
             self.unsetCursor()
+            self._handleHover = False
+        self.initStyle()
         super(VideoSlider, self).mouseMoveEvent(event)
 
     def eventFilter(self, obj: QObject, event: QMouseEvent) -> bool:

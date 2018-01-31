@@ -32,7 +32,7 @@ import traceback
 
 from PyQt5.QtCore import (pyqtSlot, QCommandLineOption, QCommandLineParser, QCoreApplication, QDir, QFileInfo,
                           QProcess, QSettings, QSize, QStandardPaths, QTimerEvent, Qt)
-from PyQt5.QtGui import QCloseEvent, QContextMenuEvent, QDragEnterEvent, QDropEvent, QMouseEvent, QResizeEvent
+from PyQt5.QtGui import QCloseEvent, QContextMenuEvent, QDragEnterEvent, QDropEvent, QMouseEvent, QPixmap, QResizeEvent
 from PyQt5.QtWidgets import qApp, QApplication, QMainWindow, QMessageBox, QSizePolicy
 
 from vidcutter.libs.singleapplication import SingleApplication
@@ -250,7 +250,7 @@ class MainWindow(QMainWindow):
             # noinspection PyBroadException
             try:
                 if hasattr(self.cutter, 'notify'):
-                    self.cutter.notify.fadeOut()
+                    self.cutter.notify.close()
             except BaseException:
                 pass
             event.accept()
@@ -304,6 +304,7 @@ class MainWindow(QMainWindow):
                         </tr>
                     </table>'''.format('#C681D5' if self.theme == 'dark' else '#642C68')
                 exitwarn = QMessageBox(QMessageBox.Warning, 'Warning', warntext, parent=self)
+                exitwarn.setIconPixmap(QPixmap(':images/warning.png'))
                 exitwarn.addButton('Yes', QMessageBox.NoRole)
                 cancelbutton = exitwarn.addButton('No', QMessageBox.RejectRole)
                 exitwarn.exec_()
@@ -329,6 +330,7 @@ class MainWindow(QMainWindow):
                         </tr>
                     </table>'''.format('#C681D5' if self.theme == 'dark' else '#642C68')
                 savewarn = QMessageBox(QMessageBox.Warning, 'Warning', warntext, parent=self)
+                savewarn.setIconPixmap(QPixmap(':images/warning.png'))
                 savebutton = savewarn.addButton('Save project', QMessageBox.YesRole)
                 savewarn.addButton('Do not save', QMessageBox.NoRole)
                 cancelbutton = savewarn.addButton('Cancel', QMessageBox.RejectRole)

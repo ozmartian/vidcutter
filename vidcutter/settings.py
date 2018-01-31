@@ -212,7 +212,6 @@ class ThemePage(QWidget):
                         font-family: "Futura-Light", sans-serif;
                         font-weight: 400;
                     }
-                    p { font-size: 15px; }
                 </style>
                 <h1>Warning</h1>
                 <p>The application needs to be restarted in order to switch themes. Attempts will be made to reopen

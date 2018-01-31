@@ -273,8 +273,8 @@ class VideoService(QObject):
     def parseMappings(self, allstreams: bool=True) -> str:
         if not len(self.mappings) or (self.parent is not None and self.parent.hasExternals()):
             return '-map 0 ' if allstreams else ''
-        if False not in self.mappings:
-            return '-map 0 '
+        # if False not in self.mappings:
+        #     return '-map 0 '
         output = ''
         for stream_id in range(len(self.mappings)):
             if self.mappings[stream_id]:

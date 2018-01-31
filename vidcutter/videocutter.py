@@ -32,9 +32,9 @@ from datetime import timedelta
 from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QBuffer, QByteArray, QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize,
                           Qt, QTextStream, QTime, QTimer, QUrl)
 from PyQt5.QtGui import QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QPixmap
-from PyQt5.QtWidgets import (QAction, qApp, QApplication, QDialogButtonBox, QFileDialog, QFrame, QGroupBox, QHBoxLayout,
-                             QLabel, QListWidgetItem, QMenu, QMessageBox, QPushButton, QSizePolicy, QStyleFactory,
-                             QVBoxLayout, QWidget)
+from PyQt5.QtWidgets import (QAction, qApp, QApplication, QFileDialog, QFrame, QGroupBox, QHBoxLayout, QLabel,
+                             QListWidgetItem, QMenu, QMessageBox, QPushButton, QSizePolicy, QStyleFactory, QVBoxLayout,
+                             QWidget)
 import sip
 
 # noinspection PyUnresolvedReferences
@@ -1128,7 +1128,7 @@ class VideoCutter(QWidget):
         self.renderClipIndex()
 
     @pyqtSlot()
-    def setProjectDirty(self, dirty: bool = True) -> None:
+    def setProjectDirty(self, dirty: bool=True) -> None:
         self.projectDirty = dirty
 
     # noinspection PyUnusedLocal,PyUnusedLocal,PyUnusedLocal

@@ -30,7 +30,6 @@ from PyQt5.QtWidgets import qApp, QStyle
 
 try:
     from PyQt5.QtWidgets import QProxyStyle
-
 except ImportError:
     from PyQt5.QtWidgets import QCommonStyle, QStyleFactory
 

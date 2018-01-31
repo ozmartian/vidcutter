@@ -26,7 +26,7 @@ import os
 import sys
 
 from PyQt5.QtCore import pyqtSlot, Qt
-from PyQt5.QtGui import QCloseEvent, QMouseEvent
+from PyQt5.QtGui import QCloseEvent, QMouseEvent, QPixmap
 from PyQt5.QtWidgets import (QCheckBox, QDialog, QDialogButtonBox, QFrame, QGridLayout, QGroupBox, QHBoxLayout, QLabel,
                              QMessageBox, QScrollArea, QSizePolicy, QSpacerItem, QStyleFactory, QVBoxLayout, QWidget)
 
@@ -218,6 +218,7 @@ class StreamSelector(QDialog):
                     </tr>
                 </table>'''.format('#C681D5' if self.parent.theme == 'dark' else '#642C68', warnsubtext)
             warnmsg = QMessageBox(QMessageBox.Warning, 'Warning', warntext, parent=self)
+            warnmsg.setIconPixmap(QPixmap(':images/warning.png'))
             warnmsg.addButton('Yes', QMessageBox.YesRole)
             cancelbtn = warnmsg.addButton('No', QMessageBox.RejectRole)
             warnmsg.exec_()
