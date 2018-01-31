@@ -54,8 +54,8 @@ install:
   - cd _build/pyinstaller/temp
   - 7z e mpv-dev.7z mpv-1.dll -o"..\libmpv\64\"
   # Copy DLLs from Windows for ANGLE Direct3D engine support..
-  - copy "C:\Windows\System32\d3dcompiler_43.dll" "..\libmpv\64\"
-  - copy "C:\Windows\System32\d3dcompiler_47.dll" "..\libmpv\64\"
+  # - copy "C:\Windows\System32\d3dcompiler_43.dll" "..\libmpv\64\"
+  # - copy "C:\Windows\System32\d3dcompiler_47.dll" "..\libmpv\64\"
   # Freezing w/ PyInstaller
   - cd ..
   # - for /f "delims=" %%a in ('C:\Python36-x64\python.exe version.py') do @set APPVER=%%a
@@ -89,8 +89,8 @@ install:
   - cd _build/pyinstaller/temp
   - 7z e mpv-dev.7z mpv-1.dll -o"..\libmpv\32\"
   # Copy DLLs from Windows for ANGLE Direct3D engine support..
-  - copy "C:\Windows\SysWOW64\d3dcompiler_43.dll" "..\libmpv\32\"
-  - copy "C:\Windows\SysWOW64\d3dcompiler_47.dll" "..\libmpv\32\"
+  # - copy "C:\Windows\SysWOW64\d3dcompiler_43.dll" "..\libmpv\32\"
+  # - copy "C:\Windows\SysWOW64\d3dcompiler_47.dll" "..\libmpv\32\"
   # Freezing w/ PyInstaller
   - cd ..
   # - for /f "delims=" %%a in ('C:\Python35\python.exe version.py') do @set APPVER=%%a
@@ -105,49 +105,3 @@ nuget:
   disable_publish_on_pr: true
 
 test: off
-
-#artifacts:
-# - path: '_build\InnoSetup\Output\VidCutter-*-setup-win64.exe'
-#   name: Windows Installer
-#   type: File
-#
-# - path: 'vidcutter\libs\*.pyd'
-#   name: Extension Module
-#   type: zip
-
-# on_finish:
-#  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
-
-# deploy:
-#   release: 4.0.0
-#   description: '4.0.0 Pre-Release'
-#   provider: GitHub
-#   auth_token:
-#     secure: 4GlXRbRHs73J4gCyirRNPtAN6MDQS+JetrPpS8JMo/9YJCK5Vpr7wLa6xKeIO46T
-#   artifact: /.*\.exe/
-#   draft: false
-#   prerelease: true
-#   force_update: true
-#   on:
-#     branch: master
-#     appveyor_repo_tag: true
-
-
-# --------------------------------------------------------------
-# 
-# on_finish:
-#   - cd C:\projects\builds\
-#   - git add -A
-#   - git commit -am "AppVeyor Build Agent commit"
-#   - git push
-# - echo.
-# # *** Building 32bit installer ***
-# - echo.
-# - 7z e mpv-dev.7z 32/mpv-1.dll -o"_build\pyinstaller\libmpv\32"
-# - mkdir "_build\pyinstaller\libmpv\32"
-# # Downloading latest libmpv 32-bit build...
-# - curl -L -fsS -o _build\pyinstaller\temp\libmpv32.7z "https://downloads.sourceforge.net/project/mpv-player-windows/libmpv/mpv-dev-i686-20170715-git-18c74f7.7z"
-# - 7z e "_build\pyinstaller\temp\libmpv32.7z" mpv-1.dll -o"_build\pyinstaller\temp"
-# - move "_build\pyinstaller\temp\mpv-1.dll" "_build\pyinstaller\libmpv\32"
-# - copy "C:\Windows\SysWOW64\d3dcompiler_43.dll" "_build\pyinstaller\libmpv\32"
-# - copy "C:\Windows\SysWOW64\d3dcompiler_47.dll" "_build\pyinstaller\libmpv\32"
