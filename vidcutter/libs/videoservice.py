@@ -112,15 +112,18 @@ class VideoService(QObject):
         tools.ffprobe = settings.value('tools/ffprobe', None, type=str)
         tools.mediainfo = settings.value('tools/mediainfo', None, type=str)
         settings.beginGroup('tools')
-        for tool, path in tools.items():
-            if not len(path):
+        for tool in list(tools.keys()):
+            path = tools[tool]
+            if path is None or not len(path):
                 for exe in VideoService.config.binaries[os.name][tool]:
                     if VideoService.frozen:
                         binpath = os.path.join(VideoService.getAppPath(), 'bin', exe)
                     else:
                         binpath = QStandardPaths.findExecutable(exe)
+                        if not len(binpath):
+                            binpath = QStandardPaths.findExecutable(exe, [os.path.join(VideoService.getAppPath(), 'bin')])
                     if os.path.isfile(binpath) and os.access(binpath, os.X_OK):
-                        tools[exe] = binpath
+                        tools[tool] = binpath
                         if not VideoService.frozen:
                             settings.setValue(tool, binpath)
                         break

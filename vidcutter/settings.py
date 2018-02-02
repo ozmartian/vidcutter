@@ -345,7 +345,7 @@ class ToolsPage(QWidget):
         super(ToolsPage, self).__init__(parent)
         self.parent = parent
         self.setObjectName('settingstoolspage')
-        ffmpegpath = QLineEdit(self.parent.service.backends.ffmpeg, self)
+        ffmpegpath = QLineEdit(QDir.toNativeSeparators(self.parent.service.backends.ffmpeg), self)
         ffmpegpath.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         ffmpegbutton = QPushButton(self)
         ffmpegbutton.setIcon(QIcon(':/images/folder.png'))
@@ -355,7 +355,7 @@ class ToolsPage(QWidget):
         ffmpeglayout = QHBoxLayout()
         ffmpeglayout.addWidget(ffmpegpath)
         ffmpeglayout.addWidget(ffmpegbutton)
-        ffprobepath = QLineEdit(self.parent.service.backends.ffprobe, self)
+        ffprobepath = QLineEdit(QDir.toNativeSeparators(self.parent.service.backends.ffprobe), self)
         ffprobepath.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         ffprobebutton = QPushButton(self)
         ffprobebutton.setIcon(QIcon(':/images/folder.png'))
@@ -365,7 +365,7 @@ class ToolsPage(QWidget):
         ffprobelayout = QHBoxLayout()
         ffprobelayout.addWidget(ffprobepath)
         ffprobelayout.addWidget(ffprobebutton)
-        mediainfopath = QLineEdit(self.parent.service.backends.mediainfo, self)
+        mediainfopath = QLineEdit(QDir.toNativeSeparators(self.parent.service.backends.mediainfo), self)
         mediainfopath.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         mediainfobutton = QPushButton(self)
         mediainfobutton.setIcon(QIcon(':/images/folder.png'))
@@ -570,6 +570,8 @@ class SettingsDialog(QDialog):
         self.settings = self.parent.settings
         self.theme = self.parent.theme
         self.setObjectName('settingsdialog')
+        if sys.platform == 'win32':
+            self.setStyle(QStyleFactory.create('Fusion'))
         self.setWindowTitle('Settings')
         self.categories = QListWidget(self)
         self.categories.setResizeMode(QListView.Fixed)
