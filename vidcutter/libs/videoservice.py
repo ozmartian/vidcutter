@@ -108,10 +108,10 @@ class VideoService(QObject):
     @staticmethod
     def findBackends(settings: QSettings) -> Munch:
         tools = Munch(ffmpeg=None, ffprobe=None, mediainfo=None)
-        tools.ffmpeg = settings.value('tools/ffmpeg', None, type=str)
-        tools.ffprobe = settings.value('tools/ffprobe', None, type=str)
-        tools.mediainfo = settings.value('tools/mediainfo', None, type=str)
         settings.beginGroup('tools')
+        tools.ffmpeg = settings.value('ffmpeg', None, type=str)
+        tools.ffprobe = settings.value('ffprobe', None, type=str)
+        tools.mediainfo = settings.value('mediainfo', None, type=str)
         for tool in list(tools.keys()):
             path = tools[tool]
             if path is None or not len(path):

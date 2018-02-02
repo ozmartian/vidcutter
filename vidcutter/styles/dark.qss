@@ -251,12 +251,14 @@ QMessageBox {
 
 /* -------------------------------------------------------------------------- */
 
-QDialogButtonBox QPushButton, QDialog#notification QPushButton, QDialog#mediainfo QPushButton {
+QDialogButtonBox QPushButton, QDialog#notification QPushButton,
+QDialog#mediainfo QPushButton, QPushButton#resetpathsbutton {
     padding: 5px 8px;
 }
 
 QDialogButtonBox QPushButton, #clipindextools QPushButton,
-QDialog#mediainfo QPushButton, QDialog#notification QPushButton {
+QDialog#mediainfo QPushButton, QDialog#notification QPushButton,
+QPushButton#resetpathsbutton {
     color: #EFF0F1;
     background-color: #31363B;
     border: 1px solid #4D5355;
@@ -306,18 +308,16 @@ QDialog#mediainfo QPushButton, QDialog#notification QPushButton {
 }
 
 QDialogButtonBox QPushButton:hover,
-QDialog#mediainfo QPushButton, QDialog#notification QPushButton:hover {
+QDialog#mediainfo QPushButton, QDialog#notification QPushButton:hover,
+QPushButton:hover#resetpathsbutton {
     border: 1px solid #4D5355;
 }
 
-QDialogButtonBox QPushButton:focus,
-QDialogButtonBox QPushButton:pressed,
-QDialog#mediainfo QPushButton:focus,
-QDialog#mediainfo QPushButton:pressed,
-QDialog#settingsdialog QPushButton:pressed,
-QDialog#notification QPushButton,
-QDialog#notification QPushButton:focus,
-QDialog#notification QPushButton:pressed {
+QDialogButtonBox QPushButton:focus, QDialogButtonBox QPushButton:pressed,
+QDialog#mediainfo QPushButton:focus, QDialog#mediainfo QPushButton:pressed,
+QDialog#settingsdialog QPushButton:pressed, QDialog#notification QPushButton,
+QDialog#notification QPushButton:focus, QDialog#notification QPushButton:pressed,
+QPushButton:focus#resetpathsbutton, QPushButton:presssed#resetpathsbutton {
     background-color: #642C68;
     border: 1px solid #EFF0F1;
 }
