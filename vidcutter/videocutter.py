@@ -95,7 +95,6 @@ class VideoCutter(QWidget):
         self.totalRuntime, self.frameRate = 0, 0
         self.notifyInterval = 1000
 
-        self.ffmpegPath = self.settings.value('ffmpegPath', None, type=str)
         self.enableOSD = self.settings.value('enableOSD', 'on', type=str) in {'on', 'true'}
         self.hardwareDecoding = self.settings.value('hwdec', 'on', type=str) in {'on', 'auto'}
         self.keepRatio = self.settings.value('aspectRatio', 'keep', type=str) == 'keep'
@@ -108,12 +107,12 @@ class VideoCutter(QWidget):
         self.level1Seek = self.settings.value('level1Seek', 2, type=float)
         self.level2Seek = self.settings.value('level2Seek', 5, type=float)
         self.verboseLogs = self.parent.verboseLogs
-
         self.lastFolder = self.settings.value('lastFolder', QDir.homePath(), type=str)
-        if not os.path.exists(self.lastFolder):
-            self.lastFolder = QDir.homePath()
 
-        self.setFFmpegPath(self.ffmpegPath)
+        self.videoService = VideoService(self.settings, self)
+        self.videoService.progress.connect(self.seekSlider.updateProgress)
+        self.videoService.finished.connect(self.smartmonitor)
+        self.videoService.error.connect(self.completeOnError)
 
         self.edlblock_re = re.compile(r'(\d+(?:\.?\d+)?)\s(\d+(?:\.?\d+)?)\s([01])')
 
@@ -580,20 +579,6 @@ class VideoCutter(QWidget):
             self.clipindex_contextmenu.setStyle(QStyleFactory.create('Fusion'))
             self.clipindex_removemenu.setStyle(QStyleFactory.create('Fusion'))
 
-    def setFFmpegPath(self, path: str=None) -> None:
-        if path is not None and os.path.isdir(path):
-            self.ffmpegPath = path
-            self.settings.setValue('ffmpegPath', self.ffmpegPath)
-            self.videoService = VideoService(self, self.ffmpegPath)
-        else:
-            self.videoService = VideoService(self)
-            if self.videoService.backends.ffmpeg is not None:
-                self.ffmpegPath = self.videoService.backends.ffmpeg
-                self.settings.setValue('ffmpegPath', self.videoService.backends.ffmpeg)
-        self.videoService.progress.connect(self.seekSlider.updateProgress)
-        self.videoService.finished.connect(self.smartmonitor)
-        self.videoService.error.connect(self.completeOnError)
-
     def _initClipIndexHeader(self) -> None:
         if self.indexLayout == 'left':
             self.listHeaderButtonL.setVisible(False)
@@ -732,7 +717,7 @@ class VideoCutter(QWidget):
     def openMedia(self) -> None:
         filename, _ = QFileDialog.getOpenFileName(
             parent=self.parent,
-            caption='{} - Open media file'.format(qApp.applicationName()),
+            caption='Open media file',
             filter=self.mediaFilters(),
             initialFilter=self.mediaFilters(True),
             directory=(self.lastFolder if os.path.exists(self.lastFolder) else QDir.homePath()),
@@ -747,7 +732,7 @@ class VideoCutter(QWidget):
         if project_file is None:
             project_file, _ = QFileDialog.getOpenFileName(
                 parent=self.parent,
-                caption='{} - Open project file'.format(qApp.applicationName()),
+                caption='Open project file',
                 filter=self.projectFilters(),
                 initialFilter=initialFilter,
                 directory=(self.lastFolder if os.path.exists(self.lastFolder) else QDir.homePath()),
@@ -854,7 +839,7 @@ class VideoCutter(QWidget):
         else:
             project_save, ptype = QFileDialog.getSaveFileName(
                 parent=self.parent,
-                caption='{} - Save project'.format(qApp.applicationName()),
+                caption='Save project',
                 directory='{}.vcp'.format(project_file),
                 filter=self.projectFilters(True),
                 initialFilter='VidCutter Project (*.vcp)',
@@ -1047,7 +1032,7 @@ class VideoCutter(QWidget):
     def addExternalClips(self):
         clips, _ = QFileDialog.getOpenFileNames(
             parent=self.parent,
-            caption='{} - Add media files'.format(qApp.applicationName()),
+            caption='Add media files',
             filter=self.mediaFilters(),
             initialFilter=self.mediaFilters(True),
             directory=(self.lastFolder if os.path.exists(self.lastFolder) else QDir.homePath()),
@@ -1196,7 +1181,7 @@ class VideoCutter(QWidget):
             return '%f' % (td.days * 86400 + td.seconds + td.microseconds / 1000000.)
 
     def captureImage(self, source: str, frametime: QTime, external: bool = False) -> QPixmap:
-        return VideoService.captureFrame(source, frametime.toString(self.timeformat), external=external)
+        return VideoService.captureFrame(self.settings, source, frametime.toString(self.timeformat), external=external)
 
     def saveMedia(self) -> None:
         clips = len(self.clipTimes)
@@ -1207,7 +1192,7 @@ class VideoCutter(QWidget):
         if clips > 0:
             self.finalFilename, _ = QFileDialog.getSaveFileName(
                 parent=self.parent,
-                caption='{} - Save media file'.format(qApp.applicationName()),
+                caption='Save media file',
                 directory=suggestedFilename,
                 filter=filefilter,
                 options=self.getFileDialogOptions())

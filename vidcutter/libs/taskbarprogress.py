@@ -38,6 +38,7 @@ class TaskbarProgress(QWidget):
         self._sessionbus = QDBusConnection.sessionBus()
         if self._sessionbus.isConnected():
             self._desktopfile = 'application://{}.desktop'.format(vidcutter.__desktopid__)
+            self.init()
 
     @pyqtSlot()
     def init(self) -> None:

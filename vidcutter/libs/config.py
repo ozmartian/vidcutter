@@ -110,6 +110,6 @@ class InvalidMediaException(VidCutterException):
         super(InvalidMediaException, self).__init__(msg)
 
 
-class FFmpegNotFoundException(VidCutterException):
+class ToolNotFoundException(VidCutterException):
     def __init__(self, msg: str=None):
-        super(FFmpegNotFoundException, self).__init__(msg)
+        super(ToolNotFoundException, self).__init__(msg)

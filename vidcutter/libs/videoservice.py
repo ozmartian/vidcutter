@@ -32,12 +32,12 @@ from bisect import bisect_left
 from enum import Enum
 from functools import partial
 
-from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QDir, QFile, QFileInfo, QObject, QProcess, QProcessEnvironment, QSize,
-                          QStandardPaths, QStorageInfo, QTemporaryFile, QTime)
+from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QDir, QFile, QFileInfo, QObject, QProcess, QProcessEnvironment,
+                          QSettings, QSize, QStandardPaths, QStorageInfo, QTemporaryFile, QTime)
 from PyQt5.QtGui import QPainter, QPixmap
 from PyQt5.QtWidgets import QMessageBox
 
-from vidcutter.libs.config import Config, FFmpegNotFoundException, InvalidMediaException, Streams
+from vidcutter.libs.config import Config, InvalidMediaException, Streams, ToolNotFoundException
 from vidcutter.libs.munch import Munch
 
 try:
@@ -63,16 +63,13 @@ class VideoService(QObject):
 
     config = Config()
 
-    def __init__(self, parent=None, ffmpegpath: str=None):
+    def __init__(self, settings: QSettings, parent=None):
         super(VideoService, self).__init__(parent)
+        self.settings = settings
         self.parent = parent
-        self.ffmpegpath = ffmpegpath
         self.logger = logging.getLogger(__name__)
         try:
-            self.backends = VideoService.findBackends(self.ffmpegpath)
-            if self.backends.ffmpeg is not None and self.parent is not None:
-                self.parent.ffmpegPath = self.backends.ffmpeg
-                self.parent.settings.setValue('ffmpegPath', os.path.dirname(self.backends.ffmpeg))
+            self.backends = VideoService.findBackends(self.settings)
             self.proc = VideoService.initProc()
             if hasattr(self.proc, 'errorOccurred'):
                 self.proc.errorOccurred.connect(self.cmdError)
@@ -81,7 +78,7 @@ class VideoService(QObject):
             self.keyframes = []
             self.streams = Munch()
             self.mappings = []
-        except FFmpegNotFoundException as e:
+        except ToolNotFoundException as e:
             self.logger.exception(e.msg, exc_info=True)
             QMessageBox.critical(getattr(self, 'parent', None), 'Missing libraries', e.msg, QMessageBox.Ok)
 
@@ -109,35 +106,31 @@ class VideoService(QObject):
                 raise FileNotFoundError(errormsg)
 
     @staticmethod
-    def findBackends(ffmpegpath: str=None) -> Munch:
+    def findBackends(settings: QSettings) -> Munch:
         tools = Munch(ffmpeg=None, ffprobe=None, mediainfo=None)
-        if ffmpegpath is not None and sys.platform.startswith('linux') and not os.getenv('QT_APPIMAGE', False):
-            for exe in VideoService.config.binaries['posix']['ffmpeg']:
-                binpath = os.path.join(ffmpegpath, exe)
-                if binpath is not None and os.path.isfile(binpath):
-                    tools['ffmpeg'] = binpath
-                    break
-            for exe in VideoService.config.binaries['posix']['ffprobe']:
-                binpath = os.path.join(ffmpegpath, exe)
-                if binpath is not None and os.path.isfile(binpath):
-                    tools['ffprobe'] = binpath
-                    break
-        for backend in tools.keys():
-            for exe in VideoService.config.binaries[os.name][backend]:
-                if tools[backend] is None:
-                    binpath = os.path.join(VideoService.getAppPath(), 'bin', exe)
-                    if binpath is not None and os.path.isfile(binpath):
-                        tools[backend] = binpath
-                        break
+        tools.ffmpeg = settings.value('tools/ffmpeg', None, type=str)
+        tools.ffprobe = settings.value('tools/ffprobe', None, type=str)
+        tools.mediainfo = settings.value('tools/mediainfo', None, type=str)
+        settings.beginGroup('tools')
+        for tool, path in tools.items():
+            if not len(path):
+                for exe in VideoService.config.binaries[os.name][tool]:
+                    if VideoService.frozen:
+                        binpath = os.path.join(VideoService.getAppPath(), 'bin', exe)
                     else:
                         binpath = QStandardPaths.findExecutable(exe)
-                        if binpath is not None and os.path.isfile(binpath):
-                            tools[backend] = binpath
-                            break
+                    if os.path.isfile(binpath) and os.access(binpath, os.X_OK):
+                        tools[exe] = binpath
+                        if not VideoService.frozen:
+                            settings.setValue(tool, binpath)
+                        break
+        settings.endGroup()
         if tools.ffmpeg is None:
-            raise FFmpegNotFoundException('Could not locate ffmpeg/avconv on your system')
+            raise ToolNotFoundException('Could not locate ffmpeg on system')
         if tools.ffprobe is None:
-            raise FFmpegNotFoundException('Could not locate ffprobe/avprobe on your system')
+            raise ToolNotFoundException('Could not locate ffprobe onsystem')
+        if tools.mediainfo is None:
+            raise ToolNotFoundException('Could not locate mediainfo on system')
         return tools
 
     @staticmethod
@@ -167,14 +160,14 @@ class VideoService(QObject):
             self.spaceWarningDelivered = True
 
     @staticmethod
-    def captureFrame(source: str, frametime: str, thumbsize: QSize=ThumbSize.INDEX.value,
+    def captureFrame(settings: QSettings, source: str, frametime: str, thumbsize: QSize=ThumbSize.INDEX.value,
                      external: bool=False) -> QPixmap:
         # print('[captureFrame] frametime: {0}  thumbsize: {1}'.format(frametime, thumbsize))
         capres = QPixmap()
         img = QTemporaryFile(os.path.join(QDir.tempPath(), 'XXXXXX.jpg'))
         if img.open():
             imagecap = img.fileName()
-            cmd = VideoService.findBackends().ffmpeg
+            cmd = VideoService.findBackends(settings).ffmpeg
             args = '-hide_banner -ss {0} -i "{1}" -vframes 1 -s {2:d}x{3:d} -y "{4}"' \
                    .format(frametime, source, thumbsize.width(), thumbsize.height(), imagecap)
             proc = VideoService.initProc()

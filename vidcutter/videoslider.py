@@ -26,10 +26,10 @@ import logging
 import math
 import sys
 
-from PyQt5.QtCore import QEvent, QObject, QPoint, QRect, QSize, QThread, Qt, pyqtSignal, pyqtSlot
+from PyQt5.QtCore import QEvent, QObject, QRect, QSettings, QSize, QThread, Qt, pyqtSignal, pyqtSlot
 from PyQt5.QtGui import QColor, QKeyEvent, QMouseEvent, QPaintEvent, QPalette, QPen, QWheelEvent
 from PyQt5.QtWidgets import (qApp, QHBoxLayout, QLabel, QLayout, QProgressBar, QSizePolicy, QSlider, QStyle,
-                             QStyleFactory, QStyleOptionSlider, QStylePainter, QToolTip, QWidget)
+                             QStyleFactory, QStyleOptionSlider, QStylePainter, QWidget)
 
 from vidcutter.libs.videoservice import VideoService
 
@@ -270,8 +270,9 @@ class VideoSlider(QSlider):
         class ThumbWorker(QObject):
             completed = pyqtSignal(list)
 
-            def __init__(self, media: str, times: list, size: QSize):
+            def __init__(self, settings: QSettings, media: str, times: list, size: QSize):
                 super(ThumbWorker, self).__init__()
+                self.settings = settings
                 self.media = media
                 self.times = times
                 self.size = size
@@ -279,11 +280,14 @@ class VideoSlider(QSlider):
             @pyqtSlot()
             def generate(self):
                 frames = list()
-                [frames.append(VideoService.captureFrame(self.media, frame, self.size)) for frame in self.times]
+                [
+                    frames.append(VideoService.captureFrame(self.settings, self.media, frame, self.size))
+                    for frame in self.times
+                ]
                 self.completed.emit(frames)
 
         self.thumbsThread = QThread(self)
-        self.thumbsWorker = ThumbWorker(self.parent.currentMedia, frametimes, thumbsize)
+        self.thumbsWorker = ThumbWorker(self.parent.settings, self.parent.currentMedia, frametimes, thumbsize)
         self.thumbsWorker.moveToThread(self.thumbsThread)
         self.thumbsThread.started.connect(self.parent.sliderWidget.setLoader)
         self.thumbsThread.started.connect(self.thumbsWorker.generate)

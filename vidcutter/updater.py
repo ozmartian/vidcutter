@@ -76,12 +76,11 @@ class Updater(QDialog):
 
 
 class UpdaterMsgBox(QDialog):
-    def __init__(self, parent=None, theme: str='light', title: str='Checking for updates',
-                 flags=Qt.Dialog | Qt.WindowCloseButtonHint):
+    def __init__(self, parent=None, theme: str='light', flags=Qt.Dialog | Qt.WindowCloseButtonHint):
         super(UpdaterMsgBox, self).__init__(parent, flags)
         self.parent = parent
         self.theme = theme
-        self.setWindowTitle(title)
+        self.setWindowTitle('{} updates'.format(qApp.applicationName()))
         self.setWindowModality(Qt.ApplicationModal)
         self.setObjectName('updaterdialog')
         self.loading = VCProgressBar(self.parent)
