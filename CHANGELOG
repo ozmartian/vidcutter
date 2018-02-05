@@ -32,6 +32,11 @@ vidcutter (5.5.0-1) stable; urgency=medium
   * Support for WTV (.wtv - Windows Recorded TV Show) media files
     (playback and cutting/joining) added.
 
+  * New code for restarting app whe changing themes is causing problems in Windows,
+    starting app again resolves things. My patience for Windows shell is at an all
+    time low so will fix this when my care factor returns (if ever). Windows shell
+    is a joke.
+
   * Required dependency of PyOpenGL python module introduced for users on slightly
     older Ubuntu, Fedora and Ubuntu based Linux distributions. such as Mint or
     ElementaryOS. This now fixes things if you were experiencing immediate
