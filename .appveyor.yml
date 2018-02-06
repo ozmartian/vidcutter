@@ -5,7 +5,7 @@ pull_requests:
 
 branches:
   only:
-  - 5.5.0
+  - master
 
 skip_non_tags: false
 
