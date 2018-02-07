@@ -577,8 +577,7 @@ class VideoService(QObject):
 
     def mediainfo(self, source: str, output: str='HTML') -> str:
         args = '--output={0} "{1}"'.format(output, source)
-        result = self.cmdExec(self.backends.mediainfo, args, True, True)
-        return result.strip()
+        return self.cmdExec(self.backends.mediainfo, args, True, True)
 
     def cmdExec(self, cmd: str, args: str=None, output: bool=False, suppresslog: bool=False):
         if self.proc.state() == QProcess.NotRunning:
@@ -592,7 +591,7 @@ class VideoService(QObject):
             self.proc.readyReadStandardOutput.connect(
                 partial(self.cmdOut, self.proc.readAllStandardOutput().data().decode().strip()))
             self.proc.waitForFinished(-1)
-            if cmd == self.backends.mediainfo:
+            if cmd in {self.backends.ffprobe, self.backends.mediainfo}:
                 self.proc.setProcessChannelMode(QProcess.MergedChannels)
             if output:
                 cmdoutput = self.proc.readAllStandardOutput().data().decode().strip()

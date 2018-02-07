@@ -1,45 +1,80 @@
-vidcutter (5.5.0-1) unstable; urgency=medium
+vidcutter (5.5.0-1) stable; urgency=medium
 
-  * The most requested feature is finally added; media stream mapping! A
-    new media settings button has been added and is enabled for use when
+  * The most requested feature is finally added; media stream configuration! A
+    new media stream button has been added and enabled for use when
     clips are all derived from the same source media OR media files added
     manually all share the same codecs, formats, etc... A view of all
-    detected streams including video, audio, text/subtitles, metadata/chapters
-    will be presented upon which you can enable/disable what you want mapped
-    and carried across to the target media produced for you.
-
-    As always, suggestions for further improvements to this, whether visual
-    or technical via the Issues page; which I definitely, most assuredly,
-    promise to start paying attention to. I'm mearly all out of new app ideas
-    + innovations so I have no choice :-)
+    detected streams including video, audio, text/subtitles. Chapters are not
+    included as they are treated differently by FFmpeg and followng the usual
+    rule of thumb in VidCutter which is they will be included in your end
+    result if the original source is not corrupt or in some weird non-standard
+    configuration.
 
   * Migrated main toolbar buttons from QToolBar + QActions to new custom
     widget VCToolBarButton handling QPushButton with attached. This allows
     working pressed states on existing toolbar buttons which QToolBar buttons
-    (for reasons I cannot figure out) do not.
+    (for reasons I cannot fathom) do not.
 
-  * FFmpeg category added to settings dialog for users on Linux systems
-    excluding AppImage, to cater for releases where the latest FFmpeg binaries
-    are not prebundled. This allows users to set a different path to a newer
-    set of FFmpeg binaries if they are stuck on Linux distros only offering
-    older versions of FFmpeg such as 2.8 and below which prevents SmartCut
-    from working to its full potential.
+  * Tools section added to settings for setting paths to three main tools
+    used by VidCutter; FFmpeg, FFprobe and MediaInfo. Set to Defaults
+    button reverts changes to defaults, especially useful for users of
+    bundled packages of app (AppImage, Windows and macOS which contain
+    these tools prepacked). Allows you to use different versions of said
+    tools.
+
+  * End of file is now being observed in the mpv library event pool so that
+    playback state resets position back to the start, in pause and all
+    controls in their default states.
+
+  * Ability to set clip index list to the left or right (default) of main
+    window.
+
+  * Support for WTV (.wtv - Windows Recorded TV Show) media files
+    (playback and cutting/joining) added.
+
+  * New code for restarting app whe changing themes is causing problems in Windows,
+    starting app again resolves things. My patience for Windows shell is at an all
+    time low so will fix this when my care factor returns (if ever). Windows shell
+    is a joke.
+
+  * Required dependency of PyOpenGL python module introduced for users on slightly
+    older Ubuntu, Fedora and Ubuntu based Linux distributions. such as Mint or
+    ElementaryOS. This now fixes things if you were experiencing immediate
+    segmentation faults when launching. no OpenGL context could be created. Again,
+    this only applies to Linux and only to those distro mentioned above. No user
+    manual tasks needed, Ubuntu and Fedora packaging scripts already updated so 
+    it should all be seamless to the end user.
+
+  * ffprobe code fixed for media that is either problematic or imperfect. stdout 
+    and stderr streams separated for ffprobe calls, thus fixing ffprobe JSON parsing
+    errors and allowing the addition of the new .WTV media file format.
 
   * Minor changes/improvements to a few other front panel buttons w/ pressed states
     where previously unavailable + minor cosmetic improvements to color schemes
     of hover/active state buttons
 
-  * Application desktop and appdata metadata files now using reverse domain
-    notation for their file names
+  * Linux desktop and appdata metadata files switched to reverse domain
+    notation file names as per freedesktop.org specs
 
-  * Hardened logic for app quit when clips exist to prompt for project save
+  * Fullscreen mode rewrite for Qt 5.10 changes + better support in wayland.
+
+  * OpenGL helpers added to X11 and Wayland based Linux platforms to better
+    assist with fullscreen functionality and video render compatibility any
+    where an OpenGL context can be created.
+
+  * Updated keyboard shortcuts information to include some added keyboard
+    and mouse based shortcuts.
+
+  * Defined cutting regions shown on the timeline are now hidden during
+    the "generating thumbnails" process (mainly evident when turning
+    thumbnails on/off or resizing the application's window)
 
   * Better detection and prompting if application exit is attempted while
     video processing jobs in progress, if user decides to continue quitting
     then kill all VidCutter associated jobs gracefully and force the usual
     cleanup routines
 
- -- Pete Alexandrou <pete@ozmartians.com>  Wed, 11 Dec 2017 19:42:00 +0800
+ -- Pete Alexandrou <pete@ozmartians.com>  Mon, 05 Feb 2018 08:34 +0800
 
 vidcutter (5.0.5-2) stable; urgency=medium
 

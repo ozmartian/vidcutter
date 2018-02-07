@@ -379,18 +379,18 @@ class VideoSlider(QSlider):
     def keyPressEvent(self, event: QKeyEvent) -> None:
         qApp.sendEvent(self.parent, event)
 
-    def mouseMoveEvent(self, event: QMouseEvent) -> None:
-        opt = QStyleOptionSlider()
-        self.initStyleOption(opt)
-        handle = self.style().subControlRect(QStyle.CC_Slider, opt, QStyle.SC_SliderHandle, self)
-        if handle.x() <= event.pos().x() <= (handle.x() + handle.width()):
-            self.setCursor(Qt.PointingHandCursor)
-            self._handleHover = True
-        else:
-            self.unsetCursor()
-            self._handleHover = False
-        self.initStyle()
-        super(VideoSlider, self).mouseMoveEvent(event)
+    # def mouseMoveEvent(self, event: QMouseEvent) -> None:
+    #     opt = QStyleOptionSlider()
+    #     self.initStyleOption(opt)
+    #     handle = self.style().subControlRect(QStyle.CC_Slider, opt, QStyle.SC_SliderHandle, self)
+    #     if handle.x() <= event.pos().x() <= (handle.x() + handle.width()):
+    #         self.setCursor(Qt.PointingHandCursor)
+    #         self._handleHover = True
+    #     else:
+    #         self.unsetCursor()
+    #         self._handleHover = False
+    #     self.initStyle()
+    #     super(VideoSlider, self).mouseMoveEvent(event)
 
     def eventFilter(self, obj: QObject, event: QMouseEvent) -> bool:
         if event.type() == QEvent.MouseButtonRelease and event.button() == Qt.LeftButton:
