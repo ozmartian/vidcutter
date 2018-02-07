@@ -23,7 +23,6 @@ Requires:       mediainfo
 Requires:       ffmpeg
 Requires:		python3-pyopengl
 
-
 %description
     A modern, simple to use, constantly evolving and hella fast MEDIA CUTTER + JOINER
     w/ frame-accurate SmartCut technology + Qt5, libmpv, FFmpeg and MediaInfo powering
