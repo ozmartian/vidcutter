@@ -1,5 +1,15 @@
 vidcutter (5.5.0-1) stable; urgency=medium
 
+  * BUGFIXES (these are minor point release changes usually attributed to bugs
+    that are more regressions from previous versions (i.e. things no longer
+    behaving as they used to/should):
+
+    - selected region on slider not updating w/ main GUI thread resulting in it
+      disappearing shortly after being painted. FIXED
+
+    - SmartCut processing breaking on final join step causing SmartCut to remain
+      at 80% completion indefinitely. FIXED
+
   * The most requested feature is finally added; media stream configuration! A
     new media stream button has been added and enabled for use when
     clips are all derived from the same source media OR media files added

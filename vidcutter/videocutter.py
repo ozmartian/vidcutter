@@ -33,8 +33,8 @@ from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QBuffer, QByteArray, QDir, QFile
                           Qt, QTextStream, QTime, QTimer, QUrl)
 from PyQt5.QtGui import QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QPixmap
 from PyQt5.QtWidgets import (QAction, qApp, QApplication, QFileDialog, QFrame, QGroupBox, QHBoxLayout, QLabel,
-                             QListWidgetItem, QMenu, QMessageBox, QPushButton, QSizePolicy, QStyleFactory, QVBoxLayout,
-                             QWidget)
+                             QListWidgetItem, QMainWindow, QMenu, QMessageBox, QPushButton, QSizePolicy, QStyleFactory,
+                             QVBoxLayout, QWidget)
 import sip
 
 # noinspection PyUnresolvedReferences
@@ -66,7 +66,7 @@ class VideoCutter(QWidget):
     timeformat = 'hh:mm:ss.zzz'
     runtimeformat = 'hh:mm:ss'
 
-    def __init__(self, parent: QWidget):
+    def __init__(self, parent: QMainWindow):
         super(VideoCutter, self).__init__(parent)
         self.setObjectName('videocutter')
         self.logger = logging.getLogger(__name__)

@@ -42,9 +42,9 @@ from vidcutter.libs.munch import Munch
 
 try:
     # noinspection PyPackageRequirements
-    import simplejson as json
+    from simplejson import loads, JSONDecodeError
 except ImportError:
-    import json
+    from json import loads, JSONDecodeError
 
 
 class VideoService(QObject):
@@ -85,7 +85,7 @@ class VideoService(QObject):
     def setMedia(self, source: str) -> None:
         try:
             self.source = source
-            self.probe(source)
+            self.media = self.probe(source)
             if self.media is not None:
                 if getattr(self.parent, 'verboseLogs', False):
                     self.logger.info(self.media)
@@ -117,11 +117,11 @@ class VideoService(QObject):
             if path is None or not len(path):
                 for exe in VideoService.config.binaries[os.name][tool]:
                     if VideoService.frozen:
-                        binpath = os.path.join(VideoService.getAppPath(), 'bin', exe)
+                        binpath = VideoService.getAppPath(os.path.join('bin', exe))
                     else:
                         binpath = QStandardPaths.findExecutable(exe)
                         if not len(binpath):
-                            binpath = QStandardPaths.findExecutable(exe, [os.path.join(VideoService.getAppPath(), 'bin')])
+                            binpath = QStandardPaths.findExecutable(exe, [VideoService.getAppPath('bin')])
                     if os.path.isfile(binpath) and os.access(binpath, os.X_OK):
                         tools[tool] = binpath
                         if not VideoService.frozen:
@@ -148,7 +148,7 @@ class VideoService(QObject):
             p.finished.connect(finish)
         return p
 
-    def checkDiskSpace(self, path: str):
+    def checkDiskSpace(self, path: str) -> None:
         # noinspection PyCallByClass
         if self.spaceWarningDelivered or not QFileInfo.exists(path):
             return
@@ -478,17 +478,20 @@ class VideoService(QObject):
                 absf = '{} mp3decomp'.format(prefix)
         return vbsf, absf
 
-    def probe(self, source: str) -> bool:
+    def probe(self, source: str, blackdetect: bool=False) -> Munch:
         try:
-            args = '-v error -show_streams -show_format -of json "{}"'.format(source)
+            if blackdetect:
+                args = '-v error -f lavfi -i "movie={},blackdetect[out0]" -show_entries tags=lavfi.black_start,' \
+                       'lavfi.black_end -of json'.format(source)
+            else:
+                args = '-v error -show_streams -show_format -of json "{}"'.format(source)
             json_data = self.cmdExec(self.backends.ffprobe, args, output=True)
-            self.media = Munch.fromDict(json.loads(json_data))
-            return hasattr(self.media, 'streams') and len(self.media.streams)
+            return Munch.fromDict(loads(json_data))
         except FileNotFoundError:
-            self.logger.exception('Probe media file not found: {}'.format(source), exc_info=True)
+            self.logger.exception('Media file for FFprobe not found: {}'.format(source), exc_info=True)
             raise
-        except json.JSONDecodeError:
-            self.logger.exception('Error decoding ffprobe JSON output', exc_info=True)
+        except JSONDecodeError:
+            self.logger.exception('Error decoding FFprobe JSON output', exc_info=True)
             raise
 
     def getKeyframes(self, source: str, formatted_time: bool=False) -> list:
@@ -615,7 +618,9 @@ class VideoService(QObject):
 
     # noinspection PyUnresolvedReferences, PyProtectedMember
     @staticmethod
-    def getAppPath() -> str:
+    def getAppPath(path: str=None) -> str:
         if VideoService.frozen and getattr(sys, '_MEIPASS', False):
-            return sys._MEIPASS
-        return os.path.dirname(os.path.realpath(sys.argv[0]))
+            app_path = sys._MEIPASS
+        else:
+            app_path = os.path.dirname(os.path.realpath(sys.argv[0]))
+        return app_path if path is None else os.path.join(app_path, path)
