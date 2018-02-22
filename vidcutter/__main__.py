@@ -389,10 +389,13 @@ def main():
 
     exit_code = app.exec_()
     if exit_code == MainWindow.EXIT_CODE_REBOOT:
-        if QProcess.startDetached(' '.join(sys.argv)):
-            sys.exit(exit_code)
-    else:
-        sys.exit(exit_code)
+        if sys.platform == 'win32':
+            if hasattr(win.cutter, 'mpvWidget'):
+                win.close()
+            QProcess.startDetached('"{}"'.format(qApp.applicationFilePath()))
+        else:
+            QProcess.startDetached(' '.join(sys.argv))
+    sys.exit(exit_code)
 
 
 if __name__ == '__main__':
