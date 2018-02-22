@@ -54,8 +54,8 @@ class VideoConsole(QTextEdit):
 
 
 class ConsoleWidget(QDialog):
-    def __init__(self, parent=None):
-        super(ConsoleWidget, self).__init__(parent)
+    def __init__(self, parent=None, flags=Qt.Dialog | Qt.WindowCloseButtonHint):
+        super(ConsoleWidget, self).__init__(parent, flags)
         self.parent = parent
         self.edit = VideoConsole(self)
         buttons = QDialogButtonBox()
@@ -70,7 +70,6 @@ class ConsoleWidget(QDialog):
         layout.addWidget(buttons)
         self.setLayout(layout)
         self.setWindowTitle('{0} Console'.format(qApp.applicationName()))
-        self.setWindowFlags(Qt.Window | Qt.WindowCloseButtonHint)
         self.setWindowModality(Qt.NonModal)
 
     def showEvent(self, event: QShowEvent):
