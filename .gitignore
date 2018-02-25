@@ -32,3 +32,5 @@ MediaInfo.dll
 *.pyd
 *.pyc
 pkg2appimage
+.snapcraft
+
