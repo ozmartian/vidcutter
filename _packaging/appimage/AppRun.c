@@ -175,7 +175,7 @@ int main(int argc, char *argv[]) {
     snprintf(new_env[4], LENGTH, "GSETTINGS_SCHEMA_DIR=%s/usr/share/glib-2.0/schemas/:%s", appdir, old_env);
 
     old_env = getenv("QT_PLUGIN_PATH") ?: "";
-    snprintf(new_env[5], LENGTH, "QT_PLUGIN_PATH=%s/lib/python3/dist-packages/PyQt5/Qt/:%s/usr/lib/i386-linux-gnu/qt4/plugins/:%s/usr/lib/qt5/plugins/:%s/usr/lib/i386-linux-gnu/qt5/plugins/:%s/usr/lib/x86_64-linux-gnu/qt5/plugins/:%s/usr/lib32/qt5/plugins/:%s/usr/lib64/qt5/plugins/:%s", appdir, appdir, appdir, appdir, appdir, appdir, appdir, old_env);
+    snprintf(new_env[5], LENGTH, "QT_PLUGIN_PATH=%s/lib/python3/dist-packages/PyQt5/Qt/:%s/usr/lib/qt5/plugins/:%s/usr/lib/i386-linux-gnu/qt5/plugins/:%s/usr/lib/x86_64-linux-gnu/qt5/plugins/:%s/usr/lib32/qt5/plugins/:%s/usr/lib64/qt5/plugins/:%s", appdir, appdir, appdir, appdir, appdir, appdir, appdir, old_env);
 
     snprintf(new_env[6], LENGTH, "QT_APPIMAGE=%s", "1");
     snprintf(new_env[7], LENGTH, "NO_AT_BRIDGE=%s", "1");
