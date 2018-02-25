@@ -9,12 +9,14 @@ ingredients:
     - mc3man/testing6
     - jonathonf/ffmpeg-3
     - ubuntu-toolchain-r/test
+    - deadsnakes/ppa
   packages:
     - gcc-7-base
     - python3.5-dev
     - libstdc++6
     - libgcc1
     - libisl15
+    - libmpv-dev
     - libmpv1
     - ffmpeg
     - mediainfo
