@@ -29,7 +29,7 @@ script:
   - wget https://bootstrap.pypa.io/get-pip.py
   - usr/bin/python3.5 ./get-pip.py
   - rm ./get-pip.py
-  - usr/bin/python3.5 -m pip install -t usr/lib/python3/dist-packages pyqt5
+  - usr/bin/python3.5 -m pip install -t usr/lib/python3/dist-packages pyqt5 pyopengl
   - find usr/lib/python3/dist-packages/PyQt5 -name "*Qt*WebEngine*" | xargs rm -rf
   - rm -rf usr/lib/python3/dist-packages/PyQt5/Qt/plugins/audio
   - rm -rf usr/lib/python3/dist-packages/PyQt5/Qt/plugins/gamepads
@@ -55,7 +55,6 @@ script:
   - cp ../../../../data/desktop/com.ozmartians.vidcutter.desktop usr/share/applications
   - cp ../../../../data/appdata/com.ozmartians.vidcutter.appdata.xml usr/share/metainfo
   - cp ../../../../data/mime/x-vidcutter.xml usr/share/mime/packages
-  - usr/bin/python3.5 -m pip install -t usr/lib/python3/dist-packages pyopengl pyopengl-accelerate
   - usr/bin/python3.5 -m pip uninstall -y pip
   - mv usr/lib/python3/dist-packages/pkg_resources.BAK usr/lib/python3/dist-packages/pkg_resources
   - rm -rf usr/local
