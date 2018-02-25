@@ -9,7 +9,6 @@ ingredients:
     - mc3man/testing6
     - jonathonf/ffmpeg-3
     - ubuntu-toolchain-r/test
-    -   
   packages:
     - gcc-7-base
     - python3.5-dev
