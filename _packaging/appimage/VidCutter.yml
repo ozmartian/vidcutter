@@ -16,7 +16,6 @@ ingredients:
     - libstdc++6
     - libgcc1
     - libisl15
-    - libmpv-dev
     - libmpv1
     - ffmpeg
     - mediainfo
