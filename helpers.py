@@ -60,21 +60,21 @@ class SetupHelpers:
         files = []
         if sys.platform.startswith('linux') and 'QT_APPIMAGE' not in os.environ.keys():
             files = [
-                ('/usr/share/icons/hicolor/16x16/apps', ['data/icons/hicolor/16x16/apps/vidcutter.png']),
-                ('/usr/share/icons/hicolor/22x22/apps', ['data/icons/hicolor/22x22/apps/vidcutter.png']),
-                ('/usr/share/icons/hicolor/24x24/apps', ['data/icons/hicolor/24x24/apps/vidcutter.png']),
-                ('/usr/share/icons/hicolor/32x32/apps', ['data/icons/hicolor/32x32/apps/vidcutter.png']),
-                ('/usr/share/icons/hicolor/48x48/apps', ['data/icons/hicolor/48x48/apps/vidcutter.png']),
-                ('/usr/share/icons/hicolor/64x64/apps', ['data/icons/hicolor/64x64/apps/vidcutter.png']),
-                ('/usr/share/icons/hicolor/128x128/apps', ['data/icons/hicolor/128x128/apps/vidcutter.png']),
-                ('/usr/share/icons/hicolor/256x256/apps', ['data/icons/hicolor/256x256/apps/vidcutter.png']),
-                ('/usr/share/icons/hicolor/512x512/apps', ['data/icons/hicolor/512x512/apps/vidcutter.png']),
-                ('/usr/share/icons/hicolor/scalable/apps', ['data/icons/hicolor/scalable/apps/vidcutter.svg']),
-                ('/usr/share/pixmaps', ['data/icons/vidcutter.svg']),
-                ('/usr/share/applications', ['data/desktop/com.ozmartians.vidcutter.desktop']),
-                ('/usr/share/appdata', ['data/appdata/com.ozmartians.vidcutter.appdata.xml']),
-                ('/usr/share/metainfo', ['data/appdata/com.ozmartians.vidcutter.appdata.xml']),
-                ('/usr/share/mime/packages', ['data/mime/wtv.xml', 'data/mime/x-vidcutter.xml'])
+                ('share/icons/hicolor/16x16/apps', ['data/icons/hicolor/16x16/apps/vidcutter.png']),
+                ('share/icons/hicolor/22x22/apps', ['data/icons/hicolor/22x22/apps/vidcutter.png']),
+                ('share/icons/hicolor/24x24/apps', ['data/icons/hicolor/24x24/apps/vidcutter.png']),
+                ('share/icons/hicolor/32x32/apps', ['data/icons/hicolor/32x32/apps/vidcutter.png']),
+                ('share/icons/hicolor/48x48/apps', ['data/icons/hicolor/48x48/apps/vidcutter.png']),
+                ('share/icons/hicolor/64x64/apps', ['data/icons/hicolor/64x64/apps/vidcutter.png']),
+                ('share/icons/hicolor/128x128/apps', ['data/icons/hicolor/128x128/apps/vidcutter.png']),
+                ('share/icons/hicolor/256x256/apps', ['data/icons/hicolor/256x256/apps/vidcutter.png']),
+                ('share/icons/hicolor/512x512/apps', ['data/icons/hicolor/512x512/apps/vidcutter.png']),
+                ('share/icons/hicolor/scalable/apps', ['data/icons/hicolor/scalable/apps/vidcutter.svg']),
+                # ('share/pixmaps', ['data/icons/vidcutter.svg']),
+                ('share/applications', ['data/desktop/com.ozmartians.vidcutter.desktop']),
+                # ('share/appdata', ['data/appdata/com.ozmartians.vidcutter.appdata.xml']),
+                ('share/metainfo', ['data/appdata/com.ozmartians.vidcutter.appdata.xml']),
+                ('share/mime/packages', ['data/mime/wtv.xml', 'data/mime/x-vidcutter.xml'])
             ]
         return files
 
@@ -105,13 +105,14 @@ class SetupHelpers:
         os.system('cls' if sys.platform == 'win32' else 'clear')
         pydoc.pager('''
     If installing via PyPi (Python Pip) on Linux then you need to know that VidCutter
-    depends on the following packages, grouped by distro. Install using your
-    Linux software packager for a noticeably better integrated experience.
+    depends on the following packages and distros. Install using your distro's
+    software packager for a noticeably better integrated experience.
     
         ---[Ubuntu/Debian/Mint/etc]--------------------------
             
             python3-dev libmpv1 libmpv-dev python3-pyqt5
-            python3-pyqt5.qtopengl ffmpeg mediainfo
+            python3-pyqt5.qtopengl python3-pyqt5.qtx11extras
+            ffmpeg mediainfo python3-opengl
     
         ---[Arch Linux]--------------------------------------
     
@@ -120,7 +121,7 @@ class SetupHelpers:
         ---[Fedora]------------------------------------------
         
             python3-devel mpv-libs mpv-libs-devel python3-qt5
-            ffmpeg mediainfo
+            ffmpeg mediainfo python3-pyopengl
         
         ---[openSUSE]----------------------------------------
             
@@ -156,7 +157,7 @@ class SetupHelpers:
         
     Windows users must do all this within a Visual Studio 2015/2017 Native x64/x86
     Developer Command Prompt accessible from your Visual Studio program group
-    via the start menu. It's easier to just grab the prebuilt Windows installers
+    via the start menu. It's easier to just grab the pre-built Windows installers
     directly from:
 
         https://github.com/ozmartian/vidcutter/releases/latest
