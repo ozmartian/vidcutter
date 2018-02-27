@@ -29,6 +29,14 @@ icotool -c -o vidcutter.ico \
               ./hicolor/64x64/apps/vidcutter.png \
               ./hicolor/128x128/apps/vidcutter.png \
               ./hicolor/256x256/apps/vidcutter.png
+icotool -c -o uninstall.ico \
+              ./uninstall/uninstall-16.png \
+              ./uninstall/uninstall-24.png \
+              ./uninstall/uninstall-32.png \
+              ./uninstall/uninstall-48.png \
+              ./uninstall/uninstall-64.png \
+              ./uninstall/uninstall-128.png \
+              ./uninstall/uninstall-256.png
 
 # macOS icon
 echo -e "\n[ creating macOS icon ]\n"
