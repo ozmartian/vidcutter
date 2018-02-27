@@ -61,6 +61,8 @@ class VCToolBarButton(QWidget):
         self.button.setStatusTip(statustip)
         self.button.setObjectName('toolbar-{}'.format(label.split()[0].lower()))
         if reset:
+            self.label1.setText(label.replace(' ', '<br/>'))
+            self.label2.setText(label)
             self.button.setStyleSheet('')
 
     def setLabelStyle(self, labelstyle: str) -> None:

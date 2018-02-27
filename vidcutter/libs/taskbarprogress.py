@@ -46,6 +46,7 @@ class TaskbarProgress(QWidget):
             self.setProgress(0.0, False)
         elif sys.platform == 'win32' and TaskbarProgress.isValidWinVer():
             self.parent.win_taskbar_button.progress().reset()
+            self.parent.win_taskbar_button.progress().pause()
 
     @pyqtSlot(float, bool)
     def setProgress(self, value: float, visible: bool=True) -> bool:
@@ -57,6 +58,13 @@ class TaskbarProgress(QWidget):
         elif sys.platform == 'win32' and TaskbarProgress.isValidWinVer():
             self.parent.win_taskbar_button.progress().setValue(int(value * 100))
             return True
+
+    def setState(self, playing: bool=False) -> None:
+        if sys.platform == 'win32' and TaskbarProgress.isValidWinVer():
+            if not playing:
+                self.parent.win_taskbar_button.progress().pause()
+            else:
+                self.parent.win_taskbar_button.progress().resume()
 
     @staticmethod
     def isValidWinVer() -> bool:

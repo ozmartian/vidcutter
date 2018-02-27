@@ -900,13 +900,15 @@ class VideoCutter(QWidget):
                                  'and make sure to include your operating system, video card, the invalid media file '
                                  'and the version of VidCutter you are currently using.</p>')
 
-    def setPlayButton(self, paused: bool=False) -> None:
-        self.toolbar_play.setup('{} Media'.format('Pause' if paused else 'Play'),
-                                'Pause currently playing media' if paused else 'Play currently loaded media',
+    def setPlayButton(self, playing: bool=False) -> None:
+        self.toolbar_play.setup('{} Media'.format('Pause' if playing else 'Play'),
+                                'Pause currently playing media' if playing else 'Play currently loaded media',
                                 True)
 
     def playMedia(self) -> None:
-        self.setPlayButton(self.mpvWidget.property('pause'))
+        playstate = self.mpvWidget.property('pause')
+        self.setPlayButton(playstate)
+        self.taskbar.setState(playstate)
         self.timeCounter.clearFocus()
         self.frameCounter.clearFocus()
         self.mpvWidget.pause()
