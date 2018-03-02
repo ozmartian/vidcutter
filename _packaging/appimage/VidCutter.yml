@@ -63,7 +63,8 @@ script:
   - rm -rf usr/lib/x86_64-linux-gnu/*krb5*
   - rm -rf usr/lib/x86_64-linux-gnu/libk5crypto.so*
   - mv /tmp/libkrb5.so.26* usr/lib/x86_64-linux-gnu/
-  - rm -f lib/x86_64-linux-gnu/libtinfo.so.* lib/x86_64-linux-gnu/libncursesw.so.5* lib/x86_64-linux-gnu/libglib-2.0.so.0* lib/x86_64-linux-gnu/libreadline.so.* lib/x86_64-linux-gnu/libdrm.so*
+  # - rm -f lib/x86_64-linux-gnu/libtinfo.so.* lib/x86_64-linux-gnu/libncursesw.so.5* lib/x86_64-linux-gnu/libglib-2.0.so.0* lib/x86_64-linux-gnu/libreadline.so.* lib/x86_64-linux-gnu/libdrm.so*
+  - rm -f lib/x86_64-linux-gnu/libglib-2.0.so.0* lib/x86_64-linux-gnu/libreadline.so.* lib/x86_64-linux-gnu/libdrm.so*
   - mv usr/lib/x86_64-linux-gnu/caca/*.so* usr/lib/x86_64-linux-gnu/
   - rm -f ./AppRun
   - gcc -fPIC -o ./AppRun ../../AppRun.c
