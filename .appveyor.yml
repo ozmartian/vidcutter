@@ -47,7 +47,8 @@ install:
   # Build Cython/C extension for libmpv binding...
   - C:\Python36-x64\python.exe setup.py build_ext -i
   # Retrieve URL for latest available version of libmpv
-  - for /f "delims=" %%a in ('C:\Python36-x64\python.exe helpers.py get_latest_win32_libmpv_64') do @set LIBMPV=%%a
+  # - for /f "delims=" %%a in ('C:\Python36-x64\python.exe helpers.py get_latest_win32_libmpv_64') do @set LIBMPV=%%a
+  - set LIBMPV=/libmpv/mpv-dev-x86_64-20180227-git-a4c436b.7z
   # Downloading latest libmpv 64-bit build...
   # - curl -L -fsS -o _build\pyinstaller\temp\mpv-dev.7z https://mpv.srsfckn.biz/mpv-dev-20170718.7z
   - curl -L -fsS -o _build\pyinstaller\temp\mpv-dev.7z https://downloads.sourceforge.net/project/mpv-player-windows%LIBMPV%
@@ -82,7 +83,8 @@ install:
   # Build Cython/C extension for libmpv binding...
   - C:\Python35\python.exe setup.py build_ext -i
   # Retrieve URL for latest available version of libmpv
-  - for /f "delims=" %%a in ('C:\Python35\python.exe helpers.py get_latest_win32_libmpv_32') do @set LIBMPV=%%a
+  # - for /f "delims=" %%a in ('C:\Python35\python.exe helpers.py get_latest_win32_libmpv_32') do @set LIBMPV=%%a
+  - set LIBMPV=/libmpv/mpv-dev-i686-20180227-git-a4c436b.7z
   # Downloading latest libmpv 32-bit build...
   # - curl -L -fsS -o _build\pyinstaller\temp\mpv-dev.7z https://mpv.srsfckn.biz/mpv-dev-20170718.7z
   - curl -L -fsS -o _build\pyinstaller\temp\mpv-dev.7z https://downloads.sourceforge.net/project/mpv-player-windows%LIBMPV%
