@@ -266,7 +266,7 @@ class MainWindow(QMainWindow):
 
     def resizeEvent(self, event: QResizeEvent) -> None:
         try:
-            if self.cutter.mediaAvailable and self.cutter.thumbnailsButton.isChecked():
+            if self.isEnabled() and self.cutter.mediaAvailable and self.cutter.thumbnailsButton.isChecked():
                 if self.cutter.seekSlider.thumbnailsOn:
                     self.cutter.sliderWidget.setLoader(True)
                     self.cutter.sliderWidget.hideThumbs()

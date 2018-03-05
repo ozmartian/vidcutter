@@ -1,33 +1,57 @@
 name: vidcutter
 version: 5.5.0
-summary: the simplest + fastest video cutter & joiner
+type: app
+architectures:
+    - amd64
+summary: the simplest + fastest video cutter and joiner
 description: |
     A modern, simple to use, constantly evolving and 
     hella fast MEDIA CUTTER + JOINER w/ frame-accurate
     SmartCut technology + Qt5, libmpv, FFmpeg and
     MediaInfo powering the backend.
-icon: data/icons/vidcutter.png
-grade: devel
-confinement: devmode
+icon: vidcutter.png
+
+grade: stable
+confinement: strict
 
 apps:
-  vidcutter:
-    command: desktop-launch vidcutter
-    plugs: [home, pulseaudio, x11, opengl]
-    desktop: data/desktop/vidcutter.desktop
+
+    vidcutter:
+        command: desktop-launch vidcutter
+        plugs: [unity7, x11, wayland, desktop, home, pulseaudio, alsa, opengl]
+        desktop: usr/share/applications/com.ozmartians.vidcutter.desktop
 
 parts:
-  vidcutter:
-    plugin: python
-    process-dependency-links: false
-    after: [desktop-qt5]
-    build-packages:
-        - python3-dev
-        - python3-setuptools
-        - libmpv-dev
-    stage-packages:
-        - python3-pyqt5
-        - python3-pyqt5.qtopengl
-        - libmpv1
-        - ffmpeg
-        - mediainfo
+    vidcutter:
+        plugin: python
+        python-version: python3
+        process-dependency-links: false
+        after: [desktop-qt5]
+        build-packages:
+            - python3-dev
+            - python3-setuptools
+            - libmpv-dev
+        stage-packages:
+            - libmpv1
+            - ffmpeg
+            - mediainfo
+        python-packages:
+            - pyqt5
+            - pyopengl
+        install: |
+            sed -i 's|Icon=vidcutter|Icon=${SNAP}/usr/share/icons/hicolor/256x256/apps/vidcutter.png|g' ${SNAPCRAFT_PART_INSTALL}/usr/share/applications/com.ozmartians.vidcutter.desktop
+            rm ${SNAPCRAFT_PART_INSTALL}/lib/python3.5/site-packages/PyQt5/Qt/lib/libQt5WebEngineCore.so.5
+
+    desktop-qt5:
+        stage-packages:
+            - libxkbcommon0
+            - ttf-ubuntu-font-family
+            - dmz-cursor-theme
+            - light-themes
+            - adwaita-icon-theme
+            - gnome-themes-standard
+            - shared-mime-info
+            - libgdk-pixbuf2.0-0
+            - locales-all
+            - xdg-user-dirs
+            - mesa-vdpau-drivers
