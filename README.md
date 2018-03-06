@@ -125,9 +125,17 @@ VidCutter is also available via the well-known Packman third-party repo. Instruc
 
 An AppImage portable Linux binary is also available via the releases page for Linux users. The latest 5.0.5 AppImage has been tested and confirmed to work on Ubuntu based distributions, including KDE Neon etc., from 14.04 up to and including current 17.10 versions.
 
-### FlatPak + Snap ??
+### snap
 
-I've played around with both of these alternative Linux portable app frameworks and while I have no personal need for them (I dont like the way either of them do things, not to mention both being tightly coupled to their desktop managers or distro i.e. GNOME and Ubuntu respectively. They exist to serve different needs I guess BUT if there are enough requests from you guys I'll hapilly make the effort to get VidCutter packaged and available in respective stores.
+Available on the Ubuntu Snapcraft store at https://snapcraft.io/vidcutter or install it via the terminal as follows:
+
+```
+$ snap install vidcutter
+```
+
+### FlatPak
+
+A FlatPak will soon be available via FlatHub for all you GNOME users. In the meantime, the AppImage or snap package should work as an alternative. 
 
 ***
 
