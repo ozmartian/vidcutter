@@ -97,6 +97,7 @@ class VideoCutter(QWidget):
 
         self.enableOSD = self.settings.value('enableOSD', 'on', type=str) in {'on', 'true'}
         self.hardwareDecoding = self.settings.value('hwdec', 'on', type=str) in {'on', 'auto'}
+        self.enablePBO = self.settings.value('enablePBO', 'off', type=str) in {'on', 'true'}
         self.keepRatio = self.settings.value('aspectRatio', 'keep', type=str) == 'keep'
         self.keepClips = self.settings.value('keepClips', 'off', type=str) in {'on', 'true'}
         self.nativeDialogs = self.settings.value('nativeDialogs', 'on', type=str) in {'on', 'true'}
@@ -463,6 +464,7 @@ class VideoCutter(QWidget):
             audio_file_auto=False,
             quiet=True,
             volume=volume if volume is not None else self.parent.startupvol,
+            opengl_pbo=self.enablePBO,
             keepaspect=self.keepRatio,
             hwdec=('auto' if self.hardwareDecoding else 'no'))
         widget.durationChanged.connect(self.on_durationChanged)

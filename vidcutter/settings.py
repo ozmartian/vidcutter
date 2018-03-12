@@ -249,6 +249,22 @@ class VideoPage(QWidget):
         decodingLabel.setObjectName('decodinglabel')
         decodingLabel.setTextFormat(Qt.RichText)
         decodingLabel.setWordWrap(True)
+        pboCheckbox = QCheckBox('Enable use of PBOs', self)
+        pboCheckbox.setToolTip('Enable the use of Pixel Buffer Objects (PBOs)')
+        pboCheckbox.setCursor(Qt.PointingHandCursor)
+        pboCheckbox.setChecked(self.parent.parent.enablePBO)
+        pboCheckbox.stateChanged.connect(self.togglePBO)
+        pboCheckboxLabel = QLabel('(recommended for 4K videos)')
+        pboCheckboxLabel.setObjectName('checkboxsubtext')
+        pboLabel = QLabel('''
+            <b>ON:</b> usually improves performance when used with 4K videos but will result in slower performance +
+            latency with standard media due to the higher memory use.   
+            <br/>
+            <b>OFF</b>: this should be your default choice for most media files.
+        ''', self)
+        pboLabel.setObjectName('pbolabel')
+        pboLabel.setTextFormat(Qt.RichText)
+        pboLabel.setWordWrap(True)
         ratioCheckbox = QCheckBox('Keep aspect ratio', self)
         ratioCheckbox.setToolTip('Keep source video aspect ratio')
         ratioCheckbox.setCursor(Qt.PointingHandCursor)
@@ -265,6 +281,14 @@ class VideoPage(QWidget):
         videoLayout = QVBoxLayout()
         videoLayout.addWidget(decodingCheckbox)
         videoLayout.addWidget(decodingLabel)
+        videoLayout.addWidget(SettingsDialog.lineSeparator())
+        pboCheckboxLayout = QHBoxLayout()
+        pboCheckboxLayout.setContentsMargins(0, 0, 0, 0)
+        pboCheckboxLayout.addWidget(pboCheckbox)
+        pboCheckboxLayout.addWidget(pboCheckboxLabel)
+        pboCheckboxLayout.addStretch(1)
+        videoLayout.addLayout(pboCheckboxLayout)
+        videoLayout.addWidget(pboLabel)
         videoLayout.addWidget(SettingsDialog.lineSeparator())
         videoLayout.addWidget(ratioCheckbox)
         videoLayout.addWidget(ratioLabel)
@@ -319,6 +343,12 @@ class VideoPage(QWidget):
         self.parent.parent.mpvWidget.mpv.set_property('hwdec', 'auto' if state == Qt.Checked else 'no')
         self.parent.parent.saveSetting('hwdec', state == Qt.Checked)
         self.parent.parent.hardwareDecoding = (state == Qt.Checked)
+
+    @pyqtSlot(int)
+    def togglePBO(self, state: int) -> None:
+        self.parent.parent.mpvWidget.mpv.set_option('opengl-pbo', state == Qt.Checked)
+        self.parent.parent.saveSetting('enablePBO', state == Qt.Checked)
+        self.parent.parent.enablePBO = (state == Qt.Checked)
 
     @pyqtSlot(int)
     def keepAspectRatio(self, state: int) -> None:
@@ -430,11 +460,13 @@ class GeneralPage(QWidget):
         super(GeneralPage, self).__init__(parent)
         self.parent = parent
         self.setObjectName('settingsgeneralpage')
-        smartCutCheckbox = QCheckBox('Enable SmartCut (frame-accurate mode)')
-        smartCutCheckbox.setToolTip('Enable SmartCut mode for frame-accurate precision when cutting')
+        smartCutCheckbox = QCheckBox('Enable SmartCut mode')
+        smartCutCheckbox.setToolTip('Enable SmartCut mode for frame-accurate cutting precision')
         smartCutCheckbox.setCursor(Qt.PointingHandCursor)
         smartCutCheckbox.setChecked(self.parent.parent.smartcut)
         smartCutCheckbox.stateChanged.connect(self.setSmartCut)
+        smartCutCheckboxLabel = QLabel('(frame-accurate cutting)')
+        smartCutCheckboxLabel.setObjectName('checkboxsubtext')
         smartCutLabel1 = QLabel('<b>ON:</b> re-encode start + end portions of each clip at valid GOP (IDR) '
                                 'keyframes')
         smartCutLabel1.setObjectName('smartcutlabel')
@@ -483,8 +515,13 @@ class GeneralPage(QWidget):
         keepClipsLabel.setObjectName('keepclipslabel')
         keepClipsLabel.setTextFormat(Qt.RichText)
         keepClipsLabel.setWordWrap(True)
+        smartCutCheckboxLayout = QHBoxLayout()
+        smartCutCheckboxLayout.setContentsMargins(0, 0, 0, 0)
+        smartCutCheckboxLayout.addWidget(smartCutCheckbox)
+        smartCutCheckboxLayout.addWidget(smartCutCheckboxLabel)
+        smartCutCheckboxLayout.addStretch(1)
         generalLayout = QVBoxLayout()
-        generalLayout.addWidget(smartCutCheckbox)
+        generalLayout.addLayout(smartCutCheckboxLayout)
         generalLayout.addLayout(smartCutLayout)
         generalLayout.addWidget(SettingsDialog.lineSeparator())
         generalLayout.addWidget(keepClipsCheckbox)

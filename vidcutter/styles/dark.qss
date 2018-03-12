@@ -175,15 +175,15 @@ QLabel#logowidget {
 }
 
 QLabel#decodinglabel, QLabel#ratiolabel, QLabel#keepclipslabel, QLabel#singleinstancelabel,
-QLabel#verboselogslabel, QLabel#nativedialogslabel, QLabel#seeksettingslabel, QLabel#zoomlabel,
-QLabel#smartcutlabel, QLabel#ffmpeglabel {
+QLabel#verboselogslabel, QLabel#pbolabel, QLabel#nativedialogslabel, QLabel#seeksettingslabel,
+QLabel#zoomlabel, QLabel#smartcutlabel, QLabel#ffmpeglabel {
     font-family: "Noto Sans UI", sans-serif;
     font-size: 11px;
     color: #EFF0F1;
 }
 
 QLabel#decodinglabel, QLabel#ratiolabel, QLabel#keepclipslabel, QLabel#singleinstancelabel,
-QLabel#verboselogslabel, QLabel#nativedialogslabel, QLabel#ffmpeglabel {
+QLabel#verboselogslabel, QLabel#pbolabel, QLabel#nativedialogslabel, QLabel#ffmpeglabel {
     margin: 2px 5px 10px 22px;
 }
 
@@ -209,6 +209,12 @@ QLabel#novideoversion {
     font-weight: bold;
     font-family: "Futura-Light", sans-serif;
     color: #FFF;
+}
+
+QLabel#checkboxsubtext {
+    font-family: "Noto Sans UI", sans-serif;
+    font-size: 12px;
+    color: #EFF0F1;
 }
 
 /* -------------------------------------------------------------------------- */
