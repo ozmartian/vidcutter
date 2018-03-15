@@ -211,11 +211,11 @@ class mpvWidget(QOpenGLWidget):
                     elif event_prop.name == 'time-pos':
                         # if os.getenv('DEBUG', False) or getattr(self.parent, 'verboseLogs', False):
                         #     self.logger.info('time-pos property event')
-                        self.positionChanged.emit(event_prop.data, self.mpv.get_property('estimated-frame-number'))
+                        self.positionChanged.emit(event_prop.data, self.property('estimated-frame-number'))
                     elif event_prop.name == 'duration':
                         # if os.getenv('DEBUG', False) or getattr(self.parent, 'verboseLogs', False):
                         #     self.logger.info('duration property event')
-                        self.durationChanged.emit(event_prop.data, self.mpv.get_property('estimated-frame-count'))
+                        self.durationChanged.emit(event_prop.data, self.property('estimated-frame-count'))
             except mpv.MPVError as e:
                 if e.code != -10:
                     raise e
@@ -238,19 +238,24 @@ class mpvWidget(QOpenGLWidget):
         self.mpv.command('seek', pos, method)
 
     def pause(self) -> None:
-        self.mpv.set_property('pause', not self.mpv.get_property('pause'))
+        self.property('pause', not self.property('pause'))
 
     def mute(self) -> None:
-        self.mpv.set_property('mute', not self.mpv.get_property('mute'))
+        self.property('mute', not self.property('mute'))
 
     def volume(self, vol: int) -> None:
-        self.mpv.set_property('volume', vol)
+        self.property('volume', vol)
 
     def codec(self, stream: str='video') -> str:
-        return self.mpv.get_property('{}-codec'.format(stream))
+        return self.property('{}-codec'.format(stream))
 
     def format(self, stream: str='video') -> str:
-        return self.mpv.get_property('audio-codec-name' if stream == 'audio' else 'video-format')
+        return self.property('audio-codec-name' if stream == 'audio' else 'video-format')
+
+    def version(self) -> str:
+        version = self.property('mpv-version').replace('mpv ', '').split('-')
+        del version[-1]
+        return '-'.join(version)
 
     def property(self, prop: str):
         return self.mpv.get_property(prop)

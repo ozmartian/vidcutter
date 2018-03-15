@@ -151,9 +151,11 @@ class AboutTab(BaseTab):
         super(AboutTab, self).__init__(parent)
         self.parent = parent
         spacer = '&nbsp;&nbsp;&nbsp;'
-        mpv_version = self.parent.parent.mpvWidget.mpv.get_property('mpv-version').replace('mpv ', '')
-        mpv_version = mpv_version.split('-')[0:2]
-        mpv_version = '-'.join(mpv_version)
+        # noinspection PyBroadException
+        try:
+            mpv_version = self.parent.parent.mpvWidget.version()
+        except BaseException:
+            mpv_version = '<span style="color:maroon; font-weight:bold;">MISSING</span>'
         # noinspection PyBroadException
         try:
             ffmpeg_version = self.parent.parent.videoService.version()
