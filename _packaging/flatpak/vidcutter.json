@@ -1,0 +1,163 @@
+{
+    "app-id": "com.ozmartians.VidCutter",
+    "runtime": "org.freedesktop.Platform",
+    "runtime-version": "1.6",
+    "sdk": "org.freedesktop.Sdk",
+    "command": "vidcutter",
+    "finish-args": [
+        "--share=ipc",
+        "--share=network",
+        "--socket=x11",
+        "--socket=wayland",
+        "--socket=pulseaudio",
+        "--filesystem=host",
+        "--device=dri"
+    ],
+    "modules": [
+        {
+            "name": "pypi",
+            "cleanup": [ "/bin" ],
+            "buildsystem": "simple",
+            "build-commands": [
+                "pip3 install --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} pyopengl sip-4.19.8-cp35-cp35m-manylinux1_x86_64.whl PyQt5-5.10.1-5.10.1-cp35.cp36.cp37.cp38-abi3-manylinux1_x86_64.whl"
+            ],
+            "sources": [
+                {
+                    "type": "file",
+                    "url": "https://pypi.python.org/packages/9c/1d/4544708aaa89f26c97cc09450bb333a23724a320923e74d73e028b3560f9/PyOpenGL-3.1.0.tar.gz",
+                    "sha256": "9b47c5c3a094fa518ca88aeed35ae75834d53e4285512c61879f67a48c94ddaf"
+                },
+                {
+                    "type": "file",
+                    "url": "https://pypi.python.org/packages/6b/46/2869369c8ec634ec9dc714b84834e9264acbe87eb7492328efccfa0c855e/sip-4.19.8-cp35-cp35m-manylinux1_x86_64.whl",
+                    "sha256": "e72955e12f4fccf27aa421be383453d697b8a44bde2cc26b08d876fd492d0174"
+                },
+                {
+                    "type": "file",
+                    "url": "https://pypi.python.org/packages/e4/15/4e2e49f64884edbab6f833c6fd3add24d7938f2429aec1f2883e645d4d8f/PyQt5-5.10.1-5.10.1-cp35.cp36.cp37.cp38-abi3-manylinux1_x86_64.whl",
+                    "sha256": "1e652910bd1ffd23a3a48c510ecad23a57a853ed26b782cd54b16658e6f271ac"
+                }
+            ]
+        },
+        {
+            "name": "ffmpeg",
+            "cleanup": [ "/share/ffmpeg/examples" ],
+            "config-opts": [
+                "--enable-shared",
+                "--disable-static",
+                "--enable-gnutls",
+                "--disable-doc",
+                "--disable-ffplay",
+                "--enable-version3"
+            ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/FFmpeg/FFmpeg.git"
+                }
+            ]
+        },
+        {
+            "name": "libmpv",
+            "cleanup": [ "/include", "/lib/pkgconfig" ],
+            "buildsystem": "simple",
+            "build-commands": [
+                "python3 waf configure --prefix=${FLATPAK_DEST} --enable-libmpv-shared --disable-cplayer",
+                "python3 waf build",
+                "python3 waf install"
+            ],
+            "sources": [
+                {
+                  "type": "git",
+                  "url": "https://github.com/mpv-player/mpv.git"
+                },
+                {
+                  "type": "file",
+                  "url": "https://waf.io/waf-1.9.8",
+                  "sha256": "167dc42bab6d5bd823b798af195420319cb5c9b571e00db7d83df2a0fe1f4dbf",
+                  "dest-filename": "waf"
+                }
+            ],
+            "modules": [
+                {
+                    "name": "fribidi",
+                    "config-opts": [ "--disable-docs" ],
+                    "cleanup": [ "/bin", "/include", "/lib/pkgconfig", "/lib/*.la", "/share/man" ],
+                    "sources": [
+                        {
+                            "type": "git",
+                            "url": "https://github.com/fribidi/fribidi.git"
+                        }
+                    ]
+                },
+                {
+                    "name": "libass",
+                    "cleanup": [ "/include", "/lib/*.la", "/lib/pkgconfig" ],
+                    "config-opts": [ "--disable-static" ],
+                    "sources": [
+                        {
+                            "type": "git",
+                            "url": "https://github.com/libass/libass.git"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "mediainfo",
+            "modules": [
+                {
+                    "name": "libzen",
+                    "subdir": "Project/GNU/Library",
+                    "config-opts": [ "--enable-shared", "--disable-static" ],
+                    "cleanup": [ "/bin", "/include", "/lib/pkgconfig" ],
+                    "sources": [
+                        {
+                            "type": "git",
+                            "url": "https://github.com/MediaArea/ZenLib.git"
+                        }
+                    ]
+                },
+                {
+                    "name": "libmediainfo",
+                    "subdir": "Project/GNU/Library",
+                    "config-opts": [ "--enable-shared", "--disable-static" ],
+                    "cleanup": [ "/bin", "/include", "/lib/pkgconfig" ],
+                    "sources": [
+                        {
+                            "type": "git",
+                            "url": "https://github.com/MediaArea/MediaInfoLib.git"
+                        }
+                    ]
+                },
+                {
+                    "name": "mediainfo-cli",
+                    "subdir": "Project/GNU/CLI",
+                    "sources": [
+                        {
+                            "type": "git",
+                            "url": "https://github.com/MediaArea/MediaInfo.git"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "vidcutter",
+            "buildsystem": "simple",
+            "build-commands": [
+                "python3 setup.py install --root=${FLATPAK_DEST}",
+                "install -v -D data/desktop/com.ozmartians.vidcutter.desktop -t ${FLATPAK_DEST}/share/applications",
+                "install -v -D data/appdata/com.ozmartians.vidcutter.appdata.xml -t ${FLATPAK_DEST}/share/appdata",
+                "mv ${FLATPAK_DEST}/share/applications/com.ozmartians.vidcutter.desktop ${FLATPAK_DEST}/share/applications/com.ozmartians.VidCutter.desktop",
+                "mv ${FLATPAK_DEST}/usr/bin/vidcutter ${FLATPAK_DEST}/bin -v"
+            ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/ozmartian/vidcutter.git"
+                }
+            ]
+        }
+    ]
+}

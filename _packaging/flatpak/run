@@ -1,0 +1,4 @@
+#!/bin/bash
+
+flatpak-builder --force-clean ./build/ vidcutter.json
+
