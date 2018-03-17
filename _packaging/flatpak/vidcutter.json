@@ -158,6 +158,8 @@
                 "find ${FLATPAK_DEST}/share/icons -name *.png | xargs dirname | xargs -I{} mv {}/vidcutter.png {}/com.ozmartians.VidCutter.png -v",
                 "find ${FLATPAK_DEST}/share/icons -name *.svg | xargs dirname | xargs -I{} mv {}/vidcutter.svg {}/com.ozmartians.VidCutter.svg -v",
                 "mv ${FLATPAK_DEST}/share/applications/com.ozmartians.vidcutter.desktop ${FLATPAK_DEST}/share/applications/com.ozmartians.VidCutter.desktop -v",
+                "mv ${FLATPAK_DEST}/share/appdata/com.ozmartians.vidcutter.appdata.xml ${FLATPAK_DEST}/share/appdata/com.ozmartians.VidCutter.appdata.xml -v",
+                "sed -i 's|<id>com.ozmartians.vidcutter.desktop</id>|<id>com.ozmartians.VidCutter.desktop</id>|g' ${FLATPAK_DEST}/share/appdata/com.ozmartians.VidCutter.appdata.xml",
                 "sed -i 's|Icon=vidcutter|Icon=com.ozmartians.VidCutter|g' ${FLATPAK_DEST}/share/applications/com.ozmartians.VidCutter.desktop",
                 "mv ${FLATPAK_DEST}/usr/bin/vidcutter ${FLATPAK_DEST}/bin -v",
                 "mv ${FLATPAK_DEST}/usr/lib/python3.5/site-packages/* ${FLATPAK_DEST}/lib/python3.5/site-packages -v"
