@@ -253,9 +253,7 @@ class mpvWidget(QOpenGLWidget):
         return self.property('audio-codec-name' if stream == 'audio' else 'video-format')
 
     def version(self) -> str:
-        version = self.property('mpv-version').replace('mpv ', '').split('-')
-        del version[-1]
-        return '-'.join(version)
+        return self.property('mpv-version').replace('mpv ', '').split('-')[0]
 
     def property(self, prop: str):
         return self.mpv.get_property(prop)
