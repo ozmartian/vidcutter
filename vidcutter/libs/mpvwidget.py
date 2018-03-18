@@ -255,8 +255,11 @@ class mpvWidget(QOpenGLWidget):
     def version(self) -> str:
         return self.property('mpv-version').replace('mpv ', '').split('-')[0]
 
-    def property(self, prop: str):
-        return self.mpv.get_property(prop)
+    def property(self, prop: str, val=None):
+        if val is None:
+            return self.mpv.get_property(prop)
+        else:
+            return self.mpv.set_property(prop, val)
 
     def changeEvent(self, event: QEvent) -> None:
         if event.type() == QEvent.WindowStateChange and self.isFullScreen():
