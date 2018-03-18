@@ -13,7 +13,8 @@
         "--socket=pulseaudio",
         "--filesystem=host",
         "--device=dri",
-        "--talk-name=com.canonical.Unity.LauncherEntry"
+        "--talk-name=com.canonical.Unity.LauncherEntry",
+        "--env=LC_NUMERIC=C"
     ],
     "modules": [
         {
@@ -167,11 +168,14 @@
                 "mv ${FLATPAK_DEST}/usr/lib/python3.5/site-packages/* ${FLATPAK_DEST}/lib/python3.5/site-packages -v"
             ],
             "post-install": [
+            	/* ICONS */
                 "install -v -D data/icons/vidcutter.png -t ${FLATPAK_DEST}/share/icons",
                 "mv ${FLATPAK_DEST}/share/icons/vidcutter.png ${FLATPAK_DEST}/share/icons/com.ozmartians.VidCutter.png -v",
+                /* DESKTOP */
                 "install -v -D data/desktop/com.ozmartians.vidcutter.desktop -t ${FLATPAK_DEST}/share/applications",
                 "mv ${FLATPAK_DEST}/share/applications/com.ozmartians.vidcutter.desktop ${FLATPAK_DEST}/share/applications/com.ozmartians.VidCutter.desktop -v",
                 "sed -i 's|Icon=vidcutter|Icon=com.ozmartians.VidCutter|g' ${FLATPAK_DEST}/share/applications/com.ozmartians.VidCutter.desktop",
+                /* APPSTREAM */
                 "install -v -D data/appdata/com.ozmartians.vidcutter.appdata.xml -t ${FLATPAK_DEST}/share/appdata",
                 "mv ${FLATPAK_DEST}/share/appdata/com.ozmartians.vidcutter.appdata.xml ${FLATPAK_DEST}/share/appdata/com.ozmartians.VidCutter.appdata.xml -v",
                 "sed -i 's|<id>com.ozmartians.vidcutter.desktop</id>|<id>com.ozmartians.VidCutter.desktop</id>|g' ${FLATPAK_DEST}/share/appdata/com.ozmartians.VidCutter.appdata.xml"
@@ -180,7 +184,7 @@
                 {
                     "type": "git",
                     "url": "https://github.com/ozmartian/vidcutter.git",
-                    "commit": "fc9b015bee776a733ace082c594cb4861195e2ec"
+                    "commit": "bd4e20df6fa20df094961bd661cb55edcf7736d4"
                 }
             ]
         }
