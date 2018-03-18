@@ -793,7 +793,7 @@ class VideoCutter(QWidget):
             QTimer.singleShot(2000, self.selectClip)
             qApp.restoreOverrideCursor()
             if project_file != os.path.join(QDir.tempPath(), self.parent.TEMP_PROJECT_FILE):
-                self.showText('Project loaded')
+                self.showText('project loaded')
 
     def saveProject(self, reboot: bool = False) -> None:
         if self.currentMedia is None:
@@ -867,7 +867,7 @@ class VideoCutter(QWidget):
             qApp.restoreOverrideCursor()
             self.projectSaved = True
             if not reboot:
-                self.showText('Project file saved')
+                self.showText('project file saved')
 
     def loadMedia(self, filename: str) -> None:
         if not os.path.isfile(filename):
@@ -903,6 +903,7 @@ class VideoCutter(QWidget):
                                  'and the version of VidCutter you are currently using.</p>')
 
     def setPlayButton(self, playing: bool=False) -> None:
+        self.showText('playing' if playing else 'paused')
         self.toolbar_play.setup('{} Media'.format('Pause' if playing else 'Play'),
                                 'Pause currently playing media' if playing else 'Play currently loaded media',
                                 True)
@@ -982,11 +983,11 @@ class VideoCutter(QWidget):
 
     def muteAudio(self) -> None:
         if self.mpvWidget.property('mute'):
-            self.showText('Audio enabled')
+            self.showText('audio enabled')
             self.muteButton.setIcon(self.unmuteIcon)
             self.muteButton.setToolTip('Mute')
         else:
-            self.showText('Audio disabled')
+            self.showText('audio disabled')
             self.muteButton.setIcon(self.muteIcon)
             self.muteButton.setToolTip('Unmute')
         self.mpvWidget.mute()
@@ -1001,12 +1002,12 @@ class VideoCutter(QWidget):
         self.seekSlider.showThumbs = checked
         self.saveSetting('timelineThumbs', checked)
         if checked:
-            self.showText('Thumbnails enabled')
+            self.showText('thumbnails enabled')
             self.seekSlider.initStyle()
             if self.mediaAvailable:
                 self.seekSlider.reloadThumbs()
         else:
-            self.showText('Thumbnails disabled')
+            self.showText('thumbnails disabled')
             self.seekSlider.removeThumbs()
             self.seekSlider.initStyle()
 
@@ -1076,7 +1077,7 @@ class VideoCutter(QWidget):
                 errordialog.setDetailedMessage(detailedmsg)
                 errordialog.show()
             if filesadded:
-                self.showText('media file(s) added to index')
+                self.showText('media added to index')
                 self.renderClipIndex()
 
     def hasExternals(self) -> bool:
@@ -1094,7 +1095,7 @@ class VideoCutter(QWidget):
         self.clipindex_add.setDisabled(True)
         self.seekSlider.setRestrictValue(self.seekSlider.value(), True)
         self.inCut = True
-        self.showText('start clip at {}'.format(starttime.toString(self.timeformat)))
+        self.showText('clip started at {}'.format(starttime.toString(self.timeformat)))
         self.renderClipIndex()
 
     def clipEnd(self) -> None:
@@ -1113,7 +1114,7 @@ class VideoCutter(QWidget):
         self.timeCounter.setMinimum()
         self.seekSlider.setRestrictValue(0, False)
         self.inCut = False
-        self.showText('end clip at {}'.format(endtime.toString(self.timeformat)))
+        self.showText('clip ends at {}'.format(endtime.toString(self.timeformat)))
         self.renderClipIndex()
 
     @pyqtSlot()
@@ -1458,7 +1459,7 @@ class VideoCutter(QWidget):
                 self.mpvWidget.showFullScreen()
 
     def toggleOSD(self, checked: bool) -> None:
-        self.showText('On screen display {}'.format('enabled' if checked else 'disabled'), override=True)
+        self.showText('on-screen display {}'.format('enabled' if checked else 'disabled'), override=True)
         self.saveSetting('enableOSD', checked)
 
     def keyPressEvent(self, event: QKeyEvent) -> None:

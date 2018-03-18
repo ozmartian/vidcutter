@@ -4,7 +4,13 @@
     "runtime-version": "1.6",
     "sdk": "org.freedesktop.Sdk",
     "command": "vidcutter",
-    "build-options": { "no-debuginfo": true },
+    "copy-icon": true,
+    "separate-locales": false,
+    "build-options": {
+        "cflags": "-O2 -g",
+        "cxxflags": "-O2 -g",
+        "no-debuginfo": true
+    },
     "finish-args": [
         "--share=ipc",
         "--share=network",
@@ -13,7 +19,15 @@
         "--socket=pulseaudio",
         "--filesystem=host",
         "--device=dri",
-        "--talk-name=com.canonical.Unity.LauncherEntry"
+        "--talk-name=com.canonical.Unity.LauncherEntry",
+        "--env=LC_NUMERIC=C"
+    ],
+    "cleanup": [
+        "/include",
+        "/lib/*.a",
+        "/lib/*.la",
+        "/lib/pkgconfig",
+        "/share/man"
     ],
     "modules": [
         {
@@ -46,15 +60,15 @@
             "cleanup": [ "/include", "/lib/pkgconfig" ],
             "buildsystem": "simple",
             "build-commands": [
-                "python3 waf configure --prefix=${FLATPAK_DEST} --enable-libmpv-shared --disable-cplayer --disable-build-date --disable-oss-audio --disable-alsa --disable-manpage-build --disable-debug-build",
+                "python3 waf configure --prefix=${FLATPAK_DEST} --enable-libmpv-shared --disable-cplayer --disable-oss-audio --disable-alsa --disable-manpage-build --disable-debug-build",
                 "python3 waf build",
                 "python3 waf install"
             ],
-            "sources": [
+            "sources": [    
                 {
                     "type": "archive",
-                    "url": "https://github.com/mpv-player/mpv/archive/v0.28.2.tar.gz",
-                    "sha256": "a8f377c719b6c3b52e7d180125d320a40dc9035d309067801a6ea6cd35fa3b13"
+                    "url": "https://github.com/mpv-player/mpv/archive/v0.27.2.tar.gz",
+                    "sha256": "2ad104d83fd3b2b9457716615acad57e479fd1537b8fc5e37bfe9065359b50be"
                 },
                 {
                   "type": "file",
@@ -64,17 +78,6 @@
                 }
             ],
             "modules": [
-                {
-                    "name": "ffmpeg",
-                    "cleanup": [ "/include", "/lib/pkgconfig", "/share/ffmpeg/examples" ],
-                    "config-opts": [ "--enable-shared", "--disable-static", "--enable-gnutls", "--disable-doc", "--disable-ffplay", "--enable-version3" ],
-                    "sources": [
-                        {
-                            "type": "git",
-                            "url": "https://github.com/FFmpeg/FFmpeg.git",
-                        }
-                    ]
-                },
                 {
                     "name": "libass",
                     "cleanup": [ "/include", "/lib/*.la", "/lib/pkgconfig" ],
@@ -100,19 +103,52 @@
                     ]
                 },
                 {
-                    "name": "uchardet",
+                    "name": "x264",
+                    "config-opts": [ "--enable-shared", "--disable-cli", "--enable-pic", "--disable-asm", "--disable-lavf" ],
+                    "sources": [
+                        {
+                            "type": "git",
+                            "url": "https://git.videolan.org/git/x264.git"
+                        }
+                    ]
+                },
+                {
+                    "name": "x265",
                     "buildsystem": "cmake-ninja",
-                    "cleanup": [ "/bin", "/include", "/lib/pkgconfig", "/share/man" ],
                     "config-opts": [
                         "-DCMAKE_INSTALL_PREFIX=${FLATPAK_DEST}",
-                        "-DCMAKE_BUILD_TYPE=Release",
-                        "-DBUILD_STATIC=0"
+                        "-DENABLE_SHARED=1",
+                        "-DENABLE_HDR10_PLUS=1",
+                        "-DHAVE_STRTOK_R=1"
                     ],
+                    "subdir":"source",
                     "sources": [
                         {
                             "type": "archive",
-                            "url": "https://www.freedesktop.org/software/uchardet/releases/uchardet-0.0.6.tar.xz",
-                            "sha256": "8351328cdfbcb2432e63938721dd781eb8c11ebc56e3a89d0f84576b96002c61"
+                            "url": "https://bitbucket.org/multicoreware/x265/downloads/x265_2.7.tar.gz",
+                            "sha256": "d5e75fa62ffe6ed49e691f8eb8ab8c1634ffcc0725dd553c6fdb4d5443b494a2"
+                        }
+                    ]
+                },
+                {
+                    "name": "fdkaac",
+                    "config-opts": [ "--disable-static" ],
+                    "sources": [
+                        {
+                            "type": "archive",
+                            "url": "https://github.com/mstorsjo/fdk-aac/archive/v0.1.6.tar.gz",
+                            "sha256": "adbcd793e406e1b88b3c1c41382d49f8c27371485b823c0fdab69c9124fd2ce3"
+                        }
+                    ]
+                },
+                {
+                    "name": "ffmpeg",
+                    "cleanup": [ "/include", "/lib/pkgconfig", "/share/ffmpeg/examples" ],
+                    "config-opts": [ "--enable-shared", "--disable-static", "--enable-gnutls", "--disable-doc", "--disable-ffplay", "--enable-version3" ],
+                    "sources": [
+                        {
+                            "type": "git",
+                            "url": "https://github.com/FFmpeg/FFmpeg.git"
                         }
                     ]
                 }
@@ -128,8 +164,9 @@
                     "cleanup": [ "/bin", "/include", "/lib/pkgconfig" ],
                     "sources": [
                         {
-                            "type": "git",
-                            "url": "https://github.com/MediaArea/ZenLib.git"
+                            "type": "archive",
+                            "url": "https://github.com/MediaArea/ZenLib/archive/v0.4.37.tar.gz",
+                            "sha256": "a29e4c0685d38b4d27f03fc88c52e9a2dcccca8181c8d094056fa6ec603fc2ff"
                         }
                     ]
                 },
@@ -140,8 +177,9 @@
                     "cleanup": [ "/bin", "/include", "/lib/pkgconfig" ],
                     "sources": [
                         {
-                            "type": "git",
-                            "url": "https://github.com/MediaArea/MediaInfoLib.git"
+                            "type": "archive",
+                            "url": "https://github.com/MediaArea/MediaInfoLib/archive/v17.12.tar.gz",
+                            "sha256": "6189804822fe90ed4c86beeb8f054eda3381ae3728b885842683c6bf768dca41"
                         }
                     ]
                 },
@@ -150,8 +188,9 @@
                     "subdir": "Project/GNU/CLI",
                     "sources": [
                         {
-                            "type": "git",
-                            "url": "https://github.com/MediaArea/MediaInfo.git"
+                            "type": "archive",
+                            "url": "https://github.com/MediaArea/MediaInfo/archive/v17.12.tar.gz",
+                            "sha256": "b1b7f119f306c83d6bb65b45d4679e75a8c914b378bf854a88df68053aa3c52b"
                         }
                     ]
                 }
@@ -171,7 +210,7 @@
                 "mv ${FLATPAK_DEST}/share/icons/vidcutter.png ${FLATPAK_DEST}/share/icons/com.ozmartians.VidCutter.png -v",
                 "install -v -D data/desktop/com.ozmartians.vidcutter.desktop -t ${FLATPAK_DEST}/share/applications",
                 "mv ${FLATPAK_DEST}/share/applications/com.ozmartians.vidcutter.desktop ${FLATPAK_DEST}/share/applications/com.ozmartians.VidCutter.desktop -v",
-                "sed -i 's|Icon=vidcutter|Icon=com.ozmartians.VidCutter|g' ${FLATPAK_DEST}/share/applications/com.ozmartians.VidCutter.desktop",
+                "sed -i 's|Icon=vidcutter|Icon=com.ozmartians.VidCutter.png|g' ${FLATPAK_DEST}/share/applications/com.ozmartians.VidCutter.desktop",
                 "install -v -D data/appdata/com.ozmartians.vidcutter.appdata.xml -t ${FLATPAK_DEST}/share/appdata",
                 "mv ${FLATPAK_DEST}/share/appdata/com.ozmartians.vidcutter.appdata.xml ${FLATPAK_DEST}/share/appdata/com.ozmartians.VidCutter.appdata.xml -v",
                 "sed -i 's|<id>com.ozmartians.vidcutter.desktop</id>|<id>com.ozmartians.VidCutter.desktop</id>|g' ${FLATPAK_DEST}/share/appdata/com.ozmartians.VidCutter.appdata.xml"
@@ -180,7 +219,7 @@
                 {
                     "type": "git",
                     "url": "https://github.com/ozmartian/vidcutter.git",
-                    "commit": "fc9b015bee776a733ace082c594cb4861195e2ec"
+                    "commit": "bd4e20df6fa20df094961bd661cb55edcf7736d4"
                 }
             ]
         }

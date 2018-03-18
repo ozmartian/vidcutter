@@ -8,6 +8,14 @@ vidcutter (6.0.0-1) stable; urgency=medium
     index resets the edit state as it used to rather than remaining in end
     clip selection mode. This was a newly introduced bug in recent versions.
 
+  * OSD (on-screen display) text defined for all user actions + standardised
+    OSD case and wording/format.
+
+  * snap + Flatpak manifests completed w/ app now available from respective
+    stores and repos (i.e snapcraft.io + flathub.org). These builds come
+    prepacked with the very latest releases of FFmpeg, libmpv, MediaInfo as
+    well as the UI libraries for Qt5 and PyQt5.
+
  -- Pete Alexandrou <pete@ozmartians.com>  Xxx, XX Xxx 2018 XX:XX +0800
 
 vidcutter (5.5.0-1) stable; urgency=medium
