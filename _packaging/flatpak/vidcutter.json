@@ -4,6 +4,7 @@
     "runtime-version": "1.6",
     "sdk": "org.freedesktop.Sdk",
     "command": "vidcutter",
+    "build-options": { "no-debuginfo": true },
     "finish-args": [
         "--share=ipc",
         "--share=network",
@@ -11,11 +12,12 @@
         "--socket=wayland",
         "--socket=pulseaudio",
         "--filesystem=host",
-        "--device=dri"
+        "--device=dri",
+        "--talk-name=com.canonical.Unity.LauncherEntry"
     ],
     "modules": [
         {
-            "name": "pypi",
+            "name": "pyqt5",
             "cleanup": [ "/bin", "/lib/python3.5/site-packages/PyQt5/Qt/lib/libQt5WebEngineCore*" ],
             "buildsystem": "simple",
             "build-commands": [
@@ -40,38 +42,19 @@
             ]
         },
         {
-            "name": "ffmpeg",
-            "cleanup": [ "/share/ffmpeg/examples" ],
-            "config-opts": [
-                "--enable-shared",
-                "--disable-static",
-                "--enable-gnutls",
-                "--disable-doc",
-                "--disable-ffplay",
-                "--enable-version3"
-            ],
-            "sources": [
-                {
-                    "type": "git",
-                    "url": "https://github.com/FFmpeg/FFmpeg.git",
-                    "commit": "dd8351b1184b8054925c28ecc5fcb6dbbc177fad"
-                }
-            ]
-        },
-        {
             "name": "libmpv",
             "cleanup": [ "/include", "/lib/pkgconfig" ],
             "buildsystem": "simple",
             "build-commands": [
-                "python3 waf configure --prefix=${FLATPAK_DEST} --enable-libmpv-shared --disable-cplayer --disable-build-date --disable-oss-audio --disable-alsa",
+                "python3 waf configure --prefix=${FLATPAK_DEST} --enable-libmpv-shared --disable-cplayer --disable-build-date --disable-oss-audio --disable-alsa --disable-manpage-build --disable-debug-build",
                 "python3 waf build",
                 "python3 waf install"
             ],
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://github.com/mpv-player/mpv/archive/v0.28.1.tar.gz",
-                    "sha256": "0209badcba3c42a54c05d5dc7f59b2d97ecd25b7f957d5fde60b36c362fe2cc4"
+                    "url": "https://github.com/mpv-player/mpv/archive/v0.28.2.tar.gz",
+                    "sha256": "a8f377c719b6c3b52e7d180125d320a40dc9035d309067801a6ea6cd35fa3b13"
                 },
                 {
                   "type": "file",
@@ -82,13 +65,13 @@
             ],
             "modules": [
                 {
-                    "name": "fribidi",
-                    "config-opts": [ "--disable-docs" ],
-                    "cleanup": [ "/bin", "/include", "/lib/pkgconfig", "/lib/*.la", "/share/man" ],
+                    "name": "ffmpeg",
+                    "cleanup": [ "/include", "/lib/pkgconfig", "/share/ffmpeg/examples" ],
+                    "config-opts": [ "--enable-shared", "--disable-static", "--enable-gnutls", "--disable-doc", "--disable-ffplay", "--enable-version3" ],
                     "sources": [
                         {
                             "type": "git",
-                            "url": "https://github.com/fribidi/fribidi.git"
+                            "url": "https://github.com/FFmpeg/FFmpeg.git",
                         }
                     ]
                 },
@@ -100,6 +83,36 @@
                         {
                             "type": "git",
                             "url": "https://github.com/libass/libass.git"
+                        }
+                    ],
+                    "modules": [
+                        {
+                            "name": "fribidi",
+                            "config-opts": [ "--disable-docs" ],
+                            "cleanup": [ "/bin", "/include", "/lib/pkgconfig", "/lib/*.la", "/share/man" ],
+                            "sources": [
+                                {
+                                    "type": "git",
+                                    "url": "https://github.com/fribidi/fribidi.git"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "uchardet",
+                    "buildsystem": "cmake-ninja",
+                    "cleanup": [ "/bin", "/include", "/lib/pkgconfig", "/share/man" ],
+                    "config-opts": [
+                        "-DCMAKE_INSTALL_PREFIX=${FLATPAK_DEST}",
+                        "-DCMAKE_BUILD_TYPE=Release",
+                        "-DBUILD_STATIC=0"
+                    ],
+                    "sources": [
+                        {
+                            "type": "archive",
+                            "url": "https://www.freedesktop.org/software/uchardet/releases/uchardet-0.0.6.tar.xz",
+                            "sha256": "8351328cdfbcb2432e63938721dd781eb8c11ebc56e3a89d0f84576b96002c61"
                         }
                     ]
                 }
@@ -147,27 +160,27 @@
         {
             "name": "vidcutter",
             "buildsystem": "simple",
+            "cleanup": [ "/usr" ],
             "build-commands": [
                 "python3 setup.py install --root=${FLATPAK_DEST}",
-                "install -v -D data/desktop/com.ozmartians.vidcutter.desktop -t ${FLATPAK_DEST}/share/applications",
-                "install -v -D data/appdata/com.ozmartians.vidcutter.appdata.xml -t ${FLATPAK_DEST}/share/appdata"
-            ],
-            "post-install": [
-                "mkdir ${FLATPAK_DEST}/share/icons",
-                "mv ${FLATPAK_DEST}/usr/share/icons/hicolor ${FLATPAK_DEST}/share/icons -v",
-                "find ${FLATPAK_DEST}/share/icons -name *.png | xargs dirname | xargs -I{} mv {}/vidcutter.png {}/com.ozmartians.VidCutter.png -v",
-                "find ${FLATPAK_DEST}/share/icons -name *.svg | xargs dirname | xargs -I{} mv {}/vidcutter.svg {}/com.ozmartians.VidCutter.svg -v",
-                "mv ${FLATPAK_DEST}/share/applications/com.ozmartians.vidcutter.desktop ${FLATPAK_DEST}/share/applications/com.ozmartians.VidCutter.desktop -v",
-                "mv ${FLATPAK_DEST}/share/appdata/com.ozmartians.vidcutter.appdata.xml ${FLATPAK_DEST}/share/appdata/com.ozmartians.VidCutter.appdata.xml -v",
-                "sed -i 's|<id>com.ozmartians.vidcutter.desktop</id>|<id>com.ozmartians.VidCutter.desktop</id>|g' ${FLATPAK_DEST}/share/appdata/com.ozmartians.VidCutter.appdata.xml",
-                "sed -i 's|Icon=vidcutter|Icon=com.ozmartians.VidCutter|g' ${FLATPAK_DEST}/share/applications/com.ozmartians.VidCutter.desktop",
                 "mv ${FLATPAK_DEST}/usr/bin/vidcutter ${FLATPAK_DEST}/bin -v",
                 "mv ${FLATPAK_DEST}/usr/lib/python3.5/site-packages/* ${FLATPAK_DEST}/lib/python3.5/site-packages -v"
+            ],
+            "post-install": [
+                "install -v -D data/icons/vidcutter.png -t ${FLATPAK_DEST}/share/icons",
+                "mv ${FLATPAK_DEST}/share/icons/vidcutter.png ${FLATPAK_DEST}/share/icons/com.ozmartians.VidCutter.png -v",
+                "install -v -D data/desktop/com.ozmartians.vidcutter.desktop -t ${FLATPAK_DEST}/share/applications",
+                "mv ${FLATPAK_DEST}/share/applications/com.ozmartians.vidcutter.desktop ${FLATPAK_DEST}/share/applications/com.ozmartians.VidCutter.desktop -v",
+                "sed -i 's|Icon=vidcutter|Icon=com.ozmartians.VidCutter|g' ${FLATPAK_DEST}/share/applications/com.ozmartians.VidCutter.desktop",
+                "install -v -D data/appdata/com.ozmartians.vidcutter.appdata.xml -t ${FLATPAK_DEST}/share/appdata",
+                "mv ${FLATPAK_DEST}/share/appdata/com.ozmartians.vidcutter.appdata.xml ${FLATPAK_DEST}/share/appdata/com.ozmartians.VidCutter.appdata.xml -v",
+                "sed -i 's|<id>com.ozmartians.vidcutter.desktop</id>|<id>com.ozmartians.VidCutter.desktop</id>|g' ${FLATPAK_DEST}/share/appdata/com.ozmartians.VidCutter.appdata.xml"
             ],
             "sources": [
                 {
                     "type": "git",
-                    "url": "https://github.com/ozmartian/vidcutter.git"
+                    "url": "https://github.com/ozmartian/vidcutter.git",
+                    "commit": "fc9b015bee776a733ace082c594cb4861195e2ec"
                 }
             ]
         }
