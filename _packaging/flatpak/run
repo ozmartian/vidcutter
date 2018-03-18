@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# flatpak-builder --force-clean --gpg-sign=5C03B24BB09D884B --install build com.ozmartians.VidCutter.json
+flatpak-builder --force-clean --install build com.ozmartians.VidCutter.json
