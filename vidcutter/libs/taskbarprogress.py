@@ -25,8 +25,10 @@
 import sys
 
 from PyQt5.QtCore import pyqtSlot, QSysInfo
-from PyQt5.QtDBus import QDBusConnection, QDBusMessage
 from PyQt5.QtWidgets import QWidget
+
+if sys.platform.startswith('linux'):
+    from PyQt5.QtDBus import QDBusConnection, QDBusMessage
 
 import vidcutter
 
@@ -35,14 +37,15 @@ class TaskbarProgress(QWidget):
     def __init__(self, parent=None):
         super(TaskbarProgress, self).__init__(parent)
         self.parent = parent
-        self._sessionbus = QDBusConnection.sessionBus()
-        if self._sessionbus.isConnected():
-            self._desktopfile = 'application://{}.desktop'.format(vidcutter.__desktopid__)
-            self.init()
+        if sys.platform.startswith('linux'):
+            self._sessionbus = QDBusConnection.sessionBus()
+            if self._sessionbus.isConnected():
+                self._desktopfile = 'application://{}.desktop'.format(vidcutter.__desktopid__)
+                self.init()
 
     @pyqtSlot()
     def init(self) -> None:
-        if self._sessionbus.isConnected():
+        if sys.platform.startswith('linux') and self._sessionbus.isConnected():
             self.setProgress(0.0, False)
         elif sys.platform == 'win32' and TaskbarProgress.isValidWinVer():
             self.parent.win_taskbar_button.progress().reset()
@@ -50,7 +53,7 @@ class TaskbarProgress(QWidget):
 
     @pyqtSlot(float, bool)
     def setProgress(self, value: float, visible: bool=True) -> bool:
-        if self._sessionbus.isConnected():
+        if sys.platform.startswith('linux') and self._sessionbus.isConnected():
             signal = QDBusMessage.createSignal('/com/canonical/unity/launcherentry/337963624',
                                                'com.canonical.Unity.LauncherEntry', 'Update')
             message = signal << self._desktopfile << {'progress-visible': visible, 'progress': value}

@@ -1,0 +1,33 @@
+{
+    "Description": "VidCutter SYSROOT specification",
+
+    "qt5": {
+        "configure_options": ["-opensource"],
+        "ssl": "openssl-runtime",
+        "source": "qt-everywhere-src-5.*.tar.xz"
+    },
+
+    "python": {
+        "build_host_from_source": false,
+        "build_target_from_source": true,
+        "source": "Python-3.*.tar.xz"
+    },
+
+    "sip": {
+        "source": "sip-4.*.tar.gz"
+    },
+
+    "pyqt5": {
+        "modules": [
+            "QtCore",
+            "QtDBus",
+            "QtGui",
+            "QtNetwork",
+            "QtOpenGL",
+            "QtWidgets",
+            "QtX11Extras",
+            "_QOpenGLFunctions_4_1_Core"
+        ],
+        "source": "PyQt5_*-5.*.tar.gz"
+    }
+}
