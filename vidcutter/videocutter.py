@@ -76,6 +76,7 @@ class VideoCutter(QWidget):
         self.settings = self.parent.settings
         self.currentMedia, self.mediaAvailable, self.mpvError = None, False, False
         self.projectDirty, self.projectSaved = False, False
+        self.flatpak = VideoCutter.isFlatpak()      
 
         self.initTheme()
         self.updater = Updater(self.parent)
@@ -445,14 +446,11 @@ class VideoCutter(QWidget):
             mute=mute,
             keep_open='always',
             idle=True,
-            ytdl=False,
-            osc=False,
             osd_font='Noto Sans UI',
             osd_level=0,
             osd_align_x='left',
             osd_align_y='top',
             cursor_autohide=False,
-            load_scripts=False,
             input_cursor=False,
             input_default_bindings=False,
             stop_playback_on_init_failure=False,
@@ -465,6 +463,10 @@ class VideoCutter(QWidget):
             volume=volume if volume is not None else self.parent.startupvol,
             keepaspect=self.keepRatio,
             hwdec=('auto' if self.hardwareDecoding else 'no'))
+        if not self.flatpak:
+            widget.mpv.set_option('load-scripts', False)
+            widget.mpv.set_option('osc', False)
+            widget.mpv.set_option('ytdl', False)
         widget.durationChanged.connect(self.on_durationChanged)
         widget.positionChanged.connect(self.on_positionChanged)
         return widget
@@ -1459,6 +1461,14 @@ class VideoCutter(QWidget):
         self.showText('On screen display {}'.format('enabled' if checked else 'disabled'), override=True)
         self.saveSetting('enableOSD', checked)
 
+    @staticmethod
+    def isFlatpak() -> bool:
+        xdg_config_dirs = os.getenv('XDG_CONFIG_DIRS', None)
+        xdg_data_dirs = os.getenv('XDG_DATA_DIRS', None)
+        if xdg_config_dirs is None or xdg_data_dirs is None:
+            return False
+        return xdg_config_dirs.split(':')[0].startswith('/app/') and xdg_data_dirs.split(':')[0].startswith('/app/')
+        
     def keyPressEvent(self, event: QKeyEvent) -> None:
         if self.mediaAvailable:
 
