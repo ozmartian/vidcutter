@@ -7,7 +7,8 @@
     "build-options": {
         "cflags": "-O2 -g",
         "cxxflags": "-O2 -g",
-        "no-debuginfo": true
+        "no-debuginfo": false,
+        "strip": true
     },
     "finish-args": [
         "--share=ipc",
@@ -39,7 +40,9 @@
                 "/lib/python3.5/site-packages/PyQt5/Qt/lib/libQt5Qml*",
                 "/lib/python3.5/site-packages/PyQt5/Qt/lib/libQt5Quick*",
                 "/lib/python3.5/site-packages/PyQt5/Qt/lib/libQt5WebEngineCore*",
-                "/lib/python3.5/site-packages/PyQt5/Qt/resources"
+                "/lib/python3.5/site-packages/PyQt5/Qt/resources",
+                "/lib/python3.5/site-packages/PyQt5/Qt/qml",
+                "/lib/python3.5/site-packages/PyQt5/Qt/translations"
             ],
             "buildsystem": "simple",
             "build-commands": [
@@ -191,7 +194,7 @@
                 {
                     "type": "git",
                     "url": "https://github.com/ozmartian/vidcutter.git",
-                    "commit": "fa30fa5e49860ae44588f3180dae005ad51ecfa2"
+                    "commit": "df79b9f0e122bed90bcee84dc6142d530012c747"
                 }
             ]
         }
