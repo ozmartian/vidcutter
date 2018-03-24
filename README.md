@@ -12,6 +12,23 @@
 [![Screenshot 3](https://cdn.rawgit.com/ozmartian/vidcutter/gh-pages/images/vidcutter-03-thumb.png)](https://cdn.rawgit.com/ozmartian/vidcutter/gh-pages/images/vidcutter-03.png) 
 [![Screenshot 4](https://cdn.rawgit.com/ozmartian/vidcutter/gh-pages/images/vidcutter-04-thumb.png)](https://cdn.rawgit.com/ozmartian/vidcutter/gh-pages/images/vidcutter-04.png)
 
+### VidCutter Flatpak Now Available!
+
+VidCutter will soon be available for installation via Flathub for all you Flatpak enthusiasts out there but a single-file bundle is now available if you don't want to wait for that. Download the Flatpak file from the releases page and open it with your distribution's Software Center app like GNOME / Ubuntu Software, KDE Discover etc..
+
+The recommended install method is via your distribution or desktop environment's software center app which should be configured for Flatpaks. This includes GNOME Software, KDE Discover, Ubuntu Software Center etc. You may need to install a small Flatpak configuration file via your usual package downloading methods in order to support Flatpaks though. Using a software center will keep your app updated with future releases without requiring you to check yourself where as installing via the flatpak terminal command only updates apps when you manually run "flatpak update" yourself.
+
+Click to install via GUI (GNOME Software/KDE Discover etc):
+
+[![Install Flatpak](https://flatpak.org/img/favicon57.png)](https://github.com/ozmartian/vidcutter/releases/download/5.5.0/VidCutter-5.5.0-x64.flatpak)
+
+or install via the terminal:
+
+```
+$ wget https://github.com/ozmartian/vidcutter/releases/download/5.5.0/VidCutter-5.5.0-x64.flatpak
+$ flatpak install VidCutter-5.5.0-x64.flatpak
+```
+
 ### VidCutter snap Now Available!
 
 The latest version of VidCutter can now be installed as a snap package via the Ubuntu Snapcraft store at https://snapcraft.io/vidcutter or install it via the terminal as follows:
