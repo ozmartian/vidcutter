@@ -1,27 +1,23 @@
 {
     "app-id": "com.ozmartians.VidCutter",
-    "runtime": "org.freedesktop.Platform",
-    "runtime-version": "1.6",
-    "sdk": "org.freedesktop.Sdk",
+    "runtime": "org.kde.Platform",
+    "runtime-version": "5.10",
+    "sdk": "org.kde.Sdk",
     "command": "vidcutter",
-    "build-options": {
-        "cflags": "-O2 -g",
-        "cxxflags": "-O2 -g",
-        "no-debuginfo": false,
-        "strip": true
-    },
     "finish-args": [
+        "--device=dri",
+        "--env=DCONF_USER_CONFIG_DIR=.config/dconf",
+        "--env=LC_NUMERIC=C",
+        "--env=QT_QPA_PLATFORM=flatpak",
+        "--filesystem=host",
+        "--filesystem=xdg-run/dconf",
         "--share=ipc",
         "--share=network",
-        "--socket=x11",
-        "--socket=wayland",
         "--socket=pulseaudio",
-        "--filesystem=host",
-        "--device=dri",
-        "--talk-name=com.canonical.Unity.LauncherEntry",
+        "--socket=wayland",
+        "--socket=x11",
         "--talk-name=ca.desrt.dconf",
-        "--env=LC_NUMERIC=C",
-        "--env=DCONF_USER_CONFIG_DIR=.config/dconf"
+        "--talk-name=com.canonical.Unity.LauncherEntry"
     ],
     "cleanup": [
         "/include",
@@ -32,42 +28,69 @@
     ],
     "modules": [
         {
-            "name": "pyqt5",
-            "cleanup": [
-                "/bin",
-                "/lib/python3.5/site-packages/PyQt5/Qt/lib/libQt5Designer*",
-                "/lib/python3.5/site-packages/PyQt5/Qt/lib/libQt5Multimedia*",
-                "/lib/python3.5/site-packages/PyQt5/Qt/lib/libQt5Qml*",
-                "/lib/python3.5/site-packages/PyQt5/Qt/lib/libQt5Quick*",
-                "/lib/python3.5/site-packages/PyQt5/Qt/lib/libQt5WebEngineCore*",
-                "/lib/python3.5/site-packages/PyQt5/Qt/resources",
-                "/lib/python3.5/site-packages/PyQt5/Qt/qml",
-                "/lib/python3.5/site-packages/PyQt5/Qt/translations"
-            ],
+            "name": "PyOpenGL",
             "buildsystem": "simple",
             "build-commands": [
-                "pip3 install --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} simplejson pyopengl sip-4.19.8-cp35-cp35m-manylinux1_x86_64.whl PyQt5-5.10.1-5.10.1-cp35.cp36.cp37.cp38-abi3-manylinux1_x86_64.whl"
+                "python3 setup.py install --root=${FLATPAK_DEST} --optimize=1",
+                "mkdir -p ${FLATPAK_DEST}/lib/python3.5/site-packages",
+                "mv ${FLATPAK_DEST}/usr/lib/python3.5/site-packages/* ${FLATPAK_DEST}/lib/python3.5/site-packages -v"
             ],
             "sources": [
                 {
-                    "type": "file",
-                    "url": "https://pypi.python.org/packages/0d/3f/3a16847fe5c010110a8f54dd8fe7b091b4e22922def374fe1cce9c1cb7e9/simplejson-3.13.2.tar.gz",
-                    "sha256": "4c4ecf20e054716cc1e5a81cadc44d3f4027108d8dd0861d8b1e3bd7a32d4f0a"
-                },
-                {
-                    "type": "file",
+                    "type": "archive",
                     "url": "https://pypi.python.org/packages/9c/1d/4544708aaa89f26c97cc09450bb333a23724a320923e74d73e028b3560f9/PyOpenGL-3.1.0.tar.gz",
                     "sha256": "9b47c5c3a094fa518ca88aeed35ae75834d53e4285512c61879f67a48c94ddaf"
-                },
+                }
+            ]
+        },
+        {
+            "name": "simplejson",
+            "buildsystem": "simple",
+            "build-commands": [
+                "python3 setup.py install --root=${FLATPAK_DEST} --optimize=1",
+                "mkdir -p ${FLATPAK_DEST}/lib/python3.5/site-packages",
+                "mv ${FLATPAK_DEST}/usr/lib/python3.5/site-packages/* ${FLATPAK_DEST}/lib/python3.5/site-packages -v"
+            ],
+            "sources": [
                 {
-                    "type": "file",
-                    "url": "https://pypi.python.org/packages/6b/46/2869369c8ec634ec9dc714b84834e9264acbe87eb7492328efccfa0c855e/sip-4.19.8-cp35-cp35m-manylinux1_x86_64.whl",
-                    "sha256": "e72955e12f4fccf27aa421be383453d697b8a44bde2cc26b08d876fd492d0174"
-                },
+                    "type": "archive",
+                    "url": "https://pypi.python.org/packages/0d/3f/3a16847fe5c010110a8f54dd8fe7b091b4e22922def374fe1cce9c1cb7e9/simplejson-3.13.2.tar.gz",
+                    "sha256": "4c4ecf20e054716cc1e5a81cadc44d3f4027108d8dd0861d8b1e3bd7a32d4f0a"
+                }
+            ]
+        },
+        {
+            "name": "PyQt5",
+            "buildsystem": "simple",
+            "cleanup": [ "/bin" ],
+            "build-commands": [ 
+                "python3 configure.py --no-stubs --assume-shared --confirm-license --no-tools --no-designer-plugin --no-qml-plugin --sip=${FLATPAK_DEST}/bin/sip --sip-incdir=${FLATPAK_DEST}/include/python3.5m -d ${FLATPAK_DEST}/lib/python3.5/site-packages -v ${FLATPAK_DEST}/share/sip --disable=QtBluetooth --disable=QtDesigner --disable=Enginio --disable=QtLocation --disable=QtMultimedia --disable=QtMultimediaWidgets --disable=QtNfc --disable=QtPositioning --disable=QtQml --disable=QtQuick --disable=QtQuickWidgets --disable=QtSensors --disable=QtSerialPort --disable=QtSql --disable=QtTest --disable=QtWebChannel --disable=QtWebEngine --disable=QtWebEngineCore --disable=QtWebEngineWidgets --disable=QtWebKit --disable=QtWebKitWidgets --disable=QtXml --disable=QtXmlPatterns -w",
+                "make",
+                "make install"
+            ],
+            "sources": [
+                 {
+                     "type": "archive",
+                     "url": "https://sourceforge.net/projects/pyqt/files/PyQt5/PyQt-5.10.1/PyQt5_gpl-5.10.1.tar.gz",
+                     "sha256": "9932e971e825ece4ea08f84ad95017837fa8f3f29c6b0496985fa1093661e9ef"
+                 }
+            ],
+            "modules": [
                 {
-                    "type": "file",
-                    "url": "https://pypi.python.org/packages/e4/15/4e2e49f64884edbab6f833c6fd3add24d7938f2429aec1f2883e645d4d8f/PyQt5-5.10.1-5.10.1-cp35.cp36.cp37.cp38-abi3-manylinux1_x86_64.whl",
-                    "sha256": "1e652910bd1ffd23a3a48c510ecad23a57a853ed26b782cd54b16658e6f271ac"
+                    "name": "sip",
+                    "buildsystem": "simple",
+                    "build-commands": [ 
+                        "python3 configure.py --no-stubs -b ${FLATPAK_DEST}/bin -d ${FLATPAK_DEST}/lib/python3.5/site-packages -e ${FLATPAK_DEST}/include/python3.5m -v ${FLATPAK_DEST}/share/sip",
+                        "make",
+                        "make install"
+                    ],
+                    "sources": [
+                        {
+                            "type": "archive",
+                            "url": "https://sourceforge.net/projects/pyqt/files/sip/sip-4.19.8/sip-4.19.8.tar.gz",
+                            "sha256": "7eaf7a2ea7d4d38a56dd6d2506574464bddf7cf284c960801679942377c297bc"
+                        }
+                    ]
                 }
             ]
         },
@@ -122,7 +145,14 @@
                 {
                     "name": "ffmpeg",
                     "cleanup": [ "/include", "/lib/pkgconfig", "/share/ffmpeg/examples" ],
-                    "config-opts": [ "--enable-shared", "--disable-static", "--enable-gnutls", "--disable-doc", "--disable-ffplay", "--enable-version3" ],
+                    "config-opts": [
+                        "--enable-shared",
+                        "--disable-static",
+                        "--enable-gnutls",
+                        "--disable-doc",
+                        "--disable-ffplay",
+                        "--enable-version3"
+                    ],
                     "sources": [
                         {
                             "type": "git",
@@ -137,8 +167,8 @@
             "buildsystem": "simple",
             "cleanup": [ "/include", "/lib/pkgconfig", "/share" ],
             "build-commands": [
-                "mv bin/mediainfo ${FLATPAK_DEST}/bin -v",
-                "mv lib/libmediainfo.so* lib/libzen.so* ${FLATPAK_DEST}/lib -v"
+                "mv lib/libmediainfo.so* lib/libzen.so* ${FLATPAK_DEST}/lib -v",
+                "install -Dm644 bin/mediainfo ${FLATPAK_DEST}/bin/mediainfo"
             ],
             "sources": [
                 {
@@ -160,7 +190,7 @@
             "modules": [
                 {
                     "name": "libmms",
-                    "config-opts": [ "--prefix=${FLATPAK_DEST}", "--disable-static" ],
+                    "config-opts": [ "--disable-static" ],
                     "sources": [
                         {
                             "type": "archive",
@@ -177,8 +207,8 @@
             "cleanup": [ "/usr" ],
             "build-commands": [
                 "python3 setup.py install --root=${FLATPAK_DEST} --optimize=1",
-                "mv ${FLATPAK_DEST}/usr/bin/vidcutter ${FLATPAK_DEST}/bin -v",
-                "mv ${FLATPAK_DEST}/usr/lib/python3.5/site-packages/* ${FLATPAK_DEST}/lib/python3.5/site-packages -v"
+                "mv ${FLATPAK_DEST}/usr/lib/python3.5/site-packages/* ${FLATPAK_DEST}/lib/python3.5/site-packages -v",
+                "install -Dm644 ${FLATPAK_DEST}/usr/bin/vidcutter ${FLATPAK_DEST}/bin/vidcutter"
             ],
             "post-install": [
                 "install -v -D data/icons/vidcutter.png -t ${FLATPAK_DEST}/share/icons",
