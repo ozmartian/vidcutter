@@ -1,0 +1,8 @@
+#!/bin/bash
+
+flatpak-builder \
+	--force-clean \
+	--gpg-sign=B09D884B \
+	--repo=vidcutter-repo \
+	build \
+	com.ozmartians.VidCutter.json
