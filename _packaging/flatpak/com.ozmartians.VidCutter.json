@@ -62,36 +62,15 @@
         {
             "name": "PyQt5",
             "buildsystem": "simple",
-            "cleanup": [ "/bin" ],
-            "build-commands": [ 
-                "python3 configure.py --no-stubs --assume-shared --confirm-license --no-tools --no-designer-plugin --no-qml-plugin --sip=${FLATPAK_DEST}/bin/sip --sip-incdir=${FLATPAK_DEST}/include/python3.5m -d ${FLATPAK_DEST}/lib/python3.5/site-packages -v ${FLATPAK_DEST}/share/sip --disable=QtBluetooth --disable=QtDesigner --disable=Enginio --disable=QtLocation --disable=QtMultimedia --disable=QtMultimediaWidgets --disable=QtNfc --disable=QtPositioning --disable=QtQml --disable=QtQuick --disable=QtQuickWidgets --disable=QtSensors --disable=QtSerialPort --disable=QtSql --disable=QtTest --disable=QtWebChannel --disable=QtWebEngine --disable=QtWebEngineCore --disable=QtWebEngineWidgets --disable=QtWebKit --disable=QtWebKitWidgets --disable=QtXml --disable=QtXmlPatterns -w",
-                "make",
-                "make install"
-            ],
+            "build-commands": [
+                "mv python3.5/site-packages/* ${FLATPAK_DEST}/lib/python3.5/site-packages -v"
+            ],  
             "sources": [
                  {
                      "type": "archive",
-                     "url": "https://sourceforge.net/projects/pyqt/files/PyQt5/PyQt-5.10.1/PyQt5_gpl-5.10.1.tar.gz",
-                     "sha256": "9932e971e825ece4ea08f84ad95017837fa8f3f29c6b0496985fa1093661e9ef"
+                     "url": "https://github.com/ozmartian/vidcutter/raw/master/_packaging/flatpak/pyqt5-py35-qt510-flatpak-kde-runtime.tar.xz",
+                     "sha256": "7eccaf1f7132a29343ff2f83dc4c6da3e202a2120e16ed183ec8c7a67aedaee2"
                  }
-            ],
-            "modules": [
-                {
-                    "name": "sip",
-                    "buildsystem": "simple",
-                    "build-commands": [ 
-                        "python3 configure.py --no-stubs -b ${FLATPAK_DEST}/bin -d ${FLATPAK_DEST}/lib/python3.5/site-packages -e ${FLATPAK_DEST}/include/python3.5m -v ${FLATPAK_DEST}/share/sip",
-                        "make",
-                        "make install"
-                    ],
-                    "sources": [
-                        {
-                            "type": "archive",
-                            "url": "https://sourceforge.net/projects/pyqt/files/sip/sip-4.19.8/sip-4.19.8.tar.gz",
-                            "sha256": "7eaf7a2ea7d4d38a56dd6d2506574464bddf7cf284c960801679942377c297bc"
-                        }
-                    ]
-                }
             ]
         },
         {
