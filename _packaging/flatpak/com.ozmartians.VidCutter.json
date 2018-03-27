@@ -201,9 +201,9 @@
             ],
             "sources": [
                 {
-                    "type": "git",
-                    "url": "https://github.com/ozmartian/vidcutter.git",
-                    "commit": "df79b9f0e122bed90bcee84dc6142d530012c747"
+                    "type": "archive",
+                    "url": "https://github.com/ozmartian/vidcutter/archive/df79b9f0e122bed90bcee84dc6142d530012c747.tar.gz",
+                    "sha256": "857441c9236ac989d78c8efb5c128a55f55ee2dafb2f231084fc1dc082a96f51"
                 }
             ]
         }
