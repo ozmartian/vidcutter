@@ -57,9 +57,7 @@ class VideoService(QObject):
     spaceWarningDelivered = False
     smartcutError = False
 
-    class ThumbSize(Enum):
-        INDEX = QSize(100, 70)
-        TIMELINE = QSize(105, 60)
+    ThumbSize = Enum('ThumbSize', {'INDEX': QSize(100, 70), 'TIMELINE': QSize(105, 60)})
 
     config = Config()
 

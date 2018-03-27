@@ -18,6 +18,10 @@
 
 #include "client.h"
 
+#if !MPV_ENABLE_DEPRECATED
+#error "This header and all API provided by it is deprecated. Use render.h instead."
+#else
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -26,6 +30,9 @@ extern "C" {
  *
  * Overview
  * --------
+ *
+ * Warning: this API is deprecated. A very similar API is provided by render.h
+ * and render_gl.h. The deprecated API is emulated with the new API.
  *
  * This API can be used to make mpv render into a foreign OpenGL context. It
  * can be used to handle video display.
@@ -59,7 +66,7 @@ extern "C" {
  * for OpenGL 2.1 and OpenGL ES 2.0.
  *
  * Note that some hardware decoding interop API (as set with the "hwdec" option)
- * may actually access
+ * may actually access some sort of host API, such as EGL.
  *
  * OpenGL state
  * ------------
@@ -118,7 +125,7 @@ extern "C" {
  * While "normal" mpv loads the OpenGL hardware decoding interop on demand,
  * this can't be done with opengl_cb for internal technical reasons. Instead,
  * it loads them by default, even if hardware decoding is not going to be used.
- * In older mpv relases, this had to be done by setting the
+ * In older mpv releases, this had to be done by setting the
  * "opengl-hwdec-interop" or "hwdec-preload" options before calling
  * mpv_opengl_cb_init_gl(). You can still use the newer "gpu-hwdec-interop"
  * option to prevent loading of interop, or to load only a specific interop.
@@ -328,7 +335,6 @@ int mpv_opengl_cb_init_gl(mpv_opengl_cb_context *ctx, const char *exts,
  */
 int mpv_opengl_cb_draw(mpv_opengl_cb_context *ctx, int fbo, int w, int h);
 
-#if MPV_ENABLE_DEPRECATED
 /**
  * Deprecated. Use mpv_opengl_cb_draw(). This function is equivalent to:
  *
@@ -341,7 +347,6 @@ int mpv_opengl_cb_draw(mpv_opengl_cb_context *ctx, int fbo, int w, int h);
  * was never marked as stable).
  */
 int mpv_opengl_cb_render(mpv_opengl_cb_context *ctx, int fbo, int vp[4]);
-#endif
 
 /**
  * Tell the renderer that a frame was flipped at the given time. This is
@@ -374,5 +379,7 @@ int mpv_opengl_cb_uninit_gl(mpv_opengl_cb_context *ctx);
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* else #if MPV_ENABLE_DEPRECATED */
 
 #endif

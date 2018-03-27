@@ -30,9 +30,9 @@ from datetime import datetime
 
 from PyQt5.Qt import PYQT_VERSION_STR, QT_VERSION_STR
 from PyQt5.QtCore import QSize, Qt, QUrl
-from PyQt5.QtGui import QCloseEvent
-from PyQt5.QtWidgets import (qApp, QDialog, QDialogButtonBox, QLabel, QStyleFactory, QTabWidget, QTextBrowser,
-                             QVBoxLayout)
+from PyQt5.QtGui import QCloseEvent, QPixmap
+from PyQt5.QtWidgets import (qApp, QDialog, QDialogButtonBox, QHBoxLayout, QLabel, QSizePolicy, QStyleFactory,
+                             QTabWidget, QTextBrowser, QVBoxLayout, QWidget)
 
 import vidcutter
 
@@ -46,74 +46,75 @@ class About(QDialog):
         self.setWindowModality(Qt.ApplicationModal)
         pencolor1 = '#9A45A2' if self.parent.theme == 'dark' else '#642C68'
         pencolor2 = '#FFF' if self.parent.theme == 'dark' else '#000'
-        appicon = self.parent.getAppIcon(encoded=True)
         appversion = qApp.applicationVersion()
         apparch = platform.architecture()[0]
         builddate = About.builddate()
-        headercontent = '''<style>table {{ color: {pencolor2}; background-color: transparent; }}</style>
-        <table border="0" cellpadding="3" cellspacing="1" width="100%%">
-            <tr>
-                <td width="82" style="padding-top:10px;padding-right:10px;">
-                    <img src="{appicon}" width="82" />
-                </td>
-                <td style="padding:4px;">
-                    <div style="font-family:'Futura-Light', sans-serif;font-size:40px;font-weight:400;color:{pencolor1};">
-                        <span style="font-size:58px;">V</span>ID<span style="font-size:58px;">C</span>UTTER
-                    </div>
-                    &nbsp;&nbsp;
-                    <div style="margin-top:6px; margin-left:15px;">
-                        <table border="0" cellpadding="0" cellspacing="0" width="100%%">'''.format(**locals())
-
+        pythonlabel, qtlabel = QLabel(self), QLabel(self)
+        pythonlabel.setPixmap(QPixmap(':/images/{}/python.png'.format(self.parent.theme)))
+        qtlabel.setPixmap(QPixmap(':/images/qt.png'))
+        headertext = '''
+            <div style="font-family:'Futura-Light', sans-serif;font-size:40px;font-weight:400;color:{};margin:0;">
+                <span style="font-size:58px;">V</span>ID<span style="font-size:58px;">C</span>UTTER
+            </div>
+            <table border="0" cellpadding="0" cellspacing="0">'''.format(pencolor1)
         if builddate is None:
-            headercontent += '''<tr valign="middle" style="padding-left:30px;">
-                                    <td style="text-align:right;font-size:10pt;font-weight:500;color:{pencolor1};">version:</td>
-                                    <td>&nbsp;</td>
-                                    <td>
-                                        <span style="font-size:18px;font-weight:400;">{appversion}</span>
-                                        &nbsp;<span style="font-size:10pt;margin-left:5px;">({apparch})</span>
-                                    </td>
-                                </tr>'''.format(**locals())
+            headertext += '''
+                <tr valign="middle">
+                    <td width="20"></td>
+                    <td style="text-align:right;font-size:10pt;font-weight:500;color:{pencolor1};">version:</td>
+                    <td>&nbsp;</td>
+                    <td>
+                        <span style="font-size:18px;font-weight:400;">{appversion}</span>
+                        &nbsp;<span style="font-size:10pt;margin-left:5px;">({apparch})</span>
+                    </td>
+                </tr>'''.format(**locals())
         else:
-            headercontent += '''<tr valign="middle">
-                                    <td style="text-align:right;font-size:10pt;font-weight:500;color:{pencolor1};">version:</td>
-                                    <td>&nbsp;</td>
-                                    <td>
-                                        <span style="font-size:18px;font-weight:400;">{appversion}</span>
-                                        &nbsp;<span style="font-size:10pt;margin-left:5px;">({apparch})</span>
-                                    </td>
-                                </tr>
-                                <tr valign="middle">
-                                    <td style="text-align:right;font-size:10pt;font-weight:500;color:{pencolor1};">build date:</td>
-                                    <td>&nbsp;</td>
-                                    <td style="font-size:10pt;font-weight:400;">{builddate}</td>
-                                </tr>'''.format(**locals())
-
-        headercontent += '''</table>
-                        </div>
-                   </td>
-                   <td valign="bottom" align="right" style="padding-top:30px;">
-                       <div align="right" style="position:relative; right:5px;">
-                           <img src=":/images/{0}/python.png"/>
-                       </div>
-                       <div align="right" style="position:relative; right:5px; top:10px;">
-                           <img src=":/images/qt.png" />
-                       </div>
-                   </td>
-               </tr>
-        </table>'''.format(self.parent.theme)
-        header = QLabel(headercontent, self)
-        header.setStyleSheet('border:none;')
+            headertext += '''
+                <tr valign="middle">
+                    <td rowspan="2" width="20"></td>
+                    <td style="text-align:right;font-size:10pt;font-weight:500;color:{pencolor1};">version:</td>
+                    <td>&nbsp;</td>
+                    <td>
+                        <span style="font-size:18px;font-weight:400;">{appversion}</span>
+                        &nbsp;<span style="font-size:10pt;margin-left:5px;">({apparch})</span>
+                    </td>
+                </tr>
+                <tr valign="middle">
+                    <td style="text-align:right;font-size:10pt;font-weight:500;color:{pencolor1};">build date:</td>
+                    <td>&nbsp;</td>
+                    <td style="font-size:10pt;font-weight:400;">{builddate}</td>
+                </tr>'''.format(**locals())
+            headertext += '''
+            </table>
+        </div>'''
+        creditslayout = QVBoxLayout()
+        creditslayout.setSpacing(15)
+        creditslayout.addStretch(1)
+        creditslayout.addWidget(pythonlabel)
+        creditslayout.addWidget(qtlabel)
+        headerlayout = QHBoxLayout()
+        headerlayout.setContentsMargins(5, 5, 5, 5)
+        headerlayout.setSpacing(15)
+        headerlayout.addWidget(QLabel('<img src="{}" />'.format(self.parent.getAppIcon(encoded=True)), self))
+        headerlayout.addWidget(QLabel(headertext, self))
+        headerlayout.addStretch(1)
+        headerlayout.addLayout(creditslayout)
+        headerlayout.addSpacing(15)
+        headerwidget = QWidget(self)
+        headerwidget.setLayout(headerlayout)
+        headerwidget.setMaximumHeight(125)
         self.tab_about = AboutTab(self)
         self.tab_credits = CreditsTab(self)
         self.tab_license = LicenseTab(self)
         tabs = QTabWidget()
+        tabs.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         tabs.addTab(self.tab_about, 'About')
         tabs.addTab(self.tab_credits, 'Credits')
         tabs.addTab(self.tab_license, 'License')
         buttons = QDialogButtonBox(QDialogButtonBox.Ok)
         buttons.accepted.connect(self.close)
         layout = QVBoxLayout()
-        layout.addWidget(header)
+        layout.addWidget(headerwidget)
         layout.addWidget(tabs)
         layout.addWidget(buttons)
         self.setLayout(layout)
