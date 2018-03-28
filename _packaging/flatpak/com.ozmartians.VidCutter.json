@@ -1,14 +1,17 @@
 {
     "app-id": "com.ozmartians.VidCutter",
-    "runtime": "org.kde.Platform",
-    "runtime-version": "5.10",
-    "sdk": "org.kde.Sdk",
+    "runtime": "org.freedesktop.Platform",
+    "runtime-version": "1.6",
+    "sdk": "org.freedesktop.Sdk",
     "command": "vidcutter",
+    "rename-appdata-file": "com.ozmartians.vidcutter.appdata.xml",
+    "rename-desktop-file": "com.ozmartians.vidcutter.desktop",
+    "rename-icon": "vidcutter",
     "finish-args": [
         "--device=dri",
         "--env=DCONF_USER_CONFIG_DIR=.config/dconf",
         "--env=LC_NUMERIC=C",
-        "--env=QT_QPA_PLATFORM=flatpak",
+        "--env=QT_PLUGIN_PATH=/app/lib/qt/plugins",
         "--filesystem=host",
         "--filesystem=xdg-run/dconf",
         "--share=ipc",
@@ -27,185 +30,169 @@
         "/share/man"
     ],
     "modules": [
+    {
+        "name": "PyOpenGL",
+        "buildsystem": "simple",
+        "build-commands": [
+            "python3 setup.py install --root=${FLATPAK_DEST} --optimize=1",
+            "mkdir -p ${FLATPAK_DEST}/lib/python3.5/site-packages",
+            "mv ${FLATPAK_DEST}/usr/lib/python3.5/site-packages/* ${FLATPAK_DEST}/lib/python3.5/site-packages -v"
+        ],
+        "sources": [
         {
-            "name": "PyOpenGL",
-            "buildsystem": "simple",
-            "build-commands": [
-                "python3 setup.py install --root=${FLATPAK_DEST} --optimize=1",
-                "mkdir -p ${FLATPAK_DEST}/lib/python3.5/site-packages",
-                "mv ${FLATPAK_DEST}/usr/lib/python3.5/site-packages/* ${FLATPAK_DEST}/lib/python3.5/site-packages -v"
-            ],
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": "https://pypi.python.org/packages/9c/1d/4544708aaa89f26c97cc09450bb333a23724a320923e74d73e028b3560f9/PyOpenGL-3.1.0.tar.gz",
-                    "sha256": "9b47c5c3a094fa518ca88aeed35ae75834d53e4285512c61879f67a48c94ddaf"
-                }
-            ]
+            "type": "archive",
+            "url": "https://pypi.python.org/packages/9c/1d/4544708aaa89f26c97cc09450bb333a23724a320923e74d73e028b3560f9/PyOpenGL-3.1.0.tar.gz",
+            "sha256": "9b47c5c3a094fa518ca88aeed35ae75834d53e4285512c61879f67a48c94ddaf"
+        }]
+    },
+    {
+        "name": "simplejson",
+        "buildsystem": "simple",
+        "build-commands": [
+            "python3 setup.py install --root=${FLATPAK_DEST} --optimize=1",
+            "mkdir -p ${FLATPAK_DEST}/lib/python3.5/site-packages",
+            "mv ${FLATPAK_DEST}/usr/lib/python3.5/site-packages/* ${FLATPAK_DEST}/lib/python3.5/site-packages -v"
+        ],
+        "sources": [
+        {
+            "type": "archive",
+            "url": "https://pypi.python.org/packages/0d/3f/3a16847fe5c010110a8f54dd8fe7b091b4e22922def374fe1cce9c1cb7e9/simplejson-3.13.2.tar.gz",
+            "sha256": "4c4ecf20e054716cc1e5a81cadc44d3f4027108d8dd0861d8b1e3bd7a32d4f0a"
+        }]
+    },
+    {
+        "name": "PyQt5",
+        "buildsystem": "simple",
+        "build-commands": [
+            "mv python3.5/site-packages/PyQt5/Qt/lib/* ${FLATPAK_DEST}/lib -v",
+            "rm -rf python3.5/site-packages/PyQt5/Qt/lib",
+            "mkdir -p ${FLATPAK_DEST}/lib/qt",
+            "mv python3.5/site-packages/PyQt5/Qt/plugins ${FLATPAK_DEST}/lib/qt -v",
+            "rm -rf python3.5/site-packages/PyQt5/Qt",
+            "mv python3.5/site-packages/* ${FLATPAK_DEST}/lib/python3.5/site-packages -v"
+        ],
+        "sources": [
+        {
+            "type": "archive",
+            "url": "https://github.com/ozmartian/vidcutter-flatpak/raw/master/pyqt5-py35-qt510-flatpak-kde-runtime.tar.xz",
+            "sha256": "4bb0bac39231805a510db3e0c019fb608f6d3233c97e0bebf3dfee5cc8c9592f"
+        }]
+    },
+    {
+        "name": "libmpv",
+        "cleanup": ["/include", "/lib/pkgconfig"],
+        "buildsystem": "simple",
+        "build-commands": [
+            "python3 waf configure --prefix=${FLATPAK_DEST} --enable-libmpv-shared --disable-cplayer --disable-oss-audio --disable-alsa --disable-manpage-build --disable-debug-build",
+            "python3 waf build",
+            "python3 waf install"
+        ],
+        "sources": [
+        {
+            "type": "archive",
+            "url": "https://github.com/mpv-player/mpv/archive/v0.27.2.tar.gz",
+            "sha256": "2ad104d83fd3b2b9457716615acad57e479fd1537b8fc5e37bfe9065359b50be"
         },
         {
-            "name": "simplejson",
-            "buildsystem": "simple",
-            "build-commands": [
-                "python3 setup.py install --root=${FLATPAK_DEST} --optimize=1",
-                "mkdir -p ${FLATPAK_DEST}/lib/python3.5/site-packages",
-                "mv ${FLATPAK_DEST}/usr/lib/python3.5/site-packages/* ${FLATPAK_DEST}/lib/python3.5/site-packages -v"
-            ],
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": "https://pypi.python.org/packages/0d/3f/3a16847fe5c010110a8f54dd8fe7b091b4e22922def374fe1cce9c1cb7e9/simplejson-3.13.2.tar.gz",
-                    "sha256": "4c4ecf20e054716cc1e5a81cadc44d3f4027108d8dd0861d8b1e3bd7a32d4f0a"
-                }
-            ]
-        },
+            "type": "file",
+            "url": "https://waf.io/waf-1.9.8",
+            "sha256": "167dc42bab6d5bd823b798af195420319cb5c9b571e00db7d83df2a0fe1f4dbf",
+            "dest-filename": "waf"
+        }],
+        "modules": [
         {
-            "name": "PyQt5",
-            "buildsystem": "simple",
-            "build-commands": [
-                "mv python3.5/site-packages/* ${FLATPAK_DEST}/lib/python3.5/site-packages -v"
-            ],  
+            "name": "libass",
+            "cleanup": ["/include", "/lib/*.la", "/lib/pkgconfig"],
+            "config-opts": ["--disable-static"],
             "sources": [
-                 {
-                     "type": "archive",
-                     "url": "https://github.com/ozmartian/vidcutter/raw/master/_packaging/flatpak/pyqt5-py35-qt510-flatpak-kde-runtime.tar.xz",
-                     "sha256": "7eccaf1f7132a29343ff2f83dc4c6da3e202a2120e16ed183ec8c7a67aedaee2"
-                 }
-            ]
-        },
-        {
-            "name": "libmpv",
-            "cleanup": [ "/include", "/lib/pkgconfig" ],
-            "buildsystem": "simple",
-            "build-commands": [
-                "python3 waf configure --prefix=${FLATPAK_DEST} --enable-libmpv-shared --disable-cplayer --disable-oss-audio --disable-alsa --disable-manpage-build --disable-debug-build",
-                "python3 waf build",
-                "python3 waf install"
-            ],
-            "sources": [    
-                {
-                    "type": "archive",
-                    "url": "https://github.com/mpv-player/mpv/archive/v0.27.2.tar.gz",
-                    "sha256": "2ad104d83fd3b2b9457716615acad57e479fd1537b8fc5e37bfe9065359b50be"
-                },
-                {
-                  "type": "file",
-                  "url": "https://waf.io/waf-1.9.8",
-                  "sha256": "167dc42bab6d5bd823b798af195420319cb5c9b571e00db7d83df2a0fe1f4dbf",
-                  "dest-filename": "waf"
-                }
-            ],
+            {
+                "type": "archive",
+                "url": "https://github.com/libass/libass/releases/download/0.14.0/libass-0.14.0.tar.xz",
+                "sha256": "881f2382af48aead75b7a0e02e65d88c5ebd369fe46bc77d9270a94aa8fd38a2"
+            }],
             "modules": [
+            {
+                "name": "fribidi",
+                "cleanup": ["/bin", "/include", "/lib/pkgconfig", "/lib/*.la", "/share/man"],
+                "sources": [
                 {
-                    "name": "libass",
-                    "cleanup": [ "/include", "/lib/*.la", "/lib/pkgconfig" ],
-                    "config-opts": [ "--disable-static" ],
-                    "sources": [
-                        {
-                            "type": "archive",
-                            "url": "https://github.com/libass/libass/releases/download/0.14.0/libass-0.14.0.tar.xz",
-                            "sha256": "881f2382af48aead75b7a0e02e65d88c5ebd369fe46bc77d9270a94aa8fd38a2"
-                        }
-                    ],
-                    "modules": [
-                        {
-                            "name": "fribidi",
-                            "cleanup": [ "/bin", "/include", "/lib/pkgconfig", "/lib/*.la", "/share/man" ],
-                            "sources": [
-                                {
-                                    "type": "archive",
-                                    "url": "https://dl.tingping.se/mirror/fribidi-0.19.7.tar.bz2",
-                                    "sha256": "08222a6212bbc2276a2d55c3bf370109ae4a35b689acbc66571ad2a670595a8e"
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    "name": "ffmpeg",
-                    "cleanup": [ "/include", "/lib/pkgconfig", "/share/ffmpeg/examples" ],
-                    "config-opts": [
-                        "--enable-shared",
-                        "--disable-static",
-                        "--enable-gnutls",
-                        "--disable-doc",
-                        "--disable-ffplay",
-                        "--enable-version3"
-                    ],
-                    "sources": [
-                        {
-                            "type": "git",
-                            "url": "https://github.com/FFmpeg/FFmpeg.git"
-                        }
-                    ]
-                }
-            ]
+                    "type": "archive",
+                    "url": "https://dl.tingping.se/mirror/fribidi-0.19.7.tar.bz2",
+                    "sha256": "08222a6212bbc2276a2d55c3bf370109ae4a35b689acbc66571ad2a670595a8e"
+                }]
+            }]
         },
         {
-            "name": "mediainfo",
-            "buildsystem": "simple",
-            "cleanup": [ "/include", "/lib/pkgconfig", "/share" ],
-            "build-commands": [
-                "mv lib/libmediainfo.so* lib/libzen.so* ${FLATPAK_DEST}/lib -v",
-                "install -Dm644 bin/mediainfo ${FLATPAK_DEST}/bin/mediainfo"
+            "name": "ffmpeg",
+            "cleanup": ["/include", "/lib/pkgconfig", "/share/ffmpeg/examples"],
+            "config-opts": [
+                "--enable-shared",
+                "--disable-static",
+                "--enable-gnutls",
+                "--disable-doc",
+                "--disable-ffplay",
+                "--enable-version3"
             ],
             "sources": [
-                {
-                    "type": "archive",
-                    "url": "https://mirror.pseudoform.org/community/os/x86_64/libzen-0.4.37-1-x86_64.pkg.tar.xz",
-                    "sha256": "2ed43babf6aea81fce788426a57ddd8769ab59129446b2058460b5632b724e04"
-                },
-                {
-                    "type": "archive",
-                    "url": "https://mirror.pseudoform.org/community/os/x86_64/libmediainfo-17.12-1-x86_64.pkg.tar.xz",
-                    "sha256": "165e7305ae12e114426ec2c2a0b392c852d23665894a296df45f69d3e0b1f786"
-                },
-                {
-                    "type": "archive",
-                    "url": "https://mirror.pseudoform.org/community/os/x86_64/mediainfo-17.12-1-x86_64.pkg.tar.xz",
-                    "sha256": "203c91a6af2dcfeabf78753c824e994d81d9129d0bbf6ffd5816c3e14ce9365c"                    
-                }
-            ],
-            "modules": [
-                {
-                    "name": "libmms",
-                    "config-opts": [ "--disable-static" ],
-                    "sources": [
-                        {
-                            "type": "archive",
-                            "url": "https://download.sourceforge.net/libmms/libmms-0.6.4.tar.gz",
-                            "sha256": "3c05e05aebcbfcc044d9e8c2d4646cd8359be39a3f0ba8ce4e72a9094bee704f"
-                        }
-                    ]
-                }
-            ]
+            {
+                "type": "archive",
+                "url": "https://github.com/FFmpeg/FFmpeg/archive/3eff98c9278804b4b664bad3853e5e60184c6a54.tar.gz",
+                "sha256": "bf612d4844fa00d9b1939248a0f4423b9cfca8cb947c529deb70da901f0ade7c"
+            }]
+        }]
+    },
+    {
+        "name": "mediainfo",
+        "buildsystem": "simple",
+        "cleanup": ["/include", "/lib/pkgconfig", "/share"],
+        "build-commands": [
+            "mv lib/libmediainfo.so* lib/libzen.so* ${FLATPAK_DEST}/lib -v",
+            "install -D bin/mediainfo ${FLATPAK_DEST}/bin/mediainfo"
+        ],
+        "sources": [
+        {
+            "type": "archive",
+            "url": "https://mirror.pseudoform.org/community/os/x86_64/libzen-0.4.37-1-x86_64.pkg.tar.xz",
+            "sha256": "2ed43babf6aea81fce788426a57ddd8769ab59129446b2058460b5632b724e04"
         },
         {
-            "name": "vidcutter",
-            "buildsystem": "simple",
-            "cleanup": [ "/usr" ],
-            "build-commands": [
-                "python3 setup.py install --root=${FLATPAK_DEST} --optimize=1",
-                "mv ${FLATPAK_DEST}/usr/lib/python3.5/site-packages/* ${FLATPAK_DEST}/lib/python3.5/site-packages -v",
-                "install -Dm644 ${FLATPAK_DEST}/usr/bin/vidcutter ${FLATPAK_DEST}/bin/vidcutter"
-            ],
-            "post-install": [
-                "install -v -D data/icons/vidcutter.png -t ${FLATPAK_DEST}/share/icons",
-                "mv ${FLATPAK_DEST}/share/icons/vidcutter.png ${FLATPAK_DEST}/share/icons/com.ozmartians.VidCutter.png -v",
-                "install -v -D data/desktop/com.ozmartians.vidcutter.desktop -t ${FLATPAK_DEST}/share/applications",
-                "mv ${FLATPAK_DEST}/share/applications/com.ozmartians.vidcutter.desktop ${FLATPAK_DEST}/share/applications/com.ozmartians.VidCutter.desktop -v",
-                "sed -i 's|Icon=vidcutter|Icon=com.ozmartians.VidCutter.png|g' ${FLATPAK_DEST}/share/applications/com.ozmartians.VidCutter.desktop",
-                "install -v -D data/appdata/com.ozmartians.vidcutter.appdata.xml -t ${FLATPAK_DEST}/share/appdata",
-                "mv ${FLATPAK_DEST}/share/appdata/com.ozmartians.vidcutter.appdata.xml ${FLATPAK_DEST}/share/appdata/com.ozmartians.VidCutter.appdata.xml -v",
-                "sed -i 's|<id>com.ozmartians.vidcutter.desktop</id>|<id>com.ozmartians.VidCutter.desktop</id>|g' ${FLATPAK_DEST}/share/appdata/com.ozmartians.VidCutter.appdata.xml"
-            ],
+            "type": "archive",
+            "url": "https://mirror.pkgbuild.com/community/os/x86_64/libmediainfo-18.03-1-x86_64.pkg.tar.xz",
+            "sha256": "a9e501125b7a48eccd095f3373b35d675f9f255e678070264c77d9804c60b6d0"
+        },
+        {
+            "type": "archive",
+            "url": "https://mirror.pkgbuild.com/community/os/x86_64/mediainfo-18.03-1-x86_64.pkg.tar.xz",
+            "sha256": "5cebb5afd8418c8ff4afefcee6b3487bfac3bb8031833a5f98518304cf5e59d2"
+        }],
+        "modules": [
+        {
+            "name": "libmms",
+            "config-opts": ["--disable-static"],
             "sources": [
-                {
-                    "type": "archive",
-                    "url": "https://github.com/ozmartian/vidcutter/archive/df79b9f0e122bed90bcee84dc6142d530012c747.tar.gz",
-                    "sha256": "857441c9236ac989d78c8efb5c128a55f55ee2dafb2f231084fc1dc082a96f51"
-                }
-            ]
-        }
-    ]
+            {
+                "type": "archive",
+                "url": "https://download.sourceforge.net/libmms/libmms-0.6.4.tar.gz",
+                "sha256": "3c05e05aebcbfcc044d9e8c2d4646cd8359be39a3f0ba8ce4e72a9094bee704f"
+            }]
+        }]
+    },
+    {
+        "name": "vidcutter",
+        "buildsystem": "simple",
+        "cleanup": ["/usr"],
+        "build-commands": [
+            "python3 setup.py install --root=${FLATPAK_DEST} --optimize=1",
+            "mv ${FLATPAK_DEST}/usr/lib/python3.5/site-packages/* ${FLATPAK_DEST}/lib/python3.5/site-packages -v",
+            "install -D ${FLATPAK_DEST}/usr/bin/vidcutter ${FLATPAK_DEST}/bin/vidcutter",
+            "mv ${FLATPAK_DEST}/usr/share/* ${FLATPAK_DEST}/share -v",
+            "[[ -d ${FLATPAK_DEST}/usr ]] && rm -rf ${FLATPAK_DEST}/usr"
+        ],
+        "sources": [
+        {
+            "type": "archive",
+            "url": "https://github.com/ozmartian/vidcutter/archive/df79b9f0e122bed90bcee84dc6142d530012c747.tar.gz",
+            "sha256": "857441c9236ac989d78c8efb5c128a55f55ee2dafb2f231084fc1dc082a96f51"
+        }]
+    }]
 }

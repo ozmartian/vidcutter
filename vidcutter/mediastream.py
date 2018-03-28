@@ -57,7 +57,7 @@ class StreamSelector(QDialog):
         layout.addWidget(buttons)
         self.setLayout(layout)
         self.setMinimumSize(500, 300)
-        self.setMaximumSize(500, 600)
+        # self.setMaximumSize(500, 600)
 
     @staticmethod
     def lineSeparator() -> QFrame:
