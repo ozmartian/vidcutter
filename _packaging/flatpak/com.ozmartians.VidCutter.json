@@ -180,6 +180,7 @@
     {
         "name": "vidcutter",
         "buildsystem": "simple",
+        "only-arches": ["x86_64"],
         "cleanup": ["/usr"],
         "build-commands": [
             "python3 setup.py install --root=${FLATPAK_DEST} --optimize=1",
