@@ -1,5 +1,11 @@
 vidcutter (6.0.0-1) stable; urgency=medium
 
+  * External media joins (when wanting to just join a set of files using the
+    the ADD button under the Video Index) is now fixed. As there is an absence
+    of regions in timeline in this mode progressbars display over list items
+    in the Video Index like they do in timeline during normal cut/join
+    operations.
+
   * Added new "Enable use of PBOs" setting under the Video category for use of
     pixel buffer objects when rendering OpenGL video. used for noticeable
     performance improvements when working with huge/4K media files.
