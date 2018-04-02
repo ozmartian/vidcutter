@@ -22,6 +22,7 @@
 #
 #######################################################################
 
+import logging
 import os
 import platform
 import sys
@@ -41,6 +42,7 @@ class About(QDialog):
     def __init__(self, parent=None, f=Qt.WindowCloseButtonHint):
         super(About, self).__init__(parent, f)
         self.parent = parent
+        self.logger = logging.getLogger(__name__)
         self.setObjectName('aboutwidget')
         self.setContentsMargins(0, 0, 0, 0)
         self.setWindowModality(Qt.ApplicationModal)
@@ -55,12 +57,12 @@ class About(QDialog):
         headertext = '''
             <div style="font-family:'Futura-Light', sans-serif;font-size:40px;font-weight:400;color:{};margin:0;">
                 <span style="font-size:58px;">V</span>ID<span style="font-size:58px;">C</span>UTTER
-            </div>
-            <table border="0" cellpadding="0" cellspacing="0">'''.format(pencolor1)
+            </div>'''.format(pencolor1)
         if builddate is None:
             headertext += '''
+            <table border="0" cellpadding="0" cellspacing="0" style="margin-top:20px;">
                 <tr valign="middle">
-                    <td width="20"></td>
+                    <td width="30"></td>
                     <td style="text-align:right;font-size:10pt;font-weight:500;color:{pencolor1};">version:</td>
                     <td>&nbsp;</td>
                     <td>
@@ -70,8 +72,9 @@ class About(QDialog):
                 </tr>'''.format(**locals())
         else:
             headertext += '''
+            <table border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;">
                 <tr valign="middle">
-                    <td rowspan="2" width="20"></td>
+                    <td rowspan="2" width="30"></td>
                     <td style="text-align:right;font-size:10pt;font-weight:500;color:{pencolor1};">version:</td>
                     <td>&nbsp;</td>
                     <td>
@@ -173,12 +176,14 @@ class AboutTab(BaseTab):
         # noinspection PyBroadException
         try:
             mpv_version = self.parent.parent.mpvWidget.version()
-        except BaseException:
+        except BaseException as e:
+            self.parent.logger.exception('mpv version error', exc_info=True)
             mpv_version = '<span style="color:maroon; font-weight:bold;">MISSING</span>'
         # noinspection PyBroadException
         try:
             ffmpeg_version = self.parent.parent.videoService.version()
-        except BaseException:
+        except BaseException as e:
+            self.parent.logger.exception('ffmpeg version error', exc_info=True)
             ffmpeg_version = '<span style="color:maroon; font-weight:bold;">MISSING</span>'
         html = '''
 <style>

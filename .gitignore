@@ -29,9 +29,7 @@ MediaInfo.dll
 *.nupkg
 *.so
 *.pyd
-*.pyc
 pkg2appimage
 .snapcraft
 _packaging/flatpak/.flatpak-builder
-_packaging/flatpak/build
-_packaging/flatpak/vidcutter-repo
+_packaging/flatpak/*repo*

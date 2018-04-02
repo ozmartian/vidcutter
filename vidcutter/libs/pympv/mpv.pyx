@@ -657,6 +657,10 @@ cdef class Context(object):
     cdef object callback, callbackthread, reply_userdata
 
     @property
+    def api_version(self):
+        return _CAPI_MINOR, _CAPI_MAJOR
+
+    @property
     def name(self):
         """Unique name for every context created.
 

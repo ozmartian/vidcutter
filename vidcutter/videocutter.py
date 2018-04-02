@@ -468,9 +468,9 @@ class VideoCutter(QWidget):
             keepaspect=self.keepRatio,
             hwdec=('auto' if self.hardwareDecoding else 'no'))
         if not self.flatpak:
-            widget.mpv.set_option('load-scripts', False)
-            widget.mpv.set_option('osc', False)
-            widget.mpv.set_option('ytdl', False)
+            widget.option('load-scripts', False)
+            widget.option('osc', False)
+            widget.option('ytdl', False)
         widget.durationChanged.connect(self.on_durationChanged)
         widget.positionChanged.connect(self.on_positionChanged)
         return widget

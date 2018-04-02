@@ -103,8 +103,8 @@ class mpvWidget(QOpenGLWidget):
         self.mpv = mpv.Context()
 
         self.setLogLevel('terminal-default')
-        self.mpv.set_option('msg-level', self.msglevel)
-        self.mpv.set_option('config', False)
+        self.option('msg-level', self.msglevel)
+        self.option('config', 'no')
 
         def _istr(o):
             return ('yes' if o else 'no') if type(o) is bool else str(o)
@@ -112,7 +112,7 @@ class mpvWidget(QOpenGLWidget):
         # do not break on non-existant properties/options
         for opt, val in mpv_opts.items():
             try:
-                self.mpv.set_option(opt.replace('_', '-'), _istr(val))
+                self.option(opt.replace('_', '-'), _istr(val))
             except mpv.MPVError:
                 self.logger.warning('error setting MPV option "%s" to value "%s"' % (opt, val))
                 pass
@@ -124,9 +124,9 @@ class mpvWidget(QOpenGLWidget):
 
         if sys.platform == 'win32':
             try:
-                self.mpv.set_option('gpu-context', 'angle')
+                self.option('gpu-context', 'angle')
             except mpv.MPVError:
-                self.mpv.set_option('opengl-backend', 'angle')
+                self.option('opengl-backend', 'angle')
 
         self.frameSwapped.connect(self.swapped, Qt.DirectConnection)
 
@@ -252,7 +252,13 @@ class mpvWidget(QOpenGLWidget):
         return self.property('audio-codec-name' if stream == 'audio' else 'video-format')
 
     def version(self) -> str:
-        return self.property('mpv-version').replace('mpv ', '').split('-')[0]
+        ver = self.mpv.api_version
+        return '{0}.{1}'.format(ver[0], ver[1])
+
+    def option(self, option: str, val):
+        if type(val) is bool:
+            val = 'yes' if val else 'no'
+        return self.mpv.set_option(option, val)
 
     def property(self, prop: str, val=None):
         if val is None:
@@ -262,14 +268,14 @@ class mpvWidget(QOpenGLWidget):
 
     def changeEvent(self, event: QEvent) -> None:
         if event.type() == QEvent.WindowStateChange and self.isFullScreen():
-            self.mpv.set_option('osd-align-x', 'center')
+            self.option('osd-align-x', 'center')
             self.showText('Press ESC key to exit full screen')
             QTimer.singleShot(5000, self.resetOSD)
 
     # noinspection PyPep8Naming
     def resetOSD(self) -> None:
         self.showText('')
-        self.mpv.set_option('osd-align-x', 'left')
+        self.option('osd-align-x', 'left')
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
         if event.key() in {Qt.Key_F, Qt.Key_Escape}:

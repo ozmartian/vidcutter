@@ -340,19 +340,19 @@ class VideoPage(QWidget):
 
     @pyqtSlot(int)
     def switchDecoding(self, state: int) -> None:
-        self.parent.parent.mpvWidget.mpv.set_property('hwdec', 'auto' if state == Qt.Checked else 'no')
+        self.parent.parent.mpvWidget.property('hwdec', 'auto' if state == Qt.Checked else 'no')
         self.parent.parent.saveSetting('hwdec', state == Qt.Checked)
         self.parent.parent.hardwareDecoding = (state == Qt.Checked)
 
     @pyqtSlot(int)
     def togglePBO(self, state: int) -> None:
-        self.parent.parent.mpvWidget.mpv.set_option('opengl-pbo', state == Qt.Checked)
+        self.parent.parent.mpvWidget.option('opengl-pbo', state == Qt.Checked)
         self.parent.parent.saveSetting('enablePBO', state == Qt.Checked)
         self.parent.parent.enablePBO = (state == Qt.Checked)
 
     @pyqtSlot(int)
     def keepAspectRatio(self, state: int) -> None:
-        self.parent.parent.mpvWidget.mpv.set_option('keepaspect', state == Qt.Checked)
+        self.parent.parent.mpvWidget.option('keepaspect', state == Qt.Checked)
         self.parent.settings.setValue('aspectRatio', 'keep' if state == Qt.Checked else 'stretch')
         self.parent.parent.keepRatio = (state == Qt.Checked)
 
@@ -366,7 +366,7 @@ class VideoPage(QWidget):
             level = 1
         else:
             level = 0
-        self.parent.parent.mpvWidget.mpv.set_property('video-zoom', level)
+        self.parent.parent.mpvWidget.property('video-zoom', level)
         self.parent.settings.setValue('videoZoom', level)
 
 
