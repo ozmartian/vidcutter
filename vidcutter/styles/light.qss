@@ -765,28 +765,28 @@ VCToolBarButton QPushButton:pressed#toolbar-save {
 
 /* -------------------------------------------------------------------------- */
 
-VCProgressBar {
+VCProgressDialog {
     background-color: #EFF0F1;
     border: 1px solid #666;
 }
 
-VCProgressBar QLabel {
+VCProgressDialog QLabel {
     font-family: "Noto Sans UI", sans-serif;
     font-size: 15px;
     font-weight: 400;
     color: #FFF;
 }
 
-VCProgressBar QProgressBar {
+VCProgressDialog QProgressBar {
     background-color: #AAA;
 }
 
-VCProgressBar QProgressBar::chunk {
+VCProgressDialog QProgressBar::chunk {
     background-color: #642C68;
     margin: 1px;
 }
 
-VCProgressBar QLabel#progresstimer {
+VCProgressDialog QLabel#progresstimer {
     color: #000;
     font-size: 14px;
     font-family: "Noto Sans UI", sans-serif;

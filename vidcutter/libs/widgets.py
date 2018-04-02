@@ -25,8 +25,8 @@
 import os
 import sys
 
-from PyQt5.QtCore import (pyqtProperty, pyqtSignal, pyqtSlot, QEasingCurve, QEvent, QObject, QPoint, QPropertyAnimation,
-                          QSize, Qt, QTime, QTimer)
+from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QEasingCurve, QEvent, QObject, QPoint, QPropertyAnimation, QSize, Qt,
+                          QTime, QTimer)
 from PyQt5.QtGui import QShowEvent
 from PyQt5.QtWidgets import (qApp, QAbstractSpinBox, QDialog, QDialogButtonBox, QGraphicsOpacityEffect, QGridLayout,
                              QHBoxLayout, QLabel, QMessageBox, QProgressBar, QPushButton, QSlider, QSpinBox, QStyle,
@@ -215,11 +215,11 @@ class VCFrameCounter(QWidget):
             self.frameChanged.emit(frame)
 
 
-class VCProgressBar(QDialog):
+class VCProgressDialog(QDialog):
     taskbarprogress = pyqtSignal(float, bool)
 
     def __init__(self, parent=None, flags=Qt.Dialog | Qt.FramelessWindowHint):
-        super(VCProgressBar, self).__init__(parent, flags)
+        super(VCProgressDialog, self).__init__(parent, flags)
         self.parent = parent
         self.setWindowModality(Qt.ApplicationModal)
         self.setStyleSheet('QDialog { border: 2px solid #000; }')
@@ -316,7 +316,7 @@ class VCProgressBar(QDialog):
             self.taskbarprogress.emit(0.0, False)
         if self._timer.isActive():
             self._timer.stop()
-        super(VCProgressBar, self).close()
+        super(VCProgressDialog, self).close()
 
 
 class VCVolumeSlider(QSlider):

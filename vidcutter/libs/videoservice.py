@@ -35,7 +35,7 @@ from functools import partial
 from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QDir, QFile, QFileInfo, QObject, QProcess, QProcessEnvironment,
                           QSettings, QSize, QStandardPaths, QStorageInfo, QTemporaryFile, QTime)
 from PyQt5.QtGui import QPainter, QPixmap
-from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QMessageBox, QWidget
 
 from vidcutter.libs.config import Config, InvalidMediaException, Streams, ToolNotFoundException
 from vidcutter.libs.munch import Munch
@@ -57,11 +57,12 @@ class VideoService(QObject):
     spaceWarningDelivered = False
     smartcutError = False
 
+    # noinspection PyArgumentList
     ThumbSize = Enum('ThumbSize', {'INDEX': QSize(100, 70), 'TIMELINE': QSize(105, 60)})
 
     config = Config()
 
-    def __init__(self, settings: QSettings, parent=None):
+    def __init__(self, settings: QSettings, parent: QWidget=None):
         super(VideoService, self).__init__(parent)
         self.settings = settings
         self.parent = parent
@@ -538,6 +539,8 @@ class VideoService(QObject):
             codec = self.streams.video.codec_name
         else:
             codec = self.codecs(source)[0].lower()
+            if codec == 'mpeg4' and os.path.splitext(source)[1] == '.avi':
+                return False
         return codec in VideoService.config.mpeg_formats
 
     # noinspection PyBroadException

@@ -32,7 +32,7 @@ from PyQt5.QtGui import QDesktopServices
 from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkReply, QNetworkRequest
 from PyQt5.QtWidgets import qApp, QDialog, QDialogButtonBox, QLabel, QVBoxLayout
 
-from vidcutter.libs.widgets import VCProgressBar
+from vidcutter.libs.widgets import VCProgressDialog
 
 
 class Updater(QDialog):
@@ -83,7 +83,7 @@ class UpdaterMsgBox(QDialog):
         self.setWindowTitle('{} updates'.format(qApp.applicationName()))
         self.setWindowModality(Qt.ApplicationModal)
         self.setObjectName('updaterdialog')
-        self.loading = VCProgressBar(self.parent)
+        self.loading = VCProgressDialog(self.parent)
         self.loading.setText('contacting server')
         self.loading.setMinimumWidth(485)
         self.loading.show()

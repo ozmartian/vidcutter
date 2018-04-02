@@ -25,10 +25,10 @@
 import os
 import sys
 
-from PyQt5.QtCore import Qt, QEvent, QModelIndex, QSize
-from PyQt5.QtGui import QColor, QFont, QIcon, QMouseEvent, QPainter, QPen
-from PyQt5.QtWidgets import (QAbstractItemDelegate, QAbstractItemView, QListWidget, QSizePolicy, QStyle,
-                             QStyleOptionViewItem)
+from PyQt5.QtCore import pyqtSlot, Qt, QEvent, QModelIndex, QRect, QSize
+from PyQt5.QtGui import QColor, QFont, QIcon, QMouseEvent, QPainter, QPalette, QPen
+from PyQt5.QtWidgets import (QAbstractItemDelegate, QAbstractItemView, QListWidget, QProgressBar, QSizePolicy, QStyle,
+                             QStyleFactory, QStyleOptionViewItem, qApp)
 
 from vidcutter.graphicseffects import OpacityEffect
 
@@ -38,6 +38,7 @@ class VideoList(QListWidget):
         super(VideoList, self).__init__(parent)
         self.parent = parent
         self.theme = self.parent.theme
+        self._progressbars = []
         self.setMouseTracking(True)
         self.setDropIndicatorShown(True)
         self.setFixedWidth(190)
@@ -55,6 +56,28 @@ class VideoList(QListWidget):
         self.opacityEffect = OpacityEffect(0.3)
         self.opacityEffect.setEnabled(False)
         self.setGraphicsEffect(self.opacityEffect)
+
+    def showProgress(self, steps: int) -> None:
+        for row in range(self.count()):
+            item = self.item(row)
+            progress = ListProgress(steps, self.visualItemRect(item), self)
+            self._progressbars.append(progress)
+
+    @pyqtSlot()
+    @pyqtSlot(int)
+    def updateProgress(self, item: int=None) -> None:
+        if self.count():
+            if item is None:
+                [progress.setValue(progress.value() + 1) for progress in self._progressbars]
+            else:
+                self._progressbars[item].setValue(self._progressbars[item].value() + 1)
+
+    @pyqtSlot()
+    def clearProgress(self) -> None:
+        for progress in self._progressbars:
+            progress.hide()
+            progress.deleteLater()
+        self._progressbars.clear()
 
     def mouseMoveEvent(self, event: QMouseEvent) -> None:
         if self.count() > 0:
@@ -129,3 +152,16 @@ class VideoItem(QAbstractItemDelegate):
 
     def sizeHint(self, option: QStyleOptionViewItem, index: QModelIndex) -> QSize:
         return QSize(185, 85)
+
+
+class ListProgress(QProgressBar):
+    def __init__(self, steps: int, geometry: QRect, parent=None):
+        super(ListProgress, self).__init__(parent)
+        self.setStyle(QStyleFactory.create('Fusion'))
+        self.setRange(0, steps)
+        self.setValue(0)
+        self.setGeometry(geometry)
+        palette = self.palette()
+        palette.setColor(QPalette.Highlight, QColor(100, 44, 104))
+        self.setPalette(palette)
+        self.show()
