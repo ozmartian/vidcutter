@@ -65,6 +65,14 @@ Native installers for Windows and macOS are available on the releases page with 
 
 [![Latest Releases](http://tvlinker.ozmartians.com/images/button-latest-release.png)](https://github.com/ozmartian/vidcutter/releases/latest)
 
+#### Homebrew cask
+
+For macOS users of Homebrew, VidCutter can be easily installed as a "cask". With Homebrew already installed, just run the following terminal command:
+
+```
+$ brew cask install vidcutter
+```
+
 #### Chocolatey package
 
 VidCutter has finally been approved + published in the [Chocolatey](https://chocolatey.org) public repository (its a package manager like in Linux but
