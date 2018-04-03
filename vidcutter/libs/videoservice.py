@@ -80,7 +80,7 @@ class VideoService(QObject):
             self.mappings = []
         except ToolNotFoundException as e:
             self.logger.exception(e.msg, exc_info=True)
-            QMessageBox.critical(getattr(self, 'parent', None), 'Missing libraries', e.msg, QMessageBox.Ok)
+            QMessageBox.critical(getattr(self, 'parent', None), 'Missing libraries', e.msg)
 
     def setMedia(self, source: str) -> None:
         try:
