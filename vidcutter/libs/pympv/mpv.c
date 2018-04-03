@@ -3,16 +3,9 @@
 /* BEGIN: Cython Metadata
 {
     "distutils": {
-        "depends": [
-            "vidcutter/libs/pympv/mpv/client.h",
-            "vidcutter/libs/pympv/mpv/opengl_cb.h"
-        ],
+        "depends": [],
         "extra_compile_args": [
             "-g0"
-        ],
-        "include_dirs": [
-            "vidcutter/libs/pympv",
-            "vidcutter/libs/pympv/mpv"
         ],
         "libraries": [
             "mpv"
@@ -8668,7 +8661,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_14_ReplyUserData_4remove(CYTHON_
  * 
  *     @property
  *     def api_version(self):             # <<<<<<<<<<<<<<
- *         return _CAPI_MINOR, _CAPI_MAJOR
+ *         return _CAPI_MINOR, _CAPI_MAJOR, _CAPI_VERSION
  * 
  */
 
@@ -8691,12 +8684,13 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_11api_version___get__(C
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
   PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_4 = NULL;
   __Pyx_RefNannySetupContext("__get__", 0);
 
   /* "vidcutter/libs/pympv/mpv.pyx":661
  *     @property
  *     def api_version(self):
- *         return _CAPI_MINOR, _CAPI_MAJOR             # <<<<<<<<<<<<<<
+ *         return _CAPI_MINOR, _CAPI_MAJOR, _CAPI_VERSION             # <<<<<<<<<<<<<<
  * 
  *     @property
  */
@@ -8705,23 +8699,28 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_11api_version___get__(C
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_CAPI_MAJOR); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 661, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 661, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyInt_From_unsigned_long(__pyx_v_9vidcutter_4libs_3mpv__CAPI_VERSION); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 661, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
+  __pyx_t_4 = PyTuple_New(3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 661, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_4);
   __Pyx_GIVEREF(__pyx_t_1);
-  PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_1);
+  PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_1);
   __Pyx_GIVEREF(__pyx_t_2);
-  PyTuple_SET_ITEM(__pyx_t_3, 1, __pyx_t_2);
+  PyTuple_SET_ITEM(__pyx_t_4, 1, __pyx_t_2);
+  __Pyx_GIVEREF(__pyx_t_3);
+  PyTuple_SET_ITEM(__pyx_t_4, 2, __pyx_t_3);
   __pyx_t_1 = 0;
   __pyx_t_2 = 0;
-  __pyx_r = __pyx_t_3;
   __pyx_t_3 = 0;
+  __pyx_r = __pyx_t_4;
+  __pyx_t_4 = 0;
   goto __pyx_L0;
 
   /* "vidcutter/libs/pympv/mpv.pyx":660
  * 
  *     @property
  *     def api_version(self):             # <<<<<<<<<<<<<<
- *         return _CAPI_MINOR, _CAPI_MAJOR
+ *         return _CAPI_MINOR, _CAPI_MAJOR, _CAPI_VERSION
  * 
  */
 
@@ -8730,6 +8729,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_11api_version___get__(C
   __Pyx_XDECREF(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
   __Pyx_AddTraceback("vidcutter.libs.mpv.Context.api_version.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;

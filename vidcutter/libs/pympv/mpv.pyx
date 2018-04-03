@@ -658,7 +658,7 @@ cdef class Context(object):
 
     @property
     def api_version(self):
-        return _CAPI_MINOR, _CAPI_MAJOR
+        return _CAPI_MINOR, _CAPI_MAJOR, _CAPI_VERSION
 
     @property
     def name(self):

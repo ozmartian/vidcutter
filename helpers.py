@@ -40,6 +40,13 @@ class SetupHelpers:
         return calcsize('P') * 8
 
     @staticmethod
+    def get_include_dirs():
+        _dirs = []
+        if sys.platform == 'win32':
+            _dirs = ['vidcutter/libs/pympv/include']
+        return _dirs
+
+    @staticmethod
     def get_library_dirs():
         _dirs = []
         if sys.platform == 'win32':

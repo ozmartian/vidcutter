@@ -264,15 +264,16 @@ class mpvWidget(QOpenGLWidget):
         if val is None:
             return self.mpv.get_property(prop)
         else:
+            if type(val) is bool:
+                val = 'yes' if val else 'no'
             return self.mpv.set_property(prop, val)
 
     def changeEvent(self, event: QEvent) -> None:
         if event.type() == QEvent.WindowStateChange and self.isFullScreen():
             self.option('osd-align-x', 'center')
-            self.showText('Press ESC key to exit full screen')
+            self.showText('Press ESC or double mouse click to exit full screen')
             QTimer.singleShot(5000, self.resetOSD)
 
-    # noinspection PyPep8Naming
     def resetOSD(self) -> None:
         self.showText('')
         self.option('osd-align-x', 'left')

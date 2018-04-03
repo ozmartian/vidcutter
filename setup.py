@@ -46,7 +46,7 @@ USE_CYTHON = True if not os.path.isfile('vidcutter/libs/pympv/mpv.c') else False
 
 extensions = [Extension(name='vidcutter.libs.mpv',
                         sources=['vidcutter/libs/pympv/mpv.{}'.format('c' if not USE_CYTHON else 'pyx')],
-                        include_dirs=['vidcutter/libs/pympv/mpv'],
+                        include_dirs=SetupHelpers.get_include_dirs(),
                         libraries=['mpv'],
                         library_dirs=SetupHelpers.get_library_dirs(),
                         extra_compile_args=['-g0' if os.name == 'posix' else ''])]
