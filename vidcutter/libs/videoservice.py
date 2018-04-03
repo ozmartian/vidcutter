@@ -29,6 +29,7 @@ import re
 import shlex
 import sys
 from bisect import bisect_left
+from collections import OrderedDict
 from enum import Enum
 from functools import partial
 
@@ -477,13 +478,35 @@ class VideoService(QObject):
                 absf = '{} mp3decomp'.format(prefix)
         return vbsf, absf
 
-    def probe(self, source: str, blackdetect: bool=False) -> Munch:
+    def blackdetect(self, source: str) -> list:
+        args = '-f lavfi -i "movie=\'{}\',blackdetect[out0]" -show_entries tags=lavfi.black_start,' \
+               'lavfi.black_end -of default=nw=1 -v quiet'.format(source)
+        result = self.cmdExec(self.backends.ffprobe, args, output=True)
+        # strip FFmpeg string prefix
+        result = result.replace('TAG:lavfi.black_', '')
+        # remove duplicate lines & split to array
+        result = list(OrderedDict.fromkeys(result.split('\n')))
+        # remove last value if uneven to ensure only start/end pairs
+        if len(result) & 1:
+            result.pop()
+        # massage array into array of start/end tuples
+        # TODO: make this more pythonic
+        blacks = []
+        for x in result:
+            key, val = x.split('=')
+            if key == 'start':
+                blacks.append(val)
+            elif key == 'end':
+                start = blacks.pop()
+                blacks.append(tuple([float(start), float(val)]))
+        # remove first scene if at start of video
+        if blacks[0][0] == 0.0:
+            blacks.pop(0)
+        return blacks
+
+    def probe(self, source: str) -> Munch:
         try:
-            if blackdetect:
-                args = '-v error -f lavfi -i "movie={},blackdetect[out0]" -show_entries tags=lavfi.black_start,' \
-                       'lavfi.black_end -of json'.format(source)
-            else:
-                args = '-v error -show_streams -show_format -of json "{}"'.format(source)
+            args = '-v error -show_streams -show_format -of json "{}"'.format(source)
             json_data = self.cmdExec(self.backends.ffprobe, args, output=True)
             return Munch.fromDict(loads(json_data))
         except FileNotFoundError:
