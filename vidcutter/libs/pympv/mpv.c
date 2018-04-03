@@ -582,8 +582,9 @@ static CYTHON_INLINE float __PYX_NAN() {
 /* Early includes */
 #include <string.h>
 #include <stdlib.h>
-#include "mpv/client.h"
-#include "mpv/opengl_cb.h"
+#include <mpv/client.h>
+#include <mpv/opengl_cb.h>
+#include <Python.h>
 #ifdef _OPENMP
 #include <omp.h>
 #endif /* _OPENMP */

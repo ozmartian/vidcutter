@@ -129,11 +129,11 @@ class VideoService(QObject):
                         break
         settings.endGroup()
         if tools.ffmpeg is None:
-            raise ToolNotFoundException('Could not locate ffmpeg on system')
+            raise ToolNotFoundException('FFmpeg missing')
         if tools.ffprobe is None:
-            raise ToolNotFoundException('Could not locate ffprobe onsystem')
+            raise ToolNotFoundException('FFprobe missing')
         if tools.mediainfo is None:
-            raise ToolNotFoundException('Could not locate mediainfo on system')
+            raise ToolNotFoundException('MediaInfo missing')
         return tools
 
     @staticmethod
@@ -479,30 +479,27 @@ class VideoService(QObject):
         return vbsf, absf
 
     def blackdetect(self, source: str) -> list:
-        args = '-f lavfi -i "movie=\'{}\',blackdetect[out0]" -show_entries tags=lavfi.black_start,' \
-               'lavfi.black_end -of default=nw=1 -v quiet'.format(source)
-        result = self.cmdExec(self.backends.ffprobe, args, output=True)
-        # strip FFmpeg string prefix
-        result = result.replace('TAG:lavfi.black_', '')
-        # remove duplicate lines & split to array
-        result = list(OrderedDict.fromkeys(result.split('\n')))
-        # remove last value if uneven to ensure only start/end pairs
-        if len(result) & 1:
-            result.pop()
-        # massage array into array of start/end tuples
-        # TODO: make this more pythonic
-        blacks = []
-        for x in result:
-            key, val = x.split('=')
-            if key == 'start':
-                blacks.append(val)
-            elif key == 'end':
-                start = blacks.pop()
-                blacks.append(tuple([float(start), float(val)]))
-        # remove first scene if at start of video
-        if blacks[0][0] == 0.0:
-            blacks.pop(0)
-        return blacks
+        try:
+            args = '-f lavfi -i "movie=\'{}\',blackdetect[out0]" -show_entries tags=lavfi.black_start,lavfi.black_end' \
+                   ' -of default=nw=1 -v quiet'.format(source)
+            result = self.cmdExec(self.backends.ffprobe, args, output=True)
+            # strip FFmpeg string prefix
+            result = result.replace('TAG:lavfi.black_', '')
+            # remove duplicate lines & split to array
+            result = list(OrderedDict.fromkeys(result.split('\n')))
+            # TODO: make this more pythonic
+            scenes = []
+            for x in result:
+                key, val = x.split('=')
+                if key == 'start':
+                    scenes.append(val)
+                elif key == 'end':
+                    start = scenes.pop()
+                    scenes.append(tuple([float(start), float(val)]))
+            return scenes
+        except FileNotFoundError:
+            self.logger.exception('Could not find media file: {}'.format(source), exc_info=True)
+            raise
 
     def probe(self, source: str) -> Munch:
         try:
@@ -510,10 +507,10 @@ class VideoService(QObject):
             json_data = self.cmdExec(self.backends.ffprobe, args, output=True)
             return Munch.fromDict(loads(json_data))
         except FileNotFoundError:
-            self.logger.exception('Media file for FFprobe not found: {}'.format(source), exc_info=True)
+            self.logger.exception('FFprobe could not find media file: {}'.format(source), exc_info=True)
             raise
         except JSONDecodeError:
-            self.logger.exception('Error decoding FFprobe JSON output', exc_info=True)
+            self.logger.exception('FFprobe JSON decoding error', exc_info=True)
             raise
 
     def getKeyframes(self, source: str, formatted_time: bool=False) -> list:

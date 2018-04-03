@@ -449,7 +449,7 @@ class VideoCutter(QWidget):
             mute=mute,
             keep_open='always',
             idle=True,
-            osd_font='Noto Sans UI',
+            osd_font='Noto Sans',
             osd_level=0,
             osd_align_x='left',
             osd_align_y='top',
@@ -822,13 +822,8 @@ class VideoCutter(QWidget):
                     </tr>
                     <tr>
                         <td>
-                            <p>Your clip index contains external media files which is not
-                            supported by the current project file format. Remove all external
-                            files from your clip index and try again.</p>
-                            <p>Support for external files may be added to the VidCutter Project
-                            (VCP) file format in a future update. Submit a feature request for
-                            this on our <a href="{2}">GitHub Issues page</a> if you would like
-                            this feature added sooner rather than later.</p>
+                            <p>Cannot save project containing external media files. Remove
+                            all media files you have externally added and try again.</p>
                         </td>
                     </tr>
                 </table>'''.format('#C681D5' if self.theme == 'dark' else '#642C68',
@@ -907,7 +902,6 @@ class VideoCutter(QWidget):
                                  'and the version of VidCutter you are currently using.</p>')
 
     def setPlayButton(self, playing: bool=False) -> None:
-        self.showText('playing' if playing else 'paused')
         self.toolbar_play.setup('{} Media'.format('Pause' if playing else 'Play'),
                                 'Pause currently playing media' if playing else 'Play currently loaded media',
                                 True)

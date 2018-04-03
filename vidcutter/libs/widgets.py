@@ -389,7 +389,7 @@ class ClipErrorsDialog(QDialog):
         self.errors = errors
         self.parent = parent
         self.setWindowModality(Qt.ApplicationModal)
-        self.setWindowTitle('Cannot add media file(s)')
+        self.setWindowTitle('Cannot add media')
         self.headingcolor = '#C681D5' if self.parent.theme == 'dark' else '#642C68'
         self.pencolor = '#FFF' if self.parent.theme == 'dark' else '#222'
         self.toolbox = ClipErrorsDialog.VCToolBox(self)
