@@ -57,10 +57,10 @@ class About(QDialog):
         headertext = '''
             <div style="font-family:'Futura-Light', sans-serif;font-size:40px;font-weight:400;color:{};margin:0;">
                 <span style="font-size:58px;">V</span>ID<span style="font-size:58px;">C</span>UTTER
-            </div>'''.format(pencolor1)
+            </div>
+            <table border="0" cellpadding="0" cellspacing="0">'''.format(pencolor1)
         if builddate is None:
             headertext += '''
-            <table border="0" cellpadding="0" cellspacing="0" style="margin-top:20px;">
                 <tr valign="middle">
                     <td width="30"></td>
                     <td style="text-align:right;font-size:10pt;font-weight:500;color:{pencolor1};">version:</td>
@@ -72,7 +72,6 @@ class About(QDialog):
                 </tr>'''.format(**locals())
         else:
             headertext += '''
-            <table border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;">
                 <tr valign="middle">
                     <td rowspan="2" width="30"></td>
                     <td style="text-align:right;font-size:10pt;font-weight:500;color:{pencolor1};">version:</td>
@@ -130,9 +129,10 @@ class About(QDialog):
         if getattr(sys, 'frozen', False) and not getattr(sys, '_MEIPASS', False):
             datefile = os.path.realpath(sys.argv[0])
         else:
+            import vidcutter.libs.mpv
             datefile = sys.modules['vidcutter.libs.mpv'].__file__
         builddate = datetime.fromtimestamp(os.path.getmtime(datefile)).strftime('%d %b %Y')
-        return None if int(builddate.split(' ')[2]) == time.gmtime(0)[0] else builddate
+        return None if int(builddate.split(' ')[2]) == time.gmtime(0)[0] else builddate.upper()
 
     @staticmethod
     def get_size(mode: str = 'NORMAL') -> QSize:

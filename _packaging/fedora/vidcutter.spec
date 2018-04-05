@@ -3,7 +3,7 @@
 
 Name:           %{pkg_name}
 Version:        5.5.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        the simplest + fastest video cutter & joiner
 Group:          Applications/Multimedia
 License:        GPLv3+
@@ -41,13 +41,17 @@ rm -rf %{pkg_name}.egg-info
 %install
 %py3_install
 
-%files -n %{pkg_name}
+%clean
+rm -rf %{buildroot}
+
+%files
+
 %license LICENSE
 %doc README.md
+%{_bindir}/%{pkg_name}
 %{python3_sitearch}/%{pkg_name}
 %{python3_sitearch}/%{pkg_name}-%{version}-py?.?.egg-info
-%{_bindir}/%{pkg_name}
-%{_datadir}/applications/com.ozmartians.vidcutter.desktop
+%{_datadir}/applications/com.ozmartians.%{pkg_name}.desktop
 %{_datadir}/icons/hicolor/16x16/apps/%{pkg_name}.png
 %{_datadir}/icons/hicolor/128x128/apps/%{pkg_name}.png
 %{_datadir}/icons/hicolor/22x22/apps/%{pkg_name}.png
@@ -58,12 +62,13 @@ rm -rf %{pkg_name}.egg-info
 %{_datadir}/icons/hicolor/512x512/apps/%{pkg_name}.png
 %{_datadir}/icons/hicolor/64x64/apps/%{pkg_name}.png
 %{_datadir}/icons/hicolor/scalable/apps/%{pkg_name}.svg
-%{_datadir}/appdata/com.ozmartians.vidcutter.appdata.xml
-%{_datadir}/metainfo/com.ozmartians.vidcutter.appdata.xml
+%{_datadir}/metainfo/com.ozmartians.%{pkg_name}.appdata.xml
 %{_datadir}/mime/packages/x-%{pkg_name}.xml
-%{_datadir}/pixmaps/%{pkg_name}.svg
+%{_datadir}/mime/packages/wtv.xml
 
 %changelog
+* Mon Feb 05 2018 Pete Alexandrou <pete AT ozmartians DOT com> 5.5.0-2
+- 5.5.0 + BUGFIX release
 * Thu Nov 30 2017 Pete Alexandrou <pete AT ozmartians DOT com> 5.0.5-1
 - 5.0.5 release
 * Thu Nov 16 2017 Pete Alexandrou <pete AT ozmartians DOT com> 5.0.0-1
