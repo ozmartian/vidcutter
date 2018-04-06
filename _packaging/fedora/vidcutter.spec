@@ -41,16 +41,12 @@ rm -rf %{pkg_name}.egg-info
 %install
 %py3_install
 
-%clean
-rm -rf %{buildroot}
-
-%files
-
+%files -n %{pkg_name}
 %license LICENSE
 %doc README.md
-%{_bindir}/%{pkg_name}
 %{python3_sitearch}/%{pkg_name}
 %{python3_sitearch}/%{pkg_name}-%{version}-py?.?.egg-info
+%{_bindir}/%{pkg_name}
 %{_datadir}/applications/com.ozmartians.%{pkg_name}.desktop
 %{_datadir}/icons/hicolor/16x16/apps/%{pkg_name}.png
 %{_datadir}/icons/hicolor/128x128/apps/%{pkg_name}.png
