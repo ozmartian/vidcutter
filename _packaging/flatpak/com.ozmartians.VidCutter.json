@@ -128,9 +128,21 @@
             "config-opts": [
                 "--enable-shared",
                 "--disable-static",
+                "--disable-debug",
                 "--enable-gnutls",
                 "--disable-doc",
                 "--disable-ffplay",
+                "--enable-gpl",
+                "--enable-libass",
+                "--enable-libfribidi",
+                "--enable-libmp3lame",
+                "--enable-libpulse",
+                "--enable-libtheora",
+                "--enable-libvorbis",
+                "--enable-libvpx",
+                "--enable-libx264",
+                "--enable-libx265",
+                "--enable-libxvid",
                 "--enable-version3"
             ],
             "sources": [
@@ -138,6 +150,97 @@
                 "type": "archive",
                 "url": "https://github.com/FFmpeg/FFmpeg/archive/3eff98c9278804b4b664bad3853e5e60184c6a54.tar.gz",
                 "sha256": "bf612d4844fa00d9b1939248a0f4423b9cfca8cb947c529deb70da901f0ade7c"
+            }],
+            "modules": [
+            {
+                "name": "xvid",
+                "subdir": "build/generic",
+                "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://downloads.xvid.org/downloads/xvidcore-1.3.5.tar.bz2",
+                    "sha256": "7c20f279f9d8e89042e85465d2bcb1b3130ceb1ecec33d5448c4589d78f010b4"
+                }]
+            },
+            {
+                "name": "libvpx",
+                "config-opts": [
+                    "--enable-runtime-cpu-detect",
+                    "--enable-shared",
+                    "--disable-static",
+                    "--enable-pic",
+                    "--disable-install-docs",
+                    "--disable-install-srcs",
+                    "--enable-vp8",
+                    "--enable-postproc",
+                    "--enable-vp9",
+                    "--enable-vp9-highbitdepth"
+                ],
+                "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://github.com/webmproject/libvpx/archive/v1.7.0.tar.gz",
+                    "sha256": "1fec931eb5c94279ad219a5b6e0202358e94a93a90cfb1603578c326abfc1238"
+                }]
+            },
+            {
+                "name": "x264",
+                "config-opts": [
+                    "--enable-shared",
+                    "--disable-static",
+                    "--disable-cli",
+                    "--enable-pic",
+                    "--disable-asm",
+                    "--disable-lavf"
+                ],
+                "sources": [
+                {
+                    "type": "git",
+                    "url": "https://git.videolan.org/git/x264.git"
+                }]
+            },
+            {
+                "name": "x265",
+                "buildsystem": "simple",
+                "cleanup": [],
+                "build-commands": [
+                    "mkdir source/build-8 source/build-10 source/build-12",
+                    "cd source/build-12 && cmake .. -DCMAKE_INSTALL_PREFIX=${FLATPAK_DEST} -DHIGH_BIT_DEPTH='TRUE' -DMAIN12='TRUE' -DEXPORT_C_API='FALSE' -DENABLE_CLI='FALSE' -DENABLE_SHARED='FALSE'",
+                    "cd source/build-12 && make",
+                    "cd source/build-10 && cmake .. -DCMAKE_INSTALL_PREFIX=${FLATPAK_DEST} -DHIGH_BIT_DEPTH='TRUE' -DEXPORT_C_API='FALSE' -DENABLE_CLI='FALSE' -DENABLE_SHARED='FALSE'",
+                    "cd source/build-10 && make",
+                    "ln -s ../build-10/libx265.a source/build-8/libx265_main10.a",
+                    "ln -s ../build-12/libx265.a source/build-8/libx265_main12.a",
+                    "cd source/build-8 && cmake .. -DCMAKE_INSTALL_PREFIX=${FLATPAK_DEST} -DENABLE_SHARED='TRUE' -DENABLE_CLI='FALSE' -DENABLE_HDR10_PLUS='TRUE' -DEXTRA_LIB='x265_main10.a;x265_main12.a' -DEXTRA_LINK_FLAGS='-L.' -DLINKED_10BIT='TRUE' -DLINKED_12BIT='TRUE'",
+                    "cd source/build-8 && make",
+                    "cd source/build-8 && make install"
+                ],
+                "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://bitbucket.org/multicoreware/x265/downloads/x265_2.7.tar.gz",
+                    "sha256": "d5e75fa62ffe6ed49e691f8eb8ab8c1634ffcc0725dd553c6fdb4d5443b494a2"
+                }]
+            },
+            {
+                "name": "fdkaac",
+                "config-opts": [ "--disable-static" ],
+                "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://github.com/mstorsjo/fdk-aac/archive/v0.1.6.tar.gz",
+                    "sha256": "adbcd793e406e1b88b3c1c41382d49f8c27371485b823c0fdab69c9124fd2ce3"
+                }]
+            },
+            {
+                "name": "lame",
+                "config-opts": [ "--enable-shared", "--disable-static", "--enable-nasm" ],
+                "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://downloads.sourceforge.net/lame/lame-3.100.tar.gz",
+                    "sha256": "ddfe36cab873794038ae2c1210557ad34857a4b6bdc515785d1da9e175b1da1e"
+                }]
             }]
         }]
     },
@@ -157,13 +260,13 @@
         },
         {
             "type": "archive",
-            "url": "https://mirror.pkgbuild.com/community/os/x86_64/libmediainfo-18.03-1-x86_64.pkg.tar.xz",
-            "sha256": "a9e501125b7a48eccd095f3373b35d675f9f255e678070264c77d9804c60b6d0"
+            "url": "https://mirror.pkgbuild.com/community/os/x86_64/libmediainfo-18.03.1-1-x86_64.pkg.tar.xz",
+            "sha256": "c80fd36769e65a607d5ea6d422e5de01946ed53d4b48db05f992291cc277e9a4"
         },
         {
             "type": "archive",
-            "url": "https://mirror.pkgbuild.com/community/os/x86_64/mediainfo-18.03-1-x86_64.pkg.tar.xz",
-            "sha256": "5cebb5afd8418c8ff4afefcee6b3487bfac3bb8031833a5f98518304cf5e59d2"
+            "url": "https://mirror.pkgbuild.com/community/os/x86_64/mediainfo-18.03.1-1-x86_64.pkg.tar.xz",
+            "sha256": "066be192f1123bff9d33fb7beaee394d8daa0d0345a81ded29f306587f2af119"
         }],
         "modules": [
         {

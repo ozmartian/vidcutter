@@ -33,3 +33,4 @@ pkg2appimage
 .snapcraft
 _packaging/flatpak/.flatpak-builder
 _packaging/flatpak/*repo*
+_packaging/flatpak/ozmartian
