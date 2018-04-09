@@ -394,7 +394,10 @@ def main():
     app.setOrganizationDomain(vidcutter.__domain__)
     app.setQuitOnLastWindowClosed(True)
 
+    stylename = qApp.style().objectName().lower()
+
     win = MainWindow()
+    win.stylename = stylename
     app.setActivationWindow(win)
     app.messageReceived.connect(win.file_opener)
     app.aboutToQuit.connect(MainWindow.cleanup)
