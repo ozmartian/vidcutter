@@ -1209,13 +1209,13 @@ class VideoCutter(QWidget):
             if not os.path.isdir(self.workFolder):
                 os.mkdir(self.workFolder)
             if self.smartcut:
-                self.seekSlider.lockGUI(True)
+                self.parent.lock_gui(True)
                 self.seekSlider.showProgress(6 if clips > 1 else 5)
                 self.videoService.smartinit(clips)
                 self.smartcutter(file, source_file, source_ext)
                 return
             steps = 3 if clips > 1 else 2
-            self.seekSlider.lockGUI(True)
+            self.parent.lock_gui(True)
             self.seekSlider.showProgress(steps)
             filename, filelist = '', []
             for clip in self.clipTimes:
@@ -1306,7 +1306,7 @@ class VideoCutter(QWidget):
             QFile.rename(filename, self.finalFilename)
         self.seekSlider.updateProgress()
         self.toolbar_save.setEnabled(True)
-        self.seekSlider.lockGUI(False)
+        self.parent.lock_gui(False)
         self.notify = JobCompleteNotification(
             self.finalFilename,
             self.sizeof_fmt(int(QFileInfo(self.finalFilename).size())),
@@ -1324,7 +1324,7 @@ class VideoCutter(QWidget):
         if self.smartcut:
             self.videoService.smartabort()
             QTimer.singleShot(1500, self.cleanup)
-        self.seekSlider.lockGUI(False)
+        self.parent.lock_gui(False)
         self.seekSlider.clearProgress()
         self.toolbar_save.setEnabled(True)
         self.parent.errorHandler(errormsg)

@@ -216,6 +216,18 @@ class MainWindow(QMainWindow):
         self.settings.setValue('windowState', self.saveState())
         self.settings.sync()
 
+    def lock_gui(self, locked: bool=True) -> None:
+        if locked:
+            qApp.setOverrideCursor(Qt.WaitCursor)
+            self.cutter.cliplist.setEnabled(False)
+            self.setEnabled(False)
+            self.blockSignals(True)
+        else:
+            self.blockSignals(False)
+            self.setEnabled(True)
+            self.cutter.cliplist.setEnabled(True)
+            qApp.restoreOverrideCursor()
+
     @staticmethod
     def get_path(path: str=None, override: bool=False) -> str:
         if override:

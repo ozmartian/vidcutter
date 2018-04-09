@@ -248,20 +248,6 @@ class VideoSlider(QSlider):
         qApp.processEvents()
         self._progressbars.clear()
 
-    def lockGUI(self, locked: bool) -> None:
-        if locked:
-            qApp.setOverrideCursor(Qt.WaitCursor)
-            self.parent.cliplist.setEnabled(False)
-            self.parent.parent.setEnabled(False)
-            self.blockSignals(True)
-            self.parent.parent.layout().setSizeConstraint(QLayout.SetFixedSize)
-        else:
-            self.blockSignals(False)
-            self.parent.parent.setEnabled(True)
-            self.parent.cliplist.setEnabled(True)
-            qApp.restoreOverrideCursor()
-            self.parent.parent.layout().setSizeConstraint(QLayout.SetNoConstraint)
-
     def initThumbs(self) -> None:
         framesize = self.parent.videoService.framesize()
         thumbsize = QSize(VideoService.ThumbSize.TIMELINE.value.height() * (framesize.width() / framesize.height()),
