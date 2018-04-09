@@ -234,6 +234,7 @@ class StreamSelectorScrollArea(QScrollArea):
         super(StreamSelectorScrollArea, self).__init__(parent)
         if sys.platform in {'win32', 'darwin'}:
             self.setStyle(QStyleFactory.create('Fusion'))
+        if self.style().objectName().lower() == 'fusion':
             self.setStyleSheet('''
             QScrollArea {{
                 background-color: transparent;
