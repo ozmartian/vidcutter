@@ -295,8 +295,8 @@
         "sources": [
         {
             "type": "archive",
-            "url": "https://github.com/ozmartian/vidcutter/archive/df79b9f0e122bed90bcee84dc6142d530012c747.tar.gz",
-            "sha256": "857441c9236ac989d78c8efb5c128a55f55ee2dafb2f231084fc1dc082a96f51"
+            "url": "https://github.com/ozmartian/vidcutter/archive/d8932edddff16f48edf8dcf4f8355d7ee464f023.tar.gz",
+            "sha256": "11e3e444537895ba5b24682c348f4213f2678fe076c84c2d1f855ae2d6d88ce7"
         }]
     }]
 }

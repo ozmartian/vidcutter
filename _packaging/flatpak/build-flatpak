@@ -2,7 +2,6 @@
 
 flatpak-builder -v \
 	--install \
-	--repo=ozmartian \
 	--force-clean \
 	build \
 	com.ozmartians.VidCutter.json
