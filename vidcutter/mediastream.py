@@ -57,7 +57,6 @@ class StreamSelector(QDialog):
         layout.addWidget(buttons)
         self.setLayout(layout)
         self.setMinimumSize(500, 300)
-        self.setMaximumSize(500, 600)
 
     @staticmethod
     def lineSeparator() -> QFrame:
@@ -89,7 +88,7 @@ class StreamSelector(QDialog):
                                                     codec=self.streams.video.codec_long_name,
                                                     width=self.streams.video.width,
                                                     height=self.streams.video.height,
-                                                    framerate=framerate,
+                                                    framerate='{0:.2f}'.format(framerate),
                                                     ratio=ratio,
                                                     pixfmt=self.streams.video.pix_fmt), self)
         label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
@@ -136,7 +135,7 @@ class StreamSelector(QDialog):
             widget.setMinimumWidth(400)
             widget.setLayout(audiolayout)
             scrolllayout = QHBoxLayout()
-            scrolllayout.addWidget(StreamSelectorScrollArea(widget, 200, self))
+            scrolllayout.addWidget(StreamSelectorScrollArea(widget, 200, self.parent.theme, self))
             audiogroup.setLayout(scrolllayout)
         else:
             audiogroup.setLayout(audiolayout)
@@ -172,7 +171,7 @@ class StreamSelector(QDialog):
             widget.setMinimumWidth(400)
             widget.setLayout(subtitlelayout)
             scrolllayout = QHBoxLayout()
-            scrolllayout.addWidget(StreamSelectorScrollArea(widget, 170, self))
+            scrolllayout.addWidget(StreamSelectorScrollArea(widget, 170, self.parent.theme, self))
             subtitlegroup.setStyleSheet('QGroupBox { padding-right: 0; }')
             subtitlegroup.setLayout(scrolllayout)
         else:
@@ -231,11 +230,24 @@ class StreamSelector(QDialog):
 
 
 class StreamSelectorScrollArea(QScrollArea):
-    def __init__(self, widget: QWidget, minHeight: int, parent=None):
+    def __init__(self, widget: QWidget, minHeight: int, theme: str, parent):
         super(StreamSelectorScrollArea, self).__init__(parent)
-        self.setStyleSheet('QScrollArea { background-color: transparent; margin-bottom: 20px; }')
         if sys.platform in {'win32', 'darwin'}:
             self.setStyle(QStyleFactory.create('Fusion'))
+            self.setStyleSheet('''
+            QScrollArea {{
+                background-color: transparent;
+                margin-bottom: 10px;
+                border: none;
+                border-right: 1px solid {};
+            }}'''.format('#4D5355' if theme == 'dark' else '#C0C2C3'))
+        else:
+            self.setStyleSheet('''
+            QScrollArea {{
+                background-color: transparent;
+                margin-bottom: 10px;
+                border: none;
+            }}''')
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setFrameShape(QFrame.NoFrame)
         self.setMinimumHeight(minHeight)
