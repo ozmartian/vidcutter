@@ -30,7 +30,7 @@ import time
 from datetime import datetime
 
 from PyQt5.Qt import PYQT_VERSION_STR, QT_VERSION_STR
-from PyQt5.QtCore import QSize, Qt, QUrl
+from PyQt5.QtCore import QObject, QSize, QUrl, Qt
 from PyQt5.QtGui import QCloseEvent, QPixmap
 from PyQt5.QtWidgets import (qApp, QDialog, QDialogButtonBox, QHBoxLayout, QLabel, QSizePolicy, QStyleFactory,
                              QTabWidget, QTextBrowser, QVBoxLayout, QWidget)
@@ -39,72 +39,67 @@ import vidcutter
 
 
 class About(QDialog):
-    def __init__(self, parent=None, f=Qt.WindowCloseButtonHint):
+    def __init__(self, ffmpeg_service: QObject, mpv_service: QObject, parent: QWidget, f=Qt.WindowCloseButtonHint):
         super(About, self).__init__(parent, f)
         self.parent = parent
         self.logger = logging.getLogger(__name__)
+        self.ffmpeg_service = ffmpeg_service
+        self.mpv_service = mpv_service
+        self.theme = self.parent.theme
         self.setObjectName('aboutwidget')
         self.setContentsMargins(0, 0, 0, 0)
         self.setWindowModality(Qt.ApplicationModal)
-        pencolor1 = '#9A45A2' if self.parent.theme == 'dark' else '#642C68'
-        pencolor2 = '#FFF' if self.parent.theme == 'dark' else '#000'
+        pencolor1 = '#9A45A2' if self.theme == 'dark' else '#642C68'
+        pencolor2 = '#FFF' if self.theme == 'dark' else '#000'
         appversion = qApp.applicationVersion()
         apparch = platform.architecture()[0]
         builddate = About.builddate()
         pythonlabel, qtlabel = QLabel(self), QLabel(self)
-        pythonlabel.setPixmap(QPixmap(':/images/{}/python.png'.format(self.parent.theme)))
+        pythonlabel.setPixmap(QPixmap(':/images/{}/python.png'.format(self.theme)))
         qtlabel.setPixmap(QPixmap(':/images/qt.png'))
-        headertext = '''
-            <div style="font-family:'Futura-Light', sans-serif;font-size:40px;font-weight:400;color:{};margin:0;">
-                <span style="font-size:58px;">V</span>ID<span style="font-size:58px;">C</span>UTTER
-            </div>
-            <table border="0" cellpadding="0" cellspacing="0">'''.format(pencolor1)
-        if builddate is None:
-            headertext += '''
-                <tr valign="middle">
-                    <td width="30"></td>
-                    <td style="text-align:right;font-size:10pt;font-weight:500;color:{pencolor1};">version:</td>
-                    <td>&nbsp;</td>
-                    <td>
-                        <span style="font-size:18px;font-weight:400;">{appversion}</span>
-                        &nbsp;<span style="font-size:10pt;margin-left:5px;">({apparch})</span>
-                    </td>
-                </tr>'''.format(**locals())
-        else:
-            headertext += '''
-                <tr valign="middle">
-                    <td rowspan="2" width="30"></td>
-                    <td style="text-align:right;font-size:10pt;font-weight:500;color:{pencolor1};">version:</td>
-                    <td>&nbsp;</td>
-                    <td>
-                        <span style="font-size:18px;font-weight:400;">{appversion}</span>
-                        &nbsp;<span style="font-size:10pt;margin-left:5px;">({apparch})</span>
-                    </td>
-                </tr>
-                <tr valign="middle">
-                    <td style="text-align:right;font-size:10pt;font-weight:500;color:{pencolor1};">build date:</td>
-                    <td>&nbsp;</td>
-                    <td style="font-size:10pt;font-weight:400;">{builddate}</td>
-                </tr>'''.format(**locals())
-            headertext += '''
-            </table>
-        </div>'''
+        rowspan = 1
+        builddate_content = ''
+        if builddate is not None:
+            rowspan = 2
+            builddate_content = '''
+            <tr valign="top">
+                <td style="vertical-align:middle;text-align:right;font-size:10pt;font-weight:500;color:{pencolor1};">
+                    build date:
+                </td>
+                <td>&nbsp;</td>
+                <td style="font-size:10pt;font-weight:400;">{builddate}</td>
+            </tr>'''.format(**locals())
+        headercontent = '''
+        <div style="font-family:'Futura-Light';font-size:40px;font-weight:400;color:{pencolor1};margin:0;padding:0;">
+            <span style="font-size:58px;">V</span>ID<span style="font-size:58px;">C</span>UTTER
+        </div>
+        <table border="0" cellpadding="0" cellspacing="0" style="margin:10px 0 0 10px;">
+            <tr valign="top">
+                <td rowspan="{rowspan}" width="30"></td>
+                <td style="vertical-align:middle;text-align:right;font-size:10pt;font-weight:500;color:{pencolor1};">
+                    version:
+                </td>
+                <td>&nbsp;</td>
+                <td>
+                    <span style="font-size:18px;font-weight:400;">{appversion}</span>
+                    &nbsp;<span style="font-size:10pt;margin-left:5px;">({apparch})</span>
+                </td>
+            </tr>
+            {builddate_content}
+        </table>'''.format(**locals())
         creditslayout = QVBoxLayout()
-        creditslayout.setSpacing(15)
+        creditslayout.setContentsMargins(0, 0, 0, 0)
+        creditslayout.setSpacing(10)
         creditslayout.addStretch(1)
         creditslayout.addWidget(pythonlabel)
         creditslayout.addWidget(qtlabel)
         headerlayout = QHBoxLayout()
-        headerlayout.setContentsMargins(5, 5, 5, 5)
-        headerlayout.setSpacing(15)
+        headerlayout.setContentsMargins(0, 5, 0, 5)
         headerlayout.addWidget(QLabel('<img src="{}" />'.format(self.parent.getAppIcon(encoded=True)), self))
-        headerlayout.addWidget(QLabel(headertext, self))
+        headerlayout.addSpacing(15)
+        headerlayout.addWidget(QLabel(headercontent, self))
         headerlayout.addStretch(1)
         headerlayout.addLayout(creditslayout)
-        headerlayout.addSpacing(15)
-        headerwidget = QWidget(self)
-        headerwidget.setLayout(headerlayout)
-        headerwidget.setMaximumHeight(125)
         self.tab_about = AboutTab(self)
         self.tab_credits = CreditsTab(self)
         self.tab_license = LicenseTab(self)
@@ -116,13 +111,13 @@ class About(QDialog):
         buttons = QDialogButtonBox(QDialogButtonBox.Ok)
         buttons.accepted.connect(self.close)
         layout = QVBoxLayout()
-        layout.addWidget(headerwidget)
-        layout.addWidget(tabs)
+        layout.addLayout(headerlayout)
+        layout.addWidget(tabs, 1)
         layout.addWidget(buttons)
         self.setLayout(layout)
         self.setWindowTitle('About %s' % qApp.applicationName())
         self.setWindowIcon(self.parent.windowIcon())
-        self.setMinimumSize(self.get_size(self.parent.parent.scale))
+        self.setMinimumSize(self.get_size(self.parent.parentWidget().scale))
 
     @staticmethod
     def builddate():
@@ -138,7 +133,7 @@ class About(QDialog):
     def get_size(mode: str = 'NORMAL') -> QSize:
         modes = {
             'LOW': QSize(450, 300),
-            'NORMAL': QSize(515, 520),
+            'NORMAL': QSize(500, 505),
             'HIGH': QSize(1080, 920)
         }
         return modes[mode]
@@ -155,7 +150,7 @@ class BaseTab(QTextBrowser):
     def __init__(self, parent=None):
         super(BaseTab, self).__init__(parent)
         self.setOpenExternalLinks(True)
-        if parent.parent.theme == 'dark':
+        if parent.theme == 'dark':
             bgcolor = 'rgba(12, 15, 16, 210)'
             pencolor = '#FFF'
         else:
@@ -169,20 +164,20 @@ class BaseTab(QTextBrowser):
 
 
 class AboutTab(BaseTab):
-    def __init__(self, parent=None):
+    def __init__(self, parent):
         super(AboutTab, self).__init__(parent)
         self.parent = parent
         spacer = '&nbsp;&nbsp;&nbsp;'
         # noinspection PyBroadException
         try:
-            mpv_version = self.parent.parent.mpvWidget.version()
-        except BaseException as e:
+            mpv_version = self.parent.mpv_service.version()
+        except Exception:
             self.parent.logger.exception('mpv version error', exc_info=True)
             mpv_version = '<span style="color:maroon; font-weight:bold;">MISSING</span>'
         # noinspection PyBroadException
         try:
-            ffmpeg_version = self.parent.parent.videoService.version()
-        except BaseException as e:
+            ffmpeg_version = self.parent.ffmpeg_service.version()
+        except Exception:
             self.parent.logger.exception('ffmpeg version error', exc_info=True)
             ffmpeg_version = '<span style="color:maroon; font-weight:bold;">MISSING</span>'
         html = '''
@@ -238,7 +233,7 @@ class AboutTab(BaseTab):
             </p>
         </td>
     </tr>
-</table>''' % ('#EA95FF' if self.parent.parent.theme == 'dark' else '#441D4E',
+</table>''' % ('#EA95FF' if self.parent.theme == 'dark' else '#441D4E',
                mpv_version, spacer, ffmpeg_version, sys.version.split(' ')[0], QT_VERSION_STR,
                PYQT_VERSION_STR, datetime.now().year, vidcutter.__email__, vidcutter.__author__,
                vidcutter.__website__, vidcutter.__website__, vidcutter.__bugreport__)
@@ -246,7 +241,7 @@ class AboutTab(BaseTab):
 
 
 class CreditsTab(BaseTab):
-    def __init__(self, parent=None):
+    def __init__(self, parent):
         super(CreditsTab, self).__init__(parent)
         self.parent = parent
         self.setObjectName('credits')
@@ -298,11 +293,11 @@ class CreditsTab(BaseTab):
                     </p>
                 </td>
             </tr>
-        </table>''' % ('#EA95FF' if self.parent.parent.theme == 'dark' else '#441D4E'))
+        </table>''' % ('#EA95FF' if self.parent.theme == 'dark' else '#441D4E'))
 
 
 class LicenseTab(BaseTab):
-    def __init__(self, parent=None):
+    def __init__(self, parent):
         super(LicenseTab, self).__init__(parent)
         self.setObjectName('license')
         self.setSource(QUrl('qrc:/license.html'))

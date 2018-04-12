@@ -3,7 +3,6 @@ Version:        5.5.0
 Release:        0
 Summary:        the simplest + fastest video cutter & joiner
 License:        GPL-3.0+
-Group:          Productivity/Multimedia/Video/Editors and Convertors
 Url:            https://vidcutter.ozmartians.com
 Source0:        https://github.com/ozmartian/%{name}/archive/%{version}.tar.gz#/%{name}-%{version}.tar.gz
 Source99:       %{name}-rpmlintrc
@@ -20,6 +19,7 @@ BuildRequires:  desktop-file-utils
 %endif
 %endif
 %if 0%{?mageia}
+Group:			Video/Editors and Converters
 %ifarch x86_64
 BuildRequires:	python-pkg-resources
 BuildRequires:	lib64raw1394-devel
@@ -35,6 +35,8 @@ BuildRequires:	libmpv-devel
 BuildRequires:	libpython3-devel
 BuildRequires:  python3-cython
 %endif
+%else
+Group:          Productivity/Multimedia/Video/Editors and Convertors
 %endif
 Requires:       ffmpeg
 Requires:       mediainfo

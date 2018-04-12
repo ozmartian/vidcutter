@@ -227,6 +227,7 @@ class MainWindow(QMainWindow):
             self.setEnabled(True)
             self.cutter.cliplist.setEnabled(True)
             qApp.restoreOverrideCursor()
+        qApp.processEvents()
 
     @staticmethod
     def get_path(path: str=None, override: bool=False) -> str:

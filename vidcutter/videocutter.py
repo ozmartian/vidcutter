@@ -28,6 +28,7 @@ import re
 import sys
 import time
 from datetime import timedelta
+from typing import Union
 
 from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QBuffer, QByteArray, QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize,
                           Qt, QTextStream, QTime, QTimer, QUrl)
@@ -546,6 +547,8 @@ class VideoCutter(QWidget):
                                     statusTip='View shortcut key bindings')
         self.settingsAction = QAction(self.settingsIcon, 'Settings', self, triggered=self.showSettings,
                                       statusTip='Configure application settings')
+        self.blackdetectAction = QAction(self.settingsIcon, 'Scene detection', self, triggered=self.detectScenes,
+                                         statusTip='Create clips via black scene detection', enabled=False)
         self.fullscreenAction = QAction(self.fullscreenIcon, 'Toggle fullscreen', self, triggered=self.toggleFullscreen,
                                         statusTip='Toggle fullscreen display mode', enabled=False)
         self.quitAction = QAction(self.quitIcon, 'Quit', self, triggered=self.parent.close,
@@ -557,6 +560,8 @@ class VideoCutter(QWidget):
         self.appMenu.addAction(self.saveProjectAction)
         self.appMenu.addSeparator()
         self.appMenu.addAction(self.settingsAction)
+        self.appMenu.addSeparator()
+        self.appMenu.addAction(self.blackdetectAction)
         self.appMenu.addSeparator()
         self.appMenu.addAction(self.fullscreenAction)
         self.appMenu.addAction(self.streamsAction)
@@ -779,8 +784,8 @@ class VideoCutter(QWidget):
                         mo = self.edlblock_re.match(line)
                         if mo:
                             start, stop, action = mo.groups()
-                            clip_start = self.delta2QTime(int(float(start) * 1000))
-                            clip_end = self.delta2QTime(int(float(stop) * 1000))
+                            clip_start = self.delta2QTime(float(start))
+                            clip_end = self.delta2QTime(float(stop))
                             clip_image = self.captureImage(self.currentMedia, clip_start)
                             self.clipTimes.append([clip_start, clip_end, clip_image, ''])
                         else:
@@ -792,6 +797,7 @@ class VideoCutter(QWidget):
             self.toolbar_start.setEnabled(True)
             self.toolbar_end.setDisabled(True)
             self.seekSlider.setRestrictValue(0, False)
+            self.blackdetectAction.setEnabled(True)
             self.inCut = False
             self.newproject = True
             QTimer.singleShot(2000, self.selectClip)
@@ -933,6 +939,7 @@ class VideoCutter(QWidget):
         self.fullscreenButton.setEnabled(flag)
         self.fullscreenAction.setEnabled(flag)
         self.seekSlider.clearRegions()
+        self.blackdetectAction.setEnabled(flag)
         if flag:
             self.seekSlider.setRestrictValue(0)
         else:
@@ -953,7 +960,7 @@ class VideoCutter(QWidget):
         progress *= 1000
         if self.seekSlider.restrictValue < progress or progress == 0:
             self.seekSlider.setValue(int(progress))
-            self.timeCounter.setTime(self.delta2QTime(int(progress)).toString(self.timeformat))
+            self.timeCounter.setTime(self.delta2QTime(round(progress)).toString(self.timeformat))
             self.frameCounter.setFrame(frame)
             if self.seekSlider.maximum() > 0:
                 self.taskbar.setProgress(float(progress / self.seekSlider.maximum()), True)
@@ -962,11 +969,11 @@ class VideoCutter(QWidget):
     def on_durationChanged(self, duration: float, frames: int) -> None:
         duration *= 1000
         self.seekSlider.setRange(0, int(duration))
-        self.timeCounter.setDuration(self.delta2QTime(int(duration)).toString(self.timeformat))
+        self.timeCounter.setDuration(self.delta2QTime(round(duration)).toString(self.timeformat))
         self.frameCounter.setFrameCount(frames)
 
-    @pyqtSlot(QListWidgetItem)
     @pyqtSlot()
+    @pyqtSlot(QListWidgetItem)
     def selectClip(self, item: QListWidgetItem = None) -> None:
         # noinspection PyBroadException
         try:
@@ -976,7 +983,7 @@ class VideoCutter(QWidget):
             if not len(self.clipTimes[row][3]):
                 self.seekSlider.selectRegion(row)
                 self.setPosition(self.clipTimes[row][0].msecsSinceStartOfDay())
-        except BaseException:
+        except Exception:
             pass
 
     def muteAudio(self) -> None:
@@ -1010,7 +1017,7 @@ class VideoCutter(QWidget):
             self.seekSlider.initStyle()
 
     @pyqtSlot(bool)
-    def toggleConsole(self, checked: bool):
+    def toggleConsole(self, checked: bool) -> None:
         if not hasattr(self, 'debugonstart'):
             self.debugonstart = os.getenv('DEBUG', False)
         if checked:
@@ -1025,14 +1032,25 @@ class VideoCutter(QWidget):
         self.saveSetting('showConsole', checked)
 
     @pyqtSlot(bool)
-    def toggleSmartCut(self, checked: bool):
+    def toggleSmartCut(self, checked: bool) -> None:
         self.smartcut = checked
         self.saveSetting('smartcut', self.smartcut)
         self.smartcutButton.setChecked(self.smartcut)
         self.showText('SmartCut {}'.format('enabled' if checked else 'disabled'))
 
     @pyqtSlot()
-    def addExternalClips(self):
+    def detectScenes(self) -> None:
+        self.parent.lock_gui(True)
+        scenes = self.videoService.blackdetect()
+        [
+            self.clipTimes.append([scene[0], scene[1], self.captureImage(self.currentMedia, scene[0]), ''])
+            for scene in scenes
+        ]
+        self.renderClipIndex()
+        self.parent.lock_gui(False)
+
+    @pyqtSlot()
+    def addExternalClips(self) -> None:
         clips, _ = QFileDialog.getOpenFileNames(
             parent=self.parent,
             caption='Add media files',
@@ -1092,6 +1110,7 @@ class VideoCutter(QWidget):
         self.toolbar_end.setEnabled(True)
         self.clipindex_add.setDisabled(True)
         self.seekSlider.setRestrictValue(self.seekSlider.value(), True)
+        self.blackdetectAction.setDisabled(True)
         self.inCut = True
         self.showText('clip started at {}'.format(starttime.toString(self.timeformat)))
         self.renderClipIndex()
@@ -1111,6 +1130,7 @@ class VideoCutter(QWidget):
         self.clipindex_add.setEnabled(True)
         self.timeCounter.setMinimum()
         self.seekSlider.setRestrictValue(0, False)
+        self.blackdetectAction.setEnabled(True)
         self.inCut = False
         self.showText('clip ends at {}'.format(endtime.toString(self.timeformat)))
         self.renderClipIndex()
@@ -1167,9 +1187,11 @@ class VideoCutter(QWidget):
         self.setRunningTime(self.delta2QTime(self.totalRuntime).toString(self.runtimeformat))
 
     @staticmethod
-    def delta2QTime(millisecs: int) -> QTime:
-        secs = millisecs / 1000
-        return QTime(int((secs / 3600) % 60), int((secs / 60) % 60), int(secs % 60), int((secs * 1000) % 1000))
+    def delta2QTime(msecs: Union[float, int]) -> QTime:
+        if type(msecs) is float:
+            msecs = round(msecs * 1000)
+        t = QTime(0, 0)
+        return t.addMSecs(msecs)
 
     @staticmethod
     def qtime2delta(qtime: QTime) -> float:
@@ -1209,14 +1231,14 @@ class VideoCutter(QWidget):
             if not os.path.isdir(self.workFolder):
                 os.mkdir(self.workFolder)
             if self.smartcut:
-                self.parent.lock_gui(True)
                 self.seekSlider.showProgress(6 if clips > 1 else 5)
+                self.parent.lock_gui(True)
                 self.videoService.smartinit(clips)
                 self.smartcutter(file, source_file, source_ext)
                 return
             steps = 3 if clips > 1 else 2
-            self.parent.lock_gui(True)
             self.seekSlider.showProgress(steps)
+            self.parent.lock_gui(True)
             filename, filelist = '', []
             for clip in self.clipTimes:
                 index = self.clipTimes.index(clip)
@@ -1399,7 +1421,7 @@ class VideoCutter(QWidget):
 
     @pyqtSlot()
     def aboutApp(self) -> None:
-        appInfo = About(self)
+        appInfo = About(self.videoService, self.mpvWidget, self)
         appInfo.exec_()
 
     @staticmethod

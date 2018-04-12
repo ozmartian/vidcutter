@@ -229,7 +229,6 @@ class VideoSlider(QSlider):
     @pyqtSlot()
     @pyqtSlot(int)
     def updateProgress(self, region: int=None) -> None:
-        # [print('pre-update value: {}'.format(progress.value())) for progress in self._progressbars]
         if len(self._regions):
             if region is None:
                 [progress.setValue(progress.value() + 1) for progress in self._progressbars]
@@ -237,7 +236,6 @@ class VideoSlider(QSlider):
                 self._progressbars[region].setValue(self._progressbars[region].value() + 1)
         else:
             self.parent.cliplist.updateProgress(region)
-        # [print('post-update value: {}'.format(progress.value())) for progress in self._progressbars]
 
     @pyqtSlot()
     def clearProgress(self) -> None:
@@ -245,7 +243,6 @@ class VideoSlider(QSlider):
             progress.hide()
             progress.deleteLater()
         self.parent.cliplist.clearProgress()
-        qApp.processEvents()
         self._progressbars.clear()
 
     def initThumbs(self) -> None:
