@@ -28,7 +28,7 @@ import re
 import sys
 import time
 from datetime import timedelta
-from typing import Union
+from typing import List, Union
 
 from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QBuffer, QByteArray, QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize,
                           Qt, QTextStream, QTime, QTimer, QUrl)
@@ -118,13 +118,16 @@ class VideoCutter(QWidget):
         self.videoService.progress.connect(self.seekSlider.updateProgress)
         self.videoService.finished.connect(self.smartmonitor)
         self.videoService.error.connect(self.completeOnError)
+        self.videoService.lockUI.connect(self.parent.lock_gui)
+        self.videoService.addScenes.connect(self.addScenes)
 
         self.edlblock_re = re.compile(r'(\d+(?:\.?\d+)?)\s(\d+(?:\.?\d+)?)\s([01])')
 
         self._initIcons()
         self._initActions()
 
-        self.appMenu, self.clipindex_removemenu, self.clipindex_contextmenu = QMenu(self), QMenu(self), QMenu(self)
+        self.appmenu, self.filtersmenu = QMenu(self), QMenu('Filters', self)
+        self.clipindex_removemenu, self.clipindex_contextmenu = QMenu(self), QMenu(self)
 
         self._initMenus()
         self._initNoVideo()
@@ -158,7 +161,6 @@ class VideoCutter(QWidget):
         listheaderLayout.addWidget(self.listHeaderButtonL)
         listheaderLayout.addStretch(1)
         listheaderLayout.addWidget(self.listHeaderButtonR)
-        self.listheader = QWidget(self)
         self.listheader = QWidget(self)
         self.listheader.setObjectName('listheader')
         self.listheader.setFixedWidth(self.cliplist.width())
@@ -336,7 +338,7 @@ class VideoCutter(QWidget):
                                       objectName='menuButton', statusTip='View menu options')
         self.menuButton.setFixedSize(QSize(33, 32))
         self.menuButton.setLayoutDirection(Qt.RightToLeft)
-        self.menuButton.setMenu(self.appMenu)
+        self.menuButton.setMenu(self.appmenu)
 
         audioLayout = QHBoxLayout()
         audioLayout.setContentsMargins(0, 0, 0, 0)
@@ -508,6 +510,7 @@ class VideoCutter(QWidget):
         self.openProjectIcon = QIcon(':/images/open.png')
         self.saveProjectIcon = QIcon(':/images/save.png')
         self.mediaInfoIcon = QIcon(':/images/info.png')
+        self.scenesIcon = QIcon(':/images/scenes.png')
         self.streamsIcon = QIcon(':/images/streams.png')
         self.viewLogsIcon = QIcon(':/images/viewlogs.png')
         self.updateCheckIcon = QIcon(':/images/update.png')
@@ -547,34 +550,37 @@ class VideoCutter(QWidget):
                                     statusTip='View shortcut key bindings')
         self.settingsAction = QAction(self.settingsIcon, 'Settings', self, triggered=self.showSettings,
                                       statusTip='Configure application settings')
-        self.blackdetectAction = QAction(self.settingsIcon, 'Scene detection', self, triggered=self.detectScenes,
-                                         statusTip='Create clips via black scene detection', enabled=False)
+        self.blackdetectAction = QAction(self.scenesIcon, 'Detect scene changes', self, enabled=False,
+                                         triggered=self.videoService.blackdetect,
+                                         statusTip='Create clips via black scene detection')
         self.fullscreenAction = QAction(self.fullscreenIcon, 'Toggle fullscreen', self, triggered=self.toggleFullscreen,
                                         statusTip='Toggle fullscreen display mode', enabled=False)
         self.quitAction = QAction(self.quitIcon, 'Quit', self, triggered=self.parent.close,
                                   statusTip='Quit the application')
 
     def _initMenus(self) -> None:
-        self.appMenu.setLayoutDirection(Qt.LeftToRight)
-        self.appMenu.addAction(self.openProjectAction)
-        self.appMenu.addAction(self.saveProjectAction)
-        self.appMenu.addSeparator()
-        self.appMenu.addAction(self.settingsAction)
-        self.appMenu.addSeparator()
-        self.appMenu.addAction(self.blackdetectAction)
-        self.appMenu.addSeparator()
-        self.appMenu.addAction(self.fullscreenAction)
-        self.appMenu.addAction(self.streamsAction)
-        self.appMenu.addAction(self.mediainfoAction)
-        self.appMenu.addAction(self.keyRefAction)
-        self.appMenu.addSeparator()
-        self.appMenu.addAction(self.viewLogsAction)
-        self.appMenu.addAction(self.updateCheckAction)
-        self.appMenu.addSeparator()
-        self.appMenu.addAction(self.aboutQtAction)
-        self.appMenu.addAction(self.aboutAction)
-        self.appMenu.addSeparator()
-        self.appMenu.addAction(self.quitAction)
+        self.filtersmenu.addAction(self.blackdetectAction)
+
+        self.appmenu.setLayoutDirection(Qt.LeftToRight)
+        self.appmenu.addAction(self.openProjectAction)
+        self.appmenu.addAction(self.saveProjectAction)
+        self.appmenu.addSeparator()
+        self.appmenu.addAction(self.settingsAction)
+        self.appmenu.addSeparator()
+        self.appmenu.addMenu(self.filtersmenu)
+        self.appmenu.addSeparator()
+        self.appmenu.addAction(self.fullscreenAction)
+        self.appmenu.addAction(self.streamsAction)
+        self.appmenu.addAction(self.mediainfoAction)
+        self.appmenu.addAction(self.keyRefAction)
+        self.appmenu.addSeparator()
+        self.appmenu.addAction(self.viewLogsAction)
+        self.appmenu.addAction(self.updateCheckAction)
+        self.appmenu.addSeparator()
+        self.appmenu.addAction(self.aboutQtAction)
+        self.appmenu.addAction(self.aboutAction)
+        self.appmenu.addSeparator()
+        self.appmenu.addAction(self.quitAction)
 
         self.clipindex_contextmenu.addAction(self.moveItemUpAction)
         self.clipindex_contextmenu.addAction(self.moveItemDownAction)
@@ -586,7 +592,7 @@ class VideoCutter(QWidget):
         self.clipindex_removemenu.aboutToShow.connect(self.initRemoveMenu)
 
         if sys.platform in {'win32', 'darwin'}:
-            self.appMenu.setStyle(QStyleFactory.create('Fusion'))
+            self.appmenu.setStyle(QStyleFactory.create('Fusion'))
             self.clipindex_contextmenu.setStyle(QStyleFactory.create('Fusion'))
             self.clipindex_removemenu.setStyle(QStyleFactory.create('Fusion'))
 
@@ -1038,17 +1044,15 @@ class VideoCutter(QWidget):
         self.smartcutButton.setChecked(self.smartcut)
         self.showText('SmartCut {}'.format('enabled' if checked else 'disabled'))
 
-    @pyqtSlot()
-    def detectScenes(self) -> None:
-        self.parent.lock_gui(True)
-        scenes = self.videoService.blackdetect()
-        [
-            self.clipTimes.append([scene[0], scene[1], self.captureImage(self.currentMedia, scene[0]), ''])
-            for scene in scenes if len(scene)
-        ]
+    @pyqtSlot(list)
+    def addScenes(self, scenes: List[list]) -> None:
         if len(scenes):
+            [
+                self.clipTimes.append([scene[0], scene[1], self.captureImage(self.currentMedia, scene[0]), ''])
+                for scene in scenes if len(scene)
+            ]
             self.renderClipIndex()
-        self.parent.lock_gui(False)
+        qApp.restoreOverrideCursor()
 
     @pyqtSlot()
     def addExternalClips(self) -> None:

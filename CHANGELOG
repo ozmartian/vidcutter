@@ -1,5 +1,16 @@
 vidcutter (6.0.0-1) stable; urgency=medium
 
+  * NEW FEATURE: scene detection added in a new filters section accessible
+    via newly added filters button within left hand buttons group or newly
+    added context menu option through right-clicking or the menu button. This
+    filter uses the blackdetect filter built into FFmpeg to detect black frames
+    within a video and then marking time between these as valid scenes. Similar
+    to tools like comskip and most handy for removal of commercials etc. In
+    addition, a new setting has been added for miniumum black duration in
+    Settings -> General (default is 2.5) which sets the minimum detected black
+    duration in seconds allowing you greater flexibility with various source
+    media files.
+
   * External media joins (when wanting to just join a set of files using the
     the ADD button under the Video Index) is now fixed. As there is an absence
     of regions in timeline in this mode progressbars display over list items
@@ -7,7 +18,7 @@ vidcutter (6.0.0-1) stable; urgency=medium
     operations.
 
   * Added new "Enable use of PBOs" setting under the Video category for use of
-    pixel buffer objects when rendering OpenGL video. used for noticeable
+    pixel buffer objects when rendering OpenGL video. Used for noticeable
     performance improvements when working with huge/4K media files.
 
   * Removing a clip you just started without marking an end time from your
@@ -21,6 +32,9 @@ vidcutter (6.0.0-1) stable; urgency=medium
     stores and repos (i.e snapcraft.io + flathub.org). These builds come
     prepacked with the very latest releases of FFmpeg, libmpv, MediaInfo as
     well as the UI libraries for Qt5 and PyQt5.
+
+  * Fixed clip index heading not extending to full width of list when it
+    becomes scrollable when more than 4 clips are added to the index.
 
   * UI improvements to media stream dialog; most consistent across differing
     desktop sizes and stream configurations

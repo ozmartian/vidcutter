@@ -30,8 +30,8 @@ import signal
 import sys
 import traceback
 
-from PyQt5.QtCore import (pyqtSlot, QCommandLineOption, QCommandLineParser, QCoreApplication, QDir, QFileInfo,
-                          QProcess, QSettings, QSize, QStandardPaths, QTimerEvent, Qt)
+from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QCommandLineOption, QCommandLineParser, QCoreApplication, QDir,
+                          QFileInfo, QProcess, QSettings, QSize, QStandardPaths, QTimerEvent, Qt)
 from PyQt5.QtGui import QCloseEvent, QContextMenuEvent, QDragEnterEvent, QDropEvent, QMouseEvent, QPixmap, QResizeEvent
 from PyQt5.QtWidgets import qApp, QApplication, QMainWindow, QMessageBox, QSizePolicy
 
@@ -216,6 +216,7 @@ class MainWindow(QMainWindow):
         self.settings.setValue('windowState', self.saveState())
         self.settings.sync()
 
+    @pyqtSlot(bool)
     def lock_gui(self, locked: bool=True) -> None:
         if locked:
             qApp.setOverrideCursor(Qt.WaitCursor)
@@ -251,7 +252,7 @@ class MainWindow(QMainWindow):
 
     def contextMenuEvent(self, event: QContextMenuEvent) -> None:
         if event.reason() == QContextMenuEvent.Mouse:
-            self.cutter.appMenu.exec_(event.globalPos())
+            self.cutter.appmenu.exec_(event.globalPos())
             event.accept()
         super(MainWindow, self).contextMenuEvent(event)
 

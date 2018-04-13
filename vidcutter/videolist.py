@@ -26,7 +26,7 @@ import os
 import sys
 
 from PyQt5.QtCore import pyqtSlot, Qt, QEvent, QModelIndex, QRect, QSize
-from PyQt5.QtGui import QColor, QFont, QIcon, QMouseEvent, QPainter, QPalette, QPen
+from PyQt5.QtGui import QColor, QFont, QIcon, QMouseEvent, QPainter, QPalette, QPen, QResizeEvent
 from PyQt5.QtWidgets import (QAbstractItemDelegate, QAbstractItemView, QListWidget, QProgressBar, QSizePolicy, QStyle,
                              QStyleFactory, QStyleOptionViewItem, qApp)
 
@@ -91,6 +91,9 @@ class VideoList(QListWidget):
     def changeEvent(self, event: QEvent) -> None:
         if event.type() == QEvent.EnabledChange:
             self.opacityEffect.setEnabled(not self.isEnabled())
+
+    def resizeEvent(self, event: QResizeEvent) -> None:
+        self.parent.listheader.setFixedWidth(self.width())
 
     def clearSelection(self) -> None:
         self.parent.seekSlider.selectRegion(-1)

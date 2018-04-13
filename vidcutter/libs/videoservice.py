@@ -29,7 +29,6 @@ import re
 import shlex
 import sys
 from bisect import bisect_left
-from collections import OrderedDict
 from enum import Enum
 from functools import partial
 from typing import List
@@ -53,6 +52,8 @@ class VideoService(QObject):
     progress = pyqtSignal(int)
     finished = pyqtSignal(bool, str)
     error = pyqtSignal(str)
+    lockUI = pyqtSignal(bool)
+    addScenes = pyqtSignal(list)
 
     frozen = getattr(sys, 'frozen', False)
     spaceWarningThreshold = 200
@@ -481,28 +482,43 @@ class VideoService(QObject):
         return vbsf, absf
 
     @pyqtSlot()
-    def blackdetect(self, source: str=None) -> List[list]:
-        if source is None and os.path.exists(self.source):
-            source = self.source
+    def blackdetect(self) -> None:
         try:
-            scenes = [[QTime(0, 0)]]
+            self.lockUI.emit(True)
             args = '-f lavfi -i "movie=\'{}\',blackdetect[out0]" -show_entries tags=lavfi.black_start,lavfi.black_end' \
-                   ' -of default=nw=1'.format(os.path.basename(source))
-            result = self.cmdExec(self.backends.ffprobe, args, output=True, workdir=os.path.dirname(source))
-            for line in result.split('\n'):
-                if re.match('\[blackdetect \@ (.*)\]', line):
+                   ' -of default=nw=1 -hide_banner'.format(os.path.basename(self.source))
+            self.detectproc = VideoService.initProc(self.backends.ffprobe, self.processdetect,
+                                                    os.path.dirname(self.source))
+            self.detectproc.started.connect(lambda: self.lockUI.emit(True))
+            self.detectproc.finished.connect(lambda: self.lockUI.emit(False))
+            self.detectproc.setArguments(shlex.split(args))
+            self.detectproc.start()
+        except FileNotFoundError:
+            self.logger.exception('Could not find media file: {}'.format(self.source), exc_info=True)
+            raise
+
+    @pyqtSlot(int, QProcess.ExitStatus)
+    def processdetect(self, code: int, status: QProcess.ExitStatus) -> None:
+        if code == 0 and status == QProcess.NormalExit:
+            scenes = [[QTime(0, 0)]]
+            results = self.detectproc.readAll().data().decode().strip()
+            for line in results.split('\n'):
+                if re.match(r'\[blackdetect @ (.*)\]', line):
                     vals = line.split(']')[1].strip().split(' ')
                     start = float(vals[0].replace('black_start:', ''))
                     end = float(vals[1].replace('black_end:', ''))
                     dur = float(vals[2].replace('black_duration:', ''))
-                    if dur <= VideoService.config.black_duration:
+                    if dur >= VideoService.config.black_duration:
                         scenes[len(scenes) - 1].append(self.parent.delta2QTime(start))
                         scenes.append([self.parent.delta2QTime(end)])
-            scenes[len(scenes) - 1].append(self.duration(source))
-            return scenes
-        except FileNotFoundError:
-            self.logger.exception('Could not find media file: {}'.format(source), exc_info=True)
-            raise
+            last = scenes[len(scenes) - 1][0]
+            dur = self.duration()
+            if last < dur and (last.msecsTo(dur) / 1000) >= VideoService.config.black_duration:
+                scenes[len(scenes) - 1].append(dur)
+            else:
+                scenes.pop()
+            self.detectproc.deleteLater()
+            self.addScenes.emit(scenes)
 
     def probe(self, source: str) -> Munch:
         try:
@@ -605,7 +621,8 @@ class VideoService(QObject):
         args = '--output={0} "{1}"'.format(output, source)
         return self.cmdExec(self.backends.mediainfo, args, True, True)
 
-    def cmdExec(self, cmd: str, args: str=None, output: bool=False, suppresslog: bool=False, workdir: str=None, mergechannels: bool=True):
+    def cmdExec(self, cmd: str, args: str=None, output: bool=False, suppresslog: bool=False, workdir: str=None,
+                mergechannels: bool=True):
         if self.proc.state() == QProcess.NotRunning:
             if cmd == self.backends.mediainfo or not mergechannels:
                 self.proc.setProcessChannelMode(QProcess.SeparateChannels)
