@@ -27,6 +27,10 @@ from enum import Enum
 
 class Config:
     @property
+    def black_duration(self) -> int:
+        return 2.5
+
+    @property
     def video_codecs(self) -> list:
         return ['flv', 'h263', 'libvpx', 'libx264', 'libx265', 'libxvid', 'mpeg2video', 'mpeg4', 'msmpeg4', 'wmv2']
 

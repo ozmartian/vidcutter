@@ -138,11 +138,12 @@ class VideoService(QObject):
         return tools
 
     @staticmethod
-    def initProc(program: str = None, finish: pyqtSlot = None, workingdir: str = None) -> QProcess:
+    def initProc(program: str=None, finish: pyqtSlot=None, workingdir: str=None) -> QProcess:
         p = QProcess()
         p.setProcessEnvironment(QProcessEnvironment.systemEnvironment())
         p.setProcessChannelMode(QProcess.MergedChannels)
-        p.setWorkingDirectory(workingdir if workingdir is not None else VideoService.getAppPath())
+        if workingdir is not None:
+            p.setWorkingDirectory(workingdir)
         if program is not None:
             p.setProgram(program)
         if finish is not None:
@@ -484,20 +485,19 @@ class VideoService(QObject):
         if source is None and os.path.exists(self.source):
             source = self.source
         try:
-            args = '-f lavfi -i "movie=\'{}\',blackdetect[out0]" -show_entries tags=lavfi.black_start,lavfi.black_end' \
-                   ' -of default=nw=1 -v quiet'.format(source)
-            result = self.cmdExec(self.backends.ffprobe, args, output=True)
-            # strip FFmpeg string prefix
-            result = result.replace('TAG:lavfi.black_', '')
-            # remove duplicate lines & split to array
-            result = list(OrderedDict.fromkeys(result.split('\n')))
             scenes = [[QTime(0, 0)]]
-            for x in result:
-                key, val = x.split('=')
-                if key == 'start':
-                    scenes[len(scenes) - 1].append(self.parent.delta2QTime(float(val)))
-                elif key == 'end':
-                    scenes.append([self.parent.delta2QTime(float(val))])
+            args = '-f lavfi -i "movie=\'{}\',blackdetect[out0]" -show_entries tags=lavfi.black_start,lavfi.black_end' \
+                   ' -of default=nw=1'.format(os.path.basename(source))
+            result = self.cmdExec(self.backends.ffprobe, args, output=True, workdir=os.path.dirname(source))
+            for line in result.split('\n'):
+                if re.match('\[blackdetect \@ (.*)\]', line):
+                    vals = line.split(']')[1].strip().split(' ')
+                    start = float(vals[0].replace('black_start:', ''))
+                    end = float(vals[1].replace('black_end:', ''))
+                    dur = float(vals[2].replace('black_duration:', ''))
+                    if dur <= VideoService.config.black_duration:
+                        scenes[len(scenes) - 1].append(self.parent.delta2QTime(start))
+                        scenes.append([self.parent.delta2QTime(end)])
             scenes[len(scenes) - 1].append(self.duration(source))
             return scenes
         except FileNotFoundError:
@@ -507,7 +507,7 @@ class VideoService(QObject):
     def probe(self, source: str) -> Munch:
         try:
             args = '-v error -show_streams -show_format -of json "{}"'.format(source)
-            json_data = self.cmdExec(self.backends.ffprobe, args, output=True)
+            json_data = self.cmdExec(self.backends.ffprobe, args, output=True, mergechannels=False)
             return Munch.fromDict(loads(json_data))
         except FileNotFoundError:
             self.logger.exception('FFprobe could not find media file: {}'.format(source), exc_info=True)
@@ -522,7 +522,7 @@ class VideoService(QObject):
         timecode = '0:00:00.000000' if formatted_time else 0
         args = '-v error -show_packets -select_streams v -show_entries packet=pts_time,flags ' \
                '{0}-of csv "{1}"'.format('-sexagesimal ' if formatted_time else '', source)
-        result = self.cmdExec(self.backends.ffprobe, args, output=True, suppresslog=True)
+        result = self.cmdExec(self.backends.ffprobe, args, output=True, suppresslog=True, mergechannels=False)
         keyframe_times = []
         for line in result.split('\n'):
             if line.split(',')[1] != 'N/A':
@@ -605,19 +605,20 @@ class VideoService(QObject):
         args = '--output={0} "{1}"'.format(output, source)
         return self.cmdExec(self.backends.mediainfo, args, True, True)
 
-    def cmdExec(self, cmd: str, args: str = None, output: bool = False, suppresslog: bool = False):
+    def cmdExec(self, cmd: str, args: str=None, output: bool=False, suppresslog: bool=False, workdir: str=None, mergechannels: bool=True):
         if self.proc.state() == QProcess.NotRunning:
-            if cmd in {self.backends.ffprobe, self.backends.mediainfo}:
+            if cmd == self.backends.mediainfo or not mergechannels:
                 self.proc.setProcessChannelMode(QProcess.SeparateChannels)
             if cmd in {self.backends.ffmpeg, self.backends.ffprobe}:
                 args = '-hide_banner {}'.format(args)
             if os.getenv('DEBUG', False) or getattr(self.parent, 'verboseLogs', False):
                 self.logger.info('{0} {1}'.format(cmd, args if args is not None else ''))
+            self.proc.setWorkingDirectory(workdir if workdir is not None else VideoService.getAppPath())
             self.proc.start(cmd, shlex.split(args))
             self.proc.readyReadStandardOutput.connect(
                 partial(self.cmdOut, self.proc.readAllStandardOutput().data().decode().strip()))
             self.proc.waitForFinished(-1)
-            if cmd in {self.backends.ffprobe, self.backends.mediainfo}:
+            if cmd == self.backends.mediainfo or not mergechannels:
                 self.proc.setProcessChannelMode(QProcess.MergedChannels)
             if output:
                 cmdoutput = self.proc.readAllStandardOutput().data().decode().strip()

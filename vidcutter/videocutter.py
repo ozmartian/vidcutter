@@ -1044,9 +1044,10 @@ class VideoCutter(QWidget):
         scenes = self.videoService.blackdetect()
         [
             self.clipTimes.append([scene[0], scene[1], self.captureImage(self.currentMedia, scene[0]), ''])
-            for scene in scenes
+            for scene in scenes if len(scene)
         ]
-        self.renderClipIndex()
+        if len(scenes):
+            self.renderClipIndex()
         self.parent.lock_gui(False)
 
     @pyqtSlot()
