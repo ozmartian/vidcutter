@@ -103,6 +103,10 @@ class Streams(Enum):
     SUBTITLE = 2
 
 
+class VideoFilter(Enum):
+    SCENEDETECT = 1
+
+
 class VidCutterException(Exception):
     def __init__(self, msg: str=None):
         super(VidCutterException, self).__init__(msg)

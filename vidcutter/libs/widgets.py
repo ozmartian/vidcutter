@@ -218,10 +218,11 @@ class VCFrameCounter(QWidget):
 class VCProgressDialog(QDialog):
     taskbarprogress = pyqtSignal(float, bool)
 
-    def __init__(self, parent=None, flags=Qt.Dialog | Qt.FramelessWindowHint):
+    def __init__(self, parent=None, flags=Qt.Dialog | Qt.FramelessWindowHint, modal: bool=True):
         super(VCProgressDialog, self).__init__(parent, flags)
         self.parent = parent
-        self.setWindowModality(Qt.ApplicationModal)
+        if modal:
+            self.setWindowModality(Qt.ApplicationModal)
         self.setStyleSheet('QDialog { border: 2px solid #000; }')
         self._progress = QProgressBar(self)
         self._progress.setRange(0, 0)

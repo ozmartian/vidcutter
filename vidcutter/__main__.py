@@ -30,17 +30,17 @@ import signal
 import sys
 import traceback
 
-from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QCommandLineOption, QCommandLineParser, QCoreApplication, QDir,
-                          QFileInfo, QProcess, QSettings, QSize, QStandardPaths, QTimerEvent, Qt)
+from PyQt5.QtCore import (pyqtSlot, QCommandLineOption, QCommandLineParser, QCoreApplication, QDir, QFileInfo, QProcess,
+                          QSettings, QSize, QStandardPaths, QTimerEvent, Qt)
 from PyQt5.QtGui import QCloseEvent, QContextMenuEvent, QDragEnterEvent, QDropEvent, QMouseEvent, QPixmap, QResizeEvent
 from PyQt5.QtWidgets import qApp, QApplication, QMainWindow, QMessageBox, QSizePolicy
 
+from vidcutter.libs.mpv import MPVError
 from vidcutter.libs.singleapplication import SingleApplication
 from vidcutter.videoconsole import ConsoleHandler, ConsoleWidget, VideoLogger
 from vidcutter.videocutter import VideoCutter
 
 import vidcutter
-import vidcutter.libs.mpv as mpv
 
 if sys.platform == 'win32':
     from vidcutter.libs.taskbarprogress import TaskbarProgress
@@ -222,9 +222,7 @@ class MainWindow(QMainWindow):
             qApp.setOverrideCursor(Qt.WaitCursor)
             self.cutter.cliplist.setEnabled(False)
             self.setEnabled(False)
-            self.blockSignals(True)
         else:
-            self.blockSignals(False)
             self.setEnabled(True)
             self.cutter.cliplist.setEnabled(True)
             qApp.restoreOverrideCursor()
@@ -375,7 +373,7 @@ class MainWindow(QMainWindow):
                 pass
         try:
             qApp.quit()
-        except mpv.MPVError:
+        except MPVError:
             pass
 
 

@@ -32,7 +32,7 @@ from typing import List, Union
 
 from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QBuffer, QByteArray, QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize,
                           Qt, QTextStream, QTime, QTimer, QUrl)
-from PyQt5.QtGui import QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QPixmap
+from PyQt5.QtGui import QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QPixmap, QShowEvent
 from PyQt5.QtWidgets import (QAction, qApp, QApplication, QFileDialog, QFrame, QGroupBox, QHBoxLayout, QLabel,
                              QListWidgetItem, QMainWindow, QMenu, QMessageBox, QPushButton, QSizePolicy, QStyleFactory,
                              QVBoxLayout, QWidget)
@@ -41,14 +41,14 @@ import sip
 # noinspection PyUnresolvedReferences
 from vidcutter import resources
 from vidcutter.about import About
-from vidcutter.libs.config import InvalidMediaException
+from vidcutter.libs.config import InvalidMediaException, VideoFilter
 from vidcutter.libs.mpvwidget import mpvWidget
 from vidcutter.libs.munch import Munch
 from vidcutter.libs.notifications import JobCompleteNotification
 from vidcutter.libs.taskbarprogress import TaskbarProgress
 from vidcutter.libs.videoservice import VideoService
-from vidcutter.libs.widgets import (ClipErrorsDialog, VCBlinkText, VCFrameCounter, VCTimeCounter, VCToolBarButton,
-                                    VCVolumeSlider)
+from vidcutter.libs.widgets import (ClipErrorsDialog, VCBlinkText, VCFrameCounter, VCProgressDialog, VCTimeCounter,
+                                    VCToolBarButton, VCVolumeSlider)
 from vidcutter.mediainfo import MediaInfo
 from vidcutter.mediastream import StreamSelector
 from vidcutter.settings import SettingsDialog
@@ -118,7 +118,6 @@ class VideoCutter(QWidget):
         self.videoService.progress.connect(self.seekSlider.updateProgress)
         self.videoService.finished.connect(self.smartmonitor)
         self.videoService.error.connect(self.completeOnError)
-        self.videoService.lockUI.connect(self.parent.lock_gui)
         self.videoService.addScenes.connect(self.addScenes)
 
         self.edlblock_re = re.compile(r'(\d+(?:\.?\d+)?)\s(\d+(?:\.?\d+)?)\s([01])')
@@ -551,7 +550,7 @@ class VideoCutter(QWidget):
         self.settingsAction = QAction(self.settingsIcon, 'Settings', self, triggered=self.showSettings,
                                       statusTip='Configure application settings')
         self.blackdetectAction = QAction(self.scenesIcon, 'Detect scene changes', self, enabled=False,
-                                         triggered=self.videoService.blackdetect,
+                                         triggered=(lambda: self.startFilter(VideoFilter.SCENEDETECT)),
                                          statusTip='Create clips via black scene detection')
         self.fullscreenAction = QAction(self.fullscreenIcon, 'Toggle fullscreen', self, triggered=self.toggleFullscreen,
                                         statusTip='Toggle fullscreen display mode', enabled=False)
@@ -1046,13 +1045,33 @@ class VideoCutter(QWidget):
 
     @pyqtSlot(list)
     def addScenes(self, scenes: List[list]) -> None:
+        self.filterProgress()
+        self.parent.lock_gui(False)
         if len(scenes):
             [
                 self.clipTimes.append([scene[0], scene[1], self.captureImage(self.currentMedia, scene[0]), ''])
                 for scene in scenes if len(scene)
             ]
             self.renderClipIndex()
-        qApp.restoreOverrideCursor()
+
+    @pyqtSlot(VideoFilter)
+    def startFilter(self, name: VideoFilter) -> None:
+        if name == VideoFilter.SCENEDETECT:
+            self.parent.lock_gui(True)
+            self.filterProgress('detecting scenes')
+            self.videoService.blackdetect()
+
+    @pyqtSlot(str)
+    def filterProgress(self, msg: str=None) -> None:
+        if msg is not None:
+            self.filterProgressBar = VCProgressDialog(self.window(), modal=False)
+            self.filterProgressBar.setText(msg)
+            self.filterProgressBar.setMinimumWidth(600)
+            self.filterProgressBar.show()
+        else:
+            if hasattr(self, 'filterProgressBar'):
+                self.filterProgressBar.close()
+                self.filterProgressBar.deleteLater()
 
     @pyqtSlot()
     def addExternalClips(self) -> None:
@@ -1547,3 +1566,8 @@ class VideoCutter(QWidget):
                 return
 
         super(VideoCutter, self).keyPressEvent(event)
+
+    def showEvent(self, event: QShowEvent) -> None:
+        if hasattr(self, 'filterProgressBar') and self.filterProgressBar.isVisible():
+            self.filterProgressBar.update()
+        super(VideoCutter, self).showEvent(event)

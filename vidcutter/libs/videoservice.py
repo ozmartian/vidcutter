@@ -52,7 +52,6 @@ class VideoService(QObject):
     progress = pyqtSignal(int)
     finished = pyqtSignal(bool, str)
     error = pyqtSignal(str)
-    lockUI = pyqtSignal(bool)
     addScenes = pyqtSignal(list)
 
     frozen = getattr(sys, 'frozen', False)
@@ -481,17 +480,15 @@ class VideoService(QObject):
                 absf = '{} mp3decomp'.format(prefix)
         return vbsf, absf
 
-    @pyqtSlot()
     def blackdetect(self) -> None:
         try:
-            self.lockUI.emit(True)
             args = '-f lavfi -i "movie=\'{}\',blackdetect[out0]" -show_entries tags=lavfi.black_start,lavfi.black_end' \
                    ' -of default=nw=1 -hide_banner'.format(os.path.basename(self.source))
             self.detectproc = VideoService.initProc(self.backends.ffprobe, self.processdetect,
                                                     os.path.dirname(self.source))
-            self.detectproc.started.connect(lambda: self.lockUI.emit(True))
-            self.detectproc.finished.connect(lambda: self.lockUI.emit(False))
             self.detectproc.setArguments(shlex.split(args))
+            self.detectproc.readyRead.connect(
+                partial(self.cmdOut, self.detectproc.readAll().data().decode().strip()))
             self.detectproc.start()
         except FileNotFoundError:
             self.logger.exception('Could not find media file: {}'.format(self.source), exc_info=True)
@@ -631,9 +628,9 @@ class VideoService(QObject):
             if os.getenv('DEBUG', False) or getattr(self.parent, 'verboseLogs', False):
                 self.logger.info('{0} {1}'.format(cmd, args if args is not None else ''))
             self.proc.setWorkingDirectory(workdir if workdir is not None else VideoService.getAppPath())
-            self.proc.start(cmd, shlex.split(args))
             self.proc.readyReadStandardOutput.connect(
                 partial(self.cmdOut, self.proc.readAllStandardOutput().data().decode().strip()))
+            self.proc.start(cmd, shlex.split(args))
             self.proc.waitForFinished(-1)
             if cmd == self.backends.mediainfo or not mergechannels:
                 self.proc.setProcessChannelMode(QProcess.MergedChannels)

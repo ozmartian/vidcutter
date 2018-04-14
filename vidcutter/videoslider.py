@@ -218,13 +218,12 @@ class VideoSlider(QSlider):
         self._regionSelected = -1
         self.update()
 
+    @pyqtSlot(int)
     def showProgress(self, steps: int) -> None:
-        if not len(self._regions):
+        if len(self._regions):
+            [self._progressbars.append(SliderProgress(steps, rect, self)) for rect in self._regions]
+        else:
             self.parent.cliplist.showProgress(steps)
-            return
-        for rect in self._regions:
-            progress = SliderProgress(steps, rect, self)
-            self._progressbars.append(progress)
 
     @pyqtSlot()
     @pyqtSlot(int)
