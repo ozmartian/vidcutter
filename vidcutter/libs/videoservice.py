@@ -484,12 +484,12 @@ class VideoService(QObject):
         try:
             args = '-f lavfi -i "movie=\'{}\',blackdetect[out0]" -show_entries tags=lavfi.black_start,lavfi.black_end' \
                    ' -of default=nw=1 -hide_banner'.format(os.path.basename(self.source))
-            self.detectproc = VideoService.initProc(self.backends.ffprobe, self.processdetect,
+            self.filterproc = VideoService.initProc(self.backends.ffprobe, self.processdetect,
                                                     os.path.dirname(self.source))
-            self.detectproc.setArguments(shlex.split(args))
-            self.detectproc.readyRead.connect(
-                partial(self.cmdOut, self.detectproc.readAll().data().decode().strip()))
-            self.detectproc.start()
+            self.filterproc.setArguments(shlex.split(args))
+            self.filterproc.start()
+            self.filterproc.readyRead.connect(
+                partial(self.cmdOut, self.filterproc.readAll().data().decode().strip()))
         except FileNotFoundError:
             self.logger.exception('Could not find media file: {}'.format(self.source), exc_info=True)
             raise
@@ -498,7 +498,7 @@ class VideoService(QObject):
     def processdetect(self, code: int, status: QProcess.ExitStatus) -> None:
         if code == 0 and status == QProcess.NormalExit:
             scenes = [[QTime(0, 0)]]
-            results = self.detectproc.readAll().data().decode().strip()
+            results = self.filterproc.readAll().data().decode().strip()
             for line in results.split('\n'):
                 if re.match(r'\[blackdetect @ (.*)\]', line):
                     vals = line.split(']')[1].strip().split(' ')
@@ -514,8 +514,13 @@ class VideoService(QObject):
                 scenes[len(scenes) - 1].append(dur)
             else:
                 scenes.pop()
-            self.detectproc.deleteLater()
             self.addScenes.emit(scenes)
+            self.filterproc.deleteLater()
+
+    def killFilter(self) -> None:
+        if hasattr(self, 'filterproc'):
+            self.filterproc.close()
+            self.filterproc.deleteLater()
 
     def probe(self, source: str) -> Munch:
         try:
@@ -628,9 +633,9 @@ class VideoService(QObject):
             if os.getenv('DEBUG', False) or getattr(self.parent, 'verboseLogs', False):
                 self.logger.info('{0} {1}'.format(cmd, args if args is not None else ''))
             self.proc.setWorkingDirectory(workdir if workdir is not None else VideoService.getAppPath())
+            self.proc.start(cmd, shlex.split(args))
             self.proc.readyReadStandardOutput.connect(
                 partial(self.cmdOut, self.proc.readAllStandardOutput().data().decode().strip()))
-            self.proc.start(cmd, shlex.split(args))
             self.proc.waitForFinished(-1)
             if cmd == self.backends.mediainfo or not mergechannels:
                 self.proc.setProcessChannelMode(QProcess.MergedChannels)

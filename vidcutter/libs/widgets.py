@@ -27,7 +27,7 @@ import sys
 
 from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QEasingCurve, QEvent, QObject, QPoint, QPropertyAnimation, QSize, Qt,
                           QTime, QTimer)
-from PyQt5.QtGui import QShowEvent
+from PyQt5.QtGui import QFocusEvent, QShowEvent
 from PyQt5.QtWidgets import (qApp, QAbstractSpinBox, QDialog, QDialogButtonBox, QGraphicsOpacityEffect, QGridLayout,
                              QHBoxLayout, QLabel, QMessageBox, QProgressBar, QPushButton, QSlider, QSpinBox, QStyle,
                              QStyleFactory, QStyleOptionSlider, QTimeEdit, QToolBox, QToolTip, QVBoxLayout, QWidget)
@@ -223,6 +223,7 @@ class VCProgressDialog(QDialog):
         self.parent = parent
         if modal:
             self.setWindowModality(Qt.ApplicationModal)
+        self.setFocusPolicy(Qt.ClickFocus)
         self.setStyleSheet('QDialog { border: 2px solid #000; }')
         self._progress = QProgressBar(self)
         self._progress.setRange(0, 0)
@@ -318,6 +319,10 @@ class VCProgressDialog(QDialog):
         if self._timer.isActive():
             self._timer.stop()
         super(VCProgressDialog, self).close()
+
+    def focusOutEvent(self, event: QFocusEvent) -> None:
+        self.activateWindow()
+        self.setFocus()
 
 
 class VCVolumeSlider(QSlider):
