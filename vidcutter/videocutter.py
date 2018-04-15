@@ -1577,6 +1577,4 @@ class VideoCutter(QWidget):
     def showEvent(self, event: QShowEvent) -> None:
         if hasattr(self, 'filterProgressBar') and self.filterProgressBar.isVisible():
             self.filterProgressBar.update()
-            self.filterProgressBar.activateWindow()
-            self.filterProgressBar.setFocus()
         super(VideoCutter, self).showEvent(event)
