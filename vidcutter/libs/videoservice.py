@@ -480,14 +480,14 @@ class VideoService(QObject):
 
     def blackdetect(self, duration: float) -> None:
         try:
-            args = '-f lavfi -i "movie=\'{}\',blackdetect[out0]" -show_entries tags=lavfi.black_start,lavfi.black_end' \
-                   ' -of default=nw=1 -hide_banner'.format(os.path.basename(self.source))
+            args = '-f lavfi -i "movie=\'{0}\',blackdetect=d={1:.1f}[out0]" -show_entries tags=lavfi.black_start,lavfi.black_end' \
+                   ' -of default=nw=1 -hide_banner'.format(os.path.basename(self.source), duration)
+            if os.getenv('DEBUG', False) or getattr(self.parent, 'verboseLogs', False):
+                self.logger.info('{0} {1}'.format(self.backends.ffprobe, args))
             self.filterproc = VideoService.initProc(self.backends.ffprobe, lambda: self.on_blackdetect(duration),
                                                     os.path.dirname(self.source))
             self.filterproc.setArguments(shlex.split(args))
             self.filterproc.start()
-            self.filterproc.readyReadStandardOutput.connect(
-                partial(self.cmdOut, self.filterproc.readAllStandardOutput().data().decode().strip()))
         except FileNotFoundError:
             self.logger.exception('Could not find media file: {}'.format(self.source), exc_info=True)
             raise
@@ -510,6 +510,9 @@ class VideoService(QObject):
             scenes[len(scenes) - 1].append(dur)
         else:
             scenes.pop()
+        if os.getenv('DEBUG', False) or getattr(self.parent, 'verboseLogs', False):
+            self.logger.info('BLACKDETECT filter results:')
+            self.logger.info(scenes)
         self.addScenes.emit(scenes)
 
     def kill_filterproc(self) -> None:

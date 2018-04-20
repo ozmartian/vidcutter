@@ -32,7 +32,8 @@ class Config:
     def filter_settings() -> Munch:
         return Munch(
             blackdetect=Munch(
-                min_duration=2.0
+                min_duration=0.1,
+                default_duration=2.0
             )
         )
 
