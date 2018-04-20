@@ -126,7 +126,7 @@ class VideoCutter(QWidget):
         self._initIcons()
         self._initActions()
 
-        self.appmenu, self.clipindex_removemenu, self.clipindex_contextmenu = QMenu(self), QMenu(self), QMenu(self)
+        self.appmenu, self.clipindex_removemenu, self.clipindex_contextmenu = QMenu(self.parent), QMenu(self), QMenu(self)
 
         self._initMenus()
         self._initNoVideo()
@@ -334,10 +334,8 @@ class VideoCutter(QWidget):
 
         # noinspection PyArgumentList
         self.menuButton = QPushButton(self, toolTip='Menu', cursor=Qt.PointingHandCursor, flat=True,
-                                      objectName='menuButton', statusTip='View menu options')
+                                      objectName='menuButton', clicked=self.showAppMenu, statusTip='View menu options')
         self.menuButton.setFixedSize(QSize(33, 32))
-        self.menuButton.setLayoutDirection(Qt.RightToLeft)
-        self.menuButton.setMenu(self.appmenu)
 
         audioLayout = QHBoxLayout()
         audioLayout.setContentsMargins(0, 0, 0, 0)
@@ -430,6 +428,13 @@ class VideoCutter(QWidget):
 
         self.setLayout(layout)
         self.seekSlider.initStyle()
+
+    @pyqtSlot()
+    def showAppMenu(self) -> None:
+        pos = self.menuButton.mapToGlobal(self.menuButton.rect().topLeft())
+        pos.setX(pos.x() - self.appmenu.sizeHint().width() + 30)
+        pos.setY(pos.y() - 28)
+        self.appmenu.popup(pos, self.quitAction)
 
     def initTheme(self) -> None:
         qApp.setStyle(VideoStyleDark() if self.theme == 'dark' else VideoStyleLight())
@@ -579,7 +584,6 @@ class VideoCutter(QWidget):
         return menu
 
     def _initMenus(self) -> None:
-        self.appmenu.setLayoutDirection(Qt.LeftToRight)
         self.appmenu.addAction(self.openProjectAction)
         self.appmenu.addAction(self.saveProjectAction)
         self.appmenu.addSeparator()
