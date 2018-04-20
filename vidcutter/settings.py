@@ -28,9 +28,9 @@ import sys
 from PyQt5.QtCore import pyqtSlot, QDir, QSize, Qt
 from PyQt5.QtGui import QCloseEvent, QColor, QIcon, QPainter, QPen, QPixmap, QShowEvent
 from PyQt5.QtWidgets import (qApp, QButtonGroup, QCheckBox, QDialog, QDialogButtonBox, QDoubleSpinBox, QFileDialog,
-                             QFormLayout, QFrame, QGridLayout, QGroupBox, QHBoxLayout, QLabel, QLineEdit, QListView,
-                             QListWidget, QListWidgetItem, QMessageBox, QPushButton, QRadioButton, QSizePolicy,
-                             QSpacerItem, QStackedWidget, QStyleFactory, QVBoxLayout, QWidget)
+                             QFrame, QGridLayout, QGroupBox, QHBoxLayout, QLabel, QLineEdit, QListView, QListWidget,
+                             QListWidgetItem, QMessageBox, QPushButton, QRadioButton, QSizePolicy, QSpacerItem,
+                             QStackedWidget, QStyleFactory, QVBoxLayout, QWidget)
 
 from vidcutter.libs.videoservice import VideoService
 
@@ -242,8 +242,8 @@ class VideoPage(QWidget):
         decodingCheckbox.setChecked(self.parent.parent.hardwareDecoding)
         decodingCheckbox.stateChanged.connect(self.switchDecoding)
         decodingLabel = QLabel('''
-            <b>ON:</b> saves laptop power + prevents video tearing;
-            falls back to software decoding if hardware not supported
+            <b>ON:</b> saves laptop power + prevents video tearing; falls back to software decoding if your hardware is
+            not supported
             <br/>
             <b>OFF:</b> always use software based decoding''', self)
         decodingLabel.setObjectName('decodinglabel')
@@ -257,10 +257,10 @@ class VideoPage(QWidget):
         pboCheckboxLabel = QLabel('(recommended for 4K videos)')
         pboCheckboxLabel.setObjectName('checkboxsubtext')
         pboLabel = QLabel('''
-            <b>ON:</b> usually improves performance when used with 4K videos but will result in slower performance +
-            latency with standard media due to the higher memory use.   
+            <b>ON:</b> usually improves performance with 4K videos but results in slower performance + latency with
+            standard media due to higher memory use
             <br/>
-            <b>OFF</b>: this should be your default choice for most media files.
+            <b>OFF</b>: this should be your default choice for most media files
         ''', self)
         pboLabel.setObjectName('pbolabel')
         pboLabel.setTextFormat(Qt.RichText)
@@ -555,8 +555,8 @@ class GeneralPage(QWidget):
         seek2SpinBox.setValue(self.parent.parent.level2Seek)
         # noinspection PyUnresolvedReferences
         seek2SpinBox.valueChanged[float].connect(lambda d: self.setSpinnerValue(2, d))
-        seekLabel = QLabel('''<b>NOTE:</b> these settings affect the seeking time forwards
-            and backwards via the UP/DOWN and SHIFT + UP/DOWN keys. see the
+        seekLabel = QLabel('''<b>NOTES:</b> these settings affect the seeking time forwards
+            and backwards via the<br/>UP/DOWN and SHIFT + UP/DOWN keys. see the
             <i>Keyboard shortcuts</i> menu option for a full list of available shortcuts''', self)
         seekLabel.setObjectName('seeksettingslabel')
         seekLabel.setTextFormat(Qt.RichText)
@@ -599,7 +599,7 @@ class GeneralPage(QWidget):
         self.parent.parent.keepClips = (state == Qt.Checked)
 
     def setSpinnerValue(self, box_id: int, val: float) -> None:
-        self.parent.settings.setValue('level{0}Seek'.format(box_id), val)
+        self.parent.settings.setValue('level{}Seek'.format(box_id), val)
         if box_id == 1:
             self.parent.parent.level1Seek = val
         elif box_id == 2:
@@ -688,7 +688,7 @@ class SettingsDialog(QDialog):
         self.categories.currentItemChanged.connect(self.changePage)
         self.categories.setCurrentRow(0)
         self.categories.setMaximumWidth(self.categories.sizeHintForColumn(0) + 2)
-        self.setMinimumWidth(650 if sys.platform == 'darwin' else 620)
+        self.setMinimumWidth(670 if sys.platform == 'darwin' else 640)
         if sys.platform != 'win32':
             self.adjustSize()
 

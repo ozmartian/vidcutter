@@ -120,7 +120,7 @@ class JobCompleteNotification(Notification):
         table.info {{
             margin: 6px;
             padding: 4px 2px;
-            font-family: "Noto Sans UI", sans-serif;
+            font-family: "Noto Sans", sans-serif;
         }}
         td.label {{
             font-weight: bold;

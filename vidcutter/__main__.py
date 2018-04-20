@@ -32,11 +32,12 @@ import traceback
 
 from PyQt5.QtCore import (pyqtSlot, QCommandLineOption, QCommandLineParser, QCoreApplication, QDir, QFileInfo, QProcess,
                           QSettings, QSize, QStandardPaths, QTimerEvent, Qt)
-from PyQt5.QtGui import QCloseEvent, QContextMenuEvent, QDragEnterEvent, QDropEvent, QMouseEvent, QPixmap, QResizeEvent
+from PyQt5.QtGui import QCloseEvent, QContextMenuEvent, QDragEnterEvent, QDropEvent, QMouseEvent, QResizeEvent
 from PyQt5.QtWidgets import qApp, QApplication, QMainWindow, QMessageBox, QSizePolicy
 
 from vidcutter.libs.mpv import MPVError
 from vidcutter.libs.singleapplication import SingleApplication
+from vidcutter.libs.widgets import VCMessageBox
 from vidcutter.videoconsole import ConsoleHandler, ConsoleWidget, VideoLogger
 from vidcutter.videocutter import VideoCutter
 
@@ -299,24 +300,8 @@ class MainWindow(QMainWindow):
     def closeEvent(self, event: QCloseEvent) -> None:
         try:
             if not self.isEnabled():
-                warntext = '''
-                    <style>
-                        h2 {{
-                            color: {};
-                            font-family: "Futura-Light", sans-serif;
-                            font-weight: 400;
-                        }}
-                    </style>
-                    <table border="0" cellpadding="6" cellspacing="0" width="350">
-                        <tr>
-                            <td><h2>Video is currently being processed</h2></td>
-                        </tr>
-                        <tr>
-                            <td>Are you sure you wish to exit right now?</td>
-                        </tr>
-                    </table>'''.format('#C681D5' if self.theme == 'dark' else '#642C68')
-                exitwarn = QMessageBox(QMessageBox.Warning, 'Warning', warntext, parent=self)
-                exitwarn.setIconPixmap(QPixmap(':images/warning.png'))
+                exitwarn = VCMessageBox('Warning', 'Video is currently being processed',
+                                        'Are you sure you want to exit now?', self)
                 exitwarn.addButton('Yes', QMessageBox.NoRole)
                 cancelbutton = exitwarn.addButton('No', QMessageBox.RejectRole)
                 exitwarn.exec_()
@@ -325,24 +310,8 @@ class MainWindow(QMainWindow):
                     event.ignore()
                     return
             elif self.cutter.mediaAvailable and self.cutter.projectDirty and not self.cutter.projectSaved:
-                warntext = '''
-                    <style>
-                        h2 {{
-                            color: {};
-                            font-family: "Futura-Light", sans-serif;
-                            font-weight: 400;
-                        }}
-                    </style>
-                    <table border="0" cellpadding="6" cellspacing="0" width="350">
-                        <tr>
-                            <td><h2>There are unsaved changes in your project</h2></td>
-                        </tr>
-                        <tr>
-                            <td>Would you like to save the project now?</td>
-                        </tr>
-                    </table>'''.format('#C681D5' if self.theme == 'dark' else '#642C68')
-                savewarn = QMessageBox(QMessageBox.Warning, 'Warning', warntext, parent=self)
-                savewarn.setIconPixmap(QPixmap(':images/warning.png'))
+                savewarn = VCMessageBox('Warning', 'Unsaved changes found in project',
+                                        'Would you like to save the project now?', self)
                 savebutton = savewarn.addButton('Save project', QMessageBox.YesRole)
                 savewarn.addButton('Do not save', QMessageBox.NoRole)
                 cancelbutton = savewarn.addButton('Cancel', QMessageBox.RejectRole)

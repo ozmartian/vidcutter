@@ -287,12 +287,10 @@ class VideoService(QObject):
         if vcodec is not None:
             encode_options = VideoService.config.encoding.get(vcodec, vcodec)
             args = '-v 32 -i "{}" -ss {} -t {} -c:v {} -c:a copy -c:s copy {}-avoid_negative_ts 1 ' \
-                   '-copyinkf -y "{}"'.format(source, frametime, duration, encode_options, stream_map, output)
+                   '-y "{}"'.format(source, frametime, duration, encode_options, stream_map, output)
         else:
-            args = '-v error -ss {} -t {} -i "{}" -c copy {}-avoid_negative_ts 1 -copyinkf -y "{}"' \
+            args = '-v error -ss {} -t {} -i "{}" -c copy {}-avoid_negative_ts 1 -y "{}"' \
                 .format(frametime, duration, source, stream_map, output)
-        # print(self.mappings)
-        # print(args)
         if run:
             result = self.cmdExec(self.backends.ffmpeg, args)
             if not result or os.path.getsize(output) < 1000:
@@ -480,44 +478,41 @@ class VideoService(QObject):
                 absf = '{} mp3decomp'.format(prefix)
         return vbsf, absf
 
-    def blackdetect(self) -> None:
+    def blackdetect(self, duration: float) -> None:
         try:
             args = '-f lavfi -i "movie=\'{}\',blackdetect[out0]" -show_entries tags=lavfi.black_start,lavfi.black_end' \
                    ' -of default=nw=1 -hide_banner'.format(os.path.basename(self.source))
-            self.filterproc = VideoService.initProc(self.backends.ffprobe, self.processdetect,
+            self.filterproc = VideoService.initProc(self.backends.ffprobe, lambda: self.on_blackdetect(duration),
                                                     os.path.dirname(self.source))
             self.filterproc.setArguments(shlex.split(args))
             self.filterproc.start()
-            self.filterproc.readyRead.connect(
-                partial(self.cmdOut, self.filterproc.readAll().data().decode().strip()))
+            self.filterproc.readyReadStandardOutput.connect(
+                partial(self.cmdOut, self.filterproc.readAllStandardOutput().data().decode().strip()))
         except FileNotFoundError:
             self.logger.exception('Could not find media file: {}'.format(self.source), exc_info=True)
             raise
 
-    @pyqtSlot(int, QProcess.ExitStatus)
-    def processdetect(self, code: int, status: QProcess.ExitStatus) -> None:
-        if code == 0 and status == QProcess.NormalExit:
-            scenes = [[QTime(0, 0)]]
-            results = self.filterproc.readAll().data().decode().strip()
-            for line in results.split('\n'):
-                if re.match(r'\[blackdetect @ (.*)\]', line):
-                    vals = line.split(']')[1].strip().split(' ')
-                    start = float(vals[0].replace('black_start:', ''))
-                    end = float(vals[1].replace('black_end:', ''))
-                    dur = float(vals[2].replace('black_duration:', ''))
-                    if dur >= VideoService.config.black_duration:
-                        scenes[len(scenes) - 1].append(self.parent.delta2QTime(start))
-                        scenes.append([self.parent.delta2QTime(end)])
-            last = scenes[len(scenes) - 1][0]
-            dur = self.duration()
-            if last < dur and (last.msecsTo(dur) / 1000) >= VideoService.config.black_duration:
-                scenes[len(scenes) - 1].append(dur)
-            else:
-                scenes.pop()
-            self.addScenes.emit(scenes)
-            self.filterproc.deleteLater()
+    def on_blackdetect(self, detect_duration: float) -> None:
+        scenes = [[QTime(0, 0)]]
+        results = self.filterproc.readAllStandardOutput().data().decode().strip()
+        for line in results.split('\n'):
+            if re.match(r'\[blackdetect @ (.*)\]', line):
+                vals = line.split(']')[1].strip().split(' ')
+                start = float(vals[0].replace('black_start:', ''))
+                end = float(vals[1].replace('black_end:', ''))
+                dur = float(vals[2].replace('black_duration:', ''))
+                if dur >= detect_duration:
+                    scenes[len(scenes) - 1].append(self.parent.delta2QTime(start))
+                    scenes.append([self.parent.delta2QTime(end)])
+        last = scenes[len(scenes) - 1][0]
+        dur = self.duration()
+        if last < dur and (last.msecsTo(dur) / 1000) >= detect_duration:
+            scenes[len(scenes) - 1].append(dur)
+        else:
+            scenes.pop()
+        self.addScenes.emit(scenes)
 
-    def killFilter(self) -> None:
+    def kill_filterproc(self) -> None:
         if hasattr(self, 'filterproc'):
             self.filterproc.close()
             self.filterproc.deleteLater()

@@ -27,10 +27,11 @@ import sys
 
 from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QEasingCurve, QEvent, QObject, QPoint, QPropertyAnimation, QSize, Qt,
                           QTime, QTimer)
-from PyQt5.QtGui import QFocusEvent, QShowEvent
+from PyQt5.QtGui import QFocusEvent, QMouseEvent, QPixmap, QShowEvent
 from PyQt5.QtWidgets import (qApp, QAbstractSpinBox, QDialog, QDialogButtonBox, QGraphicsOpacityEffect, QGridLayout,
-                             QHBoxLayout, QLabel, QMessageBox, QProgressBar, QPushButton, QSlider, QSpinBox, QStyle,
-                             QStyleFactory, QStyleOptionSlider, QTimeEdit, QToolBox, QToolTip, QVBoxLayout, QWidget)
+                             QHBoxLayout, QLabel, QMenu, QMessageBox, QProgressBar, QPushButton, QSlider, QSpinBox,
+                             QStyle, QStyleFactory, QStyleOptionSlider, QTimeEdit, QToolBox, QToolTip, QVBoxLayout,
+                             QWidget, QWidgetAction)
 
 
 class VCToolBarButton(QWidget):
@@ -285,7 +286,7 @@ class VCProgressDialog(QDialog):
 
     def setText(self, val: str) -> None:
         if '<b>' in val:
-            css = '<style>b { font-family:"Noto Sans UI"; font-weight:bold; }</style>'
+            css = '<style>b { font-family:"Noto Sans"; font-weight:bold; }</style>'
             val = '{0}{1}'.format(css, val)
         self._label.setText(val)
 
@@ -371,6 +372,71 @@ class VCBlinkText(QWidget):
         self.anim.stop()
 
 
+class VCFilterMenuAction(QWidgetAction):
+    exited = pyqtSignal()
+
+    class VCFilterMenuWidget(QWidget):
+        entered = pyqtSignal()
+        exited = pyqtSignal()
+        triggered = pyqtSignal()
+
+        def __init__(self, icon: QPixmap, title: str, text: str, subtext: str, parent=None):
+            super(VCFilterMenuAction.VCFilterMenuWidget, self).__init__(parent)
+            self.parent = parent
+            self.icon_label = QLabel()
+            self.icon_label.setPixmap(icon)
+            self.text_label = QLabel()
+            self.text_label.setText('<b>{title}:</b> {text}<br/><font size="-1">{subtext}</font>'.format(**locals()))
+            layout = QHBoxLayout()
+            layout.addWidget(self.icon_label)
+            layout.addSpacing(5)
+            layout.addWidget(self.text_label)
+            self.setLayout(layout)
+
+        def mousePressEvent(self, event: QMouseEvent) -> None:
+            self.triggered.emit()
+
+        def enterEvent(self, event: QEvent) -> None:
+            self.entered.emit()
+
+        def leaveEvent(self, event: QEvent) -> None:
+            self.exited.emit()
+
+    def __init__(self, icon: QPixmap, title: str, text: str, subtext: str, parent: QMenu):
+        super(VCFilterMenuAction, self).__init__(parent)
+        self.parent = parent
+        w = VCFilterMenuAction.VCFilterMenuWidget(icon, title, text, subtext, parent)
+        w.triggered.connect(self.trigger)
+        w.entered.connect(self.hover)
+        w.exited.connect(self.exited)
+        self.setDefaultWidget(w)
+
+
+class VCMessageBox(QMessageBox):
+    def __init__(self, title: str, heading: str, text: str, parent: QWidget=None):
+        super(VCMessageBox, self).__init__(parent)
+        self.parent = parent
+        self.setWindowTitle(title)
+        self.setIconPixmap(QPixmap(':images/warning.png'))
+        color = '#C681D5' if self.parent.theme == 'dark' else '#642C68'
+        self.setText('''
+            <style>
+                h2 {{
+                    color: {color};
+                    font-family: "Futura-Light", sans-serif;
+                    font-weight: 400;
+                }}
+            </style>
+            <table border="0" cellpadding="6" cellspacing="0" width="350">
+                <tr>
+                    <td><h2>{heading}</h2></td>
+                </tr>
+                <tr>
+                    <td>{text}</td>
+                </tr>
+            </table>'''.format(**locals()))
+
+
 class ClipErrorsDialog(QDialog):
 
     class VCToolBox(QToolBox):
@@ -429,7 +495,7 @@ class ClipErrorsDialog(QDialog):
                     font-weight: 400;
                 }}
                 p {{
-                    font-family: "Noto Sans UI", sans-serif;
+                    font-family: "Noto Sans", sans-serif;
                     color: {1};
                 }}
             </style>
@@ -464,7 +530,7 @@ class ClipErrorsDialog(QDialog):
                 font-weight: 400;
             }}
             p {{
-                font-family: "Noto Sans UI", sans-serif;
+                font-family: "Noto Sans", sans-serif;
                 font-weight: 300;
                 color: {1};
             }}

@@ -33,22 +33,22 @@ from typing import List, Union
 from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QBuffer, QByteArray, QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize,
                           Qt, QTextStream, QTime, QTimer, QUrl)
 from PyQt5.QtGui import QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QPixmap, QShowEvent
-from PyQt5.QtWidgets import (QAction, qApp, QApplication, QFileDialog, QFrame, QGroupBox, QHBoxLayout, QLabel,
-                             QListWidgetItem, QMainWindow, QMenu, QMessageBox, QPushButton, QSizePolicy, QStyleFactory,
-                             QVBoxLayout, QWidget)
+from PyQt5.QtWidgets import (QAction, qApp, QApplication, QFileDialog, QFrame, QGroupBox, QHBoxLayout, QInputDialog,
+                             QLabel, QListWidgetItem, QMainWindow, QMenu, QMessageBox, QPushButton, QSizePolicy,
+                             QStyleFactory, QVBoxLayout, QWidget)
 import sip
 
 # noinspection PyUnresolvedReferences
 from vidcutter import resources
 from vidcutter.about import About
-from vidcutter.libs.config import InvalidMediaException, VideoFilter
+from vidcutter.libs.config import Config, InvalidMediaException, VideoFilter
 from vidcutter.libs.mpvwidget import mpvWidget
 from vidcutter.libs.munch import Munch
 from vidcutter.libs.notifications import JobCompleteNotification
 from vidcutter.libs.taskbarprogress import TaskbarProgress
 from vidcutter.libs.videoservice import VideoService
-from vidcutter.libs.widgets import (ClipErrorsDialog, VCBlinkText, VCFrameCounter, VCProgressDialog, VCTimeCounter,
-                                    VCToolBarButton, VCVolumeSlider)
+from vidcutter.libs.widgets import (ClipErrorsDialog, VCBlinkText, VCFilterMenuAction, VCFrameCounter, VCProgressDialog,
+                                    VCTimeCounter, VCToolBarButton, VCVolumeSlider)
 from vidcutter.mediainfo import MediaInfo
 from vidcutter.mediastream import StreamSelector
 from vidcutter.settings import SettingsDialog
@@ -75,6 +75,7 @@ class VideoCutter(QWidget):
         self.theme = self.parent.theme
         self.workFolder = self.parent.WORKING_FOLDER
         self.settings = self.parent.settings
+        self.filter_settings = Config.filter_settings()
         self.currentMedia, self.mediaAvailable, self.mpvError = None, False, False
         self.projectDirty, self.projectSaved, self.debugonstart = False, False, False
         self.smartcut_monitor, self.notify = None, None
@@ -125,8 +126,7 @@ class VideoCutter(QWidget):
         self._initIcons()
         self._initActions()
 
-        self.appmenu, self.filtersmenu = QMenu(self), QMenu('Filters', self)
-        self.clipindex_removemenu, self.clipindex_contextmenu = QMenu(self), QMenu(self)
+        self.appmenu, self.clipindex_removemenu, self.clipindex_contextmenu = QMenu(self), QMenu(self), QMenu(self)
 
         self._initMenus()
         self._initNoVideo()
@@ -435,10 +435,11 @@ class VideoCutter(QWidget):
         qApp.setStyle(VideoStyleDark() if self.theme == 'dark' else VideoStyleLight())
         self.fonts = [
             QFontDatabase.addApplicationFont(':/fonts/FuturaLT.ttf'),
-            QFontDatabase.addApplicationFont(':/fonts/NotoSans.ttc')
+            QFontDatabase.addApplicationFont(':/fonts/NotoSans-Bold.ttf'),
+            QFontDatabase.addApplicationFont(':/fonts/NotoSans-Regular.ttf')
         ]
         self.style().loadQSS(self.theme)
-        QApplication.setFont(QFont('Noto Sans UI', 12 if sys.platform == 'darwin' else 10, 300))
+        QApplication.setFont(QFont('Noto Sans', 12 if sys.platform == 'darwin' else 10, 300))
 
     def getMPV(self, parent: QWidget=None, file: str=None, start: float=0, pause: bool=True, mute: bool=False,
                volume: int=None) -> mpvWidget:
@@ -508,8 +509,8 @@ class VideoCutter(QWidget):
         self.removeAllIcon = QIcon(':/images/remove-all.png')
         self.openProjectIcon = QIcon(':/images/open.png')
         self.saveProjectIcon = QIcon(':/images/save.png')
+        self.filtersIcon = QIcon(':/images/filters.png')
         self.mediaInfoIcon = QIcon(':/images/info.png')
-        self.scenesIcon = QIcon(':/images/scenes.png')
         self.streamsIcon = QIcon(':/images/streams.png')
         self.viewLogsIcon = QIcon(':/images/viewlogs.png')
         self.updateCheckIcon = QIcon(':/images/update.png')
@@ -549,29 +550,47 @@ class VideoCutter(QWidget):
                                     statusTip='View shortcut key bindings')
         self.settingsAction = QAction(self.settingsIcon, 'Settings', self, triggered=self.showSettings,
                                       statusTip='Configure application settings')
-        self.blackdetectAction = QAction(self.scenesIcon, 'Detect scene changes', self, enabled=False,
-                                         triggered=(lambda: self.startFilter(VideoFilter.SCENEDETECT)),
-                                         statusTip='Create clips via black scene detection')
         self.fullscreenAction = QAction(self.fullscreenIcon, 'Toggle fullscreen', self, triggered=self.toggleFullscreen,
                                         statusTip='Toggle fullscreen display mode', enabled=False)
         self.quitAction = QAction(self.quitIcon, 'Quit', self, triggered=self.parent.close,
                                   statusTip='Quit the application')
 
-    def _initMenus(self) -> None:
-        self.filtersmenu.addAction(self.blackdetectAction)
+    @property
+    def _filtersMenu(self) -> QMenu:
+        menu = QMenu('Video filters', self)
+        self.blackdetectAction = VCFilterMenuAction(QPixmap(':/images/blackdetect.png'), 'BLACKDETECT',
+                                                    'Create clips via black frame detection',
+                                                    'Useful for skipping commercials or detecting scene transitions',
+                                                    menu)
+        self.blackdetectAction.setStatusTip('Create clips via black frame detection')
+        if sys.platform == 'darwin':
+            self.blackdetectAction.triggered.connect(lambda: self.startFilter(VideoFilter.BLACKDETECT),
+                                                     Qt.QueuedConnection)
+        else:
+            self.blackdetectAction.triggered.connect(lambda: self.startFilter(VideoFilter.BLACKDETECT),
+                                                     Qt.DirectConnection)
+        self.blackdetectAction.hovered.connect(
+            lambda: self.parent.statusBar().showMessage(self.blackdetectAction.statusTip())
+            if self.blackdetectAction.isEnabled() else self.doPass())
+        self.blackdetectAction.exited.connect(self.parent.statusBar().clearMessage)
+        self.blackdetectAction.setEnabled(False)
+        menu.setIcon(self.filtersIcon)
+        menu.addAction(self.blackdetectAction)
+        return menu
 
+    def _initMenus(self) -> None:
         self.appmenu.setLayoutDirection(Qt.LeftToRight)
         self.appmenu.addAction(self.openProjectAction)
         self.appmenu.addAction(self.saveProjectAction)
         self.appmenu.addSeparator()
-        self.appmenu.addAction(self.settingsAction)
-        self.appmenu.addSeparator()
-        self.appmenu.addMenu(self.filtersmenu)
+        self.appmenu.addMenu(self._filtersMenu)
         self.appmenu.addSeparator()
         self.appmenu.addAction(self.fullscreenAction)
         self.appmenu.addAction(self.streamsAction)
         self.appmenu.addAction(self.mediainfoAction)
         self.appmenu.addAction(self.keyRefAction)
+        self.appmenu.addSeparator()
+        self.appmenu.addAction(self.settingsAction)
         self.appmenu.addSeparator()
         self.appmenu.addAction(self.viewLogsAction)
         self.appmenu.addAction(self.updateCheckAction)
@@ -1045,40 +1064,42 @@ class VideoCutter(QWidget):
 
     @pyqtSlot(list)
     def addScenes(self, scenes: List[list]) -> None:
-        self.filterProgress()
-        self.parent.lock_gui(False)
         if len(scenes):
             [
                 self.clipTimes.append([scene[0], scene[1], self.captureImage(self.currentMedia, scene[0]), ''])
                 for scene in scenes if len(scene)
             ]
             self.renderClipIndex()
+        self.stopFilters()
 
     @pyqtSlot(VideoFilter)
     def startFilter(self, name: VideoFilter) -> None:
-        if name == VideoFilter.SCENEDETECT:
-            self.parent.lock_gui(True)
-            self.filterProgress('detecting scenes (press ESC to cancel)')
-            self.videoService.blackdetect()
+        if name == VideoFilter.BLACKDETECT:
+            min_duration, confirmed = QInputDialog.getDouble(self, 'Filter Settings',
+                                                             'Minimum duration for black scenes (in seconds)', 2.5,
+                                                             self.filter_settings.blackdetect.min_duration, 999, 1,
+                                                             Qt.Dialog | Qt.WindowCloseButtonHint, 0.1)
+            if confirmed:
+                self.parent.lock_gui(True)
+                self.filterProgress('detecting scenes (press ESC to cancel)')
+                self.videoService.blackdetect(min_duration)
+
+    def filterProgress(self, msg: str=None) -> None:
+        if msg is None and hasattr(self, 'filterProgressBar'):
+            self.filterProgressBar.close()
+            self.filterProgressBar.deleteLater()
+            return
+        self.filterProgressBar = VCProgressDialog(self, modal=False)
+        self.filterProgressBar.rejected.connect(self.stopFilters)
+        self.filterProgressBar.setText(msg)
+        self.filterProgressBar.setMinimumWidth(600)
+        self.filterProgressBar.show()
 
     @pyqtSlot()
-    def stopFilter(self) -> None:
-        self.videoService.killFilter()
+    def stopFilters(self) -> None:
+        self.videoService.kill_filterproc()
         self.filterProgress()
         self.parent.lock_gui(False)
-
-    @pyqtSlot(str)
-    def filterProgress(self, msg: str=None) -> None:
-        if msg is not None:
-            self.filterProgressBar = VCProgressDialog(self, modal=False)
-            self.filterProgressBar.rejected.connect(self.stopFilter)
-            self.filterProgressBar.setText(msg)
-            self.filterProgressBar.setMinimumWidth(600)
-            self.filterProgressBar.show()
-        else:
-            if hasattr(self, 'filterProgressBar'):
-                self.filterProgressBar.close()
-                self.filterProgressBar.deleteLater()
 
     @pyqtSlot()
     def addExternalClips(self) -> None:
@@ -1512,6 +1533,9 @@ class VideoCutter(QWidget):
     def toggleOSD(self, checked: bool) -> None:
         self.showText('on-screen display {}'.format('enabled' if checked else 'disabled'), override=True)
         self.saveSetting('enableOSD', checked)
+
+    def doPass(self) -> None:
+        pass
 
     @staticmethod
     def isFlatpak() -> bool:

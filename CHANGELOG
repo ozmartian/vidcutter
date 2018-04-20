@@ -1,32 +1,36 @@
 vidcutter (6.0.0-1) stable; urgency=medium
 
-  * NEW FEATURE: scene detection added in a new filters section accessible
-    via newly added filters button within left hand buttons group or newly
-    added context menu option through right-clicking or the menu button. This
-    filter uses the blackdetect filter built into FFmpeg to detect black frames
-    within a video and then marking time between these as valid scenes. Similar
-    to tools like comskip and most handy for removal of commercials etc. In
-    addition, a new setting has been added for miniumum black duration in
-    Settings -> General (default is 2.5) which sets the minimum detected black
-    duration in seconds allowing you greater flexibility with various source
-    media files.
+  * NEW FEATURE: video filters menu option added to app menu accessed via
+    right-click or the bottom-right menu button. the first filter available
+    is BLACKDETECT which automatically creates clips in your clip index based
+    around black scene changes that are detected. selecting the filter once
+    a media file has been loaded will prompt for a black scene minimum
+    duration in seconds, allowing you to tweak the black frame sensitivity to
+    reduce or increase the amount of scenes detected. this is mainly useful for
+    skipping commercials (e.g. comskip) or auto-detecting scene transitions.
+    more filters will be added in future updates.
 
-  * External media joins (when wanting to just join a set of files using the
-    the ADD button under the Video Index) is now fixed. As there is an absence
-    of regions in timeline in this mode progressbars display over list items
-    in the Video Index like they do in timeline during normal cut/join
-    operations.
+  * External media file joins (when wanting to just join a set of files using the
+    the ADD button under the Video Index) are fixed; the last version broke
+    this once timeline progressbars were added. Progress for external joins
+    is displayed in progressbars overlaying associated clips directly in the
+    Clip Index which replaces timeline progressbar functionality when all clips
+    are external (i.e. not loaded via Open Media thus not associated with a
+    project)
 
   * Added new "Enable use of PBOs" setting under the Video category for use of
     pixel buffer objects when rendering OpenGL video. Used for noticeable
     performance improvements when working with huge/4K media files.
 
-  * Removing a clip you just started without marking an end time from your
-    index resets the edit state as it used to rather than remaining in end
-    clip selection mode. This was a newly introduced bug in recent versions.
+  * Fixed a bug caused when removing a clip with a start time but no end time
+    from your index.
 
   * OSD (on-screen display) text defined for all user actions + standardised
     OSD case and wording/format.
+
+  * Main clip list's scrolling mode changed to per pixel for smoother
+    vertical scrolling and no snapping of clips as they are scrolled into
+    view.
 
   * snap + Flatpak manifests completed w/ app now available from respective
     stores and repos (i.e snapcraft.io + flathub.org). These builds come

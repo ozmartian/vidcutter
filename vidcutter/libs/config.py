@@ -24,11 +24,17 @@
 
 from enum import Enum
 
+from vidcutter.libs.munch import Munch
+
 
 class Config:
-    @property
-    def black_duration(self) -> int:
-        return 2.5
+    @staticmethod
+    def filter_settings() -> Munch:
+        return Munch(
+            blackdetect=Munch(
+                min_duration=2.0
+            )
+        )
 
     @property
     def video_codecs(self) -> list:
@@ -104,7 +110,7 @@ class Streams(Enum):
 
 
 class VideoFilter(Enum):
-    SCENEDETECT = 1
+    BLACKDETECT = 1
 
 
 class VidCutterException(Exception):

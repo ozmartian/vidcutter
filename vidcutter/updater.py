@@ -22,7 +22,6 @@
 #
 #######################################################################
 
-import json
 import logging
 import os
 import sys
@@ -33,6 +32,12 @@ from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkReply, QNetworkReques
 from PyQt5.QtWidgets import qApp, QDialog, QDialogButtonBox, QLabel, QVBoxLayout
 
 from vidcutter.libs.widgets import VCProgressDialog
+
+try:
+    # noinspection PyPackageRequirements
+    from simplejson import loads, JSONDecodeError
+except ImportError:
+    from json import loads, JSONDecodeError
 
 
 class Updater(QDialog):
@@ -55,12 +60,15 @@ class Updater(QDialog):
             return
         if os.getenv('DEBUG', False):
             self.log_request(reply)
-        # noinspection PyTypeChecker
-        jsonobj = json.loads(str(reply.readAll(), 'utf-8'))
-        reply.deleteLater()
-        latest = jsonobj.get('tag_name')
-        current = qApp.applicationVersion()
-        self.mbox.show_result(latest, current)
+        try:
+            jsonobj = loads(str(reply.readAll(), 'utf-8'))
+            reply.deleteLater()
+            latest = jsonobj.get('tag_name')
+            current = qApp.applicationVersion()
+            self.mbox.show_result(latest, current)
+        except JSONDecodeError:
+            self.logger.exception('Updater JSON decoding error', exc_info=True)
+            raise
 
     def check(self) -> None:
         self.mbox = UpdaterMsgBox(self.parent, theme=self.parent.theme)
@@ -121,7 +129,7 @@ class UpdaterMsgBox(QDialog):
                 font-size: 17px;
             }
             td.value {
-                font-family: "Noto Sans UI", sans-serif;
+                font-family: "Noto Sans", sans-serif;
                 color: %s;
                 font-weight: 500;
                 font-size: 15px;

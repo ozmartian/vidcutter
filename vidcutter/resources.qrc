@@ -1,11 +1,13 @@
 <RCC>
     <qresource prefix="/">
         <file>fonts/FuturaLT.ttf</file>
-        <file>fonts/NotoSans.ttc</file>
+        <file>fonts/NotoSans-Bold.ttf</file>
+        <file>fonts/NotoSans-Regular.ttf</file>
         <file>images/arrow-left.png</file>
         <file>images/arrow-left-on.png</file>
         <file>images/arrow-right.png</file>
         <file>images/arrow-right-on.png</file>
+        <file>images/blackdetect.png</file>
         <file>images/complete-play.png</file>
         <file>images/dialog-backdrop.png</file>
         <file>images/dialog-backdrop-02.png</file>
@@ -14,6 +16,7 @@
         <file>images/filmstrip.png</file>
         <file>images/filmstrip-thumbs.png</file>
         <file>images/filmstrip-nothumbs.png</file>
+        <file>images/filters.png</file>
         <file>images/folder.png</file>
         <file>images/generating-thumbs.png</file>
         <file>images/handle.png</file>
@@ -30,7 +33,6 @@
         <file>images/remove-all.png</file>
         <file>images/runtime.png</file>
         <file>images/save.png</file>
-        <file>images/scenes.png</file>
         <file>images/settings.png</file>
         <file>images/settings-ffmpeg.png</file>
         <file>images/settings-general.png</file>

@@ -91,7 +91,7 @@ QToolBar#appcontrols QToolButton {
     color: #444;
     font-size: 13px;
     font-weight: 400;
-    font-family: "Noto Sans UI", sans-serif;
+    font-family: "Noto Sans", sans-serif;
     line-height: 80%;
     background: transparent;
     border: none;
@@ -118,7 +118,7 @@ QListView#cliplist {
 }
 
 QListView::item#cliplist {
-    padding: 10px;
+    padding: 0;
 }
 
 QListView#settingsmenu {
@@ -172,7 +172,7 @@ QLabel#logowidget {
 QLabel#decodinglabel, QLabel#ratiolabel, QLabel#keepclipslabel, QLabel#singleinstancelabel,
 QLabel#verboselogslabel, QLabel#pbolabel, QLabel#nativedialogslabel, QLabel#seeksettingslabel,
 QLabel#zoomlabel, QLabel#smartcutlabel, QLabel#ffmpeglabel {
-    font-family: "Noto Sans UI", sans-serif;
+    font-family: "Noto Sans", sans-serif;
     font-size: 11px;
     color: #444;
 }
@@ -207,7 +207,7 @@ QLabel#novideoversion {
 }
 
 QLabel#checkboxsubtext {
-    font-family: "Noto Sans UI", sans-serif;
+    font-family: "Noto Sans", sans-serif;
     font-size: 12px;
     color: #444;
 }
@@ -644,7 +644,7 @@ VCToolBarButton QLabel {
     color: #444;
     font-size: 13px;
     font-weight: 400;
-    font-family: "Noto Sans UI", sans-serif;    
+    font-family: "Noto Sans", sans-serif;
 }
 
 VCToolBarButton#savebutton QLabel {
@@ -771,7 +771,7 @@ VCProgressDialog {
 }
 
 VCProgressDialog QLabel {
-    font-family: "Noto Sans UI", sans-serif;
+    font-family: "Noto Sans", sans-serif;
     font-size: 15px;
     font-weight: 400;
     color: #FFF;
@@ -789,7 +789,7 @@ VCProgressDialog QProgressBar::chunk {
 VCProgressDialog QLabel#progresstimer {
     color: #000;
     font-size: 14px;
-    font-family: "Noto Sans UI", sans-serif;
+    font-family: "Noto Sans", sans-serif;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -799,4 +799,18 @@ VCBlinkText QLabel {
     font-weight: 400;
     font-size: 26px;
     color: #FFF;
+}
+
+/* -------------------------------------------------------------------------- */
+
+VCFilterMenuWidget {
+    margin: 15px;
+}
+
+VCFilterMenuWidget QWidget {
+    color: #444;
+}
+
+VCFilterMenuWidget QWidget:disabled {
+    color: rgba(125, 125, 125, 0.5);
 }

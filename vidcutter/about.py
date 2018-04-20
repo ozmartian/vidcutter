@@ -39,8 +39,8 @@ import vidcutter
 
 
 class About(QDialog):
-    def __init__(self, ffmpeg_service: QObject, mpv_service: QObject, parent: QWidget, f=Qt.WindowCloseButtonHint):
-        super(About, self).__init__(parent, f)
+    def __init__(self, ffmpeg_service: QObject, mpv_service: QObject, parent: QWidget):
+        super(About, self).__init__(parent)
         self.parent = parent
         self.logger = logging.getLogger(__name__)
         self.ffmpeg_service = ffmpeg_service
@@ -48,6 +48,7 @@ class About(QDialog):
         self.theme = self.parent.theme
         self.setObjectName('aboutwidget')
         self.setContentsMargins(0, 0, 0, 0)
+        self.setWindowFlags(Qt.Window | Qt.Dialog | Qt.WindowCloseButtonHint)
         self.setWindowModality(Qt.ApplicationModal)
         pencolor1 = '#9A45A2' if self.theme == 'dark' else '#642C68'
         pencolor2 = '#FFF' if self.theme == 'dark' else '#000'
@@ -117,7 +118,7 @@ class About(QDialog):
         self.setLayout(layout)
         self.setWindowTitle('About %s' % qApp.applicationName())
         self.setWindowIcon(self.parent.windowIcon())
-        self.setMinimumSize(self.get_size(self.parent.parentWidget().scale))
+        self.setFixedSize(self.get_size(self.parent.parentWidget().scale))
 
     @staticmethod
     def builddate():
@@ -182,7 +183,7 @@ class AboutTab(BaseTab):
             ffmpeg_version = '<span style="color:maroon; font-weight:bold;">MISSING</span>'
         html = '''
 <style>
-    table { width: 100%%; font-family: "Noto Sans UI", sans-serif; background-color: transparent; }
+    table { width: 100%%; font-family: "Noto Sans", sans-serif; background-color: transparent; }
     a { color: %s; text-decoration: none; font-weight: bold; }
 </style>
 <table border="0" cellpadding="8" cellspacing="4">
@@ -293,7 +294,10 @@ class CreditsTab(BaseTab):
                     </p>
                 </td>
             </tr>
-        </table>''' % ('#EA95FF' if self.parent.theme == 'dark' else '#441D4E'))
+        </table>
+        <p>
+            Click on a project name for more information from its official website.
+        </p>''' % ('#EA95FF' if self.parent.theme == 'dark' else '#441D4E'))
 
 
 class LicenseTab(BaseTab):

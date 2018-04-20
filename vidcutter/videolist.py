@@ -51,6 +51,7 @@ class VideoList(QListWidget):
         self.setDragDropMode(QAbstractItemView.InternalMove)
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.setAlternatingRowColors(True)
+        self.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
         self.setObjectName('cliplist')
         self.setStyleSheet('QListView::item { border: none; }')
         self.opacityEffect = OpacityEffect(0.3)
@@ -129,20 +130,20 @@ class VideoItem(QAbstractItemDelegate):
         thumb.paint(painter, r, Qt.AlignVCenter | Qt.AlignLeft)
         painter.setPen(QPen(pencolor, 1, Qt.SolidLine))
         r = option.rect.adjusted(110, 8, 0, 0)
-        painter.setFont(QFont('Noto Sans UI', 10 if sys.platform == 'darwin' else 8, QFont.Bold))
+        painter.setFont(QFont('Noto Sans', 10 if sys.platform == 'darwin' else 8, QFont.Bold))
         painter.drawText(r, Qt.AlignLeft, 'FILENAME' if len(externalPath) else 'START')
         r = option.rect.adjusted(110, 20, 0, 0)
-        painter.setFont(QFont('Noto Sans UI', 11 if sys.platform == 'darwin' else 9, QFont.Normal))
+        painter.setFont(QFont('Noto Sans', 11 if sys.platform == 'darwin' else 9, QFont.Normal))
         if len(externalPath):
             painter.drawText(r, Qt.AlignLeft, self.clipText(os.path.basename(externalPath), painter))
         else:
             painter.drawText(r, Qt.AlignLeft, starttime)
         if len(endtime) > 0:
             r = option.rect.adjusted(110, 45, 0, 0)
-            painter.setFont(QFont('Noto Sans UI', 10 if sys.platform == 'darwin' else 8, QFont.Bold))
+            painter.setFont(QFont('Noto Sans', 10 if sys.platform == 'darwin' else 8, QFont.Bold))
             painter.drawText(r, Qt.AlignLeft, 'RUNTIME' if len(externalPath) else 'END')
             r = option.rect.adjusted(110, 60, 0, 0)
-            painter.setFont(QFont('Noto Sans UI', 11 if sys.platform == 'darwin' else 9, QFont.Normal))
+            painter.setFont(QFont('Noto Sans', 11 if sys.platform == 'darwin' else 9, QFont.Normal))
             painter.drawText(r, Qt.AlignLeft, endtime)
         if self.parent.verticalScrollBar().isVisible():
             self.parent.setFixedWidth(210)
