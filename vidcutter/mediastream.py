@@ -115,7 +115,7 @@ class StreamSelector(QDialog):
             if hasattr(stream, 'tags') and hasattr(stream.tags, 'language'):
                 labeltext += '<b>language:</b> {}<br/>'.format(ISO639_2[stream.tags.language])
             labeltext += '<b>codec:</b> {}<br/>'.format(stream.codec_long_name)
-            labeltext += '<b>channels:</b> {} &nbsp; <b>sample rate:</b> {} kHz' \
+            labeltext += '<b>channels:</b> {0} &nbsp; <b>sample rate:</b> {1:.2f} kHz' \
                          .format(stream.channels, round(int(stream.sample_rate) / 1000, 1))
             label = StreamSelectorLabel(labeltext, checkbox, False, self)
             rows = audiolayout.rowCount()

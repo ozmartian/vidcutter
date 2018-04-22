@@ -87,12 +87,7 @@ class ConsoleHandler(QObject, logging.StreamHandler):
     def __init__(self, widget):
         QObject.__init__(self)
         logging.StreamHandler.__init__(self)
-        self._widget = widget
-        self.logReceived.connect(self._widget.edit.write)
-
-    @property
-    def widget(self):
-        return self._widget
+        self.logReceived.connect(widget.edit.write)
 
     def emit(self, record):
         self.logReceived.emit(record.message)
@@ -103,5 +98,7 @@ class VideoLogger(logging.Logger):
         super(VideoLogger, self).__init__(name, level)
         self.pp = pprint.PrettyPrinter(indent=2, compact=False)
 
-    def info(self, msg, pretty: bool=False, *args, **kwargs):
-        return super(VideoLogger, self).info(self.pp.pformat(msg) if pretty else msg, *args, **kwargs)
+    def info(self, msg, *args, **kwargs):
+        if 'pretty' in list(kwargs.keys()) and kwargs.pop('pretty'):
+            msg = self.pp.pformat(msg)
+        return super(VideoLogger, self).info(msg, *args, **kwargs)

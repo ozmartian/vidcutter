@@ -31,7 +31,7 @@ import sys
 from bisect import bisect_left
 from enum import Enum
 from functools import partial
-from typing import List
+from typing import List, Union
 
 from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QDir, QFileInfo, QObject, QProcess, QProcessEnvironment, QSettings,
                           QSize, QStandardPaths, QStorageInfo, QTemporaryFile, QTime)
@@ -40,6 +40,7 @@ from PyQt5.QtWidgets import QMessageBox, QWidget
 
 from vidcutter.libs.config import Config, InvalidMediaException, Streams, ToolNotFoundException
 from vidcutter.libs.munch import Munch
+from vidcutter.libs.widgets import VCMessageBox
 
 try:
     # noinspection PyPackageRequirements
@@ -85,7 +86,7 @@ class VideoService(QObject):
 
     def setMedia(self, source: str) -> None:
         try:
-            self.source = source
+            self.source = QDir.toNativeSeparators(source)
             self.media = self.probe(source)
             if self.media is not None:
                 if getattr(self.parent, 'verboseLogs', False):
@@ -157,28 +158,26 @@ class VideoService(QObject):
         info = QStorageInfo(path)
         available = info.bytesAvailable() / 1000 / 1000
         if available < VideoService.spaceWarningThreshold:
-            warnmsg = 'There is less than {0}MB of disk space available at the target folder selected to save ' \
-                      'your media. VidCutter WILL FAIL to produce your media if you run out of space during ' \
-                      'operations.'
-            QMessageBox.warning(self.parentWidget(), 'Disk space warning',
-                                warnmsg.format(VideoService.spaceWarningThreshold))
+            warnmsg = 'There is less than {}MB of free disk space in the '.format(VideoService.spaceWarningThreshold)
+            warnmsg += 'folder selected to save your media. '
+            warnmsg += 'VidCutter will fail if space runs out before processing completes.'
+            spacewarn = VCMessageBox('Warning', 'Disk space alert', warnmsg, self.parentWidget())
+            spacewarn.addButton(VCMessageBox.Ok)
+            spacewarn.exec_()
             self.spaceWarningDelivered = True
 
     @staticmethod
     def captureFrame(settings: QSettings, source: str, frametime: str, thumbsize: QSize = ThumbSize.INDEX.value,
                      external: bool = False) -> QPixmap:
-        # print('[captureFrame] frametime: {0}  thumbsize: {1}'.format(frametime, thumbsize))
         capres = QPixmap()
         img = QTemporaryFile(os.path.join(QDir.tempPath(), 'XXXXXX.jpg'))
         if img.open():
             imagecap = img.fileName()
             cmd = VideoService.findBackends(settings).ffmpeg
-            args = '-hide_banner -ss {0} -i "{1}" -vframes 1 -s {2:d}x{3:d} -y "{4}"' \
-                .format(frametime, source, thumbsize.width(), thumbsize.height(), imagecap)
+            tsize = '{0:d}x{1:d}'.format(thumbsize.width(), thumbsize.height())
+            args = '-hide_banner -ss {frametime} -i "{source}" -vframes 1 -s {tsize} -y "{imagecap}"'.format(**locals())
             proc = VideoService.initProc()
             if proc.state() == QProcess.NotRunning:
-                # if os.getenv('DEBUG', False):
-                #     logging.getLogger(__name__).info('"%s %s"' % (cmd, args))
                 proc.start(cmd, shlex.split(args))
                 proc.waitForFinished(-1)
                 if proc.exitStatus() == QProcess.NormalExit and proc.exitCode() == 0:
@@ -280,9 +279,8 @@ class VideoService(QObject):
         return output
 
     def cut(self, source: str, output: str, frametime: str, duration: str, allstreams: bool = True, vcodec: str = None,
-            run: bool = True):
+            run: bool = True) -> Union[bool, str]:
         self.checkDiskSpace(output)
-        source = QDir.toNativeSeparators(source)
         stream_map = self.parseMappings(allstreams)
         if vcodec is not None:
             encode_options = VideoService.config.encoding.get(vcodec, vcodec)
@@ -317,7 +315,6 @@ class VideoService(QObject):
         ]
 
     def smartcut(self, index: int, source: str, output: str, start: float, end: float, allstreams: bool = True) -> None:
-        source = QDir.toNativeSeparators(source)
         output_file, output_ext = os.path.splitext(output)
         bisections = self.getGOPbisections(source, start, end)
         self.smartcut_jobs[index].output = output
@@ -452,7 +449,7 @@ class VideoService(QObject):
         [fobj.write('file \'{}\'\n'.format(file.replace("'", "\\'"))) for file in inputs]
         fobj.close()
         stream_map = '-map 0 ' if allstreams else ''
-        args = '-v error -f concat -segment_time_metadata 1 -safe 0 -i "{}" -c copy {}-y "{}"'
+        args = '-v error -f concat -safe 0 -i "{}" -c copy {}-y "{}"'
         result = self.cmdExec(self.backends.ffmpeg, args.format(filelist, stream_map, output))
         os.remove(filelist)
         return result
@@ -478,13 +475,14 @@ class VideoService(QObject):
                 absf = '{} mp3decomp'.format(prefix)
         return vbsf, absf
 
-    def blackdetect(self, duration: float) -> None:
+    def blackdetect(self, min_duration: float) -> None:
         try:
-            args = '-f lavfi -i "movie=\'{0}\',blackdetect=d={1:.1f}[out0]" -show_entries tags=lavfi.black_start,lavfi.black_end' \
-                   ' -of default=nw=1 -hide_banner'.format(os.path.basename(self.source), duration)
+            args = '-f lavfi -i "movie=\'{0}\',blackdetect=d={1:.1f}[out0]" '.format(os.path.basename(self.source),
+                                                                                     min_duration)
+            args += '-show_entries tags=lavfi.black_start,lavfi.black_end -of default=nw=1 -hide_banner'
             if os.getenv('DEBUG', False) or getattr(self.parent, 'verboseLogs', False):
                 self.logger.info('{0} {1}'.format(self.backends.ffprobe, args))
-            self.filterproc = VideoService.initProc(self.backends.ffprobe, lambda: self.on_blackdetect(duration),
+            self.filterproc = VideoService.initProc(self.backends.ffprobe, lambda: self.on_blackdetect(min_duration),
                                                     os.path.dirname(self.source))
             self.filterproc.setArguments(shlex.split(args))
             self.filterproc.start()
@@ -492,7 +490,13 @@ class VideoService(QObject):
             self.logger.exception('Could not find media file: {}'.format(self.source), exc_info=True)
             raise
 
-    def on_blackdetect(self, detect_duration: float) -> None:
+    def on_blackdetect(self, min_duration: float) -> None:
+        try:
+            if self.filterproc.exitStatus() != QProcess.NormalExit or self.filterproc.exitCode() != 0:
+                self.killFilterProc()
+                return
+        except RuntimeError:
+            return
         scenes = [[QTime(0, 0)]]
         results = self.filterproc.readAllStandardOutput().data().decode().strip()
         for line in results.split('\n'):
@@ -501,23 +505,23 @@ class VideoService(QObject):
                 start = float(vals[0].replace('black_start:', ''))
                 end = float(vals[1].replace('black_end:', ''))
                 dur = float(vals[2].replace('black_duration:', ''))
-                if dur >= detect_duration:
+                if dur >= min_duration:
                     scenes[len(scenes) - 1].append(self.parent.delta2QTime(start))
                     scenes.append([self.parent.delta2QTime(end)])
         last = scenes[len(scenes) - 1][0]
         dur = self.duration()
-        if last < dur and (last.msecsTo(dur) / 1000) >= detect_duration:
+        if last < dur and (last.msecsTo(dur) / 1000) >= min_duration:
             scenes[len(scenes) - 1].append(dur)
         else:
             scenes.pop()
         if os.getenv('DEBUG', False) or getattr(self.parent, 'verboseLogs', False):
-            self.logger.info('BLACKDETECT filter results:')
             self.logger.info(scenes)
         self.addScenes.emit(scenes)
 
-    def kill_filterproc(self) -> None:
+    def killFilterProc(self) -> None:
         if hasattr(self, 'filterproc'):
-            self.filterproc.close()
+            if self.filterproc.state() != QProcess.NotRunning:
+                self.filterproc.kill()
             self.filterproc.deleteLater()
 
     def probe(self, source: str) -> Munch:
@@ -653,7 +657,7 @@ class VideoService(QObject):
     @pyqtSlot(QProcess.ProcessError)
     def cmdError(self, error: QProcess.ProcessError) -> None:
         if error != QProcess.Crashed:
-            QMessageBox.critical(self.parentWidget(), 'Error alert',
+            QMessageBox.critical(self.parent, 'Error alert',
                                  '<h4>{0} Error:</h4><p>{1}</p>'.format(self.backends.ffmpeg, self.proc.errorString()),
                                  buttons=QMessageBox.Close)
 

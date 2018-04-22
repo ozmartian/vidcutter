@@ -803,10 +803,6 @@ VCBlinkText QLabel {
 
 /* -------------------------------------------------------------------------- */
 
-VCFilterMenuWidget {
-    margin: 15px;
-}
-
 VCFilterMenuWidget QWidget {
     color: #444;
 }

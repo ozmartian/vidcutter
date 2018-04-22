@@ -616,8 +616,8 @@ class GeneralPage(QWidget):
 
 
 class SettingsDialog(QDialog):
-    def __init__(self, service: VideoService, parent=None, flags=Qt.WindowCloseButtonHint):
-        super(SettingsDialog, self).__init__(parent.parent, flags)
+    def __init__(self, service: VideoService, parent: QWidget, flags=Qt.WindowCloseButtonHint):
+        super(SettingsDialog, self).__init__(parent.parentWidget(), flags)
         self.parent = parent
         self.service = service
         self.settings = self.parent.settings

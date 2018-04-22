@@ -29,9 +29,9 @@ from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QEasingCurve, QEvent, QObject, Q
                           QTime, QTimer)
 from PyQt5.QtGui import QFocusEvent, QMouseEvent, QPixmap, QShowEvent
 from PyQt5.QtWidgets import (qApp, QAbstractSpinBox, QDialog, QDialogButtonBox, QGraphicsOpacityEffect, QGridLayout,
-                             QHBoxLayout, QLabel, QMenu, QMessageBox, QProgressBar, QPushButton, QSlider, QSpinBox,
-                             QStyle, QStyleFactory, QStyleOptionSlider, QTimeEdit, QToolBox, QToolTip, QVBoxLayout,
-                             QWidget, QWidgetAction)
+                             QHBoxLayout, QLabel, QMessageBox, QProgressBar, QPushButton, QSlider, QSpinBox, QStyle,
+                             QStyleFactory, QStyleOptionSlider, QTimeEdit, QToolBox, QToolTip, QVBoxLayout, QWidget,
+                             QWidgetAction)
 
 
 class VCToolBarButton(QWidget):
@@ -373,16 +373,13 @@ class VCBlinkText(QWidget):
 
 
 class VCFilterMenuAction(QWidgetAction):
-    exited = pyqtSignal()
 
     class VCFilterMenuWidget(QWidget):
-        entered = pyqtSignal()
-        exited = pyqtSignal()
         triggered = pyqtSignal()
 
-        def __init__(self, icon: QPixmap, title: str, text: str, subtext: str, parent=None):
-            super(VCFilterMenuAction.VCFilterMenuWidget, self).__init__(parent)
-            self.parent = parent
+        def __init__(self, icon: QPixmap, title: str, text: str, subtext: str):
+            super(VCFilterMenuAction.VCFilterMenuWidget, self).__init__()
+            self.setMouseTracking(True)
             self.icon_label = QLabel()
             self.icon_label.setPixmap(icon)
             self.text_label = QLabel()
@@ -394,21 +391,15 @@ class VCFilterMenuAction(QWidgetAction):
             self.setLayout(layout)
 
         def mousePressEvent(self, event: QMouseEvent) -> None:
-            self.triggered.emit()
+            if event.button() == Qt.LeftButton:
+                self.triggered.emit()
+            super(VCFilterMenuAction.VCFilterMenuWidget, self).mousePressEvent(event)
 
-        def enterEvent(self, event: QEvent) -> None:
-            self.entered.emit()
-
-        def leaveEvent(self, event: QEvent) -> None:
-            self.exited.emit()
-
-    def __init__(self, icon: QPixmap, title: str, text: str, subtext: str, parent: QMenu):
+    def __init__(self, icon: QPixmap, title: str, text: str, subtext: str, parent: QWidget):
         super(VCFilterMenuAction, self).__init__(parent)
-        self.parent = parent
-        w = VCFilterMenuAction.VCFilterMenuWidget(icon, title, text, subtext, parent)
+        self.setStatusTip(text)
+        w = VCFilterMenuAction.VCFilterMenuWidget(icon, title, text, subtext)
         w.triggered.connect(self.trigger)
-        w.entered.connect(self.hover)
-        w.exited.connect(self.exited)
         self.setDefaultWidget(w)
 
 

@@ -4,7 +4,8 @@ app: VidCutter
 ingredients:
   dist: trusty
   sources: 
-    - deb http://mirrors.cn99.com/ubuntu/ trusty main universe
+    # - deb http://mirrors.cn99.com/ubuntu/ trusty main universe
+    - deb http://archive.ubuntu.com/ubuntu/ trusty main universe
   ppas:
     - mc3man/testing6
     - jonathonf/ffmpeg-3
@@ -12,7 +13,7 @@ ingredients:
     - deadsnakes/ppa
   packages:
     - gcc-7-base
-    - python3.5-dev
+    - python3.6-dev
     - libstdc++6
     - libgcc1
     - libisl15
@@ -23,13 +24,13 @@ ingredients:
 script:
   - umask 022
   - PYTHONHOME=$(pwd)/usr
-  - rm -f usr/bin/python3 usr/bin/python3.5
-  - ln -s python3.5m usr/bin/python3
-  - ln -s python3.5m usr/bin/python3.5
+  - rm -f usr/bin/python3 usr/bin/python3.6
+  - ln -s python3.6m usr/bin/python3
+  - ln -s python3.6m usr/bin/python3.6
   - wget https://bootstrap.pypa.io/get-pip.py
-  - usr/bin/python3.5 ./get-pip.py
+  - usr/bin/python3.6 ./get-pip.py
   - rm ./get-pip.py
-  - usr/bin/python3.5 -m pip install -t usr/lib/python3/dist-packages pyqt5 pyopengl
+  - usr/bin/python3.6 -m pip install -t usr/lib/python3/dist-packages pyqt5 pyopengl
   - find usr/lib/python3/dist-packages/PyQt5 -name "*Qt*WebEngine*" | xargs rm -rf
   - rm -rf usr/lib/python3/dist-packages/PyQt5/Qt/plugins/audio
   - rm -rf usr/lib/python3/dist-packages/PyQt5/Qt/plugins/gamepads
@@ -49,13 +50,13 @@ script:
   - PKGRES=$(find . -name pkg_resources \! -path "*_vendor*")
   - [ ${PKGRES} != "./usr/lib/python3/dist-packages/pkg_resources" ] && mv ${PKGRES} usr/lib/python3/dist-packages
   - cp -R usr/lib/python3/dist-packages/pkg_resources usr/lib/python3/dist-packages/pkg_resources.BAK
-  - env QT_APPIMAGE=1 usr/bin/python3.5 -m pip install -t usr/lib/python3/dist-packages ../../../..
+  - env QT_APPIMAGE=1 usr/bin/python3.6 -m pip install -t usr/lib/python3/dist-packages ../../../..
   - mkdir -p usr/share/applications usr/share/mime/packages usr/share/metainfo 2> /dev/null
   - cp -R ../../../../data/icons/hicolor usr/share/icons
   - cp ../../../../data/desktop/com.ozmartians.vidcutter.desktop usr/share/applications
   - cp ../../../../data/appdata/com.ozmartians.vidcutter.appdata.xml usr/share/metainfo
   - cp ../../../../data/mime/x-vidcutter.xml usr/share/mime/packages
-  - usr/bin/python3.5 -m pip uninstall -y pip
+  - usr/bin/python3.6 -m pip uninstall -y pip
   - mv usr/lib/python3/dist-packages/pkg_resources.BAK usr/lib/python3/dist-packages/pkg_resources
   - rm -rf usr/local
   - rm -f usr/bin/ffplay usr/bin/ffserver

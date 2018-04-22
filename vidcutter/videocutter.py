@@ -566,18 +566,13 @@ class VideoCutter(QWidget):
         self.blackdetectAction = VCFilterMenuAction(QPixmap(':/images/blackdetect.png'), 'BLACKDETECT',
                                                     'Create clips via black frame detection',
                                                     'Useful for skipping commercials or detecting scene transitions',
-                                                    menu)
-        self.blackdetectAction.setStatusTip('Create clips via black frame detection')
+                                                    self)
         if sys.platform == 'darwin':
             self.blackdetectAction.triggered.connect(lambda: self.startFilter(VideoFilter.BLACKDETECT),
                                                      Qt.QueuedConnection)
         else:
             self.blackdetectAction.triggered.connect(lambda: self.startFilter(VideoFilter.BLACKDETECT),
                                                      Qt.DirectConnection)
-        self.blackdetectAction.hovered.connect(
-            lambda: self.parent.statusBar().showMessage(self.blackdetectAction.statusTip())
-            if self.blackdetectAction.isEnabled() else self.doPass())
-        self.blackdetectAction.exited.connect(self.parent.statusBar().clearMessage)
         self.blackdetectAction.setEnabled(False)
         menu.setIcon(self.filtersIcon)
         menu.addAction(self.blackdetectAction)
@@ -1102,7 +1097,7 @@ class VideoCutter(QWidget):
 
     @pyqtSlot()
     def stopFilters(self) -> None:
-        self.videoService.kill_filterproc()
+        self.videoService.killFilterProc()
         self.filterProgress()
         self.parent.lock_gui(False)
 
@@ -1157,8 +1152,6 @@ class VideoCutter(QWidget):
         return True in [len(item[3]) > 0 for item in self.clipTimes]
 
     def clipStart(self) -> None:
-        # if os.getenv('DEBUG', False):
-        #     self.logger.info('cut start position: %s' % self.seekSlider.value())
         starttime = self.delta2QTime(self.seekSlider.value())
         self.clipTimes.append([starttime, '', self.captureImage(self.currentMedia, starttime), ''])
         self.timeCounter.setMinimum(starttime.toString(self.timeformat))
@@ -1173,8 +1166,6 @@ class VideoCutter(QWidget):
         self.renderClipIndex()
 
     def clipEnd(self) -> None:
-        # if os.getenv('DEBUG', False):
-        #     self.logger.info('cut end position: %s' % self.seekSlider.value())
         item = self.clipTimes[len(self.clipTimes) - 1]
         endtime = self.delta2QTime(self.seekSlider.value())
         if endtime.__lt__(item[0]):
@@ -1241,6 +1232,8 @@ class VideoCutter(QWidget):
         if self.inCut or len(self.clipTimes) == 0 or not isinstance(self.clipTimes[0][1], QTime):
             self.toolbar_save.setEnabled(False)
             self.saveProjectAction.setEnabled(False)
+        if not len(self.cliplist.selectedItems()):
+            self.cliplist.scrollToBottom()
         self.setRunningTime(self.delta2QTime(self.totalRuntime).toString(self.runtimeformat))
 
     @staticmethod

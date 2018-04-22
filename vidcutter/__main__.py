@@ -30,10 +30,10 @@ import signal
 import sys
 import traceback
 
-from PyQt5.QtCore import (pyqtSlot, QCommandLineOption, QCommandLineParser, QCoreApplication, QDir, QFileInfo, QProcess,
+from PyQt5.QtCore import (pyqtSlot, QCommandLineOption, QCommandLineParser, QDir, QFileInfo, QProcess,
                           QSettings, QSize, QStandardPaths, QTimerEvent, Qt)
-from PyQt5.QtGui import QCloseEvent, QContextMenuEvent, QDragEnterEvent, QDropEvent, QMouseEvent, QResizeEvent
-from PyQt5.QtWidgets import qApp, QApplication, QMainWindow, QMessageBox, QSizePolicy
+from PyQt5.QtGui import QCloseEvent, QContextMenuEvent, QDragEnterEvent, QDropEvent, QGuiApplication, QMouseEvent, QResizeEvent
+from PyQt5.QtWidgets import qApp, QMainWindow, QMessageBox, QSizePolicy
 
 from vidcutter.libs.mpv import MPVError
 from vidcutter.libs.singleapplication import SingleApplication
@@ -347,14 +347,14 @@ class MainWindow(QMainWindow):
 
 def main():
     if hasattr(Qt, 'AA_EnableHighDpiScaling'):
-        QCoreApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
+        QGuiApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
     if hasattr(Qt, 'AA_Use96Dpi'):
-        QCoreApplication.setAttribute(Qt.AA_Use96Dpi, True)
+        QGuiApplication.setAttribute(Qt.AA_Use96Dpi, True)
     if hasattr(Qt, 'AA_ShareOpenGLContexts'):
-        QCoreApplication.setAttribute(Qt.AA_ShareOpenGLContexts, True)
+        QGuiApplication.setAttribute(Qt.AA_ShareOpenGLContexts, True)
 
     if sys.platform == 'darwin':
-        QApplication.setStyle('Fusion')
+        qApp.setStyle('Fusion')
 
     app = SingleApplication(vidcutter.__appid__, sys.argv)
     app.setApplicationName(vidcutter.__appname__)
@@ -362,10 +362,8 @@ def main():
     app.setOrganizationDomain(vidcutter.__domain__)
     app.setQuitOnLastWindowClosed(True)
 
-    stylename = qApp.style().objectName().lower()
-
     win = MainWindow()
-    win.stylename = stylename
+    win.stylename = app.style().objectName().lower()
     app.setActivationWindow(win)
     app.messageReceived.connect(win.file_opener)
     app.aboutToQuit.connect(MainWindow.cleanup)
