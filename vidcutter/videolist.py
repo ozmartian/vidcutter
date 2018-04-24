@@ -52,6 +52,7 @@ class VideoList(QListWidget):
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.setAlternatingRowColors(True)
         self.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setObjectName('cliplist')
         self.setStyleSheet('QListView::item { border: none; }')
         self.opacityEffect = OpacityEffect(0.3)
@@ -94,6 +95,7 @@ class VideoList(QListWidget):
             self.opacityEffect.setEnabled(not self.isEnabled())
 
     def resizeEvent(self, event: QResizeEvent) -> None:
+        self.setFixedWidth(210 if self.verticalScrollBar().isVisible() else 190)
         self.parent.listheader.setFixedWidth(self.width())
 
     def clearSelection(self) -> None:
@@ -145,10 +147,6 @@ class VideoItem(QAbstractItemDelegate):
             r = option.rect.adjusted(110, 60, 0, 0)
             painter.setFont(QFont('Noto Sans', 11 if sys.platform == 'darwin' else 9, QFont.Normal))
             painter.drawText(r, Qt.AlignLeft, endtime)
-        if self.parent.verticalScrollBar().isVisible():
-            self.parent.setFixedWidth(210)
-        else:
-            self.parent.setFixedWidth(190)
 
     def clipText(self, text: str, painter: QPainter) -> str:
         metrics = painter.fontMetrics()

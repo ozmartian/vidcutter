@@ -38,6 +38,8 @@ from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QDir, QFileInfo, QObject, QProce
 from PyQt5.QtGui import QPainter, QPixmap
 from PyQt5.QtWidgets import QMessageBox, QWidget
 
+import sip
+
 from vidcutter.libs.config import Config, InvalidMediaException, Streams, ToolNotFoundException
 from vidcutter.libs.munch import Munch
 from vidcutter.libs.widgets import VCMessageBox
@@ -491,38 +493,31 @@ class VideoService(QObject):
             raise
 
     def on_blackdetect(self, min_duration: float) -> None:
-        try:
-            if self.filterproc.exitStatus() != QProcess.NormalExit or self.filterproc.exitCode() != 0:
-                self.killFilterProc()
-                return
-        except RuntimeError:
-            return
-        scenes = [[QTime(0, 0)]]
-        results = self.filterproc.readAllStandardOutput().data().decode().strip()
-        for line in results.split('\n'):
-            if re.match(r'\[blackdetect @ (.*)\]', line):
-                vals = line.split(']')[1].strip().split(' ')
-                start = float(vals[0].replace('black_start:', ''))
-                end = float(vals[1].replace('black_end:', ''))
-                dur = float(vals[2].replace('black_duration:', ''))
-                if dur >= min_duration:
-                    scenes[len(scenes) - 1].append(self.parent.delta2QTime(start))
-                    scenes.append([self.parent.delta2QTime(end)])
-        last = scenes[len(scenes) - 1][0]
-        dur = self.duration()
-        if last < dur and (last.msecsTo(dur) / 1000) >= min_duration:
-            scenes[len(scenes) - 1].append(dur)
-        else:
-            scenes.pop()
-        if os.getenv('DEBUG', False) or getattr(self.parent, 'verboseLogs', False):
-            self.logger.info(scenes)
-        self.addScenes.emit(scenes)
+        if self.filterproc.exitStatus() == QProcess.NormalExit and self.filterproc.exitCode() == 0:
+            scenes = [[QTime(0, 0)]]
+            results = self.filterproc.readAllStandardOutput().data().decode().strip()
+            for line in results.split('\n'):
+                if re.match(r'\[blackdetect @ (.*)\]', line):
+                    vals = line.split(']')[1].strip().split(' ')
+                    start = float(vals[0].replace('black_start:', ''))
+                    end = float(vals[1].replace('black_end:', ''))
+                    dur = float(vals[2].replace('black_duration:', ''))
+                    if dur >= min_duration:
+                        scenes[len(scenes) - 1].append(self.parent.delta2QTime(start))
+                        scenes.append([self.parent.delta2QTime(end)])
+            last = scenes[len(scenes) - 1][0]
+            dur = self.duration()
+            if last < dur and (last.msecsTo(dur) / 1000) >= min_duration:
+                scenes[len(scenes) - 1].append(dur)
+            else:
+                scenes.pop()
+            if os.getenv('DEBUG', False) or getattr(self.parent, 'verboseLogs', False):
+                self.logger.info(scenes)
+            self.addScenes.emit(scenes)
 
     def killFilterProc(self) -> None:
-        if hasattr(self, 'filterproc'):
-            if self.filterproc.state() != QProcess.NotRunning:
-                self.filterproc.kill()
-            self.filterproc.deleteLater()
+        if hasattr(self, 'filterproc') and self.filterproc.state() != QProcess.NotRunning:
+            self.filterproc.kill()
 
     def probe(self, source: str) -> Munch:
         try:

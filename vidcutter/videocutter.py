@@ -1069,7 +1069,7 @@ class VideoCutter(QWidget):
                 for scene in scenes if len(scene)
             ]
             self.renderClipIndex()
-        self.stopFilters()
+        self.filterProgressBar.done(VCProgressDialog.Accepted)
 
     @pyqtSlot(VideoFilter)
     def startFilter(self, name: VideoFilter) -> None:
@@ -1084,13 +1084,9 @@ class VideoCutter(QWidget):
                 self.filterProgress('detecting scenes (press ESC to cancel)')
                 self.videoService.blackdetect(min_duration)
 
-    def filterProgress(self, msg: str=None) -> None:
-        if msg is None and hasattr(self, 'filterProgressBar'):
-            self.filterProgressBar.close()
-            self.filterProgressBar.deleteLater()
-            return
+    def filterProgress(self, msg: str) -> None:
         self.filterProgressBar = VCProgressDialog(self, modal=False)
-        self.filterProgressBar.rejected.connect(self.stopFilters)
+        self.filterProgressBar.finished.connect(self.stopFilters)
         self.filterProgressBar.setText(msg)
         self.filterProgressBar.setMinimumWidth(600)
         self.filterProgressBar.show()
@@ -1098,7 +1094,6 @@ class VideoCutter(QWidget):
     @pyqtSlot()
     def stopFilters(self) -> None:
         self.videoService.killFilterProc()
-        self.filterProgress()
         self.parent.lock_gui(False)
 
     @pyqtSlot()
