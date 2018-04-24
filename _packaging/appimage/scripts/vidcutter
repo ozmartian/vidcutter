@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.5
+#!/usr/bin/env python3.6
 # coding=utf-8
 
 import sys
@@ -10,7 +10,7 @@ from signal import SIGINT, SIG_DFL, SIGTERM, signal
 signal(SIGINT, SIG_DFL)
 signal(SIGTERM, SIG_DFL)
 
-sys.path.insert(0, "../lib/python3.5")
+sys.path.insert(0, "../lib/python3.6")
 sys.path.insert(1, "../lib/python3/dist-packages")
 
 try:
