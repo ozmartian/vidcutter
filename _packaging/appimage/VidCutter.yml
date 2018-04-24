@@ -81,6 +81,7 @@ post:
   - find /usr/lib/x86_64-linux-gnu/ -name libcairo.so.2* | xargs -I{} cp -P {} usr/lib/x86_64-linux-gnu
   - find /usr/lib/x86_64-linux-gnu/ -name libpangoft2* | xargs -I{} cp -P {} usr/lib/x86_64-linux-gnu
   - find /usr/lib/x86_64-linux-gnu/ -name libpango-1.0.so.0* | xargs -I{} cp -P {} usr/lib/x86_64-linux-gnu
+  - find /usr/lib/x86_64-linux-gnu/ -name libpangocairo-1.0.so.0* | xargs -I{} cp -P {} usr/lib/x86_64-linux-gnu
   - rm -f ./AppRun
   - gcc -fPIC -o ./AppRun ../../AppRun.c
   - strip ./AppRun
