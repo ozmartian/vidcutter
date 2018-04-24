@@ -32,8 +32,8 @@ from datetime import datetime
 from PyQt5.Qt import PYQT_VERSION_STR, QT_VERSION_STR
 from PyQt5.QtCore import QObject, QSize, QUrl, Qt
 from PyQt5.QtGui import QCloseEvent, QPixmap
-from PyQt5.QtWidgets import (qApp, QDialog, QDialogButtonBox, QHBoxLayout, QLabel, QSizePolicy, QStyleFactory,
-                             QTabWidget, QTextBrowser, QVBoxLayout, QWidget)
+from PyQt5.QtWidgets import (qApp, QDialog, QDialogButtonBox, QGridLayout, QHBoxLayout, QLabel, QSizePolicy,
+                             QSpacerItem, QStyleFactory, QTabWidget, QTextBrowser, QVBoxLayout, QWidget)
 
 import vidcutter
 
@@ -50,44 +50,35 @@ class About(QDialog):
         self.setContentsMargins(0, 0, 0, 0)
         self.setWindowFlags(Qt.Window | Qt.Dialog | Qt.WindowCloseButtonHint)
         self.setWindowModality(Qt.ApplicationModal)
-        pencolor1 = '#9A45A2' if self.theme == 'dark' else '#642C68'
-        pencolor2 = '#FFF' if self.theme == 'dark' else '#000'
-        appversion = qApp.applicationVersion()
-        apparch = platform.architecture()[0]
-        builddate = About.builddate()
         pythonlabel, qtlabel = QLabel(self), QLabel(self)
         pythonlabel.setPixmap(QPixmap(':/images/{}/python.png'.format(self.theme)))
         qtlabel.setPixmap(QPixmap(':/images/qt.png'))
-        rowspan = 1
-        builddate_content = ''
-        if builddate is not None:
-            rowspan = 2
-            builddate_content = '''
-            <tr valign="top">
-                <td style="vertical-align:middle;text-align:right;font-size:10pt;font-weight:500;color:{pencolor1};">
-                    build date:
-                </td>
-                <td>&nbsp;</td>
-                <td style="font-size:10pt;font-weight:400;">{builddate}</td>
-            </tr>'''.format(**locals())
-        headercontent = '''
-        <div style="font-family:'Futura-Light';font-size:40px;font-weight:400;color:{pencolor1};margin:0;padding:0;">
-            <span style="font-size:58px;">V</span>ID<span style="font-size:58px;">C</span>UTTER
-        </div>
-        <table border="0" cellpadding="0" cellspacing="0" style="margin:10px 0 0 10px;">
-            <tr valign="top">
-                <td rowspan="{rowspan}" width="30"></td>
-                <td style="vertical-align:middle;text-align:right;font-size:10pt;font-weight:500;color:{pencolor1};">
-                    version:
-                </td>
-                <td>&nbsp;</td>
-                <td>
-                    <span style="font-size:18px;font-weight:400;">{appversion}</span>
-                    &nbsp;<span style="font-size:10pt;margin-left:5px;">({apparch})</span>
-                </td>
-            </tr>
-            {builddate_content}
-        </table>'''.format(**locals())
+        appname = QLabel('''
+            <div style="font-family:'Futura-Light';font-size:40px;font-weight:400;color:{};margin:0;padding:0;">
+                <span style="font-size:58px;">V</span>ID<span style="font-size:58px;">C</span>UTTER
+            </div>
+        '''.format('#9A45A2' if self.theme == 'dark' else '#642C68'), self)
+        versionlabel = QLabel('<span style="font-size:10pt;font-weight:500;color:{};">version:</span>&nbsp;'
+                              .format('#9A45A2' if self.theme == 'dark' else '#642C68'), self)
+        versionlabel.setAlignment(Qt.AlignBottom | Qt.AlignRight)
+        versionval = QLabel('''<span style="font-size:15px;font-weight:400;">{}</span>
+                               <span style="font-size:11px;padding-left:10px;padding-bottom:2px;">- {}</span>'''
+                            .format(qApp.applicationVersion(), platform.architecture()[0]), self)
+        infolayout = QGridLayout()
+        infolayout.setSpacing(0)
+        infolayout.setContentsMargins(0, 0, 0, 0)
+        infolayout.addWidget(appname, 0, 0, 1, 2)
+        infolayout.addItem(QSpacerItem(1, 10), 1, 0, 1, 2)
+        infolayout.addWidget(versionlabel, 2, 0)
+        infolayout.addWidget(versionval, 2, 1)
+        if self.builddate is not None:
+            builddatelabel = QLabel('<span style="font-size:10pt;font-weight:500;color:{};">build date:</span>&nbsp;'
+                                    .format('#9A45A2' if self.theme == 'dark' else '#642C68'), self)
+            builddatelabel.setAlignment(Qt.AlignBottom | Qt.AlignRight)
+            builddateval = QLabel('<span style="font-size:10pt;font-weight:400;">{}</span>'
+                                  .format(self.builddate), self)
+            infolayout.addWidget(builddatelabel, 3, 0)
+            infolayout.addWidget(builddateval, 3, 1)
         creditslayout = QVBoxLayout()
         creditslayout.setContentsMargins(0, 0, 0, 0)
         creditslayout.setSpacing(10)
@@ -97,8 +88,8 @@ class About(QDialog):
         headerlayout = QHBoxLayout()
         headerlayout.setContentsMargins(0, 5, 0, 5)
         headerlayout.addWidget(QLabel('<img src="{}" />'.format(self.parent.getAppIcon(encoded=True)), self))
-        headerlayout.addSpacing(15)
-        headerlayout.addWidget(QLabel(headercontent, self))
+        headerlayout.addSpacing(10)
+        headerlayout.addLayout(infolayout)
         headerlayout.addStretch(1)
         headerlayout.addLayout(creditslayout)
         self.tab_about = AboutTab(self)
@@ -116,12 +107,12 @@ class About(QDialog):
         layout.addWidget(tabs, 1)
         layout.addWidget(buttons)
         self.setLayout(layout)
-        self.setWindowTitle('About %s' % qApp.applicationName())
+        self.setWindowTitle('About {}'.format(qApp.applicationName()))
         self.setWindowIcon(self.parent.windowIcon())
-        self.setFixedSize(self.get_size(self.parent.parentWidget().scale))
+        self.setFixedSize(self.sizeHint())
 
-    @staticmethod
-    def builddate():
+    @property
+    def builddate(self) -> str:
         if getattr(sys, 'frozen', False) and not getattr(sys, '_MEIPASS', False):
             datefile = os.path.realpath(sys.argv[0])
         else:
@@ -130,14 +121,13 @@ class About(QDialog):
         builddate = datetime.fromtimestamp(os.path.getmtime(datefile)).strftime('%d %b %Y')
         return None if int(builddate.split(' ')[2]) == time.gmtime(0)[0] else builddate.upper()
 
-    @staticmethod
-    def get_size(mode: str = 'NORMAL') -> QSize:
+    def sizeHint(self) -> QSize:
         modes = {
             'LOW': QSize(450, 300),
             'NORMAL': QSize(500, 505),
             'HIGH': QSize(1080, 920)
         }
-        return modes[mode]
+        return modes[self.parent.parentWidget().scale]
 
     def closeEvent(self, event: QCloseEvent) -> None:
         self.tab_about.deleteLater()
@@ -157,11 +147,7 @@ class BaseTab(QTextBrowser):
         else:
             bgcolor = 'rgba(255, 255, 255, 200)'    
             pencolor = '#000'
-        self.setStyleSheet('''
-            QTextBrowser {{
-                background-color: {bgcolor};
-                color: {pencolor};
-            }}'''.format(**locals()))
+        self.setStyleSheet('QTextBrowser {{ background: {bgcolor}; color: {pencolor}; }}'.format(**locals()))
 
 
 class AboutTab(BaseTab):

@@ -568,7 +568,8 @@ QTabBar::tab, QToolBox::tab {
     border: 1px solid #999;
 }
 
-QTabBar::tab:selected, QToolBox::tab:selected {
+QTabBar::tab:selected, QToolBox::tab:selected,
+QTabBar::tab:!selected:hover, QToolBox::tab:!selected:hover {
     background: #642C68;
     color: #FFF;
 }
@@ -576,11 +577,6 @@ QTabBar::tab:selected, QToolBox::tab:selected {
 QTabBar::tab:!selected, QToolBox::tab:!selected {
     background: silver;
     color: #444;
-}
-
-QTabBar::tab:!selected:hover, QToolBox::tab:!selected:hover {
-    background: #642C68;
-    color: #FFF;
 }
 
 QTabBar::tab:top:!selected {
@@ -601,6 +597,7 @@ QTabBar::tab:top:last,
 QTabBar::tab:top:only-one {
     margin-right: 0;
 }
+
 /* -------------------------------------------------------------------------- */
 
 QSlider::handle#volumeslider {

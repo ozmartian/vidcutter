@@ -565,18 +565,14 @@ QTabBar::tab, QToolBox::tab {
     border: 1px solid #999;
 }
 
-QTabBar::tab:selected, QToolBox::tab:selected {
+QTabBar::tab:selected, QToolBox::tab:selected,
+QTabBar::tab:!selected:hover, QToolBox::tab:!selected:hover {
     background: #642C68;
     color: #FFF;
 }
 
 QTabBar::tab:!selected, QToolBox::tab:!selected {
     background: silver;
-}
-
-QTabBar::tab:!selected:hover, QToolBox::tab:!selected:hover {
-    background: #642C68;
-    color: #FFF;
 }
 
 QTabBar::tab:top:!selected {
