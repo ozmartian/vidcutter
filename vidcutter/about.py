@@ -31,7 +31,7 @@ from datetime import datetime
 
 from PyQt5.Qt import PYQT_VERSION_STR, QT_VERSION_STR
 from PyQt5.QtCore import QObject, QSize, QUrl, Qt
-from PyQt5.QtGui import QCloseEvent, QPixmap
+from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import (qApp, QDialog, QDialogButtonBox, QGridLayout, QHBoxLayout, QLabel, QSizePolicy,
                              QSpacerItem, QStyleFactory, QTabWidget, QTextBrowser, QVBoxLayout, QWidget)
 
@@ -108,7 +108,6 @@ class About(QDialog):
         layout.addWidget(buttons)
         self.setLayout(layout)
         self.setWindowTitle('About {}'.format(qApp.applicationName()))
-        self.setWindowIcon(self.parent.windowIcon())
         self.setFixedSize(self.sizeHint())
 
     @property
@@ -128,13 +127,6 @@ class About(QDialog):
             'HIGH': QSize(1080, 920)
         }
         return modes[self.parent.parentWidget().scale]
-
-    def closeEvent(self, event: QCloseEvent) -> None:
-        self.tab_about.deleteLater()
-        self.tab_credits.deleteLater()
-        self.tab_license.deleteLater()
-        self.deleteLater()
-        event.accept()
 
 
 class BaseTab(QTextBrowser):
@@ -236,7 +228,6 @@ class CreditsTab(BaseTab):
         <style>
             table { background-color: transparent; }
             a { color:%s; text-decoration:none; font-weight:bold; }
-            a:hover { text-decoration:underline; }
         </style>
         <h3 style="text-align:center;">CREDITS</h3>
         <p>
