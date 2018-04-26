@@ -3,6 +3,7 @@
         <file>fonts/FuturaLT.ttf</file>
         <file>fonts/NotoSans-Bold.ttf</file>
         <file>fonts/NotoSans-Regular.ttf</file>
+        <file>images/about-logo.png</file>
         <file>images/arrow-left.png</file>
         <file>images/arrow-left-on.png</file>
         <file>images/arrow-right.png</file>
@@ -27,6 +28,7 @@
         <file>images/keymap.png</file>
         <file>images/open.png</file>
         <file>images/pycharm.png</file>
+        <file>images/python.png</file>
         <file>images/qt.png</file>
         <file>images/quit.png</file>
         <file>images/remove.png</file>
@@ -82,7 +84,6 @@
         <file>images/dark/osd-hover.png</file>
         <file>images/dark/osd-off.png</file>
         <file>images/dark/osd-on.png</file>
-        <file>images/dark/python.png</file>
         <file>images/dark/radio.png</file>
         <file>images/dark/radio-checked.png</file>
         <file>images/dark/radio-hover.png</file>
@@ -161,7 +162,6 @@
         <file>images/light/osd-hover.png</file>
         <file>images/light/osd-off.png</file>
         <file>images/light/osd-on.png</file>
-        <file>images/light/python.png</file>
         <file>images/light/radio.png</file>
         <file>images/light/radio-checked.png</file>
         <file>images/light/radio-hover.png</file>

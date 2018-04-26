@@ -23,17 +23,15 @@
 #######################################################################
 
 import logging
-import os
 import platform
 import sys
-import time
 from datetime import datetime
 
 from PyQt5.Qt import PYQT_VERSION_STR, QT_VERSION_STR
 from PyQt5.QtCore import QObject, QSize, QUrl, Qt
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import (qApp, QDialog, QDialogButtonBox, QGridLayout, QHBoxLayout, QLabel, QSizePolicy,
-                             QSpacerItem, QStyleFactory, QTabWidget, QTextBrowser, QVBoxLayout, QWidget)
+                             QStyleFactory, QTabWidget, QTextBrowser, QVBoxLayout, QWidget)
 
 import vidcutter
 
@@ -50,48 +48,38 @@ class About(QDialog):
         self.setContentsMargins(0, 0, 0, 0)
         self.setWindowFlags(Qt.Window | Qt.Dialog | Qt.WindowCloseButtonHint)
         self.setWindowModality(Qt.ApplicationModal)
-        pythonlabel, qtlabel = QLabel(self), QLabel(self)
-        pythonlabel.setPixmap(QPixmap(':/images/{}/python.png'.format(self.theme)))
-        qtlabel.setPixmap(QPixmap(':/images/qt.png'))
-        appname = QLabel('''
-            <div style="font-family:'Futura-Light';font-size:40px;font-weight:400;color:{};margin:0;padding:0;">
-                <span style="font-size:58px;">V</span>ID<span style="font-size:58px;">C</span>UTTER
-            </div>
-        '''.format('#9A45A2' if self.theme == 'dark' else '#642C68'), self)
-        versionlabel = QLabel('<span style="font-size:10pt;font-weight:500;color:{};">version:</span>&nbsp;'
-                              .format('#9A45A2' if self.theme == 'dark' else '#642C68'), self)
-        versionlabel.setAlignment(Qt.AlignBottom | Qt.AlignRight)
-        versionval = QLabel('''<span style="font-size:15px;font-weight:400;">{}</span>
-                               <span style="font-size:11px;padding-left:10px;padding-bottom:2px;">- {}</span>'''
-                            .format(qApp.applicationVersion(), platform.architecture()[0]), self)
-        infolayout = QGridLayout()
-        infolayout.setSpacing(0)
-        infolayout.setContentsMargins(0, 0, 0, 0)
-        infolayout.addWidget(appname, 0, 0, 1, 2)
-        infolayout.addItem(QSpacerItem(1, 10), 1, 0, 1, 2)
-        infolayout.addWidget(versionlabel, 2, 0)
-        infolayout.addWidget(versionval, 2, 1)
-        if self.builddate is not None:
-            builddatelabel = QLabel('<span style="font-size:10pt;font-weight:500;color:{};">build date:</span>&nbsp;'
-                                    .format('#9A45A2' if self.theme == 'dark' else '#642C68'), self)
-            builddatelabel.setAlignment(Qt.AlignBottom | Qt.AlignRight)
-            builddateval = QLabel('<span style="font-size:10pt;font-weight:400;">{}</span>'
-                                  .format(self.builddate), self)
-            infolayout.addWidget(builddatelabel, 3, 0)
-            infolayout.addWidget(builddateval, 3, 1)
-        creditslayout = QVBoxLayout()
-        creditslayout.setContentsMargins(0, 0, 0, 0)
-        creditslayout.setSpacing(10)
-        creditslayout.addStretch(1)
-        creditslayout.addWidget(pythonlabel)
-        creditslayout.addWidget(qtlabel)
-        headerlayout = QHBoxLayout()
-        headerlayout.setContentsMargins(0, 5, 0, 5)
-        headerlayout.addWidget(QLabel('<img src="{}" />'.format(self.parent.getAppIcon(encoded=True)), self))
-        headerlayout.addSpacing(10)
-        headerlayout.addLayout(infolayout)
-        headerlayout.addStretch(1)
-        headerlayout.addLayout(creditslayout)
+        logolabel = QLabel(self)
+        logolabel.setPixmap(QPixmap(':/images/about-logo.png'))
+        versionlabel = QLabel('''
+            <style>
+                p {{
+                    font-family: 'Noto Sans', sans-serif; 
+                }}
+                b.label {{
+                    font-size: 14px;
+                    font-weight: 500;
+                    color: {0};
+                }}
+                b.version {{
+                    font-family: Futura-Light, sans-serif;
+                    font-weight: 600;
+                    font-size: 16px;
+                }}
+            </style>
+            <b class="label">version:</b>&nbsp; <b class="version">{1}</b>
+        '''.format('#EA95FF' if self.theme == 'dark' else '#441D4E', qApp.applicationVersion(), self))
+        versionlabel.setAlignment(Qt.AlignBottom)
+        versionlayout = QHBoxLayout()
+        versionlayout.setSpacing(0)
+        versionlayout.setContentsMargins(0, 0, 0, 0)
+        versionlayout.addStretch(1)
+        versionlayout.addWidget(versionlabel)
+        versionlayout.addSpacing(95)
+        headerlayout = QVBoxLayout()
+        headerlayout.setSpacing(0)
+        headerlayout.setContentsMargins(0, 0, 0, 0)
+        headerlayout.addWidget(logolabel, 1)
+        headerlayout.addLayout(versionlayout)
         self.tab_about = AboutTab(self)
         self.tab_credits = CreditsTab(self)
         self.tab_license = LicenseTab(self)
@@ -110,20 +98,10 @@ class About(QDialog):
         self.setWindowTitle('About {}'.format(qApp.applicationName()))
         self.setFixedSize(self.sizeHint())
 
-    @property
-    def builddate(self) -> str:
-        if getattr(sys, 'frozen', False) and not getattr(sys, '_MEIPASS', False):
-            datefile = os.path.realpath(sys.argv[0])
-        else:
-            import vidcutter.libs.mpv
-            datefile = sys.modules['vidcutter.libs.mpv'].__file__
-        builddate = datetime.fromtimestamp(os.path.getmtime(datefile)).strftime('%d %b %Y')
-        return None if int(builddate.split(' ')[2]) == time.gmtime(0)[0] else builddate.upper()
-
     def sizeHint(self) -> QSize:
         modes = {
             'LOW': QSize(450, 300),
-            'NORMAL': QSize(500, 505),
+            'NORMAL': QSize(500, 485),
             'HIGH': QSize(1080, 920)
         }
         return modes[self.parent.parentWidget().scale]
@@ -168,7 +146,7 @@ class AboutTab(BaseTab):
     <tr>
         <td>
             <table border="0" cellpadding="0" cellspacing="0">
-                <tr valign="bottom">
+                <tr valign="top">
                     <td>
                         <p style="font-size:13px;">
                             <b>libmpv:</b> %s
@@ -184,14 +162,23 @@ class AboutTab(BaseTab):
                         <p style="font-size:13px;">
                             Copyright &copy; %s <a href="mailto:%s">%s</a>
                             <br/>
-                            Website: <a href="%s" target="_blank">%s</a>
+                            Website: <a href="%s">%s</a>
                         </p>
                         <p style="font-size:13px;">
                             Found a bug? You can <a href="%s">REPORT IT HERE</a>.
                         </p>
                     </td>
-                    <td align="right">
-                        <a href="https://www.jetbrains.com/pycharm"><img src=":/images/pycharm.png" /></a>
+                    <td align="right" nowrap style="font-weight:500;font-size:13px;">
+                        <p>built using</p>
+                        <p>
+                            <a href="https://python.org" title="Python"><img src=":/images/python.png" /></a>
+                            &nbsp;
+                            <a href="https://qt.io" title="Qt5"><img src=":/images/qt.png" /></a>
+                            <br/>
+                            <a href="https://www.jetbrains.com/pycharm" title="PyCharm Professional">
+                                <img src=":/images/pycharm.png" />
+                            </a>
+                        </p>
                     </td>
                 </tr>
             </table>
