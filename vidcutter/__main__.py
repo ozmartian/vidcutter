@@ -32,7 +32,8 @@ import traceback
 
 from PyQt5.QtCore import (pyqtSlot, QCommandLineOption, QCommandLineParser, QDir, QFileInfo, QProcess,
                           QSettings, QSize, QStandardPaths, QTimerEvent, Qt)
-from PyQt5.QtGui import QCloseEvent, QContextMenuEvent, QDragEnterEvent, QDropEvent, QGuiApplication, QMouseEvent, QResizeEvent
+from PyQt5.QtGui import (QCloseEvent, QContextMenuEvent, QDragEnterEvent, QDropEvent, QGuiApplication, QMouseEvent, QResizeEvent,
+                         qt_set_sequence_auto_mnemonic)
 from PyQt5.QtWidgets import qApp, QMainWindow, QMessageBox, QSizePolicy
 
 from vidcutter.libs.mpv import MPVError
@@ -346,6 +347,8 @@ class MainWindow(QMainWindow):
 
 
 def main():
+    qt_set_sequence_auto_mnemonic(False)
+
     if hasattr(Qt, 'AA_EnableHighDpiScaling'):
         QGuiApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
     if hasattr(Qt, 'AA_Use96Dpi'):

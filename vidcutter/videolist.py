@@ -25,10 +25,10 @@
 import os
 import sys
 
-from PyQt5.QtCore import pyqtSlot, Qt, QEvent, QModelIndex, QRect, QSize
+from PyQt5.QtCore import pyqtSlot, Qt, QEasingCurve, QEvent, QModelIndex, QPropertyAnimation, QRect, QSize
 from PyQt5.QtGui import QColor, QFont, QIcon, QMouseEvent, QPainter, QPalette, QPen, QResizeEvent
-from PyQt5.QtWidgets import (QAbstractItemDelegate, QAbstractItemView, QListWidget, QProgressBar, QSizePolicy, QStyle,
-                             QStyleFactory, QStyleOptionViewItem)
+from PyQt5.QtWidgets import (QAbstractItemView, QListWidget, QProgressBar, QSizePolicy, QStyle,
+                             QStyledItemDelegate, QStyleFactory, QStyleOptionViewItem, QWidget)
 
 from vidcutter.graphicseffects import OpacityEffect
 
@@ -104,7 +104,7 @@ class VideoList(QListWidget):
         super(VideoList, self).clearSelection()
 
 
-class VideoItem(QAbstractItemDelegate):
+class VideoItem(QStyledItemDelegate):
     def __init__(self, parent: VideoList=None):
         super(VideoItem, self).__init__(parent)
         self.parent = parent
@@ -124,12 +124,12 @@ class VideoItem(QAbstractItemDelegate):
                 painter.setBrush(Qt.transparent if index.row() % 2 == 0 else brushcolor)
         painter.setPen(Qt.NoPen)
         painter.drawRect(r)
-        thumb = QIcon(index.data(Qt.DecorationRole + 1))
+        thumbicon = QIcon(index.data(Qt.DecorationRole + 1))
         starttime = index.data(Qt.DisplayRole + 1)
         endtime = index.data(Qt.UserRole + 1)
         externalPath = index.data(Qt.UserRole + 2)
         r = option.rect.adjusted(5, 0, 0, 0)
-        thumb.paint(painter, r, Qt.AlignVCenter | Qt.AlignLeft)
+        thumbicon.paint(painter, r, Qt.AlignVCenter | Qt.AlignLeft)
         painter.setPen(QPen(pencolor, 1, Qt.SolidLine))
         r = option.rect.adjusted(110, 8, 0, 0)
         painter.setFont(QFont('Noto Sans', 10 if sys.platform == 'darwin' else 8, QFont.Bold))

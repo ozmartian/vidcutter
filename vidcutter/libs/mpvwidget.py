@@ -102,8 +102,8 @@ class mpvWidget(QOpenGLWidget):
 
         self.mpv = mpv.Context()
 
-        self.setLogLevel('terminal-default')
         self.option('msg-level', self.msglevel)
+        self.setLogLevel('terminal-default')
         self.option('config', 'no')
 
         def _istr(o):

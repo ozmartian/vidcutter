@@ -134,9 +134,9 @@ class VideoCutter(QWidget):
         self.cliplist = VideoList(self)
         self.cliplist.customContextMenuRequested.connect(self.itemMenu)
         self.cliplist.itemClicked.connect(self.selectClip)
-        self.cliplist.model().rowsInserted.connect(self.setProjectDirty)
-        self.cliplist.model().rowsRemoved.connect(self.setProjectDirty)
-        self.cliplist.model().rowsMoved.connect(self.setProjectDirty)
+        self.cliplist.model().rowsInserted.connect(lambda: self.setProjectDirty(True))
+        self.cliplist.model().rowsRemoved.connect(lambda: self.setProjectDirty(True))
+        self.cliplist.model().rowsMoved.connect(lambda: self.setProjectDirty(True))
         self.cliplist.model().rowsMoved.connect(self.syncClipList)
 
         self.listHeaderButtonL = QPushButton(self)
@@ -1178,7 +1178,7 @@ class VideoCutter(QWidget):
         self.showText('clip ends at {}'.format(endtime.toString(self.timeformat)))
         self.renderClipIndex()
 
-    @pyqtSlot()
+    @pyqtSlot(bool)
     def setProjectDirty(self, dirty: bool=True) -> None:
         self.projectDirty = dirty
 
