@@ -126,7 +126,8 @@ class VideoCutter(QWidget):
         self._initIcons()
         self._initActions()
 
-        self.appmenu, self.clipindex_removemenu, self.clipindex_contextmenu = QMenu(self.parent), QMenu(self), QMenu(self)
+        self.appmenu = QMenu(self.parent)
+        self.clipindex_removemenu, self.clipindex_contextmenu = QMenu(self), QMenu(self)
 
         self._initMenus()
         self._initNoVideo()
