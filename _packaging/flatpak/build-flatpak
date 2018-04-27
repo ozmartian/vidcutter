@@ -3,5 +3,6 @@
 flatpak-builder -v \
 	--install \
 	--force-clean \
+	--disable-rofiles-fuse \
 	build \
 	com.ozmartians.VidCutter.json

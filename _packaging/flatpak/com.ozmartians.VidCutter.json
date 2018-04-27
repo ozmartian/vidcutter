@@ -4,7 +4,6 @@
     "runtime-version": "1.6",
     "sdk": "org.freedesktop.Sdk",
     "command": "vidcutter",
-    "rename-icon": "vidcutter",
     "finish-args": [
         "--device=dri",
         "--env=DCONF_USER_CONFIG_DIR=.config/dconf",
@@ -32,7 +31,7 @@
         "name": "PyOpenGL",
         "buildsystem": "simple",
         "build-commands": [
-            "python3 setup.py install --prefix=${FLATPAK_DEST} --optimize=1"
+            "pip3 install --prefix=${FLATPAK_DEST} ."
         ],
         "sources": [
         {
@@ -45,7 +44,7 @@
         "name": "simplejson",
         "buildsystem": "simple",
         "build-commands": [
-            "python3 setup.py install --prefix=${FLATPAK_DEST} --optimize=1"
+            "pip3 install --prefix=${FLATPAK_DEST} ."
         ],
         "sources": [
         {
@@ -278,10 +277,8 @@
         "name": "vidcutter",
         "buildsystem": "simple",
         "only-arches": ["x86_64"],
-        "cleanup": ["/usr"],
         "build-commands": [
-            "python3 setup.py install --prefix=${FLATPAK_DEST} --optimize=1",
-            "install -D ${FLATPAK_DEST}/usr/bin/vidcutter ${FLATPAK_DEST}/bin/vidcutter"
+            "pip3 install --prefix=${FLATPAK_DEST} ."
         ],
         "sources": [
         {
