@@ -71,9 +71,9 @@ class SetupHelpers:
                 ('share/icons/hicolor/512x512/apps', ['data/icons/hicolor/512x512/apps/vidcutter.png']),
                 ('share/icons/hicolor/scalable/apps', ['data/icons/hicolor/scalable/apps/vidcutter.svg']),
                 # ('share/pixmaps', ['data/icons/vidcutter.svg']),
-                ('share/applications', ['data/desktop/com.ozmartians.vidcutter.desktop']),
+                ('share/applications', ['data/desktop/com.ozmartians.VidCutter.desktop']),
                 # ('share/appdata', ['data/appdata/com.ozmartians.vidcutter.appdata.xml']),
-                ('share/metainfo', ['data/appdata/com.ozmartians.vidcutter.appdata.xml']),
+                ('share/metainfo', ['data/appdata/com.ozmartians.VidCutter.appdata.xml']),
                 ('share/mime/packages', ['data/mime/wtv.xml', 'data/mime/x-vidcutter.xml'])
             ]
         return files
