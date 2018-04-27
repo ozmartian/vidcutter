@@ -1,8 +1,8 @@
 {
     "app-id": "com.ozmartians.VidCutter",
-    "runtime": "org.freedesktop.Platform",
-    "runtime-version": "1.6",
-    "sdk": "org.freedesktop.Sdk",
+    "runtime": "org.gnome.Platform",
+    "runtime-version": "3.26",
+    "sdk": "org.gnome.Sdk",
     "command": "vidcutter",
     "finish-args": [
         "--device=dri",
@@ -162,6 +162,7 @@
                     "--enable-shared",
                     "--disable-static",
                     "--enable-pic",
+                    "--disable-install-bins",
                     "--disable-install-docs",
                     "--disable-install-srcs",
                     "--enable-vp8",
@@ -227,7 +228,12 @@
             },
             {
                 "name": "lame",
-                "config-opts": [ "--enable-shared", "--disable-static", "--enable-nasm" ],
+                "config-opts": [
+                    "--enable-shared",
+                    "--disable-static",
+                    "--disable-frontend",
+                    "--enable-nasm"
+                ],
                 "sources": [
                 {
                     "type": "archive",

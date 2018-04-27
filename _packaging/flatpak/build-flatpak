@@ -1,8 +1,8 @@
 #!/bin/bash
 
 flatpak-builder -v \
-	--install \
 	--force-clean \
-	--disable-rofiles-fuse \
-	build \
+	--repo=ozmartian \
+	--ccache \
+	./build \
 	com.ozmartians.VidCutter.json
