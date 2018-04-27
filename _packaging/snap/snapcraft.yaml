@@ -63,5 +63,6 @@ parts:
         python-packages:
             - pyqt5
             - pyopengl
+            - simplejson
         install: |
             rm ${SNAPCRAFT_PART_INSTALL}/lib/python3.5/site-packages/PyQt5/Qt/lib/libQt5WebEngineCore.so.5

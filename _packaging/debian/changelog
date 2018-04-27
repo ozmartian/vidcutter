@@ -1,3 +1,56 @@
+vidcutter (6.0.0-1) unstable; urgency=medium
+
+  * NEW FEATURE: video filters menu option added to app menu accessed via
+    right-click or the bottom-right menu button. the first filter available
+    is BLACKDETECT which automatically creates clips in your clip index based
+    around black scene changes that are detected. selecting the filter once
+    a media file has been loaded will prompt for a black scene minimum
+    duration in seconds, allowing you to tweak the black frame sensitivity to
+    reduce or increase the amount of scenes detected. this is mainly useful for
+    skipping commercials (e.g. comskip) or auto-detecting scene transitions.
+    more filters will be added in future updates.
+
+  * External media file joins (when wanting to just join a set of files using the
+    the ADD button under the Video Index) are fixed; the last version broke
+    this once timeline progressbars were added. Progress for external joins
+    is displayed in progressbars overlaying associated clips directly in the
+    Clip Index which replaces timeline progressbar functionality when all clips
+    are external (i.e. not loaded via Open Media thus not associated with a
+    project)
+
+  * Added new "Enable use of PBOs" setting under the Video category for use of
+    pixel buffer objects when rendering OpenGL video. Used for noticeable
+    performance improvements when working with huge/4K media files.
+
+  * Fixed a bug caused when removing a clip with a start time but no end time
+    from your index.
+
+  * OSD (on-screen display) text defined for all user actions + standardised
+    OSD case and wording/format.
+
+  * Main clip list's scrolling mode changed to per pixel for smoother
+    vertical scrolling and no snapping of clips as they are scrolled into
+    view.
+
+  * snap + Flatpak manifests completed w/ app now available from respective
+    stores and repos (i.e snapcraft.io + flathub.org). These builds come
+    prepacked with the very latest releases of FFmpeg, libmpv, MediaInfo as
+    well as the UI libraries for Qt5 and PyQt5.
+
+  * Fixed clip index heading not extending to full width of list when it
+    becomes scrollable when more than 4 clips are added to the index.
+
+  * LINUX: all icons, desktop, mime-type, appstream related files has have
+    been renamed to domain based app-id (com.ozmartians.VidCutter) as per
+    freedesktop specs. updates made to support this across the vast array of
+    deploy/build scripts. makes things much more tidy and less error prone in
+    AppImage, Flatpak and Snap package build scripts.
+
+  * UI improvements to media stream dialog; most consistent across differing
+    desktop sizes and stream configurations
+
+ -- Pete Alexandrou <pete@ozmartians.com>  Fri, 27 Apr 2018 14:34 +0800
+
 vidcutter (5.5.0-1) stable; urgency=medium
 
   * The most requested feature is finally added; media stream configuration! A
