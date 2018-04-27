@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2018 Pete Alexandrou <pete@ozmartians.com> -->
+<component type="desktop">
+  <id>com.ozmartians.vidcutter.desktop</id>
+  <name>VidCutter</name>
+  <summary>Media Cutter + Joiner</summary>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0+</project_license>
+  <description>
+    <p>
+      A modern, simple to use, constantly evolving and hella fast MEDIA CUTTER + JOINER
+      w/ frame-accurate SmartCut technology + Qt5, libmpv, FFmpeg and MediaInfo powering
+      the backend.
+    </p>
+  </description>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://vidcutter.ozmartians.com/images/vidcutter-01.png</image>
+      <caption>VidCutter :: the simplest and fastest video cutter and joiner</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://vidcutter.ozmartians.com/images/vidcutter-02.png</image>
+      <caption>VidCutter :: the simplest + fastest video cutter and joiner</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://vidcutter.ozmartians.com/images/vidcutter-03.png</image>
+      <caption>VidCutter :: the simplest + fastest video cutter and joiner</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://vidcutter.ozmartians.com/images/vidcutter-04.png</image>
+      <caption>VidCutter :: the simplest + fastest video cutter and joiner</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://cdn.rawgit.com/ozmartian/vidcutter/5.5.0/vidcutter/images/startup-backdrop.jpg?raw=true</image>
+      <caption>VidCutter :: the simplest + fastest video cutter and joiner</caption>
+    </screenshot>
+  </screenshots>
+  <url type="homepage">https://vidcutter.ozmartians.com</url>
+  <url type="bugtracker">https://github.com/ozmartian/vidcutter/issues</url>
+  <update_contact>pete_AT_ozmartians.com</update_contact>
+</component>
