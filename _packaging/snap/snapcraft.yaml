@@ -9,7 +9,7 @@ description: |
     hella fast MEDIA CUTTER + JOINER w/ frame-accurate
     SmartCut technology + Qt5, libmpv, FFmpeg and
     MediaInfo powering the backend.
-icon: data/icons/hicolor/256x256/apps/vidcutter.png
+icon: data/icons/hicolor/512x512/apps/com.ozmartians.VidCutter.png
 
 grade: stable
 confinement: strict
@@ -18,7 +18,7 @@ apps:
     vidcutter:
         command: desktop-launch vidcutter
         plugs: [unity7, x11, wayland, desktop, home, pulseaudio, gsettings, opengl, mount-observe, network, network-bind, network-manager]
-        desktop: usr/share/applications/com.ozmartians.vidcutter.desktop
+        desktop: usr/share/applications/com.ozmartians.VidCutter.desktop
 
 parts:
     prepare:
@@ -64,5 +64,4 @@ parts:
             - pyqt5
             - pyopengl
         install: |
-            sed -i 's|Icon=vidcutter|Icon=${SNAP}/usr/share/icons/hicolor/256x256/apps/vidcutter.png|g' ${SNAPCRAFT_PART_INSTALL}/usr/share/applications/com.ozmartians.vidcutter.desktop
             rm ${SNAPCRAFT_PART_INSTALL}/lib/python3.5/site-packages/PyQt5/Qt/lib/libQt5WebEngineCore.so.5
