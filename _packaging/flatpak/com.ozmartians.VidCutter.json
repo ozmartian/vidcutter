@@ -4,8 +4,6 @@
     "runtime-version": "1.6",
     "sdk": "org.freedesktop.Sdk",
     "command": "vidcutter",
-    "rename-appdata-file": "com.ozmartians.vidcutter.appdata.xml",
-    "rename-desktop-file": "com.ozmartians.vidcutter.desktop",
     "rename-icon": "vidcutter",
     "finish-args": [
         "--device=dri",
