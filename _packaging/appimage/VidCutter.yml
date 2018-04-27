@@ -53,9 +53,9 @@ script:
   - env QT_APPIMAGE=1 usr/bin/python3.6 -m pip install -t usr/lib/python3/dist-packages ../../../..
   - mkdir -p usr/share/applications usr/share/mime/packages usr/share/metainfo 2> /dev/null
   - cp -R ../../../../data/icons/hicolor usr/share/icons
-  - cp ../../../../data/desktop/com.ozmartians.vidcutter.desktop usr/share/applications
-  - cp ../../../../data/appdata/com.ozmartians.vidcutter.appdata.xml usr/share/metainfo
-  - cp ../../../../data/mime/x-vidcutter.xml usr/share/mime/packages
+  - cp ../../../../data/desktop/* usr/share/applications
+  - cp ../../../../data/appdata/* usr/share/metainfo
+  - cp ../../../../data/mime/* usr/share/mime/packages
   - usr/bin/python3.6 -m pip uninstall -y pip
   - mv usr/lib/python3/dist-packages/pkg_resources.BAK usr/lib/python3/dist-packages/pkg_resources
   - rm -rf usr/local
@@ -71,7 +71,7 @@ script:
   - gcc -fPIC -o ./AppRun ../../AppRun.c
   - strip ./AppRun
   - chmod +x ./AppRun
-  - cp usr/share/icons/hicolor/256x256/apps/vidcutter.png .
+  - cp usr/share/icons/hicolor/256x256/apps/com.ozmartians.VidCutter.png ./vidcutter.png
   - ln -s vidcutter.png .DirIcon
   - cp -f usr/share/applications/*id*utter.desktop ./vidcutter.desktop
   - cp -f ../../scripts/* usr/bin/
@@ -86,7 +86,7 @@ post:
   - gcc -fPIC -o ./AppRun ../../AppRun.c
   - strip ./AppRun
   - chmod +x ./AppRun
-  - cp usr/share/icons/hicolor/256x256/apps/vidcutter.png .
+  - cp usr/share/icons/hicolor/256x256/apps/com.ozmartians.VidCutter.png ./vidcutter.png
   - ln -sf vidcutter.png .DirIcon
   - cp -f usr/share/applications/*id*utter.desktop ./vidcutter.desktop
   - cp -f ../../scripts/* usr/bin/

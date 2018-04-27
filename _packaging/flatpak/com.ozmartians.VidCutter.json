@@ -32,9 +32,7 @@
         "name": "PyOpenGL",
         "buildsystem": "simple",
         "build-commands": [
-            "python3 setup.py install --root=${FLATPAK_DEST} --optimize=1",
-            "mkdir -p ${FLATPAK_DEST}/lib/python3.5/site-packages",
-            "mv ${FLATPAK_DEST}/usr/lib/python3.5/site-packages/* ${FLATPAK_DEST}/lib/python3.5/site-packages -v"
+            "python3 setup.py install --prefix=${FLATPAK_DEST} --optimize=1"
         ],
         "sources": [
         {
@@ -47,9 +45,7 @@
         "name": "simplejson",
         "buildsystem": "simple",
         "build-commands": [
-            "python3 setup.py install --root=${FLATPAK_DEST} --optimize=1",
-            "mkdir -p ${FLATPAK_DEST}/lib/python3.5/site-packages",
-            "mv ${FLATPAK_DEST}/usr/lib/python3.5/site-packages/* ${FLATPAK_DEST}/lib/python3.5/site-packages -v"
+            "python3 setup.py install --prefix=${FLATPAK_DEST} --optimize=1"
         ],
         "sources": [
         {
@@ -284,11 +280,8 @@
         "only-arches": ["x86_64"],
         "cleanup": ["/usr"],
         "build-commands": [
-            "python3 setup.py install --root=${FLATPAK_DEST} --optimize=1",
-            "mv ${FLATPAK_DEST}/usr/lib/python3.5/site-packages/* ${FLATPAK_DEST}/lib/python3.5/site-packages -v",
-            "install -D ${FLATPAK_DEST}/usr/bin/vidcutter ${FLATPAK_DEST}/bin/vidcutter",
-            "mv ${FLATPAK_DEST}/usr/share/* ${FLATPAK_DEST}/share -v",
-            "[[ -d ${FLATPAK_DEST}/usr ]] && rm -rf ${FLATPAK_DEST}/usr"
+            "python3 setup.py install --prefix=${FLATPAK_DEST} --optimize=1",
+            "install -D ${FLATPAK_DEST}/usr/bin/vidcutter ${FLATPAK_DEST}/bin/vidcutter"
         ],
         "sources": [
         {

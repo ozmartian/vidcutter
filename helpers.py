@@ -67,21 +67,19 @@ class SetupHelpers:
         files = []
         if sys.platform.startswith('linux') and 'QT_APPIMAGE' not in os.environ.keys():
             files = [
-                ('share/icons/hicolor/16x16/apps', ['data/icons/hicolor/16x16/apps/vidcutter.png']),
-                ('share/icons/hicolor/22x22/apps', ['data/icons/hicolor/22x22/apps/vidcutter.png']),
-                ('share/icons/hicolor/24x24/apps', ['data/icons/hicolor/24x24/apps/vidcutter.png']),
-                ('share/icons/hicolor/32x32/apps', ['data/icons/hicolor/32x32/apps/vidcutter.png']),
-                ('share/icons/hicolor/48x48/apps', ['data/icons/hicolor/48x48/apps/vidcutter.png']),
-                ('share/icons/hicolor/64x64/apps', ['data/icons/hicolor/64x64/apps/vidcutter.png']),
-                ('share/icons/hicolor/128x128/apps', ['data/icons/hicolor/128x128/apps/vidcutter.png']),
-                ('share/icons/hicolor/256x256/apps', ['data/icons/hicolor/256x256/apps/vidcutter.png']),
-                ('share/icons/hicolor/512x512/apps', ['data/icons/hicolor/512x512/apps/vidcutter.png']),
-                ('share/icons/hicolor/scalable/apps', ['data/icons/hicolor/scalable/apps/vidcutter.svg']),
-                # ('share/pixmaps', ['data/icons/vidcutter.svg']),
+                ('share/icons/hicolor/16x16/apps', ['data/icons/hicolor/16x16/apps/com.ozmartians.VidCutter.png']),
+                ('share/icons/hicolor/22x22/apps', ['data/icons/hicolor/22x22/apps/com.ozmartians.VidCutter.png']),
+                ('share/icons/hicolor/24x24/apps', ['data/icons/hicolor/24x24/apps/com.ozmartians.VidCutter.png']),
+                ('share/icons/hicolor/32x32/apps', ['data/icons/hicolor/32x32/apps/com.ozmartians.VidCutter.png']),
+                ('share/icons/hicolor/48x48/apps', ['data/icons/hicolor/48x48/apps/com.ozmartians.VidCutter.png']),
+                ('share/icons/hicolor/64x64/apps', ['data/icons/hicolor/64x64/apps/com.ozmartians.VidCutter.png']),
+                ('share/icons/hicolor/128x128/apps', ['data/icons/hicolor/128x128/apps/com.ozmartians.VidCutter.png']),
+                ('share/icons/hicolor/256x256/apps', ['data/icons/hicolor/256x256/apps/com.ozmartians.VidCutter.png']),
+                ('share/icons/hicolor/512x512/apps', ['data/icons/hicolor/512x512/apps/com.ozmartians.VidCutter.png']),
+                ('share/icons/hicolor/scalable/apps', ['data/icons/hicolor/scalable/apps/com.ozmartians.VidCutter.svg']),
                 ('share/applications', ['data/desktop/com.ozmartians.VidCutter.desktop']),
-                # ('share/appdata', ['data/appdata/com.ozmartians.vidcutter.appdata.xml']),
                 ('share/metainfo', ['data/appdata/com.ozmartians.VidCutter.appdata.xml']),
-                ('share/mime/packages', ['data/mime/wtv.xml', 'data/mime/x-vidcutter.xml'])
+                ('share/mime/packages', ['data/mime/com.ozmartians.VidCutter.xml'])
             ]
         return files
 
