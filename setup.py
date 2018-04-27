@@ -32,6 +32,7 @@
 #
 
 import os
+import sys
 
 from setuptools import setup
 from setuptools.extension import Extension
@@ -39,14 +40,19 @@ from setuptools.extension import Extension
 from helpers import SetupHelpers
 import vidcutter
 
+# --------------------------------------------------------------------------- #
+
 setup_requires = ['setuptools']
+install_requires = ['typing'] if sys.version_info < (3,5) else []
+
+# --------------------------------------------------------------------------- #
 
 # Cython override; default to building extension module from pre-Cythonized .c file
 USE_CYTHON = True if not os.path.isfile('vidcutter/libs/pympv/mpv.c') else False
 
 extensions = [Extension(name='vidcutter.libs.mpv',
                         sources=['vidcutter/libs/pympv/mpv.{}'.format('c' if not USE_CYTHON else 'pyx')],
-                        include_dirs=['vidcutter/libs/pympv/mpv'],
+                        include_dirs=SetupHelpers.get_include_dirs(),
                         libraries=['mpv'],
                         library_dirs=SetupHelpers.get_library_dirs(),
                         extra_compile_args=['-g0' if os.name == 'posix' else ''])]
@@ -69,7 +75,7 @@ try:
         license='GPLv3+',
         packages=['vidcutter', 'vidcutter.libs'],
         setup_requires=setup_requires,
-        install_requires=[],
+        install_requires=install_requires,
         data_files=SetupHelpers.get_data_files(),
         ext_modules=extensions,
         entry_points={'gui_scripts': ['vidcutter = vidcutter.__main__:main']},

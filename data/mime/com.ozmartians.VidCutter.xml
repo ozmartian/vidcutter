@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+  <mime-type type="application/x-vidcutter">
+    <comment>VidCutter project file</comment>
+    <glob pattern="*.vcp"/>
+    <icon name="com.ozmartians.VidCutter"/>
+  </mime-type>
+  <mime-type type="video/wtv">
+    <comment>Windows Recorded TV Show</comment>
+    <glob pattern="*.wtv"/>
+    <icon name="video"/>
+  </mime-type>
+</mime-info>
