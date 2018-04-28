@@ -72,8 +72,10 @@ script:
   - strip ./AppRun
   - chmod +x ./AppRun
   - cp usr/share/icons/hicolor/256x256/apps/com.ozmartians.VidCutter.png .
+  - ln -s com.ozmartians.VidCutter.png vidcutter.png
   - ln -sf com.ozmartians.VidCutter.png .DirIcon
   - cp -f usr/share/applications/com.ozmartians.VidCutter.desktop .
+  - ln -s com.ozmartians.VidCutter.desktop vidcutter.desktop
   - cp -f ../../scripts/* usr/bin/
   - cp -f ../../qt5/* usr/lib/python3/dist-packages/PyQt5/Qt/plugins/platformthemes/
 
@@ -87,8 +89,10 @@ post:
   - strip ./AppRun
   - chmod +x ./AppRun
   - cp usr/share/icons/hicolor/256x256/apps/com.ozmartians.VidCutter.png .
+  - ln -s com.ozmartians.VidCutter.png vidcutter.png
   - ln -sf com.ozmartians.VidCutter.png .DirIcon
   - cp -f usr/share/applications/com.ozmartians.VidCutter.desktop .
+  - ln -s com.ozmartians.VidCutter.desktop vidcutter.desktop
   - cp -f ../../scripts/* usr/bin/
   - cp -f ../../qt5/* usr/lib/python3/dist-packages/PyQt5/Qt/plugins/platformthemes/
   
