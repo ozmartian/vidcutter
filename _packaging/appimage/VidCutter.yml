@@ -71,9 +71,9 @@ script:
   - gcc -fPIC -o ./AppRun ../../AppRun.c
   - strip ./AppRun
   - chmod +x ./AppRun
-  - cp usr/share/icons/hicolor/256x256/apps/com.ozmartians.VidCutter.png ./vidcutter.png
-  - ln -s vidcutter.png .DirIcon
-  - cp -f usr/share/applications/*id*utter.desktop ./vidcutter.desktop
+  - cp usr/share/icons/hicolor/256x256/apps/com.ozmartians.VidCutter.png .
+  - ln -sf com.ozmartians.VidCutter.png .DirIcon
+  - cp -f usr/share/applications/com.ozmartians.VidCutter.desktop .
   - cp -f ../../scripts/* usr/bin/
   - cp -f ../../qt5/* usr/lib/python3/dist-packages/PyQt5/Qt/plugins/platformthemes/
 
@@ -86,9 +86,9 @@ post:
   - gcc -fPIC -o ./AppRun ../../AppRun.c
   - strip ./AppRun
   - chmod +x ./AppRun
-  - cp usr/share/icons/hicolor/256x256/apps/com.ozmartians.VidCutter.png ./vidcutter.png
-  - ln -sf vidcutter.png .DirIcon
-  - cp -f usr/share/applications/*id*utter.desktop ./vidcutter.desktop
+  - cp usr/share/icons/hicolor/256x256/apps/com.ozmartians.VidCutter.png .
+  - ln -sf com.ozmartians.VidCutter.png .DirIcon
+  - cp -f usr/share/applications/com.ozmartians.VidCutter.desktop .
   - cp -f ../../scripts/* usr/bin/
   - cp -f ../../qt5/* usr/lib/python3/dist-packages/PyQt5/Qt/plugins/platformthemes/
   
