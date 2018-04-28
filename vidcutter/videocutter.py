@@ -41,14 +41,6 @@ import sip
 # noinspection PyUnresolvedReferences
 from vidcutter import resources
 from vidcutter.about import About
-from vidcutter.libs.config import Config, InvalidMediaException, VideoFilter
-from vidcutter.libs.mpvwidget import mpvWidget
-from vidcutter.libs.munch import Munch
-from vidcutter.libs.notifications import JobCompleteNotification
-from vidcutter.libs.taskbarprogress import TaskbarProgress
-from vidcutter.libs.videoservice import VideoService
-from vidcutter.libs.widgets import (ClipErrorsDialog, VCBlinkText, VCFilterMenuAction, VCFrameCounter, VCProgressDialog,
-                                    VCTimeCounter, VCToolBarButton, VCVolumeSlider)
 from vidcutter.mediainfo import MediaInfo
 from vidcutter.mediastream import StreamSelector
 from vidcutter.settings import SettingsDialog
@@ -57,6 +49,15 @@ from vidcutter.videolist import VideoList
 from vidcutter.videoslider import VideoSlider
 from vidcutter.videosliderwidget import VideoSliderWidget
 from vidcutter.videostyle import VideoStyleDark, VideoStyleLight
+
+from vidcutter.libs.config import Config, InvalidMediaException, VideoFilter
+from vidcutter.libs.mpvwidget import mpvWidget
+from vidcutter.libs.munch import Munch
+from vidcutter.libs.notifications import JobCompleteNotification
+from vidcutter.libs.taskbarprogress import TaskbarProgress
+from vidcutter.libs.videoservice import VideoService
+from vidcutter.libs.widgets import (ClipErrorsDialog, VCBlinkText, VCFilterMenuAction, VCFrameCounter, VCProgressDialog,
+                                    VCTimeCounter, VCToolBarButton, VCVolumeSlider)
 
 import vidcutter
 

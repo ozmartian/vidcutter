@@ -25,12 +25,12 @@
 import os
 import sys
 
-from PyQt5.QtCore import pyqtSlot, Qt, QEasingCurve, QEvent, QModelIndex, QPropertyAnimation, QRect, QSize
+from PyQt5.QtCore import pyqtSlot, Qt, QEvent, QModelIndex, QRect, QSize
 from PyQt5.QtGui import QColor, QFont, QIcon, QMouseEvent, QPainter, QPalette, QPen, QResizeEvent
 from PyQt5.QtWidgets import (QAbstractItemView, QListWidget, QProgressBar, QSizePolicy, QStyle,
-                             QStyledItemDelegate, QStyleFactory, QStyleOptionViewItem, QWidget)
+                             QStyledItemDelegate, QStyleFactory, QStyleOptionViewItem)
 
-from vidcutter.graphicseffects import OpacityEffect
+from vidcutter.libs.graphicseffects import OpacityEffect
 
 
 class VideoList(QListWidget):

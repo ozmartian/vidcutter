@@ -36,11 +36,12 @@ from PyQt5.QtGui import (QCloseEvent, QContextMenuEvent, QDragEnterEvent, QDropE
                          qt_set_sequence_auto_mnemonic)
 from PyQt5.QtWidgets import qApp, QMainWindow, QMessageBox, QSizePolicy
 
+from vidcutter.videoconsole import ConsoleHandler, ConsoleWidget, VideoLogger
+from vidcutter.videocutter import VideoCutter
+
 from vidcutter.libs.mpv import MPVError
 from vidcutter.libs.singleapplication import SingleApplication
 from vidcutter.libs.widgets import VCMessageBox
-from vidcutter.videoconsole import ConsoleHandler, ConsoleWidget, VideoLogger
-from vidcutter.videocutter import VideoCutter
 
 import vidcutter
 

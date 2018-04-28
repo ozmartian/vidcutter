@@ -38,9 +38,8 @@ from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QDir, QFileInfo, QObject, QProce
 from PyQt5.QtGui import QPainter, QPixmap
 from PyQt5.QtWidgets import QMessageBox, QWidget
 
-import sip
-
 from vidcutter.libs.config import Config, InvalidMediaException, Streams, ToolNotFoundException
+from vidcutter.libs.ffmetadata import FFMetadata
 from vidcutter.libs.munch import Munch
 from vidcutter.libs.widgets import VCMessageBox
 
@@ -79,6 +78,7 @@ class VideoService(QObject):
                 self.proc.errorOccurred.connect(self.cmdError)
             self.lastError = ''
             self.media, self.source = None, None
+            self.chapter_metadata = None
             self.keyframes = []
             self.streams = Munch()
             self.mappings = []
@@ -444,17 +444,37 @@ class VideoService(QObject):
         except FileNotFoundError:
             pass
 
-    def join(self, inputs: List[str], output: str, allstreams: bool = True) -> bool:
+    def join(self, inputs: List[str], output: str, allstreams: bool=True, chapters: bool=True) -> bool:
         self.checkDiskSpace(output)
         filelist = os.path.normpath(os.path.join(os.path.dirname(inputs[0]), '_vidcutter.list'))
-        fobj = open(filelist, 'w')
-        [fobj.write('file \'{}\'\n'.format(file.replace("'", "\\'"))) for file in inputs]
-        fobj.close()
+        with open(filelist, 'w') as f:
+            [f.write('file \'{}\'\n'.format(file.replace("'", "\\'"))) for file in inputs]
         stream_map = '-map 0 ' if allstreams else ''
-        args = '-v error -f concat -safe 0 -i "{}" -c copy {}-y "{}"'
-        result = self.cmdExec(self.backends.ffmpeg, args.format(filelist, stream_map, output))
+        ffmetadata = None
+        if chapters:
+            ffmetadata = self.getChapterFile(inputs)
+            metadata = '-i "{}" -map_metadata 1 '.format(ffmetadata)
+        else:
+            metadata = ''
+        args = '-v error -f concat -safe 0 -i "{0}" {1}-c copy {2}-y "{3}"'
+        result = self.cmdExec(self.backends.ffmpeg, args.format(filelist, metadata, stream_map, output))
         os.remove(filelist)
+        if chapters and ffmetadata is not None:
+            os.remove(ffmetadata)
         return result
+
+    def getChapterFile(self, scenes: List[str]) -> str:
+        ffmetadata = FFMetadata()
+        pos = 0
+        for scene in scenes:
+            duration = self.duration(scene)
+            end = pos + duration.msecsSinceStartOfDay()
+            ffmetadata.add_chapter(pos, end)
+            pos = end
+        ffmetafile = os.path.normpath(os.path.join(os.path.dirname(scenes[0]), 'ffmetadata.txt'))
+        with open(ffmetafile, 'w') as f:
+            f.write(ffmetadata.output())
+        return ffmetafile
 
     def getBSF(self, source: str) -> tuple:
         vbsf, absf = '', ''
