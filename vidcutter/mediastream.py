@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+    #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 #######################################################################
@@ -57,7 +57,7 @@ class StreamSelector(QDialog):
             layout.addWidget(self.subtitles())
         layout.addWidget(buttons)
         self.setLayout(layout)
-        self.setMinimumSize(500, 300)
+        self.setMinimumSize(self.sizeHint())
 
     @staticmethod
     def lineSeparator() -> QFrame:
@@ -108,6 +108,7 @@ class StreamSelector(QDialog):
         audiolayout = QGridLayout()
         audiolayout.setSpacing(15)
         for stream in self.streams.audio:
+            sameplerate = round(int(stream.sample_rate) / 1000, 1)
             checkbox = StreamSelectorCheckBox(stream.index, 'Toggle audio stream', self)
             icon = StreamSelectorLabel('<img src=":images/{}/streams-audio.png" />'.format(self.parent.theme),
                                        checkbox, True, self)
@@ -115,8 +116,8 @@ class StreamSelector(QDialog):
             if hasattr(stream, 'tags') and hasattr(stream.tags, 'language'):
                 labeltext += '<b>language:</b> {}<br/>'.format(ISO639_2[stream.tags.language])
             labeltext += '<b>codec:</b> {}<br/>'.format(stream.codec_long_name)
-            labeltext += '<b>channels:</b> {} &nbsp; <b>sample rate:</b> {} kHz' \
-                         .format(stream.channels, round(int(stream.sample_rate) / 1000, 1))
+            labeltext += '<b>channels:</b> {0} &nbsp; <b>sample rate:</b> {1:.2f} kHz' \
+                         .format(stream.channels, sameplerate)
             label = StreamSelectorLabel(labeltext, checkbox, False, self)
             rows = audiolayout.rowCount()
             audiolayout.addWidget(checkbox, rows, 0)
