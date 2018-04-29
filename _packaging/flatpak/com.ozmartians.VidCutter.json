@@ -75,7 +75,7 @@
             "type": "archive",
             "only-arches": ["i386"],
             "url": "https://github.com/ozmartian/vidcutter-flatpak/raw/master/i386/pyqt5-py35-qt5-libs.tar.xz",
-            "sha256": "1e1b69ad63f3dcabf51cf5d5c687f8088d877be185e501d22fe840545769c82a"
+            "sha256": "4478c9b7e715d76bae51f16db17c3c747f0d9a2a6af6af939cbcffe30278ee7a"
         }]
 
     },
