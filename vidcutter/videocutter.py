@@ -101,6 +101,7 @@ class VideoCutter(QWidget):
         self.totalRuntime, self.frameRate = 0, 0
         self.notifyInterval = 1000
 
+        self.createChapters = self.settings.value('chapters', 'on', type=str) in {'on', 'true'}
         self.enableOSD = self.settings.value('enableOSD', 'on', type=str) in {'on', 'true'}
         self.hardwareDecoding = self.settings.value('hwdec', 'on', type=str) in {'on', 'auto'}
         self.enablePBO = self.settings.value('enablePBO', 'off', type=str) in {'on', 'true'}
@@ -1351,13 +1352,13 @@ class VideoCutter(QWidget):
             rc = False
             if self.videoService.isMPEGcodec(filelist[0]):
                 self.logger.info('source file is MPEG based so join via MPEG-TS')
-                rc = self.videoService.mpegtsJoin(filelist, self.finalFilename)
+                rc = self.videoService.mpegtsJoin(filelist, self.finalFilename, self.createChapters)
             if not rc or QFile(self.finalFilename).size() < 1000:
                 self.logger.info('MPEG-TS based join failed, will retry using standard concat')
-                rc = self.videoService.join(filelist, self.finalFilename, True)
+                rc = self.videoService.join(filelist, self.finalFilename, True, self.createChapters)
             if not rc or QFile(self.finalFilename).size() < 1000:
                 self.logger.info('join resulted in 0 length file, trying again without all stream mapping')
-                self.videoService.join(filelist, self.finalFilename, False)
+                self.videoService.join(filelist, self.finalFilename, False, self.createChapters)
             if not self.keepClips:
                 for f in filelist:
                     clip = self.clipTimes[filelist.index(f)]

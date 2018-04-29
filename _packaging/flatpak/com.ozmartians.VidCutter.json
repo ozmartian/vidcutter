@@ -205,7 +205,7 @@
                     "cd source/build-10 && make",
                     "ln -s ../build-10/libx265.a source/build-8/libx265_main10.a",
                     "ln -s ../build-12/libx265.a source/build-8/libx265_main12.a",
-                    "cd source/build-8 && cmake .. -DCMAKE_INSTALL_PREFIX=${FLATPAK_DEST} -DENABLE_SHARED='TRUE' -DENABLE_CLI='FALSE' -DENABLE_HDR10_PLUS='TRUE' -DEXTRA_LIB='x265_main10.a;x265_main12.a' -DEXTRA_LINK_FLAGS='-L.' -DLINKED_10BIT='TRUE' -DLINKED_12BIT='TRUE'",
+                    "cd source/build-8 && cmake .. -DCMAKE_INSTALL_PREFIX=${FLATPAK_DEST} -DENABLE_SHARED='TRUE' -DCMAKE_POSITION_INDEPENDENT_CODE='True' -DENABLE_CLI='FALSE' -DENABLE_HDR10_PLUS='TRUE' -DEXTRA_LIB='x265_main10.a;x265_main12.a' -DEXTRA_LINK_FLAGS='-L.' -DLINKED_10BIT='TRUE' -DLINKED_12BIT='TRUE'",
                     "cd source/build-8 && make",
                     "cd source/build-8 && make install"
                 ],

@@ -171,13 +171,13 @@ QLabel#logowidget {
 
 QLabel#decodinglabel, QLabel#ratiolabel, QLabel#keepclipslabel, QLabel#singleinstancelabel,
 QLabel#verboselogslabel, QLabel#pbolabel, QLabel#nativedialogslabel, QLabel#seeksettingslabel,
-QLabel#zoomlabel, QLabel#smartcutlabel, QLabel#ffmpeglabel {
+QLabel#zoomlabel, QLabel#smartcutlabel, QLabel#ffmpeglabel, QLabel#chapterslabel {
     font-family: "Noto Sans", sans-serif;
     font-size: 11px;
     color: #444;
 }
 
-QLabel#decodinglabel, QLabel#ratiolabel, QLabel#keepclipslabel, QLabel#singleinstancelabel,
+QLabel#decodinglabel, QLabel#ratiolabel, QLabel#keepclipslabel, QLabel#singleinstancelabel, QLabel#chapterslabel,
 QLabel#verboselogslabel, QLabel#pbolabel, QLabel#nativedialogslabel, QLabel#ffmpeglabel {
     margin: 2px 5px 10px 22px;
 }

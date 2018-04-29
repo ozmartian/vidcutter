@@ -496,20 +496,25 @@ class GeneralPage(QWidget):
         smartCutLayout.addItem(QSpacerItem(25, 1), 3, 0)
         smartCutLayout.addWidget(smartCutLabel4, 3, 1)
         smartCutLayout.setColumnStretch(1, 1)
-        self.singleInstance = self.parent.settings.value('singleInstance', 'on', type=str) in {'on', 'true'}
-        singleInstanceCheckbox = QCheckBox('Allow only one running instance', self)
-        singleInstanceCheckbox.setToolTip('Allow just one single %s instance to be running' % qApp.applicationName())
-        singleInstanceCheckbox.setCursor(Qt.PointingHandCursor)
-        singleInstanceCheckbox.setChecked(self.singleInstance)
-        singleInstanceCheckbox.stateChanged.connect(self.setSingleInstance)
-        singleInstanceLabel = QLabel('''
-            <b>ON:</b> allow only one single application window
+        smartCutCheckboxLayout = QHBoxLayout()
+        smartCutCheckboxLayout.setContentsMargins(0, 0, 0, 0)
+        smartCutCheckboxLayout.addWidget(smartCutCheckbox)
+        smartCutCheckboxLayout.addWidget(smartCutCheckboxLabel)
+        smartCutCheckboxLayout.addStretch(1)
+
+        chaptersCheckbox = QCheckBox('Create chapters per clip', self)
+        chaptersCheckbox.setToolTip('Automatically create chapters per clip')
+        chaptersCheckbox.setCursor(Qt.PointingHandCursor)
+        chaptersCheckbox.setChecked(self.parent.parent.createChapters)
+        chaptersCheckbox.stateChanged.connect(self.createChapters)
+        chaptersLabel = QLabel('''
+            <b>ON:</b> existing chapters are ignored, new chapters added based on your clip index
             <br/>
-            <b>OFF:</b> allow multiple application windows
-        ''', self)
-        singleInstanceLabel.setObjectName('singleinstancelabel')
-        singleInstanceLabel.setTextFormat(Qt.RichText)
-        singleInstanceLabel.setWordWrap(True)
+            <b>OFF:</b> only chapters in source media are mapped to your file
+        ''')
+        chaptersLabel.setObjectName('chapterslabel')
+        chaptersLabel.setTextFormat(Qt.RichText)
+        chaptersLabel.setWordWrap(True)
         keepClipsCheckbox = QCheckBox('Keep clip segments', self)
         keepClipsCheckbox.setToolTip('Keep joined clip segments')
         keepClipsCheckbox.setCursor(Qt.PointingHandCursor)
@@ -523,14 +528,27 @@ class GeneralPage(QWidget):
         keepClipsLabel.setObjectName('keepclipslabel')
         keepClipsLabel.setTextFormat(Qt.RichText)
         keepClipsLabel.setWordWrap(True)
-        smartCutCheckboxLayout = QHBoxLayout()
-        smartCutCheckboxLayout.setContentsMargins(0, 0, 0, 0)
-        smartCutCheckboxLayout.addWidget(smartCutCheckbox)
-        smartCutCheckboxLayout.addWidget(smartCutCheckboxLabel)
-        smartCutCheckboxLayout.addStretch(1)
+        self.singleInstance = self.parent.settings.value('singleInstance', 'on', type=str) in {'on', 'true'}
+        singleInstanceCheckbox = QCheckBox('Allow only one running instance', self)
+        singleInstanceCheckbox.setToolTip('Allow just one single {} instance to be running'
+                                          .format(qApp.applicationName()))
+        singleInstanceCheckbox.setCursor(Qt.PointingHandCursor)
+        singleInstanceCheckbox.setChecked(self.singleInstance)
+        singleInstanceCheckbox.stateChanged.connect(self.setSingleInstance)
+        singleInstanceLabel = QLabel('''
+            <b>ON:</b> allow only one single application window
+            <br/>
+            <b>OFF:</b> allow multiple application windows
+        ''', self)
+        singleInstanceLabel.setObjectName('singleinstancelabel')
+        singleInstanceLabel.setTextFormat(Qt.RichText)
+        singleInstanceLabel.setWordWrap(True)
         generalLayout = QVBoxLayout()
         generalLayout.addLayout(smartCutCheckboxLayout)
         generalLayout.addLayout(smartCutLayout)
+        generalLayout.addWidget(SettingsDialog.lineSeparator())
+        generalLayout.addWidget(chaptersCheckbox)
+        generalLayout.addWidget(chaptersLabel)
         generalLayout.addWidget(SettingsDialog.lineSeparator())
         generalLayout.addWidget(keepClipsCheckbox)
         generalLayout.addWidget(keepClipsLabel)
@@ -592,6 +610,11 @@ class GeneralPage(QWidget):
     def setSingleInstance(self, state: int) -> None:
         self.singleInstance = (state == Qt.Checked)
         self.parent.parent.saveSetting('singleInstance', self.singleInstance)
+
+    @pyqtSlot(int)
+    def createChapters(self, state: int) -> None:
+        self.parent.parent.saveSetting('chapters', state == Qt.Checked)
+        self.parent.parent.createChapters = (state == Qt.Checked)
 
     @pyqtSlot(int)
     def keepClips(self, state: int) -> None:

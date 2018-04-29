@@ -231,7 +231,8 @@ class VideoService(QObject):
                 result2 = self.cut(file2, file2_cut.fileName(), '00:00:00.000', '00:00:04.00', False)
                 if result1 and result2:
                     # 4. attempt join of temp 2 second clips
-                    result = self.join([file1_cut.fileName(), file2_cut.fileName()], final_join.fileName(), False)
+                    result = self.join([file1_cut.fileName(), file2_cut.fileName()],
+                                       final_join.fileName(), False, False)
             VideoService.cleanup([file1_cut.fileName(), file2_cut.fileName(), final_join.fileName()])
         except BaseException:
             self.logger.exception('Exception in VideoService.testJoin', exc_info=True)
@@ -429,11 +430,11 @@ class VideoService(QObject):
         ]
         if self.isMPEGcodec(joinlist[1]):
             self.logger.info('smartcut files are MPEG based so join via MPEG-TS')
-            final_join = self.mpegtsJoin(joinlist, self.smartcut_jobs[index].output)
+            final_join = self.mpegtsJoin(joinlist, self.smartcut_jobs[index].output, False)
         if not final_join:
             self.logger.info('smartcut MPEG-TS join failed, retry with standard concat')
-            final_join = self.join(inputs=joinlist, output=self.smartcut_jobs[index].output,
-                                   allstreams=self.smartcut_jobs[index].allstreams)
+            final_join = self.join(joinlist, self.smartcut_jobs[index].output,
+                                   self.smartcut_jobs[index].allstreams, False)
         VideoService.cleanup(joinlist)
         self.finished.emit(final_join, self.smartcut_jobs[index].output)
 
@@ -601,7 +602,7 @@ class VideoService(QObject):
         return codec in VideoService.config.mpeg_formats
 
     # noinspection PyBroadException
-    def mpegtsJoin(self, inputs: list, output: str) -> bool:
+    def mpegtsJoin(self, inputs: list, output: str, chapters: bool=True) -> bool:
         result = False
         try:
             self.checkDiskSpace(output)
@@ -621,11 +622,19 @@ class VideoService(QObject):
             if len(outfiles):
                 if os.path.isfile(output):
                     os.remove(output)
-                args = '-v error -i "concat:{0}" -c copy {1} "{2}"' \
-                    .format("|".join(map(str, outfiles)), audio_bsf, output)
+                ffmetadata = None
+                if chapters:
+                    ffmetadata = self.getChapterFile(outfiles)
+                    metadata = '-i "{}" -map_metadata 1 '.format(ffmetadata)
+                else:
+                    metadata = ''
+                args = '-v error -i "concat:{0}" {1}-c copy {2} "{3}"' \
+                       .format("|".join(map(str, outfiles)), metadata, audio_bsf, output)
                 result = self.cmdExec(self.backends.ffmpeg, args)
                 # 3. cleanup mpegts files
                 [os.remove(file) for file in outfiles]
+                if chapters and ffmetadata is not None:
+                    os.remove(ffmetadata)
         except BaseException:
             self.logger.exception('Exception during MPEG-TS join', exc_info=True)
             result = False
