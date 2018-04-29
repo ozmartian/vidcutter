@@ -67,9 +67,17 @@
         "sources": [
         {
             "type": "archive",
-            "url": "https://github.com/ozmartian/vidcutter-flatpak/raw/master/pyqt5-py35-qt510-flatpak-kde-runtime.tar.xz",
+            "only-arches": ["x86_64"],
+            "url": "https://github.com/ozmartian/vidcutter-flatpak/raw/master/x86_64/pyqt5-py35-qt5-libs.tar.xz",
             "sha256": "4bb0bac39231805a510db3e0c019fb608f6d3233c97e0bebf3dfee5cc8c9592f"
+        },
+        {
+            "type": "archive",
+            "only-arches": ["i386"],
+            "url": "https://github.com/ozmartian/vidcutter-flatpak/raw/master/i386/pyqt5-py35-qt5-libs.tar.xz",
+            "sha256": "1e1b69ad63f3dcabf51cf5d5c687f8088d877be185e501d22fe840545769c82a"
         }]
+
     },
     {
         "name": "libmpv",
@@ -197,6 +205,16 @@
                 "name": "x265",
                 "buildsystem": "simple",
                 "cleanup": [],
+                "build-options": {
+                    "arch": {
+                        "arm": {
+                            "cxxflags": "-fPIC"
+                        },
+                        "aarch64": {
+                            "cxxflags": "-fPIC"
+                        }
+                    }
+                },
                 "build-commands": [
                     "mkdir source/build-8 source/build-10 source/build-12",
                     "cd source/build-12 && cmake .. -DCMAKE_INSTALL_PREFIX=${FLATPAK_DEST} -DHIGH_BIT_DEPTH='TRUE' -DMAIN12='TRUE' -DEXPORT_C_API='FALSE' -DENABLE_CLI='FALSE' -DENABLE_SHARED='FALSE'",
@@ -205,7 +223,7 @@
                     "cd source/build-10 && make",
                     "ln -s ../build-10/libx265.a source/build-8/libx265_main10.a",
                     "ln -s ../build-12/libx265.a source/build-8/libx265_main12.a",
-                    "cd source/build-8 && cmake .. -DCMAKE_INSTALL_PREFIX=${FLATPAK_DEST} -DENABLE_SHARED='TRUE' -DCMAKE_POSITION_INDEPENDENT_CODE='True' -DENABLE_CLI='FALSE' -DENABLE_HDR10_PLUS='TRUE' -DEXTRA_LIB='x265_main10.a;x265_main12.a' -DEXTRA_LINK_FLAGS='-L.' -DLINKED_10BIT='TRUE' -DLINKED_12BIT='TRUE'",
+                    "cd source/build-8 && cmake .. -DCMAKE_INSTALL_PREFIX=${FLATPAK_DEST} -DENABLE_SHARED='TRUE' -DENABLE_CLI='FALSE' -DENABLE_HDR10_PLUS='TRUE' -DEXTRA_LIB='x265_main10.a;x265_main12.a' -DEXTRA_LINK_FLAGS='-L.' -DLINKED_10BIT='TRUE' -DLINKED_12BIT='TRUE'",
                     "cd source/build-8 && make",
                     "cd source/build-8 && make install"
                 ],
@@ -254,16 +272,37 @@
         "sources": [
         {
             "type": "archive",
+            "only-arches": ["i386"],
+            "url": "https://mirror.archlinux32.org/i686/community/libzen-0.4.37-1-i686.pkg.tar.xz",
+            "sha256": "96511222628575ae71b5b1f8025fbbd90e077d3ffdbc045eafc65870a9035fd5"
+        },
+        {
+            "type": "archive",
+            "only-arches": ["i386"],
+            "url": "https://mirror.archlinux32.org/i686/community/libmediainfo-18.03.1-1.0-i686.pkg.tar.xz",
+            "sha256": "16af31fdab37dda8c938ba9a00270c8b3746296c45d1dfe9df0f840f5ac75ee8"
+        },  
+        {
+            "type": "archive",
+            "only-arches": ["i386"],
+            "url": "https://mirror.archlinux32.org/i686/community/mediainfo-18.03.1-1.0-i686.pkg.tar.xz",
+            "sha256": "0fcf92831aa46018911ec0b20c37816f06d5b1aa44c568ca1376574660cb6639"
+        },
+        {
+            "type": "archive",
+            "only-arches": ["x86_64"],
             "url": "https://mirror.pseudoform.org/community/os/x86_64/libzen-0.4.37-1-x86_64.pkg.tar.xz",
             "sha256": "2ed43babf6aea81fce788426a57ddd8769ab59129446b2058460b5632b724e04"
         },
         {
             "type": "archive",
+            "only-arches": ["x86_64"],
             "url": "https://mirror.pkgbuild.com/community/os/x86_64/libmediainfo-18.03.1-1-x86_64.pkg.tar.xz",
             "sha256": "c80fd36769e65a607d5ea6d422e5de01946ed53d4b48db05f992291cc277e9a4"
         },
         {
             "type": "archive",
+            "only-arches": ["x86_64"],
             "url": "https://mirror.pkgbuild.com/community/os/x86_64/mediainfo-18.03.1-1-x86_64.pkg.tar.xz",
             "sha256": "066be192f1123bff9d33fb7beaee394d8daa0d0345a81ded29f306587f2af119"
         }],
@@ -282,7 +321,6 @@
     {
         "name": "vidcutter",
         "buildsystem": "simple",
-        "only-arches": ["x86_64"],
         "build-commands": [
             "pip3 install --prefix=${FLATPAK_DEST} ."
         ],

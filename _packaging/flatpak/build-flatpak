@@ -2,7 +2,6 @@
 
 flatpak-builder -v \
 	--force-clean \
-	--repo=ozmartian \
 	--ccache \
 	--install \
 	./build \

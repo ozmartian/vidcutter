@@ -1077,11 +1077,18 @@ class VideoCutter(QWidget):
     @pyqtSlot(VideoFilter)
     def startFilter(self, name: VideoFilter) -> None:
         if name == VideoFilter.BLACKDETECT:
-            min_duration, confirmed = QInputDialog.getDouble(self, 'Filter Settings',
-                                                             'Minimum duration for black scenes (in seconds)',
-                                                             self.filter_settings.blackdetect.default_duration,
-                                                             self.filter_settings.blackdetect.min_duration, 999.9, 1,
-                                                             Qt.Dialog | Qt.WindowCloseButtonHint, 0.1)
+            try:
+                min_duration, confirmed = QInputDialog.getDouble(self, 'Filter Settings',
+                                                                 'Minimum duration for black scenes (in seconds)',
+                                                                 self.filter_settings.blackdetect.default_duration,
+                                                                 self.filter_settings.blackdetect.min_duration, 999.9, 1,
+                                                                 Qt.Dialog | Qt.WindowCloseButtonHint, 0.1)
+            except TypeError:
+                min_duration, confirmed = QInputDialog.getDouble(self, 'Filter Settings',
+                                                                 'Minimum duration for black scenes (in seconds)',
+                                                                 self.filter_settings.blackdetect.default_duration,
+                                                                 self.filter_settings.blackdetect.min_duration, 999.9, 1,
+                                                                 Qt.Dialog | Qt.WindowCloseButtonHint)
             if confirmed:
                 self.parent.lock_gui(True)
                 self.filterProgress('detecting scenes (press ESC to cancel)')
