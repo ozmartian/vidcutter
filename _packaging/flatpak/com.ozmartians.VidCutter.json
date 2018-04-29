@@ -263,48 +263,13 @@
     },
     {
         "name": "mediainfo",
-        "buildsystem": "simple",
         "cleanup": ["/include", "/lib/pkgconfig", "/share"],
-        "build-commands": [
-            "mv lib/libmediainfo.so* lib/libzen.so* ${FLATPAK_DEST}/lib -v",
-            "install -D bin/mediainfo ${FLATPAK_DEST}/bin/mediainfo"
-        ],
+        "subdir": "Project/GNU/CLI",
         "sources": [
         {
             "type": "archive",
-            "only-arches": ["i386"],
-            "url": "https://mirror.archlinux32.org/i686/community/libzen-0.4.37-1-i686.pkg.tar.xz",
-            "sha256": "96511222628575ae71b5b1f8025fbbd90e077d3ffdbc045eafc65870a9035fd5"
-        },
-        {
-            "type": "archive",
-            "only-arches": ["i386"],
-            "url": "https://mirror.archlinux32.org/i686/community/libmediainfo-18.03.1-1.0-i686.pkg.tar.xz",
-            "sha256": "16af31fdab37dda8c938ba9a00270c8b3746296c45d1dfe9df0f840f5ac75ee8"
-        },  
-        {
-            "type": "archive",
-            "only-arches": ["i386"],
-            "url": "https://mirror.archlinux32.org/i686/community/mediainfo-18.03.1-1.0-i686.pkg.tar.xz",
-            "sha256": "0fcf92831aa46018911ec0b20c37816f06d5b1aa44c568ca1376574660cb6639"
-        },
-        {
-            "type": "archive",
-            "only-arches": ["x86_64"],
-            "url": "https://mirror.pseudoform.org/community/os/x86_64/libzen-0.4.37-1-x86_64.pkg.tar.xz",
-            "sha256": "2ed43babf6aea81fce788426a57ddd8769ab59129446b2058460b5632b724e04"
-        },
-        {
-            "type": "archive",
-            "only-arches": ["x86_64"],
-            "url": "https://mirror.pkgbuild.com/community/os/x86_64/libmediainfo-18.03.1-1-x86_64.pkg.tar.xz",
-            "sha256": "c80fd36769e65a607d5ea6d422e5de01946ed53d4b48db05f992291cc277e9a4"
-        },
-        {
-            "type": "archive",
-            "only-arches": ["x86_64"],
-            "url": "https://mirror.pkgbuild.com/community/os/x86_64/mediainfo-18.03.1-1-x86_64.pkg.tar.xz",
-            "sha256": "066be192f1123bff9d33fb7beaee394d8daa0d0345a81ded29f306587f2af119"
+            "url": "https://mediaarea.net/download/source/mediainfo/18.03.1/mediainfo_18.03.1.tar.xz",
+            "sha256": "79664c356d4f09dc32105810aacf60923f6edcc6bec4836589962bc3375efcd6"
         }],
         "modules": [
         {
@@ -315,6 +280,34 @@
                 "type": "archive",
                 "url": "https://download.sourceforge.net/libmms/libmms-0.6.4.tar.gz",
                 "sha256": "3c05e05aebcbfcc044d9e8c2d4646cd8359be39a3f0ba8ce4e72a9094bee704f"
+            }]
+        },
+        {
+            "name": "libzen",
+            "config-opts": ["--enable-shared"],
+            "subdir": "Project/GNU/Library",
+            "sources": [
+            {
+                "type": "archive",
+                "url": "https://mediaarea.net/download/source/libzen/0.4.37/libzen_0.4.37.tar.xz",
+                "sha256": "401c34d93056a95f8392982f856d1371c5de6aec373d84dcbb356e1f473d0452"
+            }]
+        },
+        {
+            "name": "libmediainfo",
+            "config-opts": [
+                "--disable-static",
+                "--enable-shared",
+                "--disable-static",
+                "--with-libcurl",
+                "--with-libmms"
+            ],
+            "subdir": "Project/GNU/Library",
+            "sources": [
+            {
+                "type": "archive",
+                "url": "https://mediaarea.net/download/source/libmediainfo/18.03.1/libmediainfo_18.03.1.tar.xz",
+                "sha256": "0243365f53299997bc04dfa065de9b3f1688b6eeb450a7f57e740504cd626fa0"
             }]
         }]
     },
