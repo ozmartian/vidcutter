@@ -56,6 +56,10 @@
         <file>images/watermark.png</file>
         <file>images/dark/about-background.png</file>
         <file>images/dark/background_complete.png</file>
+        <file>images/dark/chapters-disabled.png</file>
+        <file>images/dark/chapters-hover.png</file>
+        <file>images/dark/chapters-off.png</file>
+        <file>images/dark/chapters-on.png</file>
         <file>images/dark/checkbox.png</file>
         <file>images/dark/checkbox-hover.png</file>
         <file>images/dark/checkbox-checked.png</file>
@@ -134,6 +138,10 @@
         <file>images/dark/unmuted.png</file>
         <file>images/light/about-background.png</file>
         <file>images/light/background_complete.png</file>
+        <file>images/light/chapters-disabled.png</file>
+        <file>images/light/chapters-hover.png</file>
+        <file>images/light/chapters-off.png</file>
+        <file>images/light/chapters-on.png</file>
         <file>images/light/checkbox.png</file>
         <file>images/light/checkbox-hover.png</file>
         <file>images/light/checkbox-checked.png</file>
@@ -144,6 +152,10 @@
         <file>images/light/clipindex-remove.png</file>
         <file>images/light/clipindex-remove-disabled.png</file>
         <file>images/light/clipindex-remove-on.png</file>
+        <file>images/light/chapters-disabled.png</file>
+        <file>images/light/chapters-hover.png</file>
+        <file>images/light/chapters-off.png</file>
+        <file>images/light/chapters-on.png</file>
         <file>images/light/console-disabled.png</file>
         <file>images/light/console-hover.png</file>
         <file>images/light/console-off.png</file>

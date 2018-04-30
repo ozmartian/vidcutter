@@ -615,6 +615,7 @@ class GeneralPage(QWidget):
     def createChapters(self, state: int) -> None:
         self.parent.parent.saveSetting('chapters', state == Qt.Checked)
         self.parent.parent.createChapters = (state == Qt.Checked)
+        self.parent.parent.chaptersButton.setChecked(state == Qt.Checked)
 
     @pyqtSlot(int)
     def keepClips(self, state: int) -> None:

@@ -402,13 +402,15 @@ QPushButton::menu-indicator#menuButton, #clipindextools QPushButton::menu-indica
 }
 
 QPushButton#thumbnailsButton, QPushButton#osdButton, QPushButton#consoleButton, QPushButton#smartcutButton,
-QPushButton#muteButton, QPushButton#settingsButton, QPushButton#menuButton, QPushButton#fullscreenButton {
+QPushButton#muteButton, QPushButton#settingsButton, QPushButton#menuButton, QPushButton#fullscreenButton,
+QPushButton#chaptersButton {
     background-color: transparent;
     border: none;
     outline: none;
 }
 
-QPushButton#thumbnailsButton, QPushButton#osdButton, QPushButton#consoleButton, QPushButton#smartcutButton {
+QPushButton#thumbnailsButton, QPushButton#osdButton, QPushButton#consoleButton, QPushButton#smartcutButton,
+QPushButton#chaptersButton {
     margin: 0;
     padding: 0;
 }
@@ -465,6 +467,24 @@ QPushButton:disabled#consoleButton {
 
 QPushButton:pressed#consoleButton, QPushButton:checked#consoleButton {
     border-image: url(:/images/light/console-on.png);
+}
+
+QPushButton#chaptersButton {
+    border-image: url(:/images/light/chapters-off.png);
+    width: 31px;
+    height: 31px;
+}
+
+QPushButton:hover#chaptersButton {
+    border-image: url(:/images/light/chapters-hover.png);
+}
+
+QPushButton:disabled#chaptersButton {
+    border-image: url(:/images/light/chapters-disabled.png);
+}
+
+QPushButton:pressed#chaptersButton, QPushButton:checked#chaptersButton {
+    border-image: url(:/images/light/chapters-on.png);
 }
 
 QPushButton#smartcutButton {

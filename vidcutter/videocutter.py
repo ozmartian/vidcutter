@@ -291,6 +291,15 @@ class VideoCutter(QWidget):
             self.parent.console.show()
 
         # noinspection PyArgumentList
+        self.chaptersButton = QPushButton(self, flat=True, checkable=True, objectName='chaptersButton',
+                                          statusTip='Automatically create chapters per clip',
+                                          toolTip='Create chapters', cursor=Qt.PointingHandCursor,
+                                          toggled=self.toggleChapters)
+        self.chaptersButton.setFixedSize(31, 29 if self.theme == 'dark' else 31)
+        if self.createChapters:
+            self.chaptersButton.setChecked(True)
+
+        # noinspection PyArgumentList
         self.smartcutButton = QPushButton(self, flat=True, checkable=True, objectName='smartcutButton',
                                           toolTip='Toggle SmartCut', statusTip='Toggle frame accurate cutting',
                                           cursor=Qt.PointingHandCursor, toggled=self.toggleSmartCut)
@@ -391,6 +400,7 @@ class VideoCutter(QWidget):
         togglesLayout.addWidget(self.thumbnailsButton)
         togglesLayout.addWidget(self.osdButton)
         togglesLayout.addWidget(self.consoleButton)
+        togglesLayout.addWidget(self.chaptersButton)
         togglesLayout.addWidget(self.smartcutButton)
         togglesLayout.addStretch(1)
 
@@ -411,7 +421,7 @@ class VideoCutter(QWidget):
         groupLayout.addLayout(settingsLayout)
 
         controlsLayout = QHBoxLayout()
-        controlsLayout.addSpacing(10)
+        controlsLayout.addSpacing(5)
         controlsLayout.addLayout(togglesLayout)
         controlsLayout.addSpacing(10)
         controlsLayout.addStretch(1)
@@ -419,7 +429,7 @@ class VideoCutter(QWidget):
         controlsLayout.addStretch(1)
         controlsLayout.addSpacing(10)
         controlsLayout.addLayout(groupLayout)
-        controlsLayout.addSpacing(10)
+        controlsLayout.addSpacing(5)
 
         layout = QVBoxLayout()
         layout.setSpacing(0)
@@ -1056,6 +1066,13 @@ class VideoCutter(QWidget):
                 self.mpvWidget.setLogLevel('error')
             self.parent.console.hide()
         self.saveSetting('showConsole', checked)
+
+    @pyqtSlot(bool)
+    def toggleChapters(self, checked: bool) -> None:
+        self.createChapters = checked
+        self.saveSetting('chapters', self.createChapters)
+        self.chaptersButton.setChecked(self.createChapters)
+        self.showText('chapters {}'.format('enabled' if checked else 'disabled'))
 
     @pyqtSlot(bool)
     def toggleSmartCut(self, checked: bool) -> None:
