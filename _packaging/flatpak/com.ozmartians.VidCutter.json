@@ -82,8 +82,13 @@
             "only-arches": ["arm"],
             "url": "https://github.com/ozmartian/vidcutter-flatpak/raw/master/arm/pyqt5-py35-qt5-libs.tar.xz",
             "sha256": "064b580470ee6ebe1419728f1a34128f500a6387a45dd6796505e5d72ffc99de"
+        },
+        {
+            "type": "archive",
+            "only-arches": ["aarch64"],
+            "url": "https://github.com/ozmartian/vidcutter-flatpak/raw/master/aarch64/pyqt5-py35-qt5-libs.tar.xz",
+            "sha256": "0a70430ff87159e6e5ffc005472dbcf4dd5c24f9eb4ec8d432c533e10061c64c"
         }]
-
     },
     {
         "name": "libmpv",
@@ -327,6 +332,7 @@
         {
             "type": "git",
             "branch": "flatpak",
+            "commit": "a5edb9c99ba6f17d2e96d95376d9a56d10baa450",
             "url": "https://github.com/ozmartian/vidcutter.git"
         }]
     }]
