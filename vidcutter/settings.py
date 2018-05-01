@@ -713,8 +713,7 @@ class SettingsDialog(QDialog):
         self.categories.setCurrentRow(0)
         self.categories.setMaximumWidth(self.categories.sizeHintForColumn(0) + 2)
         self.setMinimumWidth(670 if sys.platform == 'darwin' else 640)
-        if sys.platform != 'win32':
-            self.adjustSize()
+        self.adjustSize()
 
     @staticmethod
     def lineSeparator() -> QFrame:
