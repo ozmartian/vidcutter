@@ -36,6 +36,7 @@ from PyQt5.QtGui import QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent
 from PyQt5.QtWidgets import (QAction, qApp, QApplication, QFileDialog, QFrame, QGroupBox, QHBoxLayout, QInputDialog,
                              QLabel, QListWidgetItem, QMainWindow, QMenu, QMessageBox, QPushButton, QSizePolicy,
                              QStyleFactory, QVBoxLayout, QWidget)
+
 import sip
 
 # noinspection PyUnresolvedReferences
@@ -56,8 +57,8 @@ from vidcutter.libs.munch import Munch
 from vidcutter.libs.notifications import JobCompleteNotification
 from vidcutter.libs.taskbarprogress import TaskbarProgress
 from vidcutter.libs.videoservice import VideoService
-from vidcutter.libs.widgets import (ClipErrorsDialog, VCBlinkText, VCFilterMenuAction, VCFrameCounter, VCProgressDialog,
-                                    VCTimeCounter, VCToolBarButton, VCVolumeSlider)
+from vidcutter.libs.widgets import (ClipErrorsDialog, VCBlinkText, VCFilterMenuAction, VCFrameCounter, VCMessageBox,
+                                    VCProgressDialog, VCTimeCounter, VCToolBarButton, VCVolumeSlider, VCInputDialog)
 
 import vidcutter
 
@@ -263,28 +264,25 @@ class VideoCutter(QWidget):
         # noinspection PyArgumentList
         self.thumbnailsButton = QPushButton(self, flat=True, checkable=True, objectName='thumbnailsButton',
                                             statusTip='Toggle timeline thumbnails', cursor=Qt.PointingHandCursor,
-                                            toolTip='Toggle thumbnails', toggled=self.toggleThumbs)
+                                            toolTip='Toggle thumbnails', checked=self.timelineThumbs,
+                                            toggled=self.toggleThumbs)
         self.thumbnailsButton.setFixedSize(32, 29 if self.theme == 'dark' else 31)
-        if self.timelineThumbs:
-            self.thumbnailsButton.setChecked(True)
-        else:
+        if not self.thumbnailsButton.isChecked():
             self.seekSlider.setObjectName('nothumbs')
 
         # noinspection PyArgumentList
         self.osdButton = QPushButton(self, flat=True, checkable=True, objectName='osdButton', toolTip='Toggle OSD',
                                      statusTip='Toggle on-screen display', cursor=Qt.PointingHandCursor,
-                                     toggled=self.toggleOSD)
+                                     checked=self.enableOSD, toggled=self.toggleOSD)
         self.osdButton.setFixedSize(31, 29 if self.theme == 'dark' else 31)
-        if self.enableOSD:
-            self.osdButton.setChecked(True)
 
         # noinspection PyArgumentList
         self.consoleButton = QPushButton(self, flat=True, checkable=True, objectName='consoleButton',
                                          statusTip='Toggle console window', toolTip='Toggle console',
-                                         cursor=Qt.PointingHandCursor, toggled=self.toggleConsole)
+                                         cursor=Qt.PointingHandCursor, checked=self.showConsole,
+                                         toggled=self.toggleConsole)
         self.consoleButton.setFixedSize(31, 29 if self.theme == 'dark' else 31)
         if self.showConsole:
-            self.consoleButton.setChecked(True)
             self.mpvWidget.setLogLevel('v')
             os.environ['DEBUG'] = '1'
             self.parent.console.show()
@@ -293,18 +291,15 @@ class VideoCutter(QWidget):
         self.chaptersButton = QPushButton(self, flat=True, checkable=True, objectName='chaptersButton',
                                           statusTip='Automatically create chapters per clip',
                                           toolTip='Create chapters', cursor=Qt.PointingHandCursor,
-                                          toggled=self.toggleChapters)
+                                          checked=self.createChapters, toggled=self.toggleChapters)
         self.chaptersButton.setFixedSize(31, 29 if self.theme == 'dark' else 31)
-        if self.createChapters:
-            self.chaptersButton.setChecked(True)
 
         # noinspection PyArgumentList
         self.smartcutButton = QPushButton(self, flat=True, checkable=True, objectName='smartcutButton',
                                           toolTip='Toggle SmartCut', statusTip='Toggle frame accurate cutting',
-                                          cursor=Qt.PointingHandCursor, toggled=self.toggleSmartCut)
+                                          cursor=Qt.PointingHandCursor, checked=self.smartcut,
+                                          toggled=self.toggleSmartCut)
         self.smartcutButton.setFixedSize(32, 29 if self.theme == 'dark' else 31)
-        if self.smartcut:
-            self.smartcutButton.setChecked(True)
 
         # noinspection PyArgumentList
         self.muteButton = QPushButton(objectName='muteButton', icon=self.unmuteIcon, flat=True, toolTip='Mute',
@@ -516,6 +511,7 @@ class VideoCutter(QWidget):
         self.appIcon = qApp.windowIcon()
         self.muteIcon = QIcon(':/images/{}/muted.png'.format(self.theme))
         self.unmuteIcon = QIcon(':/images/{}/unmuted.png'.format(self.theme))
+        self.chapterIcon = QIcon(':/images/chapters.png')
         self.upIcon = QIcon(':/images/up.png')
         self.downIcon = QIcon(':/images/down.png')
         self.removeIcon = QIcon(':/images/remove.png')
@@ -534,14 +530,16 @@ class VideoCutter(QWidget):
 
     # noinspection PyArgumentList
     def _initActions(self) -> None:
-        self.moveItemUpAction = QAction(self.upIcon, 'Move up', self, statusTip='Move clip position up in list',
+        self.moveItemUpAction = QAction(self.upIcon, 'Move clip up', self, statusTip='Move clip position up in list',
                                         triggered=self.moveItemUp, enabled=False)
-        self.moveItemDownAction = QAction(self.downIcon, 'Move down', self, statusTip='Move clip position down in list',
-                                          triggered=self.moveItemDown, enabled=False)
-        self.removeItemAction = QAction(self.removeIcon, 'Remove selected', self, triggered=self.removeItem,
+        self.moveItemDownAction = QAction(self.downIcon, 'Move clip down', self, triggered=self.moveItemDown,
+                                          statusTip='Move clip position down in list', enabled=False)
+        self.removeItemAction = QAction(self.removeIcon, 'Remove selected clip', self, triggered=self.removeItem,
                                         statusTip='Remove selected clip from list', enabled=False)
-        self.removeAllAction = QAction(self.removeAllIcon, 'Remove all', self, statusTip='Remove all clips from list',
-                                       triggered=self.clearList, enabled=False)
+        self.removeAllAction = QAction(self.removeAllIcon, 'Remove all clips', self, triggered=self.clearList,
+                                       statusTip='Remove all clips from list', enabled=False)
+        self.editChapterAction = QAction(self.chapterIcon, 'Edit chapter name', self, triggered=self.editChapter,
+                                         statusTip='Edit the selected chapter name', enabled=False)
         self.streamsAction = QAction(self.streamsIcon, 'Media streams', self, triggered=self.selectStreams,
                                      statusTip='Select the media streams to be included', enabled=False)
         self.mediainfoAction = QAction(self.mediaInfoIcon, 'Media information', self, triggered=self.mediaInfo,
@@ -607,6 +605,8 @@ class VideoCutter(QWidget):
         self.appmenu.addSeparator()
         self.appmenu.addAction(self.quitAction)
 
+        self.clipindex_contextmenu.addAction(self.editChapterAction)
+        self.clipindex_contextmenu.addSeparator()
         self.clipindex_contextmenu.addAction(self.moveItemUpAction)
         self.clipindex_contextmenu.addAction(self.moveItemDownAction)
         self.clipindex_contextmenu.addSeparator()
@@ -681,18 +681,21 @@ class VideoCutter(QWidget):
     def initRemoveMenu(self):
         self.removeItemAction.setEnabled(False)
         self.removeAllAction.setEnabled(False)
-        if self.cliplist.count() > 0:
+        if self.cliplist.count():
             self.removeAllAction.setEnabled(True)
-            if len(self.cliplist.selectedItems()) > 0:
+            if len(self.cliplist.selectedItems()):
                 self.removeItemAction.setEnabled(True)
 
     def itemMenu(self, pos: QPoint) -> None:
         globalPos = self.cliplist.mapToGlobal(pos)
-        self.initRemoveMenu()
+        self.editChapterAction.setEnabled(False)
         self.moveItemUpAction.setEnabled(False)
         self.moveItemDownAction.setEnabled(False)
+        self.initRemoveMenu()
         index = self.cliplist.currentRow()
         if index != -1:
+            if len(self.cliplist.selectedItems()):
+                self.editChapterAction.setEnabled(self.createChapters)
             if not self.inCut:
                 if index > 0:
                     self.moveItemUpAction.setEnabled(True)
@@ -700,21 +703,35 @@ class VideoCutter(QWidget):
                     self.moveItemDownAction.setEnabled(True)
         self.clipindex_contextmenu.exec_(globalPos)
 
+    def editChapter(self) -> None:
+        index = self.cliplist.currentRow()
+        name = self.clipTimes[index][4]
+        name = name if name is not None else 'Chapter {}'.format(index + 1)
+        dialog = VCInputDialog(self, 'Edit chapter name', 'Chapter name:', name)
+        dialog.accepted.connect(lambda: self.on_editChapter(index, dialog.input.text()))
+        dialog.exec_()
+
+    def on_editChapter(self, index: int, text: str) -> None:
+        self.clipTimes[index][4] = text
+        self.renderClipIndex()
+
     def moveItemUp(self) -> None:
         index = self.cliplist.currentRow()
-        tmpItem = self.clipTimes[index]
-        del self.clipTimes[index]
-        self.clipTimes.insert(index - 1, tmpItem)
-        self.showText('clip moved up')
-        self.renderClipIndex()
+        if index != -1:
+            tmpItem = self.clipTimes[index]
+            del self.clipTimes[index]
+            self.clipTimes.insert(index - 1, tmpItem)
+            self.showText('clip moved up')
+            self.renderClipIndex()
 
     def moveItemDown(self) -> None:
         index = self.cliplist.currentRow()
-        tmpItem = self.clipTimes[index]
-        del self.clipTimes[index]
-        self.clipTimes.insert(index + 1, tmpItem)
-        self.showText('clip moved down')
-        self.renderClipIndex()
+        if index != -1:
+            tmpItem = self.clipTimes[index]
+            del self.clipTimes[index]
+            self.clipTimes.insert(index + 1, tmpItem)
+            self.showText('clip moved down')
+            self.renderClipIndex()
 
     def removeItem(self) -> None:
         index = self.cliplist.currentRow()
@@ -1068,6 +1085,20 @@ class VideoCutter(QWidget):
         self.saveSetting('chapters', self.createChapters)
         self.chaptersButton.setChecked(self.createChapters)
         self.showText('chapters {}'.format('enabled' if checked else 'disabled'))
+        if checked:
+            exist = False
+            for clip in self.clipTimes:
+                if clip[4] is not None:
+                    exist = True
+                    break
+            if exist:
+                chapterswarn = VCMessageBox('Question', 'Chapter names previously set',
+                                            'Would you like to restore chapter names? Saying no will reset names to '
+                                            'default values', buttons=QMessageBox.Yes | QMessageBox.No, parent=self)
+                if chapterswarn.exec_() == QMessageBox.No:
+                    for clip in self.clipTimes:
+                        clip[4] = None
+        self.renderClipIndex()
 
     @pyqtSlot(bool)
     def toggleSmartCut(self, checked: bool) -> None:
@@ -1093,14 +1124,14 @@ class VideoCutter(QWidget):
                 min_duration, confirmed = QInputDialog.getDouble(self, 'Filter Settings',
                                                                  'Minimum duration for black scenes (in seconds)',
                                                                  self.filter_settings.blackdetect.default_duration,
-                                                                 self.filter_settings.blackdetect.min_duration, 999.9, 1,
-                                                                 Qt.Dialog | Qt.WindowCloseButtonHint, 0.1)
+                                                                 self.filter_settings.blackdetect.min_duration, 999.9,
+                                                                 1, Qt.Dialog | Qt.WindowCloseButtonHint, 0.1)
             except TypeError:
                 min_duration, confirmed = QInputDialog.getDouble(self, 'Filter Settings',
                                                                  'Minimum duration for black scenes (in seconds)',
                                                                  self.filter_settings.blackdetect.default_duration,
-                                                                 self.filter_settings.blackdetect.min_duration, 999.9, 1,
-                                                                 Qt.Dialog | Qt.WindowCloseButtonHint)
+                                                                 self.filter_settings.blackdetect.min_duration, 999.9,
+                                                                 1, Qt.Dialog | Qt.WindowCloseButtonHint)
             if confirmed:
                 self.parent.lock_gui(True)
                 self.filterProgress('detecting scenes (press ESC to cancel)')
@@ -1170,7 +1201,7 @@ class VideoCutter(QWidget):
 
     def clipStart(self) -> None:
         starttime = self.delta2QTime(self.seekSlider.value())
-        self.clipTimes.append([starttime, '', self.captureImage(self.currentMedia, starttime), ''])
+        self.clipTimes.append([starttime, '', self.captureImage(self.currentMedia, starttime), '', None])
         self.timeCounter.setMinimum(starttime.toString(self.timeformat))
         self.frameCounter.lockMinimum()
         self.toolbar_start.setDisabled(True)
@@ -1207,22 +1238,20 @@ class VideoCutter(QWidget):
     # noinspection PyUnusedLocal,PyUnusedLocal,PyUnusedLocal
     @pyqtSlot(QModelIndex, int, int, QModelIndex, int)
     def syncClipList(self, parent: QModelIndex, start: int, end: int, destination: QModelIndex, row: int) -> None:
-        if start < row:
-            index = row - 1
-        else:
-            index = row
+        index = row - 1 if start < row else row
         clip = self.clipTimes.pop(start)
         self.clipTimes.insert(index, clip)
         if not len(clip[3]):
             self.seekSlider.switchRegions(start, index)
         self.showText('clip order updated')
+        self.renderClipIndex()
 
     def renderClipIndex(self) -> None:
         self.cliplist.clear()
         self.seekSlider.clearRegions()
         self.totalRuntime = 0
         externalCount = 0
-        for clip in self.clipTimes:
+        for index, clip in enumerate(self.clipTimes):
             endItem = ''
             if isinstance(clip[1], QTime):
                 endItem = clip[1].toString(self.timeformat)
@@ -1233,12 +1262,17 @@ class VideoCutter(QWidget):
                 externalCount += 1
             else:
                 listitem.setToolTip('Drag to reorder clips')
+            if self.createChapters:
+                chapterName = clip[4] if clip[4] is not None else 'Chapter {}'.format(index + 1)
+            else:
+                chapterName = ''
             listitem.setStatusTip('Reorder clips with mouse drag & drop or right-click menu on the clip to be moved')
             listitem.setTextAlignment(Qt.AlignVCenter)
             listitem.setData(Qt.DecorationRole + 1, clip[2])
             listitem.setData(Qt.DisplayRole + 1, clip[0].toString(self.timeformat))
             listitem.setData(Qt.UserRole + 1, endItem)
             listitem.setData(Qt.UserRole + 2, clip[3])
+            listitem.setData(Qt.UserRole + 3, chapterName)
             listitem.setFlags(Qt.ItemIsSelectable | Qt.ItemIsDragEnabled | Qt.ItemIsEnabled)
             self.cliplist.addItem(listitem)
             if isinstance(clip[1], QTime) and not len(clip[3]):
@@ -1307,8 +1341,7 @@ class VideoCutter(QWidget):
             self.seekSlider.showProgress(steps)
             self.parent.lock_gui(True)
             filename, filelist = '', []
-            for clip in self.clipTimes:
-                index = self.clipTimes.index(clip)
+            for index, clip in enumerate(self.clipTimes):
                 self.seekSlider.updateProgress(index)
                 if len(clip[3]):
                     filelist.append(clip[3])
@@ -1335,8 +1368,7 @@ class VideoCutter(QWidget):
 
     def smartcutter(self, file: str, source_file: str, source_ext: str) -> None:
         self.smartcut_monitor = Munch(clips=[], results=[], externals=0)
-        for clip in self.clipTimes:
-            index = self.clipTimes.index(clip)
+        for index, clip in enumerate(self.clipTimes):
             if len(clip[3]):
                 self.smartcut_monitor.clips.append(clip[3])
                 self.smartcut_monitor.externals += 1
@@ -1369,15 +1401,22 @@ class VideoCutter(QWidget):
         if len(filelist) > 1:
             self.seekSlider.updateProgress()
             rc = False
+            chapters = None
+            if self.createChapters:
+                chapters = []
+                [
+                    chapters.append(clip[4] if clip[4] is not None else 'Chapter {}'.format(index + 1))
+                    for index, clip in enumerate(self.clipTimes)
+                ]
             if self.videoService.isMPEGcodec(filelist[0]):
                 self.logger.info('source file is MPEG based so join via MPEG-TS')
-                rc = self.videoService.mpegtsJoin(filelist, self.finalFilename, self.createChapters)
+                rc = self.videoService.mpegtsJoin(filelist, self.finalFilename, chapters)
             if not rc or QFile(self.finalFilename).size() < 1000:
                 self.logger.info('MPEG-TS based join failed, will retry using standard concat')
-                rc = self.videoService.join(filelist, self.finalFilename, True, self.createChapters)
+                rc = self.videoService.join(filelist, self.finalFilename, True, chapters)
             if not rc or QFile(self.finalFilename).size() < 1000:
                 self.logger.info('join resulted in 0 length file, trying again without all stream mapping')
-                self.videoService.join(filelist, self.finalFilename, False, self.createChapters)
+                self.videoService.join(filelist, self.finalFilename, False, chapters)
             if not self.keepClips:
                 for f in filelist:
                     clip = self.clipTimes[filelist.index(f)]
@@ -1559,7 +1598,11 @@ class VideoCutter(QWidget):
                 self.playMedia()
                 return
 
-            if event.key() in {Qt.Key_F, Qt.Key_Escape}:
+            if event.key() == Qt.Key_Escape and self.isFullScreen():
+                self.toggleFullscreen()
+                return
+
+            if event.key() == Qt.Key_F:
                 self.toggleFullscreen()
                 return
 

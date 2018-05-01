@@ -24,14 +24,15 @@
 
 import os
 import sys
+from typing import Union
 
-from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QEasingCurve, QEvent, QObject, QPoint, QPropertyAnimation, QSize, Qt,
+from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QEasingCurve, QEvent, QObject, QPoint, QPropertyAnimation, Qt, QSize,
                           QTime, QTimer)
 from PyQt5.QtGui import QFocusEvent, QMouseEvent, QPixmap, QShowEvent
 from PyQt5.QtWidgets import (qApp, QAbstractSpinBox, QDialog, QDialogButtonBox, QGraphicsOpacityEffect, QGridLayout,
-                             QHBoxLayout, QLabel, QMessageBox, QProgressBar, QPushButton, QSlider, QSpinBox, QStyle,
-                             QStyleFactory, QStyleOptionSlider, QTimeEdit, QToolBox, QToolTip, QVBoxLayout, QWidget,
-                             QWidgetAction)
+                             QHBoxLayout, QLabel, QLineEdit, QMessageBox, QProgressBar, QPushButton, QSlider, QSpinBox,
+                             QStyle, QStyleFactory, QStyleOptionSlider, QTimeEdit, QToolBox, QToolTip, QVBoxLayout,
+                             QWidget, QWidgetAction)
 
 
 class VCToolBarButton(QWidget):
@@ -347,6 +348,26 @@ class VCVolumeSlider(QSlider):
         QToolTip.showText(globalPos, str('{0}%'.format(value)), self)
 
 
+class VCInputDialog(QDialog):
+    def __init__(self, parent: QWidget, title: str, label: str, text: str):
+        super(VCInputDialog, self).__init__(parent)
+        self.setWindowFlags(Qt.Dialog | Qt.WindowCloseButtonHint)
+        self.input = QLineEdit(text, self)
+        self.input.setClearButtonEnabled(True)
+        self.input.selectAll()
+        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        buttons.accepted.connect(self.accept)
+        buttons.rejected.connect(self.reject)
+        layout = QVBoxLayout()
+        layout.addWidget(QLabel(label, self))
+        layout.addWidget(self.input)
+        layout.addWidget(buttons)
+        self.setLayout(layout)
+        self.setWindowTitle(title)
+        self.setMinimumWidth(350)
+        self.setFixedHeight(self.sizeHint().height())
+
+
 class VCBlinkText(QWidget):
     def __init__(self, text: str, parent=None):
         super(VCBlinkText, self).__init__(parent)
@@ -404,7 +425,7 @@ class VCFilterMenuAction(QWidgetAction):
 
 
 class VCMessageBox(QMessageBox):
-    def __init__(self, title: str, heading: str, text: str, parent: QWidget=None):
+    def __init__(self, title: str, heading: str, text: str, buttons: Union=None, width: int=350, parent: QWidget=None):
         super(VCMessageBox, self).__init__(parent)
         self.parent = parent
         self.setWindowTitle(title)
@@ -418,7 +439,7 @@ class VCMessageBox(QMessageBox):
                     font-weight: 400;
                 }}
             </style>
-            <table border="0" cellpadding="6" cellspacing="0" width="350">
+            <table border="0" cellpadding="6" cellspacing="0" width="{width}">
                 <tr>
                     <td><h2>{heading}</h2></td>
                 </tr>
@@ -426,6 +447,8 @@ class VCMessageBox(QMessageBox):
                     <td>{text}</td>
                 </tr>
             </table>'''.format(**locals()))
+        if buttons is not None:
+            self.setStandardButtons(buttons)
 
 
 class ClipErrorsDialog(QDialog):

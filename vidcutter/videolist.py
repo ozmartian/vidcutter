@@ -128,32 +128,41 @@ class VideoItem(QStyledItemDelegate):
         starttime = index.data(Qt.DisplayRole + 1)
         endtime = index.data(Qt.UserRole + 1)
         externalPath = index.data(Qt.UserRole + 2)
-        r = option.rect.adjusted(5, 0, 0, 0)
-        thumbicon.paint(painter, r, Qt.AlignVCenter | Qt.AlignLeft)
+        chapterName = index.data(Qt.UserRole + 3)
         painter.setPen(QPen(pencolor, 1, Qt.SolidLine))
-        r = option.rect.adjusted(110, 8, 0, 0)
-        painter.setFont(QFont('Noto Sans', 10 if sys.platform == 'darwin' else 8, QFont.Bold))
+        if len(chapterName):
+            offset = 18
+            r = option.rect.adjusted(5, 5, 0, 0)
+            painter.setFont(QFont('Noto Sans', 12 if sys.platform == 'darwin' else 9, QFont.Medium))
+            painter.drawText(r, Qt.AlignLeft, self.clipText(chapterName, painter, True))
+            r = option.rect.adjusted(5, offset, 0, 0)
+        else:
+            offset = 0
+            r = option.rect.adjusted(5, 0, 0, 0)
+        thumbicon.paint(painter, r, Qt.AlignVCenter | Qt.AlignLeft)
+        r = option.rect.adjusted(110, 8 + offset, 0, 0)
+        painter.setFont(QFont('Noto Sans', 11 if sys.platform == 'darwin' else 9, QFont.Bold))
         painter.drawText(r, Qt.AlignLeft, 'FILENAME' if len(externalPath) else 'START')
-        r = option.rect.adjusted(110, 20, 0, 0)
+        r = option.rect.adjusted(110, 21 + offset, 0, 0)
         painter.setFont(QFont('Noto Sans', 11 if sys.platform == 'darwin' else 9, QFont.Normal))
         if len(externalPath):
             painter.drawText(r, Qt.AlignLeft, self.clipText(os.path.basename(externalPath), painter))
         else:
             painter.drawText(r, Qt.AlignLeft, starttime)
         if len(endtime) > 0:
-            r = option.rect.adjusted(110, 45, 0, 0)
-            painter.setFont(QFont('Noto Sans', 10 if sys.platform == 'darwin' else 8, QFont.Bold))
+            r = option.rect.adjusted(110, 45 + offset, 0, 0)
+            painter.setFont(QFont('Noto Sans', 11 if sys.platform == 'darwin' else 9, QFont.Bold))
             painter.drawText(r, Qt.AlignLeft, 'RUNTIME' if len(externalPath) else 'END')
-            r = option.rect.adjusted(110, 60, 0, 0)
+            r = option.rect.adjusted(110, 58 + offset, 0, 0)
             painter.setFont(QFont('Noto Sans', 11 if sys.platform == 'darwin' else 9, QFont.Normal))
             painter.drawText(r, Qt.AlignLeft, endtime)
 
-    def clipText(self, text: str, painter: QPainter) -> str:
+    def clipText(self, text: str, painter: QPainter, chapter: bool=False) -> str:
         metrics = painter.fontMetrics()
-        return metrics.elidedText(text, Qt.ElideRight, (self.parent.width() - 100 - 10))
+        return metrics.elidedText(text, Qt.ElideRight, (self.parent.width() - 10 if chapter else 100 - 10))
 
     def sizeHint(self, option: QStyleOptionViewItem, index: QModelIndex) -> QSize:
-        return QSize(185, 85)
+        return QSize(185, 100 if self.parent.parent.createChapters else 85)
 
 
 class ListProgress(QProgressBar):

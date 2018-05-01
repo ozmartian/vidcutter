@@ -31,7 +31,7 @@ import sys
 from bisect import bisect_left
 from enum import Enum
 from functools import partial
-from typing import List, Union
+from typing import List, Optional, Union
 
 from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QDir, QFileInfo, QObject, QProcess, QProcessEnvironment, QSettings,
                           QSize, QStandardPaths, QStorageInfo, QTemporaryFile, QTime)
@@ -232,7 +232,7 @@ class VideoService(QObject):
                 if result1 and result2:
                     # 4. attempt join of temp 2 second clips
                     result = self.join([file1_cut.fileName(), file2_cut.fileName()],
-                                       final_join.fileName(), False, False)
+                                       final_join.fileName(), False, None)
             VideoService.cleanup([file1_cut.fileName(), file2_cut.fileName(), final_join.fileName()])
         except BaseException:
             self.logger.exception('Exception in VideoService.testJoin', exc_info=True)
@@ -430,11 +430,11 @@ class VideoService(QObject):
         ]
         if self.isMPEGcodec(joinlist[1]):
             self.logger.info('smartcut files are MPEG based so join via MPEG-TS')
-            final_join = self.mpegtsJoin(joinlist, self.smartcut_jobs[index].output, False)
+            final_join = self.mpegtsJoin(joinlist, self.smartcut_jobs[index].output, None)
         if not final_join:
             self.logger.info('smartcut MPEG-TS join failed, retry with standard concat')
             final_join = self.join(joinlist, self.smartcut_jobs[index].output,
-                                   self.smartcut_jobs[index].allstreams, False)
+                                   self.smartcut_jobs[index].allstreams, None)
         VideoService.cleanup(joinlist)
         self.finished.emit(final_join, self.smartcut_jobs[index].output)
 
@@ -445,15 +445,15 @@ class VideoService(QObject):
         except FileNotFoundError:
             pass
 
-    def join(self, inputs: List[str], output: str, allstreams: bool=True, chapters: bool=True) -> bool:
+    def join(self, inputs: List[str], output: str, allstreams: bool=True, chapters: Optional[List[str]]=None) -> bool:
         self.checkDiskSpace(output)
         filelist = os.path.normpath(os.path.join(os.path.dirname(inputs[0]), '_vidcutter.list'))
         with open(filelist, 'w') as f:
             [f.write('file \'{}\'\n'.format(file.replace("'", "\\'"))) for file in inputs]
         stream_map = '-map 0 ' if allstreams else ''
         ffmetadata = None
-        if chapters:
-            ffmetadata = self.getChapterFile(inputs)
+        if chapters is not None and len(chapters):
+            ffmetadata = self.getChapterFile(inputs, chapters)
             metadata = '-i "{}" -map_metadata 1 '.format(ffmetadata)
         else:
             metadata = ''
@@ -464,13 +464,13 @@ class VideoService(QObject):
             os.remove(ffmetadata)
         return result
 
-    def getChapterFile(self, scenes: List[str]) -> str:
+    def getChapterFile(self, scenes: List[str], titles: List[str]=None) -> str:
         ffmetadata = FFMetadata()
         pos = 0
-        for scene in scenes:
+        for index, scene in enumerate(scenes):
             duration = self.duration(scene)
             end = pos + duration.msecsSinceStartOfDay()
-            ffmetadata.add_chapter(pos, end)
+            ffmetadata.add_chapter(pos, end, titles[index])
             pos = end
         ffmetafile = os.path.normpath(os.path.join(os.path.dirname(scenes[0]), 'ffmetadata.txt'))
         with open(ffmetafile, 'w') as f:
@@ -602,7 +602,7 @@ class VideoService(QObject):
         return codec in VideoService.config.mpeg_formats
 
     # noinspection PyBroadException
-    def mpegtsJoin(self, inputs: list, output: str, chapters: bool=True) -> bool:
+    def mpegtsJoin(self, inputs: list, output: str, chapters: Optional[List[str]]=None) -> bool:
         result = False
         try:
             self.checkDiskSpace(output)
@@ -623,8 +623,8 @@ class VideoService(QObject):
                 if os.path.isfile(output):
                     os.remove(output)
                 ffmetadata = None
-                if chapters:
-                    ffmetadata = self.getChapterFile(outfiles)
+                if chapters is not None and len(chapters):
+                    ffmetadata = self.getChapterFile(outfiles, chapters)
                     metadata = '-i "{}" -map_metadata 1 '.format(ffmetadata)
                 else:
                     metadata = ''
