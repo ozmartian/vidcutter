@@ -65,7 +65,7 @@
             "mv python3.5/site-packages/* ${FLATPAK_DEST}/lib/python3.5/site-packages -v"
         ],
         "sources": [
-        {c
+        {
             "type": "archive",
             "only-arches": ["x86_64"],
             "url": "https://github.com/ozmartian/vidcutter-flatpak/raw/master/x86_64/pyqt5-py35-qt5-libs.tar.xz",
