@@ -30,11 +30,10 @@ import sys
 import vidcutter.libs.mpv as mpv
 
 if sys.platform.startswith('linux'):
-    # noinspection PyBroadException
+    # noinspection PyBroadException, PyUnresolvedReferences
     try:
         import vidcutter.libs.distro as distro
         if distro.id().lower() in {'ubuntu', 'fedora'}:
-            # noinspection PyUnresolvedReferences
             from OpenGL import GL
     except BaseException:
         pass
@@ -42,47 +41,14 @@ if sys.platform.startswith('linux'):
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QEvent, QTimer
 from PyQt5.QtGui import QKeyEvent, QMouseEvent, QWheelEvent
 from PyQt5.QtOpenGL import QGLContext
-from PyQt5.QtWidgets import QOpenGLWidget, qApp
-
-
-def get_native_display(name):
-    # if name == 'wl' and qApp.platformName().lower().startswith('wayland'):
-    #     native = qApp.platformNativeInterface()
-    #     return native.nativeResourceForWindow('display', None)
-    name = name.decode()
-    if name == 'opengl-cb-window-pos' and qApp.focusWindow() is not None:
-        class opengl_cb_window_pos:
-            x = qApp.focusWindow().x()
-            y = qApp.focusWindow().y()
-            width = qApp.focusWindow().width()
-            height = qApp.focusWindow().height()
-        return id(opengl_cb_window_pos())
-    try:
-        from PyQt5.QtX11Extras import QX11Info
-        if QX11Info.isPlatformX11():
-            return id(QX11Info.display())
-    except ImportError:
-        return 0
-    return 0
+from PyQt5.QtWidgets import QOpenGLWidget
 
 
 def get_proc_address(name):
     glctx = QGLContext.currentContext()
     if glctx is None:
         return 0
-    name = name.decode()
-    res = glctx.getProcAddress(name)
-    if name == 'glMPGetNativeDisplay' and res is None:
-        return get_native_display
-    try:
-        if sys.platform == 'win32' and res is None:
-            from PyQt5.QtWidgets import QOpenGLContext
-            from win32api import GetProcAddress
-            handle = QOpenGLContext.openGLModuleHandle()
-            if handle is not None:
-                res = GetProcAddress(handle, name)
-    except ImportError:
-        return 0
+    res = glctx.getProcAddress(name.decode())
     return res.__int__()
 
 
@@ -159,11 +125,7 @@ class mpvWidget(QOpenGLWidget):
 
     def initializeGL(self):
         if self.opengl:
-            callback = 'GL_MP_MPGetNativeDisplay'
-            if os.name != 'posix' or sys.platform == 'darwin' \
-               or qApp.platformName().lower().startswith('wayland'):
-                callback = None
-            self.opengl.init_gl(callback, get_proc_address)
+            self.opengl.init_gl(None, get_proc_address)
             if self.filename is not None:
                 self.initialized.emit(self.filename)
 

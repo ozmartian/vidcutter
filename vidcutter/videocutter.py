@@ -81,7 +81,6 @@ class VideoCutter(QWidget):
         self.projectDirty, self.projectSaved, self.debugonstart = False, False, False
         self.smartcut_monitor, self.notify = None, None
         self.fonts = []
-        self.flatpak = VideoCutter.isFlatpak()
 
         self.initTheme()
         self.updater = Updater(self.parent)
@@ -488,10 +487,6 @@ class VideoCutter(QWidget):
             opengl_pbo=self.enablePBO,
             keepaspect=self.keepRatio,
             hwdec=('auto' if self.hardwareDecoding else 'no'))
-        if not self.flatpak:
-            widget.option('load-scripts', False)
-            widget.option('osc', False)
-            widget.option('ytdl', False)
         widget.durationChanged.connect(self.on_durationChanged)
         widget.positionChanged.connect(self.on_positionChanged)
         return widget
@@ -1556,14 +1551,6 @@ class VideoCutter(QWidget):
 
     def doPass(self) -> None:
         pass
-
-    @staticmethod
-    def isFlatpak() -> bool:
-        xdg_config_dirs = os.getenv('XDG_CONFIG_DIRS', None)
-        xdg_data_dirs = os.getenv('XDG_DATA_DIRS', None)
-        if xdg_config_dirs is None or xdg_data_dirs is None:
-            return False
-        return xdg_config_dirs.split(':')[0].startswith('/app/') and xdg_data_dirs.split(':')[0].startswith('/app/')
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
         if self.mediaAvailable:

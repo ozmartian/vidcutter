@@ -65,7 +65,7 @@
             "mv python3.5/site-packages/* ${FLATPAK_DEST}/lib/python3.5/site-packages -v"
         ],
         "sources": [
-        {
+        {c
             "type": "archive",
             "only-arches": ["x86_64"],
             "url": "https://github.com/ozmartian/vidcutter-flatpak/raw/master/x86_64/pyqt5-py35-qt5-libs.tar.xz",
@@ -102,8 +102,8 @@
         "sources": [
         {
             "type": "archive",
-            "url": "https://github.com/mpv-player/mpv/archive/v0.27.2.tar.gz",
-            "sha256": "2ad104d83fd3b2b9457716615acad57e479fd1537b8fc5e37bfe9065359b50be"
+            "url": "https://github.com/mpv-player/mpv/archive/v0.28.2.tar.gz",
+            "sha256": "aada14e025317b5b3e8e58ffaf7902e8b6e4ec347a93d25a7c10d3579426d795"
         },
         {
             "type": "file",
@@ -160,9 +160,9 @@
             "sources": [
             {
                 "type": "archive",
-                "url": "https://github.com/FFmpeg/FFmpeg/archive/3eff98c9278804b4b664bad3853e5e60184c6a54.tar.gz",
-                "sha256": "bf612d4844fa00d9b1939248a0f4423b9cfca8cb947c529deb70da901f0ade7c"
-            }],
+                "url": "https://ffmpeg.org/releases/ffmpeg-4.0.tar.xz",
+                "sha256": "ed945daf40b124e77a685893cc025d086f638bc703183460aff49508edb3a43f"
+            }],     
             "modules": [
             {
                 "name": "xvid",
