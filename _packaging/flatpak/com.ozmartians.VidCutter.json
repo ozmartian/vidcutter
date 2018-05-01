@@ -332,7 +332,7 @@
         {
             "type": "git",
             "branch": "flatpak",
-            "commit": "a5edb9c99ba6f17d2e96d95376d9a56d10baa450",
+            "commit": "15c6fc6874294dfc14459c4162aafbf81c728ac4",
             "url": "https://github.com/ozmartian/vidcutter.git"
         }]
     }]
