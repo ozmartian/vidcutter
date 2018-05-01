@@ -123,7 +123,7 @@ class VideoCutter(QWidget):
         self.videoService.error.connect(self.completeOnError)
         self.videoService.addScenes.connect(self.addScenes)
 
-        self.edlblock_re = re.compile(r'(\d+(?:\.?\d+)?)\s(\d+(?:\.?\d+)?)\s([01])')
+        self.edlblock_re = re.compile(r'(\d+(?:\.?\d+)?)\s(\d+(?:\.?\d+)?)\s([01])\s(".*")$')
 
         self._initIcons()
         self._initActions()
@@ -814,9 +814,7 @@ class VideoCutter(QWidget):
                 line = file.readLine().trimmed()
                 if line.length() > 0:
                     try:
-                        line = str(line, encoding='utf-8')
-                    except TypeError:
-                        line = str(line)
+                        line = line.data().decode()
                     except UnicodeDecodeError:
                         qApp.restoreOverrideCursor()
                         self.logger.error('Invalid project file was selected', exc_info=True)
@@ -831,11 +829,11 @@ class VideoCutter(QWidget):
                     else:
                         mo = self.edlblock_re.match(line)
                         if mo:
-                            start, stop, action = mo.groups()
+                            start, stop, action, chapter = mo.groups()
                             clip_start = self.delta2QTime(float(start))
                             clip_end = self.delta2QTime(float(stop))
                             clip_image = self.captureImage(self.currentMedia, clip_start)
-                            self.clipTimes.append([clip_start, clip_end, clip_image, ''])
+                            self.clipTimes.append([clip_start, clip_end, clip_image, '', chapter[1:len(chapter) - 1]])
                         else:
                             qApp.restoreOverrideCursor()
                             QMessageBox.critical(self.parent, 'Invalid project file',
@@ -852,6 +850,7 @@ class VideoCutter(QWidget):
             qApp.restoreOverrideCursor()
             if project_file != os.path.join(QDir.tempPath(), self.parent.TEMP_PROJECT_FILE):
                 self.showText('project loaded')
+            print('\nproject loaded:\n\n{}\n\n'.format(self.clipTimes))
 
     def saveProject(self, reboot: bool = False) -> None:
         if self.currentMedia is None:
@@ -914,9 +913,10 @@ class VideoCutter(QWidget):
                                        milliseconds=clip[0].msec())
                 stop_time = timedelta(hours=clip[1].hour(), minutes=clip[1].minute(), seconds=clip[1].second(),
                                       milliseconds=clip[1].msec())
+                chapter = '"{}"'.format(clip[4]) if self.createChapters and clip[4] is not None else ''
                 # noinspection PyUnresolvedReferences
-                QTextStream(file) << '{0}\t{1}\t{2}\n'.format(self.delta2String(start_time),
-                                                              self.delta2String(stop_time), 0)
+                QTextStream(file) << '{0}\t{1}\t{2}\t{3}\n'.format(self.delta2String(start_time),
+                                                              self.delta2String(stop_time), 0, chapter)
             qApp.restoreOverrideCursor()
             self.projectSaved = True
             if not reboot:
@@ -1263,6 +1263,7 @@ class VideoCutter(QWidget):
             else:
                 listitem.setToolTip('Drag to reorder clips')
             if self.createChapters:
+                print('\nclip = {}\n'.format(clip))
                 chapterName = clip[4] if clip[4] is not None else 'Chapter {}'.format(index + 1)
             else:
                 chapterName = ''

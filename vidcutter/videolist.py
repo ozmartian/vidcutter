@@ -133,7 +133,7 @@ class VideoItem(QStyledItemDelegate):
         if len(chapterName):
             offset = 18
             r = option.rect.adjusted(5, 5, 0, 0)
-            painter.setFont(QFont('Noto Sans', 12 if sys.platform == 'darwin' else 9, QFont.Medium))
+            painter.setFont(QFont('Noto Sans', 12 if sys.platform == 'darwin' else 10, QFont.Medium))
             painter.drawText(r, Qt.AlignLeft, self.clipText(chapterName, painter, True))
             r = option.rect.adjusted(5, offset, 0, 0)
         else:
