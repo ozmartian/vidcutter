@@ -351,9 +351,9 @@ class VCVolumeSlider(QSlider):
 class VCInputDialog(QDialog):
     def __init__(self, parent: QWidget, title: str, label: str, text: str):
         super(VCInputDialog, self).__init__(parent)
-        self.setStyle(QStyleFactory.create('Fusion'))
         self.setWindowFlags(Qt.Dialog | Qt.WindowCloseButtonHint)
         self.input = QLineEdit(text, self)
+        self.input.setStyle(QStyleFactory.create('Fusion'))
         self.input.setClearButtonEnabled(True)
         self.input.selectAll()
         buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)

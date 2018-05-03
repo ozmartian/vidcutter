@@ -916,7 +916,7 @@ class VideoCutter(QWidget):
                 chapter = '"{}"'.format(clip[4]) if self.createChapters and clip[4] is not None else ''
                 # noinspection PyUnresolvedReferences
                 QTextStream(file) << '{0}\t{1}\t{2}\t{3}\n'.format(self.delta2String(start_time),
-                                                              self.delta2String(stop_time), 0, chapter)
+                                                                   self.delta2String(stop_time), 0, chapter)
             qApp.restoreOverrideCursor()
             self.projectSaved = True
             if not reboot:
@@ -1263,7 +1263,6 @@ class VideoCutter(QWidget):
             else:
                 listitem.setToolTip('Drag to reorder clips')
             if self.createChapters:
-                print('\nclip = {}\n'.format(clip))
                 chapterName = clip[4] if clip[4] is not None else 'Chapter {}'.format(index + 1)
             else:
                 chapterName = ''
