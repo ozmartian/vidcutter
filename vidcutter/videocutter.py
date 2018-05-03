@@ -1117,7 +1117,7 @@ class VideoCutter(QWidget):
     def addScenes(self, scenes: List[list]) -> None:
         if len(scenes):
             [
-                self.clipTimes.append([scene[0], scene[1], self.captureImage(self.currentMedia, scene[0]), ''])
+                self.clipTimes.append([scene[0], scene[1], self.captureImage(self.currentMedia, scene[0]), '', None])
                 for scene in scenes if len(scene)
             ]
             self.renderClipIndex()
