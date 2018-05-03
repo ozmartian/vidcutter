@@ -1,14 +1,13 @@
 {
     "app-id": "com.ozmartians.VidCutter",
-    "runtime": "org.gnome.Platform",
-    "runtime-version": "3.26",
-    "sdk": "org.gnome.Sdk",
+    "runtime": "org.kde.Platform",
+    "runtime-version": "5.10",
+    "sdk": "org.kde.Sdk",
     "command": "vidcutter",
     "finish-args": [
         "--device=dri",
         "--env=DCONF_USER_CONFIG_DIR=.config/dconf",
         "--env=LC_NUMERIC=C",
-        "--env=QT_PLUGIN_PATH=/app/lib/qt/plugins",
         "--filesystem=host",
         "--filesystem=xdg-run/dconf",
         "--share=ipc",
@@ -55,41 +54,37 @@
     },
     {
         "name": "PyQt5",
+        "cleanup": ["/bin", "/include"],
+        "config-opts": ["--disable-static", "--enable-x11"],
         "buildsystem": "simple",
         "build-commands": [
-            "mv python3.5/site-packages/PyQt5/Qt/lib/* ${FLATPAK_DEST}/lib -v",
-            "rm -rf python3.5/site-packages/PyQt5/Qt/lib",
-            "mkdir -p ${FLATPAK_DEST}/lib/qt",
-            "mv python3.5/site-packages/PyQt5/Qt/plugins ${FLATPAK_DEST}/lib/qt -v",
-            "rm -rf python3.5/site-packages/PyQt5/Qt",
-            "mv python3.5/site-packages/* ${FLATPAK_DEST}/lib/python3.5/site-packages -v"
+            "python3 configure.py --confirm-license --no-docstrings --assume-shared --no-sip-files --no-qml-plugin --no-tools --no-qsci-api -d ${FLATPAK_DEST}/lib/python3.5/site-packages --sip=${FLATPAK_DEST}/bin/sip --sip-incdir=${FLATPAK_DEST}/include --stubsdir=${FLATPAK_DEST}/lib/python3.5/site-packages -e QtCore -e QtDBus -e QtGui -e QtNetwork -e QtOpenGL -e QtWidgets -e QtX11Extras",
+            "make -j $(nproc)",
+            "make install"
         ],
         "sources": [
         {
             "type": "archive",
-            "only-arches": ["x86_64"],
-            "url": "https://github.com/ozmartian/vidcutter-flatpak/raw/master/x86_64/pyqt5-py35-qt5-libs.tar.xz",
-            "sha256": "4bb0bac39231805a510db3e0c019fb608f6d3233c97e0bebf3dfee5cc8c9592f"
-        },
+            "url": "https://sourceforge.net/projects/pyqt/files/PyQt5/PyQt-5.10.1/PyQt5_gpl-5.10.1.tar.gz",
+            "sha256": "9932e971e825ece4ea08f84ad95017837fa8f3f29c6b0496985fa1093661e9ef"
+        }],
+        "modules": [
         {
-            "type": "archive",
-            "only-arches": ["i386"],
-            "url": "https://github.com/ozmartian/vidcutter-flatpak/raw/master/i386/pyqt5-py35-qt5-libs.tar.xz",
-            "sha256": "4478c9b7e715d76bae51f16db17c3c747f0d9a2a6af6af939cbcffe30278ee7a"
-        },
-        {
-            "type": "archive",
-            "only-arches": ["arm"],
-            "url": "https://github.com/ozmartian/vidcutter-flatpak/raw/master/arm/pyqt5-py35-qt5-libs.tar.xz",
-            "sha256": "064b580470ee6ebe1419728f1a34128f500a6387a45dd6796505e5d72ffc99de"
-        },
-        {
-            "type": "archive",
-            "only-arches": ["aarch64"],
-            "url": "https://github.com/ozmartian/vidcutter-flatpak/raw/master/aarch64/pyqt5-py35-qt5-libs.tar.xz",
-            "sha256": "0a70430ff87159e6e5ffc005472dbcf4dd5c24f9eb4ec8d432c533e10061c64c"
+            "name": "sip",
+            "buildsystem": "simple",
+            "build-commands": [
+                "python3 configure.py -b ${FLATPAK_DEST}/bin -d ${FLATPAK_DEST}/lib/python3.5/site-packages -e ${FLATPAK_DEST}/include -v ${FLATPAK_DEST}/share/sip --stubsdir=${FLATPAK_DEST}/lib/python3.5/site-packages",
+                "make",
+                "make install"
+            ],
+            "sources": [
+            {
+                "type": "archive",
+                "url": "https://sourceforge.net/projects/pyqt/files/sip/sip-4.19.8/sip-4.19.8.tar.gz",
+                "sha256": "7eaf7a2ea7d4d38a56dd6d2506574464bddf7cf284c960801679942377c297bc"
+            }]
         }]
-    },
+    }, 
     {
         "name": "libmpv",
         "cleanup": ["/include", "/lib/pkgconfig"],
@@ -215,7 +210,6 @@
             {
                 "name": "x265",
                 "buildsystem": "simple",
-                "cleanup": [],
                 "build-options": {
                     "arch": {
                         "arm": {

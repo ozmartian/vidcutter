@@ -211,8 +211,8 @@ class ThemePage(QWidget):
                 <style>
                     h1 {
                         color: %s;
-                        font-family: "Futura-Light", sans-serif;
-                        font-weight: 400;
+                        font-family: "Futura LT", sans-serif;
+                        font-weight: normal;
                     }
                 </style>
                 <h1>Warning</h1>

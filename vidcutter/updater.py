@@ -112,8 +112,8 @@ class UpdaterMsgBox(QDialog):
             h1 {
                 text-align: center;
                 color: %s;
-                font-family: "Futura-Light", sans-serif;
-                font-weight: 400;
+                font-family: "Futura LT", sans-serif;
+                font-weight: normal;
             }
             div {
                 border: 1px solid #999;
@@ -124,7 +124,8 @@ class UpdaterMsgBox(QDialog):
                 margin: 10px 0 0 0;
             }
             td.label {
-                font-family: "Futura-Light", san-serif;
+                font-family: "Futura LT", san-serif;
+                font-weight: normal;
                 text-align: right;
                 font-size: 17px;
             }
@@ -132,7 +133,7 @@ class UpdaterMsgBox(QDialog):
                 font-family: "Noto Sans", sans-serif;
                 color: %s;
                 font-weight: 500;
-                font-size: 15px;
+                font-size: 16px;
             }
         </style>''' % (pencolor1, pencolor2, pencolor2, pencolor1)
         if update_available:

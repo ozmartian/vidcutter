@@ -113,8 +113,8 @@ class JobCompleteNotification(Notification):
     <style>
         h1 {{
             color: {labelscolor};
-            font-family: "Futura-Light", sans-serif;
-            font-weight: 400;
+            font-family: "Futura LT", sans-serif;
+            font-weight: normal;
             text-align: center;
         }}
         table.info {{

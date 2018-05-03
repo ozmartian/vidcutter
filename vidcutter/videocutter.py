@@ -860,8 +860,8 @@ class VideoCutter(QWidget):
                 <style>
                     h2 {{
                         color: {0};
-                        font-family: "Futura-Light", sans-serif;
-                        font-weight: 400;
+                        font-family: "Futura LT", sans-serif;
+                        font-weight: normal;
                     }}
                     a {{
                         color: {1};
@@ -1490,8 +1490,8 @@ class VideoCutter(QWidget):
                     <style>
                         h2 {{
                             color: {0};
-                            font-family: "Futura-Light", sans-serif;
-                            font-weight: 400;
+                            font-family: "Futura LT", sans-serif;
+                            font-weight: normal;
                         }}
                     </style>
                     <table border="0" cellpadding="6" cellspacing="0" width="350">

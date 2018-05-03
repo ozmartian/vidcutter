@@ -144,8 +144,8 @@ class KeyframesDialog(QDialog):
         buttons.rejected.connect(self.close)
         content_headers = '''<style>
                     table td h2 {{
-                        font-family: "Futura-Light", sans-serif;
-                        font-weight: 500;
+                        font-family: "Futura LT", sans-serif;
+                        font-weight: normal;
                         text-align: center;
                         color: {}
                     }}

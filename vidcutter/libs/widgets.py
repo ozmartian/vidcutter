@@ -436,8 +436,8 @@ class VCMessageBox(QMessageBox):
             <style>
                 h2 {{
                     color: {color};
-                    font-family: "Futura-Light", sans-serif;
-                    font-weight: 400;
+                    font-family: "Futura LT", sans-serif;
+                    font-weight: normal;
                 }}
             </style>
             <table border="0" cellpadding="6" cellspacing="0" width="{width}">
@@ -506,8 +506,8 @@ class ClipErrorsDialog(QDialog):
                 h1 {{
                     text-align: center;
                     color: {0};
-                    font-family: "Futura-Light", sans-serif;
-                    font-weight: 400;
+                    font-family: "Futura LT", sans-serif;
+                    font-weight: normal;
                 }}
                 p {{
                     font-family: "Noto Sans", sans-serif;
@@ -541,8 +541,8 @@ class ClipErrorsDialog(QDialog):
             h1 {{
                 text-align: center;
                 color: {0};
-                font-family: "Futura-Light", sans-serif;
-                font-weight: 400;
+                font-family: "Futura LT", sans-serif;
+                font-weight: normal;
             }}
             p {{
                 font-family: "Noto Sans", sans-serif;

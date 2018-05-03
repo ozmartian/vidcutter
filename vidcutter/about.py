@@ -61,8 +61,8 @@ class About(QDialog):
                     color: {0};
                 }}
                 b.version {{
-                    font-family: Futura-Light, sans-serif;
-                    font-weight: 600;
+                    font-family: "Futura LT", sans-serif;
+                    font-weight: normal;
                     font-size: 16px;
                 }}
             </style>
