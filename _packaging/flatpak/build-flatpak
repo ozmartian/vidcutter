@@ -3,6 +3,7 @@
 flatpak-builder -v \
 	--force-clean \
 	--ccache \
-	--install \
+	--repo=repo \
+	--subject="Build of com.ozmartians.VidCutter `date`" \
 	./build \
 	com.ozmartians.VidCutter.json

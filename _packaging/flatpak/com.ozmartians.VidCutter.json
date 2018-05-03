@@ -54,11 +54,11 @@
     },
     {
         "name": "PyQt5",
-        "cleanup": ["/bin", "/include"],
+        "cleanup": ["/bin/sip", "/include", "/lib/python3.5/site-packages/*.pyi"],
         "config-opts": ["--disable-static", "--enable-x11"],
         "buildsystem": "simple",
         "build-commands": [
-            "python3 configure.py --confirm-license --no-docstrings --assume-shared --no-sip-files --no-qml-plugin --no-tools --no-qsci-api -d ${FLATPAK_DEST}/lib/python3.5/site-packages --sip=${FLATPAK_DEST}/bin/sip --sip-incdir=${FLATPAK_DEST}/include --stubsdir=${FLATPAK_DEST}/lib/python3.5/site-packages -e QtCore -e QtDBus -e QtGui -e QtNetwork -e QtOpenGL -e QtWidgets -e QtX11Extras",
+            "python3 configure.py --confirm-license --no-docstrings --assume-shared --no-sip-files --no-qml-plugin --no-tools --no-qsci-api -d ${FLATPAK_DEST}/lib/python3.5/site-packages --sip=${FLATPAK_DEST}/bin/sip --sip-incdir=${FLATPAK_DEST}/include --stubsdir=${FLATPAK_DEST}/lib/python3.5/site-packages --disable=QtSensors --disable=QtWebEngine --disable=QtQuick --disable=QtQml --disable=QtTest --disable=QtWebChannel --disable=QtWebEngineCore --disable=QWebEngineWidgets --disable=QtQuickWidgets --disable=QtSql --disable=QtXmlPatterns --disable=QtMultimedia --disable=QtMultimediaWidgets --disable=QtLocation --disable=QtDesigner --disable=QtBluetooth --disable=QtWebKit --disable=QtWebKitWidgets --disable=QtNfc --disable=QtPositioning",
             "make -j $(nproc)",
             "make install"
         ],
@@ -251,6 +251,7 @@
             },
             {
                 "name": "lame",
+                "cleanup": ["/share/doc"],
                 "config-opts": [
                     "--enable-shared",
                     "--disable-static",
@@ -326,7 +327,7 @@
         {
             "type": "git",
             "branch": "flatpak",
-            "commit": "15c6fc6874294dfc14459c4162aafbf81c728ac4",
+            "commit": "656d4a6a3266f9062f6282114fc28f0379afeb69",
             "url": "https://github.com/ozmartian/vidcutter.git"
         }]
     }]
