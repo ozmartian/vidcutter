@@ -83,6 +83,7 @@ class VideoCutter(QWidget):
         self.smartcut_monitor, self.notify = None, None
         self.fonts = []
 
+        self.fontdatabase = QFontDatabase()
         self.initTheme()
         self.updater = Updater(self.parent)
 
@@ -446,9 +447,9 @@ class VideoCutter(QWidget):
     def initTheme(self) -> None:
         qApp.setStyle(VideoStyleDark() if self.theme == 'dark' else VideoStyleLight())
         self.fonts = [
-            QFontDatabase.addApplicationFont(':/fonts/FuturaLT.ttf'),
-            QFontDatabase.addApplicationFont(':/fonts/NotoSans-Bold.ttf'),
-            QFontDatabase.addApplicationFont(':/fonts/NotoSans-Regular.ttf')
+            self.fontdatabase.addApplicationFont(':/fonts/FuturaLT.ttf'),
+            self.fontdatabase.addApplicationFont(':/fonts/NotoSans-Bold.ttf'),
+            self.fontdatabase.addApplicationFont(':/fonts/NotoSans-Regular.ttf')
         ]
         self.style().loadQSS(self.theme)
         QApplication.setFont(QFont('Noto Sans', 12 if sys.platform == 'darwin' else 10, 300))
@@ -464,7 +465,7 @@ class VideoCutter(QWidget):
             mute=mute,
             keep_open='always',
             idle=True,
-            osd_font='Noto Sans',
+            osd_font=self._osdfont,
             osd_level=0,
             osd_align_x='left',
             osd_align_y='top',
@@ -1587,6 +1588,10 @@ class VideoCutter(QWidget):
     def toggleOSD(self, checked: bool) -> None:
         self.showText('on-screen display {}'.format('enabled' if checked else 'disabled'), override=True)
         self.saveSetting('enableOSD', checked)
+
+    @property
+    def _osdfont(self) -> str:
+        return 'Noto Sans' if 'Noto Sans' in self.fontdatabase.families(QFontDatabase.Latin) else 'DejaVu Sans'
 
     def doPass(self) -> None:
         pass
