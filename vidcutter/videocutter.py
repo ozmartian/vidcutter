@@ -1591,7 +1591,7 @@ class VideoCutter(QWidget):
 
     @property
     def _osdfont(self) -> str:
-        return 'Noto Sans' if 'Noto Sans' in self.fontdatabase.families(QFontDatabase.Latin) else 'DejaVu Sans'
+        return 'DejaVu Sans' if 'DejaVu Sans' in self.fontdatabase.families(QFontDatabase.Latin) else 'Noto Sans'
 
     def doPass(self) -> None:
         pass
