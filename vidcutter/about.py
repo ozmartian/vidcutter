@@ -23,15 +23,14 @@
 #######################################################################
 
 import logging
-import platform
 import sys
 from datetime import datetime
 
 from PyQt5.Qt import PYQT_VERSION_STR, QT_VERSION_STR
-from PyQt5.QtCore import QObject, QSize, QUrl, Qt
+from PyQt5.QtCore import QFile, QObject, QSize, QTextStream, Qt
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import (qApp, QDialog, QDialogButtonBox, QGridLayout, QHBoxLayout, QLabel, QSizePolicy,
-                             QStyleFactory, QTabWidget, QTextBrowser, QVBoxLayout, QWidget)
+from PyQt5.QtWidgets import (QDialog, QDialogButtonBox, QHBoxLayout, QLabel, QScrollArea, QSizePolicy, QStyleFactory,
+                             QTabWidget, QVBoxLayout, QWidget, qApp)
 
 import vidcutter
 
@@ -83,11 +82,18 @@ class About(QDialog):
         self.tab_about = AboutTab(self)
         self.tab_credits = CreditsTab(self)
         self.tab_license = LicenseTab(self)
+        scrollarea = QScrollArea(self)
+        scrollarea.setWidgetResizable(True)
+        scrollarea.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        scrollarea.setFrameShape(QScrollArea.NoFrame)
+        scrollarea.setWidget(self.tab_license)
+        if sys.platform in {'win32', 'darwin'}:
+            scrollarea.setStyle(QStyleFactory.create('Fusion'))
         tabs = QTabWidget()
         tabs.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         tabs.addTab(self.tab_about, 'About')
         tabs.addTab(self.tab_credits, 'Credits')
-        tabs.addTab(self.tab_license, 'License')
+        tabs.addTab(scrollarea, 'License')
         buttons = QDialogButtonBox(QDialogButtonBox.Ok)
         buttons.accepted.connect(self.close)
         layout = QVBoxLayout()
@@ -107,9 +113,12 @@ class About(QDialog):
         return modes[self.parent.parentWidget().scale]
 
 
-class BaseTab(QTextBrowser):
+class BaseTab(QLabel):
     def __init__(self, parent=None):
         super(BaseTab, self).__init__(parent)
+        self.setTextFormat(Qt.RichText)
+        self.setWordWrap(True)
+        self.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         self.setOpenExternalLinks(True)
         if parent.theme == 'dark':
             bgcolor = 'rgba(12, 15, 16, 210)'
@@ -117,7 +126,7 @@ class BaseTab(QTextBrowser):
         else:
             bgcolor = 'rgba(255, 255, 255, 200)'    
             pencolor = '#000'
-        self.setStyleSheet('QTextBrowser {{ background: {bgcolor}; color: {pencolor}; }}'.format(**locals()))
+        self.setStyleSheet('background-color: {bgcolor}; color: {pencolor}; padding: 8px;'.format(**locals()))
 
 
 class AboutTab(BaseTab):
@@ -142,7 +151,7 @@ class AboutTab(BaseTab):
     table { width: 100%%; font-family: "Noto Sans", sans-serif; background-color: transparent; }
     a { color: %s; text-decoration: none; font-weight: bold; }
 </style>
-<table border="0" cellpadding="8" cellspacing="4">
+<table border="0" cellpadding="0" cellspacing="4">
     <tr>
         <td>
             <table border="0" cellpadding="0" cellspacing="0">
@@ -203,7 +212,7 @@ class AboutTab(BaseTab):
                mpv_version, spacer, ffmpeg_version, sys.version.split(' ')[0], QT_VERSION_STR,
                PYQT_VERSION_STR, datetime.now().year, vidcutter.__email__, vidcutter.__author__,
                vidcutter.__website__, vidcutter.__website__, vidcutter.__bugreport__)
-        self.setHtml(html)
+        self.setText(html)
 
 
 class CreditsTab(BaseTab):
@@ -211,7 +220,7 @@ class CreditsTab(BaseTab):
         super(CreditsTab, self).__init__(parent)
         self.parent = parent
         self.setObjectName('credits')
-        self.setHtml('''
+        self.setText('''
         <style>
             table { background-color: transparent; }
             a { color:%s; text-decoration:none; font-weight:bold; }
@@ -242,9 +251,9 @@ class CreditsTab(BaseTab):
                 </td>
                 <td width="200">
                     <p>
-                        <a href="http://mpv.io">mpv (libmpv)</a>
+                        <a href="http://mpv.io">libmpv</a>
                         -
-                        GPLv2+
+                        GPLv3+
                     </p>
                     <p>
                         <a href="http://mediaarea.net/mediainfo">MediaInfo</a>
@@ -268,6 +277,9 @@ class LicenseTab(BaseTab):
     def __init__(self, parent):
         super(LicenseTab, self).__init__(parent)
         self.setObjectName('license')
-        self.setSource(QUrl('qrc:/license.html'))
+        licensefile = QFile(':/license.html')
+        licensefile.open(QFile.ReadOnly | QFile.Text)
+        content = QTextStream(licensefile).readAll()
+        self.setText(content)
         if sys.platform in {'win32', 'darwin'}:
             self.setStyle(QStyleFactory.create('Fusion'))

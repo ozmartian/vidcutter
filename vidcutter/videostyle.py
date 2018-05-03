@@ -58,14 +58,14 @@ class VideoStyle(QProxyStyle):
         return super(VideoStyle, self).styleHint(hint, option, widget, returnData)
 
     @staticmethod
-    def loadQSS(theme) -> str:
+    def loadQSS(theme):
         filename = ':/styles/{}.qss'.format(theme)
         if QFileInfo(filename).exists():
             qssfile = QFile(filename)
             qssfile.open(QFile.ReadOnly | QFile.Text)
             content = QTextStream(qssfile).readAll()
             qApp.setStyleSheet(content)
-            return content
+            # return content
 
 
 class VideoStyleLight(VideoStyle):

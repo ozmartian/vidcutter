@@ -567,7 +567,7 @@ QStatusBar::item {
 
 /* -------------------------------------------------------------------------- */
 
-#aboutwidget QTextBrowser {
+#aboutwidget QLabel {
     border: none;
 }
 

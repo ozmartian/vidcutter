@@ -27,9 +27,8 @@ import sys
 
 from PyQt5.QtCore import pyqtSlot, Qt
 from PyQt5.QtGui import QCloseEvent, QMouseEvent, QPixmap
-from PyQt5.QtWidgets import (qApp, QCheckBox, QDialog, QDialogButtonBox, QFrame, QGridLayout, QGroupBox, QHBoxLayout,
-                             QLabel, QMessageBox, QScrollArea, QSizePolicy, QSpacerItem, QStyleFactory, QVBoxLayout,
-                             QWidget)
+from PyQt5.QtWidgets import (QCheckBox, QDialog, QDialogButtonBox, QFrame, QGridLayout, QGroupBox, QHBoxLayout, QLabel,
+                             QMessageBox, QScrollArea, QSizePolicy, QSpacerItem, QStyleFactory, QVBoxLayout, QWidget)
 
 from vidcutter.libs.iso639 import ISO639_2
 from vidcutter.libs.videoservice import VideoService
