@@ -281,7 +281,7 @@ class VideoPage(QWidget):
         videoLayout = QVBoxLayout()
         videoLayout.addWidget(decodingCheckbox)
         videoLayout.addWidget(decodingLabel)
-        videoLayout.addWidget(SettingsDialog.lineSeparator())
+        videoLayout.addLayout(SettingsDialog.lineSeparator())
         pboCheckboxLayout = QHBoxLayout()
         pboCheckboxLayout.setContentsMargins(0, 0, 0, 0)
         pboCheckboxLayout.addWidget(pboCheckbox)
@@ -289,7 +289,7 @@ class VideoPage(QWidget):
         pboCheckboxLayout.addStretch(1)
         videoLayout.addLayout(pboCheckboxLayout)
         videoLayout.addWidget(pboLabel)
-        videoLayout.addWidget(SettingsDialog.lineSeparator())
+        videoLayout.addLayout(SettingsDialog.lineSeparator())
         videoLayout.addWidget(ratioCheckbox)
         videoLayout.addWidget(ratioLabel)
         videoGroup = QGroupBox('Playback')
@@ -546,13 +546,13 @@ class GeneralPage(QWidget):
         generalLayout = QVBoxLayout()
         generalLayout.addLayout(smartCutCheckboxLayout)
         generalLayout.addLayout(smartCutLayout)
-        generalLayout.addWidget(SettingsDialog.lineSeparator())
+        generalLayout.addLayout(SettingsDialog.lineSeparator())
         generalLayout.addWidget(chaptersCheckbox)
         generalLayout.addWidget(chaptersLabel)
-        generalLayout.addWidget(SettingsDialog.lineSeparator())
+        generalLayout.addLayout(SettingsDialog.lineSeparator())
         generalLayout.addWidget(keepClipsCheckbox)
         generalLayout.addWidget(keepClipsLabel)
-        generalLayout.addWidget(SettingsDialog.lineSeparator())
+        generalLayout.addLayout(SettingsDialog.lineSeparator())
         generalLayout.addWidget(singleInstanceCheckbox)
         generalLayout.addWidget(singleInstanceLabel)
         generalGroup = QGroupBox('General')
@@ -677,6 +677,7 @@ class SettingsDialog(QDialog):
         mainLayout.addLayout(horizontalLayout)
         mainLayout.addWidget(buttons)
         self.setLayout(mainLayout)
+        self.setFixedSize(self.sizeHint())
 
     def initCategories(self):
         generalButton = QListWidgetItem(self.categories)
@@ -712,15 +713,16 @@ class SettingsDialog(QDialog):
         self.categories.currentItemChanged.connect(self.changePage)
         self.categories.setCurrentRow(0)
         self.categories.setMaximumWidth(self.categories.sizeHintForColumn(0) + 2)
-        self.setMinimumWidth(670 if sys.platform == 'darwin' else 640)
-        self.adjustSize()
 
     @staticmethod
-    def lineSeparator() -> QFrame:
+    def lineSeparator() -> QHBoxLayout:
         line = QFrame()
         line.setFrameShape(QFrame.HLine)
         line.setFrameShadow(QFrame.Sunken)
-        return line
+        layout = QHBoxLayout()
+        layout.addSpacing(25)
+        layout.addWidget(line)
+        return layout
 
     @pyqtSlot(QListWidgetItem, QListWidgetItem)
     def changePage(self, current: QListWidgetItem, previous: QListWidgetItem):
@@ -733,3 +735,6 @@ class SettingsDialog(QDialog):
     def closeEvent(self, event: QCloseEvent):
         self.deleteLater()
         super(SettingsDialog, self).closeEvent(event)
+
+    def sizeHint(self) -> QSize:
+        return QSize(655 if sys.platform == 'darwin' else 625, 645)

@@ -108,6 +108,10 @@ class VideoItem(QStyledItemDelegate):
     def __init__(self, parent: VideoList=None):
         super(VideoItem, self).__init__(parent)
         self.parent = parent
+        self.chapterFont = QFont()
+        self.chapterFont.setFamily('Futura LT')
+        self.chapterFont.setPointSizeF(12.5 if sys.platform == 'darwin' else 10.5)
+        self.chapterFont.setWeight(QFont.Medium)
         self.theme = self.parent.theme
 
     def paint(self, painter: QPainter, option: QStyleOptionViewItem, index: QModelIndex) -> None:
@@ -131,29 +135,29 @@ class VideoItem(QStyledItemDelegate):
         chapterName = index.data(Qt.UserRole + 3)
         painter.setPen(QPen(pencolor, 1, Qt.SolidLine))
         if len(chapterName):
-            offset = 18
+            offset = 20
             r = option.rect.adjusted(5, 5, 0, 0)
-            painter.setFont(QFont('Futura LT', 12 if sys.platform == 'darwin' else 10, QFont.Medium))
+            painter.setFont(self.chapterFont)
             painter.drawText(r, Qt.AlignLeft, self.clipText(chapterName, painter, True))
             r = option.rect.adjusted(5, offset, 0, 0)
         else:
             offset = 0
             r = option.rect.adjusted(5, 0, 0, 0)
         thumbicon.paint(painter, r, Qt.AlignVCenter | Qt.AlignLeft)
-        r = option.rect.adjusted(110, 8 + offset, 0, 0)
+        r = option.rect.adjusted(110, 10 + offset, 0, 0)
         painter.setFont(QFont('Noto Sans', 11 if sys.platform == 'darwin' else 9, QFont.Bold))
         painter.drawText(r, Qt.AlignLeft, 'FILENAME' if len(externalPath) else 'START')
-        r = option.rect.adjusted(110, 21 + offset, 0, 0)
+        r = option.rect.adjusted(110, 23 + offset, 0, 0)
         painter.setFont(QFont('Noto Sans', 11 if sys.platform == 'darwin' else 9, QFont.Normal))
         if len(externalPath):
             painter.drawText(r, Qt.AlignLeft, self.clipText(os.path.basename(externalPath), painter))
         else:
             painter.drawText(r, Qt.AlignLeft, starttime)
         if len(endtime) > 0:
-            r = option.rect.adjusted(110, 45 + offset, 0, 0)
+            r = option.rect.adjusted(110, 48 + offset, 0, 0)
             painter.setFont(QFont('Noto Sans', 11 if sys.platform == 'darwin' else 9, QFont.Bold))
             painter.drawText(r, Qt.AlignLeft, 'RUNTIME' if len(externalPath) else 'END')
-            r = option.rect.adjusted(110, 58 + offset, 0, 0)
+            r = option.rect.adjusted(110, 60 + offset, 0, 0)
             painter.setFont(QFont('Noto Sans', 11 if sys.platform == 'darwin' else 9, QFont.Normal))
             painter.drawText(r, Qt.AlignLeft, endtime)
 
