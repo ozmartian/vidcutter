@@ -82,6 +82,7 @@ class VideoCutter(QWidget):
         self.projectDirty, self.projectSaved, self.debugonstart = False, False, False
         self.smartcut_monitor, self.notify = None, None
         self.fonts = []
+        self.firstrun = True
 
         self.fontdatabase = QFontDatabase()
         self.initTheme()
@@ -436,6 +437,7 @@ class VideoCutter(QWidget):
 
         self.setLayout(layout)
         self.seekSlider.initStyle()
+        self.firstrun = False
 
     @pyqtSlot()
     def showAppMenu(self) -> None:
@@ -1053,17 +1055,18 @@ class VideoCutter(QWidget):
 
     @pyqtSlot(bool)
     def toggleThumbs(self, checked: bool) -> None:
-        self.seekSlider.showThumbs = checked
-        self.saveSetting('timelineThumbs', checked)
-        if checked:
-            self.showText('thumbnails enabled')
-            self.seekSlider.initStyle()
-            if self.mediaAvailable:
-                self.seekSlider.reloadThumbs()
-        else:
-            self.showText('thumbnails disabled')
-            self.seekSlider.removeThumbs()
-            self.seekSlider.initStyle()
+        if not self.firstrun:
+            self.seekSlider.showThumbs = checked
+            self.saveSetting('timelineThumbs', checked)
+            if checked:
+                self.showText('thumbnails enabled')
+                self.seekSlider.initStyle()
+                if self.mediaAvailable:
+                    self.seekSlider.reloadThumbs()
+            else:
+                self.showText('thumbnails disabled')
+                self.seekSlider.removeThumbs()
+                self.seekSlider.initStyle()
 
     @pyqtSlot(bool)
     def toggleConsole(self, checked: bool) -> None:
@@ -1082,24 +1085,26 @@ class VideoCutter(QWidget):
 
     @pyqtSlot(bool)
     def toggleChapters(self, checked: bool) -> None:
-        self.createChapters = checked
-        self.saveSetting('chapters', self.createChapters)
-        self.chaptersButton.setChecked(self.createChapters)
-        self.showText('chapters {}'.format('enabled' if checked else 'disabled'))
-        if checked:
-            exist = False
-            for clip in self.clipTimes:
-                if clip[4] is not None:
-                    exist = True
-                    break
-            if exist:
-                chapterswarn = VCMessageBox('Question', 'Chapter names previously set',
-                                            'Would you like to restore chapter names? Saying no will reset names to '
-                                            'default values', buttons=QMessageBox.Yes | QMessageBox.No, parent=self)
-                if chapterswarn.exec_() == QMessageBox.No:
-                    for clip in self.clipTimes:
-                        clip[4] = None
-        self.renderClipIndex()
+        if not self.firstrun:
+            self.createChapters = checked
+            self.saveSetting('chapters', self.createChapters)
+            self.chaptersButton.setChecked(self.createChapters)
+            self.showText('chapters {}'.format('enabled' if checked else 'disabled'))
+            if checked:
+                exist = False
+                for clip in self.clipTimes:
+                    if clip[4] is not None:
+                        exist = True
+                        break
+                if exist:
+                    chapterswarn = VCMessageBox('Question', 'Chapter names previously set',
+                                                'Would you like to restore chapter names? Saying no will reset names '
+                                                'to default values', buttons=QMessageBox.Yes | QMessageBox.No,
+                                                parent=self)
+                    if chapterswarn.exec_() == QMessageBox.No:
+                        for clip in self.clipTimes:
+                            clip[4] = None
+            self.renderClipIndex()
 
     @pyqtSlot(bool)
     def toggleSmartCut(self, checked: bool) -> None:
