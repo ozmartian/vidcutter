@@ -202,7 +202,7 @@ QLabel#filmstrip {
 QLabel#novideoversion {
     font-size: 13px;
     font-weight: bold;
-    font-family: "Futura-Light", sans-serif;
+    font-family: "Futura LT", sans-serif;
     color: #FFF;
 }
 
@@ -811,7 +811,7 @@ VCProgressDialog QLabel#progresstimer {
 /* -------------------------------------------------------------------------- */
 
 VCBlinkText QLabel {
-    font-family: "Futura-Light", sans-serif;
+    font-family: "Futura LT", sans-serif;
     font-weight: 400;
     font-size: 26px;
     color: #FFF;
