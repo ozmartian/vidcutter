@@ -51,29 +51,32 @@ class About(QDialog):
         logolabel.setPixmap(QPixmap(':/images/about-logo.png'))
         versionlabel = QLabel('''
             <style>
-                p {{
-                    font-family: 'Noto Sans', sans-serif; 
-                }}
                 b.label {{
+                    font-family: "Noto Sans", sans-serif;
                     font-size: 14px;
                     font-weight: 500;
                     color: {0};
                 }}
                 b.version {{
                     font-family: "Futura LT", sans-serif;
-                    font-weight: normal;
                     font-size: 16px;
+                    font-weight: normal;
                 }}
             </style>
             <b class="label">version:</b>&nbsp; <b class="version">{1}</b>
         '''.format('#EA95FF' if self.theme == 'dark' else '#441D4E', qApp.applicationVersion(), self))
+        if self.parent.parent.flatpak:
+            versionlabel.setText(versionlabel.text() + ' <span style="font-size:12px;">- FLATPAK</span>')
+            versionspacing = 75
+        else:
+            versionspacing = 95
         versionlabel.setAlignment(Qt.AlignBottom)
         versionlayout = QHBoxLayout()
         versionlayout.setSpacing(0)
         versionlayout.setContentsMargins(0, 0, 0, 0)
         versionlayout.addStretch(1)
         versionlayout.addWidget(versionlabel)
-        versionlayout.addSpacing(95)
+        versionlayout.addSpacing(versionspacing)
         headerlayout = QVBoxLayout()
         headerlayout.setSpacing(0)
         headerlayout.setContentsMargins(0, 0, 0, 0)
@@ -171,7 +174,7 @@ class AboutTab(BaseTab):
                         <p style="font-size:13px;">
                             Copyright &copy; %s <a href="mailto:%s">%s</a>
                             <br/>
-                            Website: <a href="%s">%s</a>
+                            <a href="%s">%s</a>
                         </p>
                         <p style="font-size:13px;">
                             Found a bug? You can <a href="%s">REPORT IT HERE</a>.
