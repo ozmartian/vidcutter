@@ -31,7 +31,7 @@ import sys
 import traceback
 
 from PyQt5.QtCore import (pyqtSlot, QCommandLineOption, QCommandLineParser, QDir, QFileInfo, QProcess,
-                          QSettings, QSize, QStandardPaths, QTimerEvent, Qt)
+                          QProcessEnvironment, QSettings, QSize, QStandardPaths, QTimerEvent, Qt)
 from PyQt5.QtGui import (QCloseEvent, QContextMenuEvent, QDragEnterEvent, QDropEvent, QGuiApplication, QMouseEvent, QResizeEvent,
                          qt_set_sequence_auto_mnemonic)
 from PyQt5.QtWidgets import qApp, QMainWindow, QMessageBox, QSizePolicy
@@ -231,18 +231,32 @@ class MainWindow(QMainWindow):
 
     @property
     def flatpak(self) -> bool:
-        xdg_config_dirs = os.getenv('XDG_CONFIG_DIRS', None)
-        xdg_data_dirs = os.getenv('XDG_DATA_DIRS', None)
-        if None in {xdg_config_dirs, xdg_data_dirs}:
+        sysenv = QProcessEnvironment.systemEnvironment()
+        config_dirs = sysenv.value('XDG_CONFIG_DIRS', None)
+        data_dirs = sysenv.value('XDG_DATA_DIRS', None)
+        if None in {config_dirs, data_dirs}:
             return False
-        return xdg_config_dirs.split(':')[0].startswith('/app/') and xdg_data_dirs.split(':')[0].startswith('/app/')
+        config_dirs = config_dirs.split(':')
+        data_dirs = data_dirs.split(':')
+        a, b = False, False
+        for d in config_dirs:
+            if d.startswith('/app/'):
+                a = True
+                break
+        for d in data_dirs:
+            if d.startswith('/app/'):
+                b = True
+                break
+        return a and b
 
     def get_app_config_path(self) -> str:
         if sys.platform.startswith('linux') and self.flatpak:
-            return os.path.join(os.getenv('XDG_CONFIG_HOME', None), qApp.applicationName().lower())
-        else:
-            return QStandardPaths.writableLocation(QStandardPaths.AppConfigLocation).replace(
-                qApp.applicationName(), qApp.applicationName().lower())
+            try:
+                return os.path.join(os.getenv('XDG_CONFIG_HOME', None), qApp.applicationName().lower())
+            except RuntimeError:
+                pass
+        return QStandardPaths.writableLocation(QStandardPaths.AppConfigLocation).replace(
+            qApp.applicationName(), qApp.applicationName().lower())
 
     @staticmethod
     def get_path(path: str=None, override: bool=False) -> str:

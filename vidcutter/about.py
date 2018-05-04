@@ -60,7 +60,7 @@ class About(QDialog):
                 b.version {{
                     font-family: "Futura LT", sans-serif;
                     font-size: 16px;
-                    font-weight: normal;
+                    font-weight: 600;
                 }}
             </style>
             <b class="label">version:</b>&nbsp; <b class="version">{1}</b>
@@ -86,6 +86,7 @@ class About(QDialog):
         self.tab_credits = CreditsTab(self)
         self.tab_license = LicenseTab(self)
         scrollarea = QScrollArea(self)
+        scrollarea.setStyleSheet('QScrollArea { background: transparent; }')
         scrollarea.setWidgetResizable(True)
         scrollarea.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         scrollarea.setFrameShape(QScrollArea.NoFrame)
@@ -129,7 +130,12 @@ class BaseTab(QLabel):
         else:
             bgcolor = 'rgba(255, 255, 255, 200)'    
             pencolor = '#000'
-        self.setStyleSheet('background-color: {bgcolor}; color: {pencolor}; padding: 8px;'.format(**locals()))
+        self.setStyleSheet('''
+            QLabel {{
+                background-color: {bgcolor};
+                color: {pencolor};
+                padding: 8px;
+            }}'''.format(**locals()))
 
 
 class AboutTab(BaseTab):
@@ -181,7 +187,7 @@ class AboutTab(BaseTab):
                         </p>
                     </td>
                     <td align="right" nowrap style="font-weight:500;font-size:13px;">
-                        <p>built using</p>
+                        <p><b>built using</b></p>
                         <p>
                             <a href="https://python.org" title="Python"><img src=":/images/python.png" /></a>
                             &nbsp;
