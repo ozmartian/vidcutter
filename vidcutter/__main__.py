@@ -31,7 +31,7 @@ import sys
 import traceback
 
 from PyQt5.QtCore import (pyqtSlot, QCommandLineOption, QCommandLineParser, QDir, QFileInfo, QProcess,
-                          QProcessEnvironment, QSettings, QSize, QStandardPaths, QTimerEvent, Qt)
+                          QSettings, QSize, QStandardPaths, QTimerEvent, Qt)
 from PyQt5.QtGui import (QCloseEvent, QContextMenuEvent, QDragEnterEvent, QDropEvent, QGuiApplication, QMouseEvent, QResizeEvent,
                          qt_set_sequence_auto_mnemonic)
 from PyQt5.QtWidgets import qApp, QMainWindow, QMessageBox, QSizePolicy
@@ -231,32 +231,14 @@ class MainWindow(QMainWindow):
 
     @property
     def flatpak(self) -> bool:
-        sysenv = QProcessEnvironment.systemEnvironment()
-        config_dirs = sysenv.value('XDG_CONFIG_DIRS', None)
-        data_dirs = sysenv.value('XDG_DATA_DIRS', None)
-        if None in {config_dirs, data_dirs}:
-            return False
-        config_dirs = config_dirs.split(':')
-        data_dirs = data_dirs.split(':')
-        a, b = False, False
-        for d in config_dirs:
-            if d.startswith('/app/'):
-                a = True
-                break
-        for d in data_dirs:
-            if d.startswith('/app/'):
-                b = True
-                break
-        return a and b
+        return sys.platform.startswith('linux') and QFileInfo(__file__).absolutePath().startswith('/app/')
 
     def get_app_config_path(self) -> str:
-        if sys.platform.startswith('linux') and self.flatpak:
-            try:
-                return os.path.join(os.getenv('XDG_CONFIG_HOME', None), qApp.applicationName().lower())
-            except RuntimeError:
-                pass
-        return QStandardPaths.writableLocation(QStandardPaths.AppConfigLocation).replace(
-            qApp.applicationName(), qApp.applicationName().lower())
+        if self.flatpak and os.getenv('XDG_CONFIG_HOME', None) is not None:
+            return os.path.join(os.getenv('XDG_CONFIG_HOME', ''), qApp.applicationName().lower())
+        else:
+            return QStandardPaths.writableLocation(QStandardPaths.AppConfigLocation).replace(
+                qApp.applicationName(), qApp.applicationName().lower())
 
     @staticmethod
     def get_path(path: str=None, override: bool=False) -> str:
@@ -265,7 +247,7 @@ class MainWindow(QMainWindow):
                 # noinspection PyProtectedMember, PyUnresolvedReferences
                 return os.path.join(sys._MEIPASS, path)
             return os.path.join(os.path.dirname(os.path.realpath(sys.argv[0])), path)
-        return ':%s' % path
+        return ':{}'.format(path)
 
     @pyqtSlot(str)
     def errorHandler(self, msg: str, title: str=None) -> None:
