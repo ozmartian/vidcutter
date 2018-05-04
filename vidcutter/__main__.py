@@ -116,8 +116,7 @@ class MainWindow(QMainWindow):
 
     def init_logger(self) -> None:
         try:
-            log_path = QStandardPaths.writableLocation(QStandardPaths.AppConfigLocation).replace(
-                qApp.applicationName(), qApp.applicationName().lower())
+            log_path = self.get_app_config_path()
         except AttributeError:
             if sys.platform == 'win32':
                 log_path = os.path.join(QDir.homePath(), 'AppData', 'Local', qApp.applicationName().lower())
@@ -145,8 +144,7 @@ class MainWindow(QMainWindow):
 
     def init_settings(self) -> None:
         try:
-            settings_path = QStandardPaths.writableLocation(QStandardPaths.AppConfigLocation).replace(
-                qApp.applicationName(), qApp.applicationName().lower())
+            settings_path = self.get_app_config_path()
         except AttributeError:
             if sys.platform == 'win32':
                 settings_path = os.path.join(QDir.homePath(), 'AppData', 'Local', qApp.applicationName().lower())
@@ -230,6 +228,22 @@ class MainWindow(QMainWindow):
             self.cutter.cliplist.setEnabled(True)
             qApp.restoreOverrideCursor()
         qApp.processEvents()
+
+    @property
+    def _flatpak(self) -> bool:
+        xdg_config_dirs = os.getenv('XDG_CONFIG_DIRS', None)
+        xdg_data_dirs = os.getenv('XDG_DATA_DIRS', None)
+        if None in {xdg_config_dirs, xdg_data_dirs}:
+            return False
+        return xdg_config_dirs.split(':')[0].startswith('/app/') and xdg_data_dirs.split(':')[0].startswith('/app/')
+
+    def get_app_config_path(self) -> str:
+        if sys.platform.startswith('linux') and self._flatpak:
+            return os.path.join(QDir.homePath(), '.var', 'app', vidcutter.__desktopid__, 'config',
+                qApp.applicationName().lower())
+        else:
+            return QStandardPaths.writableLocation(QStandardPaths.AppConfigLocation).replace(
+                qApp.applicationName(), qApp.applicationName().lower())
 
     @staticmethod
     def get_path(path: str=None, override: bool=False) -> str:
