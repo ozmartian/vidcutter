@@ -239,8 +239,7 @@ class MainWindow(QMainWindow):
 
     def get_app_config_path(self) -> str:
         if sys.platform.startswith('linux') and self._flatpak:
-            return os.path.join(QDir.homePath(), '.var', 'app', vidcutter.__desktopid__, 'config',
-                qApp.applicationName().lower())
+            return os.path.join(os.getenv('XDG_CONFIG_HOME', None), qApp.applicationName().lower())
         else:
             return QStandardPaths.writableLocation(QStandardPaths.AppConfigLocation).replace(
                 qApp.applicationName(), qApp.applicationName().lower())
