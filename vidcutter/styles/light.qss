@@ -143,7 +143,7 @@ QListView::item:selected#settingsmenu {
 /* -------------------------------------------------------------------------- */
 
 QLabel#runtimeLabel {
-    font-size: 10pt;
+    font-size: 10.5pt;
     color: #FFF;
     background: rgb(106, 69, 114) url(:images/runtime.png) no-repeat left center;
     padding: 2px 8px 2px 2px;
