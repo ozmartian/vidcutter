@@ -141,6 +141,8 @@ class MainWindow(QMainWindow):
                             level=logging.INFO)
         logging.captureWarnings(capture=True)
         sys.excepthook = MainWindow.log_uncaught_exceptions
+        if os.getenv('DEBUG', False):
+            logging.info('appconfig folder: {}'.format(log_path))
 
     def init_settings(self) -> None:
         try:

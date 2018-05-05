@@ -82,7 +82,6 @@ class VideoCutter(QWidget):
         self.projectDirty, self.projectSaved, self.debugonstart = False, False, False
         self.smartcut_monitor, self.notify = None, None
         self.fonts = []
-        self.firstrun = True
 
         self.fontdatabase = QFontDatabase()
         self.initTheme()
@@ -94,8 +93,6 @@ class VideoCutter(QWidget):
         self.sliderWidget.setLoader(True)
 
         self.taskbar = TaskbarProgress(self.parent)
-
-        self.latest_release_url = 'https://github.com/ozmartian/vidcutter/releases/latest'
 
         self.clipTimes = []
         self.inCut, self.newproject = False, False
@@ -266,24 +263,25 @@ class VideoCutter(QWidget):
         # noinspection PyArgumentList
         self.thumbnailsButton = QPushButton(self, flat=True, checkable=True, objectName='thumbnailsButton',
                                             statusTip='Toggle timeline thumbnails', cursor=Qt.PointingHandCursor,
-                                            toolTip='Toggle thumbnails', checked=self.timelineThumbs,
-                                            toggled=self.toggleThumbs)
+                                            toolTip='Toggle thumbnails', checked=self.timelineThumbs)
         self.thumbnailsButton.setFixedSize(32, 29 if self.theme == 'dark' else 31)
-        if not self.thumbnailsButton.isChecked():
+        self.thumbnailsButton.toggled.connect(self.toggleThumbs)
+        if self.timelineThumbs:
             self.seekSlider.setObjectName('nothumbs')
 
         # noinspection PyArgumentList
         self.osdButton = QPushButton(self, flat=True, checkable=True, objectName='osdButton', toolTip='Toggle OSD',
                                      statusTip='Toggle on-screen display', cursor=Qt.PointingHandCursor,
-                                     checked=self.enableOSD, toggled=self.toggleOSD)
+                                     checked=self.enableOSD)
         self.osdButton.setFixedSize(31, 29 if self.theme == 'dark' else 31)
+        self.osdButton.toggled.connect(self.toggleOSD)
 
         # noinspection PyArgumentList
         self.consoleButton = QPushButton(self, flat=True, checkable=True, objectName='consoleButton',
                                          statusTip='Toggle console window', toolTip='Toggle console',
-                                         cursor=Qt.PointingHandCursor, checked=self.showConsole,
-                                         toggled=self.toggleConsole)
+                                         cursor=Qt.PointingHandCursor, checked=self.showConsole)
         self.consoleButton.setFixedSize(31, 29 if self.theme == 'dark' else 31)
+        self.consoleButton.toggled.connect(self.toggleConsole)
         if self.showConsole:
             self.mpvWidget.setLogLevel('v')
             os.environ['DEBUG'] = '1'
@@ -291,17 +289,17 @@ class VideoCutter(QWidget):
 
         # noinspection PyArgumentList
         self.chaptersButton = QPushButton(self, flat=True, checkable=True, objectName='chaptersButton',
-                                          statusTip='Automatically create chapters per clip',
-                                          toolTip='Create chapters', cursor=Qt.PointingHandCursor,
-                                          checked=self.createChapters, toggled=self.toggleChapters)
+                                          statusTip='Automatically create chapters per clip', checked=self.createChapters,
+                                          toolTip='Create chapters', cursor=Qt.PointingHandCursor)
         self.chaptersButton.setFixedSize(31, 29 if self.theme == 'dark' else 31)
+        self.chaptersButton.toggled.connect(self.toggleChapters)
 
         # noinspection PyArgumentList
         self.smartcutButton = QPushButton(self, flat=True, checkable=True, objectName='smartcutButton',
                                           toolTip='Toggle SmartCut', statusTip='Toggle frame accurate cutting',
-                                          cursor=Qt.PointingHandCursor, checked=self.smartcut,
-                                          toggled=self.toggleSmartCut)
+                                          cursor=Qt.PointingHandCursor, checked=self.smartcut)
         self.smartcutButton.setFixedSize(32, 29 if self.theme == 'dark' else 31)
+        self.smartcutButton.toggled.connect(self.toggleSmartCut)
 
         # noinspection PyArgumentList
         self.muteButton = QPushButton(objectName='muteButton', icon=self.unmuteIcon, flat=True, toolTip='Mute',
@@ -437,7 +435,6 @@ class VideoCutter(QWidget):
 
         self.setLayout(layout)
         self.seekSlider.initStyle()
-        self.firstrun = False
 
     @pyqtSlot()
     def showAppMenu(self) -> None:
@@ -1055,18 +1052,17 @@ class VideoCutter(QWidget):
 
     @pyqtSlot(bool)
     def toggleThumbs(self, checked: bool) -> None:
-        if not self.firstrun:
-            self.seekSlider.showThumbs = checked
-            self.saveSetting('timelineThumbs', checked)
-            if checked:
-                self.showText('thumbnails enabled')
-                self.seekSlider.initStyle()
-                if self.mediaAvailable:
-                    self.seekSlider.reloadThumbs()
-            else:
-                self.showText('thumbnails disabled')
-                self.seekSlider.removeThumbs()
-                self.seekSlider.initStyle()
+        self.seekSlider.showThumbs = checked
+        self.saveSetting('timelineThumbs', checked)
+        if checked:
+            self.showText('thumbnails enabled')
+            self.seekSlider.initStyle()
+            if self.mediaAvailable:
+                self.seekSlider.reloadThumbs()
+        else:
+            self.showText('thumbnails disabled')
+            self.seekSlider.removeThumbs()
+            self.seekSlider.initStyle()
 
     @pyqtSlot(bool)
     def toggleConsole(self, checked: bool) -> None:
@@ -1085,26 +1081,25 @@ class VideoCutter(QWidget):
 
     @pyqtSlot(bool)
     def toggleChapters(self, checked: bool) -> None:
-        if not self.firstrun:
-            self.createChapters = checked
-            self.saveSetting('chapters', self.createChapters)
-            self.chaptersButton.setChecked(self.createChapters)
-            self.showText('chapters {}'.format('enabled' if checked else 'disabled'))
-            if checked:
-                exist = False
-                for clip in self.clipTimes:
-                    if clip[4] is not None:
-                        exist = True
-                        break
-                if exist:
-                    chapterswarn = VCMessageBox('Question', 'Chapter names previously set',
-                                                'Would you like to restore chapter names? Saying no will reset names '
-                                                'to default values', buttons=QMessageBox.Yes | QMessageBox.No,
-                                                parent=self)
-                    if chapterswarn.exec_() == QMessageBox.No:
-                        for clip in self.clipTimes:
-                            clip[4] = None
-            self.renderClipIndex()
+        self.createChapters = checked
+        self.saveSetting('chapters', self.createChapters)
+        self.chaptersButton.setChecked(self.createChapters)
+        self.showText('chapters {}'.format('enabled' if checked else 'disabled'))
+        if checked:
+            exist = False
+            for clip in self.clipTimes:
+                if clip[4] is not None:
+                    exist = True
+                    break
+            if exist:
+                chapterswarn = VCMessageBox('Question', 'Chapter names previously set',
+                                            'Would you like to restore chapter names? Saying no will reset names '
+                                            'to default values', buttons=QMessageBox.Yes | QMessageBox.No,
+                                            parent=self)
+                if chapterswarn.exec_() == QMessageBox.No:
+                    for clip in self.clipTimes:
+                        clip[4] = None
+        self.renderClipIndex()
 
     @pyqtSlot(bool)
     def toggleSmartCut(self, checked: bool) -> None:
