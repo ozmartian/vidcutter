@@ -31,7 +31,7 @@ import sys
 import traceback
 
 from PyQt5.QtCore import (pyqtSlot, QCommandLineOption, QCommandLineParser, QDir, QFileInfo, QProcess,
-                          QSettings, QSize, QStandardPaths, QTimerEvent, Qt)
+                          QProcessEnvironment, QSettings, QSize, QStandardPaths, QTimerEvent, Qt)
 from PyQt5.QtGui import (QCloseEvent, QContextMenuEvent, QDragEnterEvent, QDropEvent, QGuiApplication, QMouseEvent, QResizeEvent,
                          qt_set_sequence_auto_mnemonic)
 from PyQt5.QtWidgets import qApp, QMainWindow, QMessageBox, QSizePolicy
@@ -154,7 +154,7 @@ class MainWindow(QMainWindow):
             else:
                 settings_path = os.path.join(QDir.homePath(), '.config', qApp.applicationName().lower())
         os.makedirs(settings_path, exist_ok=True)
-        settings_file = '%s.ini' % qApp.applicationName().lower()
+        settings_file = '{}.ini'.format(qApp.applicationName().lower())
         self.settings = QSettings(os.path.join(settings_path, settings_file), QSettings.IniFormat)
         if self.settings.value('geometry') is not None:
             self.restoreGeometry(self.settings.value('geometry'))
@@ -234,11 +234,14 @@ class MainWindow(QMainWindow):
         return sys.platform.startswith('linux') and QFileInfo(__file__).absolutePath().startswith('/app/')
 
     def get_app_config_path(self) -> str:
-        if self.flatpak and os.getenv('XDG_CONFIG_HOME', None) is not None:
-            return os.path.join(os.getenv('XDG_CONFIG_HOME', ''), qApp.applicationName().lower())
-        else:
-            return QStandardPaths.writableLocation(QStandardPaths.AppConfigLocation).replace(
-                qApp.applicationName(), qApp.applicationName().lower())
+        if self.flatpak:
+            confpath = QProcessEnvironment.systemEnvironment().value('XDG_CONFIG_HOME', '')
+            if len(confpath):
+                return confpath
+            else:
+                return os.path.join(QDir.homePath(), '.var', 'app', vidcutter.__desktopid__, 'config')
+        return QStandardPaths.writableLocation(QStandardPaths.AppConfigLocation).replace(
+            qApp.applicationName(), qApp.applicationName().lower())
 
     @staticmethod
     def get_path(path: str=None, override: bool=False) -> str:
