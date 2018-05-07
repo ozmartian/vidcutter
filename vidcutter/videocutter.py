@@ -115,15 +115,6 @@ class VideoCutter(QWidget):
         self.verboseLogs = self.parent.verboseLogs
         self.lastFolder = self.settings.value('lastFolder', QDir.homePath(), type=str)
 
-        if os.getenv('DEBUG', False):
-            print('''
-        self.showConsole = {0}
-        self.enableOSD = {1}
-        self.timelineThumbs = {2}
-        self.createChapters = {3}
-        self.smartcut = {4}
-        '''.format(self.showConsole, self.enableOSD, self.timelineThumbs, self.createChapters, self.smartcut))
-
         self.videoService = VideoService(self.settings, self)
         self.videoService.progress.connect(self.seekSlider.updateProgress)
         self.videoService.finished.connect(self.smartmonitor)
