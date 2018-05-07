@@ -57,8 +57,8 @@ from vidcutter.libs.munch import Munch
 from vidcutter.libs.notifications import JobCompleteNotification
 from vidcutter.libs.taskbarprogress import TaskbarProgress
 from vidcutter.libs.videoservice import VideoService
-from vidcutter.libs.widgets import (ClipErrorsDialog, VCBlinkText, VCFilterMenuAction, VCFrameCounter, VCMessageBox,
-                                    VCProgressDialog, VCTimeCounter, VCToolBarButton, VCVolumeSlider, VCInputDialog)
+from vidcutter.libs.widgets import (ClipErrorsDialog, VCBlinkText, VCFilterMenuAction, VCFrameCounter, VCInputDialog,
+                                    VCMessageBox, VCProgressDialog, VCTimeCounter, VCToolBarButton, VCVolumeSlider)
 
 import vidcutter
 
@@ -83,7 +83,6 @@ class VideoCutter(QWidget):
         self.smartcut_monitor, self.notify = None, None
         self.fonts = []
 
-        self.fontdatabase = QFontDatabase()
         self.initTheme()
         self.updater = Updater(self.parent)
 
@@ -115,6 +114,15 @@ class VideoCutter(QWidget):
         self.level2Seek = self.settings.value('level2Seek', 5, type=float)
         self.verboseLogs = self.parent.verboseLogs
         self.lastFolder = self.settings.value('lastFolder', QDir.homePath(), type=str)
+
+        if os.getenv('DEBUG', False):
+            print('''
+        self.showConsole = {0}
+        self.enableOSD = {1}
+        self.timelineThumbs = {2}
+        self.createChapters = {3}
+        self.smartcut = {4}
+        '''.format(self.showConsole, self.enableOSD, self.timelineThumbs, self.createChapters, self.smartcut))
 
         self.videoService = VideoService(self.settings, self)
         self.videoService.progress.connect(self.seekSlider.updateProgress)
@@ -263,24 +271,26 @@ class VideoCutter(QWidget):
         # noinspection PyArgumentList
         self.thumbnailsButton = QPushButton(self, flat=True, checkable=True, objectName='thumbnailsButton',
                                             statusTip='Toggle timeline thumbnails', cursor=Qt.PointingHandCursor,
-                                            toolTip='Toggle thumbnails', checked=self.timelineThumbs)
+                                            toolTip='Toggle thumbnails')
         self.thumbnailsButton.setFixedSize(32, 29 if self.theme == 'dark' else 31)
+        self.thumbnailsButton.setChecked(self.timelineThumbs)
         self.thumbnailsButton.toggled.connect(self.toggleThumbs)
         if self.timelineThumbs:
             self.seekSlider.setObjectName('nothumbs')
 
         # noinspection PyArgumentList
         self.osdButton = QPushButton(self, flat=True, checkable=True, objectName='osdButton', toolTip='Toggle OSD',
-                                     statusTip='Toggle on-screen display', cursor=Qt.PointingHandCursor,
-                                     checked=self.enableOSD)
+                                     statusTip='Toggle on-screen display', cursor=Qt.PointingHandCursor)
         self.osdButton.setFixedSize(31, 29 if self.theme == 'dark' else 31)
+        self.osdButton.setChecked(self.enableOSD)
         self.osdButton.toggled.connect(self.toggleOSD)
 
         # noinspection PyArgumentList
         self.consoleButton = QPushButton(self, flat=True, checkable=True, objectName='consoleButton',
                                          statusTip='Toggle console window', toolTip='Toggle console',
-                                         cursor=Qt.PointingHandCursor, checked=self.showConsole)
+                                         cursor=Qt.PointingHandCursor)
         self.consoleButton.setFixedSize(31, 29 if self.theme == 'dark' else 31)
+        self.consoleButton.setChecked(self.showConsole)
         self.consoleButton.toggled.connect(self.toggleConsole)
         if self.showConsole:
             self.mpvWidget.setLogLevel('v')
@@ -289,16 +299,18 @@ class VideoCutter(QWidget):
 
         # noinspection PyArgumentList
         self.chaptersButton = QPushButton(self, flat=True, checkable=True, objectName='chaptersButton',
-                                          statusTip='Automatically create chapters per clip', checked=self.createChapters,
-                                          toolTip='Create chapters', cursor=Qt.PointingHandCursor)
+                                          statusTip='Automatically create chapters per clip', toolTip='Create chapters',
+                                          cursor=Qt.PointingHandCursor)
         self.chaptersButton.setFixedSize(31, 29 if self.theme == 'dark' else 31)
+        self.chaptersButton.setChecked(self.createChapters)
         self.chaptersButton.toggled.connect(self.toggleChapters)
 
         # noinspection PyArgumentList
         self.smartcutButton = QPushButton(self, flat=True, checkable=True, objectName='smartcutButton',
                                           toolTip='Toggle SmartCut', statusTip='Toggle frame accurate cutting',
-                                          cursor=Qt.PointingHandCursor, checked=self.smartcut)
+                                          cursor=Qt.PointingHandCursor)
         self.smartcutButton.setFixedSize(32, 29 if self.theme == 'dark' else 31)
+        self.smartcutButton.setChecked(self.smartcut)
         self.smartcutButton.toggled.connect(self.toggleSmartCut)
 
         # noinspection PyArgumentList
@@ -446,9 +458,9 @@ class VideoCutter(QWidget):
     def initTheme(self) -> None:
         qApp.setStyle(VideoStyleDark() if self.theme == 'dark' else VideoStyleLight())
         self.fonts = [
-            self.fontdatabase.addApplicationFont(':/fonts/FuturaLT.ttf'),
-            self.fontdatabase.addApplicationFont(':/fonts/NotoSans-Bold.ttf'),
-            self.fontdatabase.addApplicationFont(':/fonts/NotoSans-Regular.ttf')
+            QFontDatabase.addApplicationFont(':/fonts/FuturaLT.ttf'),
+            QFontDatabase.addApplicationFont(':/fonts/NotoSans-Bold.ttf'),
+            QFontDatabase.addApplicationFont(':/fonts/NotoSans-Regular.ttf')
         ]
         self.style().loadQSS(self.theme)
         QApplication.setFont(QFont('Noto Sans', 12 if sys.platform == 'darwin' else 10, 300))
@@ -1591,7 +1603,8 @@ class VideoCutter(QWidget):
 
     @property
     def _osdfont(self) -> str:
-        return 'DejaVu Sans' if 'DejaVu Sans' in self.fontdatabase.families(QFontDatabase.Latin) else 'Noto Sans'
+        fontdb = QFontDatabase()
+        return 'DejaVu Sans' if 'DejaVu Sans' in fontdb.families(QFontDatabase.Latin) else 'Noto Sans'
 
     def doPass(self) -> None:
         pass
