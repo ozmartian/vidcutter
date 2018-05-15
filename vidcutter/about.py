@@ -26,7 +26,7 @@ import logging
 import sys
 from datetime import datetime
 
-from PyQt5.Qt import PYQT_VERSION_STR, QT_VERSION_STR
+from PyQt5.Qt import PYQT_VERSION_STR
 from PyQt5.QtCore import QFile, QObject, QSize, QTextStream, Qt
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import (QDialog, QDialogButtonBox, QHBoxLayout, QLabel, QScrollArea, QSizePolicy, QStyleFactory,
@@ -91,9 +91,9 @@ class About(QDialog):
         scrollarea.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         scrollarea.setFrameShape(QScrollArea.NoFrame)
         scrollarea.setWidget(self.tab_license)
-        if sys.platform in {'win32', 'darwin'}:
-            scrollarea.setStyle(QStyleFactory.create('Fusion'))
         tabs = QTabWidget()
+        if sys.platform in {'win32', 'darwin'}:
+            tabs.setStyle(QStyleFactory.create('Fusion'))
         tabs.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         tabs.addTab(self.tab_about, 'About')
         tabs.addTab(self.tab_credits, 'Credits')
@@ -111,7 +111,7 @@ class About(QDialog):
     def sizeHint(self) -> QSize:
         modes = {
             'LOW': QSize(450, 300),
-            'NORMAL': QSize(500, 485),
+            'NORMAL': QSize(500, 490),
             'HIGH': QSize(1080, 920)
         }
         return modes[self.parent.parentWidget().scale]
@@ -138,27 +138,36 @@ class BaseTab(QLabel):
             }}'''.format(**locals()))
 
 
+# noinspection PyBroadException
 class AboutTab(BaseTab):
     def __init__(self, parent):
         super(AboutTab, self).__init__(parent)
         self.parent = parent
-        spacer = '&nbsp;&nbsp;&nbsp;'
-        # noinspection PyBroadException
+        missing = '<span style="color:maroon; font-weight:bold;">MISSING</span>'
         try:
             mpv_version = self.parent.mpv_service.version()
         except Exception:
             self.parent.logger.exception('mpv version error', exc_info=True)
-            mpv_version = '<span style="color:maroon; font-weight:bold;">MISSING</span>'
-        # noinspection PyBroadException
+            mpv_version = missing
         try:
             ffmpeg_version = self.parent.ffmpeg_service.version()
         except Exception:
             self.parent.logger.exception('ffmpeg version error', exc_info=True)
-            ffmpeg_version = '<span style="color:maroon; font-weight:bold;">MISSING</span>'
-        html = '''
+            ffmpeg_version = missing
+        linkcolor = '#EA95FF' if self.parent.theme == 'dark' else '#441D4E'
+        python_version = sys.version.split(' ')[0]
+        pyqt_version = PYQT_VERSION_STR
+        year = datetime.now().year
+        mailto = vidcutter.__email__
+        author = vidcutter.__author__
+        website = vidcutter.__website__
+        bugreport = vidcutter.__bugreport__
+        self.setText('''
 <style>
-    table { width: 100%%; font-family: "Noto Sans", sans-serif; background-color: transparent; }
-    a { color: %s; text-decoration: none; font-weight: bold; }
+    table {{ width:100%; font-family:"Noto Sans", sans-serif; background-color:transparent; }}
+    td.label {{ font-size:13px; font-weight:bold; text-align:right; }}
+    td.value {{ color:#444; font-family:"Futura LT"; font-size:12px; font-weight:600; vertical-align:bottom; }}
+    a {{ color: {linkcolor}; text-decoration:none; font-weight:bold; }}
 </style>
 <table border="0" cellpadding="0" cellspacing="4">
     <tr>
@@ -166,24 +175,33 @@ class AboutTab(BaseTab):
             <table border="0" cellpadding="0" cellspacing="0">
                 <tr valign="top">
                     <td>
+                        <table cellpadding="2" cellspacing="0" border="0">
+                            <tr>
+                                <td width="50" rowspan="2">&nbsp;</td>
+                                <td class="label">libmpv:</td>
+                                <td class="value">{mpv_version}</td>
+                                <td width="35" rowspan="2">&nbsp;</td>
+                                <td class="label">PyQt:</td>
+                                <td class="value">{pyqt_version}</td>
+                            </tr>
+                            <tr>
+                                <td class="label">FFmpeg:</td>
+                                <td class="value">{ffmpeg_version}</td>
+                                <td class="label">Python:</td>
+                                <td class="value">{python_version}</td>
+                            </tr>
+                        </table>
                         <p style="font-size:13px;">
-                            <b>libmpv:</b> %s
-                            %s
-                            <b>FFmpeg:</b> %s
+                            <img src=":/images/copyright.png" style="vertical-align:bottom;" />
+                            &nbsp;
+                            Copyright {year} <a href="mailto:{mailto}">{author}</a>
                             <br/>
-                            <b>Python:</b> %s
-                            &nbsp;&nbsp;&nbsp;
-                            <b>Qt:</b> %s
-                            &nbsp;&nbsp;&nbsp;
-                            <b>PyQt:</b> %s
+                            <img src=":/images/home.png" style="vertical-align:bottom;" />
+                            &nbsp;
+                            <a href="{website}">{website}</a>
                         </p>
                         <p style="font-size:13px;">
-                            Copyright &copy; %s <a href="mailto:%s">%s</a>
-                            <br/>
-                            <a href="%s">%s</a>
-                        </p>
-                        <p style="font-size:13px;">
-                            Found a bug? You can <a href="%s">REPORT IT HERE</a>.
+                            Found a bug? You can <a href="{bugreport}">REPORT IT HERE</a>.
                         </p>
                     </td>
                     <td align="right" nowrap style="font-weight:500;font-size:13px;">
@@ -192,7 +210,7 @@ class AboutTab(BaseTab):
                             <a href="https://python.org" title="Python"><img src=":/images/python.png" /></a>
                             &nbsp;
                             <a href="https://qt.io" title="Qt5"><img src=":/images/qt.png" /></a>
-                            <br/>
+                            <br/><br/>
                             <a href="https://www.jetbrains.com/pycharm" title="PyCharm Professional">
                                 <img src=":/images/pycharm.png" />
                             </a>
@@ -217,11 +235,7 @@ class AboutTab(BaseTab):
             </p>
         </td>
     </tr>
-</table>''' % ('#EA95FF' if self.parent.theme == 'dark' else '#441D4E',
-               mpv_version, spacer, ffmpeg_version, sys.version.split(' ')[0], QT_VERSION_STR,
-               PYQT_VERSION_STR, datetime.now().year, vidcutter.__email__, vidcutter.__author__,
-               vidcutter.__website__, vidcutter.__website__, vidcutter.__bugreport__)
-        self.setText(html)
+</table>'''.format(**locals()))
 
 
 class CreditsTab(BaseTab):

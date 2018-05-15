@@ -11,6 +11,7 @@
         <file>images/blackdetect.png</file>
         <file>images/chapters.png</file>
         <file>images/complete-play.png</file>
+        <file>images/copyright.png</file>
         <file>images/dialog-backdrop.png</file>
         <file>images/dialog-backdrop-02.png</file>
         <file>images/down.png</file>
@@ -25,6 +26,7 @@
         <file>images/handle-select.png</file>
         <file>images/handle-nothumbs.png</file>
         <file>images/handle-nothumbs-select.png</file>
+        <file>images/home.png</file>
         <file>images/info.png</file>
         <file>images/keymap.png</file>
         <file>images/open.png</file>
