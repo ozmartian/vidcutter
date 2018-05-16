@@ -155,7 +155,7 @@ class AboutTab(BaseTab):
         except Exception:
             self.parent.logger.exception('ffmpeg version error', exc_info=True)
             ffmpeg_version = missing
-        pencolor = '#FAFAFA' if self.parent.theme == 'dark' else '#444'
+        pencolor = '#FAFAFA' if self.parent.theme == 'dark' else '#222'
         linkcolor = '#EA95FF' if self.parent.theme == 'dark' else '#441D4E'
         python_version = sys.version.split(' ')[0]
         pyqt_version = PYQT_VERSION_STR
@@ -168,7 +168,7 @@ class AboutTab(BaseTab):
 <style>
     table {{ width:100%; font-family:"Noto Sans", sans-serif; background-color:transparent; }}
     td.label {{ font-size:13px; font-weight:bold; text-align:right; }}
-    td.value {{ color:{pencolor}; font-weight:500; font-family:"Futura LT", sans-serif; font-size:12.5px; vertical-align:bottom; }}
+    td.value {{ color:{pencolor}; font-weight:600; font-family:"Futura LT", sans-serif; font-size:12.5px; vertical-align:bottom; }}
     a {{ color: {linkcolor}; text-decoration:none; font-weight:bold; }}
 </style>
 <table border="0" cellpadding="0" cellspacing="4">
