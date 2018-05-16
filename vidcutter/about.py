@@ -86,14 +86,14 @@ class About(QDialog):
         self.tab_credits = CreditsTab(self)
         self.tab_license = LicenseTab(self)
         scrollarea = QScrollArea(self)
-        scrollarea.setStyleSheet('QScrollArea { background: transparent; }')
+        scrollarea.setStyleSheet('QScrollArea { background:transparent; }')
         scrollarea.setWidgetResizable(True)
         scrollarea.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         scrollarea.setFrameShape(QScrollArea.NoFrame)
         scrollarea.setWidget(self.tab_license)
-        tabs = QTabWidget()
         if sys.platform in {'win32', 'darwin'}:
-            tabs.setStyle(QStyleFactory.create('Fusion'))
+            scrollarea.setStyle(QStyleFactory.create('Fusion'))
+        tabs = QTabWidget()
         tabs.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         tabs.addTab(self.tab_about, 'About')
         tabs.addTab(self.tab_credits, 'Credits')
@@ -151,6 +151,7 @@ class AboutTab(BaseTab):
             mpv_version = missing
         try:
             ffmpeg_version = self.parent.ffmpeg_service.version()
+            ffmpeg_version = '-'.join(ffmpeg_version.split('-')[0:2])
         except Exception:
             self.parent.logger.exception('ffmpeg version error', exc_info=True)
             ffmpeg_version = missing
@@ -166,7 +167,7 @@ class AboutTab(BaseTab):
 <style>
     table {{ width:100%; font-family:"Noto Sans", sans-serif; background-color:transparent; }}
     td.label {{ font-size:13px; font-weight:bold; text-align:right; }}
-    td.value {{ color:#444; font-family:"Futura LT"; font-size:12px; font-weight:600; vertical-align:bottom; }}
+    td.value {{ font-weight:500; font-family:"Futura LT", sans-serif; font-size:12.5px; vertical-align:bottom; }}
     a {{ color: {linkcolor}; text-decoration:none; font-weight:bold; }}
 </style>
 <table border="0" cellpadding="0" cellspacing="4">
@@ -177,7 +178,6 @@ class AboutTab(BaseTab):
                     <td>
                         <table cellpadding="2" cellspacing="0" border="0">
                             <tr>
-                                <td width="50" rowspan="2">&nbsp;</td>
                                 <td class="label">libmpv:</td>
                                 <td class="value">{mpv_version}</td>
                                 <td width="35" rowspan="2">&nbsp;</td>
