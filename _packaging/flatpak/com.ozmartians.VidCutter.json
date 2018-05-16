@@ -269,51 +269,39 @@
     },
     {
         "name": "mediainfo",
-        "cleanup": ["/include", "/lib/pkgconfig", "/share"],
         "subdir": "Project/GNU/CLI",
         "sources": [
         {
-            "type": "archive",
-            "url": "https://mediaarea.net/download/source/mediainfo/18.03.1/mediainfo_18.03.1.tar.xz",
-            "sha256": "79664c356d4f09dc32105810aacf60923f6edcc6bec4836589962bc3375efcd6"
+            "type": "git",
+            "url": "https://github.com/MediaArea/MediaInfo.git"
         }],
         "modules": [
         {
-            "name": "libmms",
-            "config-opts": ["--disable-static"],
-            "sources": [
-            {
-                "type": "archive",
-                "url": "https://download.sourceforge.net/libmms/libmms-0.6.4.tar.gz",
-                "sha256": "3c05e05aebcbfcc044d9e8c2d4646cd8359be39a3f0ba8ce4e72a9094bee704f"
-            }]
-        },
-        {
             "name": "libzen",
-            "config-opts": ["--enable-shared"],
+            "cleanup": ["/bin", "/include", "/lib/pkgconfig"],
             "subdir": "Project/GNU/Library",
+            "config-opts": [
+                "--enable-shared",
+                "--disable-static"
+            ],
             "sources": [
             {
-                "type": "archive",
-                "url": "https://mediaarea.net/download/source/libzen/0.4.37/libzen_0.4.37.tar.xz",
-                "sha256": "401c34d93056a95f8392982f856d1371c5de6aec373d84dcbb356e1f473d0452"
+                "type": "git",
+                "url": "https://github.com/MediaArea/ZenLib.git"
             }]
         },
         {
             "name": "libmediainfo",
-            "config-opts": [
-                "--disable-static",
-                "--enable-shared",
-                "--disable-static",
-                "--with-libcurl",
-                "--with-libmms"
-            ],
+            "cleanup": ["/bin", "/include", "/lib/pkgconfig"],
             "subdir": "Project/GNU/Library",
+            "config-opts": [
+                "--enable-shared",
+                "--disable-static"
+            ],
             "sources": [
             {
-                "type": "archive",
-                "url": "https://mediaarea.net/download/source/libmediainfo/18.03.1/libmediainfo_18.03.1.tar.xz",
-                "sha256": "0243365f53299997bc04dfa065de9b3f1688b6eeb450a7f57e740504cd626fa0"
+                "type": "git",
+                "url": "https://github.com/MediaArea/MediaInfoLib.git"
             }]
         }]
     },
@@ -327,7 +315,7 @@
         {
             "type": "git",
             "branch": "flatpak",
-            "commit": "8b6f7a4a2a0b9756f5a57d6f63fc40db60b78de0",
+            "commit": "7b8741e5fff90e969c5186e12bab6d09459e7928",
             "url": "https://github.com/ozmartian/vidcutter.git"
         }]
     }]

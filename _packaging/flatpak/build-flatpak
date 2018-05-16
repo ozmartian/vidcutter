@@ -2,6 +2,7 @@
 
 flatpak-builder -v \
 	--force-clean \
+	--disable-rofiles-fuse \
 	--ccache \
 	--repo=repo \
 	--subject="Build of com.ozmartians.VidCutter `date`" \
