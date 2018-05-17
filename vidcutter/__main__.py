@@ -356,7 +356,7 @@ class MainWindow(QMainWindow):
             except AttributeError:
                 pass
         try:
-            qApp.quit()
+            qApp.exit(0)
         except MPVError:
             pass
 
