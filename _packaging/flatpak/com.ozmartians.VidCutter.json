@@ -235,6 +235,7 @@
                 ],
                 "sources": [{
                     "type": "git",
+                    "commit": "e9a5903edf8ca59ef20e6f4894c196f135af735e",
                     "url": "https://git.videolan.org/git/x264.git"
                 }]
             },
