@@ -72,7 +72,7 @@ class Notification(QDialog):
     @property
     def message(self):
         return self._message
-    
+
     @message.setter
     def message(self, value):
         self.msgLabel.setText(value)

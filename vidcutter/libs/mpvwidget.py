@@ -73,7 +73,7 @@ class mpvWidget(QOpenGLWidget):
         self.option('config', 'no')
 
         def _istr(o):
-            return ('yes' if o else 'no') if type(o) is bool else str(o)
+            return ('yes' if o else 'no') if isinstance(o, bool) else str(o)
 
         # do not break on non-existant properties/options
         for opt, val in mpv_opts.items():
@@ -218,7 +218,7 @@ class mpvWidget(QOpenGLWidget):
         return '{0}.{1}'.format(ver[0], ver[1])
 
     def option(self, option: str, val):
-        if type(val) is bool:
+        if isinstance(val, bool):
             val = 'yes' if val else 'no'
         return self.mpv.set_option(option, val)
 
@@ -226,7 +226,7 @@ class mpvWidget(QOpenGLWidget):
         if val is None:
             return self.mpv.get_property(prop)
         else:
-            if type(val) is bool:
+            if isinstance(val, bool):
                 val = 'yes' if val else 'no'
             return self.mpv.set_property(prop, val)
 

@@ -639,7 +639,7 @@ class VideoCutter(QWidget):
         left = self.videoLayout.takeAt(0)
         spacer = self.videoLayout.takeAt(0)
         right = self.videoLayout.takeAt(0)
-        if type(left) is QVBoxLayout:
+        if isinstance(left, QVBoxLayout):
             if self.indexLayout == 'left':
                 self.videoLayout.addItem(left)
                 self.videoLayout.addItem(spacer)
@@ -1293,7 +1293,7 @@ class VideoCutter(QWidget):
 
     @staticmethod
     def delta2QTime(msecs: Union[float, int]) -> QTime:
-        if type(msecs) is float:
+        if isinstance(msecs, float):
             msecs = round(msecs * 1000)
         t = QTime(0, 0)
         return t.addMSecs(msecs)
