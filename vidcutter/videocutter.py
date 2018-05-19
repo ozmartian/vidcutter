@@ -639,7 +639,7 @@ class VideoCutter(QWidget):
         left = self.videoLayout.takeAt(0)
         spacer = self.videoLayout.takeAt(0)
         right = self.videoLayout.takeAt(0)
-        if type(left) == QVBoxLayout:
+        if type(left) is QVBoxLayout:
             if self.indexLayout == 'left':
                 self.videoLayout.addItem(left)
                 self.videoLayout.addItem(spacer)
