@@ -136,6 +136,5 @@ class cached_property(object):
         self._f = f
 
     def __get__(self, obj, owner):
-        assert obj is not None, 'call {} on an instance'.format(self._funcname)
         ret = obj.__dict__[self._funcname] = self._f(obj)
         return ret

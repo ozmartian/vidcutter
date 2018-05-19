@@ -81,7 +81,6 @@ class mpvWidget(QOpenGLWidget):
                 self.option(opt.replace('_', '-'), _istr(val))
             except mpv.MPVError:
                 self.logger.warning('error setting MPV option "%s" to value "%s"' % (opt, val))
-                pass
 
         self.mpv.initialize()
 
