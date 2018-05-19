@@ -32,18 +32,18 @@ import traceback
 
 from PyQt5.QtCore import (pyqtSlot, QCommandLineOption, QCommandLineParser, QDir, QFileInfo, QProcess,
                           QProcessEnvironment, QSettings, QSize, QStandardPaths, QTimerEvent, Qt)
-from PyQt5.QtGui import (QCloseEvent, QContextMenuEvent, QDragEnterEvent, QDropEvent, QGuiApplication, QMouseEvent, QResizeEvent,
-                         qt_set_sequence_auto_mnemonic)
+from PyQt5.QtGui import (QCloseEvent, QContextMenuEvent, QDragEnterEvent, QDropEvent, QGuiApplication, QMouseEvent,
+                         QResizeEvent, qt_set_sequence_auto_mnemonic)
 from PyQt5.QtWidgets import qApp, QMainWindow, QMessageBox, QSizePolicy
 
 from vidcutter.videoconsole import ConsoleHandler, ConsoleWidget, VideoLogger
 from vidcutter.videocutter import VideoCutter
 
-from vidcutter.libs.mpv import MPVError
 from vidcutter.libs.singleapplication import SingleApplication
 from vidcutter.libs.widgets import VCMessageBox
 
 import vidcutter
+import vidcutter.libs.mpv as mpv
 
 if sys.platform == 'win32':
     from vidcutter.libs.taskbarprogress import TaskbarProgress
@@ -357,7 +357,7 @@ class MainWindow(QMainWindow):
                 pass
         try:
             qApp.exit(0)
-        except MPVError:
+        except mpv.MPVError:
             pass
 
 

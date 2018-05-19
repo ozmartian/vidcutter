@@ -32,6 +32,8 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import (QDialog, QDialogButtonBox, QHBoxLayout, QLabel, QScrollArea, QSizePolicy, QStyleFactory,
                              QTabWidget, QVBoxLayout, QWidget, qApp)
 
+from vidcutter.libs.config import cached_property
+
 import vidcutter
 
 
@@ -143,20 +145,11 @@ class AboutTab(BaseTab):
     def __init__(self, parent):
         super(AboutTab, self).__init__(parent)
         self.parent = parent
-        missing = '<span style="color:maroon; font-weight:bold;">MISSING</span>'
-        try:
-            mpv_version = self.parent.mpv_service.version()
-        except Exception:
-            self.parent.logger.exception('mpv version error', exc_info=True)
-            mpv_version = missing
-        try:
-            ffmpeg_version = self.parent.ffmpeg_service.version()
-            ffmpeg_version = '-'.join(ffmpeg_version.split('-')[0:2])
-        except Exception:
-            self.parent.logger.exception('ffmpeg version error', exc_info=True)
-            ffmpeg_version = missing
+        self.missing = '<span style="color:maroon; font-weight:bold;">MISSING</span>'
         pencolor = '#FAFAFA' if self.parent.theme == 'dark' else '#222'
         linkcolor = '#EA95FF' if self.parent.theme == 'dark' else '#441D4E'
+        mpv_version = self.mpv_version
+        ffmpeg_version = self.ffmpeg_version
         python_version = sys.version.split(' ')[0]
         pyqt_version = PYQT_VERSION_STR
         year = datetime.now().year
@@ -168,7 +161,13 @@ class AboutTab(BaseTab):
 <style>
     table {{ width:100%; font-family:"Noto Sans", sans-serif; background-color:transparent; }}
     td.label {{ font-size:13px; font-weight:bold; text-align:right; }}
-    td.value {{ color:{pencolor}; font-weight:600; font-family:"Futura LT", sans-serif; font-size:12.5px; vertical-align:bottom; }}
+    td.value {{
+        color: {pencolor};
+        font-weight: 600;
+        font-family: "Futura LT", sans-serif;
+        font-size: 12.5px;
+        vertical-align: bottom;
+    }}
     a {{ color: {linkcolor}; text-decoration:none; font-weight:bold; }}
 </style>
 <table border="0" cellpadding="0" cellspacing="4">
@@ -237,6 +236,23 @@ class AboutTab(BaseTab):
         </td>
     </tr>
 </table>'''.format(**locals()))
+
+    @cached_property
+    def mpv_version(self) -> str:
+        try:
+            return self.parent.mpv_service.version()
+        except Exception:
+            self.parent.logger.exception('mpv version error', exc_info=True)
+            return self.missing
+
+    @cached_property
+    def ffmpeg_version(self) -> str:
+        try:
+            v = self.parent.ffmpeg_service.version()
+            return '-'.join(v.split('-')[0:2])
+        except Exception:
+            self.parent.logger.exception('ffmpeg version error', exc_info=True)
+            return self.missing
 
 
 class CreditsTab(BaseTab):

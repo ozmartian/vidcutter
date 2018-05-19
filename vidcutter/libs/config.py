@@ -128,3 +128,14 @@ class InvalidMediaException(VidCutterException):
 class ToolNotFoundException(VidCutterException):
     def __init__(self, msg: str=None):
         super(ToolNotFoundException, self).__init__(msg)
+
+
+class cached_property(object):
+    def __init__(self, f):
+        self._funcname = f.__name__
+        self._f = f
+
+    def __get__(self, obj, owner):
+        assert obj is not None, 'call {} on an instance'.format(self._funcname)
+        ret = obj.__dict__[self._funcname] = self._f(obj)
+        return ret
