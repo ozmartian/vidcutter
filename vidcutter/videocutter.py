@@ -832,7 +832,7 @@ class VideoCutter(QWidget):
                     else:
                         mo = self.edlblock_re.match(line)
                         if mo:
-                            start, stop, action, chapter = mo.groups()
+                            start, stop, _, chapter = mo.groups()
                             clip_start = self.delta2QTime(float(start))
                             clip_end = self.delta2QTime(float(stop))
                             clip_image = self.captureImage(self.currentMedia, clip_start)
@@ -859,15 +859,17 @@ class VideoCutter(QWidget):
         if self.currentMedia is None:
             return
         if self.hasExternals():
+            h2color = '#C681D5' if self.theme == 'dark' else '#642C68'
+            acolor = '#EA95FF' if self.theme == 'dark' else '#441D4E'
             nosavetext = '''
                 <style>
                     h2 {{
-                        color: {0};
+                        color: {h2color};
                         font-family: "Futura LT", sans-serif;
                         font-weight: normal;
                     }}
                     a {{
-                        color: {1};
+                        color: {acolor};
                         text-decoration: none;
                         font-weight: bold;
                     }}
@@ -882,9 +884,7 @@ class VideoCutter(QWidget):
                             all media files you have externally added and try again.</p>
                         </td>
                     </tr>
-                </table>'''.format('#C681D5' if self.theme == 'dark' else '#642C68',
-                                   '#EA95FF' if self.theme == 'dark' else '#441D4E',
-                                   vidcutter.__bugreport__)
+                </table>'''.format(**locals())
             nosave = QMessageBox(QMessageBox.Critical, 'Cannot save project', nosavetext, parent=self.parent)
             nosave.setStandardButtons(QMessageBox.Ok)
             nosave.exec_()
@@ -1035,7 +1035,7 @@ class VideoCutter(QWidget):
                 self.seekSlider.selectRegion(row)
                 self.setPosition(self.clipTimes[row][0].msecsSinceStartOfDay())
         except Exception:
-            pass
+            self.doPass()
 
     def muteAudio(self) -> None:
         if self.mpvWidget.property('mute'):
