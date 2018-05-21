@@ -12,7 +12,7 @@
 [![Screenshot 3](https://cdn.rawgit.com/ozmartian/vidcutter/gh-pages/images/vidcutter-03-thumb.png)](https://cdn.rawgit.com/ozmartian/vidcutter/gh-pages/images/vidcutter-03.png) 
 [![Screenshot 4](https://cdn.rawgit.com/ozmartian/vidcutter/gh-pages/images/vidcutter-04-thumb.png)](https://cdn.rawgit.com/ozmartian/vidcutter/gh-pages/images/vidcutter-04.png)
 
-### VidCutter Flatpak Now Available!
+### VidCutter 6 released on Flathub!
 
 VidCutter is now available as a flatpak at [Flathub](https://www.flathub.org) and is the most reliable option for Linux. All dependencies come bundled with it, including the very latest stable releases of mpv, FFmpeg, MediaInfo and associated codec libraries. Most linux distribution sofware centres like Plasma Discover and GNOME/Ubuntu Software are able to be expanded to also support searching and installinf flatpaks from Flathub too. Unlike other packaged versions of VidCutter, the flatpak is purpose-built from the ground up with all dependencies built from source and containing only what the app requires resulting in a noticeably smaller total package file size.
 
