@@ -16,7 +16,7 @@
 
 VidCutter is now available as a flatpak at [Flathub](https://www.flathub.org) and is the most reliable option for Linux. All dependencies come bundled with it, including the very latest stable releases of mpv, FFmpeg, MediaInfo and associated codec libraries. Most linux distribution sofware centres like Plasma Discover and GNOME/Ubuntu Software are able to be expanded to also support searching and installinf flatpaks from Flathub too. Unlike other packaged versions of VidCutter, the flatpak is purpose-built from the ground up with all dependencies built from source and containing only what the app requires resulting in a noticeably smaller total package file size.
 
-The flatpak is also an exclusive early release of upcoming version 6 which should be released across all platforms and usual channels in a few days so checkout the flatpak if you want an earlier peak.
+The flatpak is also an exclusive early release of upcoming version 6 which should be released across all platforms and usual channels towards the end of May so checkout the flatpak if you want an earlier peak.
 
 Click the icon below for VidCutter's page @ Flathub:
 
