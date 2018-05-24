@@ -1,5 +1,7 @@
+%global pkgname com.ozmartians.VidCutter
+
 Name:           vidcutter
-Version:        5.5.0
+Version:        6.0.0
 Release:        0
 Summary:        the simplest + fastest video cutter & joiner
 License:        GPL-3.0+
@@ -53,7 +55,6 @@ Requires:		python3-qt5-core
 Requires:		python3-qt5-dbus
 Requires:		python3-qt5-gui
 Requires:		python3-qt5-network
-Requires:		python3-qt5-opengl
 Requires:		python3-qt5-widgets
 Requires:		python3-qt5-x11extras
 %else
@@ -62,7 +63,6 @@ Requires:		python3-qt5-core
 Requires:		python3-qt5-dbus
 Requires:		python3-qt5-gui
 Requires:		python3-qt5-network
-Requires:		python3-qt5-opengl
 Requires:		python3-qt5-widgets
 Requires:		python3-qt5-x11extras
 %endif
@@ -103,19 +103,18 @@ python3 setup.py install --root %{buildroot}
 %{_bindir}/%{name}
 %{python3_sitearch}/%{name}-%{version}-py*.egg-info/
 %{python3_sitearch}/%{name}/
-%{_datadir}/icons/hicolor/16x16/apps/%{name}.png
-%{_datadir}/icons/hicolor/22x22/apps/%{name}.png
-%{_datadir}/icons/hicolor/24x24/apps/%{name}.png
-%{_datadir}/icons/hicolor/32x32/apps/%{name}.png
-%{_datadir}/icons/hicolor/48x48/apps/%{name}.png
-%{_datadir}/icons/hicolor/64x64/apps/%{name}.png
-%{_datadir}/icons/hicolor/128x128/apps/%{name}.png
-%{_datadir}/icons/hicolor/256x256/apps/%{name}.png
-%{_datadir}/icons/hicolor/512x512/apps/%{name}.png
-%{_datadir}/icons/hicolor/scalable/apps/%{name}.svg
-%{_datadir}/applications/com.ozmartians.%{name}.desktop
-%{_datadir}/metainfo/com.ozmartians.%{name}.appdata.xml
-%{_datadir}/mime/packages/x-%{name}.xml
-%{_datadir}/mime/packages/wtv.xml
+%{_datadir}/icons/hicolor/16x16/apps/%{pkgname}.png
+%{_datadir}/icons/hicolor/22x22/apps/%{pkgname}.png
+%{_datadir}/icons/hicolor/24x24/apps/%{pkgname}.png
+%{_datadir}/icons/hicolor/32x32/apps/%{pkgname}.png
+%{_datadir}/icons/hicolor/48x48/apps/%{pkgname}.png
+%{_datadir}/icons/hicolor/64x64/apps/%{pkgname}.png
+%{_datadir}/icons/hicolor/128x128/apps/%{pkgname}.png
+%{_datadir}/icons/hicolor/256x256/apps/%{pkgname}.png
+%{_datadir}/icons/hicolor/512x512/apps/%{pkgname}.png
+%{_datadir}/icons/hicolor/scalable/apps/%{pkgname}.svg
+%{_datadir}/applications/%{pkgname}.desktop
+%{_datadir}/metainfo/%{pkgname}.appdata.xml
+%{_datadir}/mime/packages/%{pkgname}.xml
 
 %changelog

@@ -1,9 +1,10 @@
 # Maintained by app author Pete Alexandrou <pete AT ozmartians DOT com>
 %global pkg_name vidcutter
+%global pkgname com.ozmartians.VidCutter
 
 Name:           %{pkg_name}
-Version:        5.5.0
-Release:        2%{?dist}
+Version:        6.0.0
+Release:        0%{?dist}
 Summary:        the simplest + fastest video cutter & joiner
 Group:          Applications/Multimedia
 License:        GPLv3+
@@ -47,20 +48,20 @@ rm -rf %{pkg_name}.egg-info
 %{python3_sitearch}/%{pkg_name}
 %{python3_sitearch}/%{pkg_name}-%{version}-py?.?.egg-info
 %{_bindir}/%{pkg_name}
-%{_datadir}/applications/com.ozmartians.%{pkg_name}.desktop
-%{_datadir}/icons/hicolor/16x16/apps/%{pkg_name}.png
-%{_datadir}/icons/hicolor/128x128/apps/%{pkg_name}.png
-%{_datadir}/icons/hicolor/22x22/apps/%{pkg_name}.png
-%{_datadir}/icons/hicolor/24x24/apps/%{pkg_name}.png
-%{_datadir}/icons/hicolor/256x256/apps/%{pkg_name}.png
-%{_datadir}/icons/hicolor/32x32/apps/%{pkg_name}.png
-%{_datadir}/icons/hicolor/48x48/apps/%{pkg_name}.png
-%{_datadir}/icons/hicolor/512x512/apps/%{pkg_name}.png
-%{_datadir}/icons/hicolor/64x64/apps/%{pkg_name}.png
-%{_datadir}/icons/hicolor/scalable/apps/%{pkg_name}.svg
-%{_datadir}/metainfo/com.ozmartians.%{pkg_name}.appdata.xml
-%{_datadir}/mime/packages/x-%{pkg_name}.xml
-%{_datadir}/mime/packages/wtv.xml
+%{_datadir}/applications/%{pkgname}.desktop
+%{_datadir}/icons/hicolor/16x16/apps/%{pkgname}.png
+%{_datadir}/icons/hicolor/22x22/apps/%{pkgname}.png
+%{_datadir}/icons/hicolor/24x24/apps/%{pkgname}.png
+%{_datadir}/icons/hicolor/32x32/apps/%{pkgname}.png
+%{_datadir}/icons/hicolor/48x48/apps/%{pkgname}.png
+%{_datadir}/icons/hicolor/64x64/apps/%{pkgname}.png
+%{_datadir}/icons/hicolor/128x128/apps/%{pkgname}.png
+%{_datadir}/icons/hicolor/256x256/apps/%{pkgname}.png
+%{_datadir}/icons/hicolor/512x512/apps/%{pkgname}.png
+%{_datadir}/icons/hicolor/scalable/apps/%{pkgname}.svg
+%{_datadir}/metainfo/%{pkgname}.appdata.xml
+%{_datadir}/mime/packages/%{pkgname}.xml
+
 
 %changelog
 * Mon Feb 05 2018 Pete Alexandrou <pete AT ozmartians DOT com> 5.5.0-2

@@ -31,7 +31,7 @@ script:
   - wget https://bootstrap.pypa.io/get-pip.py
   - usr/bin/python3.6 ./get-pip.py
   - rm ./get-pip.py
-  - usr/bin/python3.6 -m pip install -t usr/lib/python3/dist-packages pyqt5 pyopengl
+  - usr/bin/python3.6 -m pip install -t usr/lib/python3/dist-packages PyQt5 PyOpenGL PyOpenGL-accelerate simplejson
   - find usr/lib/python3/dist-packages/PyQt5 -name "*Qt*WebEngine*" | xargs rm -rf
   - rm -rf usr/lib/python3/dist-packages/PyQt5/Qt/plugins/audio
   - rm -rf usr/lib/python3/dist-packages/PyQt5/Qt/plugins/gamepads

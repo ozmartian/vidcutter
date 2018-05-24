@@ -61,8 +61,9 @@ parts:
             - ffmpeg
             - mediainfo
         python-packages:
-            - pyqt5
-            - pyopengl
+            - PyQt5
+            - PyOpenGL
+            - PyOpenGL-accelerate
             - simplejson
         install: |
             rm ${SNAPCRAFT_PART_INSTALL}/lib/python3.5/site-packages/PyQt5/Qt/lib/libQt5WebEngineCore.so.5
