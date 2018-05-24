@@ -12,10 +12,10 @@ ingredients:
     # - ubuntu-toolchain-r/test
     - deadsnakes/ppa
   packages:
-    - gcc-7-base
-    - libstdc++6
-    - libgcc1
-    - libisl15
+    # - gcc-7-base
+    # - libstdc++6
+    # - libgcc1
+    # - libisl15
     - libmpv-dev
     - libmpv1
     - ffmpeg
