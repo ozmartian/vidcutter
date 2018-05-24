@@ -96,7 +96,7 @@ class VCTimeCounter(QWidget):
         self.timeedit.setFrame(False)
         self.timeedit.setDisplayFormat('hh:mm:ss.zzz')
         self.timeedit.timeChanged.connect(self.timeChangeHandler)
-        self.timeedit.setSelectedSection(QTimeEdit.MSecSection)
+        self.timeedit.setCurrentSectionIndex(3)
         separator = QLabel('/')
         separator.setObjectName('timeSeparator')
         self.duration = QLabel('00:00:00.000')

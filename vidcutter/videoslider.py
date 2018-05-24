@@ -90,7 +90,6 @@ class VideoSlider(QSlider):
         self.valueChanged.connect(self.on_valueChanged)
         self.rangeChanged.connect(self.on_rangeChanged)
         self.installEventFilter(self)
-        self.setFocus()
 
     def initStyle(self) -> None:
         bground = 'rgba(200, 213, 236, 0.85)' if self._cutStarted else 'transparent'

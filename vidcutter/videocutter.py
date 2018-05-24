@@ -946,6 +946,7 @@ class VideoCutter(QWidget):
             self.mediaAvailable = True
         try:
             self.videoService.setMedia(self.currentMedia)
+            self.seekSlider.setFocus()
             self.mpvWidget.play(self.currentMedia)
         except InvalidMediaException:
             qApp.restoreOverrideCursor()
