@@ -9,12 +9,10 @@ ingredients:
   ppas:
     - mc3man/testing6
     - jonathonf/ffmpeg-3
-    - ubuntu-toolchain-r/test
+    # - ubuntu-toolchain-r/test
     - deadsnakes/ppa
   packages:
     - gcc-7-base
-    - python3.6-dev
-    - libpython3.6-dev
     - libstdc++6
     - libgcc1
     - libisl15
