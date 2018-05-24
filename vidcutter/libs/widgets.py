@@ -96,6 +96,7 @@ class VCTimeCounter(QWidget):
         self.timeedit.setFrame(False)
         self.timeedit.setDisplayFormat('hh:mm:ss.zzz')
         self.timeedit.timeChanged.connect(self.timeChangeHandler)
+        self.timeedit.setSelectedSection(QTimeEdit.MSecSection)
         separator = QLabel('/')
         separator.setObjectName('timeSeparator')
         self.duration = QLabel('00:00:00.000')
@@ -132,9 +133,7 @@ class VCTimeCounter(QWidget):
         self.timeedit.clearFocus()
 
     def hasFocus(self) -> bool:
-        if self.timeedit.hasFocus():
-            return True
-        return super(VCTimeCounter, self).hasFocus()
+        return self.timeedit.hasFocus()
 
     def reset(self) -> None:
         self.timeedit.setTime(QTime(0, 0))
@@ -193,9 +192,7 @@ class VCFrameCounter(QWidget):
         self.setMaximum(count)
 
     def hasFocus(self) -> bool:
-        if self.currentframe.hasFocus():
-            return True
-        return super(VCFrameCounter, self).hasFocus()
+        return self.currentframe.hasFocus()
 
     def clearFocus(self) -> None:
         self.currentframe.clearFocus()

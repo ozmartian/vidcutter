@@ -99,7 +99,7 @@ class SingleApplication(QApplication):
     def activationWindow(self):
         return self._activationWindow
 
-    def setActivationWindow(self, activationWindow, activateOnMessage = True):
+    def setActivationWindow(self, activationWindow, activateOnMessage=True):
         self._activationWindow = activationWindow
         self._activateOnMessage = activateOnMessage
 

@@ -89,7 +89,7 @@ class StreamSelector(QDialog):
                                                     width=self.streams.video.width,
                                                     height=self.streams.video.height,
                                                     framerate='{0:.2f}'.format(framerate),
-                                                    ratio=ratio,
+                                                    ratio='{0:.2f}'.format(ratio),
                                                     pixfmt=self.streams.video.pix_fmt), self)
         label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         videolayout = QHBoxLayout()

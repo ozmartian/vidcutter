@@ -27,29 +27,14 @@ import logging
 import os
 import sys
 
-import vidcutter.libs.mpv as mpv
-
-if sys.platform.startswith('linux'):
-    # noinspection PyBroadException, PyUnresolvedReferences
-    try:
-        import vidcutter.libs.distro as distro
-        if distro.id().lower() in {'ubuntu', 'fedora'}:
-            from OpenGL import GL
-    except BaseException:
-        pass
+# noinspection PyUnresolvedReferences
+from OpenGL import GL, GLUT
 
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QEvent, QTimer
 from PyQt5.QtGui import QKeyEvent, QMouseEvent, QWheelEvent
-from PyQt5.QtOpenGL import QGLContext
 from PyQt5.QtWidgets import QOpenGLWidget
 
-
-def get_proc_address(name):
-    glctx = QGLContext.currentContext()
-    if glctx is None:
-        return 0
-    res = glctx.getProcAddress(name.decode())
-    return res.__int__()
+import vidcutter.libs.mpv as mpv
 
 
 class mpvWidget(QOpenGLWidget):
@@ -65,6 +50,8 @@ class mpvWidget(QOpenGLWidget):
         self.originalParent = None
         self.logger = logging.getLogger(__name__)
         locale.setlocale(locale.LC_NUMERIC, 'C')
+
+        GLUT.glutInit([])
 
         self.mpv = mpv.Context()
 
@@ -124,7 +111,7 @@ class mpvWidget(QOpenGLWidget):
 
     def initializeGL(self):
         if self.opengl:
-            self.opengl.init_gl(None, get_proc_address)
+            self.opengl.init_gl(None, GLUT.glutGetProcAddress)
             if self.filename is not None:
                 self.initialized.emit(self.filename)
 

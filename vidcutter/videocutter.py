@@ -134,7 +134,7 @@ class VideoCutter(QWidget):
 
         self.cliplist = VideoList(self)
         self.cliplist.customContextMenuRequested.connect(self.itemMenu)
-        self.cliplist.itemClicked.connect(self.selectClip)
+        self.cliplist.currentItemChanged.connect(self.selectClip)
         self.cliplist.model().rowsInserted.connect(lambda: self.setProjectDirty(True))
         self.cliplist.model().rowsRemoved.connect(lambda: self.setProjectDirty(True))
         self.cliplist.model().rowsMoved.connect(lambda: self.setProjectDirty(True))

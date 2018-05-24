@@ -85,6 +85,7 @@ class VideoList(QListWidget):
         if self.count() > 0:
             modelindex = self.indexAt(event.pos())
             if modelindex.isValid():
+                # data = modelindex.data(Qt.UserRole + 3)
                 self.setCursor(Qt.PointingHandCursor)
             else:
                 self.setCursor(Qt.ArrowCursor)
@@ -108,10 +109,6 @@ class VideoItem(QStyledItemDelegate):
     def __init__(self, parent: VideoList=None):
         super(VideoItem, self).__init__(parent)
         self.parent = parent
-        self.chapterFont = QFont()
-        self.chapterFont.setFamily('Futura LT')
-        self.chapterFont.setPointSizeF(12.5 if sys.platform == 'darwin' else 10.5)
-        self.chapterFont.setWeight(QFont.Medium)
         self.theme = self.parent.theme
 
     def paint(self, painter: QPainter, option: QStyleOptionViewItem, index: QModelIndex) -> None:
@@ -137,7 +134,9 @@ class VideoItem(QStyledItemDelegate):
         if len(chapterName):
             offset = 20
             r = option.rect.adjusted(5, 5, 0, 0)
-            painter.setFont(self.chapterFont)
+            cfont = QFont('Futura LT', -1, QFont.Medium)
+            cfont.setPointSizeF(12.25 if sys.platform == 'darwin' else 10.25)
+            painter.setFont(cfont)
             painter.drawText(r, Qt.AlignLeft, self.clipText(chapterName, painter, True))
             r = option.rect.adjusted(5, offset, 0, 0)
         else:
