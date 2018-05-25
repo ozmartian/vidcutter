@@ -117,6 +117,7 @@ class mpvWidget(QOpenGLWidget):
 
     def paintGL(self):
         if self.opengl:
+            GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
             self.opengl.draw(self.defaultFramebufferObject(), self.width(), -self.height())
 
     @pyqtSlot()

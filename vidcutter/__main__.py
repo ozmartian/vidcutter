@@ -33,7 +33,7 @@ import traceback
 from PyQt5.QtCore import (pyqtSlot, QCommandLineOption, QCommandLineParser, QDir, QFileInfo, QProcess,
                           QProcessEnvironment, QSettings, QSize, QStandardPaths, QTimerEvent, Qt)
 from PyQt5.QtGui import (QCloseEvent, QContextMenuEvent, QDragEnterEvent, QDropEvent, QGuiApplication, QMouseEvent,
-                         QResizeEvent, qt_set_sequence_auto_mnemonic)
+                         QResizeEvent, QSurfaceFormat, qt_set_sequence_auto_mnemonic)
 from PyQt5.QtWidgets import qApp, QMainWindow, QMessageBox, QSizePolicy
 
 from vidcutter.videoconsole import ConsoleHandler, ConsoleWidget, VideoLogger
@@ -363,6 +363,10 @@ class MainWindow(QMainWindow):
 
 def main():
     qt_set_sequence_auto_mnemonic(False)
+
+    fmt = QSurfaceFormat()
+    fmt.setDepthBufferSize(24)
+    QSurfaceFormat.setDefaultFormat(fmt)
 
     if hasattr(Qt, 'AA_EnableHighDpiScaling'):
         QGuiApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
