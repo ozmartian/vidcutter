@@ -16,8 +16,6 @@ ingredients:
     - ffmpeg
     - mediainfo
     - openssl
-    - freeglut3
-    - libglu1-mesa
 
 script:
   - umask 022

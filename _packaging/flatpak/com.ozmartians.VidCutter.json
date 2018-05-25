@@ -42,30 +42,6 @@
             "type": "archive",
             "url": "https://pypi.python.org/packages/9c/1d/4544708aaa89f26c97cc09450bb333a23724a320923e74d73e028b3560f9/PyOpenGL-3.1.0.tar.gz",
             "sha256": "9b47c5c3a094fa518ca88aeed35ae75834d53e4285512c61879f67a48c94ddaf"
-        }],
-        "modules": [{
-            "name": "freeglut",
-            "buildsystem": "simple",
-            "build-commands": [
-                "mkdir build",
-                "cd build && cmake .. -DCMAKE_INSTALL_PREFIX=${FLATPAK_DEST} -DCMAKE_BUILD_TYPE=Release -DFREEGLUT_BUILD_SHARED_LIBS=ON -DFREEGLUT_BUILD_STATIC_LIBS=OFF",
-                "cd build && make",
-                "cd build && make install"
-            ],
-            "sources": [{
-                "type": "archive",
-                "url": "https://downloads.sourceforge.net/freeglut/freeglut-3.0.0.tar.gz",
-                "sha256": "2a43be8515b01ea82bcfa17d29ae0d40bd128342f0930cd1f375f1ff999f76a2"
-            }],
-            "modules": [{
-                "name": "glu",
-                "config-opts": ["--disable-static"],
-                "sources": [{
-                    "type": "archive",
-                    "url": "https://mesa.freedesktop.org/archive/glu/glu-9.0.0.tar.bz2",
-                    "sha256": "1f7ad0d379a722fcbd303aa5650c6d7d5544fde83196b42a73d1193568a4df12"
-                }]
-            }]
         }]
     },
     {

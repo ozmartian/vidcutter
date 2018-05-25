@@ -50,10 +50,10 @@ def getProcAddress(proc: bytes) -> int:
         return _ctx.getProcAddress(proc.decode()).__int__()
     else:
         # noinspection PyUnresolvedReferences
-        _glx = platform.PLATFORM.getExtensionProcedure
-        _glx.argtypes = [c_char_p]
-        _glx.restype = c_void_p
-        return _glx(proc)
+        _getProcAddress = platform.PLATFORM.getExtensionProcedure
+        _getProcAddress.argtypes = [c_char_p]
+        _getProcAddress.restype = c_void_p
+        return _getProcAddress(proc)
 
 
 class mpvWidget(QOpenGLWidget):
