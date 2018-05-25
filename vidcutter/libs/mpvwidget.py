@@ -27,14 +27,33 @@ import logging
 import os
 import sys
 
-# noinspection PyUnresolvedReferences
-from OpenGL import GL, GLUT
+from OpenGL import GL
+
+if sys.platform == 'win32':
+    from PyQt5.QtOpenGL import QGLContext
+else:
+    from OpenGL import platform
+    from ctypes import c_char_p, c_void_p
 
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QEvent, QTimer
 from PyQt5.QtGui import QKeyEvent, QMouseEvent, QWheelEvent
 from PyQt5.QtWidgets import QOpenGLWidget
 
 import vidcutter.libs.mpv as mpv
+
+
+def getProcAddress(proc: bytes) -> int:
+    if sys.platform == 'win32':
+        _ctx = QGLContext.currentContext()
+        if _ctx is None:
+            return 0
+        return _ctx.getProcAddress(proc.decode()).__int__()
+    else:
+        # noinspection PyUnresolvedReferences
+        _glx = platform.PLATFORM.getExtensionProcedure
+        _glx.argtypes = [c_char_p]
+        _glx.restype = c_void_p
+        return _glx(proc)
 
 
 class mpvWidget(QOpenGLWidget):
@@ -50,8 +69,6 @@ class mpvWidget(QOpenGLWidget):
         self.originalParent = None
         self.logger = logging.getLogger(__name__)
         locale.setlocale(locale.LC_NUMERIC, 'C')
-
-        GLUT.glutInit([])
 
         self.mpv = mpv.Context()
 
@@ -111,7 +128,7 @@ class mpvWidget(QOpenGLWidget):
 
     def initializeGL(self):
         if self.opengl:
-            self.opengl.init_gl(None, GLUT.glutGetProcAddress)
+            self.opengl.init_gl(None, getProcAddress)
             if self.filename is not None:
                 self.initialized.emit(self.filename)
 
@@ -171,7 +188,7 @@ class mpvWidget(QOpenGLWidget):
     def showText(self, msg: str, duration: int=5, level: int=0):
         self.mpv.command('show-text', msg, duration * 1000, level)
 
-    @pyqtSlot(str)
+    @pyqtSlot(str, name='ewewf', )
     def play(self, filepath) -> None:
         if os.path.isfile(filepath):
             self.mpv.command('loadfile', filepath, 'replace')
