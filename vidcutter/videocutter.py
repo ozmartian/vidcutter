@@ -1532,9 +1532,8 @@ class VideoCutter(QWidget):
 
     @pyqtSlot()
     def aboutApp(self) -> None:
-        if not hasattr(self, 'appinfo'):
-            self.appinfo = About(self.videoService, self.mpvWidget, self)
-        self.appinfo.exec_()
+        about = About(self.videoService, self.mpvWidget, self)
+        about.exec_()
 
     @staticmethod
     def getAppIcon(encoded: bool = False):

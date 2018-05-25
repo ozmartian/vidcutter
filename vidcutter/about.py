@@ -249,7 +249,7 @@ class AboutTab(BaseTab):
     def ffmpeg_version(self) -> str:
         try:
             v = self.parent.ffmpeg_service.version()
-            return '-'.join(v.split('-')[0:2])
+            return '-'.join(v.replace('~', '-').split('-')[0:2])
         except Exception:
             self.parent.logger.exception('ffmpeg version error', exc_info=True)
             return self.missing
