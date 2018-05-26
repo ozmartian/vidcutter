@@ -31,8 +31,10 @@ from OpenGL import GL
 
 if sys.platform == 'win32':
     from PyQt5.QtOpenGL import QGLContext
+elif sys.platform == 'darwin':
+    from OpenGL.GLUT import glutGetProcAddress
 else:
-    from OpenGL import platform
+    from OpenGL.platform import PLATFORM
     from ctypes import c_char_p, c_void_p
 
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QEvent, QTimer
@@ -47,13 +49,17 @@ def getProcAddress(proc: bytes) -> int:
         _ctx = QGLContext.currentContext()
         if _ctx is None:
             return 0
-        return _ctx.getProcAddress(proc.decode()).__int__()
+        _gpa = (_ctx.getProcAddress, proc.decode())
+        # return _ctx.getProcAddress(proc.decode()).__int__()
+    elif sys.platform == 'darwin':
+        _gpa = (glutGetProcAddress, proc)
     else:
         # noinspection PyUnresolvedReferences
-        _getProcAddress = platform.PLATFORM.getExtensionProcedure
+        _getProcAddress = PLATFORM.getExtensionProcedure
         _getProcAddress.argtypes = [c_char_p]
         _getProcAddress.restype = c_void_p
-        return _getProcAddress(proc)
+        _gpa = (_getProcAddress, proc)
+    return _gpa[0](_gpa[1]).__int__()
 
 
 class mpvWidget(QOpenGLWidget):

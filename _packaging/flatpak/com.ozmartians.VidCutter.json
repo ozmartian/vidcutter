@@ -1,7 +1,7 @@
 {
     "app-id": "com.ozmartians.VidCutter",
     "runtime": "org.kde.Platform",
-    "runtime-version": "5.10",
+    "runtime-version": "5.11",
     "sdk": "org.kde.Sdk",
     "command": "vidcutter",
     "finish-args": [
@@ -346,7 +346,7 @@
         "sources": [{
             "type": "git",
             "branch": "flatpak",
-            "commit": "0fe9dcaa2c0335fa435ccad80047bc2e3208f14d",
+            "commit": "41ee449453b0c2022ef442d0cbf1eff364d570a3",
             "url": "https://github.com/ozmartian/vidcutter.git"
         }]
     }]
