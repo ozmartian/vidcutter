@@ -28,14 +28,15 @@ import re
 import sys
 import time
 from datetime import timedelta
+from functools import partial
 from typing import List, Union
 
 from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QBuffer, QByteArray, QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize,
                           Qt, QTextStream, QTime, QTimer, QUrl)
 from PyQt5.QtGui import QDesktopServices, QFont, QFontDatabase, QIcon, QKeyEvent, QPixmap, QShowEvent
-from PyQt5.QtWidgets import (QAction, qApp, QApplication, QFileDialog, QFrame, QGroupBox, QHBoxLayout, QInputDialog,
-                             QLabel, QListWidgetItem, QMainWindow, QMenu, QMessageBox, QPushButton, QSizePolicy,
-                             QStyleFactory, QVBoxLayout, QWidget)
+from PyQt5.QtWidgets import (QAction, qApp, QApplication, QDialog, QFileDialog, QFrame, QGroupBox, QHBoxLayout, QLabel,
+                             QListWidgetItem, QMainWindow, QMenu, QMessageBox, QPushButton, QSizePolicy, QStyleFactory,
+                             QVBoxLayout, QWidget)
 
 import sip
 
@@ -57,8 +58,9 @@ from vidcutter.libs.munch import Munch
 from vidcutter.libs.notifications import JobCompleteNotification
 from vidcutter.libs.taskbarprogress import TaskbarProgress
 from vidcutter.libs.videoservice import VideoService
-from vidcutter.libs.widgets import (ClipErrorsDialog, VCBlinkText, VCFilterMenuAction, VCFrameCounter, VCInputDialog,
-                                    VCMessageBox, VCProgressDialog, VCTimeCounter, VCToolBarButton, VCVolumeSlider)
+from vidcutter.libs.widgets import (ClipErrorsDialog, VCBlinkText, VCDoubleInputDialog, VCFilterMenuAction,
+                                    VCFrameCounter, VCInputDialog, VCMessageBox, VCProgressDialog, VCTimeCounter,
+                                    VCToolBarButton, VCVolumeSlider)
 
 import vidcutter
 
@@ -577,10 +579,10 @@ class VideoCutter(QWidget):
                                                     'Useful for skipping commercials or detecting scene transitions',
                                                     self)
         if sys.platform == 'darwin':
-            self.blackdetectAction.triggered.connect(lambda: self.startFilter(VideoFilter.BLACKDETECT),
+            self.blackdetectAction.triggered.connect(lambda: self.configFilters(VideoFilter.BLACKDETECT),
                                                      Qt.QueuedConnection)
         else:
-            self.blackdetectAction.triggered.connect(lambda: self.startFilter(VideoFilter.BLACKDETECT),
+            self.blackdetectAction.triggered.connect(lambda: self.configFilters(VideoFilter.BLACKDETECT),
                                                      Qt.DirectConnection)
         self.blackdetectAction.setEnabled(False)
         menu.setIcon(self.filtersIcon)
@@ -1123,24 +1125,26 @@ class VideoCutter(QWidget):
         self.filterProgressBar.done(VCProgressDialog.Accepted)
 
     @pyqtSlot(VideoFilter)
-    def startFilter(self, name: VideoFilter) -> None:
+    def configFilters(self, name: VideoFilter) -> None:
         if name == VideoFilter.BLACKDETECT:
-            try:
-                min_duration, confirmed = QInputDialog.getDouble(self, 'Filter Settings',
-                                                                 'Minimum duration for black scenes (in seconds)',
-                                                                 self.filter_settings.blackdetect.default_duration,
-                                                                 self.filter_settings.blackdetect.min_duration, 999.9,
-                                                                 1, Qt.Dialog | Qt.WindowCloseButtonHint, 0.1)
-            except TypeError:
-                min_duration, confirmed = QInputDialog.getDouble(self, 'Filter Settings',
-                                                                 'Minimum duration for black scenes (in seconds)',
-                                                                 self.filter_settings.blackdetect.default_duration,
-                                                                 self.filter_settings.blackdetect.min_duration, 999.9,
-                                                                 1, Qt.Dialog | Qt.WindowCloseButtonHint)
-            if confirmed:
-                self.parent.lock_gui(True)
-                self.filterProgress('detecting scenes (press ESC to cancel)')
-                self.videoService.blackdetect(min_duration)
+            d = VCDoubleInputDialog(self, 'Filter settings', 'Minimum duration for black scenes:',
+                                    self.filter_settings.blackdetect.default_duration,
+                                    self.filter_settings.blackdetect.min_duration, 999.9, 1, 0.1, 'secs')
+            d.okbutton.accepted.connect(lambda: self.startFilters('detecting scenes (press ESC to cancel)',
+                                                                  partial(self.videoService.blackdetect, d.value), d))
+            d.exec_()
+
+    @pyqtSlot(str, partial, QDialog)
+    def startFilters(self, progress_text: str, filter_func: partial, config_dialog: QDialog) -> None:
+        config_dialog.close()
+        self.parent.lock_gui(True)
+        self.filterProgress(progress_text)
+        filter_func()
+
+    @pyqtSlot()
+    def stopFilters(self) -> None:
+        self.videoService.killFilterProc()
+        self.parent.lock_gui(False)
 
     def filterProgress(self, msg: str) -> None:
         self.filterProgressBar = VCProgressDialog(self, modal=False)
@@ -1148,11 +1152,6 @@ class VideoCutter(QWidget):
         self.filterProgressBar.setText(msg)
         self.filterProgressBar.setMinimumWidth(600)
         self.filterProgressBar.show()
-
-    @pyqtSlot()
-    def stopFilters(self) -> None:
-        self.videoService.killFilterProc()
-        self.parent.lock_gui(False)
 
     @pyqtSlot()
     def addExternalClips(self) -> None:

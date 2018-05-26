@@ -29,7 +29,7 @@ from typing import Union
 from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QEasingCurve, QEvent, QObject, QPoint, QPropertyAnimation, Qt, QSize,
                           QTime, QTimer)
 from PyQt5.QtGui import QFocusEvent, QMouseEvent, QPixmap, QShowEvent
-from PyQt5.QtWidgets import (qApp, QAbstractSpinBox, QDialog, QDialogButtonBox, QGraphicsOpacityEffect, QGridLayout,
+from PyQt5.QtWidgets import (qApp, QDialog, QDialogButtonBox, QDoubleSpinBox, QGraphicsOpacityEffect, QGridLayout,
                              QHBoxLayout, QLabel, QLineEdit, QMessageBox, QProgressBar, QPushButton, QSlider, QSpinBox,
                              QStyle, QStyleFactory, QStyleOptionSlider, QTimeEdit, QToolBox, QToolTip, QVBoxLayout,
                              QWidget, QWidgetAction)
@@ -142,9 +142,9 @@ class VCTimeCounter(QWidget):
     def setReadOnly(self, readonly: bool) -> None:
         self.timeedit.setReadOnly(readonly)
         if readonly:
-            self.timeedit.setButtonSymbols(QAbstractSpinBox.NoButtons)
+            self.timeedit.setButtonSymbols(QTimeEdit.NoButtons)
         else:
-            self.timeedit.setButtonSymbols(QAbstractSpinBox.UpDownArrows)
+            self.timeedit.setButtonSymbols(QTimeEdit.UpDownArrows)
 
     @pyqtSlot(QTime)
     def timeChangeHandler(self, newtime: QTime) -> None:
@@ -204,9 +204,9 @@ class VCFrameCounter(QWidget):
     def setReadOnly(self, readonly: bool) -> None:
         self.currentframe.setReadOnly(readonly)
         if readonly:
-            self.currentframe.setButtonSymbols(QAbstractSpinBox.NoButtons)
+            self.currentframe.setButtonSymbols(QSpinBox.NoButtons)
         else:
-            self.currentframe.setButtonSymbols(QAbstractSpinBox.UpDownArrows)
+            self.currentframe.setButtonSymbols(QSpinBox.UpDownArrows)
 
     @pyqtSlot(int)
     def frameChangeHandler(self, frame: int) -> None:
@@ -347,8 +347,7 @@ class VCVolumeSlider(QSlider):
 
 class VCInputDialog(QDialog):
     def __init__(self, parent: QWidget, title: str, label: str, text: str):
-        super(VCInputDialog, self).__init__(parent)
-        self.setWindowFlags(Qt.Dialog | Qt.WindowCloseButtonHint)
+        super(VCInputDialog, self).__init__(parent, Qt.Dialog | Qt.WindowCloseButtonHint)
         self.input = QLineEdit(text, self)
         self.input.setStyle(QStyleFactory.create('Fusion'))
         self.input.setClearButtonEnabled(True)
@@ -364,6 +363,38 @@ class VCInputDialog(QDialog):
         self.setWindowTitle(title)
         self.setMinimumWidth(350)
         self.setFixedHeight(self.sizeHint().height())
+
+
+class VCDoubleInputDialog(QDialog):
+    def __init__(self, parent: QWidget, title: str, label: str, value: float, minval: float, maxval: float,
+                 decimals: int, step: float, suffix: str=None):
+        super(VCDoubleInputDialog, self).__init__(parent, Qt.Dialog | Qt.WindowCloseButtonHint)
+        self._spinbox = QDoubleSpinBox(self)
+        self._spinbox.setStyle(QStyleFactory.create('Fusion'))
+        self._spinbox.setAttribute(Qt.WA_MacShowFocusRect, False)
+        self._spinbox.setDecimals(decimals)
+        self._spinbox.setRange(minval, maxval)
+        self._spinbox.setSingleStep(step)
+        if suffix is not None:
+            self._spinbox.setSuffix(' {}'.format(suffix))
+        self.value = value
+        self.okbutton = QDialogButtonBox(QDialogButtonBox.Ok)
+        layout = QVBoxLayout()
+        layout.addWidget(QLabel(label, self))
+        layout.addWidget(self._spinbox)
+        layout.addWidget(self.okbutton)
+        self.setLayout(layout)
+        self.setWindowTitle(title)
+        self.setMinimumWidth(350)
+        self.setFixedHeight(self.sizeHint().height())
+
+    @property
+    def value(self) -> float:
+        return self._spinbox.value()
+
+    @value.setter
+    def value(self, val: float) -> None:
+        self._spinbox.setValue(val)
 
 
 class VCBlinkText(QWidget):

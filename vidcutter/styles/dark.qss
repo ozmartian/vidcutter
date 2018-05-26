@@ -632,6 +632,10 @@ QSlider::handle:hover#volumeslider, QSlider::handle:pressed#volumeslider {
 
 /* -------------------------------------------------------------------------- */
 
+QCheckBox {
+    spacing: 5px;
+}
+
 QCheckBox::indicator:unchecked {
     image: url(:images/dark/checkbox.png);
 }
@@ -645,6 +649,11 @@ QCheckBox::indicator:checked {
 }
 
 /* -------------------------------------------------------------------------- */
+
+QRadioButton {
+    spacing: 5px;
+    padding: 2px;
+}
 
 QRadioButton::indicator:unchecked {
     image: url(:images/dark/radio.png);

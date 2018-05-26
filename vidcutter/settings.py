@@ -254,7 +254,7 @@ class VideoPage(QWidget):
         pboCheckbox.setCursor(Qt.PointingHandCursor)
         pboCheckbox.setChecked(self.parent.parent.enablePBO)
         pboCheckbox.stateChanged.connect(self.togglePBO)
-        pboCheckboxLabel = QLabel('(recommended for 4K videos)')
+        pboCheckboxLabel = QLabel(' (recommended for 4K videos)')
         pboCheckboxLabel.setObjectName('checkboxsubtext')
         pboLabel = QLabel('''
             <b>ON:</b> usually improves performance with 4K videos but results in slower performance + latency with
@@ -558,6 +558,8 @@ class GeneralPage(QWidget):
         generalGroup = QGroupBox('General')
         generalGroup.setLayout(generalLayout)
         seek1SpinBox = QDoubleSpinBox(self)
+        seek1SpinBox.setStyle(QStyleFactory.create('Fusion'))
+        seek1SpinBox.setAttribute(Qt.WA_MacShowFocusRect, False)
         seek1SpinBox.setDecimals(1)
         seek1SpinBox.setRange(0.1, 999.9)
         seek1SpinBox.setSingleStep(0.1)
@@ -566,6 +568,8 @@ class GeneralPage(QWidget):
         # noinspection PyUnresolvedReferences
         seek1SpinBox.valueChanged[float].connect(lambda d: self.setSpinnerValue(1, d))
         seek2SpinBox = QDoubleSpinBox(self)
+        seek2SpinBox.setStyle(QStyleFactory.create('Fusion'))
+        seek2SpinBox.setAttribute(Qt.WA_MacShowFocusRect, False)
         seek2SpinBox.setDecimals(1)
         seek2SpinBox.setRange(0.1, 999.9)
         seek2SpinBox.setSingleStep(0.1)
@@ -593,14 +597,10 @@ class GeneralPage(QWidget):
         self.seekGroup = QGroupBox('Seeking')
         self.seekGroup.setLayout(seekLayout)
         mainLayout = QVBoxLayout()
-        mainLayout.setSpacing(10)
         mainLayout.addWidget(generalGroup)
         mainLayout.addWidget(self.seekGroup)
         mainLayout.addStretch(1)
         self.setLayout(mainLayout)
-        if sys.platform == 'win32':
-            seek1SpinBox.setStyle(QStyleFactory.create('Fusion'))
-            seek2SpinBox.setStyle(QStyleFactory.create('Fusion'))
 
     @pyqtSlot(int)
     def setSmartCut(self, state: int) -> None:
@@ -731,10 +731,5 @@ class SettingsDialog(QDialog):
         index = self.categories.row(current)
         self.pages.setCurrentIndex(index)
 
-    @pyqtSlot(QCloseEvent)
-    def closeEvent(self, event: QCloseEvent):
-        self.deleteLater()
-        super(SettingsDialog, self).closeEvent(event)
-
     def sizeHint(self) -> QSize:
-        return QSize(655 if sys.platform == 'darwin' else 625, 645)
+        return QSize(685 if sys.platform == 'darwin' else 625, 645)
