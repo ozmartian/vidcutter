@@ -113,7 +113,7 @@ class About(QDialog):
     def sizeHint(self) -> QSize:
         modes = {
             'LOW': QSize(450, 300),
-            'NORMAL': QSize(500, 490),
+            'NORMAL': QSize(500, 510 if sys.platform == 'darwin' else 490),
             'HIGH': QSize(1080, 920)
         }
         return modes[self.parent.parentWidget().scale]
@@ -323,3 +323,4 @@ class LicenseTab(BaseTab):
         self.setText(content)
         if sys.platform in {'win32', 'darwin'}:
             self.setStyle(QStyleFactory.create('Fusion'))
+

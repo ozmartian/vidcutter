@@ -423,17 +423,22 @@ class VideoCutter(QWidget):
         groupLayout.addLayout(settingsLayout)
 
         controlsLayout = QHBoxLayout()
-        controlsLayout.addSpacing(5)
+        if sys.platform != 'darwin':
+            controlsLayout.setContentsMargins(0, 0, 0, 0)
+            controlsLayout.addSpacing(5)
+        else:
+            controlsLayout.setContentsMargins(10, 10, 10, 0)
         controlsLayout.addLayout(togglesLayout)
-        controlsLayout.addSpacing(10)
+        controlsLayout.addSpacing(20 if sys.platform == 'darwin' else 10)
         controlsLayout.addStretch(1)
         controlsLayout.addWidget(self.toolbarGroup)
         controlsLayout.addStretch(1)
-        controlsLayout.addSpacing(10)
+        controlsLayout.addSpacing(20 if sys.platform == 'darwin' else 10)
         controlsLayout.addLayout(groupLayout)
-        controlsLayout.addSpacing(5)
+        if sys.platform != 'darwin':
+            controlsLayout.addSpacing(5)
 
-        layout = QVBoxLayout()
+        layout = QVBoxLayout()  
         layout.setSpacing(0)
         layout.setContentsMargins(10, 10, 10, 0)
         layout.addLayout(self.videoLayout)

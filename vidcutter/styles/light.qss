@@ -680,6 +680,7 @@ VCToolBarButton QLabel {
     font-size: 13px;
     font-weight: 400;
     font-family: "Noto Sans", sans-serif;
+    min-width: 65px;
 }
 
 VCToolBarButton#savebutton QLabel {
