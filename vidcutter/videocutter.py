@@ -429,11 +429,11 @@ class VideoCutter(QWidget):
         else:
             controlsLayout.setContentsMargins(10, 10, 10, 0)
         controlsLayout.addLayout(togglesLayout)
-        controlsLayout.addSpacing(20 if sys.platform == 'darwin' else 10)
+        controlsLayout.addSpacing(20)
         controlsLayout.addStretch(1)
         controlsLayout.addWidget(self.toolbarGroup)
         controlsLayout.addStretch(1)
-        controlsLayout.addSpacing(20 if sys.platform == 'darwin' else 10)
+        controlsLayout.addSpacing(20)
         controlsLayout.addLayout(groupLayout)
         if sys.platform != 'darwin':
             controlsLayout.addSpacing(5)
