@@ -123,7 +123,10 @@ class VideoCutter(QWidget):
         self.videoService.error.connect(self.completeOnError)
         self.videoService.addScenes.connect(self.addScenes)
 
-        self.edlblock_re = re.compile(r'(\d+(?:\.?\d+)?)\s(\d+(?:\.?\d+)?)\s([01])\s(".*")$')
+        self.project_files = {
+            'edl': re.compile(r'(\d+(?:\.?\d+)?)\t(\d+(?:\.?\d+)?)\t([01])'),
+            'vcp': re.compile(r'(\d+(?:\.?\d+)?)\t(\d+(?:\.?\d+)?)\t([01])\t(".*")$')
+        }
 
         self._initIcons()
         self._initActions()
@@ -577,7 +580,7 @@ class VideoCutter(QWidget):
         self.blackdetectAction = VCFilterMenuAction(QPixmap(':/images/blackdetect.png'), 'BLACKDETECT',
                                                     'Create clips via black frame detection',
                                                     'Useful for skipping commercials or detecting scene transitions',
-                                                    self)
+                                                    menu)
         if sys.platform == 'darwin':
             self.blackdetectAction.triggered.connect(lambda: self.configFilters(VideoFilter.BLACKDETECT),
                                                      Qt.QueuedConnection)
@@ -832,13 +835,19 @@ class VideoCutter(QWidget):
                         self.loadMedia(line)
                         time.sleep(1)
                     else:
-                        mo = self.edlblock_re.match(line)
+                        mo = self.project_files[project_type].match(line)
                         if mo:
                             start, stop, _, chapter = mo.groups()
                             clip_start = self.delta2QTime(float(start))
                             clip_end = self.delta2QTime(float(stop))
                             clip_image = self.captureImage(self.currentMedia, clip_start)
-                            self.clipTimes.append([clip_start, clip_end, clip_image, '', chapter[1:len(chapter) - 1]])
+                            if project_type == 'vcp' and self.createChapters and len(chapter):
+                                chapter = chapter[1:len(chapter) - 1]
+                                if not len(chapter):
+                                    chapter = None
+                            else:
+                                chapter = None
+                            self.clipTimes.append([clip_start, clip_end, clip_image, '', chapter])
                         else:
                             qApp.restoreOverrideCursor()
                             QMessageBox.critical(self.parent, 'Invalid project file',
@@ -918,10 +927,18 @@ class VideoCutter(QWidget):
                                        milliseconds=clip[0].msec())
                 stop_time = timedelta(hours=clip[1].hour(), minutes=clip[1].minute(), seconds=clip[1].second(),
                                       milliseconds=clip[1].msec())
-                chapter = '"{}"'.format(clip[4]) if self.createChapters and clip[4] is not None else ''
-                # noinspection PyUnresolvedReferences
-                QTextStream(file) << '{0}\t{1}\t{2}\t{3}\n'.format(self.delta2String(start_time),
-                                                                   self.delta2String(stop_time), 0, chapter)
+                if ptype == 'VidCutter Project (*.vcp)':
+                    if self.createChapters:
+                        chapter = '"{}"'.format(clip[4]) if clip[4] is not None else '""'
+                    else:
+                        chapter = ''
+                    # noinspection PyUnresolvedReferences
+                    QTextStream(file) << '{0}\t{1}\t{2}\t{3}\n'.format(self.delta2String(start_time),
+                                                                       self.delta2String(stop_time), 0, chapter)
+                else:
+                    # noinspection PyUnresolvedReferences
+                    QTextStream(file) << '{0}\t{1}\t{2}\n'.format(self.delta2String(start_time),
+                                                                  self.delta2String(stop_time), 0)
             qApp.restoreOverrideCursor()
             self.projectSaved = True
             if not reboot:

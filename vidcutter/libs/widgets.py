@@ -30,9 +30,9 @@ from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QEasingCurve, QEvent, QObject, Q
                           QTime, QTimer)
 from PyQt5.QtGui import QFocusEvent, QMouseEvent, QPixmap, QShowEvent
 from PyQt5.QtWidgets import (qApp, QDialog, QDialogButtonBox, QDoubleSpinBox, QGraphicsOpacityEffect, QGridLayout,
-                             QHBoxLayout, QLabel, QLineEdit, QMessageBox, QProgressBar, QPushButton, QSlider, QSpinBox,
-                             QStyle, QStyleFactory, QStyleOptionSlider, QTimeEdit, QToolBox, QToolTip, QVBoxLayout,
-                             QWidget, QWidgetAction)
+                             QHBoxLayout, QLabel, QLineEdit, QMenu, QMessageBox, QProgressBar, QPushButton, QSlider,
+                             QSpinBox, QStyle, QStyleFactory, QStyleOptionSlider, QTimeEdit, QToolBox, QToolTip,
+                             QVBoxLayout, QWidget, QWidgetAction)
 
 
 class VCToolBarButton(QWidget):
@@ -331,7 +331,7 @@ class VCVolumeSlider(QSlider):
         self.setFocusPolicy(Qt.NoFocus)
         self.valueChanged.connect(self.showTooltip)
         self.offset = QPoint(0, -45)
-        if sys.platform == 'win32':
+        if sys.platform in {'win32', 'darwin'}:
             self.setStyle(QStyleFactory.create('Fusion'))
 
     @pyqtSlot(int)
@@ -438,11 +438,10 @@ class VCFilterMenuAction(QWidgetAction):
 
         def __init__(self, icon: QPixmap, title: str, text: str, subtext: str):
             super(VCFilterMenuAction.VCFilterMenuWidget, self).__init__()
-            self.setMouseTracking(True)
-            self.icon_label = QLabel()
+            self.icon_label = QLabel(self)
             self.icon_label.setPixmap(icon)
-            self.text_label = QLabel()
-            self.text_label.setText('<b>{title}:</b> {text}<br/><font size="-1">{subtext}</font>'.format(**locals()))
+            self.text_label = QLabel('<b>{title}:</b> {text}<br/><font size="-1">{subtext}</font>'.format(**locals()),
+                                     self)
             layout = QHBoxLayout()
             layout.addWidget(self.icon_label)
             layout.addSpacing(5)
@@ -454,7 +453,18 @@ class VCFilterMenuAction(QWidgetAction):
                 self.triggered.emit()
             super(VCFilterMenuAction.VCFilterMenuWidget, self).mousePressEvent(event)
 
-    def __init__(self, icon: QPixmap, title: str, text: str, subtext: str, parent: QWidget):
+        def enterEvent(self, event: QEvent) -> None:
+            if self.isEnabled():
+                self.parentWidget().setStyleSheet('background-color: palette(highlight); '
+                                                  'color: palette(highlighted-text);')
+            super(VCFilterMenuAction.VCFilterMenuWidget, self).enterEvent(event)
+
+        def leaveEvent(self, event: QEvent) -> None:
+            if self.isEnabled():
+                self.parentWidget().setStyleSheet('background-color: palette(window); color: palette(text);')
+            super(VCFilterMenuAction.VCFilterMenuWidget, self).leaveEvent(event)
+
+    def __init__(self, icon: QPixmap, title: str, text: str, subtext: str, parent: QMenu):
         super(VCFilterMenuAction, self).__init__(parent)
         self.setStatusTip(text)
         w = VCFilterMenuAction.VCFilterMenuWidget(icon, title, text, subtext)

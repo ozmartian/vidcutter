@@ -527,6 +527,16 @@ QPushButton:hover#listheaderbutton-right, QPushButton:pressed#listheaderbutton-r
 
 /* -------------------------------------------------------------------------- */
 
+QMenu::item {
+    background-color: palette(window);
+    color: palette(text);
+}
+
+QMenu::item:selected {
+    background-color: palette(highlight);
+    color: palette(highlighted-text);
+}
+
 QMenu::item:disabled, #clipindextools QPushButton:disabled {
     color: rgba(125, 125, 125, 0.5);
 }
