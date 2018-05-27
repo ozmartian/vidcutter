@@ -1127,11 +1127,16 @@ class VideoCutter(QWidget):
     @pyqtSlot(VideoFilter)
     def configFilters(self, name: VideoFilter) -> None:
         if name == VideoFilter.BLACKDETECT:
-            d = VCDoubleInputDialog(self, 'Filter settings', 'Minimum duration for black scenes:',
+            desc = 'Detect video intervals that are (almost) completely black. Can be useful to detect chapter ' \
+                   'transitions, commercials, or invalid recordings. You can adjust the minimum duration of ' \
+                    'a detected black interval above.'
+            d = VCDoubleInputDialog(self, 'BLACKDETECT - Filter settings', 'Minimum duration for black scenes:',
                                     self.filter_settings.blackdetect.default_duration,
-                                    self.filter_settings.blackdetect.min_duration, 999.9, 1, 0.1, 'secs')
-            d.okbutton.accepted.connect(lambda: self.startFilters('detecting scenes (press ESC to cancel)',
-                                                                  partial(self.videoService.blackdetect, d.value), d))
+                                    self.filter_settings.blackdetect.min_duration, 999.9, 1, 0.1, desc, 'secs')
+            d.buttons.accepted.connect(
+                lambda: self.startFilters('detecting scenes (press ESC to cancel)',
+                                          partial(self.videoService.blackdetect, d.value), d))
+            d.setFixedSize(435, d.sizeHint().height())
             d.exec_()
 
     @pyqtSlot(str, partial, QDialog)

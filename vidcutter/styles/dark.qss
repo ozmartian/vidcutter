@@ -176,7 +176,7 @@ QLabel#logowidget {
 
 QLabel#decodinglabel, QLabel#ratiolabel, QLabel#keepclipslabel, QLabel#singleinstancelabel,
 QLabel#verboselogslabel, QLabel#pbolabel, QLabel#nativedialogslabel, QLabel#seeksettingslabel,
-QLabel#zoomlabel, QLabel#smartcutlabel, QLabel#ffmpeglabel, QLabel#chapterslabel {
+QLabel#zoomlabel, QLabel#smartcutlabel, QLabel#ffmpeglabel, QLabel#chapterslabel, QLabel#dialogdesc {
     font-family: "Noto Sans", sans-serif;
     font-size: 11px;
     color: #EFF0F1;

@@ -361,13 +361,12 @@ class VCInputDialog(QDialog):
         layout.addWidget(buttons)
         self.setLayout(layout)
         self.setWindowTitle(title)
-        self.setMinimumWidth(350)
-        self.setFixedHeight(self.sizeHint().height())
+        self.setFixedSize(350, self.sizeHint().height())
 
 
 class VCDoubleInputDialog(QDialog):
     def __init__(self, parent: QWidget, title: str, label: str, value: float, minval: float, maxval: float,
-                 decimals: int, step: float, suffix: str=None):
+                 decimals: int, step: float, desc: str=None, suffix: str=None):
         super(VCDoubleInputDialog, self).__init__(parent, Qt.Dialog | Qt.WindowCloseButtonHint)
         self._spinbox = QDoubleSpinBox(self)
         self._spinbox.setStyle(QStyleFactory.create('Fusion'))
@@ -378,15 +377,25 @@ class VCDoubleInputDialog(QDialog):
         if suffix is not None:
             self._spinbox.setSuffix(' {}'.format(suffix))
         self.value = value
-        self.okbutton = QDialogButtonBox(QDialogButtonBox.Ok)
+        startbutton = QPushButton('Start')
+        startbutton.setDefault(True)
+        self.buttons = QDialogButtonBox(self)
+        self.buttons.addButton(startbutton, QDialogButtonBox.AcceptRole)
+        self.buttons.addButton(QDialogButtonBox.Cancel)
+        self.buttons.rejected.connect(self.close)
+        fieldlayout = QHBoxLayout()
+        fieldlayout.addWidget(QLabel(label, self))
+        fieldlayout.addWidget(self._spinbox)
         layout = QVBoxLayout()
-        layout.addWidget(QLabel(label, self))
-        layout.addWidget(self._spinbox)
-        layout.addWidget(self.okbutton)
+        layout.addLayout(fieldlayout)
+        if desc is not None:
+            desc_label = QLabel(desc, self)
+            desc_label.setObjectName('dialogdesc')
+            desc_label.setWordWrap(True)
+            layout.addWidget(desc_label)
+        layout.addWidget(self.buttons)
         self.setLayout(layout)
         self.setWindowTitle(title)
-        self.setMinimumWidth(350)
-        self.setFixedHeight(self.sizeHint().height())
 
     @property
     def value(self) -> float:
