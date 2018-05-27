@@ -1457,12 +1457,13 @@ class VideoCutter(QWidget):
         else:
             self.complete(True, filelist[-1])
 
-    def complete(self, rename: bool = True, filename: str = None) -> None:
+    def complete(self, rename: bool=True, filename: str=None) -> None:
         if rename and filename is not None:
             # noinspection PyCallByClass
             QFile.remove(self.finalFilename)
             # noinspection PyCallByClass
             QFile.rename(filename, self.finalFilename)
+        self.videoService.finalize(self.finalFilename)
         self.seekSlider.updateProgress()
         self.toolbar_save.setEnabled(True)
         self.parent.lock_gui(False)
@@ -1562,7 +1563,7 @@ class VideoCutter(QWidget):
         about.exec_()
 
     @staticmethod
-    def getAppIcon(encoded: bool = False):
+    def getAppIcon(encoded: bool=False):
         icon = QIcon.fromTheme(qApp.applicationName().lower(), QIcon(':/images/vidcutter-small.png'))
         if not encoded:
             return icon
@@ -1576,7 +1577,7 @@ class VideoCutter(QWidget):
         return icon
 
     @staticmethod
-    def sizeof_fmt(num: float, suffix: chr = 'B') -> str:
+    def sizeof_fmt(num: float, suffix: chr='B') -> str:
         for unit in ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z']:
             if abs(num) < 1024.0:
                 return "%3.1f %s%s" % (num, unit, suffix)

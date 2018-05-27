@@ -281,8 +281,19 @@ class VideoService(QObject):
                 output += '-map 0:{} '.format(stream_id)
         return output
 
-    def cut(self, source: str, output: str, frametime: str, duration: str, allstreams: bool = True, vcodec: str = None,
-            run: bool = True) -> Union[bool, str]:
+    def finalize(self, source: str) -> bool:
+        self.checkDiskSpace(source)
+        source_file, source_ext = os.path.splitext(source)
+        final_filename = '{0}_FINAL{1}'.format(source_file, source_ext)
+        args = '-v error -i "{}" -map 0 -c copy -y "{}"'.format(source, final_filename)
+        result = self.cmdExec(self.backends.ffmpeg, args)
+        if result and os.path.exists(final_filename):
+            os.replace(final_filename, source)
+            return True
+        return False
+
+    def cut(self, source: str, output: str, frametime: str, duration: str, allstreams: bool=True, vcodec: str=None,
+            run: bool=True) -> Union[bool, str]:
         self.checkDiskSpace(output)
         stream_map = self.parseMappings(allstreams)
         if vcodec is not None:
@@ -291,7 +302,7 @@ class VideoService(QObject):
                    '-y "{}"'.format(source, frametime, duration, encode_options, stream_map, output)
         else:
             args = '-v error -ss {} -t {} -i "{}" -c copy {}-avoid_negative_ts 1 -y "{}"' \
-                .format(frametime, duration, source, stream_map, output)
+                   .format(frametime, duration, source, stream_map, output)
         if run:
             result = self.cmdExec(self.backends.ffmpeg, args)
             if not result or os.path.getsize(output) < 1000:
