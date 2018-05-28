@@ -50,7 +50,6 @@ def getProcAddress(proc: bytes) -> int:
         if _ctx is None:
             return 0
         _gpa = (_ctx.getProcAddress, proc.decode())
-        # return _ctx.getProcAddress(proc.decode()).__int__()
     elif sys.platform == 'darwin':
         _gpa = (glutGetProcAddress, proc)
     else:
@@ -129,7 +128,6 @@ class mpvWidget(QOpenGLWidget):
             self.opengl.set_update_callback(None)
         self.opengl.uninit_gl()
         self.mpv.command('quit')
-        self.deleteLater()
 
     def initializeGL(self):
         if self.opengl:
