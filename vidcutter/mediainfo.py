@@ -115,10 +115,6 @@ class MediaInfo(QDialog):
         kframes = KeyframesDialog(keyframes, self)
         kframes.show()
 
-    def closeEvent(self, event: QCloseEvent) -> None:
-        self.deleteLater()
-        super(MediaInfo, self).closeEvent(event)
-
 
 class KeyframesDialog(QDialog):
     def __init__(self, keyframes: list, parent=None, flags=Qt.Tool | Qt.FramelessWindowHint):

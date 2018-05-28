@@ -227,6 +227,7 @@ class StreamSelector(QDialog):
                 event.ignore()
                 return
         event.accept()
+        self.deleteLater()
         super(StreamSelector, self).closeEvent(event)
 
 
