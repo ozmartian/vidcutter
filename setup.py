@@ -76,7 +76,7 @@ try:
         setup_requires=setup_requires,
         install_requires=install_requires,
         data_files=SetupHelpers.get_data_files(),
-        package_data={'': ['CHANGELOG']},
+        package_data={'vidcutter': ['CHANGELOG']},
         ext_modules=extensions,
         entry_points={'gui_scripts': ['vidcutter = vidcutter.__main__:main']},
         keywords='vidcutter ffmpeg audiovideo mpv libmpv videoeditor video videoedit pyqt Qt5 multimedia',
