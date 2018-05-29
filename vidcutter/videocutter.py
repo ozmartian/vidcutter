@@ -43,6 +43,7 @@ import sip
 # noinspection PyUnresolvedReferences
 from vidcutter import resources
 from vidcutter.about import About
+from vidcutter.changelog import Changelog
 from vidcutter.mediainfo import MediaInfo
 from vidcutter.mediastream import StreamSelector
 from vidcutter.settings import SettingsDialog
@@ -534,6 +535,7 @@ class VideoCutter(QWidget):
         self.filtersIcon = QIcon(':/images/filters.png')
         self.mediaInfoIcon = QIcon(':/images/info.png')
         self.streamsIcon = QIcon(':/images/streams.png')
+        self.changelogIcon = QIcon(':/images/changelog.png')
         self.viewLogsIcon = QIcon(':/images/viewlogs.png')
         self.updateCheckIcon = QIcon(':/images/update.png')
         self.keyRefIcon = QIcon(':/images/keymap.png')
@@ -563,7 +565,9 @@ class VideoCutter(QWidget):
         self.saveProjectAction = QAction(self.saveProjectIcon, 'Save project file', self, triggered=self.saveProject,
                                          statusTip='Save current work to a project file (*.vcp or *.edl)',
                                          enabled=False)
-        self.viewLogsAction = QAction(self.viewLogsIcon, 'View log file', self, triggered=self.viewLogs,
+        self.changelogAction = QAction(self.changelogIcon, 'View changelog', self, triggered=self.viewChangelog,
+                                       statusTip='View log of changes')
+        self.viewLogsAction = QAction(self.viewLogsIcon, 'View log file', self, triggered=VideoCutter.viewLogs,
                                       statusTip='View the application\'s log file')
         self.updateCheckAction = QAction(self.updateCheckIcon, 'Check for updates...', self,
                                          statusTip='Check for application updates', triggered=self.updater.check)
@@ -585,7 +589,7 @@ class VideoCutter(QWidget):
         self.blackdetectAction = VCFilterMenuAction(QPixmap(':/images/blackdetect.png'), 'BLACKDETECT',
                                                     'Create clips via black frame detection',
                                                     'Useful for skipping commercials or detecting scene transitions',
-                                                    menu)
+                                                    self)
         if sys.platform == 'darwin':
             self.blackdetectAction.triggered.connect(lambda: self.configFilters(VideoFilter.BLACKDETECT),
                                                      Qt.QueuedConnection)
@@ -613,6 +617,7 @@ class VideoCutter(QWidget):
         self.appmenu.addAction(self.viewLogsAction)
         self.appmenu.addAction(self.updateCheckAction)
         self.appmenu.addSeparator()
+        self.appmenu.addAction(self.changelogAction)
         self.appmenu.addAction(self.aboutQtAction)
         self.appmenu.addAction(self.aboutAction)
         self.appmenu.addSeparator()
@@ -1583,6 +1588,11 @@ class VideoCutter(QWidget):
                 return "%3.1f %s%s" % (num, unit, suffix)
             num /= 1024.0
         return "%.1f %s%s" % (num, 'Y', suffix)
+
+    @pyqtSlot()
+    def viewChangelog(self) -> None:
+        changelog = Changelog(self)
+        changelog.exec_()
 
     @staticmethod
     @pyqtSlot()

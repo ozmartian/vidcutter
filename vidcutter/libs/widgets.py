@@ -466,7 +466,7 @@ class VCFilterMenuAction(QWidgetAction):
                 self.parentWidget().setStyleSheet('background-color: palette(window); color: palette(text);')
             super(VCFilterMenuAction.VCFilterMenuWidget, self).leaveEvent(event)
 
-    def __init__(self, icon: QPixmap, title: str, text: str, subtext: str, parent: QMenu):
+    def __init__(self, icon: QPixmap, title: str, text: str, subtext: str, parent=None):
         super(VCFilterMenuAction, self).__init__(parent)
         self.setStatusTip(text)
         w = VCFilterMenuAction.VCFilterMenuWidget(icon, title, text, subtext)

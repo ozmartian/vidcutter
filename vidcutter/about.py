@@ -323,4 +323,3 @@ class LicenseTab(BaseTab):
         self.setText(content)
         if sys.platform in {'win32', 'darwin'}:
             self.setStyle(QStyleFactory.create('Fusion'))
-

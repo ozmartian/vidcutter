@@ -33,7 +33,6 @@
 
 import os
 import sys
-
 from setuptools import setup
 from setuptools.extension import Extension
 
@@ -43,7 +42,7 @@ import vidcutter
 # --------------------------------------------------------------------------- #
 
 setup_requires = ['setuptools']
-install_requires = ['typing'] if sys.version_info < (3,5) else []
+install_requires = ['typing'] if sys.version_info < (3, 5) else []
 
 # --------------------------------------------------------------------------- #
 

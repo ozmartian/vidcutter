@@ -1,7 +1,7 @@
 {
     "app-id": "com.ozmartians.VidCutter",
     "runtime": "org.kde.Platform",
-    "runtime-version": "5.11",
+    "runtime-version": "5.10",
     "sdk": "org.kde.Sdk",
     "command": "vidcutter",
     "finish-args": [
