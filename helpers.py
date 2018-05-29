@@ -25,6 +25,7 @@
 import codecs
 import os
 import pydoc
+import shutil
 import subprocess
 import sys
 
@@ -182,8 +183,11 @@ if __name__ == '__main__':
         if exe is None:
             sys.stderr.write('Could not find pyrcc5 executable')
             sys.exit(1)
+        shutil.copy(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'CHANGELOG'),
+                    os.path.join(os.path.dirname(os.path.abspath(__file__)), 'vidcutter', 'CHANGELOG'))
         subprocess.run('{0} -compress 9 -o "{1}" "{2}"'
                        .format(exe,
                                os.path.join(os.path.dirname(os.path.abspath(__file__)), 'vidcutter', 'resources.py'),
                                os.path.join(os.path.dirname(os.path.abspath(__file__)), 'vidcutter', 'resources.qrc')),
                        shell=True)
+        os.remove(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'vidcutter', 'CHANGELOG'))

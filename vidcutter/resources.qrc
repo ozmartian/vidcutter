@@ -229,5 +229,6 @@
         <file>styles/light.qss</file>
         <file>styles/dark.qss</file>
         <file>license.html</file>
+        <file>CHANGELOG</file>
     </qresource>
 </RCC>

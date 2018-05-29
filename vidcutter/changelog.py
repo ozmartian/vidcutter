@@ -32,12 +32,7 @@ class Changelog(QDialog):
         super(Changelog, self).__init__(parent, Qt.Dialog | Qt.WindowCloseButtonHint)
         self.parent = parent
         self.setWindowTitle('{} changelog'.format(qApp.applicationName()))
-        if sys.platform.startswith('linux'):
-            filepath = '/usr/share/doc/vidcutter/CHANGELOG'
-        else:
-            # noinspection PyUnresolvedReferences
-            filepath = self.parent.parent.get_path('CHANGELOG', True)
-        changelog = QFile(filepath)
+        changelog = QFile(':/CHANGELOG')
         changelog.open(QFile.ReadOnly | QFile.Text)
         content = QTextStream(changelog).readAll()
         label = QLabel(content, self)
