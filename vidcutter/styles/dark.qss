@@ -235,7 +235,7 @@ QGroupBox#counterwidgets {
     font-weight: bold;
     border: 1px solid #4D5355;
     border-radius: 3px;
-    margin-top: 1ex;
+    margin-top: 10px;
     padding-top: 15px;
     background-color: #0C0F10;
     color: #444;

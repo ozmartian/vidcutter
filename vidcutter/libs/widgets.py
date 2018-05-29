@@ -392,6 +392,7 @@ class VCDoubleInputDialog(QDialog):
         layout.addLayout(fieldlayout)
         if desc is not None:
             desc_label = QLabel(desc, self)
+            desc_label.setTextFormat(Qt.RichText)
             desc_label.setObjectName('dialogdesc')
             desc_label.setWordWrap(True)
             layout.addWidget(desc_label)

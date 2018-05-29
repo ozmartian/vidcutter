@@ -364,15 +364,14 @@ class MainWindow(QMainWindow):
 def main():
     qt_set_sequence_auto_mnemonic(False)
 
-    fmt = QSurfaceFormat()
-    fmt.setDepthBufferSize(24)
-    QSurfaceFormat.setDefaultFormat(fmt)
-
     if hasattr(Qt, 'AA_EnableHighDpiScaling'):
         QGuiApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
     if hasattr(Qt, 'AA_Use96Dpi'):
         QGuiApplication.setAttribute(Qt.AA_Use96Dpi, True)
     if hasattr(Qt, 'AA_ShareOpenGLContexts'):
+        fmt = QSurfaceFormat()
+        fmt.setDepthBufferSize(24)
+        QSurfaceFormat.setDefaultFormat(fmt)
         QGuiApplication.setAttribute(Qt.AA_ShareOpenGLContexts, True)
 
     if sys.platform == 'darwin':
@@ -381,6 +380,7 @@ def main():
     app = SingleApplication(vidcutter.__appid__, sys.argv)
     app.setApplicationName(vidcutter.__appname__)
     app.setApplicationVersion(vidcutter.__version__)
+    app.setDesktopFileName(vidcutter.__desktopid__)
     app.setOrganizationDomain(vidcutter.__domain__)
     app.setQuitOnLastWindowClosed(True)
 

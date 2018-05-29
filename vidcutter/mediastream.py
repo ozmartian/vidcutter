@@ -56,7 +56,6 @@ class StreamSelector(QDialog):
             layout.addWidget(self.subtitles())
         layout.addWidget(buttons)
         self.setLayout(layout)
-        self.setMinimumSize(self.sizeHint())
 
     @staticmethod
     def lineSeparator() -> QFrame:
@@ -94,7 +93,6 @@ class StreamSelector(QDialog):
         label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         videolayout = QHBoxLayout()
         videolayout.setSpacing(15)
-        videolayout.setContentsMargins(15, 10, 15, 10)
         videolayout.addSpacing(25)
         videolayout.addWidget(icon)
         videolayout.addSpacing(45)

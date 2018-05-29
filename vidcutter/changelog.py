@@ -48,6 +48,22 @@ class Changelog(QDialog):
         scrollarea.setWidget(label)
         if sys.platform in {'win32', 'darwin'}:
             scrollarea.setStyle(QStyleFactory.create('Fusion'))
+        # noinspection PyUnresolvedReferences
+        if parent.parent.stylename == 'fusion' or sys.platform in {'win32', 'darwin'}:
+            self.setStyleSheet('''
+            QScrollArea {{
+                background-color: transparent;
+                margin-bottom: 10px;
+                border: none;
+                border-right: 1px solid {};
+            }}'''.format('#4D5355' if parent.theme == 'dark' else '#C0C2C3'))
+        else:
+            self.setStyleSheet('''
+            QScrollArea {{
+                background-color: transparent;
+                margin-bottom: 10px;
+                border: none;
+            }}''')
         layout = QVBoxLayout()
         layout.addWidget(scrollarea)
         layout.addWidget(buttons)

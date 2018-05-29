@@ -59,6 +59,7 @@ class LogsPage(QWidget):
         logsGroup = QGroupBox('Logging')
         logsGroup.setLayout(logsLayout)
         mainLayout = QVBoxLayout()
+        mainLayout.setSpacing(15)
         mainLayout.addWidget(logsGroup)
         mainLayout.addStretch(1)
         self.setLayout(mainLayout)
@@ -74,6 +75,7 @@ class ThemePage(QWidget):
         self.parent = parent
         self.setObjectName('settingsthemepage')
         mainLayout = QVBoxLayout()
+        mainLayout.setSpacing(15)
         pen = QPen(QColor('#4D5355' if self.parent.theme == 'dark' else '#B9B9B9'))
         pen.setWidth(2)
         theme_light = QPixmap(':/images/theme-light.png', 'PNG')
@@ -329,6 +331,7 @@ class VideoPage(QWidget):
         noteLabel.setTextFormat(Qt.RichText)
         noteLabel.setWordWrap(True)
         mainLayout = QVBoxLayout()
+        mainLayout.setSpacing(15)
         mainLayout.addWidget(videoGroup)
         mainLayout.addWidget(zoomGroup)
         mainLayout.addWidget(noteLabel)
@@ -428,6 +431,7 @@ class ToolsPage(QWidget):
         pathsGroup = QGroupBox('Paths')
         pathsGroup.setLayout(pathsLayout)
         mainLayout = QVBoxLayout()
+        mainLayout.setSpacing(15)
         mainLayout.addWidget(pathsGroup)
         mainLayout.addStretch(1)
         self.setLayout(mainLayout)
@@ -595,6 +599,7 @@ class GeneralPage(QWidget):
         self.seekGroup = QGroupBox('Seeking')
         self.seekGroup.setLayout(seekLayout)
         mainLayout = QVBoxLayout()
+        mainLayout.setSpacing(15)
         mainLayout.addWidget(generalGroup)
         mainLayout.addWidget(self.seekGroup)
         mainLayout.addStretch(1)
@@ -676,7 +681,6 @@ class SettingsDialog(QDialog):
         mainLayout.addLayout(horizontalLayout)
         mainLayout.addWidget(buttons)
         self.setLayout(mainLayout)
-        self.setFixedSize(self.sizeHint())
 
     def initCategories(self):
         generalButton = QListWidgetItem(self.categories)
@@ -719,6 +723,7 @@ class SettingsDialog(QDialog):
         line.setFrameShape(QFrame.HLine)
         line.setFrameShadow(QFrame.Sunken)
         layout = QHBoxLayout()
+        layout.setContentsMargins(0, 4, 0, 4)
         layout.addSpacing(25)
         layout.addWidget(line)
         return layout
