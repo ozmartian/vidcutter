@@ -83,8 +83,7 @@ class SetupHelpers:
                 ('share/applications', ['data/desktop/{}.desktop'.format(appid)]),
                 ('share/metainfo', ['data/appdata/{}.appdata.xml'.format(appid)]),
                 ('share/mime/packages', ['data/mime/{}.xml'.format(appid)]),
-                ('share/doc/vidcutter', ['CHANGELOG', 'LICENSE', 'README.md']),
-                ('', ['CHANGELOG'])
+                ('share/doc/vidcutter', ['CHANGELOG', 'LICENSE', 'README.md'])
             ]
         return files
 
