@@ -273,8 +273,8 @@
                 ],
                 "sources": [{
                     "type": "archive",
-                    "url": "https://bitbucket.org/multicoreware/x265/downloads/x265_2.7.tar.gz",
-                    "sha256": "d5e75fa62ffe6ed49e691f8eb8ab8c1634ffcc0725dd553c6fdb4d5443b494a2"
+                    "url": "https://bitbucket.org/multicoreware/x265/downloads/x265_2.8.tar.gz",
+                    "sha256": "6e59f9afc0c2b87a46f98e33b5159d56ffb3558a49d8e3d79cb7fdc6b7aaa863"
                 }]
             },
             {
@@ -343,9 +343,14 @@
         "build-commands": [
             "pip3 install --prefix=${FLATPAK_DEST} ."
         ],
+        "post-install": [
+            "mkdir -p ${FLATPAK_DEST}/share/fonts",
+            "cp vidcutter/fonts/* ${FLATPAK_DEST}/share/fonts"
+        ],
         "sources": [{
             "type": "git",
-            "branch": "6.0.0",
+            "branch": "flatpak",
+            "commit": "08ff21c253ec2fa2ae37c200813f1292bea28413",
             "url": "https://github.com/ozmartian/vidcutter.git"
         }]
     }]
