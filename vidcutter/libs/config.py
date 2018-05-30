@@ -24,6 +24,8 @@
 
 from enum import Enum
 
+from PyQt5.QtCore import QSize
+
 from vidcutter.libs.munch import Munch
 
 
@@ -36,6 +38,10 @@ class Config:
                 default_duration=2.0
             )
         )
+
+    @property
+    def thumbnails(self) -> dict:
+        return {'INDEX': QSize(100, 70), 'TIMELINE': QSize(105, 60)}
 
     @property
     def video_codecs(self) -> list:

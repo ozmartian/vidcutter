@@ -29,7 +29,6 @@ import re
 import shlex
 import sys
 from bisect import bisect_left
-from enum import Enum
 from functools import partial
 from typing import List, Optional, Union
 
@@ -60,9 +59,6 @@ class VideoService(QObject):
     spaceWarningThreshold = 200
     spaceWarningDelivered = False
     smartcutError = False
-
-    # noinspection PyArgumentList
-    ThumbSize = Enum('ThumbSize', {'INDEX': QSize(100, 70), 'TIMELINE': QSize(105, 60)})
 
     config = Config()
 
@@ -169,8 +165,10 @@ class VideoService(QObject):
             self.spaceWarningDelivered = True
 
     @staticmethod
-    def captureFrame(settings: QSettings, source: str, frametime: str, thumbsize: QSize = ThumbSize.INDEX.value,
-                     external: bool = False) -> QPixmap:
+    def captureFrame(settings: QSettings, source: str, frametime: str, thumbsize: QSize=None,
+                     external: bool=False) -> QPixmap:
+        if thumbsize is None:
+            thumbsize = VideoService.config.thumbnails['INDEX']
         capres = QPixmap()
         img = QTemporaryFile(os.path.join(QDir.tempPath(), 'XXXXXX.jpg'))
         if img.open():

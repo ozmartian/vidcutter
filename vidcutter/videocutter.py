@@ -29,7 +29,7 @@ import sys
 import time
 from datetime import timedelta
 from functools import partial
-from typing import List, Union
+from typing import Callable, List, Optional, Union
 
 from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QBuffer, QByteArray, QDir, QFile, QFileInfo, QModelIndex, QPoint, QSize,
                           Qt, QTextStream, QTime, QTimer, QUrl)
@@ -141,9 +141,9 @@ class VideoCutter(QWidget):
         self.cliplist = VideoList(self)
         self.cliplist.customContextMenuRequested.connect(self.itemMenu)
         self.cliplist.currentItemChanged.connect(self.selectClip)
-        self.cliplist.model().rowsInserted.connect(lambda: self.setProjectDirty(True))
-        self.cliplist.model().rowsRemoved.connect(lambda: self.setProjectDirty(True))
-        self.cliplist.model().rowsMoved.connect(lambda: self.setProjectDirty(True))
+        self.cliplist.model().rowsInserted.connect(self.setProjectDirty)
+        self.cliplist.model().rowsRemoved.connect(self.setProjectDirty)
+        self.cliplist.model().rowsMoved.connect(self.setProjectDirty)
         self.cliplist.model().rowsMoved.connect(self.syncClipList)
 
         self.listHeaderButtonL = QPushButton(self)
@@ -791,7 +791,13 @@ class VideoCutter(QWidget):
         filters += ';;{};;All files (*)'.format(';;'.join(VideoService.config.filters.get('types')))
         return filters
 
-    def openMedia(self) -> None:
+    def openMedia(self) -> Optional[Callable]:
+        cancel, callback = self.saveWarning()
+        if cancel:
+            if callback is not None:
+                return callback()
+            else:
+                return
         filename, _ = QFileDialog.getOpenFileName(
             parent=self.parent,
             caption='Open media file',
@@ -804,7 +810,13 @@ class VideoCutter(QWidget):
             self.loadMedia(filename)
 
     # noinspection PyUnusedLocal
-    def openProject(self, checked: bool = False, project_file: str = None) -> None:
+    def openProject(self, checked: bool = False, project_file: str = None) -> Optional[Callable]:
+        cancel, callback = self.saveWarning()
+        if cancel:
+            if callback is not None:
+                return callback()
+            else:
+                return
         initialFilter = 'Project files (*.edl *.vcp)' if self.mediaAvailable else 'VidCutter Project (*.vcp)'
         if project_file is None:
             project_file, _ = QFileDialog.getOpenFileName(
@@ -874,7 +886,6 @@ class VideoCutter(QWidget):
             qApp.restoreOverrideCursor()
             if project_file != os.path.join(QDir.tempPath(), self.parent.TEMP_PROJECT_FILE):
                 self.showText('project loaded')
-            print('\nproject loaded:\n\n{}\n\n'.format(self.clipTimes))
 
     def saveProject(self, reboot: bool = False) -> None:
         if self.currentMedia is None:
@@ -1125,10 +1136,9 @@ class VideoCutter(QWidget):
                     exist = True
                     break
             if exist:
-                chapterswarn = VCMessageBox('Question', 'Chapter names previously set',
-                                            'Would you like to restore chapter names? Saying no will reset names '
-                                            'to default values', buttons=QMessageBox.Yes | QMessageBox.No,
-                                            parent=self)
+                chapterswarn = VCMessageBox('Restore chapter names', 'Chapter names found in memory',
+                                            'Would you like to restore previously set chapter names?',
+                                            buttons=QMessageBox.Yes | QMessageBox.No, parent=self)
                 if chapterswarn.exec_() == QMessageBox.No:
                     for clip in self.clipTimes:
                         clip[4] = None
@@ -1250,6 +1260,7 @@ class VideoCutter(QWidget):
         self.inCut = True
         self.showText('clip started at {}'.format(starttime.toString(self.timeformat)))
         self.renderClipIndex()
+        self.cliplist.scrollToBottom()
 
     def clipEnd(self) -> None:
         item = self.clipTimes[len(self.clipTimes) - 1]
@@ -1268,7 +1279,9 @@ class VideoCutter(QWidget):
         self.inCut = False
         self.showText('clip ends at {}'.format(endtime.toString(self.timeformat)))
         self.renderClipIndex()
+        self.cliplist.scrollToBottom()
 
+    @pyqtSlot()
     @pyqtSlot(bool)
     def setProjectDirty(self, dirty: bool=True) -> None:
         self.projectDirty = dirty
@@ -1285,44 +1298,15 @@ class VideoCutter(QWidget):
         self.renderClipIndex()
 
     def renderClipIndex(self) -> None:
-        self.cliplist.clear()
         self.seekSlider.clearRegions()
         self.totalRuntime = 0
-        externalCount = 0
-        for index, clip in enumerate(self.clipTimes):
-            endItem = ''
-            if isinstance(clip[1], QTime):
-                endItem = clip[1].toString(self.timeformat)
-                self.totalRuntime += clip[0].msecsTo(clip[1])
-            listitem = QListWidgetItem()
-            if len(clip[3]):
-                listitem.setToolTip(clip[3])
-                externalCount += 1
-            else:
-                listitem.setToolTip('Drag to reorder clips')
-            if self.createChapters:
-                chapterName = clip[4] if clip[4] is not None else 'Chapter {}'.format(index + 1)
-            else:
-                chapterName = ''
-            listitem.setStatusTip('Reorder clips with mouse drag & drop or right-click menu on the clip to be moved')
-            listitem.setTextAlignment(Qt.AlignVCenter)
-            listitem.setData(Qt.DecorationRole + 1, clip[2])
-            listitem.setData(Qt.DisplayRole + 1, clip[0].toString(self.timeformat))
-            listitem.setData(Qt.UserRole + 1, endItem)
-            listitem.setData(Qt.UserRole + 2, clip[3])
-            listitem.setData(Qt.UserRole + 3, chapterName)
-            listitem.setFlags(Qt.ItemIsSelectable | Qt.ItemIsDragEnabled | Qt.ItemIsEnabled)
-            self.cliplist.addItem(listitem)
-            if isinstance(clip[1], QTime) and not len(clip[3]):
-                self.seekSlider.addRegion(clip[0].msecsSinceStartOfDay(), clip[1].msecsSinceStartOfDay())
-        if len(self.clipTimes) and not self.inCut and (externalCount == 0 or externalCount > 1):
+        externals = self.cliplist.renderClips(self.clipTimes)
+        if len(self.clipTimes) and not self.inCut and externals != 1:
             self.toolbar_save.setEnabled(True)
             self.saveProjectAction.setEnabled(True)
         if self.inCut or len(self.clipTimes) == 0 or not isinstance(self.clipTimes[0][1], QTime):
             self.toolbar_save.setEnabled(False)
             self.saveProjectAction.setEnabled(False)
-        if not len(self.cliplist.selectedItems()):
-            self.cliplist.scrollToBottom()
         self.setRunningTime(self.delta2QTime(self.totalRuntime).toString(self.runtimeformat))
 
     @staticmethod
@@ -1553,6 +1537,21 @@ class VideoCutter(QWidget):
                 return
             streamSelector = StreamSelector(self.videoService, self)
             streamSelector.show()
+
+    def saveWarning(self) -> tuple:
+        if self.mediaAvailable and self.projectDirty and not self.projectSaved:
+            savewarn = VCMessageBox('Warning', 'Unsaved changes found in project',
+                                    'Would you like to save your project?', parent=self)
+            savebutton = savewarn.addButton('Save project', QMessageBox.YesRole)
+            savewarn.addButton('Do not save', QMessageBox.NoRole)
+            cancelbutton = savewarn.addButton('Cancel', QMessageBox.RejectRole)
+            savewarn.exec_()
+            res = savewarn.clickedButton()
+            if res == savebutton:
+                return True, self.saveProject
+            elif res == cancelbutton:
+                return True, None
+        return False, None
 
     @pyqtSlot()
     def showKeyRef(self) -> None:

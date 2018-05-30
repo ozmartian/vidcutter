@@ -245,8 +245,9 @@ class VideoSlider(QSlider):
 
     def initThumbs(self) -> None:
         framesize = self.parent.videoService.framesize()
-        thumbsize = QSize(VideoService.ThumbSize.TIMELINE.value.height() * (framesize.width() / framesize.height()),
-                          VideoService.ThumbSize.TIMELINE.value.height())
+        thumbsize = QSize(
+            VideoService.config.thumbnails['TIMELINE'].height() * (framesize.width() / framesize.height()),
+            VideoService.config.thumbnails['TIMELINE'].height())
         positions, frametimes = [], []
         thumbs = int(math.ceil((self.rect().width() - (self.offset * 2)) / thumbsize.width()))
         for pos in range(thumbs):
@@ -303,7 +304,7 @@ class VideoSlider(QSlider):
         thumbnails.setLayout(thumbslayout)
         filmlabel = QLabel()
         filmlabel.setObjectName('filmstrip')
-        filmlabel.setFixedHeight(VideoService.ThumbSize.TIMELINE.value.height() + 2)
+        filmlabel.setFixedHeight(VideoService.config.thumbnails['TIMELINE'].height() + 2)
         filmlabel.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         filmlayout = QHBoxLayout()
         filmlayout.setContentsMargins(0, 0, 0, 16)

@@ -25,9 +25,9 @@
 import os
 import sys
 
-from PyQt5.QtCore import pyqtSlot, Qt, QEvent, QModelIndex, QRect, QSize
+from PyQt5.QtCore import pyqtSlot, Qt, QEvent, QModelIndex, QRect, QSize, QTime
 from PyQt5.QtGui import QColor, QFont, QIcon, QMouseEvent, QPainter, QPalette, QPen, QResizeEvent
-from PyQt5.QtWidgets import (QAbstractItemView, QListWidget, QProgressBar, QSizePolicy, QStyle,
+from PyQt5.QtWidgets import (QAbstractItemView, QListWidget, QListWidgetItem, QProgressBar, QSizePolicy, QStyle,
                              QStyledItemDelegate, QStyleFactory, QStyleOptionViewItem)
 
 from vidcutter.libs.graphicseffects import OpacityEffect
@@ -59,6 +59,34 @@ class VideoList(QListWidget):
         self.opacityEffect.setEnabled(False)
         self.setGraphicsEffect(self.opacityEffect)
 
+    def renderClips(self, cliptimes: list) -> int:
+        self.clear()
+        externalCount = 0
+        for index, clip in enumerate(cliptimes):
+            chapterName, endItem = '', ''
+            if isinstance(clip[1], QTime):
+                endItem = clip[1].toString(self.parent.timeformat)
+                self.parent.totalRuntime += clip[0].msecsTo(clip[1])
+            listitem = QListWidgetItem(self)
+            listitem.setToolTip('Drag to reorder clips')
+            if len(clip[3]):
+                listitem.setToolTip(clip[3])
+                externalCount += 1
+            if self.parent.createChapters:
+                chapterName = clip[4] if clip[4] is not None else 'Chapter {}'.format(index + 1)
+            listitem.setStatusTip('Reorder clips with mouse drag & drop or right-click menu on the clip to be moved')
+            listitem.setTextAlignment(Qt.AlignVCenter)
+            listitem.setData(Qt.DecorationRole + 1, clip[2])
+            listitem.setData(Qt.DisplayRole + 1, clip[0].toString(self.parent.timeformat))
+            listitem.setData(Qt.UserRole + 1, endItem)
+            listitem.setData(Qt.UserRole + 2, clip[3])
+            listitem.setData(Qt.UserRole + 3, chapterName)
+            listitem.setFlags(Qt.ItemIsSelectable | Qt.ItemIsDragEnabled | Qt.ItemIsEnabled)
+            self.addItem(listitem)
+            if isinstance(clip[1], QTime) and not len(clip[3]):
+                self.parent.seekSlider.addRegion(clip[0].msecsSinceStartOfDay(), clip[1].msecsSinceStartOfDay())
+        return externalCount
+
     def showProgress(self, steps: int) -> None:
         for row in range(self.count()):
             item = self.item(row)
@@ -83,9 +111,7 @@ class VideoList(QListWidget):
 
     def mouseMoveEvent(self, event: QMouseEvent) -> None:
         if self.count() > 0:
-            modelindex = self.indexAt(event.pos())
-            if modelindex.isValid():
-                # data = modelindex.data(Qt.UserRole + 3)
+            if self.indexAt(event.pos()).isValid():
                 self.setCursor(Qt.PointingHandCursor)
             else:
                 self.setCursor(Qt.ArrowCursor)

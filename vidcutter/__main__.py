@@ -29,6 +29,7 @@ import shutil
 import signal
 import sys
 import traceback
+from typing import Callable, Optional
 
 from PyQt5.QtCore import (pyqtSlot, QCommandLineOption, QCommandLineParser, QDir, QFileInfo, QProcess,
                           QProcessEnvironment, QSettings, QSize, QStandardPaths, QTimerEvent, Qt)
@@ -312,11 +313,12 @@ class MainWindow(QMainWindow):
         except AttributeError:
             pass
 
-    def closeEvent(self, event: QCloseEvent) -> None:
+    def closeEvent(self, event: QCloseEvent) -> Optional[Callable]:
+        event.accept()
         try:
             if not self.isEnabled():
-                exitwarn = VCMessageBox('Warning', 'Video is currently being processed',
-                                        'Are you sure you want to exit now?', self)
+                exitwarn = VCMessageBox('Warning', 'Media is currently being processed',
+                                        'Are you sure you want to exit now?', parent=self)
                 exitwarn.addButton('Yes', QMessageBox.NoRole)
                 cancelbutton = exitwarn.addButton('No', QMessageBox.RejectRole)
                 exitwarn.exec_()
@@ -324,24 +326,15 @@ class MainWindow(QMainWindow):
                 if res == cancelbutton:
                     event.ignore()
                     return
-            elif self.cutter.mediaAvailable and self.cutter.projectDirty and not self.cutter.projectSaved:
-                savewarn = VCMessageBox('Warning', 'Unsaved changes found in project',
-                                        'Would you like to save the project now?', self)
-                savebutton = savewarn.addButton('Save project', QMessageBox.YesRole)
-                savewarn.addButton('Do not save', QMessageBox.NoRole)
-                cancelbutton = savewarn.addButton('Cancel', QMessageBox.RejectRole)
-                savewarn.exec_()
-                res = savewarn.clickedButton()
-                if res == savebutton:
-                    event.ignore()
-                    self.cutter.saveProject()
-                    return
-                elif res == cancelbutton:
-                    event.ignore()
+            noexit, callback = self.cutter.saveWarning()
+            if noexit:
+                event.ignore()
+                if callback is not None:
+                    return callback()
+                else:
                     return
         except AttributeError:
-            pass
-        event.accept()
+            logging.exception('warning dialogs on app exit exception', exc_info=True)
         self.console.deleteLater()
         if hasattr(self, 'cutter'):
             self.save_settings()
