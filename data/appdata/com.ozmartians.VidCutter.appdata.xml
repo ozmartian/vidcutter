@@ -12,6 +12,15 @@
       w/ frame-accurate SmartCut technology + Qt5, libmpv, FFmpeg and MediaInfo powering
       the backend.
     </p>
+    <p>Features include:</p>
+    <ul>
+      <li>OpenGL hardware accelerated video playback</li>
+      <li>Lossless, super fast media cutting and joining</li>
+      <li>Timeline thumbnails for easier navigation</li>
+      <li>SmartCut frame-accurate cutting option</li>
+      <li>Attractive + simple to use interface</li>
+      <li>Bundled with the latest stable releases of FFmpeg, mpv, MediaInfo and included codecs</li>
+    </ul>
   </description>
   <screenshots>
     <screenshot type="default">
@@ -34,4 +43,20 @@
   <url type="homepage">https://vidcutter.ozmartians.com</url>
   <url type="bugtracker">https://github.com/ozmartian/vidcutter/issues</url>
   <update_contact>pete_AT_ozmartians.com</update_contact>
+  <developer_name>Pete Alexandrou</developer_name>
+  <releases>
+    <release date="2018-05-30" version="6.0.0">
+      <description>
+        <p>
+          First official Flatpak release bundled with the very latest stable
+          releases of FFmpeg, mpv, MediaInfo and supporting codecs. The latest
+          version introduces chapter support, black detect filter processing
+          for scene detection and/or commercial skipping. Produced media files
+          are now passed through a finalizing process as a new last step to
+          help ensure sane results. Plus hundreds of bug fixes, optimisations
+          and improvements over previous incarnations.
+        </p>
+      </description>
+    </release>
+  </releases>
 </component>
