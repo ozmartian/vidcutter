@@ -9,17 +9,19 @@
   <description>
     <p>
       A modern, simple to use, constantly evolving and hella fast MEDIA CUTTER + JOINER
-      w/ frame-accurate SmartCut technology + Qt5, libmpv, FFmpeg and MediaInfo powering
-      the backend.
+      w/ frame-accurate SmartCut technology, chapter support, media stream selection for
+      audio + subtitle channels and blackdetect video filter support for to automatically
+      identify scene changes and/or assist with skipping commercials in source media
     </p>
     <p>Features include:</p>
     <ul>
-      <li>OpenGL hardware accelerated video playback</li>
-      <li>Lossless, super fast media cutting and joining</li>
+      <li>OpenGL hardware accelerated video playback via libmpv</li>
+      <li>Lossless, super fast media cutting and joining via FFmpeg</li>
       <li>Timeline thumbnails for easier navigation</li>
-      <li>SmartCut frame-accurate cutting option</li>
-      <li>Attractive + simple to use interface</li>
-      <li>Bundled with the latest stable releases of FFmpeg, mpv, MediaInfo and included codecs</li>
+      <li>SmartCut frame-accurate cutting mode; not enabled by default</li>
+      <li>Attractive + simple to use Qt5 based interface</li>
+      <li>Chapter support allowing each scene to be labelled with a chapter name that is added to final media metadata. NOTE: results will only work in media players that support chapters</li>
+      <li>Flatpak release includes latest stable versions of FFmpeg, libmpv, MediaInfo and PyQt5 running on the KDE runtime for a stable Qt5 experience regardless of your existing desktop environment + window manager</li>
     </ul>
   </description>
   <screenshots>
@@ -39,6 +41,14 @@
       <image>https://vidcutter.ozmartians.com/images/vidcutter-04.png</image>
       <caption>VidCutter :: the simplest + fastest video cutter and joiner</caption>
     </screenshot>
+    <screenshot>
+      <image>https://vidcutter.ozmartians.com/images/vidcutter-05.png</image>
+      <caption>VidCutter :: the simplest + fastest video cutter and joiner</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://vidcutter.ozmartians.com/images/vidcutter-06.png</image>
+      <caption>VidCutter :: the simplest + fastest video cutter and joiner</caption>
+    </screenshot>
   </screenshots>
   <url type="homepage">https://vidcutter.ozmartians.com</url>
   <url type="bugtracker">https://github.com/ozmartian/vidcutter/issues</url>
@@ -51,7 +61,7 @@
           First official Flatpak release bundled with the very latest stable
           releases of FFmpeg, mpv, MediaInfo and supporting codecs. The latest
           version introduces chapter support, black detect filter processing
-          for scene detection and/or commercial skipping. Produced media files
+          for scene detection + commercial skipping. Produced media files
           are now passed through a finalizing process as a new last step to
           help ensure sane results. Plus hundreds of bug fixes, optimisations
           and improvements over previous incarnations.

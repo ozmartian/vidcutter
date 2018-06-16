@@ -506,7 +506,10 @@ class VideoCutter(QWidget):
         self.novideoWidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         openmediaLabel = VCBlinkText('open media to begin', self)
         openmediaLabel.setAlignment(Qt.AlignHCenter)
-        versionLabel = QLabel('v{}'.format(qApp.applicationVersion()), self)
+        _version = 'v{}'.format(qApp.applicationVersion())
+        if self.parent.flatpak:
+            _version += ' <font size="-1">- FLATPAK</font>'
+        versionLabel = QLabel(_version, self)
         versionLabel.setObjectName('novideoversion')
         versionLabel.setAlignment(Qt.AlignRight)
         versionLayout = QHBoxLayout()
