@@ -1,7 +1,7 @@
 {
     "app-id": "com.ozmartians.VidCutter",
     "runtime": "org.kde.Platform",
-    "runtime-version": "5.10",
+    "runtime-version": "5.11",
     "sdk": "org.kde.Sdk",
     "command": "vidcutter",
     "finish-args": [
@@ -40,7 +40,7 @@
         ],
         "sources": [{
             "type": "archive",
-            "url": "https://pypi.python.org/packages/9c/1d/4544708aaa89f26c97cc09450bb333a23724a320923e74d73e028b3560f9/PyOpenGL-3.1.0.tar.gz",
+            "url": "https://files.pythonhosted.org/packages/9c/1d/4544708aaa89f26c97cc09450bb333a23724a320923e74d73e028b3560f9/PyOpenGL-3.1.0.tar.gz",
             "sha256": "9b47c5c3a094fa518ca88aeed35ae75834d53e4285512c61879f67a48c94ddaf"
         }]
     },
@@ -52,8 +52,8 @@
         ],
         "sources": [{
             "type": "archive",
-            "url": "https://pypi.python.org/packages/0d/3f/3a16847fe5c010110a8f54dd8fe7b091b4e22922def374fe1cce9c1cb7e9/simplejson-3.13.2.tar.gz",
-            "sha256": "4c4ecf20e054716cc1e5a81cadc44d3f4027108d8dd0861d8b1e3bd7a32d4f0a"
+            "url": "https://files.pythonhosted.org/packages/e3/24/c35fb1c1c315fc0fffe61ea00d3f88e85469004713dab488dee4f35b0aff/simplejson-3.16.0.tar.gz",
+            "sha256": "b1f329139ba647a9548aa05fb95d046b4a677643070dc2afc05fa2e975d09ca5"
         }]
     },
     {
@@ -68,21 +68,21 @@
         ],
         "sources": [{
             "type": "archive",
-            "url": "https://sourceforge.net/projects/pyqt/files/PyQt5/PyQt-5.10.1/PyQt5_gpl-5.10.1.tar.gz",
-            "sha256": "9932e971e825ece4ea08f84ad95017837fa8f3f29c6b0496985fa1093661e9ef"
+            "url": "https://sourceforge.net/projects/pyqt/files/PyQt5/PyQt-5.11.2/PyQt5_gpl-5.11.2.tar.gz",
+            "sha256": "7caa581155c3433716b7e6aba71fe1378cd7d92f4155c266d60e5cffb64e9603"
         }],
           "modules": [{
             "name": "sip",
             "buildsystem": "simple",
             "build-commands": [
-                "python3 configure.py -b ${FLATPAK_DEST}/bin -d ${FLATPAK_DEST}/lib/python3.5/site-packages -e ${FLATPAK_DEST}/include -v ${FLATPAK_DEST}/share/sip --stubsdir=${FLATPAK_DEST}/lib/python3.5/site-packages",
+                "python3 configure.py --sip-module PyQt5.sip -b ${FLATPAK_DEST}/bin -d ${FLATPAK_DEST}/lib/python3.5/site-packages -e ${FLATPAK_DEST}/include -v ${FLATPAK_DEST}/share/sip --stubsdir=${FLATPAK_DEST}/lib/python3.5/site-packages",
                 "make",
                 "make install"
             ],
             "sources": [{
                 "type": "archive",
-                "url": "https://sourceforge.net/projects/pyqt/files/sip/sip-4.19.8/sip-4.19.8.tar.gz",
-                "sha256": "7eaf7a2ea7d4d38a56dd6d2506574464bddf7cf284c960801679942377c297bc"
+                "url": "https://sourceforge.net/projects/pyqt/files/sip/sip-4.19.12/sip-4.19.12.tar.gz",
+                "sha256": "24617fc31b983df075500ecac0e99d2fb48bf63ba82d4a17518659e571923822"
             }]
         }]
     }, 
@@ -151,14 +151,27 @@
                 "--enable-libx264",
                 "--enable-libx265",
                 "--enable-libxvid",
+                "--enable-nvdec",
                 "--enable-version3"
             ],
             "sources": [{
                 "type": "archive",
-                "url": "https://ffmpeg.org/releases/ffmpeg-4.0.tar.xz",
-                "sha256": "ed945daf40b124e77a685893cc025d086f638bc703183460aff49508edb3a43f"
+                "url": "http://ffmpeg.org/releases/ffmpeg-4.0.1.tar.xz",
+                "sha256": "605f5c01c60db35d3b617a79cabb2c7032412be243554602eeed1b628125c0ee"
             }],     
             "modules": [{
+                "name": "ffnvcodec",
+                "buildsystem": "simple",
+                "build-commands": [
+                    "make",
+                    "make install PREFIX=${FLATPAK_DEST}"
+                ],
+                "sources": [{
+                    "type": "git",
+                    "url": "https://git.videolan.org/git/ffmpeg/nv-codec-headers.git"
+                }]
+            },
+            {
                 "name": "xvid",
                 "subdir": "build/generic",
                 "sources": [{

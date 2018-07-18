@@ -15,13 +15,14 @@
     </p>
     <p>Features include:</p>
     <ul>
-      <li>OpenGL hardware accelerated video playback via libmpv</li>
-      <li>Lossless, super fast media cutting and joining via FFmpeg</li>
-      <li>Timeline thumbnails for easier navigation</li>
-      <li>SmartCut frame-accurate cutting mode; not enabled by default</li>
-      <li>Attractive + simple to use Qt5 based interface</li>
-      <li>Chapter support allowing each scene to be labelled with a chapter name that is added to final media metadata. NOTE: results will only work in media players that support chapters</li>
-      <li>Flatpak release includes latest stable versions of FFmpeg, libmpv, MediaInfo and PyQt5 running on the KDE runtime for a stable Qt5 experience regardless of your existing desktop environment + window manager</li>
+      <li>OpenGL hardware accelerated playback (libmpv)</li>
+      <li>Lossless, super fast media cutting and joining (FFmpeg)</li>
+      <li>Detailed media metadata information (MediaInfo)</li>
+      <li>Timeline thumbnails for more accurate seeking</li>
+      <li>SmartCut frame-accurate cutting option (disabled by default)</li>
+      <li>Attractive, simple to use Qt5 based interface</li>
+      <li>Chapter support allowing scene chapter names to be included in final media metadata. NOTE: results will only work in media players that support chapters</li>
+      <li>Flatpak release includes latest stable versions of FFmpeg, libmpv, MediaInfo and PyQt5 running on the KDE runtime for a stable Qt5 experience</li>
     </ul>
   </description>
   <screenshots>
@@ -55,6 +56,14 @@
   <update_contact>pete_AT_ozmartians.com</update_contact>
   <developer_name>Pete Alexandrou</developer_name>
   <releases>
+    <release date="2018-07-18" version="6.0.0.1">
+      <description>
+        <p>
+          Maintenance release updating to latest 5.11 KDE runtime + updated
+          dependencies + fix for hardware accelerated decoding on NVIDIA GPUs.
+        </p>
+      </description>
+    </release>
     <release date="2018-05-30" version="6.0.0">
       <description>
         <p>
