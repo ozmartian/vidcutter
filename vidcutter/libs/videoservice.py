@@ -262,8 +262,16 @@ class VideoService(QObject):
         else:
             args = '-i "{}"'.format(source)
             result = self.cmdExec(self.backends.ffmpeg, args, True)
-            vcodec = re.search(r'Stream.*Video:\s(\w+)', result).group(1)
-            acodec = re.search(r'Stream.*Audio:\s(\w+)', result).group(1)
+            match = re.search(r'Stream.*Video:\s(\w+)', result)
+            if match:
+                vcodec = match.group(1)
+            else:
+                vcodec = None
+            match = re.search(r'Stream.*Audio:\s(\w+)', result)
+            if match:
+                acodec = match.group(1)
+            else:
+                acodec = None
             return vcodec, acodec
 
     def parseMappings(self, allstreams: bool=True) -> str:
