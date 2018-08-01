@@ -402,7 +402,11 @@ class VideoService(QObject):
                     args.remove('-map')
                     del args[pos]
                     self.smartcut_jobs[index].procs[name].setArguments(args)
-                    self.smartcut_jobs[index].procs[name].started.disconnect()
+                    try:
+                        self.smartcut_jobs[index].procs[name].started.disconnect()
+                    except TypeError as e:
+                        self.logger.exception('Failed to disconnect SmartCut job {0}.'.format(name), exc_info=True)
+
                     self.smartcut_jobs[index].procs[name].start()
                     return
                 else:
