@@ -162,10 +162,10 @@ int main(int argc, char *argv[]) {
 
     int a,b;
     old_env = getenv("PATH") ?: "";
-    snprintf(new_env[1], LENGTH, "PATH=%s/usr/bin/:%s/usr/sbin/:%s/usr/games/:%s/bin/:%s/sbin/:%s", appdir, appdir, appdir, appdir, appdir, old_env);
+    snprintf(new_env[1], LENGTH, "PATH=%1$s/usr/bin/:%1$s/usr/sbin/:%1$s/usr/games/:%1$s/bin/:%1$s/sbin/:%2$s", appdir, old_env);
 
     old_env = getenv("LD_LIBRARY_PATH") ?: "";
-    snprintf(new_env[2], LENGTH, "LD_LIBRARY_PATH=%s/usr/lib/:%s/usr/lib/i386-linux-gnu/:%s/usr/lib/x86_64-linux-gnu/:%s/usr/lib32/:%s/usr/lib64/:%s/lib/:%s/lib/i386-linux-gnu/:%s/lib/x86_64-linux-gnu/:%s/lib32/:%s/lib64/:%s", appdir, appdir, appdir, appdir, appdir, appdir, appdir, appdir, appdir, appdir, old_env);
+    snprintf(new_env[2], LENGTH, "LD_LIBRARY_PATH=%1$s/usr/lib/:%1$s/usr/lib/i386-linux-gnu/:%1$s/usr/lib/x86_64-linux-gnu/:%1$s/usr/lib32/:%1$s/usr/lib64/:%1$s/lib/:%1$s/lib/i386-linux-gnu/:%1$s/lib/x86_64-linux-gnu/:%1$s/lib32/:%1$s/lib64/:%2$s", appdir, old_env);
 
     old_env = getenv("XDG_DATA_DIRS") ?: "";
     snprintf(new_env[3], LENGTH, "XDG_DATA_DIRS=%s/usr/share/:%s", appdir, old_env);
@@ -175,7 +175,7 @@ int main(int argc, char *argv[]) {
     snprintf(new_env[4], LENGTH, "GSETTINGS_SCHEMA_DIR=%s/usr/share/glib-2.0/schemas/:%s", appdir, old_env);
 
     old_env = getenv("QT_PLUGIN_PATH") ?: "";
-    snprintf(new_env[5], LENGTH, "QT_PLUGIN_PATH=%s/lib/python3/dist-packages/PyQt5/Qt/:%s/usr/lib/qt5/plugins/:%s/usr/lib/i386-linux-gnu/qt5/plugins/:%s/usr/lib/x86_64-linux-gnu/qt5/plugins/:%s/usr/lib32/qt5/plugins/:%s/usr/lib64/qt5/plugins/:%s", appdir, appdir, appdir, appdir, appdir, appdir, appdir, old_env);
+    snprintf(new_env[5], LENGTH, "QT_PLUGIN_PATH=%1$s/lib/python3/dist-packages/PyQt5/Qt/:%1$s/usr/lib/qt5/plugins/:%1$s/usr/lib/i386-linux-gnu/qt5/plugins/:%1$s/usr/lib/x86_64-linux-gnu/qt5/plugins/:%1$s/usr/lib32/qt5/plugins/:%1$s/usr/lib64/qt5/plugins/:%2$s", appdir, old_env);
 
     snprintf(new_env[6], LENGTH, "QT_APPIMAGE=%s", "1");
     snprintf(new_env[7], LENGTH, "NO_AT_BRIDGE=%s", "1");

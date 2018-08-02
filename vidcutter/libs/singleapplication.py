@@ -25,9 +25,11 @@
 import os
 import sys
 
-from PyQt5.QtCore import pyqtSignal, Qt, QDir, QSettings, QTextStream
+from PyQt5.QtCore import pyqtSignal, Qt, QDir, QFileInfo, QProcessEnvironment, QSettings, QTextStream
 from PyQt5.QtNetwork import QLocalServer, QLocalSocket
 from PyQt5.QtWidgets import QApplication
+
+import vidcutter
 
 
 class SingleApplication(QApplication):
@@ -80,7 +82,12 @@ class SingleApplication(QApplication):
         elif sys.platform == 'darwin':
             settings_path = os.path.join(QDir.homePath(), 'Library', 'Preferences', 'vidcutter')
         else:
-            settings_path = os.path.join(QDir.homePath(), '.config', 'vidcutter')
+            if QFileInfo(__file__).absolutePath().startswith('/app/'):
+                settings_path = QProcessEnvironment.systemEnvironment().value('XDG_CONFIG_HOME', '')
+                if not len(settings_path):
+                    settings_path = os.path.join(QDir.homePath(), '.var', 'app', vidcutter.__desktopid__, 'config')
+            else:
+                settings_path = os.path.join(QDir.homePath(), '.config', 'vidcutter')
         return os.path.join(settings_path, 'vidcutter.ini')
 
     def isRunning(self):
@@ -92,7 +99,7 @@ class SingleApplication(QApplication):
     def activationWindow(self):
         return self._activationWindow
 
-    def setActivationWindow(self, activationWindow, activateOnMessage = True):
+    def setActivationWindow(self, activationWindow, activateOnMessage=True):
         self._activationWindow = activationWindow
         self._activateOnMessage = activateOnMessage
 

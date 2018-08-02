@@ -72,7 +72,7 @@ class Notification(QDialog):
     @property
     def message(self):
         return self._message
-    
+
     @message.setter
     def message(self, value):
         self.msgLabel.setText(value)
@@ -113,14 +113,14 @@ class JobCompleteNotification(Notification):
     <style>
         h1 {{
             color: {labelscolor};
-            font-family: "Futura-Light", sans-serif;
-            font-weight: 400;
+            font-family: "Futura LT", sans-serif;
+            font-weight: normal;
             text-align: center;
         }}
         table.info {{
             margin: 6px;
             padding: 4px 2px;
-            font-family: "Noto Sans UI", sans-serif;
+            font-family: "Noto Sans", sans-serif;
         }}
         td.label {{
             font-weight: bold;

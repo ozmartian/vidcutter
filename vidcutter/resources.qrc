@@ -1,12 +1,18 @@
 <RCC>
     <qresource prefix="/">
         <file>fonts/FuturaLT.ttf</file>
-        <file>fonts/NotoSans.ttc</file>
+        <file>fonts/NotoSans-Bold.ttf</file>
+        <file>fonts/NotoSans-Regular.ttf</file>
+        <file>images/about-logo.png</file>
         <file>images/arrow-left.png</file>
         <file>images/arrow-left-on.png</file>
         <file>images/arrow-right.png</file>
         <file>images/arrow-right-on.png</file>
+        <file>images/blackdetect.png</file>
+        <file>images/changelog.png</file>
+        <file>images/chapters.png</file>
         <file>images/complete-play.png</file>
+        <file>images/copyright.png</file>
         <file>images/dialog-backdrop.png</file>
         <file>images/dialog-backdrop-02.png</file>
         <file>images/down.png</file>
@@ -14,16 +20,19 @@
         <file>images/filmstrip.png</file>
         <file>images/filmstrip-thumbs.png</file>
         <file>images/filmstrip-nothumbs.png</file>
+        <file>images/filters.png</file>
         <file>images/folder.png</file>
         <file>images/generating-thumbs.png</file>
         <file>images/handle.png</file>
         <file>images/handle-select.png</file>
         <file>images/handle-nothumbs.png</file>
         <file>images/handle-nothumbs-select.png</file>
+        <file>images/home.png</file>
         <file>images/info.png</file>
         <file>images/keymap.png</file>
         <file>images/open.png</file>
         <file>images/pycharm.png</file>
+        <file>images/python.png</file>
         <file>images/qt.png</file>
         <file>images/quit.png</file>
         <file>images/remove.png</file>
@@ -51,6 +60,10 @@
         <file>images/watermark.png</file>
         <file>images/dark/about-background.png</file>
         <file>images/dark/background_complete.png</file>
+        <file>images/dark/chapters-disabled.png</file>
+        <file>images/dark/chapters-hover.png</file>
+        <file>images/dark/chapters-off.png</file>
+        <file>images/dark/chapters-on.png</file>
         <file>images/dark/checkbox.png</file>
         <file>images/dark/checkbox-hover.png</file>
         <file>images/dark/checkbox-checked.png</file>
@@ -79,7 +92,6 @@
         <file>images/dark/osd-hover.png</file>
         <file>images/dark/osd-off.png</file>
         <file>images/dark/osd-on.png</file>
-        <file>images/dark/python.png</file>
         <file>images/dark/radio.png</file>
         <file>images/dark/radio-checked.png</file>
         <file>images/dark/radio-hover.png</file>
@@ -130,6 +142,10 @@
         <file>images/dark/unmuted.png</file>
         <file>images/light/about-background.png</file>
         <file>images/light/background_complete.png</file>
+        <file>images/light/chapters-disabled.png</file>
+        <file>images/light/chapters-hover.png</file>
+        <file>images/light/chapters-off.png</file>
+        <file>images/light/chapters-on.png</file>
         <file>images/light/checkbox.png</file>
         <file>images/light/checkbox-hover.png</file>
         <file>images/light/checkbox-checked.png</file>
@@ -140,6 +156,10 @@
         <file>images/light/clipindex-remove.png</file>
         <file>images/light/clipindex-remove-disabled.png</file>
         <file>images/light/clipindex-remove-on.png</file>
+        <file>images/light/chapters-disabled.png</file>
+        <file>images/light/chapters-hover.png</file>
+        <file>images/light/chapters-off.png</file>
+        <file>images/light/chapters-on.png</file>
         <file>images/light/console-disabled.png</file>
         <file>images/light/console-hover.png</file>
         <file>images/light/console-off.png</file>
@@ -158,7 +178,6 @@
         <file>images/light/osd-hover.png</file>
         <file>images/light/osd-off.png</file>
         <file>images/light/osd-on.png</file>
-        <file>images/light/python.png</file>
         <file>images/light/radio.png</file>
         <file>images/light/radio-checked.png</file>
         <file>images/light/radio-hover.png</file>
@@ -210,5 +229,6 @@
         <file>styles/light.qss</file>
         <file>styles/dark.qss</file>
         <file>license.html</file>
+        <file>CHANGELOG</file>
     </qresource>
 </RCC>

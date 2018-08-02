@@ -1,9 +1,14 @@
 {
     "Description": "VidCutter SYSROOT specification",
 
+    "openssl": {
+        "source": "openssl-1.0.*.tar.gz",
+        "python_source": "Python-3.*.tar.xz"
+    },
+
     "qt5": {
         "configure_options": ["-opensource"],
-        "ssl": "openssl-runtime",
+        "ssl": "openssl-linked",
         "source": "qt-everywhere-src-5.*.tar.xz"
     },
 
@@ -25,8 +30,7 @@
             "QtNetwork",
             "QtOpenGL",
             "QtWidgets",
-            "QtX11Extras",
-            "_QOpenGLFunctions_4_1_Core"
+            "QX11Info"
         ],
         "source": "PyQt5_*-5.*.tar.gz"
     }

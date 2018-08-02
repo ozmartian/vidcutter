@@ -24,8 +24,25 @@
 
 from enum import Enum
 
+from PyQt5.QtCore import QSize
+
+from vidcutter.libs.munch import Munch
+
 
 class Config:
+    @staticmethod
+    def filter_settings() -> Munch:
+        return Munch(
+            blackdetect=Munch(
+                min_duration=0.1,
+                default_duration=2.0
+            )
+        )
+
+    @property
+    def thumbnails(self) -> dict:
+        return {'INDEX': QSize(100, 70), 'TIMELINE': QSize(105, 60)}
+
     @property
     def video_codecs(self) -> list:
         return ['flv', 'h263', 'libvpx', 'libx264', 'libx265', 'libxvid', 'mpeg2video', 'mpeg4', 'msmpeg4', 'wmv2']
@@ -99,6 +116,10 @@ class Streams(Enum):
     SUBTITLE = 2
 
 
+class VideoFilter(Enum):
+    BLACKDETECT = 1
+
+
 class VidCutterException(Exception):
     def __init__(self, msg: str=None):
         super(VidCutterException, self).__init__(msg)
@@ -113,3 +134,13 @@ class InvalidMediaException(VidCutterException):
 class ToolNotFoundException(VidCutterException):
     def __init__(self, msg: str=None):
         super(ToolNotFoundException, self).__init__(msg)
+
+
+class cached_property(object):
+    def __init__(self, f):
+        self._funcname = f.__name__
+        self._f = f
+
+    def __get__(self, obj, owner):
+        ret = obj.__dict__[self._funcname] = self._f(obj)
+        return ret

@@ -29,15 +29,19 @@ import shutil
 import signal
 import sys
 import traceback
+from typing import Callable, Optional
 
-from PyQt5.QtCore import (pyqtSlot, QCommandLineOption, QCommandLineParser, QCoreApplication, QDir, QFileInfo,
-                          QProcess, QSettings, QSize, QStandardPaths, QTimerEvent, Qt)
-from PyQt5.QtGui import QCloseEvent, QContextMenuEvent, QDragEnterEvent, QDropEvent, QMouseEvent, QPixmap, QResizeEvent
-from PyQt5.QtWidgets import qApp, QApplication, QMainWindow, QMessageBox, QSizePolicy
+from PyQt5.QtCore import (pyqtSlot, QCommandLineOption, QCommandLineParser, QDir, QFileInfo, QProcess,
+                          QProcessEnvironment, QSettings, QSize, QStandardPaths, QTimerEvent, Qt)
+from PyQt5.QtGui import (QCloseEvent, QContextMenuEvent, QDragEnterEvent, QDropEvent, QGuiApplication, QMouseEvent,
+                         QResizeEvent, QSurfaceFormat, qt_set_sequence_auto_mnemonic)
+from PyQt5.QtWidgets import qApp, QMainWindow, QMessageBox, QSizePolicy
 
-from vidcutter.libs.singleapplication import SingleApplication
 from vidcutter.videoconsole import ConsoleHandler, ConsoleWidget, VideoLogger
 from vidcutter.videocutter import VideoCutter
+
+from vidcutter.libs.singleapplication import SingleApplication
+from vidcutter.libs.widgets import VCMessageBox
 
 import vidcutter
 import vidcutter.libs.mpv as mpv
@@ -113,8 +117,7 @@ class MainWindow(QMainWindow):
 
     def init_logger(self) -> None:
         try:
-            log_path = QStandardPaths.writableLocation(QStandardPaths.AppConfigLocation).replace(
-                qApp.applicationName(), qApp.applicationName().lower())
+            log_path = self.get_app_config_path()
         except AttributeError:
             if sys.platform == 'win32':
                 log_path = os.path.join(QDir.homePath(), 'AppData', 'Local', qApp.applicationName().lower())
@@ -139,11 +142,12 @@ class MainWindow(QMainWindow):
                             level=logging.INFO)
         logging.captureWarnings(capture=True)
         sys.excepthook = MainWindow.log_uncaught_exceptions
+        if os.getenv('DEBUG', False):
+            logging.info('appconfig folder: {}'.format(log_path))
 
     def init_settings(self) -> None:
         try:
-            settings_path = QStandardPaths.writableLocation(QStandardPaths.AppConfigLocation).replace(
-                qApp.applicationName(), qApp.applicationName().lower())
+            settings_path = self.get_app_config_path()
         except AttributeError:
             if sys.platform == 'win32':
                 settings_path = os.path.join(QDir.homePath(), 'AppData', 'Local', qApp.applicationName().lower())
@@ -153,7 +157,7 @@ class MainWindow(QMainWindow):
             else:
                 settings_path = os.path.join(QDir.homePath(), '.config', qApp.applicationName().lower())
         os.makedirs(settings_path, exist_ok=True)
-        settings_file = '%s.ini' % qApp.applicationName().lower()
+        settings_file = '{}.ini'.format(qApp.applicationName().lower())
         self.settings = QSettings(os.path.join(settings_path, settings_file), QSettings.IniFormat)
         if self.settings.value('geometry') is not None:
             self.restoreGeometry(self.settings.value('geometry'))
@@ -216,6 +220,32 @@ class MainWindow(QMainWindow):
         self.settings.setValue('windowState', self.saveState())
         self.settings.sync()
 
+    @pyqtSlot(bool)
+    def lock_gui(self, locked: bool=True) -> None:
+        if locked:
+            qApp.setOverrideCursor(Qt.WaitCursor)
+            self.cutter.cliplist.setEnabled(False)
+            self.setEnabled(False)
+        else:
+            self.setEnabled(True)
+            self.cutter.cliplist.setEnabled(True)
+            qApp.restoreOverrideCursor()
+        qApp.processEvents()
+
+    @property
+    def flatpak(self) -> bool:
+        return sys.platform.startswith('linux') and QFileInfo(__file__).absolutePath().startswith('/app/')
+
+    def get_app_config_path(self) -> str:
+        if self.flatpak:
+            confpath = QProcessEnvironment.systemEnvironment().value('XDG_CONFIG_HOME', '')
+            if len(confpath):
+                return confpath
+            else:
+                return os.path.join(QDir.homePath(), '.var', 'app', vidcutter.__desktopid__, 'config')
+        return QStandardPaths.writableLocation(QStandardPaths.AppConfigLocation).replace(
+            qApp.applicationName(), qApp.applicationName().lower())
+
     @staticmethod
     def get_path(path: str=None, override: bool=False) -> str:
         if override:
@@ -223,7 +253,7 @@ class MainWindow(QMainWindow):
                 # noinspection PyProtectedMember, PyUnresolvedReferences
                 return os.path.join(sys._MEIPASS, path)
             return os.path.join(os.path.dirname(os.path.realpath(sys.argv[0])), path)
-        return ':%s' % path
+        return ':{}'.format(path)
 
     @pyqtSlot(str)
     def errorHandler(self, msg: str, title: str=None) -> None:
@@ -237,9 +267,8 @@ class MainWindow(QMainWindow):
         shutil.rmtree(MainWindow.WORKING_FOLDER, ignore_errors=True)
 
     def contextMenuEvent(self, event: QContextMenuEvent) -> None:
-        if event.reason() == QContextMenuEvent.Mouse:
-            self.cutter.appMenu.exec_(event.globalPos())
-            event.accept()
+        if event.reason() in {QContextMenuEvent.Mouse, QContextMenuEvent.Keyboard}:
+            self.cutter.appmenu.popup(event.globalPos())
         super(MainWindow, self).contextMenuEvent(event)
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
@@ -284,27 +313,12 @@ class MainWindow(QMainWindow):
         except AttributeError:
             pass
 
-    def closeEvent(self, event: QCloseEvent) -> None:
+    def closeEvent(self, event: QCloseEvent) -> Optional[Callable]:
+        event.accept()
         try:
             if not self.isEnabled():
-                warntext = '''
-                    <style>
-                        h2 {{
-                            color: {};
-                            font-family: "Futura-Light", sans-serif;
-                            font-weight: 400;
-                        }}
-                    </style>
-                    <table border="0" cellpadding="6" cellspacing="0" width="350">
-                        <tr>
-                            <td><h2>Video is currently being processed</h2></td>
-                        </tr>
-                        <tr>
-                            <td>Are you sure you wish to exit right now?</td>
-                        </tr>
-                    </table>'''.format('#C681D5' if self.theme == 'dark' else '#642C68')
-                exitwarn = QMessageBox(QMessageBox.Warning, 'Warning', warntext, parent=self)
-                exitwarn.setIconPixmap(QPixmap(':images/warning.png'))
+                exitwarn = VCMessageBox('Warning', 'Media is currently being processed',
+                                        'Are you sure you want to exit now?', parent=self)
                 exitwarn.addButton('Yes', QMessageBox.NoRole)
                 cancelbutton = exitwarn.addButton('No', QMessageBox.RejectRole)
                 exitwarn.exec_()
@@ -312,40 +326,15 @@ class MainWindow(QMainWindow):
                 if res == cancelbutton:
                     event.ignore()
                     return
-            elif self.cutter.mediaAvailable and self.cutter.projectDirty and not self.cutter.projectSaved:
-                warntext = '''
-                    <style>
-                        h2 {{
-                            color: {};
-                            font-family: "Futura-Light", sans-serif;
-                            font-weight: 400;
-                        }}
-                    </style>
-                    <table border="0" cellpadding="6" cellspacing="0" width="350">
-                        <tr>
-                            <td><h2>There are unsaved changes in your project</h2></td>
-                        </tr>
-                        <tr>
-                            <td>Would you like to save the project now?</td>
-                        </tr>
-                    </table>'''.format('#C681D5' if self.theme == 'dark' else '#642C68')
-                savewarn = QMessageBox(QMessageBox.Warning, 'Warning', warntext, parent=self)
-                savewarn.setIconPixmap(QPixmap(':images/warning.png'))
-                savebutton = savewarn.addButton('Save project', QMessageBox.YesRole)
-                savewarn.addButton('Do not save', QMessageBox.NoRole)
-                cancelbutton = savewarn.addButton('Cancel', QMessageBox.RejectRole)
-                savewarn.exec_()
-                res = savewarn.clickedButton()
-                if res == savebutton:
-                    event.ignore()
-                    self.cutter.saveProject()
-                    return
-                elif res == cancelbutton:
-                    event.ignore()
+            noexit, callback = self.cutter.saveWarning()
+            if noexit:
+                event.ignore()
+                if callback is not None:
+                    return callback()
+                else:
                     return
         except AttributeError:
-            pass
-        event.accept()
+            logging.exception('warning dialogs on app exit exception', exc_info=True)
         self.console.deleteLater()
         if hasattr(self, 'cutter'):
             self.save_settings()
@@ -360,32 +349,36 @@ class MainWindow(QMainWindow):
             except AttributeError:
                 pass
         try:
-            qApp.quit()
+            qApp.exit(0)
         except mpv.MPVError:
             pass
 
 
 def main():
+    qt_set_sequence_auto_mnemonic(False)
+
     if hasattr(Qt, 'AA_EnableHighDpiScaling'):
-        QCoreApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
+        QGuiApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
     if hasattr(Qt, 'AA_Use96Dpi'):
-        QCoreApplication.setAttribute(Qt.AA_Use96Dpi, True)
+        QGuiApplication.setAttribute(Qt.AA_Use96Dpi, True)
     if hasattr(Qt, 'AA_ShareOpenGLContexts'):
-        QCoreApplication.setAttribute(Qt.AA_ShareOpenGLContexts, True)
+        fmt = QSurfaceFormat()
+        fmt.setDepthBufferSize(24)
+        QSurfaceFormat.setDefaultFormat(fmt)
+        QGuiApplication.setAttribute(Qt.AA_ShareOpenGLContexts, True)
 
     if sys.platform == 'darwin':
-        QApplication.setStyle('Fusion')
+        qApp.setStyle('Fusion')
 
     app = SingleApplication(vidcutter.__appid__, sys.argv)
     app.setApplicationName(vidcutter.__appname__)
     app.setApplicationVersion(vidcutter.__version__)
+    app.setDesktopFileName(vidcutter.__desktopid__)
     app.setOrganizationDomain(vidcutter.__domain__)
     app.setQuitOnLastWindowClosed(True)
 
-    stylename = qApp.style().objectName().lower()
-
     win = MainWindow()
-    win.stylename = stylename
+    win.stylename = app.style().objectName().lower()
     app.setActivationWindow(win)
     app.messageReceived.connect(win.file_opener)
     app.aboutToQuit.connect(MainWindow.cleanup)

@@ -90,7 +90,6 @@ class VideoSlider(QSlider):
         self.valueChanged.connect(self.on_valueChanged)
         self.rangeChanged.connect(self.on_rangeChanged)
         self.installEventFilter(self)
-        self.setFocus()
 
     def initStyle(self) -> None:
         bground = 'rgba(200, 213, 236, 0.85)' if self._cutStarted else 'transparent'
@@ -218,47 +217,37 @@ class VideoSlider(QSlider):
         self._regionSelected = -1
         self.update()
 
+    @pyqtSlot(int)
     def showProgress(self, steps: int) -> None:
-        for rect in self._regions:
-            progress = SliderProgress(steps, rect, self)
-            self._progressbars.append(progress)
+        if len(self._regions):
+            [self._progressbars.append(SliderProgress(steps, rect, self)) for rect in self._regions]
+        else:
+            self.parent.cliplist.showProgress(steps)
 
     @pyqtSlot()
     @pyqtSlot(int)
     def updateProgress(self, region: int=None) -> None:
-        # [print('pre-update value: {}'.format(progress.value())) for progress in self._progressbars]
-        if region is None:
-            [progress.setValue(progress.value() + 1) for progress in self._progressbars]
+        if len(self._regions):
+            if region is None:
+                [progress.setValue(progress.value() + 1) for progress in self._progressbars]
+            else:
+                self._progressbars[region].setValue(self._progressbars[region].value() + 1)
         else:
-            self._progressbars[region].setValue(self._progressbars[region].value() + 1)
-        # [print('post-update value: {}'.format(progress.value())) for progress in self._progressbars]
+            self.parent.cliplist.updateProgress(region)
 
     @pyqtSlot()
     def clearProgress(self) -> None:
         for progress in self._progressbars:
             progress.hide()
             progress.deleteLater()
-        qApp.processEvents()
+        self.parent.cliplist.clearProgress()
         self._progressbars.clear()
-
-    def lockGUI(self, locked: bool) -> None:
-        if locked:
-            qApp.setOverrideCursor(Qt.WaitCursor)
-            self.parent.cliplist.setEnabled(False)
-            self.parent.parent.setEnabled(False)
-            self.blockSignals(True)
-            self.parent.parent.layout().setSizeConstraint(QLayout.SetFixedSize)
-        else:
-            self.blockSignals(False)
-            self.parent.parent.setEnabled(True)
-            self.parent.cliplist.setEnabled(True)
-            qApp.restoreOverrideCursor()
-            self.parent.parent.layout().setSizeConstraint(QLayout.SetNoConstraint)
 
     def initThumbs(self) -> None:
         framesize = self.parent.videoService.framesize()
-        thumbsize = QSize(VideoService.ThumbSize.TIMELINE.value.height() * (framesize.width() / framesize.height()),
-                          VideoService.ThumbSize.TIMELINE.value.height())
+        thumbsize = QSize(
+            VideoService.config.thumbnails['TIMELINE'].height() * (framesize.width() / framesize.height()),
+            VideoService.config.thumbnails['TIMELINE'].height())
         positions, frametimes = [], []
         thumbs = int(math.ceil((self.rect().width() - (self.offset * 2)) / thumbsize.width()))
         for pos in range(thumbs):
@@ -315,7 +304,7 @@ class VideoSlider(QSlider):
         thumbnails.setLayout(thumbslayout)
         filmlabel = QLabel()
         filmlabel.setObjectName('filmstrip')
-        filmlabel.setFixedHeight(VideoService.ThumbSize.TIMELINE.value.height() + 2)
+        filmlabel.setFixedHeight(VideoService.config.thumbnails['TIMELINE'].height() + 2)
         filmlabel.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         filmlayout = QHBoxLayout()
         filmlayout.setContentsMargins(0, 0, 0, 16)

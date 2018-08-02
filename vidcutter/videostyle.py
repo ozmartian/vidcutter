@@ -22,11 +22,11 @@
 #
 #######################################################################
 
-import functools
+from functools import partial
 
 from PyQt5.QtCore import Qt, QFile, QFileInfo, QTextStream
 from PyQt5.QtGui import QColor, QPalette
-from PyQt5.QtWidgets import qApp, QStyle
+from PyQt5.QtWidgets import qApp
 
 try:
     from PyQt5.QtWidgets import QProxyStyle
@@ -42,30 +42,29 @@ except ImportError:
                            'sizeFromContents', 'standardPixmap', 'subControlRect', 'subElementRect', 'unpolish',
                            'itemPixmapRect', 'itemTextRect', 'styleHint', 'drawItemText'}:
                 target = getattr(self._style, method)
-                setattr(self, method, functools.partial(target))
+                setattr(self, method, partial(target))
             super().__init__()
 
 
 class VideoStyle(QProxyStyle):
     # noinspection PyMethodOverriding
-    def styleHint(self, hint, option, widget, returnData) -> int:
+    def styleHint(self, hint, option=None, widget=None, returnData=None) -> int:
         if hint in {
-            QStyle.SH_UnderlineShortcut,
-            QStyle.SH_DialogButtons_DefaultButton,
-            QStyle.SH_DialogButtonBox_ButtonsHaveIcons
+            self.proxy().SH_UnderlineShortcut,
+            self.proxy().SH_DialogButtons_DefaultButton,
+            self.proxy().SH_DialogButtonBox_ButtonsHaveIcons
         }:
             return 0
         return super(VideoStyle, self).styleHint(hint, option, widget, returnData)
 
     @staticmethod
-    def loadQSS(theme) -> str:
+    def loadQSS(theme) -> None:
         filename = ':/styles/{}.qss'.format(theme)
         if QFileInfo(filename).exists():
             qssfile = QFile(filename)
             qssfile.open(QFile.ReadOnly | QFile.Text)
             content = QTextStream(qssfile).readAll()
             qApp.setStyleSheet(content)
-            return content
 
 
 class VideoStyleLight(VideoStyle):
@@ -83,8 +82,8 @@ class VideoStyleLight(VideoStyle):
         palette.setColor(QPalette.ButtonText, QColor(49, 54, 59))
         palette.setColor(QPalette.BrightText, QColor(255, 255, 255))
         palette.setColor(QPalette.Link, QColor(41, 128, 185))
-        palette.setColor(QPalette.Highlight, QColor(136, 136, 136))
-        palette.setColor(QPalette.HighlightedText, QColor(239, 240, 241))
+        # palette.setColor(QPalette.Highlight, QColor(126, 71, 130))
+        # palette.setColor(QPalette.HighlightedText, Qt.white)
         palette.setColor(QPalette.Disabled, QPalette.Light, Qt.white)
         palette.setColor(QPalette.Disabled, QPalette.Shadow, QColor(234, 234, 234))
         qApp.setPalette(palette)
@@ -105,8 +104,8 @@ class VideoStyleDark(VideoStyle):
         palette.setColor(QPalette.ButtonText, Qt.white)
         palette.setColor(QPalette.BrightText, QColor(100, 215, 222))
         palette.setColor(QPalette.Link, QColor(126, 71, 130))
-        palette.setColor(QPalette.Highlight, QColor(126, 71, 130))
-        palette.setColor(QPalette.HighlightedText, Qt.white)
+        # palette.setColor(QPalette.Highlight, QColor(126, 71, 130))
+        # palette.setColor(QPalette.HighlightedText, Qt.white)
         palette.setColor(QPalette.Disabled, QPalette.Light, Qt.black)
         palette.setColor(QPalette.Disabled, QPalette.Shadow, QColor(12, 15, 16))
         qApp.setPalette(palette)

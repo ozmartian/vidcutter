@@ -28,7 +28,7 @@ import os
 import sys
 
 from PyQt5.QtCore import QSize, Qt
-from PyQt5.QtGui import QCloseEvent
+from PyQt5.QtGui import QCloseEvent, QShowEvent
 from PyQt5.QtWidgets import (QDialog, QDialogButtonBox, QHBoxLayout, QLabel, QPushButton, QSizePolicy, QStyleFactory,
                              QTextBrowser, QVBoxLayout, qApp)
 
@@ -55,12 +55,12 @@ class MediaInfo(QDialog):
             self.setStyle(QStyleFactory.create('Fusion'))
         metadata = '''<style>
     table {{
-        font-family: "Noto Sans UI", sans-serif;
+        font-family: "Noto Sans", sans-serif;
         font-size: 13px;
         border: 1px solid #999;
     }}
     td i {{
-        font-family: "Noto Sans UI", sans-serif;
+        font-family: "Noto Sans", sans-serif;
         font-weight: normal;
         font-style: normal;
         text-align: right;
@@ -115,30 +115,33 @@ class MediaInfo(QDialog):
         kframes = KeyframesDialog(keyframes, self)
         kframes.show()
 
-    def closeEvent(self, event: QCloseEvent) -> None:
-        self.deleteLater()
-        super(MediaInfo, self).closeEvent(event)
-
 
 class KeyframesDialog(QDialog):
     def __init__(self, keyframes: list, parent=None, flags=Qt.Tool | Qt.FramelessWindowHint):
         super(KeyframesDialog, self).__init__(parent, flags)
+        self.parent = parent
         self.setObjectName('keyframes')
         self.setAttribute(Qt.WA_DeleteOnClose, True)
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         self.setWindowModality(Qt.ApplicationModal)
         self.setWindowTitle('View keyframes')
         self.setStyleSheet('QDialog { border: 2px solid #000; }')
-        content = QTextBrowser(self)
-        content.setStyleSheet('QTextBrowser { border: none; background-color: transparent; }')
-        content.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.content = QTextBrowser(self)
+        self.content.setStyleSheet('''
+            QTextBrowser {{
+                border: none;
+                border-top: 1px solid {0};
+                border-bottom: 1px solid {0};
+                background-color: transparent;
+        }}'''.format('#4D5355' if parent.parent.theme == 'dark' else '#C0C2C3'))
+        self.content.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         buttons = QDialogButtonBox(QDialogButtonBox.Close)
         buttons.accepted.connect(self.close)
         buttons.rejected.connect(self.close)
         content_headers = '''<style>
                     table td h2 {{
-                        font-family: "Futura-Light", sans-serif;
-                        font-weight: 500;
+                        font-family: "Futura LT", sans-serif;
+                        font-weight: normal;
                         text-align: center;
                         color: {}
                     }}
@@ -155,7 +158,7 @@ class KeyframesDialog(QDialog):
         col2 = '<br/>'.join(keyframes[halver:])
         html = '''<style>
             table {{
-               font-family: "Noto Sans UI", sans-serif;
+               font-family: "Noto Sans", sans-serif;
                font-size: 13px;
            }}
            td {{
@@ -171,7 +174,7 @@ class KeyframesDialog(QDialog):
                </tr>
            </table>
         </div>'''.format(**locals())
-        content.setHtml(html)
+        self.content.setHtml(html)
         totalLabel = QLabel('<b>total keyframes:</b> {}'.format(len(keyframes)), self)
         totalLabel.setAlignment(Qt.AlignCenter)
         totalLabel.setObjectName('modalfooter')
@@ -181,8 +184,21 @@ class KeyframesDialog(QDialog):
         button_layout.addWidget(buttons, 0)
         layout = QVBoxLayout()
         layout.addWidget(headers)
-        layout.addWidget(content)
+        layout.addWidget(self.content)
         layout.addLayout(button_layout)
         self.setLayout(layout)
         self.setMinimumWidth(320)
         qApp.restoreOverrideCursor()
+
+    def showEvent(self, event: QShowEvent) -> None:
+        if self.content.verticalScrollBar().isVisible() \
+                and (self.parent.parent.parent.stylename == 'fusion' or sys.platform in {'win32', 'darwin'}):
+            self.content.setStyleSheet('''
+                QTextBrowser {{
+                    border-left: none;
+                    border-right: 1px solid {0};
+                    border-top: 1px solid {0};
+                    border-bottom: 1px solid {0};
+                    background-color: transparent;
+                }}'''.format('#4D5355' if self.parent.parent.theme == 'dark' else '#C0C2C3'))
+        super(KeyframesDialog, self).showEvent(event)

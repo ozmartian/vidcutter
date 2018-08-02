@@ -8,8 +8,8 @@ Homepage: https://vidcutter.ozmartians.com
 
 Package: vidcutter
 Architecture: i386 amd64
-Depends: ${misc:Depends}, ${python3:Depends}, python3-pyqt5, python3-pyqt5.qtopengl, python3-pyqt5.qtx11extras,
-         libmpv1, ffmpeg, mediainfo, python3-opengl
+Depends: ${misc:Depends}, ${python3:Depends}, python3-pyqt5, python3-pyqt5.qtx11extras,
+         libmpv1, ffmpeg, mediainfo, python3-opengl, python3-simplejson	
 Description: the simplest + fastest media cutter & joiner
  A modern, simple to use, constantly evolving and hella fast MEDIA CUTTER + JOINER
  w/ frame-accurate SmartCut technology + Qt5, libmpv, FFmpeg and MediaInfo powering

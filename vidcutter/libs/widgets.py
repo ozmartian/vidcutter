@@ -24,13 +24,15 @@
 
 import os
 import sys
+from typing import Union
 
-from PyQt5.QtCore import (pyqtProperty, pyqtSignal, pyqtSlot, QEasingCurve, QEvent, QObject, QPoint, QPropertyAnimation,
-                          QSize, Qt, QTime, QTimer)
-from PyQt5.QtGui import QShowEvent
-from PyQt5.QtWidgets import (qApp, QAbstractSpinBox, QDialog, QDialogButtonBox, QGraphicsOpacityEffect, QGridLayout,
-                             QHBoxLayout, QLabel, QMessageBox, QProgressBar, QPushButton, QSlider, QSpinBox, QStyle,
-                             QStyleFactory, QStyleOptionSlider, QTimeEdit, QToolBox, QToolTip, QVBoxLayout, QWidget)
+from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QEasingCurve, QEvent, QObject, QPoint, QPropertyAnimation, Qt, QSize,
+                          QTime, QTimer)
+from PyQt5.QtGui import QFocusEvent, QMouseEvent, QPixmap, QShowEvent
+from PyQt5.QtWidgets import (qApp, QDialog, QDialogButtonBox, QDoubleSpinBox, QGraphicsOpacityEffect, QGridLayout,
+                             QHBoxLayout, QLabel, QLineEdit, QMenu, QMessageBox, QProgressBar, QPushButton, QSlider,
+                             QSpinBox, QStyle, QStyleFactory, QStyleOptionSlider, QTimeEdit, QToolBox, QToolTip,
+                             QVBoxLayout, QWidget, QWidgetAction)
 
 
 class VCToolBarButton(QWidget):
@@ -48,7 +50,9 @@ class VCToolBarButton(QWidget):
         self.setup(label, statustip)
         self.label1 = QLabel(label.replace(' ', '<br/>'), self)
         self.label2 = QLabel(label, self)
+        self.label2.setAlignment(Qt.AlignHCenter)
         layout = QGridLayout()
+        layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(5)
         layout.addWidget(self.button, 0, 0, Qt.AlignHCenter)
         layout.addWidget(self.label1, 0, 1)
@@ -94,6 +98,7 @@ class VCTimeCounter(QWidget):
         self.timeedit.setFrame(False)
         self.timeedit.setDisplayFormat('hh:mm:ss.zzz')
         self.timeedit.timeChanged.connect(self.timeChangeHandler)
+        self.timeedit.setCurrentSectionIndex(3)
         separator = QLabel('/')
         separator.setObjectName('timeSeparator')
         self.duration = QLabel('00:00:00.000')
@@ -130,9 +135,7 @@ class VCTimeCounter(QWidget):
         self.timeedit.clearFocus()
 
     def hasFocus(self) -> bool:
-        if self.timeedit.hasFocus():
-            return True
-        return super(VCTimeCounter, self).hasFocus()
+        return self.timeedit.hasFocus()
 
     def reset(self) -> None:
         self.timeedit.setTime(QTime(0, 0))
@@ -141,9 +144,9 @@ class VCTimeCounter(QWidget):
     def setReadOnly(self, readonly: bool) -> None:
         self.timeedit.setReadOnly(readonly)
         if readonly:
-            self.timeedit.setButtonSymbols(QAbstractSpinBox.NoButtons)
+            self.timeedit.setButtonSymbols(QTimeEdit.NoButtons)
         else:
-            self.timeedit.setButtonSymbols(QAbstractSpinBox.UpDownArrows)
+            self.timeedit.setButtonSymbols(QTimeEdit.UpDownArrows)
 
     @pyqtSlot(QTime)
     def timeChangeHandler(self, newtime: QTime) -> None:
@@ -191,9 +194,7 @@ class VCFrameCounter(QWidget):
         self.setMaximum(count)
 
     def hasFocus(self) -> bool:
-        if self.currentframe.hasFocus():
-            return True
-        return super(VCFrameCounter, self).hasFocus()
+        return self.currentframe.hasFocus()
 
     def clearFocus(self) -> None:
         self.currentframe.clearFocus()
@@ -205,9 +206,9 @@ class VCFrameCounter(QWidget):
     def setReadOnly(self, readonly: bool) -> None:
         self.currentframe.setReadOnly(readonly)
         if readonly:
-            self.currentframe.setButtonSymbols(QAbstractSpinBox.NoButtons)
+            self.currentframe.setButtonSymbols(QSpinBox.NoButtons)
         else:
-            self.currentframe.setButtonSymbols(QAbstractSpinBox.UpDownArrows)
+            self.currentframe.setButtonSymbols(QSpinBox.UpDownArrows)
 
     @pyqtSlot(int)
     def frameChangeHandler(self, frame: int) -> None:
@@ -215,13 +216,15 @@ class VCFrameCounter(QWidget):
             self.frameChanged.emit(frame)
 
 
-class VCProgressBar(QDialog):
+class VCProgressDialog(QDialog):
     taskbarprogress = pyqtSignal(float, bool)
 
-    def __init__(self, parent=None, flags=Qt.Dialog | Qt.FramelessWindowHint):
-        super(VCProgressBar, self).__init__(parent, flags)
+    def __init__(self, parent=None, flags=Qt.Dialog | Qt.FramelessWindowHint, modal: bool=True):
+        super(VCProgressDialog, self).__init__(parent, flags)
         self.parent = parent
-        self.setWindowModality(Qt.ApplicationModal)
+        if modal:
+            self.setWindowModality(Qt.ApplicationModal)
+        self.setFocusPolicy(Qt.ClickFocus)
         self.setStyleSheet('QDialog { border: 2px solid #000; }')
         self._progress = QProgressBar(self)
         self._progress.setRange(0, 0)
@@ -283,7 +286,7 @@ class VCProgressBar(QDialog):
 
     def setText(self, val: str) -> None:
         if '<b>' in val:
-            css = '<style>b { font-family:"Noto Sans UI"; font-weight:bold; }</style>'
+            css = '<style>b { font-family:"Noto Sans"; font-weight:bold; }</style>'
             val = '{0}{1}'.format(css, val)
         self._label.setText(val)
 
@@ -316,7 +319,11 @@ class VCProgressBar(QDialog):
             self.taskbarprogress.emit(0.0, False)
         if self._timer.isActive():
             self._timer.stop()
-        super(VCProgressBar, self).close()
+        super(VCProgressDialog, self).close()
+
+    def focusOutEvent(self, event: QFocusEvent) -> None:
+        self.activateWindow()
+        self.setFocus()
 
 
 class VCVolumeSlider(QSlider):
@@ -326,7 +333,7 @@ class VCVolumeSlider(QSlider):
         self.setFocusPolicy(Qt.NoFocus)
         self.valueChanged.connect(self.showTooltip)
         self.offset = QPoint(0, -45)
-        if sys.platform == 'win32':
+        if sys.platform in {'win32', 'darwin'}:
             self.setStyle(QStyleFactory.create('Fusion'))
 
     @pyqtSlot(int)
@@ -338,6 +345,68 @@ class VCVolumeSlider(QSlider):
         pos += self.offset
         globalPos = self.mapToGlobal(pos)
         QToolTip.showText(globalPos, str('{0}%'.format(value)), self)
+
+
+class VCInputDialog(QDialog):
+    def __init__(self, parent: QWidget, title: str, label: str, text: str):
+        super(VCInputDialog, self).__init__(parent, Qt.Dialog | Qt.WindowCloseButtonHint)
+        self.input = QLineEdit(text, self)
+        self.input.setStyle(QStyleFactory.create('Fusion'))
+        self.input.setClearButtonEnabled(True)
+        self.input.selectAll()
+        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        buttons.accepted.connect(self.accept)
+        buttons.rejected.connect(self.reject)
+        layout = QVBoxLayout()
+        layout.addWidget(QLabel(label, self))
+        layout.addWidget(self.input)
+        layout.addWidget(buttons)
+        self.setLayout(layout)
+        self.setWindowTitle(title)
+        self.setFixedSize(350, self.sizeHint().height())
+
+
+class VCDoubleInputDialog(QDialog):
+    def __init__(self, parent: QWidget, title: str, label: str, value: float, minval: float, maxval: float,
+                 decimals: int, step: float, desc: str=None, suffix: str=None):
+        super(VCDoubleInputDialog, self).__init__(parent, Qt.Dialog | Qt.WindowCloseButtonHint)
+        self._spinbox = QDoubleSpinBox(self)
+        self._spinbox.setStyle(QStyleFactory.create('Fusion'))
+        self._spinbox.setAttribute(Qt.WA_MacShowFocusRect, False)
+        self._spinbox.setDecimals(decimals)
+        self._spinbox.setRange(minval, maxval)
+        self._spinbox.setSingleStep(step)
+        if suffix is not None:
+            self._spinbox.setSuffix(' {}'.format(suffix))
+        self.value = value
+        startbutton = QPushButton('Start')
+        startbutton.setDefault(True)
+        self.buttons = QDialogButtonBox(self)
+        self.buttons.addButton(startbutton, QDialogButtonBox.AcceptRole)
+        self.buttons.addButton(QDialogButtonBox.Cancel)
+        self.buttons.rejected.connect(self.close)
+        fieldlayout = QHBoxLayout()
+        fieldlayout.addWidget(QLabel(label, self))
+        fieldlayout.addWidget(self._spinbox)
+        layout = QVBoxLayout()
+        layout.addLayout(fieldlayout)
+        if desc is not None:
+            desc_label = QLabel(desc, self)
+            desc_label.setTextFormat(Qt.RichText)
+            desc_label.setObjectName('dialogdesc')
+            desc_label.setWordWrap(True)
+            layout.addWidget(desc_label)
+        layout.addWidget(self.buttons)
+        self.setLayout(layout)
+        self.setWindowTitle(title)
+
+    @property
+    def value(self) -> float:
+        return self._spinbox.value()
+
+    @value.setter
+    def value(self, val: float) -> None:
+        self._spinbox.setValue(val)
 
 
 class VCBlinkText(QWidget):
@@ -365,6 +434,74 @@ class VCBlinkText(QWidget):
         self.anim.stop()
 
 
+class VCFilterMenuAction(QWidgetAction):
+
+    class VCFilterMenuWidget(QWidget):
+        triggered = pyqtSignal()
+
+        def __init__(self, icon: QPixmap, title: str, text: str, subtext: str):
+            super(VCFilterMenuAction.VCFilterMenuWidget, self).__init__()
+            self.icon_label = QLabel(self)
+            self.icon_label.setPixmap(icon)
+            self.text_label = QLabel('<b>{title}:</b> {text}<br/><font size="-1">{subtext}</font>'.format(**locals()),
+                                     self)
+            layout = QHBoxLayout()
+            layout.addWidget(self.icon_label)
+            layout.addSpacing(5)
+            layout.addWidget(self.text_label)
+            self.setLayout(layout)
+
+        def mousePressEvent(self, event: QMouseEvent) -> None:
+            if event.button() == Qt.LeftButton:
+                self.triggered.emit()
+            super(VCFilterMenuAction.VCFilterMenuWidget, self).mousePressEvent(event)
+
+        def enterEvent(self, event: QEvent) -> None:
+            if self.isEnabled():
+                self.parentWidget().setStyleSheet('background-color: palette(highlight); '
+                                                  'color: palette(highlighted-text);')
+            super(VCFilterMenuAction.VCFilterMenuWidget, self).enterEvent(event)
+
+        def leaveEvent(self, event: QEvent) -> None:
+            if self.isEnabled():
+                self.parentWidget().setStyleSheet('background-color: palette(window); color: palette(text);')
+            super(VCFilterMenuAction.VCFilterMenuWidget, self).leaveEvent(event)
+
+    def __init__(self, icon: QPixmap, title: str, text: str, subtext: str, parent=None):
+        super(VCFilterMenuAction, self).__init__(parent)
+        self.setStatusTip(text)
+        w = VCFilterMenuAction.VCFilterMenuWidget(icon, title, text, subtext)
+        w.triggered.connect(self.trigger)
+        self.setDefaultWidget(w)
+
+
+class VCMessageBox(QMessageBox):
+    def __init__(self, title: str, heading: str, text: str, buttons: Union=None, width: int=350, parent: QWidget=None):
+        super(VCMessageBox, self).__init__(parent)
+        self.parent = parent
+        self.setWindowTitle(title)
+        self.setIconPixmap(QPixmap(':images/warning.png'))
+        color = '#C681D5' if self.parent.theme == 'dark' else '#642C68'
+        self.setText('''
+            <style>
+                h2 {{
+                    color: {color};
+                    font-family: "Futura LT", sans-serif;
+                    font-weight: normal;
+                }}
+            </style>
+            <table border="0" cellpadding="6" cellspacing="0" width="{width}">
+                <tr>
+                    <td><h2>{heading}</h2></td>
+                </tr>
+                <tr>
+                    <td>{text}</td>
+                </tr>
+            </table>'''.format(**locals()))
+        if buttons is not None:
+            self.setStandardButtons(buttons)
+
+
 class ClipErrorsDialog(QDialog):
 
     class VCToolBox(QToolBox):
@@ -389,7 +526,7 @@ class ClipErrorsDialog(QDialog):
         self.errors = errors
         self.parent = parent
         self.setWindowModality(Qt.ApplicationModal)
-        self.setWindowTitle('Cannot add media file(s)')
+        self.setWindowTitle('Cannot add media')
         self.headingcolor = '#C681D5' if self.parent.theme == 'dark' else '#642C68'
         self.pencolor = '#FFF' if self.parent.theme == 'dark' else '#222'
         self.toolbox = ClipErrorsDialog.VCToolBox(self)
@@ -419,11 +556,11 @@ class ClipErrorsDialog(QDialog):
                 h1 {{
                     text-align: center;
                     color: {0};
-                    font-family: "Futura-Light", sans-serif;
-                    font-weight: 400;
+                    font-family: "Futura LT", sans-serif;
+                    font-weight: normal;
                 }}
                 p {{
-                    font-family: "Noto Sans UI", sans-serif;
+                    font-family: "Noto Sans", sans-serif;
                     color: {1};
                 }}
             </style>
@@ -454,11 +591,11 @@ class ClipErrorsDialog(QDialog):
             h1 {{
                 text-align: center;
                 color: {0};
-                font-family: "Futura-Light", sans-serif;
-                font-weight: 400;
+                font-family: "Futura LT", sans-serif;
+                font-weight: normal;
             }}
             p {{
-                font-family: "Noto Sans UI", sans-serif;
+                font-family: "Noto Sans", sans-serif;
                 font-weight: 300;
                 color: {1};
             }}

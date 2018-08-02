@@ -143,9 +143,9 @@ Check https://copr.fedorainfracloud.org/coprs/suspiria/VidCutter for more detail
 
 https://software.opensuse.org/package/vidcutter
 
-VidCutter was recently added to openSUSE Tumbleweed (rolling-build) official repos and should hopefully make its way to release versions in time. 
+VidCutter is available from openSUSE Leap 15.0 + Tumbleweed official distributions repos. Community built packages for other openSUSE releases/versions can be found @ https://software.opensuse.org/package/vidcutter. 
 
-VidCutter is also available from the always respected Packman third-party repos. Instructions to enable it can be found here:
+VidCutter is also available from the popular Packman third-party repository. Instructions to enable it can be found here:
 
    https://en.opensuse.org/Additional_package_repositories#Packman
 

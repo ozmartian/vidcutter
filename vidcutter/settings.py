@@ -28,9 +28,9 @@ import sys
 from PyQt5.QtCore import pyqtSlot, QDir, QSize, Qt
 from PyQt5.QtGui import QCloseEvent, QColor, QIcon, QPainter, QPen, QPixmap, QShowEvent
 from PyQt5.QtWidgets import (qApp, QButtonGroup, QCheckBox, QDialog, QDialogButtonBox, QDoubleSpinBox, QFileDialog,
-                             QFormLayout, QFrame, QGridLayout, QGroupBox, QHBoxLayout, QLabel, QLineEdit, QListView,
-                             QListWidget, QListWidgetItem, QMessageBox, QPushButton, QRadioButton, QSizePolicy,
-                             QSpacerItem, QStackedWidget, QStyleFactory, QVBoxLayout, QWidget)
+                             QFrame, QGridLayout, QGroupBox, QHBoxLayout, QLabel, QLineEdit, QListView, QListWidget,
+                             QListWidgetItem, QMessageBox, QPushButton, QRadioButton, QSizePolicy, QSpacerItem,
+                             QStackedWidget, QStyleFactory, QVBoxLayout, QWidget)
 
 from vidcutter.libs.videoservice import VideoService
 
@@ -59,7 +59,7 @@ class LogsPage(QWidget):
         logsGroup = QGroupBox('Logging')
         logsGroup.setLayout(logsLayout)
         mainLayout = QVBoxLayout()
-        mainLayout.setSpacing(10)
+        mainLayout.setSpacing(15)
         mainLayout.addWidget(logsGroup)
         mainLayout.addStretch(1)
         self.setLayout(mainLayout)
@@ -75,7 +75,7 @@ class ThemePage(QWidget):
         self.parent = parent
         self.setObjectName('settingsthemepage')
         mainLayout = QVBoxLayout()
-        mainLayout.setSpacing(10)
+        mainLayout.setSpacing(15)
         pen = QPen(QColor('#4D5355' if self.parent.theme == 'dark' else '#B9B9B9'))
         pen.setWidth(2)
         theme_light = QPixmap(':/images/theme-light.png', 'PNG')
@@ -211,8 +211,8 @@ class ThemePage(QWidget):
                 <style>
                     h1 {
                         color: %s;
-                        font-family: "Futura-Light", sans-serif;
-                        font-weight: 400;
+                        font-family: "Futura LT", sans-serif;
+                        font-weight: normal;
                     }
                 </style>
                 <h1>Warning</h1>
@@ -242,13 +242,29 @@ class VideoPage(QWidget):
         decodingCheckbox.setChecked(self.parent.parent.hardwareDecoding)
         decodingCheckbox.stateChanged.connect(self.switchDecoding)
         decodingLabel = QLabel('''
-            <b>ON:</b> saves laptop power + prevents video tearing;
-            falls back to software decoding if hardware not supported
+            <b>ON:</b> saves laptop power + prevents video tearing; falls back to software decoding if your hardware is
+            not supported
             <br/>
             <b>OFF:</b> always use software based decoding''', self)
         decodingLabel.setObjectName('decodinglabel')
         decodingLabel.setTextFormat(Qt.RichText)
         decodingLabel.setWordWrap(True)
+        pboCheckbox = QCheckBox('Enable use of PBOs', self)
+        pboCheckbox.setToolTip('Enable the use of Pixel Buffer Objects (PBOs)')
+        pboCheckbox.setCursor(Qt.PointingHandCursor)
+        pboCheckbox.setChecked(self.parent.parent.enablePBO)
+        pboCheckbox.stateChanged.connect(self.togglePBO)
+        pboCheckboxLabel = QLabel(' (recommended for 4K videos)')
+        pboCheckboxLabel.setObjectName('checkboxsubtext')
+        pboLabel = QLabel('''
+            <b>ON:</b> usually improves performance with 4K videos but results in slower performance + latency with
+            standard media due to higher memory use
+            <br/>
+            <b>OFF</b>: this should be your default choice for most media files
+        ''', self)
+        pboLabel.setObjectName('pbolabel')
+        pboLabel.setTextFormat(Qt.RichText)
+        pboLabel.setWordWrap(True)
         ratioCheckbox = QCheckBox('Keep aspect ratio', self)
         ratioCheckbox.setToolTip('Keep source video aspect ratio')
         ratioCheckbox.setCursor(Qt.PointingHandCursor)
@@ -265,7 +281,15 @@ class VideoPage(QWidget):
         videoLayout = QVBoxLayout()
         videoLayout.addWidget(decodingCheckbox)
         videoLayout.addWidget(decodingLabel)
-        videoLayout.addWidget(SettingsDialog.lineSeparator())
+        videoLayout.addLayout(SettingsDialog.lineSeparator())
+        pboCheckboxLayout = QHBoxLayout()
+        pboCheckboxLayout.setContentsMargins(0, 0, 0, 0)
+        pboCheckboxLayout.addWidget(pboCheckbox)
+        pboCheckboxLayout.addWidget(pboCheckboxLabel)
+        pboCheckboxLayout.addStretch(1)
+        videoLayout.addLayout(pboCheckboxLayout)
+        videoLayout.addWidget(pboLabel)
+        videoLayout.addLayout(SettingsDialog.lineSeparator())
         videoLayout.addWidget(ratioCheckbox)
         videoLayout.addWidget(ratioLabel)
         videoGroup = QGroupBox('Playback')
@@ -307,7 +331,7 @@ class VideoPage(QWidget):
         noteLabel.setTextFormat(Qt.RichText)
         noteLabel.setWordWrap(True)
         mainLayout = QVBoxLayout()
-        mainLayout.setSpacing(10)
+        mainLayout.setSpacing(15)
         mainLayout.addWidget(videoGroup)
         mainLayout.addWidget(zoomGroup)
         mainLayout.addWidget(noteLabel)
@@ -316,13 +340,19 @@ class VideoPage(QWidget):
 
     @pyqtSlot(int)
     def switchDecoding(self, state: int) -> None:
-        self.parent.parent.mpvWidget.mpv.set_property('hwdec', 'auto' if state == Qt.Checked else 'no')
+        self.parent.parent.mpvWidget.property('hwdec', 'auto' if state == Qt.Checked else 'no')
         self.parent.parent.saveSetting('hwdec', state == Qt.Checked)
         self.parent.parent.hardwareDecoding = (state == Qt.Checked)
 
     @pyqtSlot(int)
+    def togglePBO(self, state: int) -> None:
+        self.parent.parent.mpvWidget.option('opengl-pbo', state == Qt.Checked)
+        self.parent.parent.saveSetting('enablePBO', state == Qt.Checked)
+        self.parent.parent.enablePBO = (state == Qt.Checked)
+
+    @pyqtSlot(int)
     def keepAspectRatio(self, state: int) -> None:
-        self.parent.parent.mpvWidget.mpv.set_option('keepaspect', state == Qt.Checked)
+        self.parent.parent.mpvWidget.option('keepaspect', state == Qt.Checked)
         self.parent.settings.setValue('aspectRatio', 'keep' if state == Qt.Checked else 'stretch')
         self.parent.parent.keepRatio = (state == Qt.Checked)
 
@@ -336,7 +366,7 @@ class VideoPage(QWidget):
             level = 1
         else:
             level = 0
-        self.parent.parent.mpvWidget.mpv.set_property('video-zoom', level)
+        self.parent.parent.mpvWidget.property('video-zoom', level)
         self.parent.settings.setValue('videoZoom', level)
 
 
@@ -346,54 +376,62 @@ class ToolsPage(QWidget):
         self.parent = parent
         self.setObjectName('settingstoolspage')
         self.ffmpegpath = QLineEdit(QDir.toNativeSeparators(self.parent.service.backends.ffmpeg), self)
-        self.ffmpegpath.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        self.ffmpegpath.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Preferred)
         ffmpegbutton = QPushButton(self)
         ffmpegbutton.setIcon(QIcon(':/images/folder.png'))
         ffmpegbutton.setToolTip('Set FFmpeg path')
         ffmpegbutton.setCursor(Qt.PointingHandCursor)
         ffmpegbutton.clicked.connect(lambda c, backend='FFmpeg': self.setPath(backend, self.ffmpegpath))
+        ffmpeglabel = QLabel('FFmpeg:', self)
+        ffmpeglabel.setFixedWidth(65)
         ffmpeglayout = QHBoxLayout()
+        ffmpeglayout.addWidget(ffmpeglabel)
         ffmpeglayout.addWidget(self.ffmpegpath)
         ffmpeglayout.addWidget(ffmpegbutton)
         self.ffprobepath = QLineEdit(QDir.toNativeSeparators(self.parent.service.backends.ffprobe), self)
-        self.ffprobepath.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        self.ffprobepath.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Preferred)
         ffprobebutton = QPushButton(self)
         ffprobebutton.setIcon(QIcon(':/images/folder.png'))
         ffprobebutton.setToolTip('Set FFprobe path')
         ffprobebutton.setCursor(Qt.PointingHandCursor)
         ffprobebutton.clicked.connect(lambda c, backend='FFprobe': self.setPath(backend, self.ffprobepath))
+        ffprobelabel = QLabel('FFprobe:', self)
+        ffprobelabel.setFixedWidth(65)
         ffprobelayout = QHBoxLayout()
+        ffprobelayout.addWidget(ffprobelabel)
         ffprobelayout.addWidget(self.ffprobepath)
         ffprobelayout.addWidget(ffprobebutton)
         self.mediainfopath = QLineEdit(QDir.toNativeSeparators(self.parent.service.backends.mediainfo), self)
-        self.mediainfopath.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        self.mediainfopath.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Preferred)
         mediainfobutton = QPushButton(self)
         mediainfobutton.setIcon(QIcon(':/images/folder.png'))
         mediainfobutton.setToolTip('Set MediaInfo path')
         mediainfobutton.setCursor(Qt.PointingHandCursor)
         mediainfobutton.clicked.connect(lambda c, backend='MediaInfo': self.setPath(backend, self.mediainfopath))
+        mediainfolabel = QLabel('MediaInfo:', self)
+        mediainfolabel.setFixedWidth(65)
         mediainfolayout = QHBoxLayout()
+        mediainfolayout.addWidget(mediainfolabel)
         mediainfolayout.addWidget(self.mediainfopath)
         mediainfolayout.addWidget(mediainfobutton)
-        resetbutton = QPushButton('Reset to Defaults', self)
+        resetbutton = QPushButton('Reset to defaults', self)
         resetbutton.setObjectName('resetpathsbutton')
-        resetbutton.setToolTip('Reset to default paths')
+        resetbutton.setToolTip('Reset paths to their defaults')
         resetbutton.setCursor(Qt.PointingHandCursor)
         resetbutton.clicked.connect(self.resetPaths)
         resetlayout = QHBoxLayout()
         resetlayout.addStretch(1)
         resetlayout.addWidget(resetbutton)
-        pathsLayout = QFormLayout()
+        pathsLayout = QVBoxLayout()
         pathsLayout.setContentsMargins(11, 11, 11, 20)
-        pathsLayout.setVerticalSpacing(20)
-        pathsLayout.addRow('FFmpeg:', ffmpeglayout)
-        pathsLayout.addRow('FFprobe:', ffprobelayout)
-        pathsLayout.addRow('MediaInfo:', mediainfolayout)
-        pathsLayout.addRow('', resetlayout)
+        pathsLayout.addLayout(ffmpeglayout)
+        pathsLayout.addLayout(ffprobelayout)
+        pathsLayout.addLayout(mediainfolayout)
+        pathsLayout.addLayout(resetlayout)
         pathsGroup = QGroupBox('Paths')
         pathsGroup.setLayout(pathsLayout)
         mainLayout = QVBoxLayout()
-        mainLayout.setSpacing(10)
+        mainLayout.setSpacing(15)
         mainLayout.addWidget(pathsGroup)
         mainLayout.addStretch(1)
         self.setLayout(mainLayout)
@@ -430,11 +468,13 @@ class GeneralPage(QWidget):
         super(GeneralPage, self).__init__(parent)
         self.parent = parent
         self.setObjectName('settingsgeneralpage')
-        smartCutCheckbox = QCheckBox('Enable SmartCut (frame-accurate mode)')
-        smartCutCheckbox.setToolTip('Enable SmartCut mode for frame-accurate precision when cutting')
+        smartCutCheckbox = QCheckBox('Enable SmartCut mode')
+        smartCutCheckbox.setToolTip('Enable SmartCut mode for frame-accurate cutting precision')
         smartCutCheckbox.setCursor(Qt.PointingHandCursor)
         smartCutCheckbox.setChecked(self.parent.parent.smartcut)
         smartCutCheckbox.stateChanged.connect(self.setSmartCut)
+        smartCutCheckboxLabel = QLabel(' (frame-accurate cutting)')
+        smartCutCheckboxLabel.setObjectName('checkboxsubtext')
         smartCutLabel1 = QLabel('<b>ON:</b> re-encode start + end portions of each clip at valid GOP (IDR) '
                                 'keyframes')
         smartCutLabel1.setObjectName('smartcutlabel')
@@ -456,20 +496,25 @@ class GeneralPage(QWidget):
         smartCutLayout.addItem(QSpacerItem(25, 1), 3, 0)
         smartCutLayout.addWidget(smartCutLabel4, 3, 1)
         smartCutLayout.setColumnStretch(1, 1)
-        self.singleInstance = self.parent.settings.value('singleInstance', 'on', type=str) in {'on', 'true'}
-        singleInstanceCheckbox = QCheckBox('Allow only one running instance', self)
-        singleInstanceCheckbox.setToolTip('Allow just one single %s instance to be running' % qApp.applicationName())
-        singleInstanceCheckbox.setCursor(Qt.PointingHandCursor)
-        singleInstanceCheckbox.setChecked(self.singleInstance)
-        singleInstanceCheckbox.stateChanged.connect(self.setSingleInstance)
-        singleInstanceLabel = QLabel('''
-            <b>ON:</b> allow only one single application window
+        smartCutCheckboxLayout = QHBoxLayout()
+        smartCutCheckboxLayout.setContentsMargins(0, 0, 0, 0)
+        smartCutCheckboxLayout.addWidget(smartCutCheckbox)
+        smartCutCheckboxLayout.addWidget(smartCutCheckboxLabel)
+        smartCutCheckboxLayout.addStretch(1)
+
+        chaptersCheckbox = QCheckBox('Create chapters per clip', self)
+        chaptersCheckbox.setToolTip('Automatically create chapters per clip')
+        chaptersCheckbox.setCursor(Qt.PointingHandCursor)
+        chaptersCheckbox.setChecked(self.parent.parent.createChapters)
+        chaptersCheckbox.stateChanged.connect(self.createChapters)
+        chaptersLabel = QLabel('''
+            <b>ON:</b> existing chapters are ignored, new chapters added based on your clip index
             <br/>
-            <b>OFF:</b> allow multiple application windows
-        ''', self)
-        singleInstanceLabel.setObjectName('singleinstancelabel')
-        singleInstanceLabel.setTextFormat(Qt.RichText)
-        singleInstanceLabel.setWordWrap(True)
+            <b>OFF:</b> only chapters in source media are mapped to your file
+        ''')
+        chaptersLabel.setObjectName('chapterslabel')
+        chaptersLabel.setTextFormat(Qt.RichText)
+        chaptersLabel.setWordWrap(True)
         keepClipsCheckbox = QCheckBox('Keep clip segments', self)
         keepClipsCheckbox.setToolTip('Keep joined clip segments')
         keepClipsCheckbox.setCursor(Qt.PointingHandCursor)
@@ -483,18 +528,38 @@ class GeneralPage(QWidget):
         keepClipsLabel.setObjectName('keepclipslabel')
         keepClipsLabel.setTextFormat(Qt.RichText)
         keepClipsLabel.setWordWrap(True)
+        self.singleInstance = self.parent.settings.value('singleInstance', 'on', type=str) in {'on', 'true'}
+        singleInstanceCheckbox = QCheckBox('Allow only one running instance', self)
+        singleInstanceCheckbox.setToolTip('Allow just one single {} instance to be running'
+                                          .format(qApp.applicationName()))
+        singleInstanceCheckbox.setCursor(Qt.PointingHandCursor)
+        singleInstanceCheckbox.setChecked(self.singleInstance)
+        singleInstanceCheckbox.stateChanged.connect(self.setSingleInstance)
+        singleInstanceLabel = QLabel('''
+            <b>ON:</b> allow only one single application window
+            <br/>
+            <b>OFF:</b> allow multiple application windows
+        ''', self)
+        singleInstanceLabel.setObjectName('singleinstancelabel')
+        singleInstanceLabel.setTextFormat(Qt.RichText)
+        singleInstanceLabel.setWordWrap(True)
         generalLayout = QVBoxLayout()
-        generalLayout.addWidget(smartCutCheckbox)
+        generalLayout.addLayout(smartCutCheckboxLayout)
         generalLayout.addLayout(smartCutLayout)
-        generalLayout.addWidget(SettingsDialog.lineSeparator())
+        generalLayout.addLayout(SettingsDialog.lineSeparator())
+        generalLayout.addWidget(chaptersCheckbox)
+        generalLayout.addWidget(chaptersLabel)
+        generalLayout.addLayout(SettingsDialog.lineSeparator())
         generalLayout.addWidget(keepClipsCheckbox)
         generalLayout.addWidget(keepClipsLabel)
-        generalLayout.addWidget(SettingsDialog.lineSeparator())
+        generalLayout.addLayout(SettingsDialog.lineSeparator())
         generalLayout.addWidget(singleInstanceCheckbox)
         generalLayout.addWidget(singleInstanceLabel)
         generalGroup = QGroupBox('General')
         generalGroup.setLayout(generalLayout)
         seek1SpinBox = QDoubleSpinBox(self)
+        seek1SpinBox.setStyle(QStyleFactory.create('Fusion'))
+        seek1SpinBox.setAttribute(Qt.WA_MacShowFocusRect, False)
         seek1SpinBox.setDecimals(1)
         seek1SpinBox.setRange(0.1, 999.9)
         seek1SpinBox.setSingleStep(0.1)
@@ -503,6 +568,8 @@ class GeneralPage(QWidget):
         # noinspection PyUnresolvedReferences
         seek1SpinBox.valueChanged[float].connect(lambda d: self.setSpinnerValue(1, d))
         seek2SpinBox = QDoubleSpinBox(self)
+        seek2SpinBox.setStyle(QStyleFactory.create('Fusion'))
+        seek2SpinBox.setAttribute(Qt.WA_MacShowFocusRect, False)
         seek2SpinBox.setDecimals(1)
         seek2SpinBox.setRange(0.1, 999.9)
         seek2SpinBox.setSingleStep(0.1)
@@ -510,34 +577,33 @@ class GeneralPage(QWidget):
         seek2SpinBox.setValue(self.parent.parent.level2Seek)
         # noinspection PyUnresolvedReferences
         seek2SpinBox.valueChanged[float].connect(lambda d: self.setSpinnerValue(2, d))
-        seekLabel = QLabel('''<b>NOTE:</b> these settings affect the seeking time forwards
-            and backwards via the UP/DOWN and SHIFT + UP/DOWN keys. see the
+        seekLabel = QLabel('''<b>NOTES:</b> these settings affect the seeking time forwards
+            and backwards via the<br/>UP/DOWN and SHIFT + UP/DOWN keys. see the
             <i>Keyboard shortcuts</i> menu option for a full list of available shortcuts''', self)
         seekLabel.setObjectName('seeksettingslabel')
         seekLabel.setTextFormat(Qt.RichText)
         seekLabel.setWordWrap(True)
         spinnersLayout = QHBoxLayout()
         spinnersLayout.addStretch(1)
-        spinnersLayout.addWidget(QLabel('Level #1', self))
+        spinnersLayout.addWidget(QLabel('Level #1: ', self))
         spinnersLayout.addWidget(seek1SpinBox)
         spinnersLayout.addStretch(1)
-        spinnersLayout.addWidget(QLabel('Level #2', self))
+        spinnersLayout.addWidget(QLabel('Level #2: ', self))
         spinnersLayout.addWidget(seek2SpinBox)
         spinnersLayout.addStretch(1)
         seekLayout = QVBoxLayout()
+        seekLayout.setContentsMargins(0, 0, 0, 0)
+        seekLayout.setSpacing(0)
         seekLayout.addLayout(spinnersLayout)
         seekLayout.addWidget(seekLabel)
         self.seekGroup = QGroupBox('Seeking')
         self.seekGroup.setLayout(seekLayout)
         mainLayout = QVBoxLayout()
-        mainLayout.setSpacing(10)
+        mainLayout.setSpacing(15)
         mainLayout.addWidget(generalGroup)
         mainLayout.addWidget(self.seekGroup)
         mainLayout.addStretch(1)
         self.setLayout(mainLayout)
-        if sys.platform == 'win32':
-            seek1SpinBox.setStyle(QStyleFactory.create('Fusion'))
-            seek2SpinBox.setStyle(QStyleFactory.create('Fusion'))
 
     @pyqtSlot(int)
     def setSmartCut(self, state: int) -> None:
@@ -549,12 +615,18 @@ class GeneralPage(QWidget):
         self.parent.parent.saveSetting('singleInstance', self.singleInstance)
 
     @pyqtSlot(int)
+    def createChapters(self, state: int) -> None:
+        self.parent.parent.saveSetting('chapters', state == Qt.Checked)
+        self.parent.parent.createChapters = (state == Qt.Checked)
+        self.parent.parent.chaptersButton.setChecked(state == Qt.Checked)
+
+    @pyqtSlot(int)
     def keepClips(self, state: int) -> None:
         self.parent.parent.saveSetting('keepClips', state == Qt.Checked)
         self.parent.parent.keepClips = (state == Qt.Checked)
 
     def setSpinnerValue(self, box_id: int, val: float) -> None:
-        self.parent.settings.setValue('level{0}Seek'.format(box_id), val)
+        self.parent.settings.setValue('level{}Seek'.format(box_id), val)
         if box_id == 1:
             self.parent.parent.level1Seek = val
         elif box_id == 2:
@@ -571,8 +643,8 @@ class GeneralPage(QWidget):
 
 
 class SettingsDialog(QDialog):
-    def __init__(self, service: VideoService, parent=None, flags=Qt.WindowCloseButtonHint):
-        super(SettingsDialog, self).__init__(parent.parent, flags)
+    def __init__(self, service: VideoService, parent: QWidget, flags=Qt.WindowCloseButtonHint):
+        super(SettingsDialog, self).__init__(parent.parentWidget(), flags)
         self.parent = parent
         self.service = service
         self.settings = self.parent.settings
@@ -600,6 +672,7 @@ class SettingsDialog(QDialog):
         self.pages.addWidget(LogsPage(self))
         self.initCategories()
         horizontalLayout = QHBoxLayout()
+        horizontalLayout.setSpacing(5)
         horizontalLayout.addWidget(self.categories)
         horizontalLayout.addWidget(self.pages, 1)
         buttons = QDialogButtonBox(QDialogButtonBox.Ok, self)
@@ -643,16 +716,17 @@ class SettingsDialog(QDialog):
         self.categories.currentItemChanged.connect(self.changePage)
         self.categories.setCurrentRow(0)
         self.categories.setMaximumWidth(self.categories.sizeHintForColumn(0) + 2)
-        self.setMinimumWidth(650 if sys.platform == 'darwin' else 620)
-        if sys.platform != 'win32':
-            self.adjustSize()
 
     @staticmethod
-    def lineSeparator() -> QFrame:
+    def lineSeparator() -> QHBoxLayout:
         line = QFrame()
         line.setFrameShape(QFrame.HLine)
         line.setFrameShadow(QFrame.Sunken)
-        return line
+        layout = QHBoxLayout()
+        layout.setContentsMargins(0, 4, 0, 4)
+        layout.addSpacing(25)
+        layout.addWidget(line)
+        return layout
 
     @pyqtSlot(QListWidgetItem, QListWidgetItem)
     def changePage(self, current: QListWidgetItem, previous: QListWidgetItem):
@@ -661,7 +735,6 @@ class SettingsDialog(QDialog):
         index = self.categories.row(current)
         self.pages.setCurrentIndex(index)
 
-    @pyqtSlot(QCloseEvent)
-    def closeEvent(self, event: QCloseEvent):
-        self.deleteLater()
-        super(SettingsDialog, self).closeEvent(event)
+    def sizeHint(self) -> QSize:
+        return QSize(700 if sys.platform == 'darwin' else 625,
+                     680 if sys.platform == 'darwin' else 645)

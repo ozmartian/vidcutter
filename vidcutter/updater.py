@@ -22,7 +22,6 @@
 #
 #######################################################################
 
-import json
 import logging
 import os
 import sys
@@ -32,7 +31,13 @@ from PyQt5.QtGui import QDesktopServices
 from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkReply, QNetworkRequest
 from PyQt5.QtWidgets import qApp, QDialog, QDialogButtonBox, QLabel, QVBoxLayout
 
-from vidcutter.libs.widgets import VCProgressBar
+from vidcutter.libs.widgets import VCProgressDialog
+
+try:
+    # noinspection PyPackageRequirements
+    from simplejson import loads, JSONDecodeError
+except ImportError:
+    from json import loads, JSONDecodeError
 
 
 class Updater(QDialog):
@@ -55,12 +60,15 @@ class Updater(QDialog):
             return
         if os.getenv('DEBUG', False):
             self.log_request(reply)
-        # noinspection PyTypeChecker
-        jsonobj = json.loads(str(reply.readAll(), 'utf-8'))
-        reply.deleteLater()
-        latest = jsonobj.get('tag_name')
-        current = qApp.applicationVersion()
-        self.mbox.show_result(latest, current)
+        try:
+            jsonobj = loads(str(reply.readAll(), 'utf-8'))
+            reply.deleteLater()
+            latest = jsonobj.get('tag_name')
+            current = qApp.applicationVersion()
+            self.mbox.show_result(latest, current)
+        except JSONDecodeError:
+            self.logger.exception('Updater JSON decoding error', exc_info=True)
+            raise
 
     def check(self) -> None:
         self.mbox = UpdaterMsgBox(self.parent, theme=self.parent.theme)
@@ -83,7 +91,7 @@ class UpdaterMsgBox(QDialog):
         self.setWindowTitle('{} updates'.format(qApp.applicationName()))
         self.setWindowModality(Qt.ApplicationModal)
         self.setObjectName('updaterdialog')
-        self.loading = VCProgressBar(self.parent)
+        self.loading = VCProgressDialog(self.parent)
         self.loading.setText('contacting server')
         self.loading.setMinimumWidth(485)
         self.loading.show()
@@ -104,8 +112,8 @@ class UpdaterMsgBox(QDialog):
             h1 {
                 text-align: center;
                 color: %s;
-                font-family: "Futura-Light", sans-serif;
-                font-weight: 400;
+                font-family: "Futura LT", sans-serif;
+                font-weight: normal;
             }
             div {
                 border: 1px solid #999;
@@ -116,15 +124,16 @@ class UpdaterMsgBox(QDialog):
                 margin: 10px 0 0 0;
             }
             td.label {
-                font-family: "Futura-Light", san-serif;
+                font-family: "Futura LT", san-serif;
+                font-weight: normal;
                 text-align: right;
                 font-size: 17px;
             }
             td.value {
-                font-family: "Noto Sans UI", sans-serif;
+                font-family: "Noto Sans", sans-serif;
                 color: %s;
                 font-weight: 500;
-                font-size: 15px;
+                font-size: 16px;
             }
         </style>''' % (pencolor1, pencolor2, pencolor2, pencolor1)
         if update_available:
@@ -173,5 +182,5 @@ class UpdaterMsgBox(QDialog):
         self.loading.close()
         self.loading.deleteLater()
         self.setLayout(layout)
-        self.setMinimumWidth(600)
+        self.setFixedSize(600, self.sizeHint().height())
         self.show()

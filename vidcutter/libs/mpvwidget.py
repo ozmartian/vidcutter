@@ -27,64 +27,38 @@ import logging
 import os
 import sys
 
-if sys.platform.startswith('linux'):
-    # noinspection PyBroadException
-    try:
-        import vidcutter.libs.distro as distro
-        if distro.id().lower() in {'ubuntu', 'fedora'}:
-            # noinspection PyUnresolvedReferences
-            from OpenGL import GL
-    except BaseException:
-        pass
+from OpenGL import GL
+
+if sys.platform == 'win32':
+    from PyQt5.QtOpenGL import QGLContext
+elif sys.platform == 'darwin':
+    from OpenGL.GLUT import glutGetProcAddress
+else:
+    from OpenGL.platform import PLATFORM
+    from ctypes import c_char_p, c_void_p
 
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QEvent, QTimer
 from PyQt5.QtGui import QKeyEvent, QMouseEvent, QWheelEvent
-from PyQt5.QtOpenGL import QGLContext
-from PyQt5.QtWidgets import QOpenGLWidget, qApp
+from PyQt5.QtWidgets import QOpenGLWidget
 
-# noinspection PyUnresolvedReferences
 import vidcutter.libs.mpv as mpv
 
 
-def MPGetNativeDisplay(name):
-    # if name == 'wl' and qApp.platformName().lower().startswith('wayland'):
-    #     native = qApp.platformNativeInterface()
-    #     return native.nativeResourceForWindow('display', None)
-    name = name.decode()
-    if name == 'opengl-cb-window-pos' and qApp.focusWindow() is not None:
-        class opengl_cb_window_pos:
-            x = qApp.focusWindow().x()
-            y = qApp.focusWindow().y()
-            width = qApp.focusWindow().width()
-            height = qApp.focusWindow().height()
-        return id(opengl_cb_window_pos())
-    try:
-        from PyQt5.QtX11Extras import QX11Info
-        if QX11Info.isPlatformX11():
-            return id(QX11Info.display())
-    except ImportError:
-        return 0
-    return 0
-
-
-def get_proc_address(name):
-    glctx = QGLContext.currentContext()
-    if glctx is None:
-        return 0
-    name = name.decode()
-    res = glctx.getProcAddress(name)
-    if name == 'glMPGetNativeDisplay' and res is None:
-        return MPGetNativeDisplay
-    try:
-        if sys.platform == 'win32' and res is None:
-            from PyQt5.QtWidgets import QOpenGLContext
-            from win32api import GetProcAddress
-            handle = QOpenGLContext.openGLModuleHandle()
-            if handle is not None:
-                res = GetProcAddress(handle, name)
-    except ImportError:
-        return 0
-    return res.__int__()
+def getProcAddress(proc: bytes) -> int:
+    if sys.platform == 'win32':
+        _ctx = QGLContext.currentContext()
+        if _ctx is None:
+            return 0
+        _gpa = (_ctx.getProcAddress, proc.decode())
+    elif sys.platform == 'darwin':
+        _gpa = (glutGetProcAddress, proc)
+    else:
+        # noinspection PyUnresolvedReferences
+        _getProcAddress = PLATFORM.getExtensionProcedure
+        _getProcAddress.argtypes = [c_char_p]
+        _getProcAddress.restype = c_void_p
+        _gpa = (_getProcAddress, proc)
+    return _gpa[0](_gpa[1]).__int__()
 
 
 class mpvWidget(QOpenGLWidget):
@@ -103,20 +77,19 @@ class mpvWidget(QOpenGLWidget):
 
         self.mpv = mpv.Context()
 
+        self.option('msg-level', self.msglevel)
         self.setLogLevel('terminal-default')
-        self.mpv.set_option('msg-level', self.msglevel)
-        self.mpv.set_option('config', False)
+        self.option('config', 'no')
 
         def _istr(o):
-            return ('yes' if o else 'no') if type(o) is bool else str(o)
+            return ('yes' if o else 'no') if isinstance(o, bool) else str(o)
 
         # do not break on non-existant properties/options
         for opt, val in mpv_opts.items():
             try:
-                self.mpv.set_option(opt.replace('_', '-'), _istr(val))
+                self.option(opt.replace('_', '-'), _istr(val))
             except mpv.MPVError:
                 self.logger.warning('error setting MPV option "%s" to value "%s"' % (opt, val))
-                pass
 
         self.mpv.initialize()
 
@@ -125,9 +98,9 @@ class mpvWidget(QOpenGLWidget):
 
         if sys.platform == 'win32':
             try:
-                self.mpv.set_option('gpu-context', 'angle')
+                self.option('gpu-context', 'angle')
             except mpv.MPVError:
-                self.mpv.set_option('opengl-backend', 'angle')
+                self.option('opengl-backend', 'angle')
 
         self.frameSwapped.connect(self.swapped, Qt.DirectConnection)
 
@@ -155,21 +128,16 @@ class mpvWidget(QOpenGLWidget):
             self.opengl.set_update_callback(None)
         self.opengl.uninit_gl()
         self.mpv.command('quit')
-        self.mpv = None
-        self.deleteLater()
 
     def initializeGL(self):
         if self.opengl:
-            callback = 'GL_MP_MPGetNativeDisplay'
-            if os.name != 'posix' or sys.platform == 'darwin' \
-               or qApp.platformName().lower().startswith('wayland'):
-                callback = None
-            self.opengl.init_gl(callback, get_proc_address)
+            self.opengl.init_gl(None, getProcAddress)
             if self.filename is not None:
                 self.initialized.emit(self.filename)
 
     def paintGL(self):
         if self.opengl:
+            GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
             self.opengl.draw(self.defaultFramebufferObject(), self.width(), -self.height())
 
     @pyqtSlot()
@@ -223,7 +191,7 @@ class mpvWidget(QOpenGLWidget):
     def showText(self, msg: str, duration: int=5, level: int=0):
         self.mpv.command('show-text', msg, duration * 1000, level)
 
-    @pyqtSlot(str)
+    @pyqtSlot(str, name='ewewf', )
     def play(self, filepath) -> None:
         if os.path.isfile(filepath):
             self.mpv.command('loadfile', filepath, 'replace')
@@ -253,23 +221,31 @@ class mpvWidget(QOpenGLWidget):
         return self.property('audio-codec-name' if stream == 'audio' else 'video-format')
 
     def version(self) -> str:
-        return self.property('mpv-version').replace('mpv ', '').split('-')[0]
+        ver = self.mpv.api_version
+        return '{0}.{1}'.format(ver[0], ver[1])
+
+    def option(self, option: str, val):
+        if isinstance(val, bool):
+            val = 'yes' if val else 'no'
+        return self.mpv.set_option(option, val)
 
     def property(self, prop: str, val=None):
         if val is None:
             return self.mpv.get_property(prop)
         else:
+            if isinstance(val, bool):
+                val = 'yes' if val else 'no'
             return self.mpv.set_property(prop, val)
 
     def changeEvent(self, event: QEvent) -> None:
         if event.type() == QEvent.WindowStateChange and self.isFullScreen():
-            self.mpv.set_option('osd-align-x', 'center')
-            self.showText('Press ESC key to exit full screen')
+            self.option('osd-align-x', 'center')
+            self.showText('Press ESC or double mouse click to exit full screen')
             QTimer.singleShot(5000, self.resetOSD)
 
     def resetOSD(self) -> None:
         self.showText('')
-        self.mpv.set_option('osd-align-x', 'left')
+        self.option('osd-align-x', 'left')
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
         if event.key() in {Qt.Key_F, Qt.Key_Escape}:

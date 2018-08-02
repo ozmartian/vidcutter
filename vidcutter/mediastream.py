@@ -1,4 +1,4 @@
-    #!/usr/bin/env python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 #######################################################################
@@ -27,9 +27,8 @@ import sys
 
 from PyQt5.QtCore import pyqtSlot, Qt
 from PyQt5.QtGui import QCloseEvent, QMouseEvent, QPixmap
-from PyQt5.QtWidgets import (qApp, QCheckBox, QDialog, QDialogButtonBox, QFrame, QGridLayout, QGroupBox, QHBoxLayout,
-                             QLabel, QMessageBox, QScrollArea, QSizePolicy, QSpacerItem, QStyleFactory, QVBoxLayout,
-                             QWidget)
+from PyQt5.QtWidgets import (QCheckBox, QDialog, QDialogButtonBox, QFrame, QGridLayout, QGroupBox, QHBoxLayout, QLabel,
+                             QMessageBox, QScrollArea, QSizePolicy, QSpacerItem, QStyleFactory, QVBoxLayout, QWidget)
 
 from vidcutter.libs.iso639 import ISO639_2
 from vidcutter.libs.videoservice import VideoService
@@ -57,7 +56,6 @@ class StreamSelector(QDialog):
             layout.addWidget(self.subtitles())
         layout.addWidget(buttons)
         self.setLayout(layout)
-        self.setMinimumSize(self.sizeHint())
 
     @staticmethod
     def lineSeparator() -> QFrame:
@@ -90,12 +88,11 @@ class StreamSelector(QDialog):
                                                     width=self.streams.video.width,
                                                     height=self.streams.video.height,
                                                     framerate='{0:.2f}'.format(framerate),
-                                                    ratio=ratio,
+                                                    ratio='{0:.2f}'.format(ratio),
                                                     pixfmt=self.streams.video.pix_fmt), self)
         label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         videolayout = QHBoxLayout()
         videolayout.setSpacing(15)
-        videolayout.setContentsMargins(15, 10, 15, 10)
         videolayout.addSpacing(25)
         videolayout.addWidget(icon)
         videolayout.addSpacing(45)
@@ -203,8 +200,8 @@ class StreamSelector(QDialog):
                 <style>
                     h2 {{
                         color: {};
-                        font-family: "Futura-Light", sans-serif;
-                        font-weight: 400;
+                        font-family: "Futura LT", sans-serif;
+                        font-weight: normal;
                     }}
                 </style>
                 <table border="0" cellpadding="6" cellspacing="0" width="350">
@@ -228,6 +225,7 @@ class StreamSelector(QDialog):
                 event.ignore()
                 return
         event.accept()
+        self.deleteLater()
         super(StreamSelector, self).closeEvent(event)
 
 

@@ -1,8 +1,9 @@
 #!/bin/bash
 
-flatpak-builder \
+flatpak-builder -v \
 	--force-clean \
-	--gpg-sign=B09D884B \
-	--repo=vidcutter-repo \
-	build \
+	--ccache \
+	--repo=repo \
+	--subject="Build of com.ozmartians.VidCutter `date`" \
+	./build \
 	com.ozmartians.VidCutter.json

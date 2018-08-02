@@ -29,7 +29,7 @@ from libc.string cimport strcpy
 
 ############################################################################
 
-cdef extern from "mpv/client.h":
+cdef extern from "<mpv/client.h>":
 
     ctypedef signed char int8_t
 
@@ -296,7 +296,7 @@ cdef extern from "mpv/client.h":
 
     void *mpv_get_sub_api(mpv_handle *ctx, mpv_sub_api sub_api) nogil
 
-cdef extern from "mpv/opengl_cb.h":
+cdef extern from "<mpv/opengl_cb.h>":
     struct mpv_opengl_cb_context:
         pass
 
@@ -339,7 +339,7 @@ if _CAPI_MAJOR != _REQUIRED_CAPI_MAJOR or _CAPI_MINOR < _MIN_CAPI_MINOR:
             (_REQUIRED_CAPI_MAJOR, _MIN_CAPI_MINOR, _CAPI_MAJOR, _CAPI_MINOR)
     )
 
-cdef extern from "Python.h":
+cdef extern from "<Python.h>":
     void PyEval_InitThreads()
 
 _is_py3 = sys.version_info >= (3,)
@@ -655,6 +655,10 @@ cdef class Context(object):
     """
     cdef mpv_handle *_ctx
     cdef object callback, callbackthread, reply_userdata
+
+    @property
+    def api_version(self):
+        return _CAPI_MINOR, _CAPI_MAJOR, _CAPI_VERSION
 
     @property
     def name(self):

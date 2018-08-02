@@ -5,7 +5,7 @@
 #
 # VidCutter - media cutter & joiner
 #
-# copyright © 2017 Pete Alexandrou
+# copyright © 2018 Pete Alexandrou
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,10 +25,13 @@
 import codecs
 import os
 import pydoc
+import shutil
 import subprocess
 import sys
 
 from distutils.spawn import find_executable
+
+import vidcutter
 
 
 class SetupHelpers:
@@ -66,20 +69,22 @@ class SetupHelpers:
     def get_data_files():
         files = []
         if sys.platform.startswith('linux') and 'QT_APPIMAGE' not in os.environ.keys():
+            appid = vidcutter.__desktopid__
             files = [
-                ('share/icons/hicolor/16x16/apps', ['data/icons/hicolor/16x16/apps/com.ozmartians.VidCutter.png']),
-                ('share/icons/hicolor/22x22/apps', ['data/icons/hicolor/22x22/apps/com.ozmartians.VidCutter.png']),
-                ('share/icons/hicolor/24x24/apps', ['data/icons/hicolor/24x24/apps/com.ozmartians.VidCutter.png']),
-                ('share/icons/hicolor/32x32/apps', ['data/icons/hicolor/32x32/apps/com.ozmartians.VidCutter.png']),
-                ('share/icons/hicolor/48x48/apps', ['data/icons/hicolor/48x48/apps/com.ozmartians.VidCutter.png']),
-                ('share/icons/hicolor/64x64/apps', ['data/icons/hicolor/64x64/apps/com.ozmartians.VidCutter.png']),
-                ('share/icons/hicolor/128x128/apps', ['data/icons/hicolor/128x128/apps/com.ozmartians.VidCutter.png']),
-                ('share/icons/hicolor/256x256/apps', ['data/icons/hicolor/256x256/apps/com.ozmartians.VidCutter.png']),
-                ('share/icons/hicolor/512x512/apps', ['data/icons/hicolor/512x512/apps/com.ozmartians.VidCutter.png']),
-                ('share/icons/hicolor/scalable/apps', ['data/icons/hicolor/scalable/apps/com.ozmartians.VidCutter.svg']),
-                ('share/applications', ['data/desktop/com.ozmartians.VidCutter.desktop']),
-                ('share/metainfo', ['data/appdata/com.ozmartians.VidCutter.appdata.xml']),
-                ('share/mime/packages', ['data/mime/com.ozmartians.VidCutter.xml'])
+                ('share/icons/hicolor/16x16/apps', ['data/icons/hicolor/16x16/apps/{}.png'.format(appid)]),
+                ('share/icons/hicolor/22x22/apps', ['data/icons/hicolor/22x22/apps/{}.png'.format(appid)]),
+                ('share/icons/hicolor/24x24/apps', ['data/icons/hicolor/24x24/apps/{}.png'.format(appid)]),
+                ('share/icons/hicolor/32x32/apps', ['data/icons/hicolor/32x32/apps/{}.png'.format(appid)]),
+                ('share/icons/hicolor/48x48/apps', ['data/icons/hicolor/48x48/apps/{}.png'.format(appid)]),
+                ('share/icons/hicolor/64x64/apps', ['data/icons/hicolor/64x64/apps/{}.png'.format(appid)]),
+                ('share/icons/hicolor/128x128/apps', ['data/icons/hicolor/128x128/apps/{}.png'.format(appid)]),
+                ('share/icons/hicolor/256x256/apps', ['data/icons/hicolor/256x256/apps/{}.png'.format(appid)]),
+                ('share/icons/hicolor/512x512/apps', ['data/icons/hicolor/512x512/apps/{}.png'.format(appid)]),
+                ('share/icons/hicolor/scalable/apps', ['data/icons/hicolor/scalable/apps/{}.svg'.format(appid)]),
+                ('share/applications', ['data/desktop/{}.desktop'.format(appid)]),
+                ('share/metainfo', ['data/appdata/{}.appdata.xml'.format(appid)]),
+                ('share/mime/packages', ['data/mime/{}.xml'.format(appid)]),
+                ('share/doc/vidcutter', ['CHANGELOG', 'LICENSE', 'README.md'])
             ]
         return files
 
@@ -178,8 +183,11 @@ if __name__ == '__main__':
         if exe is None:
             sys.stderr.write('Could not find pyrcc5 executable')
             sys.exit(1)
+        shutil.copy(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'CHANGELOG'),
+                    os.path.join(os.path.dirname(os.path.abspath(__file__)), 'vidcutter', 'CHANGELOG'))
         subprocess.run('{0} -compress 9 -o "{1}" "{2}"'
                        .format(exe,
                                os.path.join(os.path.dirname(os.path.abspath(__file__)), 'vidcutter', 'resources.py'),
                                os.path.join(os.path.dirname(os.path.abspath(__file__)), 'vidcutter', 'resources.qrc')),
                        shell=True)
+        os.remove(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'vidcutter', 'CHANGELOG'))

@@ -5,7 +5,7 @@
 #
 # VidCutter - media cutter & joiner
 #
-# copyright © 2017 Pete Alexandrou
+# copyright © 2018 Pete Alexandrou
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ import vidcutter
 # --------------------------------------------------------------------------- #
 
 setup_requires = ['setuptools']
-install_requires = ['typing'] if sys.version_info < (3,5) else []
+install_requires = ['typing'] if sys.version_info < (3, 5) else []
 
 # --------------------------------------------------------------------------- #
 

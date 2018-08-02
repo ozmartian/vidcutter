@@ -19,7 +19,7 @@ vidcutter/vidcutter.exe
 vidcutter/bin/
 bin/
 .DS_Store
-_pyqtdeploy
+_packaging/pyqtdeploy/
 testing
 _build/pyinstaller/libmpv
 mpv-1.dll
@@ -30,7 +30,7 @@ MediaInfo.dll
 *.so
 *.pyd
 pkg2appimage
-.snapcraft
+
 _packaging/flatpak/.flatpak-builder
 _packaging/flatpak/build
 _packaging/flatpak/*repo*

@@ -1,7 +1,7 @@
 /*************************************************************************
  *  VidCutter - media cutter & joiner
  *
- *  copyright © 2017 Pete Alexandrou
+ *  copyright © 2018 Pete Alexandrou
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -91,7 +91,7 @@ QToolBar#appcontrols QToolButton {
     color: #EAEAEA;
     font-size: 13px;
     font-weight: 400;
-    font-family: "Noto Sans UI", sans-serif;
+    font-family: "Noto Sans", sans-serif;
     line-height: 80%;
     background: transparent;
     border: none;
@@ -122,7 +122,7 @@ QListView#cliplist {
 }
 
 QListView::item#cliplist {
-    padding: 10px;
+    padding: 0;
     color: #EAEAEA;
 }
 
@@ -148,7 +148,7 @@ QListView::item:selected#settingsmenu {
 /* -------------------------------------------------------------------------- */
 
 QLabel#runtimeLabel {
-    font-size: 10pt;
+    font-size: 10.5pt;
     color: #FFF;
     background: rgb(106, 69, 114) url(:images/runtime.png) no-repeat left center;
     padding: 2px 8px 2px 2px;
@@ -175,15 +175,15 @@ QLabel#logowidget {
 }
 
 QLabel#decodinglabel, QLabel#ratiolabel, QLabel#keepclipslabel, QLabel#singleinstancelabel,
-QLabel#verboselogslabel, QLabel#nativedialogslabel, QLabel#seeksettingslabel, QLabel#zoomlabel,
-QLabel#smartcutlabel, QLabel#ffmpeglabel {
-    font-family: "Noto Sans UI", sans-serif;
+QLabel#verboselogslabel, QLabel#pbolabel, QLabel#nativedialogslabel, QLabel#seeksettingslabel,
+QLabel#zoomlabel, QLabel#smartcutlabel, QLabel#ffmpeglabel, QLabel#chapterslabel, QLabel#dialogdesc {
+    font-family: "Noto Sans", sans-serif;
     font-size: 11px;
     color: #EFF0F1;
 }
 
-QLabel#decodinglabel, QLabel#ratiolabel, QLabel#keepclipslabel, QLabel#singleinstancelabel,
-QLabel#verboselogslabel, QLabel#nativedialogslabel, QLabel#ffmpeglabel {
+QLabel#decodinglabel, QLabel#ratiolabel, QLabel#keepclipslabel, QLabel#singleinstancelabel, QLabel#chapterslabel,
+QLabel#verboselogslabel, QLabel#pbolabel, QLabel#nativedialogslabel, QLabel#ffmpeglabel {
     margin: 2px 5px 10px 22px;
 }
 
@@ -207,8 +207,14 @@ QLabel#filmstrip {
 QLabel#novideoversion {
     font-size: 13px;
     font-weight: bold;
-    font-family: "Futura-Light", sans-serif;
+    font-family: "Futura LT", sans-serif;
     color: #FFF;
+}
+
+QLabel#checkboxsubtext {
+    font-family: "Noto Sans", sans-serif;
+    font-size: 12px;
+    color: #EFF0F1;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -229,7 +235,7 @@ QGroupBox#counterwidgets {
     font-weight: bold;
     border: 1px solid #4D5355;
     border-radius: 3px;
-    margin-top: 1ex;
+    margin-top: 10px;
     padding-top: 15px;
     background-color: #0C0F10;
     color: #444;
@@ -399,13 +405,15 @@ QPushButton::menu-indicator#menuButton, #clipindextools QPushButton::menu-indica
 }
 
 QPushButton#thumbnailsButton, QPushButton#osdButton, QPushButton#consoleButton, QPushButton#smartcutButton,
-QPushButton#muteButton, QPushButton#settingsButton, QPushButton#menuButton, QPushButton#fullscreenButton {
+QPushButton#muteButton, QPushButton#settingsButton, QPushButton#menuButton, QPushButton#fullscreenButton,
+QPushButton#chaptersButton {
     background-color: transparent;
     border: none;
     outline: none;
 }
 
-QPushButton#thumbnailsButton, QPushButton#osdButton, QPushButton#consoleButton, QPushButton#smartcutButton {
+QPushButton#thumbnailsButton, QPushButton#osdButton, QPushButton#consoleButton, QPushButton#smartcutButton,
+QPushButton#chaptersButton {
     margin: 0;
     padding: 0;
 }
@@ -464,6 +472,24 @@ QPushButton:pressed#consoleButton, QPushButton:checked#consoleButton {
     border-image: url(:/images/dark/console-on.png);
 }
 
+QPushButton#chaptersButton {
+    border-image: url(:/images/dark/chapters-off.png);
+    width: 31px;
+    height: 31px;
+}
+
+QPushButton:hover#chaptersButton {
+    border-image: url(:/images/dark/chapters-hover.png);
+}
+
+QPushButton:disabled#chaptersButton {
+    border-image: url(:/images/dark/chapters-disabled.png);
+}
+
+QPushButton:pressed#chaptersButton, QPushButton:checked#chaptersButton {
+    border-image: url(:/images/dark/chapters-on.png);
+}
+
 QPushButton#smartcutButton {
     border-image: url(:/images/dark/smartcut-off.png);
     width: 32px;
@@ -503,6 +529,16 @@ QPushButton:hover#listheaderbutton-right, QPushButton:pressed#listheaderbutton-r
 }
 
 /* -------------------------------------------------------------------------- */
+
+QMenu::item {
+    background-color: palette(window);
+    color: palette(text);
+}
+
+QMenu::item:selected {
+    background-color: palette(highlight);
+    color: palette(highlighted-text);
+}
 
 QMenu::item:disabled, #clipindextools QPushButton:disabled {
     color: rgba(102, 102, 102, 0.5);
@@ -544,7 +580,7 @@ QStatusBar::item {
 
 /* -------------------------------------------------------------------------- */
 
-#aboutwidget QTextBrowser {
+#aboutwidget QLabel {
     border: none;
 }
 
@@ -562,7 +598,8 @@ QTabBar::tab, QToolBox::tab {
     border: 1px solid #999;
 }
 
-QTabBar::tab:selected, QToolBox::tab:selected {
+QTabBar::tab:selected, QToolBox::tab:selected,
+QTabBar::tab:!selected:hover, QToolBox::tab:!selected:hover {
     background: #642C68;
     color: #FFF;
 }
@@ -570,11 +607,6 @@ QTabBar::tab:selected, QToolBox::tab:selected {
 QTabBar::tab:!selected, QToolBox::tab:!selected {
     background: silver;
     color: #444;
-}
-
-QTabBar::tab:!selected:hover, QToolBox::tab:!selected:hover {
-    background: #642C68;
-    color: #FFF;
 }
 
 QTabBar::tab:top:!selected {
@@ -595,6 +627,7 @@ QTabBar::tab:top:last,
 QTabBar::tab:top:only-one {
     margin-right: 0;
 }
+
 /* -------------------------------------------------------------------------- */
 
 QSlider::handle#volumeslider {
@@ -609,6 +642,10 @@ QSlider::handle:hover#volumeslider, QSlider::handle:pressed#volumeslider {
 
 /* -------------------------------------------------------------------------- */
 
+QCheckBox {
+    spacing: 5px;
+}
+
 QCheckBox::indicator:unchecked {
     image: url(:images/dark/checkbox.png);
 }
@@ -622,6 +659,11 @@ QCheckBox::indicator:checked {
 }
 
 /* -------------------------------------------------------------------------- */
+
+QRadioButton {
+    spacing: 5px;
+    padding: 2px;
+}
 
 QRadioButton::indicator:unchecked {
     image: url(:images/dark/radio.png);
@@ -647,7 +689,8 @@ VCToolBarButton QLabel {
     color: #BFBFBF;
     font-size: 13px;
     font-weight: 400;
-    font-family: "Noto Sans UI", sans-serif;    
+    font-family: "Noto Sans", sans-serif;
+    min-width: 65px;
 }
 
 VCToolBarButton#savebutton QLabel {
@@ -768,34 +811,44 @@ VCToolBarButton QPushButton:pressed#toolbar-save {
 
 /* -------------------------------------------------------------------------- */
 
-VCProgressBar {
+VCProgressDialog {
     background-color: #1B2326;
     border: 1px solid #000;
 }
 
-VCProgressBar QLabel {
-    font-family: "Noto Sans UI", sans-serif;
+VCProgressDialog QLabel {
+    font-family: "Noto Sans", sans-serif;
     font-size: 15px;
     font-weight: 400;
     color: #FFF;
 }
 
-VCProgressBar QProgressBar::chunk {
+VCProgressDialog QProgressBar::chunk {
     background-color: #642C68;
     margin: 1px;
 }
 
-VCProgressBar QLabel#progresstimer {
+VCProgressDialog QLabel#progresstimer {
     color: #FFF;
     font-size: 14px;
-    font-family: "Noto Sans UI", sans-serif;
+    font-family: "Noto Sans", sans-serif;
 }
 
 /* -------------------------------------------------------------------------- */
 
 VCBlinkText QLabel {
-    font-family: "Futura-Light", sans-serif;
+    font-family: "Futura LT", sans-serif;
     font-weight: 400;
     font-size: 26px;
     color: #FFF;
+}
+
+/* -------------------------------------------------------------------------- */
+
+VCFilterMenuWidget QWidget {
+    color: #FFF;
+}
+
+VCFilterMenuWidget QWidget:disabled {
+    color: rgba(102, 102, 102, 0.5);
 }

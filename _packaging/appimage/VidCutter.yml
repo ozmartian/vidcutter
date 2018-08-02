@@ -4,32 +4,29 @@ app: VidCutter
 ingredients:
   dist: trusty
   sources: 
-    - deb http://mirrors.cn99.com/ubuntu/ trusty main universe
+    - deb http://archive.ubuntu.com/ubuntu/ trusty main restricted universe multiverse
   ppas:
     - mc3man/testing6
     - jonathonf/ffmpeg-3
-    - ubuntu-toolchain-r/test
     - deadsnakes/ppa
   packages:
-    - gcc-7-base
-    - python3.5-dev
-    - libstdc++6
-    - libgcc1
-    - libisl15
+    - python3.6-dev
+    - libmpv-dev
     - libmpv1
     - ffmpeg
     - mediainfo
+    - openssl
 
 script:
   - umask 022
   - PYTHONHOME=$(pwd)/usr
-  - rm -f usr/bin/python3 usr/bin/python3.5
-  - ln -s python3.5m usr/bin/python3
-  - ln -s python3.5m usr/bin/python3.5
+  - rm -f usr/bin/python3 usr/bin/python3.6
+  - ln -s python3.6m usr/bin/python3
+  - ln -s python3.6m usr/bin/python3.6
   - wget https://bootstrap.pypa.io/get-pip.py
-  - usr/bin/python3.5 ./get-pip.py
+  - usr/bin/python3.6 ./get-pip.py
   - rm ./get-pip.py
-  - usr/bin/python3.5 -m pip install -t usr/lib/python3/dist-packages pyqt5 pyopengl
+  - usr/bin/python3.6 -m pip install -t usr/lib/python3/dist-packages PyQt5 PyOpenGL simplejson
   - find usr/lib/python3/dist-packages/PyQt5 -name "*Qt*WebEngine*" | xargs rm -rf
   - rm -rf usr/lib/python3/dist-packages/PyQt5/Qt/plugins/audio
   - rm -rf usr/lib/python3/dist-packages/PyQt5/Qt/plugins/gamepads
@@ -49,13 +46,13 @@ script:
   - PKGRES=$(find . -name pkg_resources \! -path "*_vendor*")
   - [ ${PKGRES} != "./usr/lib/python3/dist-packages/pkg_resources" ] && mv ${PKGRES} usr/lib/python3/dist-packages
   - cp -R usr/lib/python3/dist-packages/pkg_resources usr/lib/python3/dist-packages/pkg_resources.BAK
-  - env QT_APPIMAGE=1 usr/bin/python3.5 -m pip install -t usr/lib/python3/dist-packages ../../../..
+  - env QT_APPIMAGE=1 usr/bin/python3.6 -m pip install -t usr/lib/python3/dist-packages ../../../..
   - mkdir -p usr/share/applications usr/share/mime/packages usr/share/metainfo 2> /dev/null
   - cp -R ../../../../data/icons/hicolor usr/share/icons
-  - cp ../../../../data/desktop/com.ozmartians.vidcutter.desktop usr/share/applications
-  - cp ../../../../data/appdata/com.ozmartians.vidcutter.appdata.xml usr/share/metainfo
-  - cp ../../../../data/mime/x-vidcutter.xml usr/share/mime/packages
-  - usr/bin/python3.5 -m pip uninstall -y pip
+  - cp ../../../../data/desktop/* usr/share/applications
+  - cp ../../../../data/appdata/* usr/share/metainfo
+  - cp ../../../../data/mime/* usr/share/mime/packages
+  - usr/bin/python3.6 -m pip uninstall -y pip
   - mv usr/lib/python3/dist-packages/pkg_resources.BAK usr/lib/python3/dist-packages/pkg_resources
   - rm -rf usr/local
   - rm -f usr/bin/ffplay usr/bin/ffserver
@@ -70,22 +67,27 @@ script:
   - gcc -fPIC -o ./AppRun ../../AppRun.c
   - strip ./AppRun
   - chmod +x ./AppRun
-  - cp usr/share/icons/hicolor/256x256/apps/vidcutter.png .
-  - ln -s vidcutter.png .DirIcon
-  - cp -f usr/share/applications/*id*utter.desktop ./vidcutter.desktop
+  - cp usr/share/icons/hicolor/256x256/apps/com.ozmartians.VidCutter.png .
+  - ln -s com.ozmartians.VidCutter.png vidcutter.png
+  - ln -sf com.ozmartians.VidCutter.png .DirIcon
+  - cp -f usr/share/applications/com.ozmartians.VidCutter.desktop .
+  - ln -s com.ozmartians.VidCutter.desktop vidcutter.desktop
   - cp -f ../../scripts/* usr/bin/
   - cp -f ../../qt5/* usr/lib/python3/dist-packages/PyQt5/Qt/plugins/platformthemes/
 
 post:
   - find /usr/lib/x86_64-linux-gnu/ -name libcairo.so.2* | xargs -I{} cp -P {} usr/lib/x86_64-linux-gnu
   - find /usr/lib/x86_64-linux-gnu/ -name libpangoft2* | xargs -I{} cp -P {} usr/lib/x86_64-linux-gnu
-  - rm -f ./AppRun
-  - gcc -fPIC -o ./AppRun ../../AppRun.c
-  - strip ./AppRun
-  - chmod +x ./AppRun
-  - cp usr/share/icons/hicolor/256x256/apps/vidcutter.png .
-  - ln -sf vidcutter.png .DirIcon
-  - cp -f usr/share/applications/*id*utter.desktop ./vidcutter.desktop
+  - find /usr/lib/x86_64-linux-gnu/ -name libpango-1.0.so.0* | xargs -I{} cp -P {} usr/lib/x86_64-linux-gnu
+  - find /usr/lib/x86_64-linux-gnu/ -name libpangocairo-1.0.so.0* | xargs -I{} cp -P {} usr/lib/x86_64-linux-gnu
   - cp -f ../../scripts/* usr/bin/
   - cp -f ../../qt5/* usr/lib/python3/dist-packages/PyQt5/Qt/plugins/platformthemes/
-  
+  # - rm -f ./AppRun
+  # - gcc -fPIC -o ./AppRun ../../AppRun.c
+  # - strip ./AppRun
+  # - chmod +x ./AppRun
+  # - cp usr/share/icons/hicolor/256x256/apps/com.ozmartians.VidCutter.png .
+  # - ln -s com.ozmartians.VidCutter.png vidcutter.png
+  # - ln -sf com.ozmartians.VidCutter.png .DirIcon
+  # - cp -f usr/share/applications/com.ozmartians.VidCutter.desktop .
+  # - ln -s com.ozmartians.VidCutter.desktop vidcutter.desktop 
