@@ -60,7 +60,9 @@ vidcutter (6.0.0-1) stable; urgency=medium
   * UI improvements to media stream dialog; most consistent across differing
     desktop sizes and stream configurations
 
- -- Pete Alexandrou <pete@ozmartians.com>  Xxx, XX Xxx 2018 XX:XX +0800
+  * Flatpak: Qt 5.11 + dependency updates + NVIDIA h/w decoding fixes
+
+ -- Pete Alexandrou <pete@ozmartians.com>  Thu, 02 Aug 2018 18:20:00 +1000
 
 vidcutter (5.5.0-1) stable; urgency=medium
 

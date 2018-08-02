@@ -133,27 +133,100 @@
         {
             "name": "ffmpeg",
             "cleanup": ["/include", "/lib/pkgconfig", "/share/ffmpeg/examples"],
-            "config-opts": [
-                "--enable-shared",
-                "--disable-static",
-                "--disable-debug",
-                "--enable-gnutls",
-                "--disable-doc",
-                "--disable-ffplay",
-                "--enable-gpl",
-                "--enable-libass",
-                "--enable-libfribidi",
-                "--enable-libmp3lame",
-                "--enable-libpulse",
-                "--enable-libtheora",
-                "--enable-libvorbis",
-                "--enable-libvpx",
-                "--enable-libx264",
-                "--enable-libx265",
-                "--enable-libxvid",
-                "--enable-nvdec",
-                "--enable-version3"
-            ],
+            "build-options": {
+                "arch": {
+                    "aarch64": {
+                        "config-opts": [
+                            "--enable-shared",
+                            "--disable-static",
+                            "--disable-debug",
+                            "--enable-gnutls",
+                            "--disable-doc",
+                            "--disable-ffplay",
+                            "--enable-gpl",
+                            "--enable-libass",
+                            "--enable-libfribidi",
+                            "--enable-libmp3lame",
+                            "--enable-libpulse",
+                            "--enable-libtheora",
+                            "--enable-libvorbis",
+                            "--enable-libvpx",
+                            "--enable-libx264",
+                            "--enable-libx265",
+                            "--enable-libxvid",
+                            "--enable-version3"
+                        ]
+                    },
+                    "arm": {
+                        "config-opts": [
+                            "--enable-shared",
+                            "--disable-static",
+                            "--disable-debug",
+                            "--enable-gnutls",
+                            "--disable-doc",
+                            "--disable-ffplay",
+                            "--enable-gpl",
+                            "--enable-libass",
+                            "--enable-libfribidi",
+                            "--enable-libmp3lame",
+                            "--enable-libpulse",
+                            "--enable-libtheora",
+                            "--enable-libvorbis",
+                            "--enable-libvpx",
+                            "--enable-libx264",
+                            "--enable-libx265",
+                            "--enable-libxvid",
+                            "--enable-version3"
+                        ]
+                    },
+                    "i386": {
+                        "config-opts": [
+                            "--enable-shared",
+                            "--disable-static",
+                            "--disable-debug",
+                            "--enable-gnutls",
+                            "--disable-doc",
+                            "--disable-ffplay",
+                            "--enable-gpl",
+                            "--enable-libass",
+                            "--enable-libfribidi",
+                            "--enable-libmp3lame",
+                            "--enable-libpulse",
+                            "--enable-libtheora",
+                            "--enable-libvorbis",
+                            "--enable-libvpx",
+                            "--enable-libx264",
+                            "--enable-libx265",
+                            "--enable-libxvid",
+                            "--enable-nvdec",
+                            "--enable-version3"
+                        ]
+                    },
+                    "x86_64": {
+                        "config-opts": [
+                            "--enable-shared",
+                            "--disable-static",
+                            "--disable-debug",
+                            "--enable-gnutls",
+                            "--disable-doc",
+                            "--disable-ffplay",
+                            "--enable-gpl",
+                            "--enable-libass",
+                            "--enable-libfribidi",
+                            "--enable-libmp3lame",
+                            "--enable-libpulse",
+                            "--enable-libtheora",
+                            "--enable-libvorbis",
+                            "--enable-libvpx",
+                            "--enable-libx264",
+                            "--enable-libx265",
+                            "--enable-libxvid",
+                            "--enable-nvdec",
+                            "--enable-version3"
+                        ]
+                    }
+                }
+            },
             "sources": [{
                 "type": "archive",
                 "url": "http://ffmpeg.org/releases/ffmpeg-4.0.1.tar.xz",
@@ -161,6 +234,7 @@
             }],     
             "modules": [{
                 "name": "ffnvcodec",
+                "only-arches": ["i386", "x86_64"],
                 "buildsystem": "simple",
                 "build-commands": [
                     "make",

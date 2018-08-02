@@ -1,6 +1,6 @@
-vidcutter (6.0.0-1) unstable; urgency=medium
+vidcutter (6.0.0-1) stable; urgency=medium
 
-  * NEW FEATURE: video filters menu option added to app menu accessed via
+  * MAJOR FEATURE: video filters menu option added to app menu accessed via
     right-click or the bottom-right menu button. the first filter available
     is BLACKDETECT which automatically creates clips in your clip index based
     around black scene changes that are detected. selecting the filter once
@@ -9,6 +9,17 @@ vidcutter (6.0.0-1) unstable; urgency=medium
     reduce or increase the amount of scenes detected. this is mainly useful for
     skipping commercials (e.g. comskip) or auto-detecting scene transitions.
     more filters will be added in future updates.
+
+  * MAJOR FEATURE: automatic chapters created per clip in your list. enabled by
+    default and can be toggled via Settings -> General and a new toggle button
+    in the left hand side group of the UI buttons.
+
+  * MAJOR FEATURE: chapter names can be edited from their default set values
+    via new edit chapter option when right-clicking on a clip in your list. all
+    clip will default to "Chapter <x>" as their default text which is what
+    a media center or half-decent player will display in menu and you are
+    able to skip directly to each clip point using standard previous/next buttons
+    (if they are set in their default state, obviously)
 
   * External media file joins (when wanting to just join a set of files using the
     the ADD button under the Video Index) are fixed; the last version broke
@@ -49,7 +60,9 @@ vidcutter (6.0.0-1) unstable; urgency=medium
   * UI improvements to media stream dialog; most consistent across differing
     desktop sizes and stream configurations
 
- -- Pete Alexandrou <pete@ozmartians.com>  Fri, 27 Apr 2018 14:34 +0800
+  * Flatpak: Qt 5.11 + dependency updates + NVIDIA h/w decoding fixes
+
+ -- Pete Alexandrou <pete@ozmartians.com>  Thu, 02 Aug 2018 18:20:00
 
 vidcutter (5.5.0-1) stable; urgency=medium
 
