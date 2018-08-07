@@ -26,6 +26,10 @@ parts:
         build-packages:
             - software-properties-common
         prepare: |
+            # echo "deb http://ppa.launchpad.net/mc3man/mpv-tests/ubuntu xenial main" | tee /etc/apt/sources.list.d/mc3man-ubuntu-mpv-tests-xenial.list
+            # apt-key adv --keyserver ams.sks.heypete.com --recv-keys 8E51A6D660CD88D67D65221D90BD7EACED8E640A
+            # echo "deb http://ppa.launchpad.net/jonathonf/ffmpeg-3/ubuntu xenial main" | tee /etc/apt/sources.list.d/jonathonf-ubuntu-ffmpeg-3-xenial.list
+            # apt-key adv --keyserver ams.sks.heypete.com --recv-keys 4AB0F789CBA31744CC7DA76A8CF63AD3F06FC659
             add-apt-repository ppa:mc3man/mpv-tests -y
             add-apt-repository ppa:jonathonf/ffmpeg-3 -y
             apt update
@@ -61,9 +65,9 @@ parts:
             - ffmpeg
             - mediainfo
         python-packages:
-            - PyQt5
-            - PyOpenGL
-            - PyOpenGL-accelerate
-            - simplejson
+            - pyqt5
+            - pyopengl
+			- simplejson
         install: |
+            # sed -i 's|Icon=vidcutter|Icon=${SNAP}/usr/share/icons/hicolor/256x256/apps/vidcutter.png|g' ${SNAPCRAFT_PART_INSTALL}/usr/share/applications/com.ozmartians.vidcutter.desktop
             rm ${SNAPCRAFT_PART_INSTALL}/lib/python3.5/site-packages/PyQt5/Qt/lib/libQt5WebEngineCore.so.5
