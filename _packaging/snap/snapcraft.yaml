@@ -18,7 +18,7 @@ apps:
     vidcutter:
         command: desktop-launch vidcutter
         plugs: [unity7, x11, wayland, desktop, home, pulseaudio, gsettings, opengl, mount-observe, network, network-bind, network-manager]
-        desktop: usr/share/applications/com.ozmartians.VidCutter.desktop
+        desktop: share/applications/com.ozmartians.VidCutter.desktop
 
 parts:
     prepare:
@@ -50,6 +50,8 @@ parts:
             - locales-all
             - xdg-user-dirs
             - mesa-vdpau-drivers
+            - libglu1-mesa
+            - libdb5.3
 
     vidcutter:
         plugin: python
@@ -67,7 +69,7 @@ parts:
         python-packages:
             - pyqt5
             - pyopengl
-			- simplejson
+            - simplejson
         install: |
-            # sed -i 's|Icon=vidcutter|Icon=${SNAP}/usr/share/icons/hicolor/256x256/apps/vidcutter.png|g' ${SNAPCRAFT_PART_INSTALL}/usr/share/applications/com.ozmartians.vidcutter.desktop
+            sed -i 's|Icon=.*|Icon=${SNAP}/share/icons/hicolor/512x512/apps/com.ozmartians.VidCutter.png|g' ${SNAPCRAFT_PART_INSTALL}/share/applications/com.ozmartians.VidCutter.desktop
             rm ${SNAPCRAFT_PART_INSTALL}/lib/python3.5/site-packages/PyQt5/Qt/lib/libQt5WebEngineCore.so.5
