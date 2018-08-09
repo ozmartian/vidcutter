@@ -3,7 +3,7 @@ version: 6.0.0
 type: app
 architectures:
     - amd64
-summary: the simplest + fastest video cutter and joiner
+summary: the simplest + fastest media cutter and joiner
 description: |
     A modern, simple to use, constantly evolving and 
     hella fast MEDIA CUTTER + JOINER w/ frame-accurate
@@ -30,8 +30,8 @@ parts:
             # apt-key adv --keyserver ams.sks.heypete.com --recv-keys 8E51A6D660CD88D67D65221D90BD7EACED8E640A
             # echo "deb http://ppa.launchpad.net/jonathonf/ffmpeg-3/ubuntu xenial main" | tee /etc/apt/sources.list.d/jonathonf-ubuntu-ffmpeg-3-xenial.list
             # apt-key adv --keyserver ams.sks.heypete.com --recv-keys 4AB0F789CBA31744CC7DA76A8CF63AD3F06FC659
-            add-apt-repository ppa:mc3man/mpv-tests -y
-            add-apt-repository ppa:jonathonf/ffmpeg-3 -y
+            # add-apt-repository ppa:mc3man/mpv-tests -y
+            # add-apt-repository ppa:jonathonf/ffmpeg-3 -y
             apt update
             apt upgrade -yy
         prime: [-*]
@@ -39,6 +39,7 @@ parts:
     desktop-qt5:
         after: [prepare]
         stage-packages:
+            - libc6
             - libxkbcommon0
             - ttf-ubuntu-font-family
             - dmz-cursor-theme
@@ -56,20 +57,22 @@ parts:
     vidcutter:
         plugin: python
         python-version: python3
-        process-dependency-links: false
+        process-dependency-links: true
         after: [prepare, desktop-qt5]
         build-packages:
             - python3-dev
             - python3-setuptools
             - libmpv-dev
         stage-packages:
+            - libc6
             - libmpv1
             - ffmpeg
             - mediainfo
         python-packages:
+            - pyqt5-sip
             - pyqt5
             - pyopengl
             - simplejson
         install: |
             sed -i 's|Icon=.*|Icon=${SNAP}/share/icons/hicolor/512x512/apps/com.ozmartians.VidCutter.png|g' ${SNAPCRAFT_PART_INSTALL}/share/applications/com.ozmartians.VidCutter.desktop
-            rm ${SNAPCRAFT_PART_INSTALL}/lib/python3.5/site-packages/PyQt5/Qt/lib/libQt5WebEngineCore.so.5
+            rm ${SNAPCRAFT_PART_INSTALL}/lib/python3.6/site-packages/PyQt5/Qt/lib/libQt5WebEngineCore.so.5
