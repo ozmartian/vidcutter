@@ -9,7 +9,7 @@ branches:
 
 skip_non_tags: false
 
-image: Visual Studio 2015
+image: Visual Studio 2017
 
 shallow_clone: true
 
@@ -24,7 +24,7 @@ environment:
     secure: dU7R+yCfZACwkvslBf988A==
   APPVEYOR_SKIP_FINALIZE_ON_EXIT: false
   PYTHONUNBUFFERED: 1
-  PYTHONHOME: C:\Python37-x86
+  PYTHONHOME: C:\Python37-x64
 
 # init:
 #   - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
@@ -43,7 +43,8 @@ install:
   - mkdir "_build\pyinstaller\libmpv\64"
   # Setup build environment for MSVC++
   - call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x64
-  - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
+  # - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
+  - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvars64.bat"
   # Build Cython/C extension for libmpv binding...
   - C:\Python37-x64\python.exe setup.py build_ext -i
   # Retrieve URL for latest available version of libmpv
@@ -79,7 +80,8 @@ install:
   - del /q "_build\pyinstaller\temp\*.*"
   # Setup build environment for MSVC++
   - call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x86
-  - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
+  # - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
+  - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvars32.bat"
   # Build Cython/C extension for libmpv binding...
   - C:\Python37\python.exe setup.py build_ext -i
   # Retrieve URL for latest available version of libmpv
