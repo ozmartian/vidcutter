@@ -5,7 +5,7 @@ pull_requests:
 
 branches:
   only:
-  - 6.0.0
+  - master
 
 skip_non_tags: false
 
@@ -36,7 +36,7 @@ install:
   - cd C:\projects\vidcutter
   # Installing latest pip + setuptools + dependencies
   - C:\Python36-x64\python.exe -m pip install -U pip setuptools
-  - C:\Python36-x64\python.exe -m pip install PyOpenGL PyOpenGL-accelerate PyQt5 PyInstaller xmltodict simplejson
+  - C:\Python36-x64\python.exe -m pip install PyOpenGL PyOpenGL-accelerate PyQt5-sip PyQt5 PyInstaller xmltodict simplejson
   # Setting up libmpv build subfolders...
   - mkdir "_build\pyinstaller\temp"
   - mkdir "_build\pyinstaller\libmpv"
