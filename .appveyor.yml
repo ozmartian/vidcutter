@@ -42,7 +42,7 @@ install:
   - mkdir "_build\pyinstaller\libmpv"
   - mkdir "_build\pyinstaller\libmpv\64"
   # Setup build environment for MSVC++
-  - call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x64
+  # - call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x64
   # - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
   - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvars64.bat"
   # Build Cython/C extension for libmpv binding...
@@ -79,7 +79,7 @@ install:
   - mkdir "_build\pyinstaller\libmpv\32"
   - del /q "_build\pyinstaller\temp\*.*"
   # Setup build environment for MSVC++
-  - call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x86
+  # - call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x86
   # - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
   - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvars32.bat"
   # Build Cython/C extension for libmpv binding...
