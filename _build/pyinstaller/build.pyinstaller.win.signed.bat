@@ -29,7 +29,7 @@ if ["%ARCH%"]==["32"] (
     SET BINARCH=x86
     SET PYPATH=C:\Python36
     REM SET FFMPEG_URL=https://ffmpeg.zeranoe.com/builds/win32/shared/ffmpeg-latest-win32-shared.zip
-    SET FFMPEG_URL=https://ffmpeg.zeranoe.com/builds/win64/shared/ffmpeg-4.0.2-win32-shared.zip
+    SET FFMPEG_URL=https://ffmpeg.zeranoe.com/builds/win32/shared/ffmpeg-4.0.2-win32-shared.zip
     REM SET FFMPEG=ffmpeg-latest-win32-shared.zip
     SET FFMPEG=ffmpeg-4.0.2-win32-shared.zip
     SET MEDIAINFO_URL=https://mediaarea.net/download/binary/mediainfo/18.05/MediaInfo_CLI_18.05_Windows_i386.zip
