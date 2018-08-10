@@ -44,7 +44,7 @@ install:
   # Setup build environment for MSVC++
   # - call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x64
   # - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
-  - call "%VSINSTALLDIR%VC\Auxiliary\Build\vcvarsall.bat" x64
+  - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
   # Build Cython/C extension for libmpv binding...
   - C:\Python37-x64\python.exe setup.py build_ext -i
   # Retrieve URL for latest available version of libmpv
@@ -81,7 +81,7 @@ install:
   # Setup build environment for MSVC++
   # - call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x86
   # - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
-  - call "%VSINSTALLDIR%VC\Auxiliary\Build\vcvarsall.bat" x86
+  - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x86
   # Build Cython/C extension for libmpv binding...
   - C:\Python37\python.exe setup.py build_ext -i
   # Retrieve URL for latest available version of libmpv
