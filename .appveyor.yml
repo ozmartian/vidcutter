@@ -36,7 +36,7 @@ install:
   - cd C:\projects\vidcutter
   # Installing latest pip + setuptools + dependencies
   - C:\Python37-x64\python.exe -m pip install -U pip setuptools
-  - C:\Python37-x64\python.exe -m pip install PyOpenGL PyOpenGL-accelerate PyQt5 PyInstaller xmltodict simplejson
+  - C:\Python37-x64\python.exe -m pip install PyOpenGL PyQt5 PyInstaller xmltodict simplejson
   # Setting up libmpv build subfolders...
   - mkdir "_build\pyinstaller\temp"
   - mkdir "_build\pyinstaller\libmpv"
@@ -65,13 +65,13 @@ install:
   - appveyor PushArtifact VidCutter-6.0.0-setup-win64.exe
   # ---------------------------------------- 32-bit build ----------------------------------------
   - cd ..\..\..
-  - set PYTHONHOME=C:\Python35
+  - set PYTHONHOME=C:\Python37
   - set PATH=%PYTHONHOME%;%PYTHONHOME%\scripts;%PYTHONHOME%\tools\scripts;%PATH%
   # Installing latest pip + setuptools + dependencies
-  - C:\Python35\python.exe -m pip install -U pip setuptools
-  - C:\Python35\python.exe -m pip install PyOpenGL PyOpenGL-accelerate PyQt5 PyInstaller xmltodict simplejson
+  - C:\Python37\python.exe -m pip install -U pip setuptools
+  - C:\Python37\python.exe -m pip install PyOpenGL PyQt5 PyInstaller xmltodict simplejson
   # # Installing latest git checkout of PyInstaller...
-  # - C:\Python35\python.exe -m pip install git+https://github.com/pyinstaller/pyinstaller.git@develop
+  # - C:\Python37\python.exe -m pip install git+https://github.com/pyinstaller/pyinstaller.git@develop
   # Setting up libmpv build subfolders...
   # - mkdir "_build\pyinstaller\temp"
   # - mkdir "_build\pyinstaller\libmpv"
@@ -81,9 +81,9 @@ install:
   - call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x86
   - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
   # Build Cython/C extension for libmpv binding...
-  - C:\Python35\python.exe setup.py build_ext -i
+  - C:\Python37\python.exe setup.py build_ext -i
   # Retrieve URL for latest available version of libmpv
-  - for /f "delims=" %%a in ('C:\Python35\python.exe helpers.py get_latest_win32_libmpv_32') do @set LIBMPV=%%a
+  - for /f "delims=" %%a in ('C:\Python37\python.exe helpers.py get_latest_win32_libmpv_32') do @set LIBMPV=%%a
   # Downloading latest libmpv 32-bit build...
   - curl -L -fsS -o _build\pyinstaller\temp\mpv-dev.7z https://downloads.sourceforge.net/project/mpv-player-windows%LIBMPV%
   # - curl -L -fsS -o _build\pyinstaller\temp\mpv-dev.7z https://mpv.srsfckn.biz/mpv-dev-20170718.7z
@@ -95,7 +95,7 @@ install:
   # - copy "C:\Windows\SysWOW64\d3dcompiler_47.dll" "..\libmpv\32\"
   # Freezing w/ PyInstaller
   - cd ..
-  # - for /f "delims=" %%a in ('C:\Python35\python.exe version.py') do @set APPVER=%%a
+  # - for /f "delims=" %%a in ('C:\Python37\python.exe version.py') do @set APPVER=%%a
   - call build.pyinstaller.win.signed.bat 32 %PFX_PASSWORD%
   - cd ..\InnoSetup\Output
   - appveyor PushArtifact VidCutter-6.0.0-setup-win32.exe
