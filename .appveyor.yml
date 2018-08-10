@@ -9,7 +9,7 @@ branches:
 
 skip_non_tags: false
 
-image: Visual Studio 2017
+image: Visual Studio 2015
 
 shallow_clone: true
 
@@ -42,9 +42,9 @@ install:
   - mkdir "_build\pyinstaller\libmpv"
   - mkdir "_build\pyinstaller\libmpv\64"
   # Setup build environment for MSVC++
-  # - call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x64
-  # - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
-  - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
+  - call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x64
+  - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
+  # - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
   # Build Cython/C extension for libmpv binding...
   - C:\Python36-x64\python.exe setup.py build_ext -i
   # Retrieve URL for latest available version of libmpv
@@ -79,9 +79,9 @@ install:
   - mkdir "_build\pyinstaller\libmpv\32"
   - del /q "_build\pyinstaller\temp\*.*"
   # Setup build environment for MSVC++
-  # - call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x86
-  # - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
-  - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x86
+  - call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x86
+  - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
+  # - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x86
   # Build Cython/C extension for libmpv binding...
   - C:\Python36\python.exe setup.py build_ext -i
   # Retrieve URL for latest available version of libmpv
