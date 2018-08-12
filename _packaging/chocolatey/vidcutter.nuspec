@@ -7,17 +7,19 @@
     <authors>Pete Alexandrou</authors>
     <owners>ozmartian</owners>
     <licenseUrl>http://www.gnu.org/licenses/gpl.html</licenseUrl>
-    <projectUrl>http://vidcutter.ozmartians.com</projectUrl>
-    <iconUrl>https://cdn.rawgit.com/ozmartian/vidcutter/a64c64b1/data/icons/vidcutter.png</iconUrl>
+    <projectUrl>https://vidcutter.ozmartians.com</projectUrl>
+    <iconUrl>https://cdn.rawgit.com/ozmartian/vidcutter/6c803f35/data/icons/vidcutter.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>The simplest + sexiest tool for cutting and joining your videos without needing to re-encode, now with a powerful OpenGL based rendering engine.
+    <description>NEW FEATURES: chapter support + blackdetect scene detection
+
+The simplest + sexiest tool for cutting and joining your videos without needing to re-encode with a powerful OpenGL based, hardware-accelerated video rendering.
 
 VidCutter focuses on just getting the job done using the best options determined from your source media. Did we mention it was super fast too?
 
 mpv powered playback for frame-level accuracy and support for the widest array of media file formats and codec/filter configurations, it should work with any source media you throw at it as long as its valid. It should even accept moderately corrupted media too, re-indexing and salvaging what it can if the metadata exists. Direct-stream cutting and joining is then performed with the help of the legendary FFmpeg library. No reencoding ever, even blue-ray sized files cut into scenes, rearranged in the index and joined together in under 10 seconds in most cases.
 
 install location: %PROGRAMFILES%\VidCutter</description>
-    <summary>the simplest + fastest video cutter and joiner</summary>
+    <summary>the simplest + fastest media cutter and joiner</summary>
     <releaseNotes>https://github.com/ozmartian/vidcutter/releases/tag/6.0.0</releaseNotes>
     <copyright>All Rights Reserved</copyright>
     <tags>vidcutter ffmpeg audiovideo opengl mpv libmpv videoeditor video videoedit pyqt Qt5 multimedia admin</tags>
