@@ -367,8 +367,8 @@ def main():
         QSurfaceFormat.setDefaultFormat(fmt)
         QGuiApplication.setAttribute(Qt.AA_ShareOpenGLContexts, True)
 
-    if sys.platform == 'darwin':
-        qApp.setStyle('Fusion')
+    # if sys.platform == 'darwin':
+    #     qApp.setStyle('Fusion')
 
     app = SingleApplication(vidcutter.__appid__, sys.argv)
     app.setApplicationName(vidcutter.__appname__)

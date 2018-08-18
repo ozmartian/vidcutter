@@ -319,8 +319,6 @@ class VideoCutter(QWidget):
         self.volSlider = VCVolumeSlider(orientation=Qt.Horizontal, toolTip='Volume', statusTip='Adjust volume level',
                                         cursor=Qt.PointingHandCursor, value=self.parent.startupvol, minimum=0,
                                         maximum=130, minimumHeight=22, sliderMoved=self.setVolume)
-        if sys.platform == 'darwin':
-            self.volSlider.setStyle(QStyleFactory.create('Macintosh'))
 
         # noinspection PyArgumentList
         self.fullscreenButton = QPushButton(objectName='fullscreenButton', icon=self.fullscreenIcon, flat=True,

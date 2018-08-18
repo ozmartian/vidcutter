@@ -25,7 +25,7 @@ a = Analysis(['../../vidcutter/__main__.py'],
                  ('../../README.md', '.'),
                  ('../../bin/*', 'bin')
              ],
-             hiddenimports=[],
+             hiddenimports=['PyQt5.sip'],
              hookspath=[],
              runtime_hooks=[],
              excludes=['numpy'],

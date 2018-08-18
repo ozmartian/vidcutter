@@ -1,5 +1,4 @@
 #!/bin/bash
 
 rm -rf build dist
-python3 -m pip install pyopengl
 python3 -m PyInstaller --clean vidcutter.osx.spec

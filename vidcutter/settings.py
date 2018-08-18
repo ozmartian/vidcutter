@@ -650,7 +650,7 @@ class SettingsDialog(QDialog):
         self.settings = self.parent.settings
         self.theme = self.parent.theme
         self.setObjectName('settingsdialog')
-        if sys.platform == 'win32':
+        if sys.platform in {'win32', 'darwin'}:
             self.setStyle(QStyleFactory.create('Fusion'))
         self.setWindowTitle('Settings')
         self.categories = QListWidget(self)
