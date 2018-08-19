@@ -3,7 +3,7 @@
 Name:           vidcutter
 Version:        6.0.0
 Release:        0
-Summary:        the simplest + fastest video cutter & joiner
+Summary:        the simplest + fastest media cutter & joiner
 License:        GPL-3.0+
 Url:            https://vidcutter.ozmartians.com
 Source0:        https://github.com/ozmartian/%{name}/archive/%{version}.tar.gz#/%{name}-%{version}.tar.gz
@@ -116,5 +116,10 @@ python3 setup.py install --root %{buildroot}
 %{_datadir}/applications/%{pkgname}.desktop
 %{_datadir}/metainfo/%{pkgname}.appdata.xml
 %{_datadir}/mime/packages/%{pkgname}.xml
+%{_datadir}/doc/%{name}/
+%{_datadir}/doc/%{name}/CHANGELOG
+%{_datadir}/doc/%{name}/LICENSE
+%{_datadir}/doc/%{name}/README.md
+
 
 %changelog
