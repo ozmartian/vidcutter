@@ -5,7 +5,7 @@
 Name:           %{pkg_name}
 Version:        6.0.0
 Release:        0%{?dist}
-Summary:        the simplest + fastest video cutter & joiner
+Summary:        the simplest + fastest media cutter & joiner
 Group:          Applications/Multimedia
 License:        GPLv3+
 URL:            https://vidcutter.ozmartians.com
@@ -14,6 +14,7 @@ Source0:        https://github.com/ozmartian/%{pkg_name}/archive/%{version}.tar.
 
 ExclusiveArch:	%{ix86} x86_64	
 
+BuildRequires:  gcc-c++
 BuildRequires:  python3-devel
 BuildRequires:  python3-setuptools
 BuildRequires:  mpv-libs-devel
@@ -22,7 +23,7 @@ Requires:       python3-qt5
 Requires:       mpv-libs
 Requires:       mediainfo
 Requires:       ffmpeg
-Requires:		python3-pyopengl
+Requires:       python3-pyopengl
 
 %description
     A modern, simple to use, constantly evolving and hella fast MEDIA CUTTER + JOINER
@@ -49,21 +50,19 @@ rm -rf %{pkg_name}.egg-info
 %{python3_sitearch}/%{pkg_name}-%{version}-py?.?.egg-info
 %{_bindir}/%{pkg_name}
 %{_datadir}/applications/%{pkgname}.desktop
-%{_datadir}/icons/hicolor/16x16/apps/%{pkgname}.png
-%{_datadir}/icons/hicolor/22x22/apps/%{pkgname}.png
-%{_datadir}/icons/hicolor/24x24/apps/%{pkgname}.png
-%{_datadir}/icons/hicolor/32x32/apps/%{pkgname}.png
-%{_datadir}/icons/hicolor/48x48/apps/%{pkgname}.png
-%{_datadir}/icons/hicolor/64x64/apps/%{pkgname}.png
-%{_datadir}/icons/hicolor/128x128/apps/%{pkgname}.png
-%{_datadir}/icons/hicolor/256x256/apps/%{pkgname}.png
-%{_datadir}/icons/hicolor/512x512/apps/%{pkgname}.png
+%{_datadir}/icons/hicolor/*/apps/%{pkgname}.png
 %{_datadir}/icons/hicolor/scalable/apps/%{pkgname}.svg
 %{_datadir}/metainfo/%{pkgname}.appdata.xml
 %{_datadir}/mime/packages/%{pkgname}.xml
+%{_docdir}/%{pkg_name}/ 
+%{_docdir}/%{pkg_name}/CHANGELOG
+%{_docdir}/%{pkg_name}/LICENSE
+%{_docdir}/%{pkg_name}/README.md
 
 
 %changelog
+* Sun Aug 19 2018 Pete Alexandrou <pete AT ozmartians DOT com> 6.0.0-1
+- 6.0.0 release
 * Mon Feb 05 2018 Pete Alexandrou <pete AT ozmartians DOT com> 5.5.0-2
 - 5.5.0 + BUGFIX release
 * Thu Nov 30 2017 Pete Alexandrou <pete AT ozmartians DOT com> 5.0.5-1
