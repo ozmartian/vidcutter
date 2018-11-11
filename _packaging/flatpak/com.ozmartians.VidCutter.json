@@ -68,8 +68,8 @@
         ],
         "sources": [{
             "type": "archive",
-            "url": "https://sourceforge.net/projects/pyqt/files/PyQt5/PyQt-5.11.2/PyQt5_gpl-5.11.2.tar.gz",
-            "sha256": "7caa581155c3433716b7e6aba71fe1378cd7d92f4155c266d60e5cffb64e9603"
+            "url": "https://sourceforge.net/projects/pyqt/files/PyQt5/PyQt-5.11.3/PyQt5_gpl-5.11.3.tar.gz",
+            "sha256": "c9b57d15601d436faf35dacf8e0acefa220194829a653e771e80b189b3261073"
         }],
           "modules": [{
             "name": "sip",
@@ -81,8 +81,8 @@
             ],
             "sources": [{
                 "type": "archive",
-                "url": "https://sourceforge.net/projects/pyqt/files/sip/sip-4.19.12/sip-4.19.12.tar.gz",
-                "sha256": "24617fc31b983df075500ecac0e99d2fb48bf63ba82d4a17518659e571923822"
+                "url": "https://sourceforge.net/projects/pyqt/files/sip/sip-4.19.13/sip-4.19.13.tar.gz",
+                "sha256": "e353a7056599bf5fbd5d3ff9842a6ab2ea3cf4e0304a0f925ec5862907c0d15e"
             }]
         }]
     }, 
@@ -97,13 +97,13 @@
         ],
         "sources": [{
             "type": "archive",
-            "url": "https://github.com/mpv-player/mpv/archive/v0.28.2.tar.gz",
-            "sha256": "aada14e025317b5b3e8e58ffaf7902e8b6e4ec347a93d25a7c10d3579426d795"
+            "url": "https://github.com/mpv-player/mpv/archive/v0.29.1.tar.gz",
+            "sha256": "f9f9d461d1990f9728660b4ccb0e8cb5dce29ccaa6af567bec481b79291ca623"
         },
         {
             "type": "file",
-            "url": "https://waf.io/waf-1.9.8",
-            "sha256": "167dc42bab6d5bd823b798af195420319cb5c9b571e00db7d83df2a0fe1f4dbf",
+            "url": "https://waf.io/waf-2.0.12",
+            "sha256": "0979ca87f45928e0d752049ab2f43be8551249be73dc5563b944ec54f8871d1f",
             "dest-filename": "waf"
         }],
         "modules": [{
@@ -229,8 +229,8 @@
             },
             "sources": [{
                 "type": "archive",
-                "url": "http://ffmpeg.org/releases/ffmpeg-4.0.2.tar.xz",
-                "sha256": "a95c0cc9eb990e94031d2183f2e6e444cc61c99f6f182d1575c433d62afb2f97"
+                "url": "http://ffmpeg.org/releases/ffmpeg-4.1.tar.xz",
+                "sha256": "a38ec4d026efb58506a99ad5cd23d5a9793b4bf415f2c4c2e9c1bb444acd1994"
             }],     
             "modules": [{
                 "name": "ffnvcodec",
@@ -329,7 +329,7 @@
                 ],
                 "sources": [{
                     "type": "git",
-                    "commit": "e9a5903edf8ca59ef20e6f4894c196f135af735e",
+                    "commit": "545de2ffec6ae9a80738de1b2c8cf820249a2530",
                     "url": "https://git.videolan.org/git/x264.git"
                 }]
             },
@@ -360,8 +360,8 @@
                 ],
                 "sources": [{
                     "type": "archive",
-                    "url": "https://bitbucket.org/multicoreware/x265/downloads/x265_2.8.tar.gz",
-                    "sha256": "6e59f9afc0c2b87a46f98e33b5159d56ffb3558a49d8e3d79cb7fdc6b7aaa863"
+                    "url": "https://bitbucket.org/multicoreware/x265/downloads/x265_2.9.tar.gz",
+                    "sha256": "ebae687c84a39f54b995417c52a2fdde65a4e2e7ebac5730d251471304b91024"
                 },
                 {
                     "type": "patch",

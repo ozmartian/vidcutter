@@ -22,33 +22,33 @@
       <li>SmartCut frame-accurate cutting option (disabled by default)</li>
       <li>Attractive, simple to use Qt5 based interface</li>
       <li>Chapter support allowing scene chapter names to be included in final media metadata. NOTE: results will only work in media players that support chapters</li>
-      <li>Flatpak release includes latest stable versions of FFmpeg, libmpv, MediaInfo and PyQt5 running on the KDE runtime for a stable Qt5 experience</li>
+      <li>Flatpak release includes latest stable versions of FFmpeg, libmpv, MediaInfo and PyQt5 running on the KDE platform runtime</li>
     </ul>
   </description>
   <screenshots>
     <screenshot type="default">
       <image>https://vidcutter.ozmartians.com/images/vidcutter-01.png</image>
-      <caption>VidCutter :: the simplest and fastest video cutter and joiner</caption>
+      <caption>VidCutter :: the simplest and fastest media cutter and joiner</caption>
     </screenshot>
     <screenshot>
       <image>https://vidcutter.ozmartians.com/images/vidcutter-02.png</image>
-      <caption>VidCutter :: the simplest + fastest video cutter and joiner</caption>
+      <caption>VidCutter :: the simplest + fastest media cutter and joiner</caption>
     </screenshot>
     <screenshot>
       <image>https://vidcutter.ozmartians.com/images/vidcutter-03.png</image>
-      <caption>VidCutter :: the simplest + fastest video cutter and joiner</caption>
+      <caption>VidCutter :: the simplest + fastest media cutter and joiner</caption>
     </screenshot>
     <screenshot>
       <image>https://vidcutter.ozmartians.com/images/vidcutter-04.png</image>
-      <caption>VidCutter :: the simplest + fastest video cutter and joiner</caption>
+      <caption>VidCutter :: the simplest + fastest media cutter and joiner</caption>
     </screenshot>
     <screenshot>
       <image>https://vidcutter.ozmartians.com/images/vidcutter-05.png</image>
-      <caption>VidCutter :: the simplest + fastest video cutter and joiner</caption>
+      <caption>VidCutter :: the simplest + fastest media cutter and joiner</caption>
     </screenshot>
     <screenshot>
       <image>https://vidcutter.ozmartians.com/images/vidcutter-06.png</image>
-      <caption>VidCutter :: the simplest + fastest video cutter and joiner</caption>
+      <caption>VidCutter :: the simplest + fastest media cutter and joiner</caption>
     </screenshot>
   </screenshots>
   <url type="homepage">https://vidcutter.ozmartians.com</url>
@@ -56,6 +56,18 @@
   <update_contact>pete_AT_ozmartians.com</update_contact>
   <developer_name>Pete Alexandrou</developer_name>
   <releases>
+    <release date="2018-11-11" version="6.0.0.2">
+      <description>
+        <p>Maintenance release updating the following:</p>
+        <ul>
+          <li>PyQt5 5.11.3</li>
+          <li>FFmpeg 4.1</li>
+          <li>mpv 0.29.1</li>
+          <li>MediaInfo 18.08.1</li>
+          <li>x264, x265 codecs</li>
+        </ul>
+      </description>
+    </release>
     <release date="2018-07-18" version="6.0.0.1">
       <description>
         <p>
