@@ -125,8 +125,8 @@ class VideoCutter(QWidget):
         self.videoService.addScenes.connect(self.addScenes)
 
         self.project_files = {
-            'edl': re.compile(r'(\d+(?:\.?\d+)?)\t(\d+(?:\.?\d+)?)\t([01])'),
-            'vcp': re.compile(r'(\d+(?:\.?\d+)?)\t(\d+(?:\.?\d+)?)\t([01])\t(".*")$')
+            'edl': re.compile(r'(\d+(?:\.\d+)?)\t(\d+(?:\.\d+)?)\t([01])'),
+            'vcp': re.compile(r'(\d+(?:\.\d+)?)\t(\d+(?:\.\d+)?)\t([01])\t(".*")$')
         }
 
         self._initIcons()
