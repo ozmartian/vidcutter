@@ -112,8 +112,7 @@ class VideoService(QObject):
         tools.ffmpeg = settings.value('ffmpeg', None, type=str)
         tools.ffprobe = settings.value('ffprobe', None, type=str)
         tools.mediainfo = settings.value('mediainfo', None, type=str)
-        for tool in list(tools.keys()):
-            path = tools[tool]
+        for tool, path in tools.items():
             if path is None or not len(path) or not os.path.isfile(path):
                 for exe in VideoService.config.binaries[os.name][tool]:
                     if VideoService.frozen:
