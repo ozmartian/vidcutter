@@ -29,7 +29,7 @@ import re
 import sys
 from bisect import bisect_left
 from functools import partial
-from typing import List, Optional, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QDir, QFileInfo, QObject, QProcess, QProcessEnvironment, QSettings,
                           QSize, QStandardPaths, QStorageInfo, QTemporaryFile, QTime)
@@ -609,7 +609,7 @@ class VideoService(QObject):
             self.logger.exception('FFprobe JSON decoding error', exc_info=True)
             raise
 
-    def getKeyframes(self, source: str, formatted_time: bool = False) -> list:
+    def getKeyframes(self, source: str, formatted_time: bool = False) -> List[Union[str, float]]:
         if len(self.keyframes) and source == self.source:
             return self.keyframes
         timecode = '0:00:00.000000' if formatted_time else 0
@@ -638,7 +638,7 @@ class VideoService(QObject):
             self.keyframes = keyframe_times
         return keyframe_times
 
-    def getGOPbisections(self, source: str, start: float, end: float) -> dict:
+    def getGOPbisections(self, source: str, start: float, end: float) -> Dict[str, Tuple[float, float, float]]:
         keyframes = self.getKeyframes(source)
         start_pos = bisect_left(keyframes, start)
         end_pos = bisect_left(keyframes, end)
