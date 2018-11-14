@@ -175,8 +175,8 @@ class MainWindow(QMainWindow):
     def parse_cmdline(self) -> None:
         self.parser = QCommandLineParser()
         self.parser.setApplicationDescription('\nVidCutter - the simplest + fastest media cutter & joiner')
-        self.parser.addPositionalArgument('video', 'Preload video file', '[video]')
-        self.parser.addPositionalArgument('project', 'Open VidCutter project file (.vcp)', '[project]')
+        self.parser.addPositionalArgument('video', 'Preload video file', '[video |')
+        self.parser.addPositionalArgument('project', 'Open VidCutter project file (.vcp)', 'project]')
         self.debug_option = QCommandLineOption(['debug'], 'debug mode; verbose console output & logging. '
                                                'This will basically output what is being logged to file to the '
                                                'console stdout. Mainly useful for debugging problems with your '
