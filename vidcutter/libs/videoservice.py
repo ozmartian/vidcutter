@@ -610,6 +610,13 @@ class VideoService(QObject):
             raise
 
     def getKeyframes(self, source: str, formatted_time: bool = False) -> List[Union[str, float]]:
+        """
+        Return a list of key-frame times.
+
+        :param source: The file name of the media file.
+        :param formatted_time: If `True`, return times list of strings. Defaults to `False`, which returns times as list of floats.
+        :returns: a list of key-frame times, eiter formatted as strings or floats.
+        """
         if len(self.keyframes) and source == self.source:
             return self.keyframes
         timecode = '0:00:00.000000' if formatted_time else 0
@@ -639,6 +646,14 @@ class VideoService(QObject):
         return keyframe_times
 
     def getGOPbisections(self, source: str, start: float, end: float) -> Dict[str, Tuple[float, float, float]]:
+        """
+        Return a mapping of the start and end time to the 3 surronging key-frames.
+
+        :param source: The file name of the media file.
+        :param start: The start time.
+        :param end: The end time.
+        :returns: A dictionary mapping `start` and `end` to 3-tuples (before, exact, after).
+        """
         keyframes = self.getKeyframes(source)
         start_pos = bisect_left(keyframes, start)
         end_pos = bisect_left(keyframes, end)
