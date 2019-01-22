@@ -1,7 +1,7 @@
 {
     "app-id": "com.ozmartians.VidCutter",
     "runtime": "org.kde.Platform",
-    "runtime-version": "5.11",
+    "runtime-version": "5.12",
     "sdk": "org.kde.Sdk",
     "command": "vidcutter",
     "finish-args": [
@@ -58,11 +58,11 @@
     },
     {
         "name": "PyQt5",
-        "cleanup": ["/bin/sip", "/include", "/lib/python3.5/site-packages/*.pyi"],
+        "cleanup": ["/bin/sip", "/include", "/lib/python3.7/site-packages/*.pyi"],
         "config-opts": ["--disable-static", "--enable-x11"],
         "buildsystem": "simple",
         "build-commands": [
-            "python3 configure.py --confirm-license --no-docstrings --assume-shared --no-sip-files --no-qml-plugin --no-tools --no-qsci-api -d ${FLATPAK_DEST}/lib/python3.5/site-packages --sip=${FLATPAK_DEST}/bin/sip --sip-incdir=${FLATPAK_DEST}/include --stubsdir=${FLATPAK_DEST}/lib/python3.5/site-packages --disable=QtSensors --disable=QtWebEngine --disable=QtQuick --disable=QtQml --disable=QtTest --disable=QtWebChannel --disable=QtWebEngineCore --disable=QWebEngineWidgets --disable=QtQuickWidgets --disable=QtSql --disable=QtXmlPatterns --disable=QtMultimedia --disable=QtMultimediaWidgets --disable=QtLocation --disable=QtDesigner --disable=QtOpenGL --disable=QtBluetooth --disable=QtWebKit --disable=QtWebKitWidgets --disable=QtNfc --disable=QtPositioning",
+            "python3 configure.py --confirm-license --no-docstrings --assume-shared --no-sip-files --no-qml-plugin --no-tools --no-qsci-api -d ${FLATPAK_DEST}/lib/python3.7/site-packages --sip=${FLATPAK_DEST}/bin/sip --sip-incdir=${FLATPAK_DEST}/include --stubsdir=${FLATPAK_DEST}/lib/python3.7/site-packages --disable=QtSensors --disable=QtWebEngine --disable=QtQuick --disable=QtQml --disable=QtTest --disable=QtWebChannel --disable=QtWebEngineCore --disable=QWebEngineWidgets --disable=QtQuickWidgets --disable=QtSql --disable=QtXmlPatterns --disable=QtMultimedia --disable=QtMultimediaWidgets --disable=QtLocation --disable=QtDesigner --disable=QtOpenGL --disable=QtBluetooth --disable=QtWebKit --disable=QtWebKitWidgets --disable=QtNfc --disable=QtPositioning",
             "make -j $(nproc)",
             "make install"
         ],
@@ -75,7 +75,7 @@
             "name": "sip",
             "buildsystem": "simple",
             "build-commands": [
-                "python3 configure.py --sip-module PyQt5.sip -b ${FLATPAK_DEST}/bin -d ${FLATPAK_DEST}/lib/python3.5/site-packages -e ${FLATPAK_DEST}/include -v ${FLATPAK_DEST}/share/sip --stubsdir=${FLATPAK_DEST}/lib/python3.5/site-packages",
+                "python3 configure.py --sip-module PyQt5.sip -b ${FLATPAK_DEST}/bin -d ${FLATPAK_DEST}/lib/python3.7/site-packages -e ${FLATPAK_DEST}/include -v ${FLATPAK_DEST}/share/sip --stubsdir=${FLATPAK_DEST}/lib/python3.7/site-packages",
                 "make",
                 "make install"
             ],
@@ -102,8 +102,8 @@
         },
         {
             "type": "file",
-            "url": "https://waf.io/waf-2.0.12",
-            "sha256": "0979ca87f45928e0d752049ab2f43be8551249be73dc5563b944ec54f8871d1f",
+            "url": "https://waf.io/waf-2.0.14",
+            "sha256": "c5bc6083bba5e24415bb83872fa9e048afa150109a7e8855af679076d0779b22",
             "dest-filename": "waf"
         }],
         "modules": [{
@@ -379,8 +379,8 @@
                 "config-opts": [ "--disable-static" ],
                 "sources": [{
                     "type": "archive",
-                    "url": "https://github.com/mstorsjo/fdk-aac/archive/v0.1.6.tar.gz",
-                    "sha256": "adbcd793e406e1b88b3c1c41382d49f8c27371485b823c0fdab69c9124fd2ce3"
+                    "url": "https://github.com/mstorsjo/fdk-aac/archive/v2.0.0.tar.gz",
+                    "sha256": "6e6c7921713788e31df655911e1d42620b057180b00bf16874f5d630e1d5b9a2"
                 }]
             },
             {

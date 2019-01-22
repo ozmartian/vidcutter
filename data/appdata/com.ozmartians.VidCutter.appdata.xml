@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright 2018 Pete Alexandrou <pete@ozmartians.com> -->
+<!-- Copyright 2019 Pete Alexandrou <pete@ozmartians.com> -->
 <component type="desktop">
   <id>com.ozmartians.VidCutter.desktop</id>
   <name>VidCutter</name>
@@ -56,6 +56,16 @@
   <update_contact>pete_AT_ozmartians.com</update_contact>
   <developer_name>Pete Alexandrou</developer_name>
   <releases>
+    <release date="2019-01-23" version="6.0.0.3">
+      <description>
+        <p>Maintenance release updating the following:</p>
+        <ul>
+          <li>Qt 5.12</li>
+          <li>Python 3.7</li>
+          <li>updated dependencies</li>
+        </ul>
+      </description>
+    </release>
     <release date="2018-11-11" version="6.0.0.2">
       <description>
         <p>Maintenance release updating the following:</p>
