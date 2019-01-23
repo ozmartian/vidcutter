@@ -335,7 +335,8 @@
                 }]
             },
             {
-                "name": "x265",
+                "name": "x265_32",
+                "only-arches": ["i386"],
                 "buildsystem": "simple",
                 "build-options": {
                     "arch": {
@@ -347,7 +348,39 @@
                         }
                     }
                 },
-                "build-commands": [
+                "build-commands": [ 
+                    "mkdir source/build-8 source/build-10 source/build-12",
+                    "cd source/build-12 && cmake .. -DCMAKE_INSTALL_PREFIX=${FLATPAK_DEST} -DENABLE_ASSEMBLY='FALSE' -DHIGH_BIT_DEPTH='TRUE' -DMAIN12='TRUE' -DEXPORT_C_API='FALSE' -DENABLE_CLI='FALSE' -DENABLE_SHARED='FALSE'",
+                    "cd source/build-12 && make",
+                    "cd source/build-10 && cmake .. -DCMAKE_INSTALL_PREFIX=${FLATPAK_DEST} -DENABLE_ASSEMBLY='FALSE' -DHIGH_BIT_DEPTH='TRUE' -DEXPORT_C_API='FALSE' -DENABLE_CLI='FALSE' -DENABLE_SHARED='FALSE'",
+                    "cd source/build-10 && make",
+                    "ln -s ../build-10/libx265.a source/build-8/libx265_main10.a",
+                    "ln -s ../build-12/libx265.a source/build-8/libx265_main12.a",
+                    "cd source/build-8 && cmake .. -DCMAKE_INSTALL_PREFIX=${FLATPAK_DEST} -DENABLE_ASSEMBLY='FALSE' -DENABLE_SHARED='TRUE' -DENABLE_CLI='FALSE' -DENABLE_HDR10_PLUS='TRUE' -DEXTRA_LIB='x265_main10.a;x265_main12.a' -DEXTRA_LINK_FLAGS='-L.' -DLINKED_10BIT='TRUE' -DLINKED_12BIT='TRUE'",
+                    "cd source/build-8 && make",
+                    "cd source/build-8 && make install"
+                ],
+                "sources": [{
+                    "type": "archive",
+                    "url": "https://bitbucket.org/multicoreware/x265/downloads/x265_2.9.tar.gz",
+                    "sha256": "ebae687c84a39f54b995417c52a2fdde65a4e2e7ebac5730d251471304b91024"
+                }]
+            },
+            {
+                "name": "x265_64",
+                "skip-arches": ["i386"],
+                "buildsystem": "simple",
+                "build-options": {
+                    "arch": {
+                        "arm": {
+                            "cxxflags": "-fPIC"
+                        },
+                        "aarch64": {
+                            "cxxflags": "-fPIC"
+                        }
+                    }
+                },
+                "build-commands": [ 
                     "mkdir source/build-8 source/build-10 source/build-12",
                     "cd source/build-12 && cmake .. -DCMAKE_INSTALL_PREFIX=${FLATPAK_DEST} -DHIGH_BIT_DEPTH='TRUE' -DMAIN12='TRUE' -DEXPORT_C_API='FALSE' -DENABLE_CLI='FALSE' -DENABLE_SHARED='FALSE'",
                     "cd source/build-12 && make",
