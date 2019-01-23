@@ -8,6 +8,7 @@
         "--device=dri",
         "--env=DCONF_USER_CONFIG_DIR=.config/dconf",
         "--env=LC_NUMERIC=C",
+        "--env=LD_LIBRARY_PATH=/app/lib",
         "--filesystem=host",
         "--filesystem=xdg-run/dconf",
         "--share=ipc",
