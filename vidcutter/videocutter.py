@@ -1217,7 +1217,7 @@ class VideoCutter(QWidget):
                     file4Test = lastItem[3] if len(lastItem[3]) else self.currentMedia
                     if self.videoService.testJoin(file4Test, file):
                         self.clipTimes.append([QTime(0, 0), self.videoService.duration(file),
-                                               self.captureImage(file, QTime(0, 0, second=2), True), file])
+                                               self.captureImage(file, QTime(0, 0, second=2), True), file, None])
                         filesadded = True
                     else:
                         cliperrors.append((file,
@@ -1225,7 +1225,7 @@ class VideoCutter(QWidget):
                         self.videoService.lastError = ''
                 else:
                     self.clipTimes.append([QTime(0, 0), self.videoService.duration(file),
-                                           self.captureImage(file, QTime(0, 0, second=2), True), file])
+                                           self.captureImage(file, QTime(0, 0, second=2), True), file, None])
                     filesadded = True
             if len(cliperrors):
                 detailedmsg = '''<p>The file(s) listed were found to be incompatible for inclusion to the clip index as
@@ -1354,6 +1354,20 @@ class VideoCutter(QWidget):
             self.toolbar_save.setDisabled(True)
             if not os.path.isdir(self.workFolder):
                 os.mkdir(self.workFolder)
+            if source_ext.lower() == ('.mkv'):
+                self.seekSlider.showProgress(2)
+                self.parent.lock_gui(True)
+                split_str = ''
+                for clip in self.clipTimes:
+                    start_time = timedelta(hours=clip[0].hour(), minutes=clip[0].minute(), seconds=clip[0].second(),
+                                           milliseconds=clip[0].msec())
+                    stop_time = timedelta(hours=clip[1].hour(), minutes=clip[1].minute(), seconds=clip[1].second(),
+                                          milliseconds=clip[1].msec())
+                    split_str += self.delta2String(start_time) + 's-' + self.delta2String(stop_time) + 's,'
+                split_str = split_str.rstrip(',')
+                self.videoService.mkvcut(source=os.path.abspath(source_file + source_ext), dest=os.path.abspath(self.finalFilename), nclips=len(self.clipTimes), split_str=split_str, workdir=os.path.abspath(self.workFolder))
+                self.complete(rename=False, finalize=False)
+                return
             if self.smartcut:
                 self.seekSlider.showProgress(6 if clips > 1 else 5)
                 self.parent.lock_gui(True)
@@ -1372,7 +1386,7 @@ class VideoCutter(QWidget):
                     duration = self.delta2QTime(clip[0].msecsTo(clip[1])).toString(self.timeformat)
                     filename = '{0}_{1}{2}'.format(file, '{0:0>2}'.format(index), source_ext)
                     if not self.keepClips:
-                        filename = os.path.join(self.workFolder, os.path.basename(filename))
+                        filename = os.path.join(os.path.abspath(self.workFolder), os.path.basename(filename))
                     filename = QDir.toNativeSeparators(filename)
                     filelist.append(filename)
                     if not self.videoService.cut(source='{0}{1}'.format(source_file, source_ext),
@@ -1449,13 +1463,14 @@ class VideoCutter(QWidget):
         else:
             self.complete(True, filelist[-1])
 
-    def complete(self, rename: bool=True, filename: str=None) -> None:
+    def complete(self, rename: bool=True, filename: str=None, finalize: bool=True) -> None:
         if rename and filename is not None:
             # noinspection PyCallByClass
             QFile.remove(self.finalFilename)
             # noinspection PyCallByClass
             QFile.rename(filename, self.finalFilename)
-        self.videoService.finalize(self.finalFilename)
+        if finalize:
+            self.videoService.finalize(self.finalFilename)
         self.seekSlider.updateProgress()
         self.toolbar_save.setEnabled(True)
         self.parent.lock_gui(False)

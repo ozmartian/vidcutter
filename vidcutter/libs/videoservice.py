@@ -107,11 +107,12 @@ class VideoService(QObject):
 
     @staticmethod
     def findBackends(settings: QSettings) -> Munch:
-        tools = Munch(ffmpeg=None, ffprobe=None, mediainfo=None)
+        tools = Munch(ffmpeg=None, ffprobe=None, mediainfo=None, mkvmerge=None)
         settings.beginGroup('tools')
         tools.ffmpeg = settings.value('ffmpeg', None, type=str)
         tools.ffprobe = settings.value('ffprobe', None, type=str)
         tools.mediainfo = settings.value('mediainfo', None, type=str)
+        tools.mkvmerge = settings.value('mkvmerge', None, type=str)
         for tool in list(tools.keys()):
             path = tools[tool]
             if path is None or not len(path) or not os.path.isfile(path):
@@ -134,6 +135,8 @@ class VideoService(QObject):
             raise ToolNotFoundException('FFprobe missing')
         if tools.mediainfo is None:
             raise ToolNotFoundException('MediaInfo missing')
+        if tools.mkvmerge is None:
+            raise ToolNotFoundException('Mkvmerge missing')
         return tools
 
     @staticmethod
@@ -459,6 +462,25 @@ class VideoService(QObject):
         VideoService.cleanup(joinlist)
         self.finished.emit(final_join, self.smartcut_jobs[index].output)
 
+    def mkvcut(self, source: str, dest: str, nclips: int, split_str: str, workdir: str) -> None:
+        args = ' '.join(['-o', '"' + os.path.join(os.path.dirname(workdir), 'clips.mkv') + '"', '"' + source + '"', '--split', 'parts:' + split_str])
+        self.cmdExec(os.path.abspath(self.backends.mkvmerge), args, output=True)
+        for index in range(0, nclips):
+            self.progress.emit(index)
+        merge_string = ['-o', '"' + dest + '"', '"' + os.path.join(os.path.dirname(workdir), 'clips-{0:03d}.mkv'.format(1)) + '"']
+        for i in range(2, nclips + 1):
+            merge_string.append('--no-global-tags')
+            merge_string.append('+')
+            merge_string.append('"' + os.path.join(os.path.dirname(workdir), 'clips-{0:03d}.mkv'.format(i)) + '"')
+
+        merge_string.append('--generate-chapters')
+        merge_string.append('when-appending')
+        self.cmdExec(os.path.abspath(self.backends.mkvmerge), ' '.join(merge_string), output=True)
+        temp_files = []
+        for i in range(1,nclips+1):
+            temp_files.append(os.path.join(os.path.dirname(workdir),'clips-{0:03d}.mkv'.format(i)))
+        VideoService.cleanup(temp_files)
+
     @staticmethod
     def cleanup(files: List[str]) -> None:
         try:
@@ -718,5 +740,6 @@ class VideoService(QObject):
         if VideoService.frozen and getattr(sys, '_MEIPASS', False):
             app_path = sys._MEIPASS
         else:
-            app_path = os.path.dirname(os.path.realpath(sys.argv[0]))
+            app_path = os.path.realpath(os.path.join(os.path.dirname(__file__),'..','..'))
+
         return app_path if path is None else os.path.join(app_path, path)
