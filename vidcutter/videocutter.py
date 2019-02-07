@@ -1354,7 +1354,7 @@ class VideoCutter(QWidget):
             self.toolbar_save.setDisabled(True)
             if not os.path.isdir(self.workFolder):
                 os.mkdir(self.workFolder)
-            if source_ext.lower() == ('.mkv'):
+            if source_ext.lower() == '.mkv':
                 self.seekSlider.showProgress(2)
                 self.parent.lock_gui(True)
                 split_str = ''
@@ -1365,7 +1365,18 @@ class VideoCutter(QWidget):
                                           milliseconds=clip[1].msec())
                     split_str += self.delta2String(start_time) + 's-' + self.delta2String(stop_time) + 's,'
                 split_str = split_str.rstrip(',')
-                self.videoService.mkvcut(source=os.path.abspath(source_file + source_ext), dest=os.path.abspath(self.finalFilename), nclips=len(self.clipTimes), split_str=split_str, workdir=os.path.abspath(self.workFolder))
+                chapters = None
+                if self.createChapters:
+                    chapters = []
+                    [
+                        chapters.append(clip[4] if clip[4] is not None else 'Chapter {}'.format(index + 1))
+                        for index, clip in enumerate(self.clipTimes)
+                    ]
+                workdir = os.path.dirname(os.path.abspath(self.finalFilename)) if self.keepClips else os.path.abspath(self.workFolder)
+                self.videoService.mkvcut(source=os.path.abspath(source_file + source_ext),
+                                         dest=os.path.abspath(self.finalFilename), nclips=len(self.clipTimes),
+                                         split_str=split_str, workdir=workdir,
+                                         chapters=chapters)
                 self.complete(rename=False, finalize=False)
                 return
             if self.smartcut:

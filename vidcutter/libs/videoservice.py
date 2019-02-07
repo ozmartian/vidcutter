@@ -462,24 +462,25 @@ class VideoService(QObject):
         VideoService.cleanup(joinlist)
         self.finished.emit(final_join, self.smartcut_jobs[index].output)
 
-    def mkvcut(self, source: str, dest: str, nclips: int, split_str: str, workdir: str) -> None:
-        args = ' '.join(['-o', '"' + os.path.join(os.path.dirname(workdir), 'clips.mkv') + '"', '"' + source + '"', '--split', 'parts:' + split_str])
+    def mkvcut(self, source: str, dest: str, nclips: int,
+               split_str: str, workdir: str, chapters: List[str]=None) -> None:
+        clips_file_base, ext = os.path.splitext(os.path.basename(dest))
+        args = ' '.join(['-o', '"' + os.path.join(workdir, clips_file_base + ext) + '"',
+                         '"' + source + '"', '--split', 'parts:' + split_str])
         self.cmdExec(os.path.abspath(self.backends.mkvmerge), args, output=True)
         for index in range(0, nclips):
             self.progress.emit(index)
-        merge_string = ['-o', '"' + dest + '"', '"' + os.path.join(os.path.dirname(workdir), 'clips-{0:03d}.mkv'.format(1)) + '"']
+        merge_string = ['-o', '"' + dest + '"',
+                        '"' + os.path.join(workdir, clips_file_base + '-{0:03d}'.format(1)) + ext + '"']
         for i in range(2, nclips + 1):
             merge_string.append('--no-global-tags')
             merge_string.append('+')
-            merge_string.append('"' + os.path.join(os.path.dirname(workdir), 'clips-{0:03d}.mkv'.format(i)) + '"')
+            merge_string.append('"' + os.path.join(workdir, clips_file_base + '-{0:03d}'.format(i)) + ext + '"')
 
-        merge_string.append('--generate-chapters')
-        merge_string.append('when-appending')
+        if chapters is not None:
+            merge_string.append('--generate-chapters')
+            merge_string.append('when-appending')
         self.cmdExec(os.path.abspath(self.backends.mkvmerge), ' '.join(merge_string), output=True)
-        temp_files = []
-        for i in range(1,nclips+1):
-            temp_files.append(os.path.join(os.path.dirname(workdir),'clips-{0:03d}.mkv'.format(i)))
-        VideoService.cleanup(temp_files)
 
     @staticmethod
     def cleanup(files: List[str]) -> None:
