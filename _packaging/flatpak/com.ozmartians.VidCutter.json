@@ -380,7 +380,7 @@
                         }
                     }
                 },
-                "build-commands": [ 
+                "build-commands": [
                     "mkdir source/build-8 source/build-10 source/build-12",
                     "cd source/build-12 && cmake .. -DCMAKE_INSTALL_PREFIX=${FLATPAK_DEST} -DHIGH_BIT_DEPTH='TRUE' -DMAIN12='TRUE' -DEXPORT_C_API='FALSE' -DENABLE_CLI='FALSE' -DENABLE_SHARED='FALSE'",
                     "cd source/build-12 && make",
@@ -396,16 +396,6 @@
                     "type": "archive",
                     "url": "https://bitbucket.org/multicoreware/x265/downloads/x265_3.0.tar.gz",
                     "sha256": "c5b9fc260cabbc4a81561a448f4ce9cad7218272b4011feabc3a6b751b2f0662"
-                },
-                {
-                    "type": "patch",
-                    "path": "x265-arm-01.patch",
-                    "only-arches": ["arm", "aarch64"]
-                },
-                {
-                    "type": "patch",
-                    "path": "x265-arm-02.patch",
-                    "only-arches": ["arm", "aarch64"]
                 }]
             },
             {
