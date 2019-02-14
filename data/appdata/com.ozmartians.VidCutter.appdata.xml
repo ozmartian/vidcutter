@@ -56,6 +56,16 @@
   <update_contact>pete_AT_ozmartians.com</update_contact>
   <developer_name>Pete Alexandrou</developer_name>
   <releases>
+    <release date="2019-02-14" version="6.0.0.4">
+      <description>
+        <p>Maintenance release updating the following:</p>
+        <ul>
+          <li>PyQt5 5.12</li>
+          <li>FFmpeg 4.1.1</li>
+          <li>updated codec dependencies</li>
+        </ul>
+      </description>
+    </release>
     <release date="2019-01-22" version="6.0.0.3">
       <description>
         <p>Maintenance release updating the following:</p>
