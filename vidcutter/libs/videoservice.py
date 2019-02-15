@@ -32,8 +32,8 @@ from bisect import bisect_left
 from functools import partial
 from typing import List, Optional, Union
 
-from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QDir, QFileInfo, QObject, QProcess, QProcessEnvironment, QSettings,
-                          QSize, QStandardPaths, QStorageInfo, QTemporaryFile, QTime)
+from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QDir, QFile, QFileInfo, QObject, QProcess, QProcessEnvironment,
+                          QSettings, QSize, QStandardPaths, QStorageInfo, QTemporaryFile, QTime)
 from PyQt5.QtGui import QPainter, QPixmap
 from PyQt5.QtWidgets import QMessageBox, QWidget
 
@@ -470,17 +470,24 @@ class VideoService(QObject):
         self.cmdExec(os.path.abspath(self.backends.mkvmerge), args, output=True)
         for index in range(0, nclips):
             self.progress.emit(index)
-        merge_string = ['-o', '"' + dest + '"',
-                        '"' + os.path.join(workdir, clips_file_base + '-{0:03d}'.format(1)) + ext + '"']
-        for i in range(2, nclips + 1):
-            merge_string.append('--no-global-tags')
-            merge_string.append('+')
-            merge_string.append('"' + os.path.join(workdir, clips_file_base + '-{0:03d}'.format(i)) + ext + '"')
 
-        if chapters is not None:
-            merge_string.append('--generate-chapters')
-            merge_string.append('when-appending')
-        self.cmdExec(os.path.abspath(self.backends.mkvmerge), ' '.join(merge_string), output=True)
+        if nclips > 1:
+            merge_string = ['-o', '"' + dest + '"',
+                            '"' + os.path.join(workdir, clips_file_base + '-{0:03d}'.format(1)) + ext + '"']
+            for i in range(2, nclips + 1):
+                merge_string.append('--no-global-tags')
+                merge_string.append('+')
+                merge_string.append('"' + os.path.join(workdir, clips_file_base + '-{0:03d}'.format(i)) + ext + '"')
+
+            if chapters is not None:
+                merge_string.append('--generate-chapters')
+                merge_string.append('when-appending')
+            self.cmdExec(os.path.abspath(self.backends.mkvmerge), ' '.join(merge_string), output=True)
+        else:
+            split_file = os.path.join(workdir, clips_file_base) + ext
+            if QFile.exists(dest):
+                QFile.remove(dest)
+            QFile.copy(split_file, dest)
 
     @staticmethod
     def cleanup(files: List[str]) -> None:
