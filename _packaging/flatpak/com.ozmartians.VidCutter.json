@@ -1,7 +1,7 @@
 {
     "app-id": "com.ozmartians.VidCutter",
     "runtime": "org.kde.Platform",
-    "runtime-version": "5.12",
+    "runtime-version": "5.13",
     "sdk": "org.kde.Sdk",
     "command": "vidcutter",
     "finish-args": [
@@ -69,8 +69,8 @@
         ],
         "sources": [{
             "type": "archive",
-            "url": "https://www.riverbankcomputing.com/static/Downloads/PyQt5/PyQt5_gpl-5.12.tar.gz",
-            "sha256": "d9e70065b5980afde5f2b9bc900910050331604e02c70666c45fcfc66b0d4f34"
+            "url": "https://www.riverbankcomputing.com/static/Downloads/PyQt5/5.13.1/PyQt5_gpl-5.13.1.tar.gz",
+            "sha256": "54b7f456341b89eeb3930e786837762ea67f235e886512496c4152ebe106d4af"
         }],
           "modules": [{
             "name": "sip",
@@ -82,8 +82,8 @@
             ],
             "sources": [{
                 "type": "archive",
-                "url": "https://www.riverbankcomputing.com/static/Downloads/sip/sip-4.19.14.tar.gz",
-                "sha256": "0ef3765dbcc3b8131f83e60239f49508f82205b33cae5408c405e2e2f2d0af87"
+                "url": "https://www.riverbankcomputing.com/static/Downloads/sip/4.19.19/sip-4.19.19.tar.gz",
+                "sha256": "5436b61a78f48c7e8078e93a6b59453ad33780f80c644e5f3af39f94be1ede44"
             }]
         }]
     }, 
@@ -230,8 +230,8 @@
             },
             "sources": [{
                 "type": "archive",
-                "url": "http://ffmpeg.org/releases/ffmpeg-4.1.1.tar.xz",
-                "sha256": "373749824dfd334d84e55dff406729edfd1606575ee44dd485d97d45ea4d2d86"
+                "url": "http://ffmpeg.org/releases/ffmpeg-4.2.1.tar.xz",
+                "sha256": "cec7c87e9b60d174509e263ac4011b522385fd0775292e1670ecc1180c9bb6d4"
             }],     
             "modules": [{
                 "name": "ffnvcodec",
@@ -272,8 +272,8 @@
                 ],
                 "sources": [{
                     "type": "archive",
-                    "url": "https://github.com/webmproject/libvpx/archive/v1.8.0.tar.gz",
-                    "sha256": "86df18c694e1c06cc8f83d2d816e9270747a0ce6abe316e93a4f4095689373f6"
+                    "url": "https://github.com/webmproject/libvpx/archive/v1.8.1.tar.gz",
+                    "sha256": "df19b8f24758e90640e1ab228ab4a4676ec3df19d23e4593375e6f3847dee03e"
                 }]
             },
             {
@@ -362,8 +362,8 @@
                 ],
                 "sources": [{
                     "type": "archive",
-                    "url": "https://bitbucket.org/multicoreware/x265/downloads/x265_3.0.tar.gz",
-                    "sha256": "c5b9fc260cabbc4a81561a448f4ce9cad7218272b4011feabc3a6b751b2f0662"
+                    "url": "https://bitbucket.org/multicoreware/x265/downloads/x265_3.1.2.tar.gz",
+                    "sha256": "6f785f1c9a42e00a56402da88463bb861c49d9af108be53eb3ef10295f2a59aa"
                 }]
             },
             {
@@ -394,8 +394,8 @@
                 ],
                 "sources": [{
                     "type": "archive",
-                    "url": "https://bitbucket.org/multicoreware/x265/downloads/x265_3.0.tar.gz",
-                    "sha256": "c5b9fc260cabbc4a81561a448f4ce9cad7218272b4011feabc3a6b751b2f0662"
+                    "url": "https://bitbucket.org/multicoreware/x265/downloads/x265_3.1.2.tar.gz",
+                    "sha256": "6f785f1c9a42e00a56402da88463bb861c49d9af108be53eb3ef10295f2a59aa"
                 }]
             },
             {
