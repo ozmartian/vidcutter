@@ -570,6 +570,7 @@ class VideoService(QObject):
         result = self.cmdExec(self.backends.ffprobe, args, output=True, suppresslog=True, mergechannels=False)
         keyframe_times = []
         for line in result.split('\n'):
+            if ',' not in line: continue
             if line.split(',')[1] != 'N/A':
                 timecode = line.split(',')[1]
             if re.search(',K', line):
