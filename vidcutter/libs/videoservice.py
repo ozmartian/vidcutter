@@ -451,7 +451,7 @@ class VideoService(QObject):
     def cleanup(files: List[str]) -> None:
         try:
             [os.remove(file) for file in files]
-        except FileNotFoundError:
+        except (FileNotFoundError, TypeError):
             pass
 
     def join(self, inputs: List[str], output: str, allstreams: bool=True, chapters: Optional[List[str]]=None) -> bool:
@@ -622,6 +622,7 @@ class VideoService(QObject):
             video_bsf, audio_bsf = self.getBSF(inputs[0])
             # 1. transcode to mpeg transport streams
             for file in inputs:
+                if not file: continue
                 name, _ = os.path.splitext(file)
                 outfile = '{}.ts'.format(name)
                 outfiles.append(outfile)
