@@ -90,7 +90,7 @@ class VideoService(QObject):
                     self.logger.info(self.media)
                 for codec_type in Streams.__members__:
                     setattr(self.streams, codec_type.lower(),
-                            [stream for stream in self.media.streams if stream.codec_type == codec_type.lower()])
+                            [stream for stream in self.media.streams if stream.get('codec_type') == codec_type.lower()])
                 if len(self.streams.video):
                     self.streams.video = self.streams.video[0]  # we always assume one video stream per media file
                 else:
