@@ -631,9 +631,9 @@ class VideoService(QObject):
         result = self.cmdExec(self.backends.ffprobe, args, output=True, suppresslog=True, mergechannels=False)
         keyframe_times = []
         for line in result.split('\n'):
-            if line.split(',')[1] != 'N/A':
-                timecode = line.split(',')[1]
-            if re.search(',K', line):
+            if line.split('=')[0] == 'pts_time':
+                timecode = line.split('=')[1]
+            if re.search('=K', line):
                 if formatted_time:
                     keyframe_times.append(timecode[:-3])
                 else:
