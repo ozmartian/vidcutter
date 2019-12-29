@@ -940,7 +940,7 @@ class VideoCutter(QWidget):
                                      'Cannot save project file at {0}:\n\n{1}'.format(project_save, file.errorString()))
                 return
             qApp.setOverrideCursor(Qt.WaitCursor)
-            if ptype == 'VidCutter Project (*.vcp)':
+            if ptype == 'VidCutter Project (*.vcp)' or ptype == 'VidCutter Project':
                 # noinspection PyUnresolvedReferences
                 QTextStream(file) << '{}\n'.format(self.currentMedia)
             for clip in self.clipTimes:
@@ -948,7 +948,7 @@ class VideoCutter(QWidget):
                                        milliseconds=clip[0].msec())
                 stop_time = timedelta(hours=clip[1].hour(), minutes=clip[1].minute(), seconds=clip[1].second(),
                                       milliseconds=clip[1].msec())
-                if ptype == 'VidCutter Project (*.vcp)':
+                if ptype == 'VidCutter Project (*.vcp)' or ptype == 'VidCutter Project':
                     if self.createChapters:
                         chapter = '"{}"'.format(clip[4]) if clip[4] is not None else '""'
                     else:
