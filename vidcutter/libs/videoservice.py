@@ -263,6 +263,17 @@ class VideoService(QObject):
             secs, msecs = matches['secs'].split('.')
             return QTime(int(matches['hrs']), int(matches['mins']), int(secs), int(msecs))
 
+    def durationSecs(self, source: str = None) -> float:
+        if source is None and hasattr(self.media, 'format') and self.parent is not None:
+            return float(self.media.format.duration)
+        else:
+            args = ['-i', source]
+            result = self.cmdExec(self.backends.ffmpeg, args, True)
+            matches = re.search(r'Duration:\s(?P<hrs>\d+?):(?P<mins>\d+?):(?P<secs>\d+\.\d+?),',
+                                result, re.DOTALL).groupdict()
+            secs, msecs = matches['secs'].split('.')
+            return int(matches['hrs'])*3600 + int(matches['mins'])*60 + int(secs) + int(msecs) / 1000
+
     def codecs(self, source: str = None) -> tuple:
         if source is None and hasattr(self.streams, 'video'):
             return self.streams.video.codec_name, self.streams.audio[0].codec_name if len(self.streams.audio) else None
@@ -367,11 +378,12 @@ class VideoService(QObject):
             startproc = VideoService.initProc(self.backends.ffmpeg, self.smartcheck, os.path.dirname(source))
             startproc.setObjectName('start.{}'.format(index))
             startproc.started.connect(lambda: self.progress.emit(index))
+            dur=bisections['start'][1] - start
             startproc.setArguments(
                 self.cut(source=source,
                          output=self.smartcut_jobs[index].files['start'],
                          frametime=str(start),
-                         duration=bisections['start'][1] - start,
+                         duration=str(dur),
                          allstreams=allstreams,
                          vcodec=self.streams.video.codec_name,
                          run=False))
@@ -386,11 +398,12 @@ class VideoService(QObject):
         middleproc.setWorkingDirectory(os.path.dirname(self.smartcut_jobs[index].files['middle']))
         middleproc.setObjectName('middle.{}'.format(index))
         middleproc.started.connect(lambda: self.progress.emit(index))
+        dur=bisections['end'][1] - bisections['start'][2]
         middleproc.setArguments(
             self.cut(source=source,
                      output=self.smartcut_jobs[index].files['middle'],
-                     frametime=bisections['start'][2],
-                     duration=bisections['end'][1] - bisections['start'][2],
+                     frametime=str(bisections['start'][2]),
+                     duration=str(dur),
                      allstreams=allstreams,
                      run=False))
         self.smartcut_jobs[index].procs.update(middle=middleproc)
@@ -404,11 +417,12 @@ class VideoService(QObject):
             endproc = VideoService.initProc(self.backends.ffmpeg, self.smartcheck, os.path.dirname(source))
             endproc.setObjectName('end.{}'.format(index))
             endproc.started.connect(lambda: self.progress.emit(index))
+            dur=end - bisections['end'][1]
             endproc.setArguments(
                 self.cut(source=source,
                          output=self.smartcut_jobs[index].files['end'],
-                         frametime=bisections['end'][1],
-                         duration=end - bisections['end'][1],
+                         frametime=str(bisections['end'][1]),
+                         duration=str(dur),
                          allstreams=allstreams,
                          vcodec=self.streams.video.codec_name,
                          run=False))
@@ -638,7 +652,8 @@ class VideoService(QObject):
                     keyframe_times.append(timecode[:-3])
                 else:
                     keyframe_times.append(float(timecode))
-        last_keyframe = self.duration().toString('h:mm:ss.zzz')
+        #last_keyframe = self.duration().toString('h:mm:ss.zzz')
+        last_keyframe = self.durationSecs()
         if keyframe_times[-1] != last_keyframe:
             keyframe_times.append(last_keyframe)
         if source == self.source and not formatted_time:
