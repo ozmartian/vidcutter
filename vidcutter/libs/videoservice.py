@@ -324,7 +324,7 @@ class VideoService(QObject):
                 '-ss', frametime,
                 '-t', duration,
                 '-c:v',
-            ] + encode_options + [
+            ] + [encode_options] + [
                 '-c:a', 'copy',
                 '-c:s', 'copy',
             ] + stream_map + [
