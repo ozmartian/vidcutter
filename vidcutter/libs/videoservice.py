@@ -640,6 +640,7 @@ class VideoService(QObject):
             '-select_streams', 'v',
             '-show_entries', 'packet=pts_time,flags',
         ] + (['-sexagesimal'] if formatted_time else []) + [
+            '-of', 'csv',
             source,
         ]
         result = self.cmdExec(self.backends.ffprobe, args, output=True, suppresslog=True, mergechannels=False)
