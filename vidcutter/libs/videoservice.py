@@ -634,11 +634,14 @@ class VideoService(QObject):
         if len(self.keyframes) and source == self.source:
             return self.keyframes
         timecode = '0:00:00.000000' if formatted_time else 0
+
+        # for mpeg2ts movies the pts_time is never N/A
+        # Note that pts_time and dts_time are equal when both exist and pts_time is N/A for h264 content.
         args = [
             '-v', 'error',
             '-show_packets',
             '-select_streams', 'v',
-            '-show_entries', 'packet=pts_time,flags',
+            '-show_entries', 'packet=pts_time,dts_time,flags',
         ] + (['-sexagesimal'] if formatted_time else []) + [
             '-of', 'csv',
             source,
@@ -646,13 +649,32 @@ class VideoService(QObject):
         result = self.cmdExec(self.backends.ffprobe, args, output=True, suppresslog=True, mergechannels=False)
         keyframe_times = []
         for line in result.split('\n'):
-            if line.split(',')[1] != 'N/A':
-                timecode = line.split(',')[1]
-            if re.search(',K', line):
-                if formatted_time:
-                    keyframe_times.append(timecode[:-3])
+            parts=line.split(',')
+            # For some streams, e.g. DVB-T recorded MPEG2TS, the output may look like below.
+            # in other words, some lines may be empty. Those are the lines following packets with the side_data flag
+            # ==== ffprobe output BEGIN ======
+            # packet,audio,1,95942.464222,95942.464222,K_side_data,
+            #
+            # packet,audio,1,95942.488222,95942.488222,K_
+            # packet,subtitle,2,95942.550667,95942.550667,K_side_data,
+            #
+            # packet,audio,3,95942.464222,95942.464222,K_side_data,
+            #
+            # packet,audio,3,95942.488222,95942.488222,K_
+            # packet,video,0,95942.910667,95942.910667,__
+            # ==== ffprobe output BEGIN ======
+            #
+            # It is therefore important to check for the length of the split
+            if len(parts) > 1:
+                if parts[1] != 'N/A':
+                    timecode = parts[1]
                 else:
-                    keyframe_times.append(float(timecode))
+                    timecode = parts[2]
+                if re.search(',K', line):
+                    if formatted_time:
+                        keyframe_times.append(timecode[:-3])
+                    else:
+                        keyframe_times.append(float(timecode))
         #last_keyframe = self.duration().toString('h:mm:ss.zzz')
         last_keyframe = self.durationSecs()
         if keyframe_times[-1] != last_keyframe:
