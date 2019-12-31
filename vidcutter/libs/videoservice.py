@@ -731,7 +731,7 @@ class VideoService(QObject):
             # 1. transcode to mpeg transport streams
             for file in inputs:
                 name, _ = os.path.splitext(file)
-                outfile = '{}.ts'.format(name)
+                outfile = '{}-transcoded.ts'.format(name)
                 outfiles.append(outfile)
                 if os.path.isfile(outfile):
                     os.remove(outfile)
