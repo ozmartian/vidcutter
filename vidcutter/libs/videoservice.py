@@ -627,6 +627,10 @@ class VideoService(QObject):
         """
         Return a list of key-frame times.
 
+        TODO: change this to return a list of key-frame times for specific sub-streams
+        Different sub-streams in a container (e.g. in MPEG2-TS) may contain keyframes at different positions. See this comment for more information:
+        https://github.com/ozmartian/vidcutter/issues/257#issuecomment-569889644
+
         :param source: The file name of the media file.
         :param formatted_time: If `True`, return times list of strings. Defaults to `False`, which returns times as list of floats.
         :returns: a list of key-frame times, eiter formatted as strings or floats.
