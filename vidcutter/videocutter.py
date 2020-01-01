@@ -1398,6 +1398,13 @@ class VideoCutter(QWidget):
 
     def smartcutter(self, file: str, source_file: str, source_ext: str) -> None:
         self.smartcut_monitor = Munch(clips=[], results=[], externals=0)
+        videoWithForcedKeyframes = f'{source_file}-forced{source_ext}'
+        self.videoService.forceKeyframes(
+            source='{0}{1}'.format(source_file, source_ext),
+            clipTimes=self.clipTimes,
+            fps=25,
+            output=videoWithForcedKeyframes)
+        keyframes = self.videoService.getKeyframes(videoWithForcedKeyframes)
         for index, clip in enumerate(self.clipTimes):
             if len(clip[3]):
                 self.smartcut_monitor.clips.append(clip[3])
@@ -1412,18 +1419,12 @@ class VideoCutter(QWidget):
                 self.smartcut_monitor.clips.append(filename)
 
                 # source='{0}{1}'.format(source_file, source_ext)
-                videoWithForcedKeyframes = f'{source_file}-forced{source_ext}'
-                self.videoService.forceKeyframes(
-                    source='{0}{1}'.format(source_file, source_ext),
-                    clipTimes=self.clipTimes,
-                    fsp=25,
-                    output=videoWithForcedKeyframes)
-
                 self.videoService.smartcut(index=index,
                                            source=videoWithForcedKeyframes,
                                            output=filename,
                                            start=VideoCutter.qtime2delta(clip[0]),
                                            end=VideoCutter.qtime2delta(clip[1]),
+                                           keyframes=keyframes,
                                            allstreams=True)
 
     @pyqtSlot(bool, str)

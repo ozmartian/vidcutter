@@ -371,9 +371,9 @@ class VideoService(QObject):
             for index in range(clips)
         ]
 
-    def smartcut(self, index: int, source: str, output: str, start: float, end: float, allstreams: bool = True) -> None:
+    def smartcut(self, index: int, source: str, output: str, start: float, end: float, keyframes: [], allstreams: bool = True) -> None:
         output_file, output_ext = os.path.splitext(output)
-        bisections = self.getGOPbisections(source, start, end)
+        bisections = self.getGOPbisections(keyframes, start, end)
         self.smartcut_jobs[index].output = output
         self.smartcut_jobs[index].allstreams = allstreams
         # ----------------------[ STEP 1 - start of clip if not starting on a keyframe ]-------------------------
@@ -720,16 +720,16 @@ class VideoService(QObject):
             self.keyframes = keyframe_times
         return keyframe_times
 
-    def getGOPbisections(self, source: str, start: float, end: float) -> Dict[str, Tuple[float, float, float]]:
+    def getGOPbisections(self, keyframes: [], start: float, end: float) -> Dict[str, Tuple[float, float, float]]:
         """
         Return a mapping of the start and end time to the 3 surronging key-frames.
 
-        :param source: The file name of the media file.
+        :param keyframes: the keyframes to bisect for start / end
         :param start: The start time.
         :param end: The end time.
-        :returns: A dictionary mapping `start` and `end` to 3-tuples (before, exact, after).
+        :returns: A dictionary mapping `start` and `end` to 3-tuples (before, nearest-before-or-exact, after).
         """
-        keyframes = self.getKeyframes(source)
+        
         start_pos = bisect_left(keyframes, start)
         end_pos = bisect_left(keyframes, end)
         return {
