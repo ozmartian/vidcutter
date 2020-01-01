@@ -1359,6 +1359,13 @@ class VideoCutter(QWidget):
                 self.videoService.smartinit(clips)
                 self.smartcutter(file, source_file, source_ext)
                 return
+            videoWithForcedKeyframes = f'{source_file}-forced{source_ext}'
+            self.videoService.forceKeyframes(
+                source='{0}{1}'.format(source_file, source_ext),
+                clipTimes=self.clipTimes,
+                fps=25,
+                output=videoWithForcedKeyframes)
+
             steps = 3 if clips > 1 else 2
             self.seekSlider.showProgress(steps)
             self.parent.lock_gui(True)
@@ -1374,7 +1381,8 @@ class VideoCutter(QWidget):
                         filename = os.path.join(self.workFolder, os.path.basename(filename))
                     filename = QDir.toNativeSeparators(filename)
                     filelist.append(filename)
-                    if not self.videoService.cut(source='{0}{1}'.format(source_file, source_ext),
+                    # if not self.videoService.cut(source='{0}{1}'.format(source_file, source_ext),
+                    if not self.videoService.cut(source=videoWithForcedKeyframes,
                                                  output=filename,
                                                  frametime=clip[0].toString(self.timeformat),
                                                  duration=duration,
@@ -1402,8 +1410,17 @@ class VideoCutter(QWidget):
                     filename = os.path.join(self.workFolder, os.path.basename(filename))
                 filename = QDir.toNativeSeparators(filename)
                 self.smartcut_monitor.clips.append(filename)
+
+                # source='{0}{1}'.format(source_file, source_ext)
+                videoWithForcedKeyframes = f'{source_file}-forced{source_ext}'
+                self.videoService.forceKeyframes(
+                    source='{0}{1}'.format(source_file, source_ext),
+                    clipTimes=self.clipTimes,
+                    fsp=25,
+                    output=videoWithForcedKeyframes)
+
                 self.videoService.smartcut(index=index,
-                                           source='{0}{1}'.format(source_file, source_ext),
+                                           source=videoWithForcedKeyframes,
                                            output=filename,
                                            start=VideoCutter.qtime2delta(clip[0]),
                                            end=VideoCutter.qtime2delta(clip[1]),
