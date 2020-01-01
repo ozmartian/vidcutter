@@ -383,7 +383,7 @@ class VideoService(QObject):
             startproc = VideoService.initProc(self.backends.ffmpeg, self.smartcheck, os.path.dirname(source))
             startproc.setObjectName('start.{}'.format(index))
             startproc.started.connect(lambda: self.progress.emit(index))
-            dur=bisections['start'][1] - start
+            dur=bisections['start'][2] - start
             startproc.setArguments(
                 self.cut(source=source,
                          output=self.smartcut_jobs[index].files['start'],
