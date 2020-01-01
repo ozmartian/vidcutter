@@ -274,6 +274,9 @@ class VideoService(QObject):
             secs, msecs = matches['secs'].split('.')
             return int(matches['hrs'])*3600 + int(matches['mins'])*60 + int(secs) + int(msecs) / 1000
 
+    def qTime2float(self, qTime : QTime) -> float:
+        return qTime.hour()*3600 + qTime.minute()*60 + qTime.second() + qTime.msec() / 1000
+
     def codecs(self, source: str = None) -> tuple:
         if source is None and hasattr(self.streams, 'video'):
             return self.streams.video.codec_name, self.streams.audio[0].codec_name if len(self.streams.audio) else None
@@ -430,6 +433,34 @@ class VideoService(QObject):
                          run=False))
             self.smartcut_jobs[index].procs.update(end=endproc)
             self.smartcut_jobs[index].results.update(end=False)
+
+    def forceKeyframes(self, source: str, clipTimes:[], fps: float, output: str) -> None:
+        # stream_map = self.parseMappings(true)
+        #eq(n,45)+eq(n,99)+eq(n,154)'
+        # forcedKeyframes = toFrames(clipTimes)
+        keyframesExpr = 'expr:'
+        for index, clip in enumerate(clipTimes):
+            # if index == 0 and clip[0] != 0:
+            #     keyframesExpr += f'eq(n,{self.qTime2float(clip[0])*fps})'
+            # else:
+            keyframesExpr += f'eq(n,{int(self.qTime2float(clip[0])*fps)})'
+            keyframesExpr += '+'
+            keyframesExpr += f'eq(n,{int(self.qTime2float(clip[1])*fps)})'
+            keyframesExpr += '+'
+        keyframesExpr = keyframesExpr[:-1]
+        args = [
+                '-v', '32',
+                '-i', source,
+                '-map','0',
+                '-c','copy',
+                '-force_key_frames', keyframesExpr,
+                '-y', output,
+            ]
+        # print(args)
+        if os.path.isfile(output):
+                os.remove(output)
+        if not self.cmdExec(self.backends.ffmpeg, args):
+            return result
 
     @pyqtSlot(int, QProcess.ExitStatus)
     def smartcheck(self, code: int, status: QProcess.ExitStatus) -> None:
