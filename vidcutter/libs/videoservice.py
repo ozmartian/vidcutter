@@ -317,14 +317,15 @@ class VideoService(QObject):
         self.checkDiskSpace(output)
         stream_map = self.parseMappings(allstreams)
         if vcodec is not None:
-            encode_options = VideoService.config.encoding.get(vcodec, vcodec)
+            # encode_options = VideoService.config.encoding.get(vcodec, vcodec)
             args = [
                 '-v', '32',
                 '-i', source,
                 '-ss', frametime,
                 '-t', duration,
-                '-c:v',
-            ] + [encode_options] + [
+                '-vcodec','copy',
+            #     '-c:v',
+            # ] + [encode_options] + [
                 '-c:a', 'copy',
                 '-c:s', 'copy',
             ] + stream_map + [
@@ -337,6 +338,7 @@ class VideoService(QObject):
                 '-ss', frametime,
                 '-t', duration,
                 '-i', source,
+                '-c', 'copy',
             ] + stream_map + [
                 '-avoid_negative_ts', '1',
                 '-y', output,
