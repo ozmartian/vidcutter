@@ -323,9 +323,9 @@ class VideoService(QObject):
             # encode_options = VideoService.config.encoding.get(vcodec, vcodec)
             args = [
                 '-v', '32',
-                '-i', source,
                 '-ss', frametime,
                 '-t', duration,
+                '-i', source,
                 '-vcodec','copy',
             #     '-c:v',
             # ] + [encode_options] + [
@@ -338,9 +338,9 @@ class VideoService(QObject):
         else:
             args = [
                 '-v', 'error',
+                '-i', source,
                 '-ss', frametime,
                 '-t', duration,
-                '-i', source,
                 '-c', 'copy',
             ] + stream_map + [
                 '-avoid_negative_ts', '1',
