@@ -383,7 +383,7 @@ class VideoService(QObject):
             startproc = VideoService.initProc(self.backends.ffmpeg, self.smartcheck, os.path.dirname(source))
             startproc.setObjectName('start.{}'.format(index))
             startproc.started.connect(lambda: self.progress.emit(index))
-            dur=bisections['start'][2] - start
+            dur=round(bisections['start'][2] - start,6)
             startproc.setArguments(
                 self.cut(source=source,
                          output=self.smartcut_jobs[index].files['start'],
@@ -403,7 +403,7 @@ class VideoService(QObject):
         middleproc.setWorkingDirectory(os.path.dirname(self.smartcut_jobs[index].files['middle']))
         middleproc.setObjectName('middle.{}'.format(index))
         middleproc.started.connect(lambda: self.progress.emit(index))
-        dur=bisections['end'][1] - bisections['start'][2]
+        dur=round(bisections['end'][1] - bisections['start'][2],6)
         middleproc.setArguments(
             self.cut(source=source,
                      output=self.smartcut_jobs[index].files['middle'],
@@ -422,7 +422,7 @@ class VideoService(QObject):
             endproc = VideoService.initProc(self.backends.ffmpeg, self.smartcheck, os.path.dirname(source))
             endproc.setObjectName('end.{}'.format(index))
             endproc.started.connect(lambda: self.progress.emit(index))
-            dur=end - bisections['end'][1]
+            dur=round(end - bisections['end'][1],6)
             endproc.setArguments(
                 self.cut(source=source,
                          output=self.smartcut_jobs[index].files['end'],
