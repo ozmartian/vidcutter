@@ -1363,7 +1363,7 @@ class VideoCutter(QWidget):
             self.videoService.forceKeyframes(
                 source='{0}{1}'.format(source_file, source_ext),
                 clipTimes=self.clipTimes,
-                fps=25,
+                fps=eval(self.videoService.streams.video.avg_frame_rate),
                 output=videoWithForcedKeyframes)
 
             steps = 3 if clips > 1 else 2
@@ -1402,7 +1402,7 @@ class VideoCutter(QWidget):
         self.videoService.forceKeyframes(
             source='{0}{1}'.format(source_file, source_ext),
             clipTimes=self.clipTimes,
-            fps=25,
+            fps=eval(self.videoService.streams.video.avg_frame_rate),
             output=videoWithForcedKeyframes)
         keyframes = self.videoService.getKeyframes(videoWithForcedKeyframes)
         for index, clip in enumerate(self.clipTimes):
