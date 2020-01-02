@@ -469,7 +469,7 @@ class VideoService(QObject):
             index = int(index)
             self.smartcut_jobs[index].results[name] = (code == 0 and status == QProcess.NormalExit)
             if os.getenv('DEBUG', False) or getattr(self.parent, 'verboseLogs', False):
-                self.logger.info('SmartCut progress: {}'.format(self.smartcut_jobs[index].results))
+                self.logger.info('SmartCut progress for part {0}: {1}'.format(index, self.smartcut_jobs[index].results))
             resultfile = self.smartcut_jobs[index].files.get(name)
             if not self.smartcut_jobs[index].results[name] or os.path.getsize(resultfile) < 1000:
                 args = self.smartcut_jobs[index].procs[name].arguments()
