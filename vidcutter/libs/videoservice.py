@@ -285,7 +285,6 @@ class VideoService(QObject):
             args = ['-i', source]
             result = self.cmdExec(self.backends.ffmpeg, args, True)
             match = re.search(r'Stream.*Video:\s(\w+)', result)
-            acodec = re.search(r'Stream.*Audio:\s(\w+)', result).group(1)
             if match:
                 vcodec = match.group(1)
             else:
