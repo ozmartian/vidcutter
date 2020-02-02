@@ -535,7 +535,7 @@ class VideoService(QObject):
     @staticmethod
     def cleanup(files: List[str]) -> None:
         try:
-            [os.remove(file) for file in files]
+            [os.remove(file) for file in files if file]
         except (FileNotFoundError, TypeError):
             pass
 
