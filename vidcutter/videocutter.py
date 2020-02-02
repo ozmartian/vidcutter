@@ -437,7 +437,7 @@ class VideoCutter(QWidget):
         if sys.platform != 'darwin':
             controlsLayout.addSpacing(5)
 
-        layout = QVBoxLayout()  
+        layout = QVBoxLayout()
         layout.setSpacing(0)
         layout.setContentsMargins(10, 10, 10, 0)
         layout.addLayout(self.videoLayout)
@@ -952,7 +952,7 @@ class VideoCutter(QWidget):
                     if self.createChapters:
                         chapter = '"{}"'.format(clip[4]) if clip[4] is not None else '""'
                     else:
-                        chapter = ''
+                        chapter = '""'
                     # noinspection PyUnresolvedReferences
                     QTextStream(file) << '{0}\t{1}\t{2}\t{3}\n'.format(self.delta2String(start_time),
                                                                        self.delta2String(stop_time), 0, chapter)
