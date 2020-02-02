@@ -441,6 +441,8 @@ class VideoService(QObject):
                          run=False))
             self.smartcut_jobs[index].procs.update(end=endproc)
             self.smartcut_jobs[index].results.update(end=False)
+            endproc.start()
+
 
     def forceKeyframes(self, source: str, clipTimes: [], fps: float, output: str) -> None:
         # stream_map = self.parseMappings(true)
