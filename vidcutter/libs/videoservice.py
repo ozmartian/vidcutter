@@ -360,7 +360,7 @@ class VideoService(QObject):
             return True
         else:
             if os.getenv('DEBUG', False) or getattr(self.parent, 'verboseLogs', False):
-                self.logger.info(args)
+                self.logger.info(' '.join([self.backends.ffmpeg] + args))
             return args
 
     def smartinit(self, clips: int):
@@ -434,7 +434,7 @@ class VideoService(QObject):
             self.smartcut_jobs[index].procs.update(end=endproc)
             self.smartcut_jobs[index].results.update(end=False)
 
-    def forceKeyframes(self, source: str, clipTimes:[], fps: float, output: str) -> None:
+    def forceKeyframes(self, source: str, clipTimes: [], fps: float, output: str) -> None:
         # stream_map = self.parseMappings(true)
         #eq(n,45)+eq(n,99)+eq(n,154)'
         # forcedKeyframes = toFrames(clipTimes)
@@ -614,7 +614,7 @@ class VideoService(QObject):
     def on_blackdetect(self, min_duration: float) -> None:
         if self.filterproc.exitStatus() == QProcess.NormalExit and self.filterproc.exitCode() == 0:
             scenes = [[QTime(0, 0)]]
-            results = self.filterproc.readAllStandardOutput().data().decode().strip()
+            results = self.filterproc.readAllStandardOutput().data().decode('iso-8859-1').strip()
             for line in results.split('\n'):
                 if re.match(r'\[blackdetect @ (.*)\]', line):
                     vals = line.split(']')[1].strip().split(' ')
@@ -729,7 +729,7 @@ class VideoService(QObject):
         :param end: The end time.
         :returns: A dictionary mapping `start` and `end` to 3-tuples (before, nearest-before-or-exact, after).
         """
-        
+
         start_pos = bisect_left(keyframes, start)
         end_pos = bisect_left(keyframes, end)
         return {
@@ -828,12 +828,12 @@ class VideoService(QObject):
             self.proc.setWorkingDirectory(workdir if workdir is not None else VideoService.getAppPath())
             self.proc.start(cmd, args)
             self.proc.readyReadStandardOutput.connect(
-                partial(self.cmdOut, self.proc.readAllStandardOutput().data().decode().strip()))
+                partial(self.cmdOut, self.proc.readAllStandardOutput().data().decode('iso-8859-1').strip()))
             self.proc.waitForFinished(-1)
             if cmd == self.backends.mediainfo or not mergechannels:
                 self.proc.setProcessChannelMode(QProcess.MergedChannels)
             if output:
-                cmdoutput = self.proc.readAllStandardOutput().data().decode().strip()
+                cmdoutput = self.proc.readAllStandardOutput().data().decode('iso-8859-1').strip()
                 if getattr(self.parent, 'verboseLogs', False) and not suppresslog:
                     self.logger.info('cmd output: {}'.format(cmdoutput))
                 return cmdoutput
