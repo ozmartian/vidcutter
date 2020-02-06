@@ -325,7 +325,7 @@ class VideoService(QObject):
         return False
 
     def cut(self, source: str, output: str, frametime: str, duration: str, allstreams: bool=True, vcodec: str=None,
-            run: bool=True) -> Union[bool, List[str]]:
+            run: bool=True, seektime: str=None) -> Union[bool, List[str]]:
         self.checkDiskSpace(output)
         stream_map = self.parseMappings(allstreams)
         if vcodec is not None:
@@ -354,6 +354,10 @@ class VideoService(QObject):
                 '-avoid_negative_ts', '1',
                 '-y', output,
             ]
+        if seektime is not None:
+            # insert seektime before '-i'
+            idx = args.index('-i')
+            args[idx:idx] = ['-ss', seektime]
         if run:
             result = self.cmdExec(self.backends.ffmpeg, args)
             if not result or os.path.getsize(output) < 1000:
@@ -385,7 +389,7 @@ class VideoService(QObject):
         self.smartcut_jobs[index].output = output
         self.smartcut_jobs[index].allstreams = allstreams
         # ----------------------[ STEP 1 - start of clip if not starting on a keyframe ]-------------------------
-        if start == bisections['start'][0]:
+        if start == bisections['start'][1]:
             vcodec = None # copy
         else:
             vcodec = self.streams.video.codec_name # re-encode
@@ -394,11 +398,12 @@ class VideoService(QObject):
         startproc = VideoService.initProc(self.backends.ffmpeg, self.smartcheck, os.path.dirname(source))
         startproc.setObjectName('start.{}'.format(index))
         startproc.started.connect(lambda: self.progress.emit(index))
-        dur=round(bisections['start'][1] - start,6)
+        dur=round(bisections['start'][2] - start, 6)
         startproc.setArguments(
             self.cut(source=source,
                      output=self.smartcut_jobs[index].files['start'],
-                     frametime=str(start),
+                     seektime=str(bisections['start'][0]),
+                     frametime=str(round(start - bisections['start'][0], 6)),
                      duration=str(dur),
                      allstreams=allstreams,
                      vcodec=vcodec,
@@ -414,11 +419,12 @@ class VideoService(QObject):
         middleproc.setWorkingDirectory(os.path.dirname(self.smartcut_jobs[index].files['middle']))
         middleproc.setObjectName('middle.{}'.format(index))
         middleproc.started.connect(lambda: self.progress.emit(index))
-        dur=round(bisections['end'][0] - bisections['start'][1],6)
+        dur=round(bisections['end'][1] - bisections['start'][2], 6)
         middleproc.setArguments(
             self.cut(source=source,
                      output=self.smartcut_jobs[index].files['middle'],
-                     frametime=str(bisections['start'][1]),
+                     seektime=str(bisections['start'][1]),
+                     frametime=str(round(bisections['start'][2] - bisections['start'][1], 6)),
                      duration=str(dur),
                      allstreams=allstreams,
                      run=False))
@@ -427,7 +433,7 @@ class VideoService(QObject):
         if len(self.smartcut_jobs[index].procs) == 1:
             middleproc.start()
         # ----------------------[ STEP 3 - end of clip if not ending on a keyframe ]-------------------------
-        if end == bisections['end'][1]:
+        if end == bisections['end'][2]:
             vcodec = None # copy
         else:
             vcodec = self.streams.video.codec_name # re-encode
@@ -436,11 +442,12 @@ class VideoService(QObject):
         endproc = VideoService.initProc(self.backends.ffmpeg, self.smartcheck, os.path.dirname(source))
         endproc.setObjectName('end.{}'.format(index))
         endproc.started.connect(lambda: self.progress.emit(index))
-        dur=round(end - bisections['end'][0],6)
+        dur=round(end - bisections['end'][1], 6)
         endproc.setArguments(
             self.cut(source=source,
                      output=self.smartcut_jobs[index].files['end'],
-                     frametime=str(bisections['end'][0]),
+                     seektime=str(bisections['end'][0]),
+                     frametime=str(round(bisections['end'][1] - bisections['end'][0], 6)),
                      duration=str(dur),
                      allstreams=allstreams,
                      vcodec=vcodec,
@@ -747,18 +754,20 @@ class VideoService(QObject):
         :param start: The start time.
         :param end: The end time.
         :returns: A dictionary mapping `start` and `end` to 3-tuples
-            `start` => (start of start segment GOP, end of start segment GOP & start of middle segment);
-            `end` => (end of middle segment & start of end segment GOP, end of end segment GOP).
+            `start` => (seek time, start of start segment GOP, end of start segment GOP & start of middle segment);
+            `end` => (seek time, end of middle segment & start of end segment GOP, end of end segment GOP).
         """
 
         start_pos = bisect_right(keyframes, start)
         end_pos = bisect_left(keyframes, end)
         return {
             'start': (
+                keyframes[start_pos-2] if start_pos > 1 else keyframes[start_pos-1] if start_pos > 0 else keyframes[start_pos],
                 keyframes[start_pos-1] if start_pos > 0 else keyframes[start_pos],
                 keyframes[start_pos]
             ),
             'end': (
+                keyframes[end_pos-2],
                 keyframes[end_pos-1],
                 keyframes[end_pos] if end_pos != len(keyframes) else keyframes[end_pos-1],
             )
