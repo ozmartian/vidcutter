@@ -331,7 +331,7 @@ class VideoService(QObject):
         if vcodec is not None:
             encode_options = VideoService.config.encoding.get(vcodec, ['copy'])
             args = [
-                '-v', '32',
+                '-v', 'info',
                 '-i', source,
                 '-ss', frametime,
                 '-t', duration,
@@ -472,7 +472,7 @@ class VideoService(QObject):
             keyframesExpr += '+'
         keyframesExpr = keyframesExpr[:-1]
         args = [
-                '-v', '32',
+                '-v', 'info',
                 '-i', source,
                 '-map','0',
                 '-c','copy',
