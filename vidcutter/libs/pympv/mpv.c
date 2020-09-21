@@ -23778,7 +23778,9 @@ static int __Pyx_modinit_type_init_code(void) {
   __pyx_vtabptr_3mpv_EndOfFileReached = &__pyx_vtable_3mpv_EndOfFileReached;
   __pyx_vtable_3mpv_EndOfFileReached._init = (PyObject *(*)(struct __pyx_obj_3mpv_EndOfFileReached *, struct mpv_event_end_file *))__pyx_f_3mpv_16EndOfFileReached__init;
   if (PyType_Ready(&__pyx_type_3mpv_EndOfFileReached) < 0) __PYX_ERR(0, 449, __pyx_L1_error)
+#if PY_MAJOR_VERSION < 3
   __pyx_type_3mpv_EndOfFileReached.tp_print = 0;
+#endif
   if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_type_3mpv_EndOfFileReached.tp_dictoffset && __pyx_type_3mpv_EndOfFileReached.tp_getattro == PyObject_GenericGetAttr)) {
     __pyx_type_3mpv_EndOfFileReached.tp_getattro = __Pyx_PyObject_GenericGetAttr;
   }
@@ -23789,7 +23791,9 @@ static int __Pyx_modinit_type_init_code(void) {
   __pyx_vtabptr_3mpv_InputDispatch = &__pyx_vtable_3mpv_InputDispatch;
   __pyx_vtable_3mpv_InputDispatch._init = (PyObject *(*)(struct __pyx_obj_3mpv_InputDispatch *, struct mpv_event_script_input_dispatch *))__pyx_f_3mpv_13InputDispatch__init;
   if (PyType_Ready(&__pyx_type_3mpv_InputDispatch) < 0) __PYX_ERR(0, 462, __pyx_L1_error)
+#if PY_MAJOR_VERSION < 3
   __pyx_type_3mpv_InputDispatch.tp_print = 0;
+#endif
   if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_type_3mpv_InputDispatch.tp_dictoffset && __pyx_type_3mpv_InputDispatch.tp_getattro == PyObject_GenericGetAttr)) {
     __pyx_type_3mpv_InputDispatch.tp_getattro = __Pyx_PyObject_GenericGetAttr;
   }
@@ -23800,7 +23804,9 @@ static int __Pyx_modinit_type_init_code(void) {
   __pyx_vtabptr_3mpv_LogMessage = &__pyx_vtable_3mpv_LogMessage;
   __pyx_vtable_3mpv_LogMessage._init = (PyObject *(*)(struct __pyx_obj_3mpv_LogMessage *, struct mpv_event_log_message *))__pyx_f_3mpv_10LogMessage__init;
   if (PyType_Ready(&__pyx_type_3mpv_LogMessage) < 0) __PYX_ERR(0, 475, __pyx_L1_error)
+#if PY_MAJOR_VERSION < 3
   __pyx_type_3mpv_LogMessage.tp_print = 0;
+#endif
   if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_type_3mpv_LogMessage.tp_dictoffset && __pyx_type_3mpv_LogMessage.tp_getattro == PyObject_GenericGetAttr)) {
     __pyx_type_3mpv_LogMessage.tp_getattro = __Pyx_PyObject_GenericGetAttr;
   }
@@ -23811,7 +23817,9 @@ static int __Pyx_modinit_type_init_code(void) {
   __pyx_vtabptr_3mpv_Property = &__pyx_vtable_3mpv_Property;
   __pyx_vtable_3mpv_Property._init = (PyObject *(*)(struct __pyx_obj_3mpv_Property *, struct mpv_event_property *))__pyx_f_3mpv_8Property__init;
   if (PyType_Ready(&__pyx_type_3mpv_Property) < 0) __PYX_ERR(0, 536, __pyx_L1_error)
+#if PY_MAJOR_VERSION < 3
   __pyx_type_3mpv_Property.tp_print = 0;
+#endif
   if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_type_3mpv_Property.tp_dictoffset && __pyx_type_3mpv_Property.tp_getattro == PyObject_GenericGetAttr)) {
     __pyx_type_3mpv_Property.tp_getattro = __Pyx_PyObject_GenericGetAttr;
   }
@@ -23823,7 +23831,9 @@ static int __Pyx_modinit_type_init_code(void) {
   __pyx_vtable_3mpv_Event._data = (PyObject *(*)(struct __pyx_obj_3mpv_Event *, struct mpv_event *))__pyx_f_3mpv_5Event__data;
   __pyx_vtable_3mpv_Event._init = (PyObject *(*)(struct __pyx_obj_3mpv_Event *, struct mpv_event *, PyObject *))__pyx_f_3mpv_5Event__init;
   if (PyType_Ready(&__pyx_type_3mpv_Event) < 0) __PYX_ERR(0, 549, __pyx_L1_error)
+#if PY_MAJOR_VERSION < 3
   __pyx_type_3mpv_Event.tp_print = 0;
+#endif
   if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_type_3mpv_Event.tp_dictoffset && __pyx_type_3mpv_Event.tp_getattro == PyObject_GenericGetAttr)) {
     __pyx_type_3mpv_Event.tp_getattro = __Pyx_PyObject_GenericGetAttr;
   }
@@ -23837,7 +23847,9 @@ static int __Pyx_modinit_type_init_code(void) {
   __pyx_vtable_3mpv_Context._prep_native_value = (struct mpv_node (*)(struct __pyx_obj_3mpv_Context *, PyObject *, PyObject *))__pyx_f_3mpv_7Context__prep_native_value;
   __pyx_vtable_3mpv_Context._free_native_value = (PyObject *(*)(struct __pyx_obj_3mpv_Context *, struct mpv_node))__pyx_f_3mpv_7Context__free_native_value;
   if (PyType_Ready(&__pyx_type_3mpv_Context) < 0) __PYX_ERR(0, 649, __pyx_L1_error)
+#if PY_MAJOR_VERSION < 3
   __pyx_type_3mpv_Context.tp_print = 0;
+#endif
   if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_type_3mpv_Context.tp_dictoffset && __pyx_type_3mpv_Context.tp_getattro == PyObject_GenericGetAttr)) {
     __pyx_type_3mpv_Context.tp_getattro = __Pyx_PyObject_GenericGetAttr;
   }
@@ -23846,7 +23858,9 @@ static int __Pyx_modinit_type_init_code(void) {
   if (__Pyx_setup_reduce((PyObject*)&__pyx_type_3mpv_Context) < 0) __PYX_ERR(0, 649, __pyx_L1_error)
   __pyx_ptype_3mpv_Context = &__pyx_type_3mpv_Context;
   if (PyType_Ready(&__pyx_type_3mpv_OpenGLContext) < 0) __PYX_ERR(0, 1110, __pyx_L1_error)
+#if PY_MAJOR_VERSION < 3
   __pyx_type_3mpv_OpenGLContext.tp_print = 0;
+#endif
   if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_type_3mpv_OpenGLContext.tp_dictoffset && __pyx_type_3mpv_OpenGLContext.tp_getattro == PyObject_GenericGetAttr)) {
     __pyx_type_3mpv_OpenGLContext.tp_getattro = __Pyx_PyObject_GenericGetAttr;
   }
@@ -23854,7 +23868,9 @@ static int __Pyx_modinit_type_init_code(void) {
   if (__Pyx_setup_reduce((PyObject*)&__pyx_type_3mpv_OpenGLContext) < 0) __PYX_ERR(0, 1110, __pyx_L1_error)
   __pyx_ptype_3mpv_OpenGLContext = &__pyx_type_3mpv_OpenGLContext;
   if (PyType_Ready(&__pyx_type_3mpv___pyx_scope_struct___errors) < 0) __PYX_ERR(0, 611, __pyx_L1_error)
+#if PY_MAJOR_VERSION < 3
   __pyx_type_3mpv___pyx_scope_struct___errors.tp_print = 0;
+#endif
   if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_type_3mpv___pyx_scope_struct___errors.tp_dictoffset && __pyx_type_3mpv___pyx_scope_struct___errors.tp_getattro == PyObject_GenericGetAttr)) {
     __pyx_type_3mpv___pyx_scope_struct___errors.tp_getattro = __Pyx_PyObject_GenericGetAttrNoDict;
   }
