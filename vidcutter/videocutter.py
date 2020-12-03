@@ -470,7 +470,7 @@ class VideoCutter(QWidget):
         widget = mpvWidget(
             parent=parent,
             file=file,
-            vo='opengl-cb',
+            #vo='opengl-cb',
             pause=pause,
             start=start,
             mute=mute,
