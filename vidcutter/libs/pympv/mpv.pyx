@@ -367,6 +367,10 @@ cdef class Context(object):
     cdef object callback, callbackthread, reply_userdata
 
     @property
+    def api_version(self):
+        return _CAPI_MINOR, _CAPI_MAJOR, _CAPI_VERSION
+
+    @property
     def name(self):
         """Unique name for every context created.
 
@@ -1097,6 +1101,13 @@ cdef class RenderContext(object):
     def report_swap(self):
         with nogil:
             mpv_render_context_report_swap(self._ctx)
+
+    def free(self):
+        if not self.inited:
+            return
+        with nogil:
+            mpv_render_context_free(self._ctx)
+        self.inited = False
 
     def close(self):
         if not self.inited:

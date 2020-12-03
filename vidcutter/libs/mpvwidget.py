@@ -127,7 +127,7 @@ class mpvWidget(QOpenGLWidget):
         self.makeCurrent()
         # if self.opengl:
         #     self.opengl.set_update_callback(None)
-        self.opengl.close()
+        self.opengl.free()
         self.mpv.command('quit')
 
     def initializeGL(self):

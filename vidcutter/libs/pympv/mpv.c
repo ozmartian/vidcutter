@@ -870,7 +870,7 @@ struct __pyx_obj_9vidcutter_4libs_3mpv_OpenGLRenderContext;
 struct __pyx_obj_9vidcutter_4libs_3mpv___pyx_scope_struct___errors;
 struct __pyx_opt_args_9vidcutter_4libs_3mpv_13_RenderParams_add_voidp;
 
-/* "vidcutter/libs/pympv/mpv.pyx":886
+/* "vidcutter/libs/pympv/mpv.pyx":890
  *         self.params[0].type = MPV_RENDER_PARAM_INVALID
  * 
  *     cdef add_voidp(self, mpv_render_param_type t, void *p, bint owned=False):             # <<<<<<<<<<<<<<
@@ -978,7 +978,7 @@ struct __pyx_obj_9vidcutter_4libs_3mpv_Context {
 };
 
 
-/* "vidcutter/libs/pympv/mpv.pyx":818
+/* "vidcutter/libs/pympv/mpv.pyx":822
  *     (<object>ctx)()
  * 
  * cdef class OpenGLContext(object):             # <<<<<<<<<<<<<<
@@ -993,7 +993,7 @@ struct __pyx_obj_9vidcutter_4libs_3mpv_OpenGLContext {
 };
 
 
-/* "vidcutter/libs/pympv/mpv.pyx":877
+/* "vidcutter/libs/pympv/mpv.pyx":881
  * DEF MAX_RENDER_PARAMS = 32
  * 
  * cdef class _RenderParams(object):             # <<<<<<<<<<<<<<
@@ -1008,7 +1008,7 @@ struct __pyx_obj_9vidcutter_4libs_3mpv__RenderParams {
 };
 
 
-/* "vidcutter/libs/pympv/mpv.pyx":924
+/* "vidcutter/libs/pympv/mpv.pyx":928
  * 
  * @cython.internal
  * cdef class RenderFrameInfo(object):             # <<<<<<<<<<<<<<
@@ -1021,7 +1021,7 @@ struct __pyx_obj_9vidcutter_4libs_3mpv_RenderFrameInfo {
 };
 
 
-/* "vidcutter/libs/pympv/mpv.pyx":933
+/* "vidcutter/libs/pympv/mpv.pyx":937
  *         return self
  * 
  * cdef class RenderContext(object):             # <<<<<<<<<<<<<<
@@ -1040,7 +1040,7 @@ struct __pyx_obj_9vidcutter_4libs_3mpv_RenderContext {
 };
 
 
-/* "vidcutter/libs/pympv/mpv.pyx":1118
+/* "vidcutter/libs/pympv/mpv.pyx":1115
  *         self.close()
  * 
  * cdef class OpenGLRenderContext(RenderContext):             # <<<<<<<<<<<<<<
@@ -1154,7 +1154,7 @@ struct __pyx_vtabstruct_9vidcutter_4libs_3mpv_Context {
 static struct __pyx_vtabstruct_9vidcutter_4libs_3mpv_Context *__pyx_vtabptr_9vidcutter_4libs_3mpv_Context;
 
 
-/* "vidcutter/libs/pympv/mpv.pyx":877
+/* "vidcutter/libs/pympv/mpv.pyx":881
  * DEF MAX_RENDER_PARAMS = 32
  * 
  * cdef class _RenderParams(object):             # <<<<<<<<<<<<<<
@@ -1170,7 +1170,7 @@ struct __pyx_vtabstruct_9vidcutter_4libs_3mpv__RenderParams {
 static struct __pyx_vtabstruct_9vidcutter_4libs_3mpv__RenderParams *__pyx_vtabptr_9vidcutter_4libs_3mpv__RenderParams;
 
 
-/* "vidcutter/libs/pympv/mpv.pyx":924
+/* "vidcutter/libs/pympv/mpv.pyx":928
  * 
  * @cython.internal
  * cdef class RenderFrameInfo(object):             # <<<<<<<<<<<<<<
@@ -2459,6 +2459,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_8MPVError___init__(CYTHON_UNUSED
 static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_14_ReplyUserData___init__(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_data); /* proto */
 static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_14_ReplyUserData_2add(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_14_ReplyUserData_4remove(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_11api_version___get__(CYTHON_UNUSED struct __pyx_obj_9vidcutter_4libs_3mpv_Context *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_4name___get__(struct __pyx_obj_9vidcutter_4libs_3mpv_Context *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_4time___get__(struct __pyx_obj_9vidcutter_4libs_3mpv_Context *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_suspend(struct __pyx_obj_9vidcutter_4libs_3mpv_Context *__pyx_v_self); /* proto */
@@ -2510,11 +2511,10 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_8set_update_call
 static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_10update(struct __pyx_obj_9vidcutter_4libs_3mpv_RenderContext *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_12render(struct __pyx_obj_9vidcutter_4libs_3mpv_RenderContext *__pyx_v_self, PyObject *__pyx_v_opengl_fbo, PyObject *__pyx_v_flip_y, PyObject *__pyx_v_depth, PyObject *__pyx_v_block_for_target_time, PyObject *__pyx_v_skip_rendering); /* proto */
 static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_14report_swap(struct __pyx_obj_9vidcutter_4libs_3mpv_RenderContext *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_16free(struct __pyx_obj_9vidcutter_4libs_3mpv_RenderContext *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_18close(struct __pyx_obj_9vidcutter_4libs_3mpv_RenderContext *__pyx_v_self); /* proto */
-static void __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_20__dealloc__(struct __pyx_obj_9vidcutter_4libs_3mpv_RenderContext *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_22__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_9vidcutter_4libs_3mpv_RenderContext *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_24__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_9vidcutter_4libs_3mpv_RenderContext *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state); /* proto */
+static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_16close(struct __pyx_obj_9vidcutter_4libs_3mpv_RenderContext *__pyx_v_self); /* proto */
+static void __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_18__dealloc__(struct __pyx_obj_9vidcutter_4libs_3mpv_RenderContext *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_20__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_9vidcutter_4libs_3mpv_RenderContext *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_22__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_9vidcutter_4libs_3mpv_RenderContext *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state); /* proto */
 static int __pyx_pf_9vidcutter_4libs_3mpv_19OpenGLRenderContext___init__(struct __pyx_obj_9vidcutter_4libs_3mpv_OpenGLRenderContext *__pyx_v_self, PyObject *__pyx_v_mpv, PyObject *__pyx_v_get_proc_address, PyObject *__pyx_v_args, PyObject *__pyx_v_kwargs); /* proto */
 static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_19OpenGLRenderContext_2__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_9vidcutter_4libs_3mpv_OpenGLRenderContext *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_19OpenGLRenderContext_4__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_9vidcutter_4libs_3mpv_OpenGLRenderContext *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state); /* proto */
@@ -8650,6 +8650,90 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_14_ReplyUserData_4remove(CYTHON_
 /* "vidcutter/libs/pympv/mpv.pyx":370
  * 
  *     @property
+ *     def api_version(self):             # <<<<<<<<<<<<<<
+ *         return _CAPI_MINOR, _CAPI_MAJOR, _CAPI_VERSION
+ * 
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_7Context_11api_version_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_7Context_11api_version_1__get__(PyObject *__pyx_v_self) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
+  __pyx_r = __pyx_pf_9vidcutter_4libs_3mpv_7Context_11api_version___get__(((struct __pyx_obj_9vidcutter_4libs_3mpv_Context *)__pyx_v_self));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_11api_version___get__(CYTHON_UNUSED struct __pyx_obj_9vidcutter_4libs_3mpv_Context *__pyx_v_self) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_4 = NULL;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("__get__", 0);
+
+  /* "vidcutter/libs/pympv/mpv.pyx":371
+ *     @property
+ *     def api_version(self):
+ *         return _CAPI_MINOR, _CAPI_MAJOR, _CAPI_VERSION             # <<<<<<<<<<<<<<
+ * 
+ *     @property
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_CAPI_MINOR); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 371, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_CAPI_MAJOR); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 371, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = __Pyx_PyInt_From_unsigned_long(__pyx_v_9vidcutter_4libs_3mpv__CAPI_VERSION); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 371, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __pyx_t_4 = PyTuple_New(3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 371, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_4);
+  __Pyx_GIVEREF(__pyx_t_1);
+  PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_1);
+  __Pyx_GIVEREF(__pyx_t_2);
+  PyTuple_SET_ITEM(__pyx_t_4, 1, __pyx_t_2);
+  __Pyx_GIVEREF(__pyx_t_3);
+  PyTuple_SET_ITEM(__pyx_t_4, 2, __pyx_t_3);
+  __pyx_t_1 = 0;
+  __pyx_t_2 = 0;
+  __pyx_t_3 = 0;
+  __pyx_r = __pyx_t_4;
+  __pyx_t_4 = 0;
+  goto __pyx_L0;
+
+  /* "vidcutter/libs/pympv/mpv.pyx":370
+ * 
+ *     @property
+ *     def api_version(self):             # <<<<<<<<<<<<<<
+ *         return _CAPI_MINOR, _CAPI_MAJOR, _CAPI_VERSION
+ * 
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_AddTraceback("vidcutter.libs.mpv.Context.api_version.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "vidcutter/libs/pympv/mpv.pyx":374
+ * 
+ *     @property
  *     def name(self):             # <<<<<<<<<<<<<<
  *         """Unique name for every context created.
  * 
@@ -8681,7 +8765,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_4name___get__(struct __
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":376
+  /* "vidcutter/libs/pympv/mpv.pyx":380
  *         """
  *         cdef const char* name
  *         assert self._ctx             # <<<<<<<<<<<<<<
@@ -8692,12 +8776,12 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_4name___get__(struct __
   if (unlikely(!Py_OptimizeFlag)) {
     if (unlikely(!(__pyx_v_self->_ctx != 0))) {
       PyErr_SetNone(PyExc_AssertionError);
-      __PYX_ERR(0, 376, __pyx_L1_error)
+      __PYX_ERR(0, 380, __pyx_L1_error)
     }
   }
   #endif
 
-  /* "vidcutter/libs/pympv/mpv.pyx":377
+  /* "vidcutter/libs/pympv/mpv.pyx":381
  *         cdef const char* name
  *         assert self._ctx
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -8712,7 +8796,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_4name___get__(struct __
       #endif
       /*try:*/ {
 
-        /* "vidcutter/libs/pympv/mpv.pyx":378
+        /* "vidcutter/libs/pympv/mpv.pyx":382
  *         assert self._ctx
  *         with nogil:
  *             name = mpv_client_name(self._ctx)             # <<<<<<<<<<<<<<
@@ -8722,7 +8806,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_4name___get__(struct __
         __pyx_v_name = mpv_client_name(__pyx_v_self->_ctx);
       }
 
-      /* "vidcutter/libs/pympv/mpv.pyx":377
+      /* "vidcutter/libs/pympv/mpv.pyx":381
  *         cdef const char* name
  *         assert self._ctx
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -8741,7 +8825,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_4name___get__(struct __
       }
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":379
+  /* "vidcutter/libs/pympv/mpv.pyx":383
  *         with nogil:
  *             name = mpv_client_name(self._ctx)
  *         return _strdec(name)             # <<<<<<<<<<<<<<
@@ -8749,9 +8833,9 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_4name___get__(struct __
  *     @property
  */
   __Pyx_XDECREF(__pyx_r);
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_strdec); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 379, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_strdec); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 383, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyBytes_FromString(__pyx_v_name); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 379, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyBytes_FromString(__pyx_v_name); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 383, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_t_4 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
@@ -8766,14 +8850,14 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_4name___get__(struct __
   __pyx_t_1 = (__pyx_t_4) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_4, __pyx_t_3) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 379, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 383, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":370
+  /* "vidcutter/libs/pympv/mpv.pyx":374
  * 
  *     @property
  *     def name(self):             # <<<<<<<<<<<<<<
@@ -8795,7 +8879,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_4name___get__(struct __
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":382
+/* "vidcutter/libs/pympv/mpv.pyx":386
  * 
  *     @property
  *     def time(self):             # <<<<<<<<<<<<<<
@@ -8826,7 +8910,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_4time___get__(struct __
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":390
+  /* "vidcutter/libs/pympv/mpv.pyx":394
  *         """
  *         cdef int64_t time
  *         assert self._ctx             # <<<<<<<<<<<<<<
@@ -8837,12 +8921,12 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_4time___get__(struct __
   if (unlikely(!Py_OptimizeFlag)) {
     if (unlikely(!(__pyx_v_self->_ctx != 0))) {
       PyErr_SetNone(PyExc_AssertionError);
-      __PYX_ERR(0, 390, __pyx_L1_error)
+      __PYX_ERR(0, 394, __pyx_L1_error)
     }
   }
   #endif
 
-  /* "vidcutter/libs/pympv/mpv.pyx":391
+  /* "vidcutter/libs/pympv/mpv.pyx":395
  *         cdef int64_t time
  *         assert self._ctx
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -8857,7 +8941,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_4time___get__(struct __
       #endif
       /*try:*/ {
 
-        /* "vidcutter/libs/pympv/mpv.pyx":392
+        /* "vidcutter/libs/pympv/mpv.pyx":396
  *         assert self._ctx
  *         with nogil:
  *             time = mpv_get_time_us(self._ctx)             # <<<<<<<<<<<<<<
@@ -8867,7 +8951,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_4time___get__(struct __
         __pyx_v_time = mpv_get_time_us(__pyx_v_self->_ctx);
       }
 
-      /* "vidcutter/libs/pympv/mpv.pyx":391
+      /* "vidcutter/libs/pympv/mpv.pyx":395
  *         cdef int64_t time
  *         assert self._ctx
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -8886,7 +8970,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_4time___get__(struct __
       }
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":393
+  /* "vidcutter/libs/pympv/mpv.pyx":397
  *         with nogil:
  *             time = mpv_get_time_us(self._ctx)
  *         return time             # <<<<<<<<<<<<<<
@@ -8894,13 +8978,13 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_4time___get__(struct __
  *     def suspend(self):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int64_t(__pyx_v_time); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 393, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int64_t(__pyx_v_time); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 397, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":382
+  /* "vidcutter/libs/pympv/mpv.pyx":386
  * 
  *     @property
  *     def time(self):             # <<<<<<<<<<<<<<
@@ -8919,7 +9003,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_4time___get__(struct __
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":395
+/* "vidcutter/libs/pympv/mpv.pyx":399
  *         return time
  * 
  *     def suspend(self):             # <<<<<<<<<<<<<<
@@ -8949,7 +9033,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_suspend(struct __pyx_ob
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("suspend", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":397
+  /* "vidcutter/libs/pympv/mpv.pyx":401
  *     def suspend(self):
  *         """Wraps: mpv_suspend"""
  *         assert self._ctx             # <<<<<<<<<<<<<<
@@ -8960,12 +9044,12 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_suspend(struct __pyx_ob
   if (unlikely(!Py_OptimizeFlag)) {
     if (unlikely(!(__pyx_v_self->_ctx != 0))) {
       PyErr_SetNone(PyExc_AssertionError);
-      __PYX_ERR(0, 397, __pyx_L1_error)
+      __PYX_ERR(0, 401, __pyx_L1_error)
     }
   }
   #endif
 
-  /* "vidcutter/libs/pympv/mpv.pyx":398
+  /* "vidcutter/libs/pympv/mpv.pyx":402
  *         """Wraps: mpv_suspend"""
  *         assert self._ctx
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -8980,7 +9064,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_suspend(struct __pyx_ob
       #endif
       /*try:*/ {
 
-        /* "vidcutter/libs/pympv/mpv.pyx":399
+        /* "vidcutter/libs/pympv/mpv.pyx":403
  *         assert self._ctx
  *         with nogil:
  *             mpv_suspend(self._ctx)             # <<<<<<<<<<<<<<
@@ -8990,7 +9074,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_suspend(struct __pyx_ob
         mpv_suspend(__pyx_v_self->_ctx);
       }
 
-      /* "vidcutter/libs/pympv/mpv.pyx":398
+      /* "vidcutter/libs/pympv/mpv.pyx":402
  *         """Wraps: mpv_suspend"""
  *         assert self._ctx
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -9009,7 +9093,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_suspend(struct __pyx_ob
       }
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":395
+  /* "vidcutter/libs/pympv/mpv.pyx":399
  *         return time
  * 
  *     def suspend(self):             # <<<<<<<<<<<<<<
@@ -9029,7 +9113,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_suspend(struct __pyx_ob
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":401
+/* "vidcutter/libs/pympv/mpv.pyx":405
  *             mpv_suspend(self._ctx)
  * 
  *     def resume(self):             # <<<<<<<<<<<<<<
@@ -9059,7 +9143,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_2resume(struct __pyx_ob
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("resume", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":403
+  /* "vidcutter/libs/pympv/mpv.pyx":407
  *     def resume(self):
  *         """Wraps: mpv_resume"""
  *         assert self._ctx             # <<<<<<<<<<<<<<
@@ -9070,12 +9154,12 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_2resume(struct __pyx_ob
   if (unlikely(!Py_OptimizeFlag)) {
     if (unlikely(!(__pyx_v_self->_ctx != 0))) {
       PyErr_SetNone(PyExc_AssertionError);
-      __PYX_ERR(0, 403, __pyx_L1_error)
+      __PYX_ERR(0, 407, __pyx_L1_error)
     }
   }
   #endif
 
-  /* "vidcutter/libs/pympv/mpv.pyx":404
+  /* "vidcutter/libs/pympv/mpv.pyx":408
  *         """Wraps: mpv_resume"""
  *         assert self._ctx
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -9090,7 +9174,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_2resume(struct __pyx_ob
       #endif
       /*try:*/ {
 
-        /* "vidcutter/libs/pympv/mpv.pyx":405
+        /* "vidcutter/libs/pympv/mpv.pyx":409
  *         assert self._ctx
  *         with nogil:
  *             mpv_resume(self._ctx)             # <<<<<<<<<<<<<<
@@ -9100,7 +9184,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_2resume(struct __pyx_ob
         mpv_resume(__pyx_v_self->_ctx);
       }
 
-      /* "vidcutter/libs/pympv/mpv.pyx":404
+      /* "vidcutter/libs/pympv/mpv.pyx":408
  *         """Wraps: mpv_resume"""
  *         assert self._ctx
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -9119,7 +9203,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_2resume(struct __pyx_ob
       }
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":401
+  /* "vidcutter/libs/pympv/mpv.pyx":405
  *             mpv_suspend(self._ctx)
  * 
  *     def resume(self):             # <<<<<<<<<<<<<<
@@ -9139,7 +9223,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_2resume(struct __pyx_ob
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":408
+/* "vidcutter/libs/pympv/mpv.pyx":412
  * 
  *     @_errors
  *     def request_event(self, event, enable):             # <<<<<<<<<<<<<<
@@ -9182,11 +9266,11 @@ static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_7Context_5request_event(PyObject
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_enable)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("request_event", 1, 2, 2, 1); __PYX_ERR(0, 408, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("request_event", 1, 2, 2, 1); __PYX_ERR(0, 412, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "request_event") < 0)) __PYX_ERR(0, 408, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "request_event") < 0)) __PYX_ERR(0, 412, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -9199,7 +9283,7 @@ static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_7Context_5request_event(PyObject
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("request_event", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 408, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("request_event", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 412, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("vidcutter.libs.mpv.Context.request_event", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -9227,7 +9311,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_4request_event(struct _
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("request_event", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":417
+  /* "vidcutter/libs/pympv/mpv.pyx":421
  *         Wraps: mpv_request_event
  *         """
  *         assert self._ctx             # <<<<<<<<<<<<<<
@@ -9238,19 +9322,19 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_4request_event(struct _
   if (unlikely(!Py_OptimizeFlag)) {
     if (unlikely(!(__pyx_v_self->_ctx != 0))) {
       PyErr_SetNone(PyExc_AssertionError);
-      __PYX_ERR(0, 417, __pyx_L1_error)
+      __PYX_ERR(0, 421, __pyx_L1_error)
     }
   }
   #endif
 
-  /* "vidcutter/libs/pympv/mpv.pyx":418
+  /* "vidcutter/libs/pympv/mpv.pyx":422
  *         """
  *         assert self._ctx
  *         cdef int enable_i = 1 if enable else 0             # <<<<<<<<<<<<<<
  *         cdef int err
  *         cdef mpv_event_id event_id = event
  */
-  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_v_enable); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 418, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_v_enable); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 422, __pyx_L1_error)
   if (__pyx_t_2) {
     __pyx_t_1 = 1;
   } else {
@@ -9258,17 +9342,17 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_4request_event(struct _
   }
   __pyx_v_enable_i = __pyx_t_1;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":420
+  /* "vidcutter/libs/pympv/mpv.pyx":424
  *         cdef int enable_i = 1 if enable else 0
  *         cdef int err
  *         cdef mpv_event_id event_id = event             # <<<<<<<<<<<<<<
  *         with nogil:
  *             err = mpv_request_event(self._ctx, event_id, enable_i)
  */
-  __pyx_t_3 = ((enum mpv_event_id)__Pyx_PyInt_As_enum__mpv_event_id(__pyx_v_event)); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 420, __pyx_L1_error)
+  __pyx_t_3 = ((enum mpv_event_id)__Pyx_PyInt_As_enum__mpv_event_id(__pyx_v_event)); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 424, __pyx_L1_error)
   __pyx_v_event_id = __pyx_t_3;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":421
+  /* "vidcutter/libs/pympv/mpv.pyx":425
  *         cdef int err
  *         cdef mpv_event_id event_id = event
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -9283,7 +9367,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_4request_event(struct _
       #endif
       /*try:*/ {
 
-        /* "vidcutter/libs/pympv/mpv.pyx":422
+        /* "vidcutter/libs/pympv/mpv.pyx":426
  *         cdef mpv_event_id event_id = event
  *         with nogil:
  *             err = mpv_request_event(self._ctx, event_id, enable_i)             # <<<<<<<<<<<<<<
@@ -9293,7 +9377,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_4request_event(struct _
         __pyx_v_err = mpv_request_event(__pyx_v_self->_ctx, __pyx_v_event_id, __pyx_v_enable_i);
       }
 
-      /* "vidcutter/libs/pympv/mpv.pyx":421
+      /* "vidcutter/libs/pympv/mpv.pyx":425
  *         cdef int err
  *         cdef mpv_event_id event_id = event
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -9312,7 +9396,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_4request_event(struct _
       }
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":423
+  /* "vidcutter/libs/pympv/mpv.pyx":427
  *         with nogil:
  *             err = mpv_request_event(self._ctx, event_id, enable_i)
  *         return err             # <<<<<<<<<<<<<<
@@ -9320,13 +9404,13 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_4request_event(struct _
  *     @_errors
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_err); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 423, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_err); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 427, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __pyx_r = __pyx_t_4;
   __pyx_t_4 = 0;
   goto __pyx_L0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":408
+  /* "vidcutter/libs/pympv/mpv.pyx":412
  * 
  *     @_errors
  *     def request_event(self, event, enable):             # <<<<<<<<<<<<<<
@@ -9345,7 +9429,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_4request_event(struct _
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":426
+/* "vidcutter/libs/pympv/mpv.pyx":430
  * 
  *     @_errors
  *     def set_log_level(self, loglevel):             # <<<<<<<<<<<<<<
@@ -9382,7 +9466,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_6set_log_level(struct _
   __Pyx_RefNannySetupContext("set_log_level", 0);
   __Pyx_INCREF(__pyx_v_loglevel);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":428
+  /* "vidcutter/libs/pympv/mpv.pyx":432
  *     def set_log_level(self, loglevel):
  *         """Wraps: mpv_request_log_messages"""
  *         assert self._ctx             # <<<<<<<<<<<<<<
@@ -9393,19 +9477,19 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_6set_log_level(struct _
   if (unlikely(!Py_OptimizeFlag)) {
     if (unlikely(!(__pyx_v_self->_ctx != 0))) {
       PyErr_SetNone(PyExc_AssertionError);
-      __PYX_ERR(0, 428, __pyx_L1_error)
+      __PYX_ERR(0, 432, __pyx_L1_error)
     }
   }
   #endif
 
-  /* "vidcutter/libs/pympv/mpv.pyx":429
+  /* "vidcutter/libs/pympv/mpv.pyx":433
  *         """Wraps: mpv_request_log_messages"""
  *         assert self._ctx
  *         loglevel = _strenc(loglevel)             # <<<<<<<<<<<<<<
  *         cdef const char* loglevel_c = loglevel
  *         cdef int err
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_strenc); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 429, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_strenc); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 433, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
@@ -9419,23 +9503,23 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_6set_log_level(struct _
   }
   __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_3, __pyx_v_loglevel) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_loglevel);
   __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 429, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 433, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF_SET(__pyx_v_loglevel, __pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":430
+  /* "vidcutter/libs/pympv/mpv.pyx":434
  *         assert self._ctx
  *         loglevel = _strenc(loglevel)
  *         cdef const char* loglevel_c = loglevel             # <<<<<<<<<<<<<<
  *         cdef int err
  *         with nogil:
  */
-  __pyx_t_4 = __Pyx_PyObject_AsString(__pyx_v_loglevel); if (unlikely((!__pyx_t_4) && PyErr_Occurred())) __PYX_ERR(0, 430, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_AsString(__pyx_v_loglevel); if (unlikely((!__pyx_t_4) && PyErr_Occurred())) __PYX_ERR(0, 434, __pyx_L1_error)
   __pyx_v_loglevel_c = __pyx_t_4;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":432
+  /* "vidcutter/libs/pympv/mpv.pyx":436
  *         cdef const char* loglevel_c = loglevel
  *         cdef int err
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -9450,7 +9534,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_6set_log_level(struct _
       #endif
       /*try:*/ {
 
-        /* "vidcutter/libs/pympv/mpv.pyx":433
+        /* "vidcutter/libs/pympv/mpv.pyx":437
  *         cdef int err
  *         with nogil:
  *             err = mpv_request_log_messages(self._ctx, loglevel_c)             # <<<<<<<<<<<<<<
@@ -9460,7 +9544,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_6set_log_level(struct _
         __pyx_v_err = mpv_request_log_messages(__pyx_v_self->_ctx, __pyx_v_loglevel_c);
       }
 
-      /* "vidcutter/libs/pympv/mpv.pyx":432
+      /* "vidcutter/libs/pympv/mpv.pyx":436
  *         cdef const char* loglevel_c = loglevel
  *         cdef int err
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -9479,7 +9563,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_6set_log_level(struct _
       }
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":434
+  /* "vidcutter/libs/pympv/mpv.pyx":438
  *         with nogil:
  *             err = mpv_request_log_messages(self._ctx, loglevel_c)
  *         return err             # <<<<<<<<<<<<<<
@@ -9487,13 +9571,13 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_6set_log_level(struct _
  *     @_errors
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_err); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 434, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_err); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 438, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":426
+  /* "vidcutter/libs/pympv/mpv.pyx":430
  * 
  *     @_errors
  *     def set_log_level(self, loglevel):             # <<<<<<<<<<<<<<
@@ -9515,7 +9599,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_6set_log_level(struct _
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":437
+/* "vidcutter/libs/pympv/mpv.pyx":441
  * 
  *     @_errors
  *     def load_config(self, filename):             # <<<<<<<<<<<<<<
@@ -9552,7 +9636,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_8load_config(struct __p
   __Pyx_RefNannySetupContext("load_config", 0);
   __Pyx_INCREF(__pyx_v_filename);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":439
+  /* "vidcutter/libs/pympv/mpv.pyx":443
  *     def load_config(self, filename):
  *         """Wraps: mpv_load_config_file"""
  *         assert self._ctx             # <<<<<<<<<<<<<<
@@ -9563,19 +9647,19 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_8load_config(struct __p
   if (unlikely(!Py_OptimizeFlag)) {
     if (unlikely(!(__pyx_v_self->_ctx != 0))) {
       PyErr_SetNone(PyExc_AssertionError);
-      __PYX_ERR(0, 439, __pyx_L1_error)
+      __PYX_ERR(0, 443, __pyx_L1_error)
     }
   }
   #endif
 
-  /* "vidcutter/libs/pympv/mpv.pyx":440
+  /* "vidcutter/libs/pympv/mpv.pyx":444
  *         """Wraps: mpv_load_config_file"""
  *         assert self._ctx
  *         filename = _strenc(filename)             # <<<<<<<<<<<<<<
  *         cdef const char* _filename = filename
  *         cdef int err
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_strenc); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 440, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_strenc); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 444, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
@@ -9589,23 +9673,23 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_8load_config(struct __p
   }
   __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_3, __pyx_v_filename) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_filename);
   __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 440, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 444, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF_SET(__pyx_v_filename, __pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":441
+  /* "vidcutter/libs/pympv/mpv.pyx":445
  *         assert self._ctx
  *         filename = _strenc(filename)
  *         cdef const char* _filename = filename             # <<<<<<<<<<<<<<
  *         cdef int err
  *         with nogil:
  */
-  __pyx_t_4 = __Pyx_PyObject_AsString(__pyx_v_filename); if (unlikely((!__pyx_t_4) && PyErr_Occurred())) __PYX_ERR(0, 441, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_AsString(__pyx_v_filename); if (unlikely((!__pyx_t_4) && PyErr_Occurred())) __PYX_ERR(0, 445, __pyx_L1_error)
   __pyx_v__filename = __pyx_t_4;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":443
+  /* "vidcutter/libs/pympv/mpv.pyx":447
  *         cdef const char* _filename = filename
  *         cdef int err
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -9620,7 +9704,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_8load_config(struct __p
       #endif
       /*try:*/ {
 
-        /* "vidcutter/libs/pympv/mpv.pyx":444
+        /* "vidcutter/libs/pympv/mpv.pyx":448
  *         cdef int err
  *         with nogil:
  *             err = mpv_load_config_file(self._ctx, _filename)             # <<<<<<<<<<<<<<
@@ -9630,7 +9714,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_8load_config(struct __p
         __pyx_v_err = mpv_load_config_file(__pyx_v_self->_ctx, __pyx_v__filename);
       }
 
-      /* "vidcutter/libs/pympv/mpv.pyx":443
+      /* "vidcutter/libs/pympv/mpv.pyx":447
  *         cdef const char* _filename = filename
  *         cdef int err
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -9649,7 +9733,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_8load_config(struct __p
       }
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":445
+  /* "vidcutter/libs/pympv/mpv.pyx":449
  *         with nogil:
  *             err = mpv_load_config_file(self._ctx, _filename)
  *         return err             # <<<<<<<<<<<<<<
@@ -9657,13 +9741,13 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_8load_config(struct __p
  *     def _format_for(self, value):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_err); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 445, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_err); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 449, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":437
+  /* "vidcutter/libs/pympv/mpv.pyx":441
  * 
  *     @_errors
  *     def load_config(self, filename):             # <<<<<<<<<<<<<<
@@ -9685,7 +9769,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_8load_config(struct __p
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":447
+/* "vidcutter/libs/pympv/mpv.pyx":451
  *         return err
  * 
  *     def _format_for(self, value):             # <<<<<<<<<<<<<<
@@ -9718,7 +9802,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_10_format_for(CYTHON_UN
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_format_for", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":448
+  /* "vidcutter/libs/pympv/mpv.pyx":452
  * 
  *     def _format_for(self, value):
  *         if isinstance(value, basestring):             # <<<<<<<<<<<<<<
@@ -9729,7 +9813,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_10_format_for(CYTHON_UN
   __pyx_t_2 = (__pyx_t_1 != 0);
   if (__pyx_t_2) {
 
-    /* "vidcutter/libs/pympv/mpv.pyx":449
+    /* "vidcutter/libs/pympv/mpv.pyx":453
  *     def _format_for(self, value):
  *         if isinstance(value, basestring):
  *             return MPV_FORMAT_STRING             # <<<<<<<<<<<<<<
@@ -9737,13 +9821,13 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_10_format_for(CYTHON_UN
  *             return MPV_FORMAT_FLAG
  */
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_3 = __Pyx_PyInt_From_enum__mpv_format(MPV_FORMAT_STRING); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 449, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyInt_From_enum__mpv_format(MPV_FORMAT_STRING); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 453, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_r = __pyx_t_3;
     __pyx_t_3 = 0;
     goto __pyx_L0;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":448
+    /* "vidcutter/libs/pympv/mpv.pyx":452
  * 
  *     def _format_for(self, value):
  *         if isinstance(value, basestring):             # <<<<<<<<<<<<<<
@@ -9752,7 +9836,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_10_format_for(CYTHON_UN
  */
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":450
+  /* "vidcutter/libs/pympv/mpv.pyx":454
  *         if isinstance(value, basestring):
  *             return MPV_FORMAT_STRING
  *         elif isinstance(value, bool):             # <<<<<<<<<<<<<<
@@ -9761,12 +9845,12 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_10_format_for(CYTHON_UN
  */
   __pyx_t_3 = ((PyObject*)&PyBool_Type);
   __Pyx_INCREF(__pyx_t_3);
-  __pyx_t_2 = PyObject_IsInstance(__pyx_v_value, __pyx_t_3); if (unlikely(__pyx_t_2 == ((int)-1))) __PYX_ERR(0, 450, __pyx_L1_error)
+  __pyx_t_2 = PyObject_IsInstance(__pyx_v_value, __pyx_t_3); if (unlikely(__pyx_t_2 == ((int)-1))) __PYX_ERR(0, 454, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_t_1 = (__pyx_t_2 != 0);
   if (__pyx_t_1) {
 
-    /* "vidcutter/libs/pympv/mpv.pyx":451
+    /* "vidcutter/libs/pympv/mpv.pyx":455
  *             return MPV_FORMAT_STRING
  *         elif isinstance(value, bool):
  *             return MPV_FORMAT_FLAG             # <<<<<<<<<<<<<<
@@ -9774,13 +9858,13 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_10_format_for(CYTHON_UN
  *             return MPV_FORMAT_INT64
  */
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_3 = __Pyx_PyInt_From_enum__mpv_format(MPV_FORMAT_FLAG); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 451, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyInt_From_enum__mpv_format(MPV_FORMAT_FLAG); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 455, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_r = __pyx_t_3;
     __pyx_t_3 = 0;
     goto __pyx_L0;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":450
+    /* "vidcutter/libs/pympv/mpv.pyx":454
  *         if isinstance(value, basestring):
  *             return MPV_FORMAT_STRING
  *         elif isinstance(value, bool):             # <<<<<<<<<<<<<<
@@ -9789,7 +9873,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_10_format_for(CYTHON_UN
  */
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":452
+  /* "vidcutter/libs/pympv/mpv.pyx":456
  *         elif isinstance(value, bool):
  *             return MPV_FORMAT_FLAG
  *         elif isinstance(value, int):             # <<<<<<<<<<<<<<
@@ -9800,7 +9884,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_10_format_for(CYTHON_UN
   __pyx_t_2 = (__pyx_t_1 != 0);
   if (__pyx_t_2) {
 
-    /* "vidcutter/libs/pympv/mpv.pyx":453
+    /* "vidcutter/libs/pympv/mpv.pyx":457
  *             return MPV_FORMAT_FLAG
  *         elif isinstance(value, int):
  *             return MPV_FORMAT_INT64             # <<<<<<<<<<<<<<
@@ -9808,13 +9892,13 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_10_format_for(CYTHON_UN
  *             return MPV_FORMAT_DOUBLE
  */
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_3 = __Pyx_PyInt_From_enum__mpv_format(MPV_FORMAT_INT64); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 453, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyInt_From_enum__mpv_format(MPV_FORMAT_INT64); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 457, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_r = __pyx_t_3;
     __pyx_t_3 = 0;
     goto __pyx_L0;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":452
+    /* "vidcutter/libs/pympv/mpv.pyx":456
  *         elif isinstance(value, bool):
  *             return MPV_FORMAT_FLAG
  *         elif isinstance(value, int):             # <<<<<<<<<<<<<<
@@ -9823,7 +9907,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_10_format_for(CYTHON_UN
  */
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":454
+  /* "vidcutter/libs/pympv/mpv.pyx":458
  *         elif isinstance(value, int):
  *             return MPV_FORMAT_INT64
  *         elif isinstance(value, float):             # <<<<<<<<<<<<<<
@@ -9834,7 +9918,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_10_format_for(CYTHON_UN
   __pyx_t_1 = (__pyx_t_2 != 0);
   if (__pyx_t_1) {
 
-    /* "vidcutter/libs/pympv/mpv.pyx":455
+    /* "vidcutter/libs/pympv/mpv.pyx":459
  *             return MPV_FORMAT_INT64
  *         elif isinstance(value, float):
  *             return MPV_FORMAT_DOUBLE             # <<<<<<<<<<<<<<
@@ -9842,13 +9926,13 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_10_format_for(CYTHON_UN
  *             return MPV_FORMAT_NODE_ARRAY
  */
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_3 = __Pyx_PyInt_From_enum__mpv_format(MPV_FORMAT_DOUBLE); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 455, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyInt_From_enum__mpv_format(MPV_FORMAT_DOUBLE); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 459, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_r = __pyx_t_3;
     __pyx_t_3 = 0;
     goto __pyx_L0;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":454
+    /* "vidcutter/libs/pympv/mpv.pyx":458
  *         elif isinstance(value, int):
  *             return MPV_FORMAT_INT64
  *         elif isinstance(value, float):             # <<<<<<<<<<<<<<
@@ -9857,7 +9941,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_10_format_for(CYTHON_UN
  */
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":456
+  /* "vidcutter/libs/pympv/mpv.pyx":460
  *         elif isinstance(value, float):
  *             return MPV_FORMAT_DOUBLE
  *         elif isinstance(value, (tuple, list)):             # <<<<<<<<<<<<<<
@@ -9878,7 +9962,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_10_format_for(CYTHON_UN
   __pyx_t_2 = (__pyx_t_1 != 0);
   if (__pyx_t_2) {
 
-    /* "vidcutter/libs/pympv/mpv.pyx":457
+    /* "vidcutter/libs/pympv/mpv.pyx":461
  *             return MPV_FORMAT_DOUBLE
  *         elif isinstance(value, (tuple, list)):
  *             return MPV_FORMAT_NODE_ARRAY             # <<<<<<<<<<<<<<
@@ -9886,13 +9970,13 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_10_format_for(CYTHON_UN
  *             return MPV_FORMAT_NODE_MAP
  */
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_3 = __Pyx_PyInt_From_enum__mpv_format(MPV_FORMAT_NODE_ARRAY); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 457, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyInt_From_enum__mpv_format(MPV_FORMAT_NODE_ARRAY); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 461, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_r = __pyx_t_3;
     __pyx_t_3 = 0;
     goto __pyx_L0;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":456
+    /* "vidcutter/libs/pympv/mpv.pyx":460
  *         elif isinstance(value, float):
  *             return MPV_FORMAT_DOUBLE
  *         elif isinstance(value, (tuple, list)):             # <<<<<<<<<<<<<<
@@ -9901,7 +9985,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_10_format_for(CYTHON_UN
  */
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":458
+  /* "vidcutter/libs/pympv/mpv.pyx":462
  *         elif isinstance(value, (tuple, list)):
  *             return MPV_FORMAT_NODE_ARRAY
  *         elif isinstance(value, dict):             # <<<<<<<<<<<<<<
@@ -9912,7 +9996,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_10_format_for(CYTHON_UN
   __pyx_t_1 = (__pyx_t_2 != 0);
   if (__pyx_t_1) {
 
-    /* "vidcutter/libs/pympv/mpv.pyx":459
+    /* "vidcutter/libs/pympv/mpv.pyx":463
  *             return MPV_FORMAT_NODE_ARRAY
  *         elif isinstance(value, dict):
  *             return MPV_FORMAT_NODE_MAP             # <<<<<<<<<<<<<<
@@ -9920,13 +10004,13 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_10_format_for(CYTHON_UN
  * 
  */
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_3 = __Pyx_PyInt_From_enum__mpv_format(MPV_FORMAT_NODE_MAP); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 459, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyInt_From_enum__mpv_format(MPV_FORMAT_NODE_MAP); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 463, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_r = __pyx_t_3;
     __pyx_t_3 = 0;
     goto __pyx_L0;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":458
+    /* "vidcutter/libs/pympv/mpv.pyx":462
  *         elif isinstance(value, (tuple, list)):
  *             return MPV_FORMAT_NODE_ARRAY
  *         elif isinstance(value, dict):             # <<<<<<<<<<<<<<
@@ -9935,7 +10019,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_10_format_for(CYTHON_UN
  */
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":460
+  /* "vidcutter/libs/pympv/mpv.pyx":464
  *         elif isinstance(value, dict):
  *             return MPV_FORMAT_NODE_MAP
  *         return MPV_FORMAT_NONE             # <<<<<<<<<<<<<<
@@ -9943,13 +10027,13 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_10_format_for(CYTHON_UN
  *     cdef mpv_node_list* _prep_node_list(self, values):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_3 = __Pyx_PyInt_From_enum__mpv_format(MPV_FORMAT_NONE); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 460, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyInt_From_enum__mpv_format(MPV_FORMAT_NONE); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 464, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_r = __pyx_t_3;
   __pyx_t_3 = 0;
   goto __pyx_L0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":447
+  /* "vidcutter/libs/pympv/mpv.pyx":451
  *         return err
  * 
  *     def _format_for(self, value):             # <<<<<<<<<<<<<<
@@ -9968,7 +10052,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_10_format_for(CYTHON_UN
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":462
+/* "vidcutter/libs/pympv/mpv.pyx":466
  *         return MPV_FORMAT_NONE
  * 
  *     cdef mpv_node_list* _prep_node_list(self, values):             # <<<<<<<<<<<<<<
@@ -9999,7 +10083,7 @@ static struct mpv_node_list *__pyx_f_9vidcutter_4libs_3mpv_7Context__prep_node_l
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_prep_node_list", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":465
+  /* "vidcutter/libs/pympv/mpv.pyx":469
  *         cdef mpv_node node
  *         cdef mpv_format format
  *         cdef mpv_node_list* node_list = <mpv_node_list*>malloc(sizeof(mpv_node_list))             # <<<<<<<<<<<<<<
@@ -10008,17 +10092,17 @@ static struct mpv_node_list *__pyx_f_9vidcutter_4libs_3mpv_7Context__prep_node_l
  */
   __pyx_v_node_list = ((struct mpv_node_list *)malloc((sizeof(struct mpv_node_list))));
 
-  /* "vidcutter/libs/pympv/mpv.pyx":466
+  /* "vidcutter/libs/pympv/mpv.pyx":470
  *         cdef mpv_format format
  *         cdef mpv_node_list* node_list = <mpv_node_list*>malloc(sizeof(mpv_node_list))
  *         node_list.num = len(values)             # <<<<<<<<<<<<<<
  *         node_list.values = NULL
  *         node_list.keys = NULL
  */
-  __pyx_t_1 = PyObject_Length(__pyx_v_values); if (unlikely(__pyx_t_1 == ((Py_ssize_t)-1))) __PYX_ERR(0, 466, __pyx_L1_error)
+  __pyx_t_1 = PyObject_Length(__pyx_v_values); if (unlikely(__pyx_t_1 == ((Py_ssize_t)-1))) __PYX_ERR(0, 470, __pyx_L1_error)
   __pyx_v_node_list->num = __pyx_t_1;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":467
+  /* "vidcutter/libs/pympv/mpv.pyx":471
  *         cdef mpv_node_list* node_list = <mpv_node_list*>malloc(sizeof(mpv_node_list))
  *         node_list.num = len(values)
  *         node_list.values = NULL             # <<<<<<<<<<<<<<
@@ -10027,7 +10111,7 @@ static struct mpv_node_list *__pyx_f_9vidcutter_4libs_3mpv_7Context__prep_node_l
  */
   __pyx_v_node_list->values = NULL;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":468
+  /* "vidcutter/libs/pympv/mpv.pyx":472
  *         node_list.num = len(values)
  *         node_list.values = NULL
  *         node_list.keys = NULL             # <<<<<<<<<<<<<<
@@ -10036,7 +10120,7 @@ static struct mpv_node_list *__pyx_f_9vidcutter_4libs_3mpv_7Context__prep_node_l
  */
   __pyx_v_node_list->keys = NULL;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":469
+  /* "vidcutter/libs/pympv/mpv.pyx":473
  *         node_list.values = NULL
  *         node_list.keys = NULL
  *         if node_list.num:             # <<<<<<<<<<<<<<
@@ -10046,7 +10130,7 @@ static struct mpv_node_list *__pyx_f_9vidcutter_4libs_3mpv_7Context__prep_node_l
   __pyx_t_2 = (__pyx_v_node_list->num != 0);
   if (__pyx_t_2) {
 
-    /* "vidcutter/libs/pympv/mpv.pyx":470
+    /* "vidcutter/libs/pympv/mpv.pyx":474
  *         node_list.keys = NULL
  *         if node_list.num:
  *             node_list.values = <mpv_node*>malloc(node_list.num * sizeof(mpv_node))             # <<<<<<<<<<<<<<
@@ -10055,7 +10139,7 @@ static struct mpv_node_list *__pyx_f_9vidcutter_4libs_3mpv_7Context__prep_node_l
  */
     __pyx_v_node_list->values = ((struct mpv_node *)malloc((__pyx_v_node_list->num * (sizeof(struct mpv_node)))));
 
-    /* "vidcutter/libs/pympv/mpv.pyx":469
+    /* "vidcutter/libs/pympv/mpv.pyx":473
  *         node_list.values = NULL
  *         node_list.keys = NULL
  *         if node_list.num:             # <<<<<<<<<<<<<<
@@ -10064,7 +10148,7 @@ static struct mpv_node_list *__pyx_f_9vidcutter_4libs_3mpv_7Context__prep_node_l
  */
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":471
+  /* "vidcutter/libs/pympv/mpv.pyx":475
  *         if node_list.num:
  *             node_list.values = <mpv_node*>malloc(node_list.num * sizeof(mpv_node))
  *         for i, value in enumerate(values):             # <<<<<<<<<<<<<<
@@ -10077,26 +10161,26 @@ static struct mpv_node_list *__pyx_f_9vidcutter_4libs_3mpv_7Context__prep_node_l
     __pyx_t_4 = __pyx_v_values; __Pyx_INCREF(__pyx_t_4); __pyx_t_1 = 0;
     __pyx_t_5 = NULL;
   } else {
-    __pyx_t_1 = -1; __pyx_t_4 = PyObject_GetIter(__pyx_v_values); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 471, __pyx_L1_error)
+    __pyx_t_1 = -1; __pyx_t_4 = PyObject_GetIter(__pyx_v_values); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 475, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_5 = Py_TYPE(__pyx_t_4)->tp_iternext; if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 471, __pyx_L1_error)
+    __pyx_t_5 = Py_TYPE(__pyx_t_4)->tp_iternext; if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 475, __pyx_L1_error)
   }
   for (;;) {
     if (likely(!__pyx_t_5)) {
       if (likely(PyList_CheckExact(__pyx_t_4))) {
         if (__pyx_t_1 >= PyList_GET_SIZE(__pyx_t_4)) break;
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_6 = PyList_GET_ITEM(__pyx_t_4, __pyx_t_1); __Pyx_INCREF(__pyx_t_6); __pyx_t_1++; if (unlikely(0 < 0)) __PYX_ERR(0, 471, __pyx_L1_error)
+        __pyx_t_6 = PyList_GET_ITEM(__pyx_t_4, __pyx_t_1); __Pyx_INCREF(__pyx_t_6); __pyx_t_1++; if (unlikely(0 < 0)) __PYX_ERR(0, 475, __pyx_L1_error)
         #else
-        __pyx_t_6 = PySequence_ITEM(__pyx_t_4, __pyx_t_1); __pyx_t_1++; if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 471, __pyx_L1_error)
+        __pyx_t_6 = PySequence_ITEM(__pyx_t_4, __pyx_t_1); __pyx_t_1++; if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 475, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_6);
         #endif
       } else {
         if (__pyx_t_1 >= PyTuple_GET_SIZE(__pyx_t_4)) break;
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_6 = PyTuple_GET_ITEM(__pyx_t_4, __pyx_t_1); __Pyx_INCREF(__pyx_t_6); __pyx_t_1++; if (unlikely(0 < 0)) __PYX_ERR(0, 471, __pyx_L1_error)
+        __pyx_t_6 = PyTuple_GET_ITEM(__pyx_t_4, __pyx_t_1); __Pyx_INCREF(__pyx_t_6); __pyx_t_1++; if (unlikely(0 < 0)) __PYX_ERR(0, 475, __pyx_L1_error)
         #else
-        __pyx_t_6 = PySequence_ITEM(__pyx_t_4, __pyx_t_1); __pyx_t_1++; if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 471, __pyx_L1_error)
+        __pyx_t_6 = PySequence_ITEM(__pyx_t_4, __pyx_t_1); __pyx_t_1++; if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 475, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_6);
         #endif
       }
@@ -10106,7 +10190,7 @@ static struct mpv_node_list *__pyx_f_9vidcutter_4libs_3mpv_7Context__prep_node_l
         PyObject* exc_type = PyErr_Occurred();
         if (exc_type) {
           if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-          else __PYX_ERR(0, 471, __pyx_L1_error)
+          else __PYX_ERR(0, 475, __pyx_L1_error)
         }
         break;
       }
@@ -10116,20 +10200,20 @@ static struct mpv_node_list *__pyx_f_9vidcutter_4libs_3mpv_7Context__prep_node_l
     __pyx_t_6 = 0;
     __Pyx_INCREF(__pyx_t_3);
     __Pyx_XDECREF_SET(__pyx_v_i, __pyx_t_3);
-    __pyx_t_6 = __Pyx_PyInt_AddObjC(__pyx_t_3, __pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 471, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyInt_AddObjC(__pyx_t_3, __pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 475, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_3);
     __pyx_t_3 = __pyx_t_6;
     __pyx_t_6 = 0;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":472
+    /* "vidcutter/libs/pympv/mpv.pyx":476
  *             node_list.values = <mpv_node*>malloc(node_list.num * sizeof(mpv_node))
  *         for i, value in enumerate(values):
  *             format = self._format_for(value)             # <<<<<<<<<<<<<<
  *             node = self._prep_native_value(value, format)
  *             node_list.values[i] = node
  */
-    __pyx_t_7 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_format_for); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 472, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_format_for); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 476, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __pyx_t_8 = NULL;
     if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_7))) {
@@ -10143,36 +10227,36 @@ static struct mpv_node_list *__pyx_f_9vidcutter_4libs_3mpv_7Context__prep_node_l
     }
     __pyx_t_6 = (__pyx_t_8) ? __Pyx_PyObject_Call2Args(__pyx_t_7, __pyx_t_8, __pyx_v_value) : __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_v_value);
     __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-    if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 472, __pyx_L1_error)
+    if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 476, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-    __pyx_t_9 = ((enum mpv_format)__Pyx_PyInt_As_enum__mpv_format(__pyx_t_6)); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 472, __pyx_L1_error)
+    __pyx_t_9 = ((enum mpv_format)__Pyx_PyInt_As_enum__mpv_format(__pyx_t_6)); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 476, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     __pyx_v_format = __pyx_t_9;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":473
+    /* "vidcutter/libs/pympv/mpv.pyx":477
  *         for i, value in enumerate(values):
  *             format = self._format_for(value)
  *             node = self._prep_native_value(value, format)             # <<<<<<<<<<<<<<
  *             node_list.values[i] = node
  *         return node_list
  */
-    __pyx_t_6 = __Pyx_PyInt_From_enum__mpv_format(__pyx_v_format); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 473, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyInt_From_enum__mpv_format(__pyx_v_format); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 477, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __pyx_v_node = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv_Context *)__pyx_v_self->__pyx_vtab)->_prep_native_value(__pyx_v_self, __pyx_v_value, __pyx_t_6);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":474
+    /* "vidcutter/libs/pympv/mpv.pyx":478
  *             format = self._format_for(value)
  *             node = self._prep_native_value(value, format)
  *             node_list.values[i] = node             # <<<<<<<<<<<<<<
  *         return node_list
  * 
  */
-    __pyx_t_10 = __Pyx_PyIndex_AsSsize_t(__pyx_v_i); if (unlikely((__pyx_t_10 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 474, __pyx_L1_error)
+    __pyx_t_10 = __Pyx_PyIndex_AsSsize_t(__pyx_v_i); if (unlikely((__pyx_t_10 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 478, __pyx_L1_error)
     (__pyx_v_node_list->values[__pyx_t_10]) = __pyx_v_node;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":471
+    /* "vidcutter/libs/pympv/mpv.pyx":475
  *         if node_list.num:
  *             node_list.values = <mpv_node*>malloc(node_list.num * sizeof(mpv_node))
  *         for i, value in enumerate(values):             # <<<<<<<<<<<<<<
@@ -10183,7 +10267,7 @@ static struct mpv_node_list *__pyx_f_9vidcutter_4libs_3mpv_7Context__prep_node_l
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":475
+  /* "vidcutter/libs/pympv/mpv.pyx":479
  *             node = self._prep_native_value(value, format)
  *             node_list.values[i] = node
  *         return node_list             # <<<<<<<<<<<<<<
@@ -10193,7 +10277,7 @@ static struct mpv_node_list *__pyx_f_9vidcutter_4libs_3mpv_7Context__prep_node_l
   __pyx_r = __pyx_v_node_list;
   goto __pyx_L0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":462
+  /* "vidcutter/libs/pympv/mpv.pyx":466
  *         return MPV_FORMAT_NONE
  * 
  *     cdef mpv_node_list* _prep_node_list(self, values):             # <<<<<<<<<<<<<<
@@ -10217,7 +10301,7 @@ static struct mpv_node_list *__pyx_f_9vidcutter_4libs_3mpv_7Context__prep_node_l
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":477
+/* "vidcutter/libs/pympv/mpv.pyx":481
  *         return node_list
  * 
  *     cdef mpv_node_list* _prep_node_map(self, map):             # <<<<<<<<<<<<<<
@@ -10249,14 +10333,14 @@ static struct mpv_node_list *__pyx_f_9vidcutter_4libs_3mpv_7Context__prep_node_m
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_prep_node_map", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":480
+  /* "vidcutter/libs/pympv/mpv.pyx":484
  *         cdef char* ckey
  *         cdef mpv_node_list* list
  *         list = self._prep_node_list(map.values())             # <<<<<<<<<<<<<<
  *         keys = map.keys()
  *         if not len(keys):
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_map, __pyx_n_s_values); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 480, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_map, __pyx_n_s_values); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 484, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
@@ -10270,20 +10354,20 @@ static struct mpv_node_list *__pyx_f_9vidcutter_4libs_3mpv_7Context__prep_node_m
   }
   __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3) : __Pyx_PyObject_CallNoArg(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 480, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 484, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_v_list = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv_Context *)__pyx_v_self->__pyx_vtab)->_prep_node_list(__pyx_v_self, __pyx_t_1);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":481
+  /* "vidcutter/libs/pympv/mpv.pyx":485
  *         cdef mpv_node_list* list
  *         list = self._prep_node_list(map.values())
  *         keys = map.keys()             # <<<<<<<<<<<<<<
  *         if not len(keys):
  *             return list
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_map, __pyx_n_s_keys); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 481, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_map, __pyx_n_s_keys); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 485, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
@@ -10297,24 +10381,24 @@ static struct mpv_node_list *__pyx_f_9vidcutter_4libs_3mpv_7Context__prep_node_m
   }
   __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3) : __Pyx_PyObject_CallNoArg(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 481, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 485, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_v_keys = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":482
+  /* "vidcutter/libs/pympv/mpv.pyx":486
  *         list = self._prep_node_list(map.values())
  *         keys = map.keys()
  *         if not len(keys):             # <<<<<<<<<<<<<<
  *             return list
  *         list.keys = <char**>malloc(list.num)
  */
-  __pyx_t_4 = PyObject_Length(__pyx_v_keys); if (unlikely(__pyx_t_4 == ((Py_ssize_t)-1))) __PYX_ERR(0, 482, __pyx_L1_error)
+  __pyx_t_4 = PyObject_Length(__pyx_v_keys); if (unlikely(__pyx_t_4 == ((Py_ssize_t)-1))) __PYX_ERR(0, 486, __pyx_L1_error)
   __pyx_t_5 = ((!(__pyx_t_4 != 0)) != 0);
   if (__pyx_t_5) {
 
-    /* "vidcutter/libs/pympv/mpv.pyx":483
+    /* "vidcutter/libs/pympv/mpv.pyx":487
  *         keys = map.keys()
  *         if not len(keys):
  *             return list             # <<<<<<<<<<<<<<
@@ -10324,7 +10408,7 @@ static struct mpv_node_list *__pyx_f_9vidcutter_4libs_3mpv_7Context__prep_node_m
     __pyx_r = __pyx_v_list;
     goto __pyx_L0;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":482
+    /* "vidcutter/libs/pympv/mpv.pyx":486
  *         list = self._prep_node_list(map.values())
  *         keys = map.keys()
  *         if not len(keys):             # <<<<<<<<<<<<<<
@@ -10333,7 +10417,7 @@ static struct mpv_node_list *__pyx_f_9vidcutter_4libs_3mpv_7Context__prep_node_m
  */
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":484
+  /* "vidcutter/libs/pympv/mpv.pyx":488
  *         if not len(keys):
  *             return list
  *         list.keys = <char**>malloc(list.num)             # <<<<<<<<<<<<<<
@@ -10342,7 +10426,7 @@ static struct mpv_node_list *__pyx_f_9vidcutter_4libs_3mpv_7Context__prep_node_m
  */
   __pyx_v_list->keys = ((char **)malloc(__pyx_v_list->num));
 
-  /* "vidcutter/libs/pympv/mpv.pyx":485
+  /* "vidcutter/libs/pympv/mpv.pyx":489
  *             return list
  *         list.keys = <char**>malloc(list.num)
  *         for i, key in enumerate(keys):             # <<<<<<<<<<<<<<
@@ -10355,26 +10439,26 @@ static struct mpv_node_list *__pyx_f_9vidcutter_4libs_3mpv_7Context__prep_node_m
     __pyx_t_2 = __pyx_v_keys; __Pyx_INCREF(__pyx_t_2); __pyx_t_4 = 0;
     __pyx_t_6 = NULL;
   } else {
-    __pyx_t_4 = -1; __pyx_t_2 = PyObject_GetIter(__pyx_v_keys); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 485, __pyx_L1_error)
+    __pyx_t_4 = -1; __pyx_t_2 = PyObject_GetIter(__pyx_v_keys); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 489, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_6 = Py_TYPE(__pyx_t_2)->tp_iternext; if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 485, __pyx_L1_error)
+    __pyx_t_6 = Py_TYPE(__pyx_t_2)->tp_iternext; if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 489, __pyx_L1_error)
   }
   for (;;) {
     if (likely(!__pyx_t_6)) {
       if (likely(PyList_CheckExact(__pyx_t_2))) {
         if (__pyx_t_4 >= PyList_GET_SIZE(__pyx_t_2)) break;
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_3 = PyList_GET_ITEM(__pyx_t_2, __pyx_t_4); __Pyx_INCREF(__pyx_t_3); __pyx_t_4++; if (unlikely(0 < 0)) __PYX_ERR(0, 485, __pyx_L1_error)
+        __pyx_t_3 = PyList_GET_ITEM(__pyx_t_2, __pyx_t_4); __Pyx_INCREF(__pyx_t_3); __pyx_t_4++; if (unlikely(0 < 0)) __PYX_ERR(0, 489, __pyx_L1_error)
         #else
-        __pyx_t_3 = PySequence_ITEM(__pyx_t_2, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 485, __pyx_L1_error)
+        __pyx_t_3 = PySequence_ITEM(__pyx_t_2, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 489, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_3);
         #endif
       } else {
         if (__pyx_t_4 >= PyTuple_GET_SIZE(__pyx_t_2)) break;
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_3 = PyTuple_GET_ITEM(__pyx_t_2, __pyx_t_4); __Pyx_INCREF(__pyx_t_3); __pyx_t_4++; if (unlikely(0 < 0)) __PYX_ERR(0, 485, __pyx_L1_error)
+        __pyx_t_3 = PyTuple_GET_ITEM(__pyx_t_2, __pyx_t_4); __Pyx_INCREF(__pyx_t_3); __pyx_t_4++; if (unlikely(0 < 0)) __PYX_ERR(0, 489, __pyx_L1_error)
         #else
-        __pyx_t_3 = PySequence_ITEM(__pyx_t_2, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 485, __pyx_L1_error)
+        __pyx_t_3 = PySequence_ITEM(__pyx_t_2, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 489, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_3);
         #endif
       }
@@ -10384,7 +10468,7 @@ static struct mpv_node_list *__pyx_f_9vidcutter_4libs_3mpv_7Context__prep_node_m
         PyObject* exc_type = PyErr_Occurred();
         if (exc_type) {
           if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-          else __PYX_ERR(0, 485, __pyx_L1_error)
+          else __PYX_ERR(0, 489, __pyx_L1_error)
         }
         break;
       }
@@ -10394,20 +10478,20 @@ static struct mpv_node_list *__pyx_f_9vidcutter_4libs_3mpv_7Context__prep_node_m
     __pyx_t_3 = 0;
     __Pyx_INCREF(__pyx_t_1);
     __Pyx_XDECREF_SET(__pyx_v_i, __pyx_t_1);
-    __pyx_t_3 = __Pyx_PyInt_AddObjC(__pyx_t_1, __pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 485, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyInt_AddObjC(__pyx_t_1, __pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 489, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_1);
     __pyx_t_1 = __pyx_t_3;
     __pyx_t_3 = 0;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":486
+    /* "vidcutter/libs/pympv/mpv.pyx":490
  *         list.keys = <char**>malloc(list.num)
  *         for i, key in enumerate(keys):
  *             key = _strenc(key)             # <<<<<<<<<<<<<<
  *             ckey = key
  *             list.keys[i] = <char*>malloc(len(key) + 1)
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_strenc); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 486, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_strenc); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 490, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __pyx_t_8 = NULL;
     if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_7))) {
@@ -10421,44 +10505,44 @@ static struct mpv_node_list *__pyx_f_9vidcutter_4libs_3mpv_7Context__prep_node_m
     }
     __pyx_t_3 = (__pyx_t_8) ? __Pyx_PyObject_Call2Args(__pyx_t_7, __pyx_t_8, __pyx_v_key) : __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_v_key);
     __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 486, __pyx_L1_error)
+    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 490, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     __Pyx_DECREF_SET(__pyx_v_key, __pyx_t_3);
     __pyx_t_3 = 0;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":487
+    /* "vidcutter/libs/pympv/mpv.pyx":491
  *         for i, key in enumerate(keys):
  *             key = _strenc(key)
  *             ckey = key             # <<<<<<<<<<<<<<
  *             list.keys[i] = <char*>malloc(len(key) + 1)
  *             strcpy(list.keys[i], ckey)
  */
-    __pyx_t_9 = __Pyx_PyObject_AsWritableString(__pyx_v_key); if (unlikely((!__pyx_t_9) && PyErr_Occurred())) __PYX_ERR(0, 487, __pyx_L1_error)
+    __pyx_t_9 = __Pyx_PyObject_AsWritableString(__pyx_v_key); if (unlikely((!__pyx_t_9) && PyErr_Occurred())) __PYX_ERR(0, 491, __pyx_L1_error)
     __pyx_v_ckey = __pyx_t_9;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":488
+    /* "vidcutter/libs/pympv/mpv.pyx":492
  *             key = _strenc(key)
  *             ckey = key
  *             list.keys[i] = <char*>malloc(len(key) + 1)             # <<<<<<<<<<<<<<
  *             strcpy(list.keys[i], ckey)
  *         return list
  */
-    __pyx_t_10 = PyObject_Length(__pyx_v_key); if (unlikely(__pyx_t_10 == ((Py_ssize_t)-1))) __PYX_ERR(0, 488, __pyx_L1_error)
-    __pyx_t_11 = __Pyx_PyIndex_AsSsize_t(__pyx_v_i); if (unlikely((__pyx_t_11 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 488, __pyx_L1_error)
+    __pyx_t_10 = PyObject_Length(__pyx_v_key); if (unlikely(__pyx_t_10 == ((Py_ssize_t)-1))) __PYX_ERR(0, 492, __pyx_L1_error)
+    __pyx_t_11 = __Pyx_PyIndex_AsSsize_t(__pyx_v_i); if (unlikely((__pyx_t_11 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 492, __pyx_L1_error)
     (__pyx_v_list->keys[__pyx_t_11]) = ((char *)malloc((__pyx_t_10 + 1)));
 
-    /* "vidcutter/libs/pympv/mpv.pyx":489
+    /* "vidcutter/libs/pympv/mpv.pyx":493
  *             ckey = key
  *             list.keys[i] = <char*>malloc(len(key) + 1)
  *             strcpy(list.keys[i], ckey)             # <<<<<<<<<<<<<<
  *         return list
  * 
  */
-    __pyx_t_10 = __Pyx_PyIndex_AsSsize_t(__pyx_v_i); if (unlikely((__pyx_t_10 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 489, __pyx_L1_error)
+    __pyx_t_10 = __Pyx_PyIndex_AsSsize_t(__pyx_v_i); if (unlikely((__pyx_t_10 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 493, __pyx_L1_error)
     (void)(strcpy((__pyx_v_list->keys[__pyx_t_10]), __pyx_v_ckey));
 
-    /* "vidcutter/libs/pympv/mpv.pyx":485
+    /* "vidcutter/libs/pympv/mpv.pyx":489
  *             return list
  *         list.keys = <char**>malloc(list.num)
  *         for i, key in enumerate(keys):             # <<<<<<<<<<<<<<
@@ -10469,7 +10553,7 @@ static struct mpv_node_list *__pyx_f_9vidcutter_4libs_3mpv_7Context__prep_node_m
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":490
+  /* "vidcutter/libs/pympv/mpv.pyx":494
  *             list.keys[i] = <char*>malloc(len(key) + 1)
  *             strcpy(list.keys[i], ckey)
  *         return list             # <<<<<<<<<<<<<<
@@ -10479,7 +10563,7 @@ static struct mpv_node_list *__pyx_f_9vidcutter_4libs_3mpv_7Context__prep_node_m
   __pyx_r = __pyx_v_list;
   goto __pyx_L0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":477
+  /* "vidcutter/libs/pympv/mpv.pyx":481
  *         return node_list
  * 
  *     cdef mpv_node_list* _prep_node_map(self, map):             # <<<<<<<<<<<<<<
@@ -10504,7 +10588,7 @@ static struct mpv_node_list *__pyx_f_9vidcutter_4libs_3mpv_7Context__prep_node_m
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":492
+/* "vidcutter/libs/pympv/mpv.pyx":496
  *         return list
  * 
  *     cdef mpv_node _prep_native_value(self, value, format):             # <<<<<<<<<<<<<<
@@ -10532,39 +10616,39 @@ static struct mpv_node __pyx_f_9vidcutter_4libs_3mpv_7Context__prep_native_value
   __Pyx_RefNannySetupContext("_prep_native_value", 0);
   __Pyx_INCREF(__pyx_v_value);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":494
+  /* "vidcutter/libs/pympv/mpv.pyx":498
  *     cdef mpv_node _prep_native_value(self, value, format):
  *         cdef mpv_node node
  *         node.format = format             # <<<<<<<<<<<<<<
  *         if format == MPV_FORMAT_STRING:
  *             value = _strenc(value)
  */
-  __pyx_t_1 = ((enum mpv_format)__Pyx_PyInt_As_enum__mpv_format(__pyx_v_format)); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 494, __pyx_L1_error)
+  __pyx_t_1 = ((enum mpv_format)__Pyx_PyInt_As_enum__mpv_format(__pyx_v_format)); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 498, __pyx_L1_error)
   __pyx_v_node.format = __pyx_t_1;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":495
+  /* "vidcutter/libs/pympv/mpv.pyx":499
  *         cdef mpv_node node
  *         node.format = format
  *         if format == MPV_FORMAT_STRING:             # <<<<<<<<<<<<<<
  *             value = _strenc(value)
  *             node.u.string = <char*>malloc(len(value) + 1)
  */
-  __pyx_t_2 = __Pyx_PyInt_From_enum__mpv_format(MPV_FORMAT_STRING); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 495, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_enum__mpv_format(MPV_FORMAT_STRING); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 499, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = PyObject_RichCompare(__pyx_v_format, __pyx_t_2, Py_EQ); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 495, __pyx_L1_error)
+  __pyx_t_3 = PyObject_RichCompare(__pyx_v_format, __pyx_t_2, Py_EQ); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 499, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 495, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 499, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   if (__pyx_t_4) {
 
-    /* "vidcutter/libs/pympv/mpv.pyx":496
+    /* "vidcutter/libs/pympv/mpv.pyx":500
  *         node.format = format
  *         if format == MPV_FORMAT_STRING:
  *             value = _strenc(value)             # <<<<<<<<<<<<<<
  *             node.u.string = <char*>malloc(len(value) + 1)
  *             strcpy(node.u.string, value)
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_strenc); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 496, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_strenc); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 500, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __pyx_t_5 = NULL;
     if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
@@ -10578,33 +10662,33 @@ static struct mpv_node __pyx_f_9vidcutter_4libs_3mpv_7Context__prep_native_value
     }
     __pyx_t_3 = (__pyx_t_5) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_5, __pyx_v_value) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_value);
     __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 496, __pyx_L1_error)
+    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 500, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_DECREF_SET(__pyx_v_value, __pyx_t_3);
     __pyx_t_3 = 0;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":497
+    /* "vidcutter/libs/pympv/mpv.pyx":501
  *         if format == MPV_FORMAT_STRING:
  *             value = _strenc(value)
  *             node.u.string = <char*>malloc(len(value) + 1)             # <<<<<<<<<<<<<<
  *             strcpy(node.u.string, value)
  *         elif format == MPV_FORMAT_FLAG:
  */
-    __pyx_t_6 = PyObject_Length(__pyx_v_value); if (unlikely(__pyx_t_6 == ((Py_ssize_t)-1))) __PYX_ERR(0, 497, __pyx_L1_error)
+    __pyx_t_6 = PyObject_Length(__pyx_v_value); if (unlikely(__pyx_t_6 == ((Py_ssize_t)-1))) __PYX_ERR(0, 501, __pyx_L1_error)
     __pyx_v_node.u.string = ((char *)malloc((__pyx_t_6 + 1)));
 
-    /* "vidcutter/libs/pympv/mpv.pyx":498
+    /* "vidcutter/libs/pympv/mpv.pyx":502
  *             value = _strenc(value)
  *             node.u.string = <char*>malloc(len(value) + 1)
  *             strcpy(node.u.string, value)             # <<<<<<<<<<<<<<
  *         elif format == MPV_FORMAT_FLAG:
  *             node.u.flag = 1 if value else 0
  */
-    __pyx_t_7 = __Pyx_PyObject_AsString(__pyx_v_value); if (unlikely((!__pyx_t_7) && PyErr_Occurred())) __PYX_ERR(0, 498, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyObject_AsString(__pyx_v_value); if (unlikely((!__pyx_t_7) && PyErr_Occurred())) __PYX_ERR(0, 502, __pyx_L1_error)
     (void)(strcpy(__pyx_v_node.u.string, __pyx_t_7));
 
-    /* "vidcutter/libs/pympv/mpv.pyx":495
+    /* "vidcutter/libs/pympv/mpv.pyx":499
  *         cdef mpv_node node
  *         node.format = format
  *         if format == MPV_FORMAT_STRING:             # <<<<<<<<<<<<<<
@@ -10614,89 +10698,14 @@ static struct mpv_node __pyx_f_9vidcutter_4libs_3mpv_7Context__prep_native_value
     goto __pyx_L3;
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":499
- *             node.u.string = <char*>malloc(len(value) + 1)
- *             strcpy(node.u.string, value)
- *         elif format == MPV_FORMAT_FLAG:             # <<<<<<<<<<<<<<
- *             node.u.flag = 1 if value else 0
- *         elif format == MPV_FORMAT_INT64:
- */
-  __pyx_t_3 = __Pyx_PyInt_From_enum__mpv_format(MPV_FORMAT_FLAG); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 499, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_2 = PyObject_RichCompare(__pyx_v_format, __pyx_t_3, Py_EQ); __Pyx_XGOTREF(__pyx_t_2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 499, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 499, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (__pyx_t_4) {
-
-    /* "vidcutter/libs/pympv/mpv.pyx":500
- *             strcpy(node.u.string, value)
- *         elif format == MPV_FORMAT_FLAG:
- *             node.u.flag = 1 if value else 0             # <<<<<<<<<<<<<<
- *         elif format == MPV_FORMAT_INT64:
- *             node.u.int64 = value
- */
-    __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_v_value); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 500, __pyx_L1_error)
-    if (__pyx_t_4) {
-      __pyx_t_8 = 1;
-    } else {
-      __pyx_t_8 = 0;
-    }
-    __pyx_v_node.u.flag = __pyx_t_8;
-
-    /* "vidcutter/libs/pympv/mpv.pyx":499
- *             node.u.string = <char*>malloc(len(value) + 1)
- *             strcpy(node.u.string, value)
- *         elif format == MPV_FORMAT_FLAG:             # <<<<<<<<<<<<<<
- *             node.u.flag = 1 if value else 0
- *         elif format == MPV_FORMAT_INT64:
- */
-    goto __pyx_L3;
-  }
-
-  /* "vidcutter/libs/pympv/mpv.pyx":501
- *         elif format == MPV_FORMAT_FLAG:
- *             node.u.flag = 1 if value else 0
- *         elif format == MPV_FORMAT_INT64:             # <<<<<<<<<<<<<<
- *             node.u.int64 = value
- *         elif format == MPV_FORMAT_DOUBLE:
- */
-  __pyx_t_2 = __Pyx_PyInt_From_enum__mpv_format(MPV_FORMAT_INT64); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 501, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = PyObject_RichCompare(__pyx_v_format, __pyx_t_2, Py_EQ); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 501, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 501, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (__pyx_t_4) {
-
-    /* "vidcutter/libs/pympv/mpv.pyx":502
- *             node.u.flag = 1 if value else 0
- *         elif format == MPV_FORMAT_INT64:
- *             node.u.int64 = value             # <<<<<<<<<<<<<<
- *         elif format == MPV_FORMAT_DOUBLE:
- *             node.u.double_ = value
- */
-    __pyx_t_9 = __Pyx_PyInt_As_int64_t(__pyx_v_value); if (unlikely((__pyx_t_9 == ((int64_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 502, __pyx_L1_error)
-    __pyx_v_node.u.int64 = __pyx_t_9;
-
-    /* "vidcutter/libs/pympv/mpv.pyx":501
- *         elif format == MPV_FORMAT_FLAG:
- *             node.u.flag = 1 if value else 0
- *         elif format == MPV_FORMAT_INT64:             # <<<<<<<<<<<<<<
- *             node.u.int64 = value
- *         elif format == MPV_FORMAT_DOUBLE:
- */
-    goto __pyx_L3;
-  }
-
   /* "vidcutter/libs/pympv/mpv.pyx":503
+ *             node.u.string = <char*>malloc(len(value) + 1)
+ *             strcpy(node.u.string, value)
+ *         elif format == MPV_FORMAT_FLAG:             # <<<<<<<<<<<<<<
+ *             node.u.flag = 1 if value else 0
  *         elif format == MPV_FORMAT_INT64:
- *             node.u.int64 = value
- *         elif format == MPV_FORMAT_DOUBLE:             # <<<<<<<<<<<<<<
- *             node.u.double_ = value
- *         elif format == MPV_FORMAT_NODE_ARRAY:
  */
-  __pyx_t_3 = __Pyx_PyInt_From_enum__mpv_format(MPV_FORMAT_DOUBLE); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 503, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyInt_From_enum__mpv_format(MPV_FORMAT_FLAG); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 503, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_t_2 = PyObject_RichCompare(__pyx_v_format, __pyx_t_3, Py_EQ); __Pyx_XGOTREF(__pyx_t_2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 503, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -10705,16 +10714,91 @@ static struct mpv_node __pyx_f_9vidcutter_4libs_3mpv_7Context__prep_native_value
   if (__pyx_t_4) {
 
     /* "vidcutter/libs/pympv/mpv.pyx":504
+ *             strcpy(node.u.string, value)
+ *         elif format == MPV_FORMAT_FLAG:
+ *             node.u.flag = 1 if value else 0             # <<<<<<<<<<<<<<
+ *         elif format == MPV_FORMAT_INT64:
+ *             node.u.int64 = value
+ */
+    __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_v_value); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 504, __pyx_L1_error)
+    if (__pyx_t_4) {
+      __pyx_t_8 = 1;
+    } else {
+      __pyx_t_8 = 0;
+    }
+    __pyx_v_node.u.flag = __pyx_t_8;
+
+    /* "vidcutter/libs/pympv/mpv.pyx":503
+ *             node.u.string = <char*>malloc(len(value) + 1)
+ *             strcpy(node.u.string, value)
+ *         elif format == MPV_FORMAT_FLAG:             # <<<<<<<<<<<<<<
+ *             node.u.flag = 1 if value else 0
+ *         elif format == MPV_FORMAT_INT64:
+ */
+    goto __pyx_L3;
+  }
+
+  /* "vidcutter/libs/pympv/mpv.pyx":505
+ *         elif format == MPV_FORMAT_FLAG:
+ *             node.u.flag = 1 if value else 0
+ *         elif format == MPV_FORMAT_INT64:             # <<<<<<<<<<<<<<
+ *             node.u.int64 = value
+ *         elif format == MPV_FORMAT_DOUBLE:
+ */
+  __pyx_t_2 = __Pyx_PyInt_From_enum__mpv_format(MPV_FORMAT_INT64); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 505, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = PyObject_RichCompare(__pyx_v_format, __pyx_t_2, Py_EQ); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 505, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 505, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  if (__pyx_t_4) {
+
+    /* "vidcutter/libs/pympv/mpv.pyx":506
+ *             node.u.flag = 1 if value else 0
+ *         elif format == MPV_FORMAT_INT64:
+ *             node.u.int64 = value             # <<<<<<<<<<<<<<
+ *         elif format == MPV_FORMAT_DOUBLE:
+ *             node.u.double_ = value
+ */
+    __pyx_t_9 = __Pyx_PyInt_As_int64_t(__pyx_v_value); if (unlikely((__pyx_t_9 == ((int64_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 506, __pyx_L1_error)
+    __pyx_v_node.u.int64 = __pyx_t_9;
+
+    /* "vidcutter/libs/pympv/mpv.pyx":505
+ *         elif format == MPV_FORMAT_FLAG:
+ *             node.u.flag = 1 if value else 0
+ *         elif format == MPV_FORMAT_INT64:             # <<<<<<<<<<<<<<
+ *             node.u.int64 = value
+ *         elif format == MPV_FORMAT_DOUBLE:
+ */
+    goto __pyx_L3;
+  }
+
+  /* "vidcutter/libs/pympv/mpv.pyx":507
+ *         elif format == MPV_FORMAT_INT64:
+ *             node.u.int64 = value
+ *         elif format == MPV_FORMAT_DOUBLE:             # <<<<<<<<<<<<<<
+ *             node.u.double_ = value
+ *         elif format == MPV_FORMAT_NODE_ARRAY:
+ */
+  __pyx_t_3 = __Pyx_PyInt_From_enum__mpv_format(MPV_FORMAT_DOUBLE); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 507, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __pyx_t_2 = PyObject_RichCompare(__pyx_v_format, __pyx_t_3, Py_EQ); __Pyx_XGOTREF(__pyx_t_2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 507, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 507, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  if (__pyx_t_4) {
+
+    /* "vidcutter/libs/pympv/mpv.pyx":508
  *             node.u.int64 = value
  *         elif format == MPV_FORMAT_DOUBLE:
  *             node.u.double_ = value             # <<<<<<<<<<<<<<
  *         elif format == MPV_FORMAT_NODE_ARRAY:
  *             node.u.list = self._prep_node_list(value)
  */
-    __pyx_t_10 = __pyx_PyFloat_AsDouble(__pyx_v_value); if (unlikely((__pyx_t_10 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 504, __pyx_L1_error)
+    __pyx_t_10 = __pyx_PyFloat_AsDouble(__pyx_v_value); if (unlikely((__pyx_t_10 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 508, __pyx_L1_error)
     __pyx_v_node.u.double_ = __pyx_t_10;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":503
+    /* "vidcutter/libs/pympv/mpv.pyx":507
  *         elif format == MPV_FORMAT_INT64:
  *             node.u.int64 = value
  *         elif format == MPV_FORMAT_DOUBLE:             # <<<<<<<<<<<<<<
@@ -10724,22 +10808,22 @@ static struct mpv_node __pyx_f_9vidcutter_4libs_3mpv_7Context__prep_native_value
     goto __pyx_L3;
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":505
+  /* "vidcutter/libs/pympv/mpv.pyx":509
  *         elif format == MPV_FORMAT_DOUBLE:
  *             node.u.double_ = value
  *         elif format == MPV_FORMAT_NODE_ARRAY:             # <<<<<<<<<<<<<<
  *             node.u.list = self._prep_node_list(value)
  *         elif format == MPV_FORMAT_NODE_MAP:
  */
-  __pyx_t_2 = __Pyx_PyInt_From_enum__mpv_format(MPV_FORMAT_NODE_ARRAY); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 505, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_enum__mpv_format(MPV_FORMAT_NODE_ARRAY); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 509, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = PyObject_RichCompare(__pyx_v_format, __pyx_t_2, Py_EQ); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 505, __pyx_L1_error)
+  __pyx_t_3 = PyObject_RichCompare(__pyx_v_format, __pyx_t_2, Py_EQ); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 509, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 505, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 509, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   if (__pyx_t_4) {
 
-    /* "vidcutter/libs/pympv/mpv.pyx":506
+    /* "vidcutter/libs/pympv/mpv.pyx":510
  *             node.u.double_ = value
  *         elif format == MPV_FORMAT_NODE_ARRAY:
  *             node.u.list = self._prep_node_list(value)             # <<<<<<<<<<<<<<
@@ -10748,7 +10832,7 @@ static struct mpv_node __pyx_f_9vidcutter_4libs_3mpv_7Context__prep_native_value
  */
     __pyx_v_node.u.list = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv_Context *)__pyx_v_self->__pyx_vtab)->_prep_node_list(__pyx_v_self, __pyx_v_value);
 
-    /* "vidcutter/libs/pympv/mpv.pyx":505
+    /* "vidcutter/libs/pympv/mpv.pyx":509
  *         elif format == MPV_FORMAT_DOUBLE:
  *             node.u.double_ = value
  *         elif format == MPV_FORMAT_NODE_ARRAY:             # <<<<<<<<<<<<<<
@@ -10758,22 +10842,22 @@ static struct mpv_node __pyx_f_9vidcutter_4libs_3mpv_7Context__prep_native_value
     goto __pyx_L3;
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":507
+  /* "vidcutter/libs/pympv/mpv.pyx":511
  *         elif format == MPV_FORMAT_NODE_ARRAY:
  *             node.u.list = self._prep_node_list(value)
  *         elif format == MPV_FORMAT_NODE_MAP:             # <<<<<<<<<<<<<<
  *             node.u.list = self._prep_node_map(value)
  *         else:
  */
-  __pyx_t_3 = __Pyx_PyInt_From_enum__mpv_format(MPV_FORMAT_NODE_MAP); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 507, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyInt_From_enum__mpv_format(MPV_FORMAT_NODE_MAP); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 511, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_2 = PyObject_RichCompare(__pyx_v_format, __pyx_t_3, Py_EQ); __Pyx_XGOTREF(__pyx_t_2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 507, __pyx_L1_error)
+  __pyx_t_2 = PyObject_RichCompare(__pyx_v_format, __pyx_t_3, Py_EQ); __Pyx_XGOTREF(__pyx_t_2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 511, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 507, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 511, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   if (__pyx_t_4) {
 
-    /* "vidcutter/libs/pympv/mpv.pyx":508
+    /* "vidcutter/libs/pympv/mpv.pyx":512
  *             node.u.list = self._prep_node_list(value)
  *         elif format == MPV_FORMAT_NODE_MAP:
  *             node.u.list = self._prep_node_map(value)             # <<<<<<<<<<<<<<
@@ -10782,7 +10866,7 @@ static struct mpv_node __pyx_f_9vidcutter_4libs_3mpv_7Context__prep_native_value
  */
     __pyx_v_node.u.list = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv_Context *)__pyx_v_self->__pyx_vtab)->_prep_node_map(__pyx_v_self, __pyx_v_value);
 
-    /* "vidcutter/libs/pympv/mpv.pyx":507
+    /* "vidcutter/libs/pympv/mpv.pyx":511
  *         elif format == MPV_FORMAT_NODE_ARRAY:
  *             node.u.list = self._prep_node_list(value)
  *         elif format == MPV_FORMAT_NODE_MAP:             # <<<<<<<<<<<<<<
@@ -10792,7 +10876,7 @@ static struct mpv_node __pyx_f_9vidcutter_4libs_3mpv_7Context__prep_native_value
     goto __pyx_L3;
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":510
+  /* "vidcutter/libs/pympv/mpv.pyx":514
  *             node.u.list = self._prep_node_map(value)
  *         else:
  *             node.format = MPV_FORMAT_NONE             # <<<<<<<<<<<<<<
@@ -10804,7 +10888,7 @@ static struct mpv_node __pyx_f_9vidcutter_4libs_3mpv_7Context__prep_native_value
   }
   __pyx_L3:;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":511
+  /* "vidcutter/libs/pympv/mpv.pyx":515
  *         else:
  *             node.format = MPV_FORMAT_NONE
  *         return node             # <<<<<<<<<<<<<<
@@ -10814,7 +10898,7 @@ static struct mpv_node __pyx_f_9vidcutter_4libs_3mpv_7Context__prep_native_value
   __pyx_r = __pyx_v_node;
   goto __pyx_L0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":492
+  /* "vidcutter/libs/pympv/mpv.pyx":496
  *         return list
  * 
  *     cdef mpv_node _prep_native_value(self, value, format):             # <<<<<<<<<<<<<<
@@ -10835,7 +10919,7 @@ static struct mpv_node __pyx_f_9vidcutter_4libs_3mpv_7Context__prep_native_value
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":513
+/* "vidcutter/libs/pympv/mpv.pyx":517
  *         return node
  * 
  *     cdef _free_native_value(self, mpv_node node):             # <<<<<<<<<<<<<<
@@ -10857,7 +10941,7 @@ static PyObject *__pyx_f_9vidcutter_4libs_3mpv_7Context__free_native_value(struc
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_free_native_value", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":514
+  /* "vidcutter/libs/pympv/mpv.pyx":518
  * 
  *     cdef _free_native_value(self, mpv_node node):
  *         if node.format in (MPV_FORMAT_NODE_ARRAY, MPV_FORMAT_NODE_MAP):             # <<<<<<<<<<<<<<
@@ -10868,7 +10952,7 @@ static PyObject *__pyx_f_9vidcutter_4libs_3mpv_7Context__free_native_value(struc
     case MPV_FORMAT_NODE_ARRAY:
     case MPV_FORMAT_NODE_MAP:
 
-    /* "vidcutter/libs/pympv/mpv.pyx":515
+    /* "vidcutter/libs/pympv/mpv.pyx":519
  *     cdef _free_native_value(self, mpv_node node):
  *         if node.format in (MPV_FORMAT_NODE_ARRAY, MPV_FORMAT_NODE_MAP):
  *             for i in range(node.u.list.num):             # <<<<<<<<<<<<<<
@@ -10880,19 +10964,19 @@ static PyObject *__pyx_f_9vidcutter_4libs_3mpv_7Context__free_native_value(struc
     for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
       __pyx_v_i = __pyx_t_3;
 
-      /* "vidcutter/libs/pympv/mpv.pyx":516
+      /* "vidcutter/libs/pympv/mpv.pyx":520
  *         if node.format in (MPV_FORMAT_NODE_ARRAY, MPV_FORMAT_NODE_MAP):
  *             for i in range(node.u.list.num):
  *                 self._free_native_value(node.u.list.values[i])             # <<<<<<<<<<<<<<
  *             free(node.u.list.values)
  *             if node.format == MPV_FORMAT_NODE_MAP:
  */
-      __pyx_t_4 = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv_Context *)__pyx_v_self->__pyx_vtab)->_free_native_value(__pyx_v_self, (__pyx_v_node.u.list->values[__pyx_v_i])); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 516, __pyx_L1_error)
+      __pyx_t_4 = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv_Context *)__pyx_v_self->__pyx_vtab)->_free_native_value(__pyx_v_self, (__pyx_v_node.u.list->values[__pyx_v_i])); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 520, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     }
 
-    /* "vidcutter/libs/pympv/mpv.pyx":517
+    /* "vidcutter/libs/pympv/mpv.pyx":521
  *             for i in range(node.u.list.num):
  *                 self._free_native_value(node.u.list.values[i])
  *             free(node.u.list.values)             # <<<<<<<<<<<<<<
@@ -10901,7 +10985,7 @@ static PyObject *__pyx_f_9vidcutter_4libs_3mpv_7Context__free_native_value(struc
  */
     free(__pyx_v_node.u.list->values);
 
-    /* "vidcutter/libs/pympv/mpv.pyx":518
+    /* "vidcutter/libs/pympv/mpv.pyx":522
  *                 self._free_native_value(node.u.list.values[i])
  *             free(node.u.list.values)
  *             if node.format == MPV_FORMAT_NODE_MAP:             # <<<<<<<<<<<<<<
@@ -10911,7 +10995,7 @@ static PyObject *__pyx_f_9vidcutter_4libs_3mpv_7Context__free_native_value(struc
     __pyx_t_5 = ((__pyx_v_node.format == MPV_FORMAT_NODE_MAP) != 0);
     if (__pyx_t_5) {
 
-      /* "vidcutter/libs/pympv/mpv.pyx":519
+      /* "vidcutter/libs/pympv/mpv.pyx":523
  *             free(node.u.list.values)
  *             if node.format == MPV_FORMAT_NODE_MAP:
  *                 for i in range(node.u.list.num):             # <<<<<<<<<<<<<<
@@ -10923,7 +11007,7 @@ static PyObject *__pyx_f_9vidcutter_4libs_3mpv_7Context__free_native_value(struc
       for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
         __pyx_v_i = __pyx_t_3;
 
-        /* "vidcutter/libs/pympv/mpv.pyx":520
+        /* "vidcutter/libs/pympv/mpv.pyx":524
  *             if node.format == MPV_FORMAT_NODE_MAP:
  *                 for i in range(node.u.list.num):
  *                     free(node.u.list.keys[i])             # <<<<<<<<<<<<<<
@@ -10933,7 +11017,7 @@ static PyObject *__pyx_f_9vidcutter_4libs_3mpv_7Context__free_native_value(struc
         free((__pyx_v_node.u.list->keys[__pyx_v_i]));
       }
 
-      /* "vidcutter/libs/pympv/mpv.pyx":521
+      /* "vidcutter/libs/pympv/mpv.pyx":525
  *                 for i in range(node.u.list.num):
  *                     free(node.u.list.keys[i])
  *                 free(node.u.list.keys)             # <<<<<<<<<<<<<<
@@ -10942,7 +11026,7 @@ static PyObject *__pyx_f_9vidcutter_4libs_3mpv_7Context__free_native_value(struc
  */
       free(__pyx_v_node.u.list->keys);
 
-      /* "vidcutter/libs/pympv/mpv.pyx":518
+      /* "vidcutter/libs/pympv/mpv.pyx":522
  *                 self._free_native_value(node.u.list.values[i])
  *             free(node.u.list.values)
  *             if node.format == MPV_FORMAT_NODE_MAP:             # <<<<<<<<<<<<<<
@@ -10951,7 +11035,7 @@ static PyObject *__pyx_f_9vidcutter_4libs_3mpv_7Context__free_native_value(struc
  */
     }
 
-    /* "vidcutter/libs/pympv/mpv.pyx":522
+    /* "vidcutter/libs/pympv/mpv.pyx":526
  *                     free(node.u.list.keys[i])
  *                 free(node.u.list.keys)
  *             free(node.u.list)             # <<<<<<<<<<<<<<
@@ -10960,7 +11044,7 @@ static PyObject *__pyx_f_9vidcutter_4libs_3mpv_7Context__free_native_value(struc
  */
     free(__pyx_v_node.u.list);
 
-    /* "vidcutter/libs/pympv/mpv.pyx":514
+    /* "vidcutter/libs/pympv/mpv.pyx":518
  * 
  *     cdef _free_native_value(self, mpv_node node):
  *         if node.format in (MPV_FORMAT_NODE_ARRAY, MPV_FORMAT_NODE_MAP):             # <<<<<<<<<<<<<<
@@ -10970,7 +11054,7 @@ static PyObject *__pyx_f_9vidcutter_4libs_3mpv_7Context__free_native_value(struc
     break;
     case MPV_FORMAT_STRING:
 
-    /* "vidcutter/libs/pympv/mpv.pyx":524
+    /* "vidcutter/libs/pympv/mpv.pyx":528
  *             free(node.u.list)
  *         elif node.format == MPV_FORMAT_STRING:
  *             free(node.u.string)             # <<<<<<<<<<<<<<
@@ -10979,7 +11063,7 @@ static PyObject *__pyx_f_9vidcutter_4libs_3mpv_7Context__free_native_value(struc
  */
     free(__pyx_v_node.u.string);
 
-    /* "vidcutter/libs/pympv/mpv.pyx":523
+    /* "vidcutter/libs/pympv/mpv.pyx":527
  *                 free(node.u.list.keys)
  *             free(node.u.list)
  *         elif node.format == MPV_FORMAT_STRING:             # <<<<<<<<<<<<<<
@@ -10990,7 +11074,7 @@ static PyObject *__pyx_f_9vidcutter_4libs_3mpv_7Context__free_native_value(struc
     default: break;
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":513
+  /* "vidcutter/libs/pympv/mpv.pyx":517
  *         return node
  * 
  *     cdef _free_native_value(self, mpv_node node):             # <<<<<<<<<<<<<<
@@ -11011,7 +11095,7 @@ static PyObject *__pyx_f_9vidcutter_4libs_3mpv_7Context__free_native_value(struc
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":526
+/* "vidcutter/libs/pympv/mpv.pyx":530
  *             free(node.u.string)
  * 
  *     def command(self, *cmdlist, asynchronous=False, data=None):             # <<<<<<<<<<<<<<
@@ -11063,7 +11147,7 @@ static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_7Context_13command(PyObject *__p
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, 0, "command") < 0)) __PYX_ERR(0, 526, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, 0, "command") < 0)) __PYX_ERR(0, 530, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) < 0) {
       goto __pyx_L5_argtuple_error;
@@ -11074,7 +11158,7 @@ static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_7Context_13command(PyObject *__p
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("command", 0, 0, 0, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 526, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("command", 0, 0, 0, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 530, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_DECREF(__pyx_v_cmdlist); __pyx_v_cmdlist = 0;
   __Pyx_AddTraceback("vidcutter.libs.mpv.Context.command", __pyx_clineno, __pyx_lineno, __pyx_filename);
@@ -11121,7 +11205,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_12command(struct __pyx_
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("command", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":540
+  /* "vidcutter/libs/pympv/mpv.pyx":544
  *         Wraps: mpv_command_node and mpv_command_node_async
  *         """
  *         assert self._ctx             # <<<<<<<<<<<<<<
@@ -11132,19 +11216,19 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_12command(struct __pyx_
   if (unlikely(!Py_OptimizeFlag)) {
     if (unlikely(!(__pyx_v_self->_ctx != 0))) {
       PyErr_SetNone(PyExc_AssertionError);
-      __PYX_ERR(0, 540, __pyx_L1_error)
+      __PYX_ERR(0, 544, __pyx_L1_error)
     }
   }
   #endif
 
-  /* "vidcutter/libs/pympv/mpv.pyx":541
+  /* "vidcutter/libs/pympv/mpv.pyx":545
  *         """
  *         assert self._ctx
  *         cdef mpv_node node = self._prep_native_value(cmdlist, self._format_for(cmdlist))             # <<<<<<<<<<<<<<
  *         cdef mpv_node noderesult
  *         cdef int err
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_format_for); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 541, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_format_for); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 545, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
@@ -11158,13 +11242,13 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_12command(struct __pyx_
   }
   __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_3, __pyx_v_cmdlist) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_cmdlist);
   __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 541, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 545, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_v_node = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv_Context *)__pyx_v_self->__pyx_vtab)->_prep_native_value(__pyx_v_self, __pyx_v_cmdlist, __pyx_t_1);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":545
+  /* "vidcutter/libs/pympv/mpv.pyx":549
  *         cdef int err
  *         cdef uint64_t data_id
  *         result = None             # <<<<<<<<<<<<<<
@@ -11174,7 +11258,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_12command(struct __pyx_
   __Pyx_INCREF(Py_None);
   __pyx_v_result = Py_None;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":546
+  /* "vidcutter/libs/pympv/mpv.pyx":550
  *         cdef uint64_t data_id
  *         result = None
  *         try:             # <<<<<<<<<<<<<<
@@ -11183,31 +11267,31 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_12command(struct __pyx_
  */
   /*try:*/ {
 
-    /* "vidcutter/libs/pympv/mpv.pyx":547
+    /* "vidcutter/libs/pympv/mpv.pyx":551
  *         result = None
  *         try:
  *             data_id = id(data)             # <<<<<<<<<<<<<<
  *             if not asynchronous:
  *                 with nogil:
  */
-    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_builtin_id, __pyx_v_data); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 547, __pyx_L4_error)
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_builtin_id, __pyx_v_data); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 551, __pyx_L4_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_4 = __Pyx_PyInt_As_uint64_t(__pyx_t_1); if (unlikely((__pyx_t_4 == ((uint64_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 547, __pyx_L4_error)
+    __pyx_t_4 = __Pyx_PyInt_As_uint64_t(__pyx_t_1); if (unlikely((__pyx_t_4 == ((uint64_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 551, __pyx_L4_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __pyx_v_data_id = __pyx_t_4;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":548
+    /* "vidcutter/libs/pympv/mpv.pyx":552
  *         try:
  *             data_id = id(data)
  *             if not asynchronous:             # <<<<<<<<<<<<<<
  *                 with nogil:
  *                     err = mpv_command_node(self._ctx, &node, &noderesult)
  */
-    __pyx_t_5 = __Pyx_PyObject_IsTrue(__pyx_v_asynchronous); if (unlikely(__pyx_t_5 < 0)) __PYX_ERR(0, 548, __pyx_L4_error)
+    __pyx_t_5 = __Pyx_PyObject_IsTrue(__pyx_v_asynchronous); if (unlikely(__pyx_t_5 < 0)) __PYX_ERR(0, 552, __pyx_L4_error)
     __pyx_t_6 = ((!__pyx_t_5) != 0);
     if (__pyx_t_6) {
 
-      /* "vidcutter/libs/pympv/mpv.pyx":549
+      /* "vidcutter/libs/pympv/mpv.pyx":553
  *             data_id = id(data)
  *             if not asynchronous:
  *                 with nogil:             # <<<<<<<<<<<<<<
@@ -11222,7 +11306,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_12command(struct __pyx_
           #endif
           /*try:*/ {
 
-            /* "vidcutter/libs/pympv/mpv.pyx":550
+            /* "vidcutter/libs/pympv/mpv.pyx":554
  *             if not asynchronous:
  *                 with nogil:
  *                     err = mpv_command_node(self._ctx, &node, &noderesult)             # <<<<<<<<<<<<<<
@@ -11232,7 +11316,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_12command(struct __pyx_
             __pyx_v_err = mpv_command_node(__pyx_v_self->_ctx, (&__pyx_v_node), (&__pyx_v_noderesult));
           }
 
-          /* "vidcutter/libs/pympv/mpv.pyx":549
+          /* "vidcutter/libs/pympv/mpv.pyx":553
  *             data_id = id(data)
  *             if not asynchronous:
  *                 with nogil:             # <<<<<<<<<<<<<<
@@ -11251,7 +11335,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_12command(struct __pyx_
           }
       }
 
-      /* "vidcutter/libs/pympv/mpv.pyx":551
+      /* "vidcutter/libs/pympv/mpv.pyx":555
  *                 with nogil:
  *                     err = mpv_command_node(self._ctx, &node, &noderesult)
  *                 try:             # <<<<<<<<<<<<<<
@@ -11260,7 +11344,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_12command(struct __pyx_
  */
       /*try:*/ {
 
-        /* "vidcutter/libs/pympv/mpv.pyx":552
+        /* "vidcutter/libs/pympv/mpv.pyx":556
  *                     err = mpv_command_node(self._ctx, &node, &noderesult)
  *                 try:
  *                     result = _convert_node_value(noderesult) if err >= 0 else None             # <<<<<<<<<<<<<<
@@ -11268,7 +11352,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_12command(struct __pyx_
  *                     with nogil:
  */
         if (((__pyx_v_err >= 0) != 0)) {
-          __pyx_t_2 = __pyx_f_9vidcutter_4libs_3mpv__convert_node_value(__pyx_v_noderesult); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 552, __pyx_L11_error)
+          __pyx_t_2 = __pyx_f_9vidcutter_4libs_3mpv__convert_node_value(__pyx_v_noderesult); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 556, __pyx_L11_error)
           __Pyx_GOTREF(__pyx_t_2);
           __pyx_t_1 = __pyx_t_2;
           __pyx_t_2 = 0;
@@ -11280,7 +11364,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_12command(struct __pyx_
         __pyx_t_1 = 0;
       }
 
-      /* "vidcutter/libs/pympv/mpv.pyx":554
+      /* "vidcutter/libs/pympv/mpv.pyx":558
  *                     result = _convert_node_value(noderesult) if err >= 0 else None
  *                 finally:
  *                     with nogil:             # <<<<<<<<<<<<<<
@@ -11297,7 +11381,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_12command(struct __pyx_
               #endif
               /*try:*/ {
 
-                /* "vidcutter/libs/pympv/mpv.pyx":555
+                /* "vidcutter/libs/pympv/mpv.pyx":559
  *                 finally:
  *                     with nogil:
  *                         mpv_free_node_contents(&noderesult)             # <<<<<<<<<<<<<<
@@ -11307,7 +11391,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_12command(struct __pyx_
                 mpv_free_node_contents((&__pyx_v_noderesult));
               }
 
-              /* "vidcutter/libs/pympv/mpv.pyx":554
+              /* "vidcutter/libs/pympv/mpv.pyx":558
  *                     result = _convert_node_value(noderesult) if err >= 0 else None
  *                 finally:
  *                     with nogil:             # <<<<<<<<<<<<<<
@@ -11353,7 +11437,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_12command(struct __pyx_
                 #endif
                 /*try:*/ {
 
-                  /* "vidcutter/libs/pympv/mpv.pyx":555
+                  /* "vidcutter/libs/pympv/mpv.pyx":559
  *                 finally:
  *                     with nogil:
  *                         mpv_free_node_contents(&noderesult)             # <<<<<<<<<<<<<<
@@ -11363,7 +11447,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_12command(struct __pyx_
                   mpv_free_node_contents((&__pyx_v_noderesult));
                 }
 
-                /* "vidcutter/libs/pympv/mpv.pyx":554
+                /* "vidcutter/libs/pympv/mpv.pyx":558
  *                     result = _convert_node_value(noderesult) if err >= 0 else None
  *                 finally:
  *                     with nogil:             # <<<<<<<<<<<<<<
@@ -11399,7 +11483,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_12command(struct __pyx_
         __pyx_L12:;
       }
 
-      /* "vidcutter/libs/pympv/mpv.pyx":548
+      /* "vidcutter/libs/pympv/mpv.pyx":552
  *         try:
  *             data_id = id(data)
  *             if not asynchronous:             # <<<<<<<<<<<<<<
@@ -11409,7 +11493,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_12command(struct __pyx_
       goto __pyx_L6;
     }
 
-    /* "vidcutter/libs/pympv/mpv.pyx":557
+    /* "vidcutter/libs/pympv/mpv.pyx":561
  *                         mpv_free_node_contents(&noderesult)
  *             else:
  *                 userdatas = self.reply_userdata.get(data_id, None)             # <<<<<<<<<<<<<<
@@ -11417,9 +11501,9 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_12command(struct __pyx_
  *                     _reply_userdatas[data_id] = userdatas = _ReplyUserData(data)
  */
     /*else*/ {
-      __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->reply_userdata, __pyx_n_s_get); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 557, __pyx_L4_error)
+      __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->reply_userdata, __pyx_n_s_get); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 561, __pyx_L4_error)
       __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_3 = __Pyx_PyInt_From_uint64_t(__pyx_v_data_id); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 557, __pyx_L4_error)
+      __pyx_t_3 = __Pyx_PyInt_From_uint64_t(__pyx_v_data_id); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 561, __pyx_L4_error)
       __Pyx_GOTREF(__pyx_t_3);
       __pyx_t_16 = NULL;
       __pyx_t_8 = 0;
@@ -11436,7 +11520,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_12command(struct __pyx_
       #if CYTHON_FAST_PYCALL
       if (PyFunction_Check(__pyx_t_2)) {
         PyObject *__pyx_temp[3] = {__pyx_t_16, __pyx_t_3, Py_None};
-        __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_8, 2+__pyx_t_8); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 557, __pyx_L4_error)
+        __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_8, 2+__pyx_t_8); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 561, __pyx_L4_error)
         __Pyx_XDECREF(__pyx_t_16); __pyx_t_16 = 0;
         __Pyx_GOTREF(__pyx_t_1);
         __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -11445,14 +11529,14 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_12command(struct __pyx_
       #if CYTHON_FAST_PYCCALL
       if (__Pyx_PyFastCFunction_Check(__pyx_t_2)) {
         PyObject *__pyx_temp[3] = {__pyx_t_16, __pyx_t_3, Py_None};
-        __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_8, 2+__pyx_t_8); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 557, __pyx_L4_error)
+        __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_8, 2+__pyx_t_8); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 561, __pyx_L4_error)
         __Pyx_XDECREF(__pyx_t_16); __pyx_t_16 = 0;
         __Pyx_GOTREF(__pyx_t_1);
         __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
       } else
       #endif
       {
-        __pyx_t_17 = PyTuple_New(2+__pyx_t_8); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 557, __pyx_L4_error)
+        __pyx_t_17 = PyTuple_New(2+__pyx_t_8); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 561, __pyx_L4_error)
         __Pyx_GOTREF(__pyx_t_17);
         if (__pyx_t_16) {
           __Pyx_GIVEREF(__pyx_t_16); PyTuple_SET_ITEM(__pyx_t_17, 0, __pyx_t_16); __pyx_t_16 = NULL;
@@ -11463,7 +11547,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_12command(struct __pyx_
         __Pyx_GIVEREF(Py_None);
         PyTuple_SET_ITEM(__pyx_t_17, 1+__pyx_t_8, Py_None);
         __pyx_t_3 = 0;
-        __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_17, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 557, __pyx_L4_error)
+        __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_17, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 561, __pyx_L4_error)
         __Pyx_GOTREF(__pyx_t_1);
         __Pyx_DECREF(__pyx_t_17); __pyx_t_17 = 0;
       }
@@ -11471,7 +11555,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_12command(struct __pyx_
       __pyx_v_userdatas = __pyx_t_1;
       __pyx_t_1 = 0;
 
-      /* "vidcutter/libs/pympv/mpv.pyx":558
+      /* "vidcutter/libs/pympv/mpv.pyx":562
  *             else:
  *                 userdatas = self.reply_userdata.get(data_id, None)
  *                 if userdatas is None:             # <<<<<<<<<<<<<<
@@ -11482,14 +11566,14 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_12command(struct __pyx_
       __pyx_t_5 = (__pyx_t_6 != 0);
       if (__pyx_t_5) {
 
-        /* "vidcutter/libs/pympv/mpv.pyx":559
+        /* "vidcutter/libs/pympv/mpv.pyx":563
  *                 userdatas = self.reply_userdata.get(data_id, None)
  *                 if userdatas is None:
  *                     _reply_userdatas[data_id] = userdatas = _ReplyUserData(data)             # <<<<<<<<<<<<<<
  *                 userdatas.add()
  *                 with nogil:
  */
-        __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_ReplyUserData); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 559, __pyx_L4_error)
+        __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_ReplyUserData); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 563, __pyx_L4_error)
         __Pyx_GOTREF(__pyx_t_2);
         __pyx_t_17 = NULL;
         if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
@@ -11503,15 +11587,15 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_12command(struct __pyx_
         }
         __pyx_t_1 = (__pyx_t_17) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_17, __pyx_v_data) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_data);
         __Pyx_XDECREF(__pyx_t_17); __pyx_t_17 = 0;
-        if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 559, __pyx_L4_error)
+        if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 563, __pyx_L4_error)
         __Pyx_GOTREF(__pyx_t_1);
         __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-        if (unlikely(__Pyx_SetItemInt(__pyx_v_9vidcutter_4libs_3mpv__reply_userdatas, __pyx_v_data_id, __pyx_t_1, uint64_t, 0, __Pyx_PyInt_From_uint64_t, 0, 0, 1) < 0)) __PYX_ERR(0, 559, __pyx_L4_error)
+        if (unlikely(__Pyx_SetItemInt(__pyx_v_9vidcutter_4libs_3mpv__reply_userdatas, __pyx_v_data_id, __pyx_t_1, uint64_t, 0, __Pyx_PyInt_From_uint64_t, 0, 0, 1) < 0)) __PYX_ERR(0, 563, __pyx_L4_error)
         __Pyx_INCREF(__pyx_t_1);
         __Pyx_DECREF_SET(__pyx_v_userdatas, __pyx_t_1);
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-        /* "vidcutter/libs/pympv/mpv.pyx":558
+        /* "vidcutter/libs/pympv/mpv.pyx":562
  *             else:
  *                 userdatas = self.reply_userdata.get(data_id, None)
  *                 if userdatas is None:             # <<<<<<<<<<<<<<
@@ -11520,14 +11604,14 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_12command(struct __pyx_
  */
       }
 
-      /* "vidcutter/libs/pympv/mpv.pyx":560
+      /* "vidcutter/libs/pympv/mpv.pyx":564
  *                 if userdatas is None:
  *                     _reply_userdatas[data_id] = userdatas = _ReplyUserData(data)
  *                 userdatas.add()             # <<<<<<<<<<<<<<
  *                 with nogil:
  *                     err = mpv_command_node_async(self._ctx, data_id, &node)
  */
-      __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_userdatas, __pyx_n_s_add); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 560, __pyx_L4_error)
+      __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_userdatas, __pyx_n_s_add); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 564, __pyx_L4_error)
       __Pyx_GOTREF(__pyx_t_2);
       __pyx_t_17 = NULL;
       if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
@@ -11541,12 +11625,12 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_12command(struct __pyx_
       }
       __pyx_t_1 = (__pyx_t_17) ? __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_17) : __Pyx_PyObject_CallNoArg(__pyx_t_2);
       __Pyx_XDECREF(__pyx_t_17); __pyx_t_17 = 0;
-      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 560, __pyx_L4_error)
+      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 564, __pyx_L4_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-      /* "vidcutter/libs/pympv/mpv.pyx":561
+      /* "vidcutter/libs/pympv/mpv.pyx":565
  *                     _reply_userdatas[data_id] = userdatas = _ReplyUserData(data)
  *                 userdatas.add()
  *                 with nogil:             # <<<<<<<<<<<<<<
@@ -11561,7 +11645,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_12command(struct __pyx_
           #endif
           /*try:*/ {
 
-            /* "vidcutter/libs/pympv/mpv.pyx":562
+            /* "vidcutter/libs/pympv/mpv.pyx":566
  *                 userdatas.add()
  *                 with nogil:
  *                     err = mpv_command_node_async(self._ctx, data_id, &node)             # <<<<<<<<<<<<<<
@@ -11571,7 +11655,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_12command(struct __pyx_
             __pyx_v_err = mpv_command_node_async(__pyx_v_self->_ctx, __pyx_v_data_id, (&__pyx_v_node));
           }
 
-          /* "vidcutter/libs/pympv/mpv.pyx":561
+          /* "vidcutter/libs/pympv/mpv.pyx":565
  *                     _reply_userdatas[data_id] = userdatas = _ReplyUserData(data)
  *                 userdatas.add()
  *                 with nogil:             # <<<<<<<<<<<<<<
@@ -11593,7 +11677,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_12command(struct __pyx_
     __pyx_L6:;
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":564
+  /* "vidcutter/libs/pympv/mpv.pyx":568
  *                     err = mpv_command_node_async(self._ctx, data_id, &node)
  *         finally:
  *             self._free_native_value(node)             # <<<<<<<<<<<<<<
@@ -11602,7 +11686,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_12command(struct __pyx_
  */
   /*finally:*/ {
     /*normal exit:*/{
-      __pyx_t_1 = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv_Context *)__pyx_v_self->__pyx_vtab)->_free_native_value(__pyx_v_self, __pyx_v_node); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 564, __pyx_L1_error)
+      __pyx_t_1 = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv_Context *)__pyx_v_self->__pyx_vtab)->_free_native_value(__pyx_v_self, __pyx_v_node); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 568, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       goto __pyx_L5;
@@ -11627,7 +11711,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_12command(struct __pyx_
       __Pyx_XGOTREF(__pyx_t_10);
       __pyx_t_8 = __pyx_lineno; __pyx_t_7 = __pyx_clineno; __pyx_t_18 = __pyx_filename;
       {
-        __pyx_t_1 = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv_Context *)__pyx_v_self->__pyx_vtab)->_free_native_value(__pyx_v_self, __pyx_v_node); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 564, __pyx_L26_error)
+        __pyx_t_1 = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv_Context *)__pyx_v_self->__pyx_vtab)->_free_native_value(__pyx_v_self, __pyx_v_node); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 568, __pyx_L26_error)
         __Pyx_GOTREF(__pyx_t_1);
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       }
@@ -11660,7 +11744,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_12command(struct __pyx_
     __pyx_L5:;
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":565
+  /* "vidcutter/libs/pympv/mpv.pyx":569
  *         finally:
  *             self._free_native_value(node)
  *         if err < 0:             # <<<<<<<<<<<<<<
@@ -11670,16 +11754,16 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_12command(struct __pyx_
   __pyx_t_5 = ((__pyx_v_err < 0) != 0);
   if (unlikely(__pyx_t_5)) {
 
-    /* "vidcutter/libs/pympv/mpv.pyx":566
+    /* "vidcutter/libs/pympv/mpv.pyx":570
  *             self._free_native_value(node)
  *         if err < 0:
  *             raise MPVError(err)             # <<<<<<<<<<<<<<
  *         return result
  * 
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_MPVError); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 566, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_MPVError); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 570, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_17 = __Pyx_PyInt_From_int(__pyx_v_err); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 566, __pyx_L1_error)
+    __pyx_t_17 = __Pyx_PyInt_From_int(__pyx_v_err); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 570, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_17);
     __pyx_t_3 = NULL;
     if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
@@ -11694,14 +11778,14 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_12command(struct __pyx_
     __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_3, __pyx_t_17) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_17);
     __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_DECREF(__pyx_t_17); __pyx_t_17 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 566, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 570, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_Raise(__pyx_t_1, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __PYX_ERR(0, 566, __pyx_L1_error)
+    __PYX_ERR(0, 570, __pyx_L1_error)
 
-    /* "vidcutter/libs/pympv/mpv.pyx":565
+    /* "vidcutter/libs/pympv/mpv.pyx":569
  *         finally:
  *             self._free_native_value(node)
  *         if err < 0:             # <<<<<<<<<<<<<<
@@ -11710,7 +11794,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_12command(struct __pyx_
  */
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":567
+  /* "vidcutter/libs/pympv/mpv.pyx":571
  *         if err < 0:
  *             raise MPVError(err)
  *         return result             # <<<<<<<<<<<<<<
@@ -11722,7 +11806,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_12command(struct __pyx_
   __pyx_r = __pyx_v_result;
   goto __pyx_L0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":526
+  /* "vidcutter/libs/pympv/mpv.pyx":530
  *             free(node.u.string)
  * 
  *     def command(self, *cmdlist, asynchronous=False, data=None):             # <<<<<<<<<<<<<<
@@ -11747,7 +11831,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_12command(struct __pyx_
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":570
+/* "vidcutter/libs/pympv/mpv.pyx":574
  * 
  *     @_errors
  *     def get_property_async(self, prop, data=None):             # <<<<<<<<<<<<<<
@@ -11795,7 +11879,7 @@ static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_7Context_15get_property_async(Py
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "get_property_async") < 0)) __PYX_ERR(0, 570, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "get_property_async") < 0)) __PYX_ERR(0, 574, __pyx_L3_error)
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -11811,7 +11895,7 @@ static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_7Context_15get_property_async(Py
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("get_property_async", 0, 1, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 570, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("get_property_async", 0, 1, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 574, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("vidcutter.libs.mpv.Context.get_property_async", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -11847,7 +11931,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_14get_property_async(st
   __Pyx_RefNannySetupContext("get_property_async", 0);
   __Pyx_INCREF(__pyx_v_prop);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":579
+  /* "vidcutter/libs/pympv/mpv.pyx":583
  *         data: Value to be passed into the reply_userdata of the response event.
  *         Wraps: mpv_get_property_async"""
  *         assert self._ctx             # <<<<<<<<<<<<<<
@@ -11858,19 +11942,19 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_14get_property_async(st
   if (unlikely(!Py_OptimizeFlag)) {
     if (unlikely(!(__pyx_v_self->_ctx != 0))) {
       PyErr_SetNone(PyExc_AssertionError);
-      __PYX_ERR(0, 579, __pyx_L1_error)
+      __PYX_ERR(0, 583, __pyx_L1_error)
     }
   }
   #endif
 
-  /* "vidcutter/libs/pympv/mpv.pyx":580
+  /* "vidcutter/libs/pympv/mpv.pyx":584
  *         Wraps: mpv_get_property_async"""
  *         assert self._ctx
  *         prop = _strenc(prop)             # <<<<<<<<<<<<<<
  *         cdef uint64_t id_data = <uint64_t>hash(data)
  *         userdatas = self.reply_userdata.get(id_data, None)
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_strenc); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 580, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_strenc); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 584, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
@@ -11884,32 +11968,32 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_14get_property_async(st
   }
   __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_3, __pyx_v_prop) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_prop);
   __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 580, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 584, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF_SET(__pyx_v_prop, __pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":581
+  /* "vidcutter/libs/pympv/mpv.pyx":585
  *         assert self._ctx
  *         prop = _strenc(prop)
  *         cdef uint64_t id_data = <uint64_t>hash(data)             # <<<<<<<<<<<<<<
  *         userdatas = self.reply_userdata.get(id_data, None)
  *         if userdatas is None:
  */
-  __pyx_t_4 = PyObject_Hash(__pyx_v_data); if (unlikely(__pyx_t_4 == ((Py_hash_t)-1))) __PYX_ERR(0, 581, __pyx_L1_error)
+  __pyx_t_4 = PyObject_Hash(__pyx_v_data); if (unlikely(__pyx_t_4 == ((Py_hash_t)-1))) __PYX_ERR(0, 585, __pyx_L1_error)
   __pyx_v_id_data = ((uint64_t)__pyx_t_4);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":582
+  /* "vidcutter/libs/pympv/mpv.pyx":586
  *         prop = _strenc(prop)
  *         cdef uint64_t id_data = <uint64_t>hash(data)
  *         userdatas = self.reply_userdata.get(id_data, None)             # <<<<<<<<<<<<<<
  *         if userdatas is None:
  *             self.reply_userdata[id_data] = userdatas = _ReplyUserData(data)
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->reply_userdata, __pyx_n_s_get); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 582, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->reply_userdata, __pyx_n_s_get); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 586, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyInt_From_uint64_t(__pyx_v_id_data); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 582, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyInt_From_uint64_t(__pyx_v_id_data); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 586, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_t_5 = NULL;
   __pyx_t_6 = 0;
@@ -11926,7 +12010,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_14get_property_async(st
   #if CYTHON_FAST_PYCALL
   if (PyFunction_Check(__pyx_t_2)) {
     PyObject *__pyx_temp[3] = {__pyx_t_5, __pyx_t_3, Py_None};
-    __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_6, 2+__pyx_t_6); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 582, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_6, 2+__pyx_t_6); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 586, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -11935,14 +12019,14 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_14get_property_async(st
   #if CYTHON_FAST_PYCCALL
   if (__Pyx_PyFastCFunction_Check(__pyx_t_2)) {
     PyObject *__pyx_temp[3] = {__pyx_t_5, __pyx_t_3, Py_None};
-    __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_6, 2+__pyx_t_6); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 582, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_6, 2+__pyx_t_6); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 586, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   } else
   #endif
   {
-    __pyx_t_7 = PyTuple_New(2+__pyx_t_6); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 582, __pyx_L1_error)
+    __pyx_t_7 = PyTuple_New(2+__pyx_t_6); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 586, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     if (__pyx_t_5) {
       __Pyx_GIVEREF(__pyx_t_5); PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_5); __pyx_t_5 = NULL;
@@ -11953,7 +12037,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_14get_property_async(st
     __Pyx_GIVEREF(Py_None);
     PyTuple_SET_ITEM(__pyx_t_7, 1+__pyx_t_6, Py_None);
     __pyx_t_3 = 0;
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_7, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 582, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_7, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 586, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   }
@@ -11961,7 +12045,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_14get_property_async(st
   __pyx_v_userdatas = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":583
+  /* "vidcutter/libs/pympv/mpv.pyx":587
  *         cdef uint64_t id_data = <uint64_t>hash(data)
  *         userdatas = self.reply_userdata.get(id_data, None)
  *         if userdatas is None:             # <<<<<<<<<<<<<<
@@ -11972,14 +12056,14 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_14get_property_async(st
   __pyx_t_9 = (__pyx_t_8 != 0);
   if (__pyx_t_9) {
 
-    /* "vidcutter/libs/pympv/mpv.pyx":584
+    /* "vidcutter/libs/pympv/mpv.pyx":588
  *         userdatas = self.reply_userdata.get(id_data, None)
  *         if userdatas is None:
  *             self.reply_userdata[id_data] = userdatas = _ReplyUserData(data)             # <<<<<<<<<<<<<<
  *         userdatas.add()
  *         cdef const char* prop_c = prop
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_ReplyUserData); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 584, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_ReplyUserData); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 588, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __pyx_t_7 = NULL;
     if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
@@ -11993,15 +12077,15 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_14get_property_async(st
     }
     __pyx_t_1 = (__pyx_t_7) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_7, __pyx_v_data) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_data);
     __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 584, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 588, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    if (unlikely(__Pyx_SetItemInt(__pyx_v_self->reply_userdata, __pyx_v_id_data, __pyx_t_1, uint64_t, 0, __Pyx_PyInt_From_uint64_t, 0, 0, 1) < 0)) __PYX_ERR(0, 584, __pyx_L1_error)
+    if (unlikely(__Pyx_SetItemInt(__pyx_v_self->reply_userdata, __pyx_v_id_data, __pyx_t_1, uint64_t, 0, __Pyx_PyInt_From_uint64_t, 0, 0, 1) < 0)) __PYX_ERR(0, 588, __pyx_L1_error)
     __Pyx_INCREF(__pyx_t_1);
     __Pyx_DECREF_SET(__pyx_v_userdatas, __pyx_t_1);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":583
+    /* "vidcutter/libs/pympv/mpv.pyx":587
  *         cdef uint64_t id_data = <uint64_t>hash(data)
  *         userdatas = self.reply_userdata.get(id_data, None)
  *         if userdatas is None:             # <<<<<<<<<<<<<<
@@ -12010,14 +12094,14 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_14get_property_async(st
  */
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":585
+  /* "vidcutter/libs/pympv/mpv.pyx":589
  *         if userdatas is None:
  *             self.reply_userdata[id_data] = userdatas = _ReplyUserData(data)
  *         userdatas.add()             # <<<<<<<<<<<<<<
  *         cdef const char* prop_c = prop
  *         with nogil:
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_userdatas, __pyx_n_s_add); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 585, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_userdatas, __pyx_n_s_add); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 589, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_7 = NULL;
   if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
@@ -12031,22 +12115,22 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_14get_property_async(st
   }
   __pyx_t_1 = (__pyx_t_7) ? __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_7) : __Pyx_PyObject_CallNoArg(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 585, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 589, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":586
+  /* "vidcutter/libs/pympv/mpv.pyx":590
  *             self.reply_userdata[id_data] = userdatas = _ReplyUserData(data)
  *         userdatas.add()
  *         cdef const char* prop_c = prop             # <<<<<<<<<<<<<<
  *         with nogil:
  *             err = mpv_get_property_async(
  */
-  __pyx_t_10 = __Pyx_PyObject_AsString(__pyx_v_prop); if (unlikely((!__pyx_t_10) && PyErr_Occurred())) __PYX_ERR(0, 586, __pyx_L1_error)
+  __pyx_t_10 = __Pyx_PyObject_AsString(__pyx_v_prop); if (unlikely((!__pyx_t_10) && PyErr_Occurred())) __PYX_ERR(0, 590, __pyx_L1_error)
   __pyx_v_prop_c = __pyx_t_10;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":587
+  /* "vidcutter/libs/pympv/mpv.pyx":591
  *         userdatas.add()
  *         cdef const char* prop_c = prop
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -12061,7 +12145,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_14get_property_async(st
       #endif
       /*try:*/ {
 
-        /* "vidcutter/libs/pympv/mpv.pyx":588
+        /* "vidcutter/libs/pympv/mpv.pyx":592
  *         cdef const char* prop_c = prop
  *         with nogil:
  *             err = mpv_get_property_async(             # <<<<<<<<<<<<<<
@@ -12071,7 +12155,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_14get_property_async(st
         __pyx_v_err = mpv_get_property_async(__pyx_v_self->_ctx, __pyx_v_id_data, __pyx_v_prop_c, MPV_FORMAT_NODE);
       }
 
-      /* "vidcutter/libs/pympv/mpv.pyx":587
+      /* "vidcutter/libs/pympv/mpv.pyx":591
  *         userdatas.add()
  *         cdef const char* prop_c = prop
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -12090,7 +12174,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_14get_property_async(st
       }
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":594
+  /* "vidcutter/libs/pympv/mpv.pyx":598
  *                 MPV_FORMAT_NODE,
  *             )
  *         return err             # <<<<<<<<<<<<<<
@@ -12098,13 +12182,13 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_14get_property_async(st
  *     def try_get_property_async(self, prop, data=None, default=None):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_err); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 594, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_err); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 598, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":570
+  /* "vidcutter/libs/pympv/mpv.pyx":574
  * 
  *     @_errors
  *     def get_property_async(self, prop, data=None):             # <<<<<<<<<<<<<<
@@ -12129,7 +12213,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_14get_property_async(st
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":596
+/* "vidcutter/libs/pympv/mpv.pyx":600
  *         return err
  * 
  *     def try_get_property_async(self, prop, data=None, default=None):             # <<<<<<<<<<<<<<
@@ -12186,7 +12270,7 @@ static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_7Context_17try_get_property_asyn
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "try_get_property_async") < 0)) __PYX_ERR(0, 596, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "try_get_property_async") < 0)) __PYX_ERR(0, 600, __pyx_L3_error)
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -12205,7 +12289,7 @@ static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_7Context_17try_get_property_asyn
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("try_get_property_async", 0, 1, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 596, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("try_get_property_async", 0, 1, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 600, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("vidcutter.libs.mpv.Context.try_get_property_async", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -12234,7 +12318,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_16try_get_property_asyn
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("try_get_property_async", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":597
+  /* "vidcutter/libs/pympv/mpv.pyx":601
  * 
  *     def try_get_property_async(self, prop, data=None, default=None):
  *         try:             # <<<<<<<<<<<<<<
@@ -12250,7 +12334,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_16try_get_property_asyn
     __Pyx_XGOTREF(__pyx_t_3);
     /*try:*/ {
 
-      /* "vidcutter/libs/pympv/mpv.pyx":598
+      /* "vidcutter/libs/pympv/mpv.pyx":602
  *     def try_get_property_async(self, prop, data=None, default=None):
  *         try:
  *             return self.get_property_async(prop, data=data)             # <<<<<<<<<<<<<<
@@ -12258,17 +12342,17 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_16try_get_property_asyn
  *             return default
  */
       __Pyx_XDECREF(__pyx_r);
-      __pyx_t_4 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_get_property_async); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 598, __pyx_L3_error)
+      __pyx_t_4 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_get_property_async); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 602, __pyx_L3_error)
       __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_5 = PyTuple_New(1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 598, __pyx_L3_error)
+      __pyx_t_5 = PyTuple_New(1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 602, __pyx_L3_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_INCREF(__pyx_v_prop);
       __Pyx_GIVEREF(__pyx_v_prop);
       PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_v_prop);
-      __pyx_t_6 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 598, __pyx_L3_error)
+      __pyx_t_6 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 602, __pyx_L3_error)
       __Pyx_GOTREF(__pyx_t_6);
-      if (PyDict_SetItem(__pyx_t_6, __pyx_n_s_data, __pyx_v_data) < 0) __PYX_ERR(0, 598, __pyx_L3_error)
-      __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_5, __pyx_t_6); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 598, __pyx_L3_error)
+      if (PyDict_SetItem(__pyx_t_6, __pyx_n_s_data, __pyx_v_data) < 0) __PYX_ERR(0, 602, __pyx_L3_error)
+      __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_5, __pyx_t_6); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 602, __pyx_L3_error)
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
@@ -12277,7 +12361,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_16try_get_property_asyn
       __pyx_t_7 = 0;
       goto __pyx_L7_try_return;
 
-      /* "vidcutter/libs/pympv/mpv.pyx":597
+      /* "vidcutter/libs/pympv/mpv.pyx":601
  * 
  *     def try_get_property_async(self, prop, data=None, default=None):
  *         try:             # <<<<<<<<<<<<<<
@@ -12291,7 +12375,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_16try_get_property_asyn
     __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":599
+    /* "vidcutter/libs/pympv/mpv.pyx":603
  *         try:
  *             return self.get_property_async(prop, data=data)
  *         except MPVError:             # <<<<<<<<<<<<<<
@@ -12299,7 +12383,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_16try_get_property_asyn
  * 
  */
     __Pyx_ErrFetch(&__pyx_t_7, &__pyx_t_6, &__pyx_t_5);
-    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_MPVError); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 599, __pyx_L5_except_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_MPVError); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 603, __pyx_L5_except_error)
     __Pyx_GOTREF(__pyx_t_4);
     __pyx_t_8 = __Pyx_PyErr_GivenExceptionMatches(__pyx_t_7, __pyx_t_4);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
@@ -12307,12 +12391,12 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_16try_get_property_asyn
     __pyx_t_7 = 0; __pyx_t_6 = 0; __pyx_t_5 = 0;
     if (__pyx_t_8) {
       __Pyx_AddTraceback("vidcutter.libs.mpv.Context.try_get_property_async", __pyx_clineno, __pyx_lineno, __pyx_filename);
-      if (__Pyx_GetException(&__pyx_t_5, &__pyx_t_6, &__pyx_t_7) < 0) __PYX_ERR(0, 599, __pyx_L5_except_error)
+      if (__Pyx_GetException(&__pyx_t_5, &__pyx_t_6, &__pyx_t_7) < 0) __PYX_ERR(0, 603, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_GOTREF(__pyx_t_7);
 
-      /* "vidcutter/libs/pympv/mpv.pyx":600
+      /* "vidcutter/libs/pympv/mpv.pyx":604
  *             return self.get_property_async(prop, data=data)
  *         except MPVError:
  *             return default             # <<<<<<<<<<<<<<
@@ -12330,7 +12414,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_16try_get_property_asyn
     goto __pyx_L5_except_error;
     __pyx_L5_except_error:;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":597
+    /* "vidcutter/libs/pympv/mpv.pyx":601
  * 
  *     def try_get_property_async(self, prop, data=None, default=None):
  *         try:             # <<<<<<<<<<<<<<
@@ -12356,7 +12440,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_16try_get_property_asyn
     goto __pyx_L0;
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":596
+  /* "vidcutter/libs/pympv/mpv.pyx":600
  *         return err
  * 
  *     def try_get_property_async(self, prop, data=None, default=None):             # <<<<<<<<<<<<<<
@@ -12378,7 +12462,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_16try_get_property_asyn
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":602
+/* "vidcutter/libs/pympv/mpv.pyx":606
  *             return default
  * 
  *     def try_get_property(self, prop, default=None):             # <<<<<<<<<<<<<<
@@ -12425,7 +12509,7 @@ static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_7Context_19try_get_property(PyOb
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "try_get_property") < 0)) __PYX_ERR(0, 602, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "try_get_property") < 0)) __PYX_ERR(0, 606, __pyx_L3_error)
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -12441,7 +12525,7 @@ static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_7Context_19try_get_property(PyOb
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("try_get_property", 0, 1, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 602, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("try_get_property", 0, 1, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 606, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("vidcutter.libs.mpv.Context.try_get_property", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -12470,7 +12554,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_18try_get_property(stru
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("try_get_property", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":603
+  /* "vidcutter/libs/pympv/mpv.pyx":607
  * 
  *     def try_get_property(self, prop, default=None):
  *         try:             # <<<<<<<<<<<<<<
@@ -12486,7 +12570,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_18try_get_property(stru
     __Pyx_XGOTREF(__pyx_t_3);
     /*try:*/ {
 
-      /* "vidcutter/libs/pympv/mpv.pyx":604
+      /* "vidcutter/libs/pympv/mpv.pyx":608
  *     def try_get_property(self, prop, default=None):
  *         try:
  *             return self.get_property(prop)             # <<<<<<<<<<<<<<
@@ -12494,7 +12578,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_18try_get_property(stru
  *             return default
  */
       __Pyx_XDECREF(__pyx_r);
-      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_get_property); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 604, __pyx_L3_error)
+      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_get_property); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 608, __pyx_L3_error)
       __Pyx_GOTREF(__pyx_t_5);
       __pyx_t_6 = NULL;
       if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_5))) {
@@ -12508,14 +12592,14 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_18try_get_property(stru
       }
       __pyx_t_4 = (__pyx_t_6) ? __Pyx_PyObject_Call2Args(__pyx_t_5, __pyx_t_6, __pyx_v_prop) : __Pyx_PyObject_CallOneArg(__pyx_t_5, __pyx_v_prop);
       __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
-      if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 604, __pyx_L3_error)
+      if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 608, __pyx_L3_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       __pyx_r = __pyx_t_4;
       __pyx_t_4 = 0;
       goto __pyx_L7_try_return;
 
-      /* "vidcutter/libs/pympv/mpv.pyx":603
+      /* "vidcutter/libs/pympv/mpv.pyx":607
  * 
  *     def try_get_property(self, prop, default=None):
  *         try:             # <<<<<<<<<<<<<<
@@ -12528,7 +12612,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_18try_get_property(stru
     __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":605
+    /* "vidcutter/libs/pympv/mpv.pyx":609
  *         try:
  *             return self.get_property(prop)
  *         except MPVError:             # <<<<<<<<<<<<<<
@@ -12536,7 +12620,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_18try_get_property(stru
  * 
  */
     __Pyx_ErrFetch(&__pyx_t_4, &__pyx_t_5, &__pyx_t_6);
-    __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_MPVError); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 605, __pyx_L5_except_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_MPVError); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 609, __pyx_L5_except_error)
     __Pyx_GOTREF(__pyx_t_7);
     __pyx_t_8 = __Pyx_PyErr_GivenExceptionMatches(__pyx_t_4, __pyx_t_7);
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
@@ -12544,12 +12628,12 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_18try_get_property(stru
     __pyx_t_4 = 0; __pyx_t_5 = 0; __pyx_t_6 = 0;
     if (__pyx_t_8) {
       __Pyx_AddTraceback("vidcutter.libs.mpv.Context.try_get_property", __pyx_clineno, __pyx_lineno, __pyx_filename);
-      if (__Pyx_GetException(&__pyx_t_6, &__pyx_t_5, &__pyx_t_4) < 0) __PYX_ERR(0, 605, __pyx_L5_except_error)
+      if (__Pyx_GetException(&__pyx_t_6, &__pyx_t_5, &__pyx_t_4) < 0) __PYX_ERR(0, 609, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_GOTREF(__pyx_t_4);
 
-      /* "vidcutter/libs/pympv/mpv.pyx":606
+      /* "vidcutter/libs/pympv/mpv.pyx":610
  *             return self.get_property(prop)
  *         except MPVError:
  *             return default             # <<<<<<<<<<<<<<
@@ -12567,7 +12651,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_18try_get_property(stru
     goto __pyx_L5_except_error;
     __pyx_L5_except_error:;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":603
+    /* "vidcutter/libs/pympv/mpv.pyx":607
  * 
  *     def try_get_property(self, prop, default=None):
  *         try:             # <<<<<<<<<<<<<<
@@ -12593,7 +12677,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_18try_get_property(stru
     goto __pyx_L0;
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":602
+  /* "vidcutter/libs/pympv/mpv.pyx":606
  *             return default
  * 
  *     def try_get_property(self, prop, default=None):             # <<<<<<<<<<<<<<
@@ -12615,7 +12699,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_18try_get_property(stru
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":608
+/* "vidcutter/libs/pympv/mpv.pyx":612
  *             return default
  * 
  *     def get_property(self, prop):             # <<<<<<<<<<<<<<
@@ -12665,7 +12749,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_20get_property(struct _
   __Pyx_RefNannySetupContext("get_property", 0);
   __Pyx_INCREF(__pyx_v_prop);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":610
+  /* "vidcutter/libs/pympv/mpv.pyx":614
  *     def get_property(self, prop):
  *         """Wraps: mpv_get_property"""
  *         assert self._ctx             # <<<<<<<<<<<<<<
@@ -12676,19 +12760,19 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_20get_property(struct _
   if (unlikely(!Py_OptimizeFlag)) {
     if (unlikely(!(__pyx_v_self->_ctx != 0))) {
       PyErr_SetNone(PyExc_AssertionError);
-      __PYX_ERR(0, 610, __pyx_L1_error)
+      __PYX_ERR(0, 614, __pyx_L1_error)
     }
   }
   #endif
 
-  /* "vidcutter/libs/pympv/mpv.pyx":612
+  /* "vidcutter/libs/pympv/mpv.pyx":616
  *         assert self._ctx
  *         cdef mpv_node result
  *         prop = _strenc(prop)             # <<<<<<<<<<<<<<
  *         cdef const char* prop_c = prop
  *         cdef int err
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_strenc); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 612, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_strenc); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 616, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
@@ -12702,23 +12786,23 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_20get_property(struct _
   }
   __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_3, __pyx_v_prop) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_prop);
   __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 612, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 616, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF_SET(__pyx_v_prop, __pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":613
+  /* "vidcutter/libs/pympv/mpv.pyx":617
  *         cdef mpv_node result
  *         prop = _strenc(prop)
  *         cdef const char* prop_c = prop             # <<<<<<<<<<<<<<
  *         cdef int err
  *         with nogil:
  */
-  __pyx_t_4 = __Pyx_PyObject_AsString(__pyx_v_prop); if (unlikely((!__pyx_t_4) && PyErr_Occurred())) __PYX_ERR(0, 613, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_AsString(__pyx_v_prop); if (unlikely((!__pyx_t_4) && PyErr_Occurred())) __PYX_ERR(0, 617, __pyx_L1_error)
   __pyx_v_prop_c = __pyx_t_4;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":615
+  /* "vidcutter/libs/pympv/mpv.pyx":619
  *         cdef const char* prop_c = prop
  *         cdef int err
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -12733,7 +12817,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_20get_property(struct _
       #endif
       /*try:*/ {
 
-        /* "vidcutter/libs/pympv/mpv.pyx":616
+        /* "vidcutter/libs/pympv/mpv.pyx":620
  *         cdef int err
  *         with nogil:
  *             err = mpv_get_property(             # <<<<<<<<<<<<<<
@@ -12743,7 +12827,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_20get_property(struct _
         __pyx_v_err = mpv_get_property(__pyx_v_self->_ctx, __pyx_v_prop_c, MPV_FORMAT_NODE, (&__pyx_v_result));
       }
 
-      /* "vidcutter/libs/pympv/mpv.pyx":615
+      /* "vidcutter/libs/pympv/mpv.pyx":619
  *         cdef const char* prop_c = prop
  *         cdef int err
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -12762,7 +12846,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_20get_property(struct _
       }
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":622
+  /* "vidcutter/libs/pympv/mpv.pyx":626
  *                 &result,
  *             )
  *         if err < 0:             # <<<<<<<<<<<<<<
@@ -12772,16 +12856,16 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_20get_property(struct _
   __pyx_t_5 = ((__pyx_v_err < 0) != 0);
   if (unlikely(__pyx_t_5)) {
 
-    /* "vidcutter/libs/pympv/mpv.pyx":623
+    /* "vidcutter/libs/pympv/mpv.pyx":627
  *             )
  *         if err < 0:
  *             raise MPVError(err)             # <<<<<<<<<<<<<<
  *         try:
  *             v = _convert_node_value(result)
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_MPVError); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 623, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_MPVError); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 627, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_err); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 623, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_err); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 627, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_t_6 = NULL;
     if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
@@ -12796,14 +12880,14 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_20get_property(struct _
     __pyx_t_1 = (__pyx_t_6) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_6, __pyx_t_3) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3);
     __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 623, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 627, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_Raise(__pyx_t_1, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __PYX_ERR(0, 623, __pyx_L1_error)
+    __PYX_ERR(0, 627, __pyx_L1_error)
 
-    /* "vidcutter/libs/pympv/mpv.pyx":622
+    /* "vidcutter/libs/pympv/mpv.pyx":626
  *                 &result,
  *             )
  *         if err < 0:             # <<<<<<<<<<<<<<
@@ -12812,7 +12896,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_20get_property(struct _
  */
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":624
+  /* "vidcutter/libs/pympv/mpv.pyx":628
  *         if err < 0:
  *             raise MPVError(err)
  *         try:             # <<<<<<<<<<<<<<
@@ -12821,20 +12905,20 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_20get_property(struct _
  */
   /*try:*/ {
 
-    /* "vidcutter/libs/pympv/mpv.pyx":625
+    /* "vidcutter/libs/pympv/mpv.pyx":629
  *             raise MPVError(err)
  *         try:
  *             v = _convert_node_value(result)             # <<<<<<<<<<<<<<
  *         finally:
  *             with nogil:
  */
-    __pyx_t_1 = __pyx_f_9vidcutter_4libs_3mpv__convert_node_value(__pyx_v_result); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 625, __pyx_L8_error)
+    __pyx_t_1 = __pyx_f_9vidcutter_4libs_3mpv__convert_node_value(__pyx_v_result); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 629, __pyx_L8_error)
     __Pyx_GOTREF(__pyx_t_1);
     __pyx_v_v = __pyx_t_1;
     __pyx_t_1 = 0;
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":627
+  /* "vidcutter/libs/pympv/mpv.pyx":631
  *             v = _convert_node_value(result)
  *         finally:
  *             with nogil:             # <<<<<<<<<<<<<<
@@ -12851,7 +12935,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_20get_property(struct _
           #endif
           /*try:*/ {
 
-            /* "vidcutter/libs/pympv/mpv.pyx":628
+            /* "vidcutter/libs/pympv/mpv.pyx":632
  *         finally:
  *             with nogil:
  *                 mpv_free_node_contents(&result)             # <<<<<<<<<<<<<<
@@ -12861,7 +12945,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_20get_property(struct _
             mpv_free_node_contents((&__pyx_v_result));
           }
 
-          /* "vidcutter/libs/pympv/mpv.pyx":627
+          /* "vidcutter/libs/pympv/mpv.pyx":631
  *             v = _convert_node_value(result)
  *         finally:
  *             with nogil:             # <<<<<<<<<<<<<<
@@ -12908,7 +12992,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_20get_property(struct _
             #endif
             /*try:*/ {
 
-              /* "vidcutter/libs/pympv/mpv.pyx":628
+              /* "vidcutter/libs/pympv/mpv.pyx":632
  *         finally:
  *             with nogil:
  *                 mpv_free_node_contents(&result)             # <<<<<<<<<<<<<<
@@ -12918,7 +13002,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_20get_property(struct _
               mpv_free_node_contents((&__pyx_v_result));
             }
 
-            /* "vidcutter/libs/pympv/mpv.pyx":627
+            /* "vidcutter/libs/pympv/mpv.pyx":631
  *             v = _convert_node_value(result)
  *         finally:
  *             with nogil:             # <<<<<<<<<<<<<<
@@ -12954,7 +13038,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_20get_property(struct _
     __pyx_L9:;
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":629
+  /* "vidcutter/libs/pympv/mpv.pyx":633
  *             with nogil:
  *                 mpv_free_node_contents(&result)
  *         return v             # <<<<<<<<<<<<<<
@@ -12966,7 +13050,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_20get_property(struct _
   __pyx_r = __pyx_v_v;
   goto __pyx_L0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":608
+  /* "vidcutter/libs/pympv/mpv.pyx":612
  *             return default
  * 
  *     def get_property(self, prop):             # <<<<<<<<<<<<<<
@@ -12990,7 +13074,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_20get_property(struct _
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":632
+/* "vidcutter/libs/pympv/mpv.pyx":636
  * 
  *     @_errors
  *     def set_property(self, prop, value=True, asynchronous=False, data=None):             # <<<<<<<<<<<<<<
@@ -13058,7 +13142,7 @@ static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_7Context_23set_property(PyObject
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "set_property") < 0)) __PYX_ERR(0, 632, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "set_property") < 0)) __PYX_ERR(0, 636, __pyx_L3_error)
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -13080,7 +13164,7 @@ static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_7Context_23set_property(PyObject
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("set_property", 0, 1, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 632, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("set_property", 0, 1, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 636, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("vidcutter.libs.mpv.Context.set_property", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -13127,7 +13211,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_22set_property(struct _
   __Pyx_RefNannySetupContext("set_property", 0);
   __Pyx_INCREF(__pyx_v_prop);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":634
+  /* "vidcutter/libs/pympv/mpv.pyx":638
  *     def set_property(self, prop, value=True, asynchronous=False, data=None):
  *         """Wraps: mpv_set_property and mpv_set_property_async"""
  *         assert self._ctx             # <<<<<<<<<<<<<<
@@ -13138,19 +13222,19 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_22set_property(struct _
   if (unlikely(!Py_OptimizeFlag)) {
     if (unlikely(!(__pyx_v_self->_ctx != 0))) {
       PyErr_SetNone(PyExc_AssertionError);
-      __PYX_ERR(0, 634, __pyx_L1_error)
+      __PYX_ERR(0, 638, __pyx_L1_error)
     }
   }
   #endif
 
-  /* "vidcutter/libs/pympv/mpv.pyx":635
+  /* "vidcutter/libs/pympv/mpv.pyx":639
  *         """Wraps: mpv_set_property and mpv_set_property_async"""
  *         assert self._ctx
  *         prop = _strenc(prop)             # <<<<<<<<<<<<<<
  *         cdef mpv_format format = self._format_for(value)
  *         cdef mpv_node v = self._prep_native_value(value, format)
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_strenc); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 635, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_strenc); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 639, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
@@ -13164,20 +13248,20 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_22set_property(struct _
   }
   __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_3, __pyx_v_prop) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_prop);
   __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 635, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 639, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF_SET(__pyx_v_prop, __pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":636
+  /* "vidcutter/libs/pympv/mpv.pyx":640
  *         assert self._ctx
  *         prop = _strenc(prop)
  *         cdef mpv_format format = self._format_for(value)             # <<<<<<<<<<<<<<
  *         cdef mpv_node v = self._prep_native_value(value, format)
  *         cdef int err
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_format_for); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 636, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_format_for); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 640, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
@@ -13191,26 +13275,26 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_22set_property(struct _
   }
   __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_3, __pyx_v_value) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_value);
   __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 636, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 640, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_4 = ((enum mpv_format)__Pyx_PyInt_As_enum__mpv_format(__pyx_t_1)); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 636, __pyx_L1_error)
+  __pyx_t_4 = ((enum mpv_format)__Pyx_PyInt_As_enum__mpv_format(__pyx_t_1)); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 640, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_format = __pyx_t_4;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":637
+  /* "vidcutter/libs/pympv/mpv.pyx":641
  *         prop = _strenc(prop)
  *         cdef mpv_format format = self._format_for(value)
  *         cdef mpv_node v = self._prep_native_value(value, format)             # <<<<<<<<<<<<<<
  *         cdef int err
  *         cdef uint64_t data_id
  */
-  __pyx_t_1 = __Pyx_PyInt_From_enum__mpv_format(__pyx_v_format); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 637, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_enum__mpv_format(__pyx_v_format); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 641, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_v = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv_Context *)__pyx_v_self->__pyx_vtab)->_prep_native_value(__pyx_v_self, __pyx_v_value, __pyx_t_1);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":641
+  /* "vidcutter/libs/pympv/mpv.pyx":645
  *         cdef uint64_t data_id
  *         cdef const char* prop_c
  *         try:             # <<<<<<<<<<<<<<
@@ -13219,28 +13303,28 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_22set_property(struct _
  */
   /*try:*/ {
 
-    /* "vidcutter/libs/pympv/mpv.pyx":642
+    /* "vidcutter/libs/pympv/mpv.pyx":646
  *         cdef const char* prop_c
  *         try:
  *             prop_c = prop             # <<<<<<<<<<<<<<
  *             if not asynchronous:
  *                 with nogil:
  */
-    __pyx_t_5 = __Pyx_PyObject_AsString(__pyx_v_prop); if (unlikely((!__pyx_t_5) && PyErr_Occurred())) __PYX_ERR(0, 642, __pyx_L4_error)
+    __pyx_t_5 = __Pyx_PyObject_AsString(__pyx_v_prop); if (unlikely((!__pyx_t_5) && PyErr_Occurred())) __PYX_ERR(0, 646, __pyx_L4_error)
     __pyx_v_prop_c = __pyx_t_5;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":643
+    /* "vidcutter/libs/pympv/mpv.pyx":647
  *         try:
  *             prop_c = prop
  *             if not asynchronous:             # <<<<<<<<<<<<<<
  *                 with nogil:
  *                     err = mpv_set_property(
  */
-    __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_v_asynchronous); if (unlikely(__pyx_t_6 < 0)) __PYX_ERR(0, 643, __pyx_L4_error)
+    __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_v_asynchronous); if (unlikely(__pyx_t_6 < 0)) __PYX_ERR(0, 647, __pyx_L4_error)
     __pyx_t_7 = ((!__pyx_t_6) != 0);
     if (__pyx_t_7) {
 
-      /* "vidcutter/libs/pympv/mpv.pyx":644
+      /* "vidcutter/libs/pympv/mpv.pyx":648
  *             prop_c = prop
  *             if not asynchronous:
  *                 with nogil:             # <<<<<<<<<<<<<<
@@ -13255,7 +13339,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_22set_property(struct _
           #endif
           /*try:*/ {
 
-            /* "vidcutter/libs/pympv/mpv.pyx":645
+            /* "vidcutter/libs/pympv/mpv.pyx":649
  *             if not asynchronous:
  *                 with nogil:
  *                     err = mpv_set_property(             # <<<<<<<<<<<<<<
@@ -13265,7 +13349,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_22set_property(struct _
             __pyx_v_err = mpv_set_property(__pyx_v_self->_ctx, __pyx_v_prop_c, MPV_FORMAT_NODE, (&__pyx_v_v));
           }
 
-          /* "vidcutter/libs/pympv/mpv.pyx":644
+          /* "vidcutter/libs/pympv/mpv.pyx":648
  *             prop_c = prop
  *             if not asynchronous:
  *                 with nogil:             # <<<<<<<<<<<<<<
@@ -13284,7 +13368,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_22set_property(struct _
           }
       }
 
-      /* "vidcutter/libs/pympv/mpv.pyx":651
+      /* "vidcutter/libs/pympv/mpv.pyx":655
  *                         &v
  *                     )
  *                 return err             # <<<<<<<<<<<<<<
@@ -13292,13 +13376,13 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_22set_property(struct _
  *             userdatas = self.reply_userdata.get(data_id, None)
  */
       __Pyx_XDECREF(__pyx_r);
-      __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_err); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 651, __pyx_L4_error)
+      __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_err); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 655, __pyx_L4_error)
       __Pyx_GOTREF(__pyx_t_1);
       __pyx_r = __pyx_t_1;
       __pyx_t_1 = 0;
       goto __pyx_L3_return;
 
-      /* "vidcutter/libs/pympv/mpv.pyx":643
+      /* "vidcutter/libs/pympv/mpv.pyx":647
  *         try:
  *             prop_c = prop
  *             if not asynchronous:             # <<<<<<<<<<<<<<
@@ -13307,26 +13391,26 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_22set_property(struct _
  */
     }
 
-    /* "vidcutter/libs/pympv/mpv.pyx":652
+    /* "vidcutter/libs/pympv/mpv.pyx":656
  *                     )
  *                 return err
  *             data_id = <uint64_t>hash(data)             # <<<<<<<<<<<<<<
  *             userdatas = self.reply_userdata.get(data_id, None)
  *             if userdatas is None:
  */
-    __pyx_t_8 = PyObject_Hash(__pyx_v_data); if (unlikely(__pyx_t_8 == ((Py_hash_t)-1))) __PYX_ERR(0, 652, __pyx_L4_error)
+    __pyx_t_8 = PyObject_Hash(__pyx_v_data); if (unlikely(__pyx_t_8 == ((Py_hash_t)-1))) __PYX_ERR(0, 656, __pyx_L4_error)
     __pyx_v_data_id = ((uint64_t)__pyx_t_8);
 
-    /* "vidcutter/libs/pympv/mpv.pyx":653
+    /* "vidcutter/libs/pympv/mpv.pyx":657
  *                 return err
  *             data_id = <uint64_t>hash(data)
  *             userdatas = self.reply_userdata.get(data_id, None)             # <<<<<<<<<<<<<<
  *             if userdatas is None:
  *                 self.reply_userdata[data_id] = userdatas = _ReplyUserData(data)
  */
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->reply_userdata, __pyx_n_s_get); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 653, __pyx_L4_error)
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->reply_userdata, __pyx_n_s_get); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 657, __pyx_L4_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_3 = __Pyx_PyInt_From_uint64_t(__pyx_v_data_id); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 653, __pyx_L4_error)
+    __pyx_t_3 = __Pyx_PyInt_From_uint64_t(__pyx_v_data_id); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 657, __pyx_L4_error)
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_t_9 = NULL;
     __pyx_t_10 = 0;
@@ -13343,7 +13427,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_22set_property(struct _
     #if CYTHON_FAST_PYCALL
     if (PyFunction_Check(__pyx_t_2)) {
       PyObject *__pyx_temp[3] = {__pyx_t_9, __pyx_t_3, Py_None};
-      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_10, 2+__pyx_t_10); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 653, __pyx_L4_error)
+      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_10, 2+__pyx_t_10); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 657, __pyx_L4_error)
       __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -13352,14 +13436,14 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_22set_property(struct _
     #if CYTHON_FAST_PYCCALL
     if (__Pyx_PyFastCFunction_Check(__pyx_t_2)) {
       PyObject *__pyx_temp[3] = {__pyx_t_9, __pyx_t_3, Py_None};
-      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_10, 2+__pyx_t_10); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 653, __pyx_L4_error)
+      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_10, 2+__pyx_t_10); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 657, __pyx_L4_error)
       __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     } else
     #endif
     {
-      __pyx_t_11 = PyTuple_New(2+__pyx_t_10); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 653, __pyx_L4_error)
+      __pyx_t_11 = PyTuple_New(2+__pyx_t_10); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 657, __pyx_L4_error)
       __Pyx_GOTREF(__pyx_t_11);
       if (__pyx_t_9) {
         __Pyx_GIVEREF(__pyx_t_9); PyTuple_SET_ITEM(__pyx_t_11, 0, __pyx_t_9); __pyx_t_9 = NULL;
@@ -13370,7 +13454,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_22set_property(struct _
       __Pyx_GIVEREF(Py_None);
       PyTuple_SET_ITEM(__pyx_t_11, 1+__pyx_t_10, Py_None);
       __pyx_t_3 = 0;
-      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_11, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 653, __pyx_L4_error)
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_11, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 657, __pyx_L4_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
     }
@@ -13378,7 +13462,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_22set_property(struct _
     __pyx_v_userdatas = __pyx_t_1;
     __pyx_t_1 = 0;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":654
+    /* "vidcutter/libs/pympv/mpv.pyx":658
  *             data_id = <uint64_t>hash(data)
  *             userdatas = self.reply_userdata.get(data_id, None)
  *             if userdatas is None:             # <<<<<<<<<<<<<<
@@ -13389,14 +13473,14 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_22set_property(struct _
     __pyx_t_6 = (__pyx_t_7 != 0);
     if (__pyx_t_6) {
 
-      /* "vidcutter/libs/pympv/mpv.pyx":655
+      /* "vidcutter/libs/pympv/mpv.pyx":659
  *             userdatas = self.reply_userdata.get(data_id, None)
  *             if userdatas is None:
  *                 self.reply_userdata[data_id] = userdatas = _ReplyUserData(data)             # <<<<<<<<<<<<<<
  *             userdatas.add()
  *             with nogil:
  */
-      __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_ReplyUserData); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 655, __pyx_L4_error)
+      __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_ReplyUserData); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 659, __pyx_L4_error)
       __Pyx_GOTREF(__pyx_t_2);
       __pyx_t_11 = NULL;
       if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
@@ -13410,15 +13494,15 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_22set_property(struct _
       }
       __pyx_t_1 = (__pyx_t_11) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_11, __pyx_v_data) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_data);
       __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
-      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 655, __pyx_L4_error)
+      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 659, __pyx_L4_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-      if (unlikely(__Pyx_SetItemInt(__pyx_v_self->reply_userdata, __pyx_v_data_id, __pyx_t_1, uint64_t, 0, __Pyx_PyInt_From_uint64_t, 0, 0, 1) < 0)) __PYX_ERR(0, 655, __pyx_L4_error)
+      if (unlikely(__Pyx_SetItemInt(__pyx_v_self->reply_userdata, __pyx_v_data_id, __pyx_t_1, uint64_t, 0, __Pyx_PyInt_From_uint64_t, 0, 0, 1) < 0)) __PYX_ERR(0, 659, __pyx_L4_error)
       __Pyx_INCREF(__pyx_t_1);
       __Pyx_DECREF_SET(__pyx_v_userdatas, __pyx_t_1);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-      /* "vidcutter/libs/pympv/mpv.pyx":654
+      /* "vidcutter/libs/pympv/mpv.pyx":658
  *             data_id = <uint64_t>hash(data)
  *             userdatas = self.reply_userdata.get(data_id, None)
  *             if userdatas is None:             # <<<<<<<<<<<<<<
@@ -13427,14 +13511,14 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_22set_property(struct _
  */
     }
 
-    /* "vidcutter/libs/pympv/mpv.pyx":656
+    /* "vidcutter/libs/pympv/mpv.pyx":660
  *             if userdatas is None:
  *                 self.reply_userdata[data_id] = userdatas = _ReplyUserData(data)
  *             userdatas.add()             # <<<<<<<<<<<<<<
  *             with nogil:
  *                 err = mpv_set_property_async(
  */
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_userdatas, __pyx_n_s_add); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 656, __pyx_L4_error)
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_userdatas, __pyx_n_s_add); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 660, __pyx_L4_error)
     __Pyx_GOTREF(__pyx_t_2);
     __pyx_t_11 = NULL;
     if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
@@ -13448,12 +13532,12 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_22set_property(struct _
     }
     __pyx_t_1 = (__pyx_t_11) ? __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_11) : __Pyx_PyObject_CallNoArg(__pyx_t_2);
     __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 656, __pyx_L4_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 660, __pyx_L4_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":657
+    /* "vidcutter/libs/pympv/mpv.pyx":661
  *                 self.reply_userdata[data_id] = userdatas = _ReplyUserData(data)
  *             userdatas.add()
  *             with nogil:             # <<<<<<<<<<<<<<
@@ -13468,7 +13552,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_22set_property(struct _
         #endif
         /*try:*/ {
 
-          /* "vidcutter/libs/pympv/mpv.pyx":658
+          /* "vidcutter/libs/pympv/mpv.pyx":662
  *             userdatas.add()
  *             with nogil:
  *                 err = mpv_set_property_async(             # <<<<<<<<<<<<<<
@@ -13478,7 +13562,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_22set_property(struct _
           __pyx_v_err = mpv_set_property_async(__pyx_v_self->_ctx, __pyx_v_data_id, __pyx_v_prop_c, MPV_FORMAT_NODE, (&__pyx_v_v));
         }
 
-        /* "vidcutter/libs/pympv/mpv.pyx":657
+        /* "vidcutter/libs/pympv/mpv.pyx":661
  *                 self.reply_userdata[data_id] = userdatas = _ReplyUserData(data)
  *             userdatas.add()
  *             with nogil:             # <<<<<<<<<<<<<<
@@ -13498,7 +13582,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_22set_property(struct _
     }
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":666
+  /* "vidcutter/libs/pympv/mpv.pyx":670
  *                 )
  *         finally:
  *             self._free_native_value(v)             # <<<<<<<<<<<<<<
@@ -13507,7 +13591,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_22set_property(struct _
  */
   /*finally:*/ {
     /*normal exit:*/{
-      __pyx_t_1 = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv_Context *)__pyx_v_self->__pyx_vtab)->_free_native_value(__pyx_v_self, __pyx_v_v); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 666, __pyx_L1_error)
+      __pyx_t_1 = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv_Context *)__pyx_v_self->__pyx_vtab)->_free_native_value(__pyx_v_self, __pyx_v_v); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 670, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       goto __pyx_L5;
@@ -13532,7 +13616,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_22set_property(struct _
       __Pyx_XGOTREF(__pyx_t_19);
       __pyx_t_10 = __pyx_lineno; __pyx_t_12 = __pyx_clineno; __pyx_t_13 = __pyx_filename;
       {
-        __pyx_t_1 = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv_Context *)__pyx_v_self->__pyx_vtab)->_free_native_value(__pyx_v_self, __pyx_v_v); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 666, __pyx_L15_error)
+        __pyx_t_1 = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv_Context *)__pyx_v_self->__pyx_vtab)->_free_native_value(__pyx_v_self, __pyx_v_v); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 670, __pyx_L15_error)
         __Pyx_GOTREF(__pyx_t_1);
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       }
@@ -13565,7 +13649,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_22set_property(struct _
     __pyx_L3_return: {
       __pyx_t_19 = __pyx_r;
       __pyx_r = 0;
-      __pyx_t_1 = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv_Context *)__pyx_v_self->__pyx_vtab)->_free_native_value(__pyx_v_self, __pyx_v_v); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 666, __pyx_L1_error)
+      __pyx_t_1 = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv_Context *)__pyx_v_self->__pyx_vtab)->_free_native_value(__pyx_v_self, __pyx_v_v); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 670, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       __pyx_r = __pyx_t_19;
@@ -13575,7 +13659,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_22set_property(struct _
     __pyx_L5:;
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":667
+  /* "vidcutter/libs/pympv/mpv.pyx":671
  *         finally:
  *             self._free_native_value(v)
  *         return err             # <<<<<<<<<<<<<<
@@ -13583,13 +13667,13 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_22set_property(struct _
  *     @_errors
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_err); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 667, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_err); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 671, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":632
+  /* "vidcutter/libs/pympv/mpv.pyx":636
  * 
  *     @_errors
  *     def set_property(self, prop, value=True, asynchronous=False, data=None):             # <<<<<<<<<<<<<<
@@ -13614,7 +13698,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_22set_property(struct _
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":670
+/* "vidcutter/libs/pympv/mpv.pyx":674
  * 
  *     @_errors
  *     def set_option(self, prop, value=True):             # <<<<<<<<<<<<<<
@@ -13662,7 +13746,7 @@ static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_7Context_25set_option(PyObject *
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "set_option") < 0)) __PYX_ERR(0, 670, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "set_option") < 0)) __PYX_ERR(0, 674, __pyx_L3_error)
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -13678,7 +13762,7 @@ static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_7Context_25set_option(PyObject *
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("set_option", 0, 1, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 670, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("set_option", 0, 1, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 674, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("vidcutter.libs.mpv.Context.set_option", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -13718,7 +13802,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_24set_option(struct __p
   __Pyx_RefNannySetupContext("set_option", 0);
   __Pyx_INCREF(__pyx_v_prop);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":672
+  /* "vidcutter/libs/pympv/mpv.pyx":676
  *     def set_option(self, prop, value=True):
  *         """Wraps: mpv_set_option"""
  *         assert self._ctx             # <<<<<<<<<<<<<<
@@ -13729,19 +13813,19 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_24set_option(struct __p
   if (unlikely(!Py_OptimizeFlag)) {
     if (unlikely(!(__pyx_v_self->_ctx != 0))) {
       PyErr_SetNone(PyExc_AssertionError);
-      __PYX_ERR(0, 672, __pyx_L1_error)
+      __PYX_ERR(0, 676, __pyx_L1_error)
     }
   }
   #endif
 
-  /* "vidcutter/libs/pympv/mpv.pyx":673
+  /* "vidcutter/libs/pympv/mpv.pyx":677
  *         """Wraps: mpv_set_option"""
  *         assert self._ctx
  *         prop = _strenc(prop)             # <<<<<<<<<<<<<<
  *         cdef mpv_format format = self._format_for(value)
  *         cdef mpv_node v = self._prep_native_value(value, format)
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_strenc); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 673, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_strenc); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 677, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
@@ -13755,20 +13839,20 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_24set_option(struct __p
   }
   __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_3, __pyx_v_prop) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_prop);
   __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 673, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 677, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF_SET(__pyx_v_prop, __pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":674
+  /* "vidcutter/libs/pympv/mpv.pyx":678
  *         assert self._ctx
  *         prop = _strenc(prop)
  *         cdef mpv_format format = self._format_for(value)             # <<<<<<<<<<<<<<
  *         cdef mpv_node v = self._prep_native_value(value, format)
  *         cdef int err
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_format_for); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 674, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_format_for); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 678, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
@@ -13782,26 +13866,26 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_24set_option(struct __p
   }
   __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_3, __pyx_v_value) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_value);
   __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 674, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 678, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_4 = ((enum mpv_format)__Pyx_PyInt_As_enum__mpv_format(__pyx_t_1)); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 674, __pyx_L1_error)
+  __pyx_t_4 = ((enum mpv_format)__Pyx_PyInt_As_enum__mpv_format(__pyx_t_1)); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 678, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_format = __pyx_t_4;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":675
+  /* "vidcutter/libs/pympv/mpv.pyx":679
  *         prop = _strenc(prop)
  *         cdef mpv_format format = self._format_for(value)
  *         cdef mpv_node v = self._prep_native_value(value, format)             # <<<<<<<<<<<<<<
  *         cdef int err
  *         cdef const char* prop_c
  */
-  __pyx_t_1 = __Pyx_PyInt_From_enum__mpv_format(__pyx_v_format); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 675, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_enum__mpv_format(__pyx_v_format); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 679, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_v = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv_Context *)__pyx_v_self->__pyx_vtab)->_prep_native_value(__pyx_v_self, __pyx_v_value, __pyx_t_1);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":678
+  /* "vidcutter/libs/pympv/mpv.pyx":682
  *         cdef int err
  *         cdef const char* prop_c
  *         try:             # <<<<<<<<<<<<<<
@@ -13810,17 +13894,17 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_24set_option(struct __p
  */
   /*try:*/ {
 
-    /* "vidcutter/libs/pympv/mpv.pyx":679
+    /* "vidcutter/libs/pympv/mpv.pyx":683
  *         cdef const char* prop_c
  *         try:
  *             prop_c = prop             # <<<<<<<<<<<<<<
  *             with nogil:
  *                 err = mpv_set_option(
  */
-    __pyx_t_5 = __Pyx_PyObject_AsString(__pyx_v_prop); if (unlikely((!__pyx_t_5) && PyErr_Occurred())) __PYX_ERR(0, 679, __pyx_L4_error)
+    __pyx_t_5 = __Pyx_PyObject_AsString(__pyx_v_prop); if (unlikely((!__pyx_t_5) && PyErr_Occurred())) __PYX_ERR(0, 683, __pyx_L4_error)
     __pyx_v_prop_c = __pyx_t_5;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":680
+    /* "vidcutter/libs/pympv/mpv.pyx":684
  *         try:
  *             prop_c = prop
  *             with nogil:             # <<<<<<<<<<<<<<
@@ -13835,7 +13919,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_24set_option(struct __p
         #endif
         /*try:*/ {
 
-          /* "vidcutter/libs/pympv/mpv.pyx":681
+          /* "vidcutter/libs/pympv/mpv.pyx":685
  *             prop_c = prop
  *             with nogil:
  *                 err = mpv_set_option(             # <<<<<<<<<<<<<<
@@ -13845,7 +13929,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_24set_option(struct __p
           __pyx_v_err = mpv_set_option(__pyx_v_self->_ctx, __pyx_v_prop_c, MPV_FORMAT_NODE, (&__pyx_v_v));
         }
 
-        /* "vidcutter/libs/pympv/mpv.pyx":680
+        /* "vidcutter/libs/pympv/mpv.pyx":684
  *         try:
  *             prop_c = prop
  *             with nogil:             # <<<<<<<<<<<<<<
@@ -13865,7 +13949,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_24set_option(struct __p
     }
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":688
+  /* "vidcutter/libs/pympv/mpv.pyx":692
  *                 )
  *         finally:
  *             self._free_native_value(v)             # <<<<<<<<<<<<<<
@@ -13874,7 +13958,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_24set_option(struct __p
  */
   /*finally:*/ {
     /*normal exit:*/{
-      __pyx_t_1 = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv_Context *)__pyx_v_self->__pyx_vtab)->_free_native_value(__pyx_v_self, __pyx_v_v); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 688, __pyx_L1_error)
+      __pyx_t_1 = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv_Context *)__pyx_v_self->__pyx_vtab)->_free_native_value(__pyx_v_self, __pyx_v_v); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 692, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       goto __pyx_L5;
@@ -13897,7 +13981,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_24set_option(struct __p
       __Pyx_XGOTREF(__pyx_t_14);
       __pyx_t_6 = __pyx_lineno; __pyx_t_7 = __pyx_clineno; __pyx_t_8 = __pyx_filename;
       {
-        __pyx_t_1 = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv_Context *)__pyx_v_self->__pyx_vtab)->_free_native_value(__pyx_v_self, __pyx_v_v); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 688, __pyx_L10_error)
+        __pyx_t_1 = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv_Context *)__pyx_v_self->__pyx_vtab)->_free_native_value(__pyx_v_self, __pyx_v_v); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 692, __pyx_L10_error)
         __Pyx_GOTREF(__pyx_t_1);
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       }
@@ -13930,7 +14014,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_24set_option(struct __p
     __pyx_L5:;
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":689
+  /* "vidcutter/libs/pympv/mpv.pyx":693
  *         finally:
  *             self._free_native_value(v)
  *         return err             # <<<<<<<<<<<<<<
@@ -13938,13 +14022,13 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_24set_option(struct __p
  *     @_errors
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_err); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 689, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_err); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 693, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":670
+  /* "vidcutter/libs/pympv/mpv.pyx":674
  * 
  *     @_errors
  *     def set_option(self, prop, value=True):             # <<<<<<<<<<<<<<
@@ -13966,7 +14050,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_24set_option(struct __p
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":692
+/* "vidcutter/libs/pympv/mpv.pyx":696
  * 
  *     @_errors
  *     def initialize(self):             # <<<<<<<<<<<<<<
@@ -13998,7 +14082,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_26initialize(struct __p
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("initialize", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":694
+  /* "vidcutter/libs/pympv/mpv.pyx":698
  *     def initialize(self):
  *         """Wraps: mpv_initialize"""
  *         assert self._ctx             # <<<<<<<<<<<<<<
@@ -14009,12 +14093,12 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_26initialize(struct __p
   if (unlikely(!Py_OptimizeFlag)) {
     if (unlikely(!(__pyx_v_self->_ctx != 0))) {
       PyErr_SetNone(PyExc_AssertionError);
-      __PYX_ERR(0, 694, __pyx_L1_error)
+      __PYX_ERR(0, 698, __pyx_L1_error)
     }
   }
   #endif
 
-  /* "vidcutter/libs/pympv/mpv.pyx":696
+  /* "vidcutter/libs/pympv/mpv.pyx":700
  *         assert self._ctx
  *         cdef int err
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -14029,7 +14113,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_26initialize(struct __p
       #endif
       /*try:*/ {
 
-        /* "vidcutter/libs/pympv/mpv.pyx":697
+        /* "vidcutter/libs/pympv/mpv.pyx":701
  *         cdef int err
  *         with nogil:
  *             err = mpv_initialize(self._ctx)             # <<<<<<<<<<<<<<
@@ -14039,7 +14123,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_26initialize(struct __p
         __pyx_v_err = mpv_initialize(__pyx_v_self->_ctx);
       }
 
-      /* "vidcutter/libs/pympv/mpv.pyx":696
+      /* "vidcutter/libs/pympv/mpv.pyx":700
  *         assert self._ctx
  *         cdef int err
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -14058,7 +14142,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_26initialize(struct __p
       }
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":698
+  /* "vidcutter/libs/pympv/mpv.pyx":702
  *         with nogil:
  *             err = mpv_initialize(self._ctx)
  *         return err             # <<<<<<<<<<<<<<
@@ -14066,13 +14150,13 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_26initialize(struct __p
  *     def wait_event(self, timeout=None):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_err); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 698, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_err); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 702, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":692
+  /* "vidcutter/libs/pympv/mpv.pyx":696
  * 
  *     @_errors
  *     def initialize(self):             # <<<<<<<<<<<<<<
@@ -14091,7 +14175,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_26initialize(struct __p
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":700
+/* "vidcutter/libs/pympv/mpv.pyx":704
  *         return err
  * 
  *     def wait_event(self, timeout=None):             # <<<<<<<<<<<<<<
@@ -14132,7 +14216,7 @@ static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_7Context_29wait_event(PyObject *
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "wait_event") < 0)) __PYX_ERR(0, 700, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "wait_event") < 0)) __PYX_ERR(0, 704, __pyx_L3_error)
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -14146,7 +14230,7 @@ static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_7Context_29wait_event(PyObject *
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("wait_event", 0, 0, 1, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 700, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("wait_event", 0, 0, 1, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 704, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("vidcutter.libs.mpv.Context.wait_event", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -14174,7 +14258,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_28wait_event(struct __p
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("wait_event", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":702
+  /* "vidcutter/libs/pympv/mpv.pyx":706
  *     def wait_event(self, timeout=None):
  *         """Wraps: mpv_wait_event"""
  *         assert self._ctx             # <<<<<<<<<<<<<<
@@ -14185,12 +14269,12 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_28wait_event(struct __p
   if (unlikely(!Py_OptimizeFlag)) {
     if (unlikely(!(__pyx_v_self->_ctx != 0))) {
       PyErr_SetNone(PyExc_AssertionError);
-      __PYX_ERR(0, 702, __pyx_L1_error)
+      __PYX_ERR(0, 706, __pyx_L1_error)
     }
   }
   #endif
 
-  /* "vidcutter/libs/pympv/mpv.pyx":703
+  /* "vidcutter/libs/pympv/mpv.pyx":707
  *         """Wraps: mpv_wait_event"""
  *         assert self._ctx
  *         cdef double timeout_d = timeout if timeout is not None else -1             # <<<<<<<<<<<<<<
@@ -14199,14 +14283,14 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_28wait_event(struct __p
  */
   __pyx_t_2 = (__pyx_v_timeout != Py_None);
   if ((__pyx_t_2 != 0)) {
-    __pyx_t_3 = __pyx_PyFloat_AsDouble(__pyx_v_timeout); if (unlikely((__pyx_t_3 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 703, __pyx_L1_error)
+    __pyx_t_3 = __pyx_PyFloat_AsDouble(__pyx_v_timeout); if (unlikely((__pyx_t_3 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 707, __pyx_L1_error)
     __pyx_t_1 = __pyx_t_3;
   } else {
     __pyx_t_1 = -1.0;
   }
   __pyx_v_timeout_d = __pyx_t_1;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":705
+  /* "vidcutter/libs/pympv/mpv.pyx":709
  *         cdef double timeout_d = timeout if timeout is not None else -1
  *         cdef mpv_event* event
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -14221,7 +14305,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_28wait_event(struct __p
       #endif
       /*try:*/ {
 
-        /* "vidcutter/libs/pympv/mpv.pyx":706
+        /* "vidcutter/libs/pympv/mpv.pyx":710
  *         cdef mpv_event* event
  *         with nogil:
  *             event = mpv_wait_event(self._ctx, timeout_d)             # <<<<<<<<<<<<<<
@@ -14231,7 +14315,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_28wait_event(struct __p
         __pyx_v_event = mpv_wait_event(__pyx_v_self->_ctx, __pyx_v_timeout_d);
       }
 
-      /* "vidcutter/libs/pympv/mpv.pyx":705
+      /* "vidcutter/libs/pympv/mpv.pyx":709
  *         cdef double timeout_d = timeout if timeout is not None else -1
  *         cdef mpv_event* event
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -14250,7 +14334,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_28wait_event(struct __p
       }
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":707
+  /* "vidcutter/libs/pympv/mpv.pyx":711
  *         with nogil:
  *             event = mpv_wait_event(self._ctx, timeout_d)
  *         return Event()._init(event, self)             # <<<<<<<<<<<<<<
@@ -14258,16 +14342,16 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_28wait_event(struct __p
  *     def wakeup(self):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_4 = __Pyx_PyObject_CallNoArg(((PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_Event)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 707, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_CallNoArg(((PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_Event)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 711, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_5 = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv_Event *)((struct __pyx_obj_9vidcutter_4libs_3mpv_Event *)__pyx_t_4)->__pyx_vtab)->_init(((struct __pyx_obj_9vidcutter_4libs_3mpv_Event *)__pyx_t_4), __pyx_v_event, ((PyObject *)__pyx_v_self)); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 707, __pyx_L1_error)
+  __pyx_t_5 = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv_Event *)((struct __pyx_obj_9vidcutter_4libs_3mpv_Event *)__pyx_t_4)->__pyx_vtab)->_init(((struct __pyx_obj_9vidcutter_4libs_3mpv_Event *)__pyx_t_4), __pyx_v_event, ((PyObject *)__pyx_v_self)); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 711, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __pyx_r = __pyx_t_5;
   __pyx_t_5 = 0;
   goto __pyx_L0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":700
+  /* "vidcutter/libs/pympv/mpv.pyx":704
  *         return err
  * 
  *     def wait_event(self, timeout=None):             # <<<<<<<<<<<<<<
@@ -14287,7 +14371,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_28wait_event(struct __p
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":709
+/* "vidcutter/libs/pympv/mpv.pyx":713
  *         return Event()._init(event, self)
  * 
  *     def wakeup(self):             # <<<<<<<<<<<<<<
@@ -14317,7 +14401,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_30wakeup(struct __pyx_o
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("wakeup", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":711
+  /* "vidcutter/libs/pympv/mpv.pyx":715
  *     def wakeup(self):
  *         """Wraps: mpv_wakeup"""
  *         assert self._ctx             # <<<<<<<<<<<<<<
@@ -14328,12 +14412,12 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_30wakeup(struct __pyx_o
   if (unlikely(!Py_OptimizeFlag)) {
     if (unlikely(!(__pyx_v_self->_ctx != 0))) {
       PyErr_SetNone(PyExc_AssertionError);
-      __PYX_ERR(0, 711, __pyx_L1_error)
+      __PYX_ERR(0, 715, __pyx_L1_error)
     }
   }
   #endif
 
-  /* "vidcutter/libs/pympv/mpv.pyx":712
+  /* "vidcutter/libs/pympv/mpv.pyx":716
  *         """Wraps: mpv_wakeup"""
  *         assert self._ctx
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -14348,7 +14432,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_30wakeup(struct __pyx_o
       #endif
       /*try:*/ {
 
-        /* "vidcutter/libs/pympv/mpv.pyx":713
+        /* "vidcutter/libs/pympv/mpv.pyx":717
  *         assert self._ctx
  *         with nogil:
  *             mpv_wakeup(self._ctx)             # <<<<<<<<<<<<<<
@@ -14358,7 +14442,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_30wakeup(struct __pyx_o
         mpv_wakeup(__pyx_v_self->_ctx);
       }
 
-      /* "vidcutter/libs/pympv/mpv.pyx":712
+      /* "vidcutter/libs/pympv/mpv.pyx":716
  *         """Wraps: mpv_wakeup"""
  *         assert self._ctx
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -14377,7 +14461,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_30wakeup(struct __pyx_o
       }
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":709
+  /* "vidcutter/libs/pympv/mpv.pyx":713
  *         return Event()._init(event, self)
  * 
  *     def wakeup(self):             # <<<<<<<<<<<<<<
@@ -14397,7 +14481,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_30wakeup(struct __pyx_o
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":715
+/* "vidcutter/libs/pympv/mpv.pyx":719
  *             mpv_wakeup(self._ctx)
  * 
  *     def set_wakeup_callback(self, callback):             # <<<<<<<<<<<<<<
@@ -14432,7 +14516,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_32set_wakeup_callback(s
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("set_wakeup_callback", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":717
+  /* "vidcutter/libs/pympv/mpv.pyx":721
  *     def set_wakeup_callback(self, callback):
  *         """Wraps: mpv_set_wakeup_callback"""
  *         assert self._ctx             # <<<<<<<<<<<<<<
@@ -14443,25 +14527,25 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_32set_wakeup_callback(s
   if (unlikely(!Py_OptimizeFlag)) {
     if (unlikely(!(__pyx_v_self->_ctx != 0))) {
       PyErr_SetNone(PyExc_AssertionError);
-      __PYX_ERR(0, 717, __pyx_L1_error)
+      __PYX_ERR(0, 721, __pyx_L1_error)
     }
   }
   #endif
 
-  /* "vidcutter/libs/pympv/mpv.pyx":718
+  /* "vidcutter/libs/pympv/mpv.pyx":722
  *         """Wraps: mpv_set_wakeup_callback"""
  *         assert self._ctx
  *         cdef uint64_t name = <uint64_t>id(self)             # <<<<<<<<<<<<<<
  *         self.callback = callback
  *         self.callbackthread.set(callback)
  */
-  __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_builtin_id, ((PyObject *)__pyx_v_self)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 718, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_builtin_id, ((PyObject *)__pyx_v_self)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 722, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyInt_As_uint64_t(__pyx_t_1); if (unlikely((__pyx_t_2 == ((uint64_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 718, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_As_uint64_t(__pyx_t_1); if (unlikely((__pyx_t_2 == ((uint64_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 722, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_name = ((uint64_t)__pyx_t_2);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":719
+  /* "vidcutter/libs/pympv/mpv.pyx":723
  *         assert self._ctx
  *         cdef uint64_t name = <uint64_t>id(self)
  *         self.callback = callback             # <<<<<<<<<<<<<<
@@ -14474,14 +14558,14 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_32set_wakeup_callback(s
   __Pyx_DECREF(__pyx_v_self->callback);
   __pyx_v_self->callback = __pyx_v_callback;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":720
+  /* "vidcutter/libs/pympv/mpv.pyx":724
  *         cdef uint64_t name = <uint64_t>id(self)
  *         self.callback = callback
  *         self.callbackthread.set(callback)             # <<<<<<<<<<<<<<
  *         with nogil:
  *             mpv_set_wakeup_callback(self._ctx, _c_callback, <void*>name)
  */
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->callbackthread, __pyx_n_s_set); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 720, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->callbackthread, __pyx_n_s_set); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 724, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_t_4 = NULL;
   if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_3))) {
@@ -14495,12 +14579,12 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_32set_wakeup_callback(s
   }
   __pyx_t_1 = (__pyx_t_4) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_4, __pyx_v_callback) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_v_callback);
   __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 720, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 724, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":721
+  /* "vidcutter/libs/pympv/mpv.pyx":725
  *         self.callback = callback
  *         self.callbackthread.set(callback)
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -14515,7 +14599,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_32set_wakeup_callback(s
       #endif
       /*try:*/ {
 
-        /* "vidcutter/libs/pympv/mpv.pyx":722
+        /* "vidcutter/libs/pympv/mpv.pyx":726
  *         self.callbackthread.set(callback)
  *         with nogil:
  *             mpv_set_wakeup_callback(self._ctx, _c_callback, <void*>name)             # <<<<<<<<<<<<<<
@@ -14525,7 +14609,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_32set_wakeup_callback(s
         mpv_set_wakeup_callback(__pyx_v_self->_ctx, __pyx_f_9vidcutter_4libs_3mpv__c_callback, ((void *)__pyx_v_name));
       }
 
-      /* "vidcutter/libs/pympv/mpv.pyx":721
+      /* "vidcutter/libs/pympv/mpv.pyx":725
  *         self.callback = callback
  *         self.callbackthread.set(callback)
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -14544,7 +14628,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_32set_wakeup_callback(s
       }
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":715
+  /* "vidcutter/libs/pympv/mpv.pyx":719
  *             mpv_wakeup(self._ctx)
  * 
  *     def set_wakeup_callback(self, callback):             # <<<<<<<<<<<<<<
@@ -14567,7 +14651,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_32set_wakeup_callback(s
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":724
+/* "vidcutter/libs/pympv/mpv.pyx":728
  *             mpv_set_wakeup_callback(self._ctx, _c_callback, <void*>name)
  * 
  *     def get_wakeup_pipe(self):             # <<<<<<<<<<<<<<
@@ -14599,7 +14683,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_34get_wakeup_pipe(struc
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get_wakeup_pipe", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":726
+  /* "vidcutter/libs/pympv/mpv.pyx":730
  *     def get_wakeup_pipe(self):
  *         """Wraps: mpv_get_wakeup_pipe"""
  *         assert self._ctx             # <<<<<<<<<<<<<<
@@ -14610,12 +14694,12 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_34get_wakeup_pipe(struc
   if (unlikely(!Py_OptimizeFlag)) {
     if (unlikely(!(__pyx_v_self->_ctx != 0))) {
       PyErr_SetNone(PyExc_AssertionError);
-      __PYX_ERR(0, 726, __pyx_L1_error)
+      __PYX_ERR(0, 730, __pyx_L1_error)
     }
   }
   #endif
 
-  /* "vidcutter/libs/pympv/mpv.pyx":728
+  /* "vidcutter/libs/pympv/mpv.pyx":732
  *         assert self._ctx
  *         cdef int pipe
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -14630,7 +14714,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_34get_wakeup_pipe(struc
       #endif
       /*try:*/ {
 
-        /* "vidcutter/libs/pympv/mpv.pyx":729
+        /* "vidcutter/libs/pympv/mpv.pyx":733
  *         cdef int pipe
  *         with nogil:
  *             pipe = mpv_get_wakeup_pipe(self._ctx)             # <<<<<<<<<<<<<<
@@ -14640,7 +14724,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_34get_wakeup_pipe(struc
         __pyx_v_pipe = mpv_get_wakeup_pipe(__pyx_v_self->_ctx);
       }
 
-      /* "vidcutter/libs/pympv/mpv.pyx":728
+      /* "vidcutter/libs/pympv/mpv.pyx":732
  *         assert self._ctx
  *         cdef int pipe
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -14659,7 +14743,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_34get_wakeup_pipe(struc
       }
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":730
+  /* "vidcutter/libs/pympv/mpv.pyx":734
  *         with nogil:
  *             pipe = mpv_get_wakeup_pipe(self._ctx)
  *         return pipe             # <<<<<<<<<<<<<<
@@ -14667,13 +14751,13 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_34get_wakeup_pipe(struc
  *     def __cinit__(self):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_pipe); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 730, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_pipe); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 734, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":724
+  /* "vidcutter/libs/pympv/mpv.pyx":728
  *             mpv_set_wakeup_callback(self._ctx, _c_callback, <void*>name)
  * 
  *     def get_wakeup_pipe(self):             # <<<<<<<<<<<<<<
@@ -14692,7 +14776,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_34get_wakeup_pipe(struc
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":732
+/* "vidcutter/libs/pympv/mpv.pyx":736
  *         return pipe
  * 
  *     def __cinit__(self):             # <<<<<<<<<<<<<<
@@ -14730,20 +14814,20 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_7Context_36__cinit__(struct __pyx_obj_
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__cinit__", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":733
+  /* "vidcutter/libs/pympv/mpv.pyx":737
  * 
  *     def __cinit__(self):
  *         cdef uint64_t ctxid = <uint64_t>id(self)             # <<<<<<<<<<<<<<
  *         with nogil:
  *             self._ctx = mpv_create()
  */
-  __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_builtin_id, ((PyObject *)__pyx_v_self)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 733, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_builtin_id, ((PyObject *)__pyx_v_self)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 737, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyInt_As_uint64_t(__pyx_t_1); if (unlikely((__pyx_t_2 == ((uint64_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 733, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_As_uint64_t(__pyx_t_1); if (unlikely((__pyx_t_2 == ((uint64_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 737, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_ctxid = ((uint64_t)__pyx_t_2);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":734
+  /* "vidcutter/libs/pympv/mpv.pyx":738
  *     def __cinit__(self):
  *         cdef uint64_t ctxid = <uint64_t>id(self)
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -14758,7 +14842,7 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_7Context_36__cinit__(struct __pyx_obj_
       #endif
       /*try:*/ {
 
-        /* "vidcutter/libs/pympv/mpv.pyx":735
+        /* "vidcutter/libs/pympv/mpv.pyx":739
  *         cdef uint64_t ctxid = <uint64_t>id(self)
  *         with nogil:
  *             self._ctx = mpv_create()             # <<<<<<<<<<<<<<
@@ -14768,7 +14852,7 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_7Context_36__cinit__(struct __pyx_obj_
         __pyx_v_self->_ctx = mpv_create();
       }
 
-      /* "vidcutter/libs/pympv/mpv.pyx":734
+      /* "vidcutter/libs/pympv/mpv.pyx":738
  *     def __cinit__(self):
  *         cdef uint64_t ctxid = <uint64_t>id(self)
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -14787,7 +14871,7 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_7Context_36__cinit__(struct __pyx_obj_
       }
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":736
+  /* "vidcutter/libs/pympv/mpv.pyx":740
  *         with nogil:
  *             self._ctx = mpv_create()
  *         if not self._ctx:             # <<<<<<<<<<<<<<
@@ -14797,14 +14881,14 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_7Context_36__cinit__(struct __pyx_obj_
   __pyx_t_3 = ((!(__pyx_v_self->_ctx != 0)) != 0);
   if (unlikely(__pyx_t_3)) {
 
-    /* "vidcutter/libs/pympv/mpv.pyx":737
+    /* "vidcutter/libs/pympv/mpv.pyx":741
  *             self._ctx = mpv_create()
  *         if not self._ctx:
  *             raise MPVError("Context creation error")             # <<<<<<<<<<<<<<
  *         self.callbackthread = CallbackThread()
  *         _callbacks[ctxid] = self.callbackthread
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_MPVError); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 737, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_MPVError); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 741, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __pyx_t_5 = NULL;
     if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_4))) {
@@ -14818,14 +14902,14 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_7Context_36__cinit__(struct __pyx_obj_
     }
     __pyx_t_1 = (__pyx_t_5) ? __Pyx_PyObject_Call2Args(__pyx_t_4, __pyx_t_5, __pyx_kp_s_Context_creation_error) : __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_kp_s_Context_creation_error);
     __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 737, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 741, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_Raise(__pyx_t_1, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __PYX_ERR(0, 737, __pyx_L1_error)
+    __PYX_ERR(0, 741, __pyx_L1_error)
 
-    /* "vidcutter/libs/pympv/mpv.pyx":736
+    /* "vidcutter/libs/pympv/mpv.pyx":740
  *         with nogil:
  *             self._ctx = mpv_create()
  *         if not self._ctx:             # <<<<<<<<<<<<<<
@@ -14834,14 +14918,14 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_7Context_36__cinit__(struct __pyx_obj_
  */
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":738
+  /* "vidcutter/libs/pympv/mpv.pyx":742
  *         if not self._ctx:
  *             raise MPVError("Context creation error")
  *         self.callbackthread = CallbackThread()             # <<<<<<<<<<<<<<
  *         _callbacks[ctxid] = self.callbackthread
  *         self.reply_userdata = dict()
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_CallbackThread); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 738, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_CallbackThread); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 742, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __pyx_t_5 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_4))) {
@@ -14855,7 +14939,7 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_7Context_36__cinit__(struct __pyx_obj_
   }
   __pyx_t_1 = (__pyx_t_5) ? __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_5) : __Pyx_PyObject_CallNoArg(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 738, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 742, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __Pyx_GIVEREF(__pyx_t_1);
@@ -14864,7 +14948,7 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_7Context_36__cinit__(struct __pyx_obj_
   __pyx_v_self->callbackthread = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":739
+  /* "vidcutter/libs/pympv/mpv.pyx":743
  *             raise MPVError("Context creation error")
  *         self.callbackthread = CallbackThread()
  *         _callbacks[ctxid] = self.callbackthread             # <<<<<<<<<<<<<<
@@ -14873,17 +14957,17 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_7Context_36__cinit__(struct __pyx_obj_
  */
   __pyx_t_1 = __pyx_v_self->callbackthread;
   __Pyx_INCREF(__pyx_t_1);
-  if (unlikely(__Pyx_SetItemInt(__pyx_v_9vidcutter_4libs_3mpv__callbacks, __pyx_v_ctxid, __pyx_t_1, uint64_t, 0, __Pyx_PyInt_From_uint64_t, 0, 0, 1) < 0)) __PYX_ERR(0, 739, __pyx_L1_error)
+  if (unlikely(__Pyx_SetItemInt(__pyx_v_9vidcutter_4libs_3mpv__callbacks, __pyx_v_ctxid, __pyx_t_1, uint64_t, 0, __Pyx_PyInt_From_uint64_t, 0, 0, 1) < 0)) __PYX_ERR(0, 743, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":740
+  /* "vidcutter/libs/pympv/mpv.pyx":744
  *         self.callbackthread = CallbackThread()
  *         _callbacks[ctxid] = self.callbackthread
  *         self.reply_userdata = dict()             # <<<<<<<<<<<<<<
  *         _reply_userdatas[ctxid] = self.reply_userdata
  *         self.callbackthread.start()
  */
-  __pyx_t_1 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 740, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 744, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_GIVEREF(__pyx_t_1);
   __Pyx_GOTREF(__pyx_v_self->reply_userdata);
@@ -14891,7 +14975,7 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_7Context_36__cinit__(struct __pyx_obj_
   __pyx_v_self->reply_userdata = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":741
+  /* "vidcutter/libs/pympv/mpv.pyx":745
  *         _callbacks[ctxid] = self.callbackthread
  *         self.reply_userdata = dict()
  *         _reply_userdatas[ctxid] = self.reply_userdata             # <<<<<<<<<<<<<<
@@ -14900,17 +14984,17 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_7Context_36__cinit__(struct __pyx_obj_
  */
   __pyx_t_1 = __pyx_v_self->reply_userdata;
   __Pyx_INCREF(__pyx_t_1);
-  if (unlikely(__Pyx_SetItemInt(__pyx_v_9vidcutter_4libs_3mpv__reply_userdatas, __pyx_v_ctxid, __pyx_t_1, uint64_t, 0, __Pyx_PyInt_From_uint64_t, 0, 0, 1) < 0)) __PYX_ERR(0, 741, __pyx_L1_error)
+  if (unlikely(__Pyx_SetItemInt(__pyx_v_9vidcutter_4libs_3mpv__reply_userdatas, __pyx_v_ctxid, __pyx_t_1, uint64_t, 0, __Pyx_PyInt_From_uint64_t, 0, 0, 1) < 0)) __PYX_ERR(0, 745, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":742
+  /* "vidcutter/libs/pympv/mpv.pyx":746
  *         self.reply_userdata = dict()
  *         _reply_userdatas[ctxid] = self.reply_userdata
  *         self.callbackthread.start()             # <<<<<<<<<<<<<<
  * 
  *     @_errors
  */
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->callbackthread, __pyx_n_s_start); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 742, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->callbackthread, __pyx_n_s_start); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 746, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __pyx_t_5 = NULL;
   if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_4))) {
@@ -14924,12 +15008,12 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_7Context_36__cinit__(struct __pyx_obj_
   }
   __pyx_t_1 = (__pyx_t_5) ? __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_5) : __Pyx_PyObject_CallNoArg(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 742, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 746, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":732
+  /* "vidcutter/libs/pympv/mpv.pyx":736
  *         return pipe
  * 
  *     def __cinit__(self):             # <<<<<<<<<<<<<<
@@ -14951,7 +15035,7 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_7Context_36__cinit__(struct __pyx_obj_
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":745
+/* "vidcutter/libs/pympv/mpv.pyx":749
  * 
  *     @_errors
  *     def observe_property(self, prop, data=None):             # <<<<<<<<<<<<<<
@@ -14999,7 +15083,7 @@ static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_7Context_39observe_property(PyOb
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "observe_property") < 0)) __PYX_ERR(0, 745, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "observe_property") < 0)) __PYX_ERR(0, 749, __pyx_L3_error)
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -15015,7 +15099,7 @@ static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_7Context_39observe_property(PyOb
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("observe_property", 0, 1, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 745, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("observe_property", 0, 1, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 749, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("vidcutter.libs.mpv.Context.observe_property", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -15051,7 +15135,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_38observe_property(stru
   __Pyx_RefNannySetupContext("observe_property", 0);
   __Pyx_INCREF(__pyx_v_prop);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":747
+  /* "vidcutter/libs/pympv/mpv.pyx":751
  *     def observe_property(self, prop, data=None):
  *         """Wraps: mpv_observe_property"""
  *         assert self._ctx             # <<<<<<<<<<<<<<
@@ -15062,41 +15146,41 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_38observe_property(stru
   if (unlikely(!Py_OptimizeFlag)) {
     if (unlikely(!(__pyx_v_self->_ctx != 0))) {
       PyErr_SetNone(PyExc_AssertionError);
-      __PYX_ERR(0, 747, __pyx_L1_error)
+      __PYX_ERR(0, 751, __pyx_L1_error)
     }
   }
   #endif
 
-  /* "vidcutter/libs/pympv/mpv.pyx":748
+  /* "vidcutter/libs/pympv/mpv.pyx":752
  *         """Wraps: mpv_observe_property"""
  *         assert self._ctx
  *         cdef uint64_t id_data = <uint64_t>hash(data)             # <<<<<<<<<<<<<<
  *         id_data = <uint64_t>hash(data)
  *         userdatas = self.reply_userdata.get(id_data, None)
  */
-  __pyx_t_1 = PyObject_Hash(__pyx_v_data); if (unlikely(__pyx_t_1 == ((Py_hash_t)-1))) __PYX_ERR(0, 748, __pyx_L1_error)
+  __pyx_t_1 = PyObject_Hash(__pyx_v_data); if (unlikely(__pyx_t_1 == ((Py_hash_t)-1))) __PYX_ERR(0, 752, __pyx_L1_error)
   __pyx_v_id_data = ((uint64_t)__pyx_t_1);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":749
+  /* "vidcutter/libs/pympv/mpv.pyx":753
  *         assert self._ctx
  *         cdef uint64_t id_data = <uint64_t>hash(data)
  *         id_data = <uint64_t>hash(data)             # <<<<<<<<<<<<<<
  *         userdatas = self.reply_userdata.get(id_data, None)
  *         if userdatas is None:
  */
-  __pyx_t_1 = PyObject_Hash(__pyx_v_data); if (unlikely(__pyx_t_1 == ((Py_hash_t)-1))) __PYX_ERR(0, 749, __pyx_L1_error)
+  __pyx_t_1 = PyObject_Hash(__pyx_v_data); if (unlikely(__pyx_t_1 == ((Py_hash_t)-1))) __PYX_ERR(0, 753, __pyx_L1_error)
   __pyx_v_id_data = ((uint64_t)__pyx_t_1);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":750
+  /* "vidcutter/libs/pympv/mpv.pyx":754
  *         cdef uint64_t id_data = <uint64_t>hash(data)
  *         id_data = <uint64_t>hash(data)
  *         userdatas = self.reply_userdata.get(id_data, None)             # <<<<<<<<<<<<<<
  *         if userdatas is None:
  *             self.reply_userdata[id_data] = userdatas = _ReplyUserData(data)
  */
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->reply_userdata, __pyx_n_s_get); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 750, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->reply_userdata, __pyx_n_s_get); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 754, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_4 = __Pyx_PyInt_From_uint64_t(__pyx_v_id_data); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 750, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyInt_From_uint64_t(__pyx_v_id_data); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 754, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __pyx_t_5 = NULL;
   __pyx_t_6 = 0;
@@ -15113,7 +15197,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_38observe_property(stru
   #if CYTHON_FAST_PYCALL
   if (PyFunction_Check(__pyx_t_3)) {
     PyObject *__pyx_temp[3] = {__pyx_t_5, __pyx_t_4, Py_None};
-    __pyx_t_2 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-__pyx_t_6, 2+__pyx_t_6); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 750, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-__pyx_t_6, 2+__pyx_t_6); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 754, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
@@ -15122,14 +15206,14 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_38observe_property(stru
   #if CYTHON_FAST_PYCCALL
   if (__Pyx_PyFastCFunction_Check(__pyx_t_3)) {
     PyObject *__pyx_temp[3] = {__pyx_t_5, __pyx_t_4, Py_None};
-    __pyx_t_2 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-__pyx_t_6, 2+__pyx_t_6); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 750, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-__pyx_t_6, 2+__pyx_t_6); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 754, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   } else
   #endif
   {
-    __pyx_t_7 = PyTuple_New(2+__pyx_t_6); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 750, __pyx_L1_error)
+    __pyx_t_7 = PyTuple_New(2+__pyx_t_6); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 754, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     if (__pyx_t_5) {
       __Pyx_GIVEREF(__pyx_t_5); PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_5); __pyx_t_5 = NULL;
@@ -15140,7 +15224,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_38observe_property(stru
     __Pyx_GIVEREF(Py_None);
     PyTuple_SET_ITEM(__pyx_t_7, 1+__pyx_t_6, Py_None);
     __pyx_t_4 = 0;
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_7, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 750, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_7, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 754, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   }
@@ -15148,7 +15232,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_38observe_property(stru
   __pyx_v_userdatas = __pyx_t_2;
   __pyx_t_2 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":751
+  /* "vidcutter/libs/pympv/mpv.pyx":755
  *         id_data = <uint64_t>hash(data)
  *         userdatas = self.reply_userdata.get(id_data, None)
  *         if userdatas is None:             # <<<<<<<<<<<<<<
@@ -15159,14 +15243,14 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_38observe_property(stru
   __pyx_t_9 = (__pyx_t_8 != 0);
   if (__pyx_t_9) {
 
-    /* "vidcutter/libs/pympv/mpv.pyx":752
+    /* "vidcutter/libs/pympv/mpv.pyx":756
  *         userdatas = self.reply_userdata.get(id_data, None)
  *         if userdatas is None:
  *             self.reply_userdata[id_data] = userdatas = _ReplyUserData(data)             # <<<<<<<<<<<<<<
  *         userdatas.observed = True
  *         prop = _strenc(prop)
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_ReplyUserData); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 752, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_ReplyUserData); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 756, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_t_7 = NULL;
     if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
@@ -15180,15 +15264,15 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_38observe_property(stru
     }
     __pyx_t_2 = (__pyx_t_7) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_7, __pyx_v_data) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_v_data);
     __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-    if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 752, __pyx_L1_error)
+    if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 756, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    if (unlikely(__Pyx_SetItemInt(__pyx_v_self->reply_userdata, __pyx_v_id_data, __pyx_t_2, uint64_t, 0, __Pyx_PyInt_From_uint64_t, 0, 0, 1) < 0)) __PYX_ERR(0, 752, __pyx_L1_error)
+    if (unlikely(__Pyx_SetItemInt(__pyx_v_self->reply_userdata, __pyx_v_id_data, __pyx_t_2, uint64_t, 0, __Pyx_PyInt_From_uint64_t, 0, 0, 1) < 0)) __PYX_ERR(0, 756, __pyx_L1_error)
     __Pyx_INCREF(__pyx_t_2);
     __Pyx_DECREF_SET(__pyx_v_userdatas, __pyx_t_2);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":751
+    /* "vidcutter/libs/pympv/mpv.pyx":755
  *         id_data = <uint64_t>hash(data)
  *         userdatas = self.reply_userdata.get(id_data, None)
  *         if userdatas is None:             # <<<<<<<<<<<<<<
@@ -15197,23 +15281,23 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_38observe_property(stru
  */
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":753
+  /* "vidcutter/libs/pympv/mpv.pyx":757
  *         if userdatas is None:
  *             self.reply_userdata[id_data] = userdatas = _ReplyUserData(data)
  *         userdatas.observed = True             # <<<<<<<<<<<<<<
  *         prop = _strenc(prop)
  *         cdef char* propc = prop
  */
-  if (__Pyx_PyObject_SetAttrStr(__pyx_v_userdatas, __pyx_n_s_observed, Py_True) < 0) __PYX_ERR(0, 753, __pyx_L1_error)
+  if (__Pyx_PyObject_SetAttrStr(__pyx_v_userdatas, __pyx_n_s_observed, Py_True) < 0) __PYX_ERR(0, 757, __pyx_L1_error)
 
-  /* "vidcutter/libs/pympv/mpv.pyx":754
+  /* "vidcutter/libs/pympv/mpv.pyx":758
  *             self.reply_userdata[id_data] = userdatas = _ReplyUserData(data)
  *         userdatas.observed = True
  *         prop = _strenc(prop)             # <<<<<<<<<<<<<<
  *         cdef char* propc = prop
  *         cdef int err
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_strenc); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 754, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_strenc); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 758, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_t_7 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
@@ -15227,23 +15311,23 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_38observe_property(stru
   }
   __pyx_t_2 = (__pyx_t_7) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_7, __pyx_v_prop) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_v_prop);
   __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-  if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 754, __pyx_L1_error)
+  if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 758, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __Pyx_DECREF_SET(__pyx_v_prop, __pyx_t_2);
   __pyx_t_2 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":755
+  /* "vidcutter/libs/pympv/mpv.pyx":759
  *         userdatas.observed = True
  *         prop = _strenc(prop)
  *         cdef char* propc = prop             # <<<<<<<<<<<<<<
  *         cdef int err
  *         with nogil:
  */
-  __pyx_t_10 = __Pyx_PyObject_AsWritableString(__pyx_v_prop); if (unlikely((!__pyx_t_10) && PyErr_Occurred())) __PYX_ERR(0, 755, __pyx_L1_error)
+  __pyx_t_10 = __Pyx_PyObject_AsWritableString(__pyx_v_prop); if (unlikely((!__pyx_t_10) && PyErr_Occurred())) __PYX_ERR(0, 759, __pyx_L1_error)
   __pyx_v_propc = __pyx_t_10;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":757
+  /* "vidcutter/libs/pympv/mpv.pyx":761
  *         cdef char* propc = prop
  *         cdef int err
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -15258,7 +15342,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_38observe_property(stru
       #endif
       /*try:*/ {
 
-        /* "vidcutter/libs/pympv/mpv.pyx":758
+        /* "vidcutter/libs/pympv/mpv.pyx":762
  *         cdef int err
  *         with nogil:
  *             err = mpv_observe_property(             # <<<<<<<<<<<<<<
@@ -15268,7 +15352,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_38observe_property(stru
         __pyx_v_err = mpv_observe_property(__pyx_v_self->_ctx, __pyx_v_id_data, __pyx_v_propc, MPV_FORMAT_NODE);
       }
 
-      /* "vidcutter/libs/pympv/mpv.pyx":757
+      /* "vidcutter/libs/pympv/mpv.pyx":761
  *         cdef char* propc = prop
  *         cdef int err
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -15287,7 +15371,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_38observe_property(stru
       }
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":764
+  /* "vidcutter/libs/pympv/mpv.pyx":768
  *                 MPV_FORMAT_NODE,
  *             )
  *         return err             # <<<<<<<<<<<<<<
@@ -15295,13 +15379,13 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_38observe_property(stru
  *     @_errors
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_err); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 764, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_err); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 768, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_r = __pyx_t_2;
   __pyx_t_2 = 0;
   goto __pyx_L0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":745
+  /* "vidcutter/libs/pympv/mpv.pyx":749
  * 
  *     @_errors
  *     def observe_property(self, prop, data=None):             # <<<<<<<<<<<<<<
@@ -15326,7 +15410,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_38observe_property(stru
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":767
+/* "vidcutter/libs/pympv/mpv.pyx":771
  * 
  *     @_errors
  *     def unobserve_property(self, data):             # <<<<<<<<<<<<<<
@@ -15368,7 +15452,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_40unobserve_property(st
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("unobserve_property", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":769
+  /* "vidcutter/libs/pympv/mpv.pyx":773
  *     def unobserve_property(self, data):
  *         """Wraps: mpv_unobserve_property"""
  *         assert self._ctx             # <<<<<<<<<<<<<<
@@ -15379,31 +15463,31 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_40unobserve_property(st
   if (unlikely(!Py_OptimizeFlag)) {
     if (unlikely(!(__pyx_v_self->_ctx != 0))) {
       PyErr_SetNone(PyExc_AssertionError);
-      __PYX_ERR(0, 769, __pyx_L1_error)
+      __PYX_ERR(0, 773, __pyx_L1_error)
     }
   }
   #endif
 
-  /* "vidcutter/libs/pympv/mpv.pyx":770
+  /* "vidcutter/libs/pympv/mpv.pyx":774
  *         """Wraps: mpv_unobserve_property"""
  *         assert self._ctx
  *         cdef uint64_t id_data = <uint64_t>hash(data)             # <<<<<<<<<<<<<<
  *         userdatas = self.reply_userdata.get(id_data, None)
  *         if userdatas is not None:
  */
-  __pyx_t_1 = PyObject_Hash(__pyx_v_data); if (unlikely(__pyx_t_1 == ((Py_hash_t)-1))) __PYX_ERR(0, 770, __pyx_L1_error)
+  __pyx_t_1 = PyObject_Hash(__pyx_v_data); if (unlikely(__pyx_t_1 == ((Py_hash_t)-1))) __PYX_ERR(0, 774, __pyx_L1_error)
   __pyx_v_id_data = ((uint64_t)__pyx_t_1);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":771
+  /* "vidcutter/libs/pympv/mpv.pyx":775
  *         assert self._ctx
  *         cdef uint64_t id_data = <uint64_t>hash(data)
  *         userdatas = self.reply_userdata.get(id_data, None)             # <<<<<<<<<<<<<<
  *         if userdatas is not None:
  *             userdatas.observed = False
  */
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->reply_userdata, __pyx_n_s_get); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 771, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->reply_userdata, __pyx_n_s_get); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 775, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_4 = __Pyx_PyInt_From_uint64_t(__pyx_v_id_data); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 771, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyInt_From_uint64_t(__pyx_v_id_data); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 775, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __pyx_t_5 = NULL;
   __pyx_t_6 = 0;
@@ -15420,7 +15504,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_40unobserve_property(st
   #if CYTHON_FAST_PYCALL
   if (PyFunction_Check(__pyx_t_3)) {
     PyObject *__pyx_temp[3] = {__pyx_t_5, __pyx_t_4, Py_None};
-    __pyx_t_2 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-__pyx_t_6, 2+__pyx_t_6); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 771, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-__pyx_t_6, 2+__pyx_t_6); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 775, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
@@ -15429,14 +15513,14 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_40unobserve_property(st
   #if CYTHON_FAST_PYCCALL
   if (__Pyx_PyFastCFunction_Check(__pyx_t_3)) {
     PyObject *__pyx_temp[3] = {__pyx_t_5, __pyx_t_4, Py_None};
-    __pyx_t_2 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-__pyx_t_6, 2+__pyx_t_6); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 771, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-__pyx_t_6, 2+__pyx_t_6); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 775, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   } else
   #endif
   {
-    __pyx_t_7 = PyTuple_New(2+__pyx_t_6); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 771, __pyx_L1_error)
+    __pyx_t_7 = PyTuple_New(2+__pyx_t_6); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 775, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     if (__pyx_t_5) {
       __Pyx_GIVEREF(__pyx_t_5); PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_5); __pyx_t_5 = NULL;
@@ -15447,7 +15531,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_40unobserve_property(st
     __Pyx_GIVEREF(Py_None);
     PyTuple_SET_ITEM(__pyx_t_7, 1+__pyx_t_6, Py_None);
     __pyx_t_4 = 0;
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_7, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 771, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_7, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 775, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   }
@@ -15455,7 +15539,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_40unobserve_property(st
   __pyx_v_userdatas = __pyx_t_2;
   __pyx_t_2 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":772
+  /* "vidcutter/libs/pympv/mpv.pyx":776
  *         cdef uint64_t id_data = <uint64_t>hash(data)
  *         userdatas = self.reply_userdata.get(id_data, None)
  *         if userdatas is not None:             # <<<<<<<<<<<<<<
@@ -15466,40 +15550,40 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_40unobserve_property(st
   __pyx_t_9 = (__pyx_t_8 != 0);
   if (__pyx_t_9) {
 
-    /* "vidcutter/libs/pympv/mpv.pyx":773
+    /* "vidcutter/libs/pympv/mpv.pyx":777
  *         userdatas = self.reply_userdata.get(id_data, None)
  *         if userdatas is not None:
  *             userdatas.observed = False             # <<<<<<<<<<<<<<
  *             if userdatas.counter <= 0:
  *                 del self.reply_userdata[id_data]
  */
-    if (__Pyx_PyObject_SetAttrStr(__pyx_v_userdatas, __pyx_n_s_observed, Py_False) < 0) __PYX_ERR(0, 773, __pyx_L1_error)
+    if (__Pyx_PyObject_SetAttrStr(__pyx_v_userdatas, __pyx_n_s_observed, Py_False) < 0) __PYX_ERR(0, 777, __pyx_L1_error)
 
-    /* "vidcutter/libs/pympv/mpv.pyx":774
+    /* "vidcutter/libs/pympv/mpv.pyx":778
  *         if userdatas is not None:
  *             userdatas.observed = False
  *             if userdatas.counter <= 0:             # <<<<<<<<<<<<<<
  *                 del self.reply_userdata[id_data]
  *         cdef int err
  */
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_userdatas, __pyx_n_s_counter); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 774, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_userdatas, __pyx_n_s_counter); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 778, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_3 = PyObject_RichCompare(__pyx_t_2, __pyx_int_0, Py_LE); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 774, __pyx_L1_error)
+    __pyx_t_3 = PyObject_RichCompare(__pyx_t_2, __pyx_int_0, Py_LE); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 778, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_9 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 774, __pyx_L1_error)
+    __pyx_t_9 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 778, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     if (__pyx_t_9) {
 
-      /* "vidcutter/libs/pympv/mpv.pyx":775
+      /* "vidcutter/libs/pympv/mpv.pyx":779
  *             userdatas.observed = False
  *             if userdatas.counter <= 0:
  *                 del self.reply_userdata[id_data]             # <<<<<<<<<<<<<<
  *         cdef int err
  *         with nogil:
  */
-      if (unlikely(__Pyx_DelItemInt(__pyx_v_self->reply_userdata, __pyx_v_id_data, uint64_t, 0, __Pyx_PyInt_From_uint64_t, 0, 0, 1) < 0)) __PYX_ERR(0, 775, __pyx_L1_error)
+      if (unlikely(__Pyx_DelItemInt(__pyx_v_self->reply_userdata, __pyx_v_id_data, uint64_t, 0, __Pyx_PyInt_From_uint64_t, 0, 0, 1) < 0)) __PYX_ERR(0, 779, __pyx_L1_error)
 
-      /* "vidcutter/libs/pympv/mpv.pyx":774
+      /* "vidcutter/libs/pympv/mpv.pyx":778
  *         if userdatas is not None:
  *             userdatas.observed = False
  *             if userdatas.counter <= 0:             # <<<<<<<<<<<<<<
@@ -15508,7 +15592,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_40unobserve_property(st
  */
     }
 
-    /* "vidcutter/libs/pympv/mpv.pyx":772
+    /* "vidcutter/libs/pympv/mpv.pyx":776
  *         cdef uint64_t id_data = <uint64_t>hash(data)
  *         userdatas = self.reply_userdata.get(id_data, None)
  *         if userdatas is not None:             # <<<<<<<<<<<<<<
@@ -15517,7 +15601,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_40unobserve_property(st
  */
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":777
+  /* "vidcutter/libs/pympv/mpv.pyx":781
  *                 del self.reply_userdata[id_data]
  *         cdef int err
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -15532,7 +15616,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_40unobserve_property(st
       #endif
       /*try:*/ {
 
-        /* "vidcutter/libs/pympv/mpv.pyx":778
+        /* "vidcutter/libs/pympv/mpv.pyx":782
  *         cdef int err
  *         with nogil:
  *             err = mpv_unobserve_property(             # <<<<<<<<<<<<<<
@@ -15542,7 +15626,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_40unobserve_property(st
         __pyx_v_err = mpv_unobserve_property(__pyx_v_self->_ctx, __pyx_v_id_data);
       }
 
-      /* "vidcutter/libs/pympv/mpv.pyx":777
+      /* "vidcutter/libs/pympv/mpv.pyx":781
  *                 del self.reply_userdata[id_data]
  *         cdef int err
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -15561,7 +15645,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_40unobserve_property(st
       }
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":782
+  /* "vidcutter/libs/pympv/mpv.pyx":786
  *                 id_data,
  *             )
  *         return err             # <<<<<<<<<<<<<<
@@ -15569,13 +15653,13 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_40unobserve_property(st
  *     def shutdown(self):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_err); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 782, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_err); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 786, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_r = __pyx_t_3;
   __pyx_t_3 = 0;
   goto __pyx_L0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":767
+  /* "vidcutter/libs/pympv/mpv.pyx":771
  * 
  *     @_errors
  *     def unobserve_property(self, data):             # <<<<<<<<<<<<<<
@@ -15599,7 +15683,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_40unobserve_property(st
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":784
+/* "vidcutter/libs/pympv/mpv.pyx":788
  *         return err
  * 
  *     def shutdown(self):             # <<<<<<<<<<<<<<
@@ -15634,7 +15718,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_42shutdown(struct __pyx
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("shutdown", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":785
+  /* "vidcutter/libs/pympv/mpv.pyx":789
  * 
  *     def shutdown(self):
  *         if self._ctx == NULL:             # <<<<<<<<<<<<<<
@@ -15644,7 +15728,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_42shutdown(struct __pyx
   __pyx_t_1 = ((__pyx_v_self->_ctx == NULL) != 0);
   if (__pyx_t_1) {
 
-    /* "vidcutter/libs/pympv/mpv.pyx":786
+    /* "vidcutter/libs/pympv/mpv.pyx":790
  *     def shutdown(self):
  *         if self._ctx == NULL:
  *             return             # <<<<<<<<<<<<<<
@@ -15655,7 +15739,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_42shutdown(struct __pyx
     __pyx_r = Py_None; __Pyx_INCREF(Py_None);
     goto __pyx_L0;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":785
+    /* "vidcutter/libs/pympv/mpv.pyx":789
  * 
  *     def shutdown(self):
  *         if self._ctx == NULL:             # <<<<<<<<<<<<<<
@@ -15664,20 +15748,20 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_42shutdown(struct __pyx
  */
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":787
+  /* "vidcutter/libs/pympv/mpv.pyx":791
  *         if self._ctx == NULL:
  *             return
  *         cdef uint64_t ctxid = <uint64_t>id(self)             # <<<<<<<<<<<<<<
  *         with nogil:
  *             mpv_terminate_destroy(self._ctx)
  */
-  __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_builtin_id, ((PyObject *)__pyx_v_self)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 787, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_builtin_id, ((PyObject *)__pyx_v_self)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 791, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyInt_As_uint64_t(__pyx_t_2); if (unlikely((__pyx_t_3 == ((uint64_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 787, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyInt_As_uint64_t(__pyx_t_2); if (unlikely((__pyx_t_3 == ((uint64_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 791, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_v_ctxid = ((uint64_t)__pyx_t_3);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":788
+  /* "vidcutter/libs/pympv/mpv.pyx":792
  *             return
  *         cdef uint64_t ctxid = <uint64_t>id(self)
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -15692,7 +15776,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_42shutdown(struct __pyx
       #endif
       /*try:*/ {
 
-        /* "vidcutter/libs/pympv/mpv.pyx":789
+        /* "vidcutter/libs/pympv/mpv.pyx":793
  *         cdef uint64_t ctxid = <uint64_t>id(self)
  *         with nogil:
  *             mpv_terminate_destroy(self._ctx)             # <<<<<<<<<<<<<<
@@ -15702,7 +15786,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_42shutdown(struct __pyx
         mpv_terminate_destroy(__pyx_v_self->_ctx);
       }
 
-      /* "vidcutter/libs/pympv/mpv.pyx":788
+      /* "vidcutter/libs/pympv/mpv.pyx":792
  *             return
  *         cdef uint64_t ctxid = <uint64_t>id(self)
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -15721,14 +15805,14 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_42shutdown(struct __pyx
       }
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":790
+  /* "vidcutter/libs/pympv/mpv.pyx":794
  *         with nogil:
  *             mpv_terminate_destroy(self._ctx)
  *         self.callbackthread.shutdown()             # <<<<<<<<<<<<<<
  *         del _callbacks[ctxid]
  *         del _reply_userdatas[ctxid]
  */
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->callbackthread, __pyx_n_s_shutdown); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 790, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->callbackthread, __pyx_n_s_shutdown); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 794, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __pyx_t_5 = NULL;
   if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_4))) {
@@ -15742,30 +15826,30 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_42shutdown(struct __pyx
   }
   __pyx_t_2 = (__pyx_t_5) ? __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_5) : __Pyx_PyObject_CallNoArg(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-  if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 790, __pyx_L1_error)
+  if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 794, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":791
+  /* "vidcutter/libs/pympv/mpv.pyx":795
  *             mpv_terminate_destroy(self._ctx)
  *         self.callbackthread.shutdown()
  *         del _callbacks[ctxid]             # <<<<<<<<<<<<<<
  *         del _reply_userdatas[ctxid]
  *         self.callback = None
  */
-  if (unlikely(__Pyx_DelItemInt(__pyx_v_9vidcutter_4libs_3mpv__callbacks, __pyx_v_ctxid, uint64_t, 0, __Pyx_PyInt_From_uint64_t, 0, 0, 1) < 0)) __PYX_ERR(0, 791, __pyx_L1_error)
+  if (unlikely(__Pyx_DelItemInt(__pyx_v_9vidcutter_4libs_3mpv__callbacks, __pyx_v_ctxid, uint64_t, 0, __Pyx_PyInt_From_uint64_t, 0, 0, 1) < 0)) __PYX_ERR(0, 795, __pyx_L1_error)
 
-  /* "vidcutter/libs/pympv/mpv.pyx":792
+  /* "vidcutter/libs/pympv/mpv.pyx":796
  *         self.callbackthread.shutdown()
  *         del _callbacks[ctxid]
  *         del _reply_userdatas[ctxid]             # <<<<<<<<<<<<<<
  *         self.callback = None
  *         self.reply_userdata = None
  */
-  if (unlikely(__Pyx_DelItemInt(__pyx_v_9vidcutter_4libs_3mpv__reply_userdatas, __pyx_v_ctxid, uint64_t, 0, __Pyx_PyInt_From_uint64_t, 0, 0, 1) < 0)) __PYX_ERR(0, 792, __pyx_L1_error)
+  if (unlikely(__Pyx_DelItemInt(__pyx_v_9vidcutter_4libs_3mpv__reply_userdatas, __pyx_v_ctxid, uint64_t, 0, __Pyx_PyInt_From_uint64_t, 0, 0, 1) < 0)) __PYX_ERR(0, 796, __pyx_L1_error)
 
-  /* "vidcutter/libs/pympv/mpv.pyx":793
+  /* "vidcutter/libs/pympv/mpv.pyx":797
  *         del _callbacks[ctxid]
  *         del _reply_userdatas[ctxid]
  *         self.callback = None             # <<<<<<<<<<<<<<
@@ -15778,7 +15862,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_42shutdown(struct __pyx
   __Pyx_DECREF(__pyx_v_self->callback);
   __pyx_v_self->callback = Py_None;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":794
+  /* "vidcutter/libs/pympv/mpv.pyx":798
  *         del _reply_userdatas[ctxid]
  *         self.callback = None
  *         self.reply_userdata = None             # <<<<<<<<<<<<<<
@@ -15791,7 +15875,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_42shutdown(struct __pyx
   __Pyx_DECREF(__pyx_v_self->reply_userdata);
   __pyx_v_self->reply_userdata = Py_None;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":795
+  /* "vidcutter/libs/pympv/mpv.pyx":799
  *         self.callback = None
  *         self.reply_userdata = None
  *         self._ctx = NULL             # <<<<<<<<<<<<<<
@@ -15800,7 +15884,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_42shutdown(struct __pyx
  */
   __pyx_v_self->_ctx = NULL;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":784
+  /* "vidcutter/libs/pympv/mpv.pyx":788
  *         return err
  * 
  *     def shutdown(self):             # <<<<<<<<<<<<<<
@@ -15823,7 +15907,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_42shutdown(struct __pyx
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":797
+/* "vidcutter/libs/pympv/mpv.pyx":801
  *         self._ctx = NULL
  * 
  *     def opengl_cb_api(self):             # <<<<<<<<<<<<<<
@@ -15858,7 +15942,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_44opengl_cb_api(struct 
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("opengl_cb_api", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":800
+  /* "vidcutter/libs/pympv/mpv.pyx":804
  *         cdef void *cb
  * 
  *         _ctx = mpv_get_sub_api(self._ctx, MPV_SUB_API_OPENGL_CB)             # <<<<<<<<<<<<<<
@@ -15867,7 +15951,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_44opengl_cb_api(struct 
  */
   __pyx_v__ctx = mpv_get_sub_api(__pyx_v_self->_ctx, MPV_SUB_API_OPENGL_CB);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":801
+  /* "vidcutter/libs/pympv/mpv.pyx":805
  * 
  *         _ctx = mpv_get_sub_api(self._ctx, MPV_SUB_API_OPENGL_CB)
  *         if not _ctx:             # <<<<<<<<<<<<<<
@@ -15877,14 +15961,14 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_44opengl_cb_api(struct 
   __pyx_t_1 = ((!(__pyx_v__ctx != 0)) != 0);
   if (unlikely(__pyx_t_1)) {
 
-    /* "vidcutter/libs/pympv/mpv.pyx":802
+    /* "vidcutter/libs/pympv/mpv.pyx":806
  *         _ctx = mpv_get_sub_api(self._ctx, MPV_SUB_API_OPENGL_CB)
  *         if not _ctx:
  *             raise MPVError("OpenGL API not available")             # <<<<<<<<<<<<<<
  * 
  *         ctx = OpenGLContext()
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_MPVError); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 802, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_MPVError); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 806, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_t_4 = NULL;
     if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
@@ -15898,14 +15982,14 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_44opengl_cb_api(struct 
     }
     __pyx_t_2 = (__pyx_t_4) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_4, __pyx_kp_s_OpenGL_API_not_available) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_kp_s_OpenGL_API_not_available);
     __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-    if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 802, __pyx_L1_error)
+    if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 806, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_Raise(__pyx_t_2, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __PYX_ERR(0, 802, __pyx_L1_error)
+    __PYX_ERR(0, 806, __pyx_L1_error)
 
-    /* "vidcutter/libs/pympv/mpv.pyx":801
+    /* "vidcutter/libs/pympv/mpv.pyx":805
  * 
  *         _ctx = mpv_get_sub_api(self._ctx, MPV_SUB_API_OPENGL_CB)
  *         if not _ctx:             # <<<<<<<<<<<<<<
@@ -15914,19 +15998,19 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_44opengl_cb_api(struct 
  */
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":804
+  /* "vidcutter/libs/pympv/mpv.pyx":808
  *             raise MPVError("OpenGL API not available")
  * 
  *         ctx = OpenGLContext()             # <<<<<<<<<<<<<<
  *         ctx._ctx = <mpv_opengl_cb_context*>_ctx
  * 
  */
-  __pyx_t_2 = __Pyx_PyObject_CallNoArg(((PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_OpenGLContext)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 804, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_CallNoArg(((PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_OpenGLContext)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 808, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_v_ctx = ((struct __pyx_obj_9vidcutter_4libs_3mpv_OpenGLContext *)__pyx_t_2);
   __pyx_t_2 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":805
+  /* "vidcutter/libs/pympv/mpv.pyx":809
  * 
  *         ctx = OpenGLContext()
  *         ctx._ctx = <mpv_opengl_cb_context*>_ctx             # <<<<<<<<<<<<<<
@@ -15935,7 +16019,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_44opengl_cb_api(struct 
  */
   __pyx_v_ctx->_ctx = ((struct mpv_opengl_cb_context *)__pyx_v__ctx);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":807
+  /* "vidcutter/libs/pympv/mpv.pyx":811
  *         ctx._ctx = <mpv_opengl_cb_context*>_ctx
  * 
  *         return ctx             # <<<<<<<<<<<<<<
@@ -15947,7 +16031,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_44opengl_cb_api(struct 
   __pyx_r = ((PyObject *)__pyx_v_ctx);
   goto __pyx_L0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":797
+  /* "vidcutter/libs/pympv/mpv.pyx":801
  *         self._ctx = NULL
  * 
  *     def opengl_cb_api(self):             # <<<<<<<<<<<<<<
@@ -15969,7 +16053,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_44opengl_cb_api(struct 
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":809
+/* "vidcutter/libs/pympv/mpv.pyx":813
  *         return ctx
  * 
  *     def __dealloc__(self):             # <<<<<<<<<<<<<<
@@ -15998,14 +16082,14 @@ static void __pyx_pf_9vidcutter_4libs_3mpv_7Context_46__dealloc__(struct __pyx_o
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__dealloc__", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":810
+  /* "vidcutter/libs/pympv/mpv.pyx":814
  * 
  *     def __dealloc__(self):
  *         self.shutdown()             # <<<<<<<<<<<<<<
  * 
  * cdef void *_c_getprocaddress(void *ctx, const char *name) with gil:
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_shutdown); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 810, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_shutdown); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 814, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
@@ -16019,12 +16103,12 @@ static void __pyx_pf_9vidcutter_4libs_3mpv_7Context_46__dealloc__(struct __pyx_o
   }
   __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3) : __Pyx_PyObject_CallNoArg(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 810, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 814, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":809
+  /* "vidcutter/libs/pympv/mpv.pyx":813
  *         return ctx
  * 
  *     def __dealloc__(self):             # <<<<<<<<<<<<<<
@@ -16156,7 +16240,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_7Context_50__setstate_cython__(C
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":812
+/* "vidcutter/libs/pympv/mpv.pyx":816
  *         self.shutdown()
  * 
  * cdef void *_c_getprocaddress(void *ctx, const char *name) with gil:             # <<<<<<<<<<<<<<
@@ -16180,14 +16264,14 @@ static void *__pyx_f_9vidcutter_4libs_3mpv__c_getprocaddress(void *__pyx_v_ctx, 
   #endif
   __Pyx_RefNannySetupContext("_c_getprocaddress", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":813
+  /* "vidcutter/libs/pympv/mpv.pyx":817
  * 
  * cdef void *_c_getprocaddress(void *ctx, const char *name) with gil:
  *     return <void *><intptr_t>(<object>ctx)(name)             # <<<<<<<<<<<<<<
  * 
  * cdef void _c_updatecb(void *ctx) with gil:
  */
-  __pyx_t_2 = __Pyx_PyBytes_FromString(__pyx_v_name); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 813, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyBytes_FromString(__pyx_v_name); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 817, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_INCREF(((PyObject *)__pyx_v_ctx));
   __pyx_t_3 = ((PyObject *)__pyx_v_ctx); __pyx_t_4 = NULL;
@@ -16203,15 +16287,15 @@ static void *__pyx_f_9vidcutter_4libs_3mpv__c_getprocaddress(void *__pyx_v_ctx, 
   __pyx_t_1 = (__pyx_t_4) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_4, __pyx_t_2) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2);
   __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 813, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 817, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_5 = __Pyx_PyInt_As_intptr_t(__pyx_t_1); if (unlikely((__pyx_t_5 == ((intptr_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 813, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyInt_As_intptr_t(__pyx_t_1); if (unlikely((__pyx_t_5 == ((intptr_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 817, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_r = ((void *)((intptr_t)__pyx_t_5));
   goto __pyx_L0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":812
+  /* "vidcutter/libs/pympv/mpv.pyx":816
  *         self.shutdown()
  * 
  * cdef void *_c_getprocaddress(void *ctx, const char *name) with gil:             # <<<<<<<<<<<<<<
@@ -16235,7 +16319,7 @@ static void *__pyx_f_9vidcutter_4libs_3mpv__c_getprocaddress(void *__pyx_v_ctx, 
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":815
+/* "vidcutter/libs/pympv/mpv.pyx":819
  *     return <void *><intptr_t>(<object>ctx)(name)
  * 
  * cdef void _c_updatecb(void *ctx) with gil:             # <<<<<<<<<<<<<<
@@ -16256,7 +16340,7 @@ static void __pyx_f_9vidcutter_4libs_3mpv__c_updatecb(void *__pyx_v_ctx) {
   #endif
   __Pyx_RefNannySetupContext("_c_updatecb", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":816
+  /* "vidcutter/libs/pympv/mpv.pyx":820
  * 
  * cdef void _c_updatecb(void *ctx) with gil:
  *     (<object>ctx)()             # <<<<<<<<<<<<<<
@@ -16276,12 +16360,12 @@ static void __pyx_f_9vidcutter_4libs_3mpv__c_updatecb(void *__pyx_v_ctx) {
   }
   __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3) : __Pyx_PyObject_CallNoArg(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 816, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 820, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":815
+  /* "vidcutter/libs/pympv/mpv.pyx":819
  *     return <void *><intptr_t>(<object>ctx)(name)
  * 
  * cdef void _c_updatecb(void *ctx) with gil:             # <<<<<<<<<<<<<<
@@ -16303,7 +16387,7 @@ static void __pyx_f_9vidcutter_4libs_3mpv__c_updatecb(void *__pyx_v_ctx) {
   #endif
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":824
+/* "vidcutter/libs/pympv/mpv.pyx":828
  *         object update_cb
  * 
  *     def __init__(self):             # <<<<<<<<<<<<<<
@@ -16337,7 +16421,7 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext___init__(struct __pyx_
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__init__", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":825
+  /* "vidcutter/libs/pympv/mpv.pyx":829
  * 
  *     def __init__(self):
  *         self.inited = False             # <<<<<<<<<<<<<<
@@ -16346,24 +16430,24 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext___init__(struct __pyx_
  */
   __pyx_v_self->inited = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":826
+  /* "vidcutter/libs/pympv/mpv.pyx":830
  *     def __init__(self):
  *         self.inited = False
  *         warnings.warn("OpenGLContext is deprecated, please switch to RenderContext", DeprecationWarning)             # <<<<<<<<<<<<<<
  * 
  *     def init_gl(self, exts, get_proc_address):
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_warnings); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 826, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_warnings); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 830, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_warn); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 826, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_warn); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 830, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_tuple__5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 826, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_tuple__5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 830, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":824
+  /* "vidcutter/libs/pympv/mpv.pyx":828
  *         object update_cb
  * 
  *     def __init__(self):             # <<<<<<<<<<<<<<
@@ -16384,7 +16468,7 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext___init__(struct __pyx_
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":828
+/* "vidcutter/libs/pympv/mpv.pyx":832
  *         warnings.warn("OpenGLContext is deprecated, please switch to RenderContext", DeprecationWarning)
  * 
  *     def init_gl(self, exts, get_proc_address):             # <<<<<<<<<<<<<<
@@ -16426,11 +16510,11 @@ static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_13OpenGLContext_3init_gl(PyObjec
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_get_proc_address)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("init_gl", 1, 2, 2, 1); __PYX_ERR(0, 828, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("init_gl", 1, 2, 2, 1); __PYX_ERR(0, 832, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "init_gl") < 0)) __PYX_ERR(0, 828, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "init_gl") < 0)) __PYX_ERR(0, 832, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -16443,7 +16527,7 @@ static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_13OpenGLContext_3init_gl(PyObjec
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("init_gl", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 828, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("init_gl", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 832, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("vidcutter.libs.mpv.OpenGLContext.init_gl", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -16474,7 +16558,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_2init_gl(struct 
   __Pyx_RefNannySetupContext("init_gl", 0);
   __Pyx_INCREF(__pyx_v_exts);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":829
+  /* "vidcutter/libs/pympv/mpv.pyx":833
  * 
  *     def init_gl(self, exts, get_proc_address):
  *         exts = _strenc(exts) if exts is not None else None             # <<<<<<<<<<<<<<
@@ -16483,7 +16567,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_2init_gl(struct 
  */
   __pyx_t_2 = (__pyx_v_exts != Py_None);
   if ((__pyx_t_2 != 0)) {
-    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_strenc); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 829, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_strenc); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 833, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __pyx_t_5 = NULL;
     if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_4))) {
@@ -16497,7 +16581,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_2init_gl(struct 
     }
     __pyx_t_3 = (__pyx_t_5) ? __Pyx_PyObject_Call2Args(__pyx_t_4, __pyx_t_5, __pyx_v_exts) : __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_v_exts);
     __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 829, __pyx_L1_error)
+    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 833, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __pyx_t_1 = __pyx_t_3;
@@ -16509,7 +16593,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_2init_gl(struct 
   __Pyx_DECREF_SET(__pyx_v_exts, __pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":830
+  /* "vidcutter/libs/pympv/mpv.pyx":834
  *     def init_gl(self, exts, get_proc_address):
  *         exts = _strenc(exts) if exts is not None else None
  *         cdef char* extsc = NULL             # <<<<<<<<<<<<<<
@@ -16518,7 +16602,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_2init_gl(struct 
  */
   __pyx_v_extsc = NULL;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":831
+  /* "vidcutter/libs/pympv/mpv.pyx":835
  *         exts = _strenc(exts) if exts is not None else None
  *         cdef char* extsc = NULL
  *         if exts is not None:             # <<<<<<<<<<<<<<
@@ -16529,17 +16613,17 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_2init_gl(struct 
   __pyx_t_6 = (__pyx_t_2 != 0);
   if (__pyx_t_6) {
 
-    /* "vidcutter/libs/pympv/mpv.pyx":832
+    /* "vidcutter/libs/pympv/mpv.pyx":836
  *         cdef char* extsc = NULL
  *         if exts is not None:
  *             extsc = exts             # <<<<<<<<<<<<<<
  *         with nogil:
  *             err = mpv_opengl_cb_init_gl(self._ctx, extsc, &_c_getprocaddress,
  */
-    __pyx_t_7 = __Pyx_PyObject_AsWritableString(__pyx_v_exts); if (unlikely((!__pyx_t_7) && PyErr_Occurred())) __PYX_ERR(0, 832, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyObject_AsWritableString(__pyx_v_exts); if (unlikely((!__pyx_t_7) && PyErr_Occurred())) __PYX_ERR(0, 836, __pyx_L1_error)
     __pyx_v_extsc = __pyx_t_7;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":831
+    /* "vidcutter/libs/pympv/mpv.pyx":835
  *         exts = _strenc(exts) if exts is not None else None
  *         cdef char* extsc = NULL
  *         if exts is not None:             # <<<<<<<<<<<<<<
@@ -16548,7 +16632,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_2init_gl(struct 
  */
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":833
+  /* "vidcutter/libs/pympv/mpv.pyx":837
  *         if exts is not None:
  *             extsc = exts
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -16563,7 +16647,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_2init_gl(struct 
       #endif
       /*try:*/ {
 
-        /* "vidcutter/libs/pympv/mpv.pyx":834
+        /* "vidcutter/libs/pympv/mpv.pyx":838
  *             extsc = exts
  *         with nogil:
  *             err = mpv_opengl_cb_init_gl(self._ctx, extsc, &_c_getprocaddress,             # <<<<<<<<<<<<<<
@@ -16573,7 +16657,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_2init_gl(struct 
         __pyx_v_err = mpv_opengl_cb_init_gl(__pyx_v_self->_ctx, __pyx_v_extsc, (&__pyx_f_9vidcutter_4libs_3mpv__c_getprocaddress), ((void *)__pyx_v_get_proc_address));
       }
 
-      /* "vidcutter/libs/pympv/mpv.pyx":833
+      /* "vidcutter/libs/pympv/mpv.pyx":837
  *         if exts is not None:
  *             extsc = exts
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -16592,7 +16676,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_2init_gl(struct 
       }
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":836
+  /* "vidcutter/libs/pympv/mpv.pyx":840
  *             err = mpv_opengl_cb_init_gl(self._ctx, extsc, &_c_getprocaddress,
  *                                         <void *>get_proc_address)
  *         if err < 0:             # <<<<<<<<<<<<<<
@@ -16602,16 +16686,16 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_2init_gl(struct 
   __pyx_t_6 = ((__pyx_v_err < 0) != 0);
   if (unlikely(__pyx_t_6)) {
 
-    /* "vidcutter/libs/pympv/mpv.pyx":837
+    /* "vidcutter/libs/pympv/mpv.pyx":841
  *                                         <void *>get_proc_address)
  *         if err < 0:
  *             raise MPVError(err)             # <<<<<<<<<<<<<<
  * 
  *         self.inited = True
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_MPVError); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 837, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_MPVError); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 841, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_err); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 837, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_err); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 841, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __pyx_t_5 = NULL;
     if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
@@ -16626,14 +16710,14 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_2init_gl(struct 
     __pyx_t_1 = (__pyx_t_5) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_5, __pyx_t_4) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4);
     __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 837, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 841, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_Raise(__pyx_t_1, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __PYX_ERR(0, 837, __pyx_L1_error)
+    __PYX_ERR(0, 841, __pyx_L1_error)
 
-    /* "vidcutter/libs/pympv/mpv.pyx":836
+    /* "vidcutter/libs/pympv/mpv.pyx":840
  *             err = mpv_opengl_cb_init_gl(self._ctx, extsc, &_c_getprocaddress,
  *                                         <void *>get_proc_address)
  *         if err < 0:             # <<<<<<<<<<<<<<
@@ -16642,7 +16726,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_2init_gl(struct 
  */
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":839
+  /* "vidcutter/libs/pympv/mpv.pyx":843
  *             raise MPVError(err)
  * 
  *         self.inited = True             # <<<<<<<<<<<<<<
@@ -16651,7 +16735,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_2init_gl(struct 
  */
   __pyx_v_self->inited = 1;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":828
+  /* "vidcutter/libs/pympv/mpv.pyx":832
  *         warnings.warn("OpenGLContext is deprecated, please switch to RenderContext", DeprecationWarning)
  * 
  *     def init_gl(self, exts, get_proc_address):             # <<<<<<<<<<<<<<
@@ -16676,7 +16760,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_2init_gl(struct 
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":841
+/* "vidcutter/libs/pympv/mpv.pyx":845
  *         self.inited = True
  * 
  *     def set_update_callback(self, cb):             # <<<<<<<<<<<<<<
@@ -16702,7 +16786,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_4set_update_call
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("set_update_callback", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":842
+  /* "vidcutter/libs/pympv/mpv.pyx":846
  * 
  *     def set_update_callback(self, cb):
  *         self.update_cb = cb             # <<<<<<<<<<<<<<
@@ -16715,7 +16799,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_4set_update_call
   __Pyx_DECREF(__pyx_v_self->update_cb);
   __pyx_v_self->update_cb = __pyx_v_cb;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":843
+  /* "vidcutter/libs/pympv/mpv.pyx":847
  *     def set_update_callback(self, cb):
  *         self.update_cb = cb
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -16730,7 +16814,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_4set_update_call
       #endif
       /*try:*/ {
 
-        /* "vidcutter/libs/pympv/mpv.pyx":844
+        /* "vidcutter/libs/pympv/mpv.pyx":848
  *         self.update_cb = cb
  *         with nogil:
  *             mpv_opengl_cb_set_update_callback(self._ctx, &_c_updatecb, <void *>cb)             # <<<<<<<<<<<<<<
@@ -16740,7 +16824,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_4set_update_call
         mpv_opengl_cb_set_update_callback(__pyx_v_self->_ctx, (&__pyx_f_9vidcutter_4libs_3mpv__c_updatecb), ((void *)__pyx_v_cb));
       }
 
-      /* "vidcutter/libs/pympv/mpv.pyx":843
+      /* "vidcutter/libs/pympv/mpv.pyx":847
  *     def set_update_callback(self, cb):
  *         self.update_cb = cb
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -16759,7 +16843,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_4set_update_call
       }
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":841
+  /* "vidcutter/libs/pympv/mpv.pyx":845
  *         self.inited = True
  * 
  *     def set_update_callback(self, cb):             # <<<<<<<<<<<<<<
@@ -16774,7 +16858,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_4set_update_call
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":846
+/* "vidcutter/libs/pympv/mpv.pyx":850
  *             mpv_opengl_cb_set_update_callback(self._ctx, &_c_updatecb, <void *>cb)
  * 
  *     def draw(self, fbo, w, h):             # <<<<<<<<<<<<<<
@@ -16819,17 +16903,17 @@ static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_13OpenGLContext_7draw(PyObject *
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_w)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("draw", 1, 3, 3, 1); __PYX_ERR(0, 846, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("draw", 1, 3, 3, 1); __PYX_ERR(0, 850, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_h)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("draw", 1, 3, 3, 2); __PYX_ERR(0, 846, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("draw", 1, 3, 3, 2); __PYX_ERR(0, 850, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "draw") < 0)) __PYX_ERR(0, 846, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "draw") < 0)) __PYX_ERR(0, 850, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 3) {
       goto __pyx_L5_argtuple_error;
@@ -16844,7 +16928,7 @@ static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_13OpenGLContext_7draw(PyObject *
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("draw", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 846, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("draw", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 850, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("vidcutter.libs.mpv.OpenGLContext.draw", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -16875,37 +16959,37 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_6draw(struct __p
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("draw", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":848
+  /* "vidcutter/libs/pympv/mpv.pyx":852
  *     def draw(self, fbo, w, h):
  *         cdef:
  *             int fboc = fbo             # <<<<<<<<<<<<<<
  *             int wc = w
  *             int hc = h
  */
-  __pyx_t_1 = __Pyx_PyInt_As_int(__pyx_v_fbo); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 848, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_As_int(__pyx_v_fbo); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 852, __pyx_L1_error)
   __pyx_v_fboc = __pyx_t_1;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":849
+  /* "vidcutter/libs/pympv/mpv.pyx":853
  *         cdef:
  *             int fboc = fbo
  *             int wc = w             # <<<<<<<<<<<<<<
  *             int hc = h
  *         with nogil:
  */
-  __pyx_t_1 = __Pyx_PyInt_As_int(__pyx_v_w); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 849, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_As_int(__pyx_v_w); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 853, __pyx_L1_error)
   __pyx_v_wc = __pyx_t_1;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":850
+  /* "vidcutter/libs/pympv/mpv.pyx":854
  *             int fboc = fbo
  *             int wc = w
  *             int hc = h             # <<<<<<<<<<<<<<
  *         with nogil:
  *             err = mpv_opengl_cb_draw(self._ctx, fboc, wc, hc)
  */
-  __pyx_t_1 = __Pyx_PyInt_As_int(__pyx_v_h); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 850, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_As_int(__pyx_v_h); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 854, __pyx_L1_error)
   __pyx_v_hc = __pyx_t_1;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":851
+  /* "vidcutter/libs/pympv/mpv.pyx":855
  *             int wc = w
  *             int hc = h
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -16920,7 +17004,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_6draw(struct __p
       #endif
       /*try:*/ {
 
-        /* "vidcutter/libs/pympv/mpv.pyx":852
+        /* "vidcutter/libs/pympv/mpv.pyx":856
  *             int hc = h
  *         with nogil:
  *             err = mpv_opengl_cb_draw(self._ctx, fboc, wc, hc)             # <<<<<<<<<<<<<<
@@ -16930,7 +17014,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_6draw(struct __p
         __pyx_v_err = mpv_opengl_cb_draw(__pyx_v_self->_ctx, __pyx_v_fboc, __pyx_v_wc, __pyx_v_hc);
       }
 
-      /* "vidcutter/libs/pympv/mpv.pyx":851
+      /* "vidcutter/libs/pympv/mpv.pyx":855
  *             int wc = w
  *             int hc = h
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -16949,7 +17033,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_6draw(struct __p
       }
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":853
+  /* "vidcutter/libs/pympv/mpv.pyx":857
  *         with nogil:
  *             err = mpv_opengl_cb_draw(self._ctx, fboc, wc, hc)
  *         if err < 0:             # <<<<<<<<<<<<<<
@@ -16959,16 +17043,16 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_6draw(struct __p
   __pyx_t_2 = ((__pyx_v_err < 0) != 0);
   if (unlikely(__pyx_t_2)) {
 
-    /* "vidcutter/libs/pympv/mpv.pyx":854
+    /* "vidcutter/libs/pympv/mpv.pyx":858
  *             err = mpv_opengl_cb_draw(self._ctx, fboc, wc, hc)
  *         if err < 0:
  *             raise MPVError(err)             # <<<<<<<<<<<<<<
  * 
  *     def report_flip(self, time):
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_MPVError); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 854, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_MPVError); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 858, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_5 = __Pyx_PyInt_From_int(__pyx_v_err); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 854, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyInt_From_int(__pyx_v_err); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 858, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __pyx_t_6 = NULL;
     if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_4))) {
@@ -16983,14 +17067,14 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_6draw(struct __p
     __pyx_t_3 = (__pyx_t_6) ? __Pyx_PyObject_Call2Args(__pyx_t_4, __pyx_t_6, __pyx_t_5) : __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_5);
     __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 854, __pyx_L1_error)
+    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 858, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_Raise(__pyx_t_3, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __PYX_ERR(0, 854, __pyx_L1_error)
+    __PYX_ERR(0, 858, __pyx_L1_error)
 
-    /* "vidcutter/libs/pympv/mpv.pyx":853
+    /* "vidcutter/libs/pympv/mpv.pyx":857
  *         with nogil:
  *             err = mpv_opengl_cb_draw(self._ctx, fboc, wc, hc)
  *         if err < 0:             # <<<<<<<<<<<<<<
@@ -16999,7 +17083,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_6draw(struct __p
  */
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":846
+  /* "vidcutter/libs/pympv/mpv.pyx":850
  *             mpv_opengl_cb_set_update_callback(self._ctx, &_c_updatecb, <void *>cb)
  * 
  *     def draw(self, fbo, w, h):             # <<<<<<<<<<<<<<
@@ -17023,7 +17107,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_6draw(struct __p
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":856
+/* "vidcutter/libs/pympv/mpv.pyx":860
  *             raise MPVError(err)
  * 
  *     def report_flip(self, time):             # <<<<<<<<<<<<<<
@@ -17060,17 +17144,17 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_8report_flip(str
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("report_flip", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":857
+  /* "vidcutter/libs/pympv/mpv.pyx":861
  * 
  *     def report_flip(self, time):
  *         cdef int64_t ctime = time             # <<<<<<<<<<<<<<
  *         with nogil:
  *             err = mpv_opengl_cb_report_flip(self._ctx, ctime)
  */
-  __pyx_t_1 = __Pyx_PyInt_As_int64_t(__pyx_v_time); if (unlikely((__pyx_t_1 == ((int64_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 857, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_As_int64_t(__pyx_v_time); if (unlikely((__pyx_t_1 == ((int64_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 861, __pyx_L1_error)
   __pyx_v_ctime = __pyx_t_1;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":858
+  /* "vidcutter/libs/pympv/mpv.pyx":862
  *     def report_flip(self, time):
  *         cdef int64_t ctime = time
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -17085,7 +17169,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_8report_flip(str
       #endif
       /*try:*/ {
 
-        /* "vidcutter/libs/pympv/mpv.pyx":859
+        /* "vidcutter/libs/pympv/mpv.pyx":863
  *         cdef int64_t ctime = time
  *         with nogil:
  *             err = mpv_opengl_cb_report_flip(self._ctx, ctime)             # <<<<<<<<<<<<<<
@@ -17095,7 +17179,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_8report_flip(str
         __pyx_v_err = mpv_opengl_cb_report_flip(__pyx_v_self->_ctx, __pyx_v_ctime);
       }
 
-      /* "vidcutter/libs/pympv/mpv.pyx":858
+      /* "vidcutter/libs/pympv/mpv.pyx":862
  *     def report_flip(self, time):
  *         cdef int64_t ctime = time
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -17114,7 +17198,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_8report_flip(str
       }
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":860
+  /* "vidcutter/libs/pympv/mpv.pyx":864
  *         with nogil:
  *             err = mpv_opengl_cb_report_flip(self._ctx, ctime)
  *         if err < 0:             # <<<<<<<<<<<<<<
@@ -17124,16 +17208,16 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_8report_flip(str
   __pyx_t_2 = ((__pyx_v_err < 0) != 0);
   if (unlikely(__pyx_t_2)) {
 
-    /* "vidcutter/libs/pympv/mpv.pyx":861
+    /* "vidcutter/libs/pympv/mpv.pyx":865
  *             err = mpv_opengl_cb_report_flip(self._ctx, ctime)
  *         if err < 0:
  *             raise MPVError(err)             # <<<<<<<<<<<<<<
  * 
  *     def uninit_gl(self):
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_MPVError); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 861, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_MPVError); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 865, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_5 = __Pyx_PyInt_From_int(__pyx_v_err); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 861, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyInt_From_int(__pyx_v_err); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 865, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __pyx_t_6 = NULL;
     if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_4))) {
@@ -17148,14 +17232,14 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_8report_flip(str
     __pyx_t_3 = (__pyx_t_6) ? __Pyx_PyObject_Call2Args(__pyx_t_4, __pyx_t_6, __pyx_t_5) : __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_5);
     __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 861, __pyx_L1_error)
+    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 865, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_Raise(__pyx_t_3, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __PYX_ERR(0, 861, __pyx_L1_error)
+    __PYX_ERR(0, 865, __pyx_L1_error)
 
-    /* "vidcutter/libs/pympv/mpv.pyx":860
+    /* "vidcutter/libs/pympv/mpv.pyx":864
  *         with nogil:
  *             err = mpv_opengl_cb_report_flip(self._ctx, ctime)
  *         if err < 0:             # <<<<<<<<<<<<<<
@@ -17164,7 +17248,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_8report_flip(str
  */
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":856
+  /* "vidcutter/libs/pympv/mpv.pyx":860
  *             raise MPVError(err)
  * 
  *     def report_flip(self, time):             # <<<<<<<<<<<<<<
@@ -17188,7 +17272,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_8report_flip(str
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":863
+/* "vidcutter/libs/pympv/mpv.pyx":867
  *             raise MPVError(err)
  * 
  *     def uninit_gl(self):             # <<<<<<<<<<<<<<
@@ -17223,7 +17307,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_10uninit_gl(stru
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("uninit_gl", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":864
+  /* "vidcutter/libs/pympv/mpv.pyx":868
  * 
  *     def uninit_gl(self):
  *         if not self.inited:             # <<<<<<<<<<<<<<
@@ -17233,7 +17317,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_10uninit_gl(stru
   __pyx_t_1 = ((!(__pyx_v_self->inited != 0)) != 0);
   if (__pyx_t_1) {
 
-    /* "vidcutter/libs/pympv/mpv.pyx":865
+    /* "vidcutter/libs/pympv/mpv.pyx":869
  *     def uninit_gl(self):
  *         if not self.inited:
  *             return             # <<<<<<<<<<<<<<
@@ -17244,7 +17328,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_10uninit_gl(stru
     __pyx_r = Py_None; __Pyx_INCREF(Py_None);
     goto __pyx_L0;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":864
+    /* "vidcutter/libs/pympv/mpv.pyx":868
  * 
  *     def uninit_gl(self):
  *         if not self.inited:             # <<<<<<<<<<<<<<
@@ -17253,7 +17337,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_10uninit_gl(stru
  */
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":866
+  /* "vidcutter/libs/pympv/mpv.pyx":870
  *         if not self.inited:
  *             return
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -17268,7 +17352,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_10uninit_gl(stru
       #endif
       /*try:*/ {
 
-        /* "vidcutter/libs/pympv/mpv.pyx":867
+        /* "vidcutter/libs/pympv/mpv.pyx":871
  *             return
  *         with nogil:
  *             err = mpv_opengl_cb_uninit_gl(self._ctx)             # <<<<<<<<<<<<<<
@@ -17278,7 +17362,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_10uninit_gl(stru
         __pyx_v_err = mpv_opengl_cb_uninit_gl(__pyx_v_self->_ctx);
       }
 
-      /* "vidcutter/libs/pympv/mpv.pyx":866
+      /* "vidcutter/libs/pympv/mpv.pyx":870
  *         if not self.inited:
  *             return
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -17297,7 +17381,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_10uninit_gl(stru
       }
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":868
+  /* "vidcutter/libs/pympv/mpv.pyx":872
  *         with nogil:
  *             err = mpv_opengl_cb_uninit_gl(self._ctx)
  *         if err < 0:             # <<<<<<<<<<<<<<
@@ -17307,16 +17391,16 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_10uninit_gl(stru
   __pyx_t_1 = ((__pyx_v_err < 0) != 0);
   if (unlikely(__pyx_t_1)) {
 
-    /* "vidcutter/libs/pympv/mpv.pyx":869
+    /* "vidcutter/libs/pympv/mpv.pyx":873
  *             err = mpv_opengl_cb_uninit_gl(self._ctx)
  *         if err < 0:
  *             raise MPVError(err)             # <<<<<<<<<<<<<<
  *         self.inited = False
  * 
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_MPVError); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 869, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_MPVError); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 873, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_err); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 869, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_err); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 873, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __pyx_t_5 = NULL;
     if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
@@ -17331,14 +17415,14 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_10uninit_gl(stru
     __pyx_t_2 = (__pyx_t_5) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_5, __pyx_t_4) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4);
     __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 869, __pyx_L1_error)
+    if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 873, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_Raise(__pyx_t_2, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __PYX_ERR(0, 869, __pyx_L1_error)
+    __PYX_ERR(0, 873, __pyx_L1_error)
 
-    /* "vidcutter/libs/pympv/mpv.pyx":868
+    /* "vidcutter/libs/pympv/mpv.pyx":872
  *         with nogil:
  *             err = mpv_opengl_cb_uninit_gl(self._ctx)
  *         if err < 0:             # <<<<<<<<<<<<<<
@@ -17347,7 +17431,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_10uninit_gl(stru
  */
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":870
+  /* "vidcutter/libs/pympv/mpv.pyx":874
  *         if err < 0:
  *             raise MPVError(err)
  *         self.inited = False             # <<<<<<<<<<<<<<
@@ -17356,7 +17440,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_10uninit_gl(stru
  */
   __pyx_v_self->inited = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":863
+  /* "vidcutter/libs/pympv/mpv.pyx":867
  *             raise MPVError(err)
  * 
  *     def uninit_gl(self):             # <<<<<<<<<<<<<<
@@ -17380,7 +17464,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_10uninit_gl(stru
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":872
+/* "vidcutter/libs/pympv/mpv.pyx":876
  *         self.inited = False
  * 
  *     def __dealloc__(self):             # <<<<<<<<<<<<<<
@@ -17409,14 +17493,14 @@ static void __pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_12__dealloc__(struct 
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__dealloc__", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":873
+  /* "vidcutter/libs/pympv/mpv.pyx":877
  * 
  *     def __dealloc__(self):
  *         self.uninit_gl()             # <<<<<<<<<<<<<<
  * 
  * DEF MAX_RENDER_PARAMS = 32
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_uninit_gl); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 873, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_uninit_gl); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 877, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
@@ -17430,12 +17514,12 @@ static void __pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_12__dealloc__(struct 
   }
   __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3) : __Pyx_PyObject_CallNoArg(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 873, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 877, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":872
+  /* "vidcutter/libs/pympv/mpv.pyx":876
  *         self.inited = False
  * 
  *     def __dealloc__(self):             # <<<<<<<<<<<<<<
@@ -17567,7 +17651,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13OpenGLContext_16__setstate_cyt
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":882
+/* "vidcutter/libs/pympv/mpv.pyx":886
  *         object owned
  * 
  *     def __init__(self):             # <<<<<<<<<<<<<<
@@ -17600,14 +17684,14 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_13_RenderParams___init__(struct __pyx_
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__init__", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":883
+  /* "vidcutter/libs/pympv/mpv.pyx":887
  * 
  *     def __init__(self):
  *         self.owned = []             # <<<<<<<<<<<<<<
  *         self.params[0].type = MPV_RENDER_PARAM_INVALID
  * 
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 883, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 887, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_GIVEREF(__pyx_t_1);
   __Pyx_GOTREF(__pyx_v_self->owned);
@@ -17615,7 +17699,7 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_13_RenderParams___init__(struct __pyx_
   __pyx_v_self->owned = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":884
+  /* "vidcutter/libs/pympv/mpv.pyx":888
  *     def __init__(self):
  *         self.owned = []
  *         self.params[0].type = MPV_RENDER_PARAM_INVALID             # <<<<<<<<<<<<<<
@@ -17624,7 +17708,7 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_13_RenderParams___init__(struct __pyx_
  */
   (__pyx_v_self->params[0]).type = MPV_RENDER_PARAM_INVALID;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":882
+  /* "vidcutter/libs/pympv/mpv.pyx":886
  *         object owned
  * 
  *     def __init__(self):             # <<<<<<<<<<<<<<
@@ -17644,7 +17728,7 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_13_RenderParams___init__(struct __pyx_
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":886
+/* "vidcutter/libs/pympv/mpv.pyx":890
  *         self.params[0].type = MPV_RENDER_PARAM_INVALID
  * 
  *     cdef add_voidp(self, mpv_render_param_type t, void *p, bint owned=False):             # <<<<<<<<<<<<<<
@@ -17673,7 +17757,7 @@ static PyObject *__pyx_f_9vidcutter_4libs_3mpv_13_RenderParams_add_voidp(struct 
     }
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":887
+  /* "vidcutter/libs/pympv/mpv.pyx":891
  * 
  *     cdef add_voidp(self, mpv_render_param_type t, void *p, bint owned=False):
  *         count = len(self.owned)             # <<<<<<<<<<<<<<
@@ -17682,26 +17766,26 @@ static PyObject *__pyx_f_9vidcutter_4libs_3mpv_13_RenderParams_add_voidp(struct 
  */
   __pyx_t_1 = __pyx_v_self->owned;
   __Pyx_INCREF(__pyx_t_1);
-  __pyx_t_2 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_2 == ((Py_ssize_t)-1))) __PYX_ERR(0, 887, __pyx_L1_error)
+  __pyx_t_2 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_2 == ((Py_ssize_t)-1))) __PYX_ERR(0, 891, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = PyInt_FromSsize_t(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 887, __pyx_L1_error)
+  __pyx_t_1 = PyInt_FromSsize_t(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 891, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_count = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":888
+  /* "vidcutter/libs/pympv/mpv.pyx":892
  *     cdef add_voidp(self, mpv_render_param_type t, void *p, bint owned=False):
  *         count = len(self.owned)
  *         if count >= MAX_RENDER_PARAMS:             # <<<<<<<<<<<<<<
  *             if owned:
  *                 free(p)
  */
-  __pyx_t_1 = PyObject_RichCompare(__pyx_v_count, __pyx_int_32, Py_GE); __Pyx_XGOTREF(__pyx_t_1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 888, __pyx_L1_error)
-  __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_3 < 0)) __PYX_ERR(0, 888, __pyx_L1_error)
+  __pyx_t_1 = PyObject_RichCompare(__pyx_v_count, __pyx_int_32, Py_GE); __Pyx_XGOTREF(__pyx_t_1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 892, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_3 < 0)) __PYX_ERR(0, 892, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   if (__pyx_t_3) {
 
-    /* "vidcutter/libs/pympv/mpv.pyx":889
+    /* "vidcutter/libs/pympv/mpv.pyx":893
  *         count = len(self.owned)
  *         if count >= MAX_RENDER_PARAMS:
  *             if owned:             # <<<<<<<<<<<<<<
@@ -17711,7 +17795,7 @@ static PyObject *__pyx_f_9vidcutter_4libs_3mpv_13_RenderParams_add_voidp(struct 
     __pyx_t_3 = (__pyx_v_owned != 0);
     if (__pyx_t_3) {
 
-      /* "vidcutter/libs/pympv/mpv.pyx":890
+      /* "vidcutter/libs/pympv/mpv.pyx":894
  *         if count >= MAX_RENDER_PARAMS:
  *             if owned:
  *                 free(p)             # <<<<<<<<<<<<<<
@@ -17720,7 +17804,7 @@ static PyObject *__pyx_f_9vidcutter_4libs_3mpv_13_RenderParams_add_voidp(struct 
  */
       free(__pyx_v_p);
 
-      /* "vidcutter/libs/pympv/mpv.pyx":889
+      /* "vidcutter/libs/pympv/mpv.pyx":893
  *         count = len(self.owned)
  *         if count >= MAX_RENDER_PARAMS:
  *             if owned:             # <<<<<<<<<<<<<<
@@ -17729,14 +17813,14 @@ static PyObject *__pyx_f_9vidcutter_4libs_3mpv_13_RenderParams_add_voidp(struct 
  */
     }
 
-    /* "vidcutter/libs/pympv/mpv.pyx":891
+    /* "vidcutter/libs/pympv/mpv.pyx":895
  *             if owned:
  *                 free(p)
  *             raise PyMPVError("RenderParams overflow")             # <<<<<<<<<<<<<<
  * 
  *         self.params[count].type = t
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_PyMPVError); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 891, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_PyMPVError); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 895, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __pyx_t_5 = NULL;
     if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_4))) {
@@ -17750,14 +17834,14 @@ static PyObject *__pyx_f_9vidcutter_4libs_3mpv_13_RenderParams_add_voidp(struct 
     }
     __pyx_t_1 = (__pyx_t_5) ? __Pyx_PyObject_Call2Args(__pyx_t_4, __pyx_t_5, __pyx_kp_s_RenderParams_overflow) : __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_kp_s_RenderParams_overflow);
     __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 891, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 895, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_Raise(__pyx_t_1, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __PYX_ERR(0, 891, __pyx_L1_error)
+    __PYX_ERR(0, 895, __pyx_L1_error)
 
-    /* "vidcutter/libs/pympv/mpv.pyx":888
+    /* "vidcutter/libs/pympv/mpv.pyx":892
  *     cdef add_voidp(self, mpv_render_param_type t, void *p, bint owned=False):
  *         count = len(self.owned)
  *         if count >= MAX_RENDER_PARAMS:             # <<<<<<<<<<<<<<
@@ -17766,52 +17850,52 @@ static PyObject *__pyx_f_9vidcutter_4libs_3mpv_13_RenderParams_add_voidp(struct 
  */
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":893
+  /* "vidcutter/libs/pympv/mpv.pyx":897
  *             raise PyMPVError("RenderParams overflow")
  * 
  *         self.params[count].type = t             # <<<<<<<<<<<<<<
  *         self.params[count].data = p
  *         self.params[count + 1].type = MPV_RENDER_PARAM_INVALID
  */
-  __pyx_t_2 = __Pyx_PyIndex_AsSsize_t(__pyx_v_count); if (unlikely((__pyx_t_2 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 893, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyIndex_AsSsize_t(__pyx_v_count); if (unlikely((__pyx_t_2 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 897, __pyx_L1_error)
   (__pyx_v_self->params[__pyx_t_2]).type = __pyx_v_t;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":894
+  /* "vidcutter/libs/pympv/mpv.pyx":898
  * 
  *         self.params[count].type = t
  *         self.params[count].data = p             # <<<<<<<<<<<<<<
  *         self.params[count + 1].type = MPV_RENDER_PARAM_INVALID
  *         self.owned.append(owned)
  */
-  __pyx_t_2 = __Pyx_PyIndex_AsSsize_t(__pyx_v_count); if (unlikely((__pyx_t_2 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 894, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyIndex_AsSsize_t(__pyx_v_count); if (unlikely((__pyx_t_2 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 898, __pyx_L1_error)
   (__pyx_v_self->params[__pyx_t_2]).data = __pyx_v_p;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":895
+  /* "vidcutter/libs/pympv/mpv.pyx":899
  *         self.params[count].type = t
  *         self.params[count].data = p
  *         self.params[count + 1].type = MPV_RENDER_PARAM_INVALID             # <<<<<<<<<<<<<<
  *         self.owned.append(owned)
  * 
  */
-  __pyx_t_1 = __Pyx_PyInt_AddObjC(__pyx_v_count, __pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 895, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_AddObjC(__pyx_v_count, __pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 899, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyIndex_AsSsize_t(__pyx_t_1); if (unlikely((__pyx_t_2 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 895, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyIndex_AsSsize_t(__pyx_t_1); if (unlikely((__pyx_t_2 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 899, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   (__pyx_v_self->params[__pyx_t_2]).type = MPV_RENDER_PARAM_INVALID;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":896
+  /* "vidcutter/libs/pympv/mpv.pyx":900
  *         self.params[count].data = p
  *         self.params[count + 1].type = MPV_RENDER_PARAM_INVALID
  *         self.owned.append(owned)             # <<<<<<<<<<<<<<
  * 
  *     cdef add_int(self, mpv_render_param_type t, int val):
  */
-  __pyx_t_1 = __Pyx_PyBool_FromLong(__pyx_v_owned); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 896, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyBool_FromLong(__pyx_v_owned); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 900, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_6 = __Pyx_PyObject_Append(__pyx_v_self->owned, __pyx_t_1); if (unlikely(__pyx_t_6 == ((int)-1))) __PYX_ERR(0, 896, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyObject_Append(__pyx_v_self->owned, __pyx_t_1); if (unlikely(__pyx_t_6 == ((int)-1))) __PYX_ERR(0, 900, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":886
+  /* "vidcutter/libs/pympv/mpv.pyx":890
  *         self.params[0].type = MPV_RENDER_PARAM_INVALID
  * 
  *     cdef add_voidp(self, mpv_render_param_type t, void *p, bint owned=False):             # <<<<<<<<<<<<<<
@@ -17835,7 +17919,7 @@ static PyObject *__pyx_f_9vidcutter_4libs_3mpv_13_RenderParams_add_voidp(struct 
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":898
+/* "vidcutter/libs/pympv/mpv.pyx":902
  *         self.owned.append(owned)
  * 
  *     cdef add_int(self, mpv_render_param_type t, int val):             # <<<<<<<<<<<<<<
@@ -17853,7 +17937,7 @@ static PyObject *__pyx_f_9vidcutter_4libs_3mpv_13_RenderParams_add_int(struct __
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("add_int", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":899
+  /* "vidcutter/libs/pympv/mpv.pyx":903
  * 
  *     cdef add_int(self, mpv_render_param_type t, int val):
  *         cdef int *p = <int *>malloc(sizeof(int))             # <<<<<<<<<<<<<<
@@ -17862,7 +17946,7 @@ static PyObject *__pyx_f_9vidcutter_4libs_3mpv_13_RenderParams_add_int(struct __
  */
   __pyx_v_p = ((int *)malloc((sizeof(int))));
 
-  /* "vidcutter/libs/pympv/mpv.pyx":900
+  /* "vidcutter/libs/pympv/mpv.pyx":904
  *     cdef add_int(self, mpv_render_param_type t, int val):
  *         cdef int *p = <int *>malloc(sizeof(int))
  *         p[0] = val             # <<<<<<<<<<<<<<
@@ -17871,18 +17955,18 @@ static PyObject *__pyx_f_9vidcutter_4libs_3mpv_13_RenderParams_add_int(struct __
  */
   (__pyx_v_p[0]) = __pyx_v_val;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":901
+  /* "vidcutter/libs/pympv/mpv.pyx":905
  *         cdef int *p = <int *>malloc(sizeof(int))
  *         p[0] = val
  *         self.add_voidp(t, p)             # <<<<<<<<<<<<<<
  * 
  *     cdef add_string(self, mpv_render_param_type t, char *s):
  */
-  __pyx_t_1 = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv__RenderParams *)__pyx_v_self->__pyx_vtab)->add_voidp(__pyx_v_self, __pyx_v_t, __pyx_v_p, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 901, __pyx_L1_error)
+  __pyx_t_1 = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv__RenderParams *)__pyx_v_self->__pyx_vtab)->add_voidp(__pyx_v_self, __pyx_v_t, __pyx_v_p, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 905, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":898
+  /* "vidcutter/libs/pympv/mpv.pyx":902
  *         self.owned.append(owned)
  * 
  *     cdef add_int(self, mpv_render_param_type t, int val):             # <<<<<<<<<<<<<<
@@ -17903,7 +17987,7 @@ static PyObject *__pyx_f_9vidcutter_4libs_3mpv_13_RenderParams_add_int(struct __
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":903
+/* "vidcutter/libs/pympv/mpv.pyx":907
  *         self.add_voidp(t, p)
  * 
  *     cdef add_string(self, mpv_render_param_type t, char *s):             # <<<<<<<<<<<<<<
@@ -17921,7 +18005,7 @@ static PyObject *__pyx_f_9vidcutter_4libs_3mpv_13_RenderParams_add_string(struct
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("add_string", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":904
+  /* "vidcutter/libs/pympv/mpv.pyx":908
  * 
  *     cdef add_string(self, mpv_render_param_type t, char *s):
  *         cdef char *p = <char *>malloc(strlen(s) + 1)             # <<<<<<<<<<<<<<
@@ -17930,7 +18014,7 @@ static PyObject *__pyx_f_9vidcutter_4libs_3mpv_13_RenderParams_add_string(struct
  */
   __pyx_v_p = ((char *)malloc((strlen(__pyx_v_s) + 1)));
 
-  /* "vidcutter/libs/pympv/mpv.pyx":905
+  /* "vidcutter/libs/pympv/mpv.pyx":909
  *     cdef add_string(self, mpv_render_param_type t, char *s):
  *         cdef char *p = <char *>malloc(strlen(s) + 1)
  *         strcpy(p, s)             # <<<<<<<<<<<<<<
@@ -17939,18 +18023,18 @@ static PyObject *__pyx_f_9vidcutter_4libs_3mpv_13_RenderParams_add_string(struct
  */
   (void)(strcpy(__pyx_v_p, __pyx_v_s));
 
-  /* "vidcutter/libs/pympv/mpv.pyx":906
+  /* "vidcutter/libs/pympv/mpv.pyx":910
  *         cdef char *p = <char *>malloc(strlen(s) + 1)
  *         strcpy(p, s)
  *         self.add_voidp(t, p)             # <<<<<<<<<<<<<<
  * 
  *     def __dealloc__(self):
  */
-  __pyx_t_1 = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv__RenderParams *)__pyx_v_self->__pyx_vtab)->add_voidp(__pyx_v_self, __pyx_v_t, __pyx_v_p, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 906, __pyx_L1_error)
+  __pyx_t_1 = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv__RenderParams *)__pyx_v_self->__pyx_vtab)->add_voidp(__pyx_v_self, __pyx_v_t, __pyx_v_p, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 910, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":903
+  /* "vidcutter/libs/pympv/mpv.pyx":907
  *         self.add_voidp(t, p)
  * 
  *     cdef add_string(self, mpv_render_param_type t, char *s):             # <<<<<<<<<<<<<<
@@ -17971,7 +18055,7 @@ static PyObject *__pyx_f_9vidcutter_4libs_3mpv_13_RenderParams_add_string(struct
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":908
+/* "vidcutter/libs/pympv/mpv.pyx":912
  *         self.add_voidp(t, p)
  * 
  *     def __dealloc__(self):             # <<<<<<<<<<<<<<
@@ -18006,7 +18090,7 @@ static void __pyx_pf_9vidcutter_4libs_3mpv_13_RenderParams_2__dealloc__(struct _
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__dealloc__", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":909
+  /* "vidcutter/libs/pympv/mpv.pyx":913
  * 
  *     def __dealloc__(self):
  *         for i, j in enumerate(self.owned):             # <<<<<<<<<<<<<<
@@ -18019,26 +18103,26 @@ static void __pyx_pf_9vidcutter_4libs_3mpv_13_RenderParams_2__dealloc__(struct _
     __pyx_t_2 = __pyx_v_self->owned; __Pyx_INCREF(__pyx_t_2); __pyx_t_3 = 0;
     __pyx_t_4 = NULL;
   } else {
-    __pyx_t_3 = -1; __pyx_t_2 = PyObject_GetIter(__pyx_v_self->owned); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 909, __pyx_L1_error)
+    __pyx_t_3 = -1; __pyx_t_2 = PyObject_GetIter(__pyx_v_self->owned); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 913, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_4 = Py_TYPE(__pyx_t_2)->tp_iternext; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 909, __pyx_L1_error)
+    __pyx_t_4 = Py_TYPE(__pyx_t_2)->tp_iternext; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 913, __pyx_L1_error)
   }
   for (;;) {
     if (likely(!__pyx_t_4)) {
       if (likely(PyList_CheckExact(__pyx_t_2))) {
         if (__pyx_t_3 >= PyList_GET_SIZE(__pyx_t_2)) break;
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_5 = PyList_GET_ITEM(__pyx_t_2, __pyx_t_3); __Pyx_INCREF(__pyx_t_5); __pyx_t_3++; if (unlikely(0 < 0)) __PYX_ERR(0, 909, __pyx_L1_error)
+        __pyx_t_5 = PyList_GET_ITEM(__pyx_t_2, __pyx_t_3); __Pyx_INCREF(__pyx_t_5); __pyx_t_3++; if (unlikely(0 < 0)) __PYX_ERR(0, 913, __pyx_L1_error)
         #else
-        __pyx_t_5 = PySequence_ITEM(__pyx_t_2, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 909, __pyx_L1_error)
+        __pyx_t_5 = PySequence_ITEM(__pyx_t_2, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 913, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
         #endif
       } else {
         if (__pyx_t_3 >= PyTuple_GET_SIZE(__pyx_t_2)) break;
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_5 = PyTuple_GET_ITEM(__pyx_t_2, __pyx_t_3); __Pyx_INCREF(__pyx_t_5); __pyx_t_3++; if (unlikely(0 < 0)) __PYX_ERR(0, 909, __pyx_L1_error)
+        __pyx_t_5 = PyTuple_GET_ITEM(__pyx_t_2, __pyx_t_3); __Pyx_INCREF(__pyx_t_5); __pyx_t_3++; if (unlikely(0 < 0)) __PYX_ERR(0, 913, __pyx_L1_error)
         #else
-        __pyx_t_5 = PySequence_ITEM(__pyx_t_2, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 909, __pyx_L1_error)
+        __pyx_t_5 = PySequence_ITEM(__pyx_t_2, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 913, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
         #endif
       }
@@ -18048,7 +18132,7 @@ static void __pyx_pf_9vidcutter_4libs_3mpv_13_RenderParams_2__dealloc__(struct _
         PyObject* exc_type = PyErr_Occurred();
         if (exc_type) {
           if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-          else __PYX_ERR(0, 909, __pyx_L1_error)
+          else __PYX_ERR(0, 913, __pyx_L1_error)
         }
         break;
       }
@@ -18058,33 +18142,33 @@ static void __pyx_pf_9vidcutter_4libs_3mpv_13_RenderParams_2__dealloc__(struct _
     __pyx_t_5 = 0;
     __Pyx_INCREF(__pyx_t_1);
     __Pyx_XDECREF_SET(__pyx_v_i, __pyx_t_1);
-    __pyx_t_5 = __Pyx_PyInt_AddObjC(__pyx_t_1, __pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 909, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyInt_AddObjC(__pyx_t_1, __pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 913, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_1);
     __pyx_t_1 = __pyx_t_5;
     __pyx_t_5 = 0;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":910
+    /* "vidcutter/libs/pympv/mpv.pyx":914
  *     def __dealloc__(self):
  *         for i, j in enumerate(self.owned):
  *             if j:             # <<<<<<<<<<<<<<
  *                 free(self.params[i].data)
  * 
  */
-    __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_v_j); if (unlikely(__pyx_t_6 < 0)) __PYX_ERR(0, 910, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_v_j); if (unlikely(__pyx_t_6 < 0)) __PYX_ERR(0, 914, __pyx_L1_error)
     if (__pyx_t_6) {
 
-      /* "vidcutter/libs/pympv/mpv.pyx":911
+      /* "vidcutter/libs/pympv/mpv.pyx":915
  *         for i, j in enumerate(self.owned):
  *             if j:
  *                 free(self.params[i].data)             # <<<<<<<<<<<<<<
  * 
  * cdef void *get_pointer(const char *name, object obj):
  */
-      __pyx_t_7 = __Pyx_PyIndex_AsSsize_t(__pyx_v_i); if (unlikely((__pyx_t_7 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 911, __pyx_L1_error)
+      __pyx_t_7 = __Pyx_PyIndex_AsSsize_t(__pyx_v_i); if (unlikely((__pyx_t_7 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 915, __pyx_L1_error)
       free((__pyx_v_self->params[__pyx_t_7]).data);
 
-      /* "vidcutter/libs/pympv/mpv.pyx":910
+      /* "vidcutter/libs/pympv/mpv.pyx":914
  *     def __dealloc__(self):
  *         for i, j in enumerate(self.owned):
  *             if j:             # <<<<<<<<<<<<<<
@@ -18093,7 +18177,7 @@ static void __pyx_pf_9vidcutter_4libs_3mpv_13_RenderParams_2__dealloc__(struct _
  */
     }
 
-    /* "vidcutter/libs/pympv/mpv.pyx":909
+    /* "vidcutter/libs/pympv/mpv.pyx":913
  * 
  *     def __dealloc__(self):
  *         for i, j in enumerate(self.owned):             # <<<<<<<<<<<<<<
@@ -18104,7 +18188,7 @@ static void __pyx_pf_9vidcutter_4libs_3mpv_13_RenderParams_2__dealloc__(struct _
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":908
+  /* "vidcutter/libs/pympv/mpv.pyx":912
  *         self.add_voidp(t, p)
  * 
  *     def __dealloc__(self):             # <<<<<<<<<<<<<<
@@ -18238,7 +18322,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13_RenderParams_6__setstate_cyth
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":913
+/* "vidcutter/libs/pympv/mpv.pyx":917
  *                 free(self.params[i].data)
  * 
  * cdef void *get_pointer(const char *name, object obj):             # <<<<<<<<<<<<<<
@@ -18264,7 +18348,7 @@ static void *__pyx_f_9vidcutter_4libs_3mpv_get_pointer(char const *__pyx_v_name,
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get_pointer", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":915
+  /* "vidcutter/libs/pympv/mpv.pyx":919
  * cdef void *get_pointer(const char *name, object obj):
  *     cdef void *p
  *     if PyCapsule_IsValid(obj, name):             # <<<<<<<<<<<<<<
@@ -18274,17 +18358,17 @@ static void *__pyx_f_9vidcutter_4libs_3mpv_get_pointer(char const *__pyx_v_name,
   __pyx_t_1 = (PyCapsule_IsValid(__pyx_v_obj, __pyx_v_name) != 0);
   if (__pyx_t_1) {
 
-    /* "vidcutter/libs/pympv/mpv.pyx":916
+    /* "vidcutter/libs/pympv/mpv.pyx":920
  *     cdef void *p
  *     if PyCapsule_IsValid(obj, name):
  *         p = PyCapsule_GetPointer(obj, name)             # <<<<<<<<<<<<<<
  *     elif isinstance(obj, int) or isinstance(obj, long) and obj:
  *         p = <void *><intptr_t>obj
  */
-    __pyx_t_2 = PyCapsule_GetPointer(__pyx_v_obj, __pyx_v_name); if (unlikely(__pyx_t_2 == ((void *)NULL) && PyErr_Occurred())) __PYX_ERR(0, 916, __pyx_L1_error)
+    __pyx_t_2 = PyCapsule_GetPointer(__pyx_v_obj, __pyx_v_name); if (unlikely(__pyx_t_2 == ((void *)NULL) && PyErr_Occurred())) __PYX_ERR(0, 920, __pyx_L1_error)
     __pyx_v_p = __pyx_t_2;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":915
+    /* "vidcutter/libs/pympv/mpv.pyx":919
  * cdef void *get_pointer(const char *name, object obj):
  *     cdef void *p
  *     if PyCapsule_IsValid(obj, name):             # <<<<<<<<<<<<<<
@@ -18294,7 +18378,7 @@ static void *__pyx_f_9vidcutter_4libs_3mpv_get_pointer(char const *__pyx_v_name,
     goto __pyx_L3;
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":917
+  /* "vidcutter/libs/pympv/mpv.pyx":921
  *     if PyCapsule_IsValid(obj, name):
  *         p = PyCapsule_GetPointer(obj, name)
  *     elif isinstance(obj, int) or isinstance(obj, long) and obj:             # <<<<<<<<<<<<<<
@@ -18315,22 +18399,22 @@ static void *__pyx_f_9vidcutter_4libs_3mpv_get_pointer(char const *__pyx_v_name,
     __pyx_t_1 = __pyx_t_3;
     goto __pyx_L4_bool_binop_done;
   }
-  __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_v_obj); if (unlikely(__pyx_t_3 < 0)) __PYX_ERR(0, 917, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_v_obj); if (unlikely(__pyx_t_3 < 0)) __PYX_ERR(0, 921, __pyx_L1_error)
   __pyx_t_1 = __pyx_t_3;
   __pyx_L4_bool_binop_done:;
   if (likely(__pyx_t_1)) {
 
-    /* "vidcutter/libs/pympv/mpv.pyx":918
+    /* "vidcutter/libs/pympv/mpv.pyx":922
  *         p = PyCapsule_GetPointer(obj, name)
  *     elif isinstance(obj, int) or isinstance(obj, long) and obj:
  *         p = <void *><intptr_t>obj             # <<<<<<<<<<<<<<
  *     else:
  *         raise PyMPVError("Unknown or invalid pointer object: %r" % obj)
  */
-    __pyx_t_5 = __Pyx_PyInt_As_intptr_t(__pyx_v_obj); if (unlikely((__pyx_t_5 == ((intptr_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 918, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyInt_As_intptr_t(__pyx_v_obj); if (unlikely((__pyx_t_5 == ((intptr_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 922, __pyx_L1_error)
     __pyx_v_p = ((void *)((intptr_t)__pyx_t_5));
 
-    /* "vidcutter/libs/pympv/mpv.pyx":917
+    /* "vidcutter/libs/pympv/mpv.pyx":921
  *     if PyCapsule_IsValid(obj, name):
  *         p = PyCapsule_GetPointer(obj, name)
  *     elif isinstance(obj, int) or isinstance(obj, long) and obj:             # <<<<<<<<<<<<<<
@@ -18340,7 +18424,7 @@ static void *__pyx_f_9vidcutter_4libs_3mpv_get_pointer(char const *__pyx_v_name,
     goto __pyx_L3;
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":920
+  /* "vidcutter/libs/pympv/mpv.pyx":924
  *         p = <void *><intptr_t>obj
  *     else:
  *         raise PyMPVError("Unknown or invalid pointer object: %r" % obj)             # <<<<<<<<<<<<<<
@@ -18348,9 +18432,9 @@ static void *__pyx_f_9vidcutter_4libs_3mpv_get_pointer(char const *__pyx_v_name,
  * 
  */
   /*else*/ {
-    __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_PyMPVError); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 920, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_PyMPVError); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 924, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
-    __pyx_t_8 = __Pyx_PyString_FormatSafe(__pyx_kp_s_Unknown_or_invalid_pointer_objec, __pyx_v_obj); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 920, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyString_FormatSafe(__pyx_kp_s_Unknown_or_invalid_pointer_objec, __pyx_v_obj); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 924, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
     __pyx_t_9 = NULL;
     if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_7))) {
@@ -18365,16 +18449,16 @@ static void *__pyx_f_9vidcutter_4libs_3mpv_get_pointer(char const *__pyx_v_name,
     __pyx_t_6 = (__pyx_t_9) ? __Pyx_PyObject_Call2Args(__pyx_t_7, __pyx_t_9, __pyx_t_8) : __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_t_8);
     __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-    if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 920, __pyx_L1_error)
+    if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 924, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     __Pyx_Raise(__pyx_t_6, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-    __PYX_ERR(0, 920, __pyx_L1_error)
+    __PYX_ERR(0, 924, __pyx_L1_error)
   }
   __pyx_L3:;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":921
+  /* "vidcutter/libs/pympv/mpv.pyx":925
  *     else:
  *         raise PyMPVError("Unknown or invalid pointer object: %r" % obj)
  *     return p             # <<<<<<<<<<<<<<
@@ -18384,7 +18468,7 @@ static void *__pyx_f_9vidcutter_4libs_3mpv_get_pointer(char const *__pyx_v_name,
   __pyx_r = __pyx_v_p;
   goto __pyx_L0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":913
+  /* "vidcutter/libs/pympv/mpv.pyx":917
  *                 free(self.params[i].data)
  * 
  * cdef void *get_pointer(const char *name, object obj):             # <<<<<<<<<<<<<<
@@ -18405,7 +18489,7 @@ static void *__pyx_f_9vidcutter_4libs_3mpv_get_pointer(char const *__pyx_v_name,
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":925
+/* "vidcutter/libs/pympv/mpv.pyx":929
  * @cython.internal
  * cdef class RenderFrameInfo(object):
  *     cdef _from_struct(self, mpv_render_frame_info *info):             # <<<<<<<<<<<<<<
@@ -18423,83 +18507,83 @@ static PyObject *__pyx_f_9vidcutter_4libs_3mpv_15RenderFrameInfo__from_struct(st
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_from_struct", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":926
+  /* "vidcutter/libs/pympv/mpv.pyx":930
  * cdef class RenderFrameInfo(object):
  *     cdef _from_struct(self, mpv_render_frame_info *info):
  *         self.present = bool(info[0].flags & MPV_RENDER_FRAME_INFO_PRESENT)             # <<<<<<<<<<<<<<
  *         self.redraw = bool(info[0].flags & MPV_RENDER_FRAME_INFO_REDRAW)
  *         self.repeat = bool(info[0].flags & MPV_RENDER_FRAME_INFO_REPEAT)
  */
-  __pyx_t_1 = __Pyx_PyInt_From_uint64_t(((__pyx_v_info[0]).flags & MPV_RENDER_FRAME_INFO_PRESENT)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 926, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_uint64_t(((__pyx_v_info[0]).flags & MPV_RENDER_FRAME_INFO_PRESENT)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 930, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 926, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 930, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyBool_FromLong((!(!__pyx_t_2))); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 926, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyBool_FromLong((!(!__pyx_t_2))); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 930, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (__Pyx_PyObject_SetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_present, __pyx_t_1) < 0) __PYX_ERR(0, 926, __pyx_L1_error)
+  if (__Pyx_PyObject_SetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_present, __pyx_t_1) < 0) __PYX_ERR(0, 930, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":927
+  /* "vidcutter/libs/pympv/mpv.pyx":931
  *     cdef _from_struct(self, mpv_render_frame_info *info):
  *         self.present = bool(info[0].flags & MPV_RENDER_FRAME_INFO_PRESENT)
  *         self.redraw = bool(info[0].flags & MPV_RENDER_FRAME_INFO_REDRAW)             # <<<<<<<<<<<<<<
  *         self.repeat = bool(info[0].flags & MPV_RENDER_FRAME_INFO_REPEAT)
  *         self.block_vsync = bool(info[0].flags & MPV_RENDER_FRAME_INFO_BLOCK_VSYNC)
  */
-  __pyx_t_1 = __Pyx_PyInt_From_uint64_t(((__pyx_v_info[0]).flags & MPV_RENDER_FRAME_INFO_REDRAW)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 927, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_uint64_t(((__pyx_v_info[0]).flags & MPV_RENDER_FRAME_INFO_REDRAW)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 931, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 927, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 931, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyBool_FromLong((!(!__pyx_t_2))); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 927, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyBool_FromLong((!(!__pyx_t_2))); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 931, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (__Pyx_PyObject_SetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_redraw, __pyx_t_1) < 0) __PYX_ERR(0, 927, __pyx_L1_error)
+  if (__Pyx_PyObject_SetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_redraw, __pyx_t_1) < 0) __PYX_ERR(0, 931, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":928
+  /* "vidcutter/libs/pympv/mpv.pyx":932
  *         self.present = bool(info[0].flags & MPV_RENDER_FRAME_INFO_PRESENT)
  *         self.redraw = bool(info[0].flags & MPV_RENDER_FRAME_INFO_REDRAW)
  *         self.repeat = bool(info[0].flags & MPV_RENDER_FRAME_INFO_REPEAT)             # <<<<<<<<<<<<<<
  *         self.block_vsync = bool(info[0].flags & MPV_RENDER_FRAME_INFO_BLOCK_VSYNC)
  *         self.target_time = info[0].target_time
  */
-  __pyx_t_1 = __Pyx_PyInt_From_uint64_t(((__pyx_v_info[0]).flags & MPV_RENDER_FRAME_INFO_REPEAT)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 928, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_uint64_t(((__pyx_v_info[0]).flags & MPV_RENDER_FRAME_INFO_REPEAT)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 932, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 928, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 932, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyBool_FromLong((!(!__pyx_t_2))); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 928, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyBool_FromLong((!(!__pyx_t_2))); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 932, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (__Pyx_PyObject_SetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_repeat, __pyx_t_1) < 0) __PYX_ERR(0, 928, __pyx_L1_error)
+  if (__Pyx_PyObject_SetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_repeat, __pyx_t_1) < 0) __PYX_ERR(0, 932, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":929
+  /* "vidcutter/libs/pympv/mpv.pyx":933
  *         self.redraw = bool(info[0].flags & MPV_RENDER_FRAME_INFO_REDRAW)
  *         self.repeat = bool(info[0].flags & MPV_RENDER_FRAME_INFO_REPEAT)
  *         self.block_vsync = bool(info[0].flags & MPV_RENDER_FRAME_INFO_BLOCK_VSYNC)             # <<<<<<<<<<<<<<
  *         self.target_time = info[0].target_time
  *         return self
  */
-  __pyx_t_1 = __Pyx_PyInt_From_uint64_t(((__pyx_v_info[0]).flags & MPV_RENDER_FRAME_INFO_BLOCK_VSYNC)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 929, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_uint64_t(((__pyx_v_info[0]).flags & MPV_RENDER_FRAME_INFO_BLOCK_VSYNC)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 933, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 929, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 933, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyBool_FromLong((!(!__pyx_t_2))); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 929, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyBool_FromLong((!(!__pyx_t_2))); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 933, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (__Pyx_PyObject_SetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_block_vsync, __pyx_t_1) < 0) __PYX_ERR(0, 929, __pyx_L1_error)
+  if (__Pyx_PyObject_SetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_block_vsync, __pyx_t_1) < 0) __PYX_ERR(0, 933, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":930
+  /* "vidcutter/libs/pympv/mpv.pyx":934
  *         self.repeat = bool(info[0].flags & MPV_RENDER_FRAME_INFO_REPEAT)
  *         self.block_vsync = bool(info[0].flags & MPV_RENDER_FRAME_INFO_BLOCK_VSYNC)
  *         self.target_time = info[0].target_time             # <<<<<<<<<<<<<<
  *         return self
  * 
  */
-  __pyx_t_1 = __Pyx_PyInt_From_int64_t((__pyx_v_info[0]).target_time); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 930, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int64_t((__pyx_v_info[0]).target_time); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 934, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (__Pyx_PyObject_SetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_target_time, __pyx_t_1) < 0) __PYX_ERR(0, 930, __pyx_L1_error)
+  if (__Pyx_PyObject_SetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_target_time, __pyx_t_1) < 0) __PYX_ERR(0, 934, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":931
+  /* "vidcutter/libs/pympv/mpv.pyx":935
  *         self.block_vsync = bool(info[0].flags & MPV_RENDER_FRAME_INFO_BLOCK_VSYNC)
  *         self.target_time = info[0].target_time
  *         return self             # <<<<<<<<<<<<<<
@@ -18511,7 +18595,7 @@ static PyObject *__pyx_f_9vidcutter_4libs_3mpv_15RenderFrameInfo__from_struct(st
   __pyx_r = ((PyObject *)__pyx_v_self);
   goto __pyx_L0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":925
+  /* "vidcutter/libs/pympv/mpv.pyx":929
  * @cython.internal
  * cdef class RenderFrameInfo(object):
  *     cdef _from_struct(self, mpv_render_frame_info *info):             # <<<<<<<<<<<<<<
@@ -18817,7 +18901,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_15RenderFrameInfo_2__setstate_cy
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":946
+/* "vidcutter/libs/pympv/mpv.pyx":950
  *         bint inited
  * 
  *     def __init__(self, mpv,             # <<<<<<<<<<<<<<
@@ -18846,7 +18930,7 @@ static int __pyx_pw_9vidcutter_4libs_3mpv_13RenderContext_1__init__(PyObject *__
     static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_mpv,&__pyx_n_s_api_type,&__pyx_n_s_opengl_init_params,&__pyx_n_s_advanced_control,&__pyx_n_s_x11_display,&__pyx_n_s_wl_display,&__pyx_n_s_drm_display,&__pyx_n_s_drm_osd_size,0};
     PyObject* values[8] = {0,0,0,0,0,0,0,0};
 
-    /* "vidcutter/libs/pympv/mpv.pyx":948
+    /* "vidcutter/libs/pympv/mpv.pyx":952
  *     def __init__(self, mpv,
  *                  api_type,
  *                  opengl_init_params=None,             # <<<<<<<<<<<<<<
@@ -18855,7 +18939,7 @@ static int __pyx_pw_9vidcutter_4libs_3mpv_13RenderContext_1__init__(PyObject *__
  */
     values[2] = ((PyObject *)Py_None);
 
-    /* "vidcutter/libs/pympv/mpv.pyx":949
+    /* "vidcutter/libs/pympv/mpv.pyx":953
  *                  api_type,
  *                  opengl_init_params=None,
  *                  advanced_control=False,             # <<<<<<<<<<<<<<
@@ -18864,7 +18948,7 @@ static int __pyx_pw_9vidcutter_4libs_3mpv_13RenderContext_1__init__(PyObject *__
  */
     values[3] = ((PyObject *)Py_False);
 
-    /* "vidcutter/libs/pympv/mpv.pyx":950
+    /* "vidcutter/libs/pympv/mpv.pyx":954
  *                  opengl_init_params=None,
  *                  advanced_control=False,
  *                  x11_display=None,             # <<<<<<<<<<<<<<
@@ -18873,7 +18957,7 @@ static int __pyx_pw_9vidcutter_4libs_3mpv_13RenderContext_1__init__(PyObject *__
  */
     values[4] = ((PyObject *)Py_None);
 
-    /* "vidcutter/libs/pympv/mpv.pyx":951
+    /* "vidcutter/libs/pympv/mpv.pyx":955
  *                  advanced_control=False,
  *                  x11_display=None,
  *                  wl_display=None,             # <<<<<<<<<<<<<<
@@ -18882,7 +18966,7 @@ static int __pyx_pw_9vidcutter_4libs_3mpv_13RenderContext_1__init__(PyObject *__
  */
     values[5] = ((PyObject *)Py_None);
 
-    /* "vidcutter/libs/pympv/mpv.pyx":952
+    /* "vidcutter/libs/pympv/mpv.pyx":956
  *                  x11_display=None,
  *                  wl_display=None,
  *                  drm_display=None,             # <<<<<<<<<<<<<<
@@ -18891,7 +18975,7 @@ static int __pyx_pw_9vidcutter_4libs_3mpv_13RenderContext_1__init__(PyObject *__
  */
     values[6] = ((PyObject *)Py_None);
 
-    /* "vidcutter/libs/pympv/mpv.pyx":953
+    /* "vidcutter/libs/pympv/mpv.pyx":957
  *                  wl_display=None,
  *                  drm_display=None,
  *                  drm_osd_size=None             # <<<<<<<<<<<<<<
@@ -18931,7 +19015,7 @@ static int __pyx_pw_9vidcutter_4libs_3mpv_13RenderContext_1__init__(PyObject *__
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_api_type)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 0, 2, 8, 1); __PYX_ERR(0, 946, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("__init__", 0, 2, 8, 1); __PYX_ERR(0, 950, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
@@ -18971,7 +19055,7 @@ static int __pyx_pw_9vidcutter_4libs_3mpv_13RenderContext_1__init__(PyObject *__
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__init__") < 0)) __PYX_ERR(0, 946, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__init__") < 0)) __PYX_ERR(0, 950, __pyx_L3_error)
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -19004,7 +19088,7 @@ static int __pyx_pw_9vidcutter_4libs_3mpv_13RenderContext_1__init__(PyObject *__
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("__init__", 0, 2, 8, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 946, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("__init__", 0, 2, 8, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 950, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("vidcutter.libs.mpv.RenderContext.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -19012,7 +19096,7 @@ static int __pyx_pw_9vidcutter_4libs_3mpv_13RenderContext_1__init__(PyObject *__
   __pyx_L4_argument_unpacking_done:;
   __pyx_r = __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext___init__(((struct __pyx_obj_9vidcutter_4libs_3mpv_RenderContext *)__pyx_v_self), __pyx_v_mpv, __pyx_v_api_type, __pyx_v_opengl_init_params, __pyx_v_advanced_control, __pyx_v_x11_display, __pyx_v_wl_display, __pyx_v_drm_display, __pyx_v_drm_osd_size);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":946
+  /* "vidcutter/libs/pympv/mpv.pyx":950
  *         bint inited
  * 
  *     def __init__(self, mpv,             # <<<<<<<<<<<<<<
@@ -19049,14 +19133,14 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext___init__(struct __pyx_
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__init__", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":961
+  /* "vidcutter/libs/pympv/mpv.pyx":965
  *             mpv_opengl_drm_osd_size _drm_osd_size
  * 
  *         self._mpv = mpv             # <<<<<<<<<<<<<<
  * 
  *         memset(&gl_params, 0, sizeof(gl_params))
  */
-  if (!(likely(((__pyx_v_mpv) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_mpv, __pyx_ptype_9vidcutter_4libs_3mpv_Context))))) __PYX_ERR(0, 961, __pyx_L1_error)
+  if (!(likely(((__pyx_v_mpv) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_mpv, __pyx_ptype_9vidcutter_4libs_3mpv_Context))))) __PYX_ERR(0, 965, __pyx_L1_error)
   __pyx_t_1 = __pyx_v_mpv;
   __Pyx_INCREF(__pyx_t_1);
   __Pyx_GIVEREF(__pyx_t_1);
@@ -19065,7 +19149,7 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext___init__(struct __pyx_
   __pyx_v_self->_mpv = ((struct __pyx_obj_9vidcutter_4libs_3mpv_Context *)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":963
+  /* "vidcutter/libs/pympv/mpv.pyx":967
  *         self._mpv = mpv
  * 
  *         memset(&gl_params, 0, sizeof(gl_params))             # <<<<<<<<<<<<<<
@@ -19074,7 +19158,7 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext___init__(struct __pyx_
  */
   (void)(memset((&__pyx_v_gl_params), 0, (sizeof(__pyx_v_gl_params))));
 
-  /* "vidcutter/libs/pympv/mpv.pyx":964
+  /* "vidcutter/libs/pympv/mpv.pyx":968
  * 
  *         memset(&gl_params, 0, sizeof(gl_params))
  *         memset(&drm_params, 0, sizeof(drm_params))             # <<<<<<<<<<<<<<
@@ -19083,7 +19167,7 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext___init__(struct __pyx_
  */
   (void)(memset((&__pyx_v_drm_params), 0, (sizeof(__pyx_v_drm_params))));
 
-  /* "vidcutter/libs/pympv/mpv.pyx":965
+  /* "vidcutter/libs/pympv/mpv.pyx":969
  *         memset(&gl_params, 0, sizeof(gl_params))
  *         memset(&drm_params, 0, sizeof(drm_params))
  *         memset(&_drm_osd_size, 0, sizeof(_drm_osd_size))             # <<<<<<<<<<<<<<
@@ -19092,45 +19176,45 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext___init__(struct __pyx_
  */
   (void)(memset((&__pyx_v__drm_osd_size), 0, (sizeof(__pyx_v__drm_osd_size))));
 
-  /* "vidcutter/libs/pympv/mpv.pyx":967
+  /* "vidcutter/libs/pympv/mpv.pyx":971
  *         memset(&_drm_osd_size, 0, sizeof(_drm_osd_size))
  * 
  *         params = _RenderParams()             # <<<<<<<<<<<<<<
  * 
  *         if api_type == self.API_OPENGL:
  */
-  __pyx_t_1 = __Pyx_PyObject_CallNoArg(((PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv__RenderParams)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 967, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_CallNoArg(((PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv__RenderParams)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 971, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_params = ((struct __pyx_obj_9vidcutter_4libs_3mpv__RenderParams *)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":969
+  /* "vidcutter/libs/pympv/mpv.pyx":973
  *         params = _RenderParams()
  * 
  *         if api_type == self.API_OPENGL:             # <<<<<<<<<<<<<<
  *             params.add_string(MPV_RENDER_PARAM_API_TYPE, MPV_RENDER_API_TYPE_OPENGL)
  *         else:
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_API_OPENGL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 969, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_API_OPENGL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 973, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = PyObject_RichCompare(__pyx_v_api_type, __pyx_t_1, Py_EQ); __Pyx_XGOTREF(__pyx_t_2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 969, __pyx_L1_error)
+  __pyx_t_2 = PyObject_RichCompare(__pyx_v_api_type, __pyx_t_1, Py_EQ); __Pyx_XGOTREF(__pyx_t_2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 973, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_3 < 0)) __PYX_ERR(0, 969, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_3 < 0)) __PYX_ERR(0, 973, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   if (likely(__pyx_t_3)) {
 
-    /* "vidcutter/libs/pympv/mpv.pyx":970
+    /* "vidcutter/libs/pympv/mpv.pyx":974
  * 
  *         if api_type == self.API_OPENGL:
  *             params.add_string(MPV_RENDER_PARAM_API_TYPE, MPV_RENDER_API_TYPE_OPENGL)             # <<<<<<<<<<<<<<
  *         else:
  *             raise PyMPVError("Unknown api_type %r" % api_type)
  */
-    __pyx_t_2 = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv__RenderParams *)__pyx_v_params->__pyx_vtab)->add_string(__pyx_v_params, MPV_RENDER_PARAM_API_TYPE, MPV_RENDER_API_TYPE_OPENGL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 970, __pyx_L1_error)
+    __pyx_t_2 = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv__RenderParams *)__pyx_v_params->__pyx_vtab)->add_string(__pyx_v_params, MPV_RENDER_PARAM_API_TYPE, MPV_RENDER_API_TYPE_OPENGL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 974, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":969
+    /* "vidcutter/libs/pympv/mpv.pyx":973
  *         params = _RenderParams()
  * 
  *         if api_type == self.API_OPENGL:             # <<<<<<<<<<<<<<
@@ -19140,7 +19224,7 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext___init__(struct __pyx_
     goto __pyx_L3;
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":972
+  /* "vidcutter/libs/pympv/mpv.pyx":976
  *             params.add_string(MPV_RENDER_PARAM_API_TYPE, MPV_RENDER_API_TYPE_OPENGL)
  *         else:
  *             raise PyMPVError("Unknown api_type %r" % api_type)             # <<<<<<<<<<<<<<
@@ -19148,9 +19232,9 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext___init__(struct __pyx_
  *         if opengl_init_params is not None:
  */
   /*else*/ {
-    __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_PyMPVError); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 972, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_PyMPVError); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 976, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_4 = __Pyx_PyString_FormatSafe(__pyx_kp_s_Unknown_api_type_r, __pyx_v_api_type); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 972, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyString_FormatSafe(__pyx_kp_s_Unknown_api_type_r, __pyx_v_api_type); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 976, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __pyx_t_5 = NULL;
     if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_1))) {
@@ -19165,16 +19249,16 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext___init__(struct __pyx_
     __pyx_t_2 = (__pyx_t_5) ? __Pyx_PyObject_Call2Args(__pyx_t_1, __pyx_t_5, __pyx_t_4) : __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_4);
     __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 972, __pyx_L1_error)
+    if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 976, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_Raise(__pyx_t_2, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __PYX_ERR(0, 972, __pyx_L1_error)
+    __PYX_ERR(0, 976, __pyx_L1_error)
   }
   __pyx_L3:;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":974
+  /* "vidcutter/libs/pympv/mpv.pyx":978
  *             raise PyMPVError("Unknown api_type %r" % api_type)
  * 
  *         if opengl_init_params is not None:             # <<<<<<<<<<<<<<
@@ -19185,14 +19269,14 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext___init__(struct __pyx_
   __pyx_t_6 = (__pyx_t_3 != 0);
   if (__pyx_t_6) {
 
-    /* "vidcutter/libs/pympv/mpv.pyx":975
+    /* "vidcutter/libs/pympv/mpv.pyx":979
  * 
  *         if opengl_init_params is not None:
  *             self._get_proc_address = opengl_init_params["get_proc_address"]             # <<<<<<<<<<<<<<
  *             gl_params.get_proc_address = &_c_getprocaddress
  *             gl_params.get_proc_address_ctx = <void *>self._get_proc_address
  */
-    __pyx_t_2 = __Pyx_PyObject_Dict_GetItem(__pyx_v_opengl_init_params, __pyx_n_s_get_proc_address); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 975, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_Dict_GetItem(__pyx_v_opengl_init_params, __pyx_n_s_get_proc_address); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 979, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_GIVEREF(__pyx_t_2);
     __Pyx_GOTREF(__pyx_v_self->_get_proc_address);
@@ -19200,7 +19284,7 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext___init__(struct __pyx_
     __pyx_v_self->_get_proc_address = __pyx_t_2;
     __pyx_t_2 = 0;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":976
+    /* "vidcutter/libs/pympv/mpv.pyx":980
  *         if opengl_init_params is not None:
  *             self._get_proc_address = opengl_init_params["get_proc_address"]
  *             gl_params.get_proc_address = &_c_getprocaddress             # <<<<<<<<<<<<<<
@@ -19209,7 +19293,7 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext___init__(struct __pyx_
  */
     __pyx_v_gl_params.get_proc_address = (&__pyx_f_9vidcutter_4libs_3mpv__c_getprocaddress);
 
-    /* "vidcutter/libs/pympv/mpv.pyx":977
+    /* "vidcutter/libs/pympv/mpv.pyx":981
  *             self._get_proc_address = opengl_init_params["get_proc_address"]
  *             gl_params.get_proc_address = &_c_getprocaddress
  *             gl_params.get_proc_address_ctx = <void *>self._get_proc_address             # <<<<<<<<<<<<<<
@@ -19218,18 +19302,18 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext___init__(struct __pyx_
  */
     __pyx_v_gl_params.get_proc_address_ctx = ((void *)__pyx_v_self->_get_proc_address);
 
-    /* "vidcutter/libs/pympv/mpv.pyx":978
+    /* "vidcutter/libs/pympv/mpv.pyx":982
  *             gl_params.get_proc_address = &_c_getprocaddress
  *             gl_params.get_proc_address_ctx = <void *>self._get_proc_address
  *             params.add_voidp(MPV_RENDER_PARAM_OPENGL_INIT_PARAMS, &gl_params)             # <<<<<<<<<<<<<<
  *         if advanced_control:
  *             params.add_int(MPV_RENDER_PARAM_ADVANCED_CONTROL, 1)
  */
-    __pyx_t_2 = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv__RenderParams *)__pyx_v_params->__pyx_vtab)->add_voidp(__pyx_v_params, MPV_RENDER_PARAM_OPENGL_INIT_PARAMS, (&__pyx_v_gl_params), NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 978, __pyx_L1_error)
+    __pyx_t_2 = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv__RenderParams *)__pyx_v_params->__pyx_vtab)->add_voidp(__pyx_v_params, MPV_RENDER_PARAM_OPENGL_INIT_PARAMS, (&__pyx_v_gl_params), NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 982, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":974
+    /* "vidcutter/libs/pympv/mpv.pyx":978
  *             raise PyMPVError("Unknown api_type %r" % api_type)
  * 
  *         if opengl_init_params is not None:             # <<<<<<<<<<<<<<
@@ -19238,28 +19322,28 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext___init__(struct __pyx_
  */
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":979
+  /* "vidcutter/libs/pympv/mpv.pyx":983
  *             gl_params.get_proc_address_ctx = <void *>self._get_proc_address
  *             params.add_voidp(MPV_RENDER_PARAM_OPENGL_INIT_PARAMS, &gl_params)
  *         if advanced_control:             # <<<<<<<<<<<<<<
  *             params.add_int(MPV_RENDER_PARAM_ADVANCED_CONTROL, 1)
  *         if x11_display:
  */
-  __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_v_advanced_control); if (unlikely(__pyx_t_6 < 0)) __PYX_ERR(0, 979, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_v_advanced_control); if (unlikely(__pyx_t_6 < 0)) __PYX_ERR(0, 983, __pyx_L1_error)
   if (__pyx_t_6) {
 
-    /* "vidcutter/libs/pympv/mpv.pyx":980
+    /* "vidcutter/libs/pympv/mpv.pyx":984
  *             params.add_voidp(MPV_RENDER_PARAM_OPENGL_INIT_PARAMS, &gl_params)
  *         if advanced_control:
  *             params.add_int(MPV_RENDER_PARAM_ADVANCED_CONTROL, 1)             # <<<<<<<<<<<<<<
  *         if x11_display:
  *             self._x11_display = x11_display
  */
-    __pyx_t_2 = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv__RenderParams *)__pyx_v_params->__pyx_vtab)->add_int(__pyx_v_params, MPV_RENDER_PARAM_ADVANCED_CONTROL, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 980, __pyx_L1_error)
+    __pyx_t_2 = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv__RenderParams *)__pyx_v_params->__pyx_vtab)->add_int(__pyx_v_params, MPV_RENDER_PARAM_ADVANCED_CONTROL, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 984, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":979
+    /* "vidcutter/libs/pympv/mpv.pyx":983
  *             gl_params.get_proc_address_ctx = <void *>self._get_proc_address
  *             params.add_voidp(MPV_RENDER_PARAM_OPENGL_INIT_PARAMS, &gl_params)
  *         if advanced_control:             # <<<<<<<<<<<<<<
@@ -19268,17 +19352,17 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext___init__(struct __pyx_
  */
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":981
+  /* "vidcutter/libs/pympv/mpv.pyx":985
  *         if advanced_control:
  *             params.add_int(MPV_RENDER_PARAM_ADVANCED_CONTROL, 1)
  *         if x11_display:             # <<<<<<<<<<<<<<
  *             self._x11_display = x11_display
  *             params.add_voidp(MPV_RENDER_PARAM_X11_DISPLAY, get_pointer("Display", x11_display))
  */
-  __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_v_x11_display); if (unlikely(__pyx_t_6 < 0)) __PYX_ERR(0, 981, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_v_x11_display); if (unlikely(__pyx_t_6 < 0)) __PYX_ERR(0, 985, __pyx_L1_error)
   if (__pyx_t_6) {
 
-    /* "vidcutter/libs/pympv/mpv.pyx":982
+    /* "vidcutter/libs/pympv/mpv.pyx":986
  *             params.add_int(MPV_RENDER_PARAM_ADVANCED_CONTROL, 1)
  *         if x11_display:
  *             self._x11_display = x11_display             # <<<<<<<<<<<<<<
@@ -19291,18 +19375,18 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext___init__(struct __pyx_
     __Pyx_DECREF(__pyx_v_self->_x11_display);
     __pyx_v_self->_x11_display = __pyx_v_x11_display;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":983
+    /* "vidcutter/libs/pympv/mpv.pyx":987
  *         if x11_display:
  *             self._x11_display = x11_display
  *             params.add_voidp(MPV_RENDER_PARAM_X11_DISPLAY, get_pointer("Display", x11_display))             # <<<<<<<<<<<<<<
  *         if wl_display:
  *             self._wl_display = wl_display
  */
-    __pyx_t_2 = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv__RenderParams *)__pyx_v_params->__pyx_vtab)->add_voidp(__pyx_v_params, MPV_RENDER_PARAM_X11_DISPLAY, __pyx_f_9vidcutter_4libs_3mpv_get_pointer(((char const *)"Display"), __pyx_v_x11_display), NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 983, __pyx_L1_error)
+    __pyx_t_2 = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv__RenderParams *)__pyx_v_params->__pyx_vtab)->add_voidp(__pyx_v_params, MPV_RENDER_PARAM_X11_DISPLAY, __pyx_f_9vidcutter_4libs_3mpv_get_pointer(((char const *)"Display"), __pyx_v_x11_display), NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 987, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":981
+    /* "vidcutter/libs/pympv/mpv.pyx":985
  *         if advanced_control:
  *             params.add_int(MPV_RENDER_PARAM_ADVANCED_CONTROL, 1)
  *         if x11_display:             # <<<<<<<<<<<<<<
@@ -19311,17 +19395,17 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext___init__(struct __pyx_
  */
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":984
+  /* "vidcutter/libs/pympv/mpv.pyx":988
  *             self._x11_display = x11_display
  *             params.add_voidp(MPV_RENDER_PARAM_X11_DISPLAY, get_pointer("Display", x11_display))
  *         if wl_display:             # <<<<<<<<<<<<<<
  *             self._wl_display = wl_display
  *             params.add_voidp(MPV_RENDER_PARAM_WL_DISPLAY, get_pointer("wl_display", wl_display))
  */
-  __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_v_wl_display); if (unlikely(__pyx_t_6 < 0)) __PYX_ERR(0, 984, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_v_wl_display); if (unlikely(__pyx_t_6 < 0)) __PYX_ERR(0, 988, __pyx_L1_error)
   if (__pyx_t_6) {
 
-    /* "vidcutter/libs/pympv/mpv.pyx":985
+    /* "vidcutter/libs/pympv/mpv.pyx":989
  *             params.add_voidp(MPV_RENDER_PARAM_X11_DISPLAY, get_pointer("Display", x11_display))
  *         if wl_display:
  *             self._wl_display = wl_display             # <<<<<<<<<<<<<<
@@ -19334,18 +19418,18 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext___init__(struct __pyx_
     __Pyx_DECREF(__pyx_v_self->_wl_display);
     __pyx_v_self->_wl_display = __pyx_v_wl_display;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":986
+    /* "vidcutter/libs/pympv/mpv.pyx":990
  *         if wl_display:
  *             self._wl_display = wl_display
  *             params.add_voidp(MPV_RENDER_PARAM_WL_DISPLAY, get_pointer("wl_display", wl_display))             # <<<<<<<<<<<<<<
  *         if drm_display:
  *             drm_params.fd = drm_display.get("fd", -1)
  */
-    __pyx_t_2 = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv__RenderParams *)__pyx_v_params->__pyx_vtab)->add_voidp(__pyx_v_params, MPV_RENDER_PARAM_WL_DISPLAY, __pyx_f_9vidcutter_4libs_3mpv_get_pointer(((char const *)"wl_display"), __pyx_v_wl_display), NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 986, __pyx_L1_error)
+    __pyx_t_2 = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv__RenderParams *)__pyx_v_params->__pyx_vtab)->add_voidp(__pyx_v_params, MPV_RENDER_PARAM_WL_DISPLAY, __pyx_f_9vidcutter_4libs_3mpv_get_pointer(((char const *)"wl_display"), __pyx_v_wl_display), NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 990, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":984
+    /* "vidcutter/libs/pympv/mpv.pyx":988
  *             self._x11_display = x11_display
  *             params.add_voidp(MPV_RENDER_PARAM_X11_DISPLAY, get_pointer("Display", x11_display))
  *         if wl_display:             # <<<<<<<<<<<<<<
@@ -19354,80 +19438,80 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext___init__(struct __pyx_
  */
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":987
+  /* "vidcutter/libs/pympv/mpv.pyx":991
  *             self._wl_display = wl_display
  *             params.add_voidp(MPV_RENDER_PARAM_WL_DISPLAY, get_pointer("wl_display", wl_display))
  *         if drm_display:             # <<<<<<<<<<<<<<
  *             drm_params.fd = drm_display.get("fd", -1)
  *             drm_params.crtc_id = drm_display.get("crtc_id", -1)
  */
-  __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_v_drm_display); if (unlikely(__pyx_t_6 < 0)) __PYX_ERR(0, 987, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_v_drm_display); if (unlikely(__pyx_t_6 < 0)) __PYX_ERR(0, 991, __pyx_L1_error)
   if (__pyx_t_6) {
 
-    /* "vidcutter/libs/pympv/mpv.pyx":988
+    /* "vidcutter/libs/pympv/mpv.pyx":992
  *             params.add_voidp(MPV_RENDER_PARAM_WL_DISPLAY, get_pointer("wl_display", wl_display))
  *         if drm_display:
  *             drm_params.fd = drm_display.get("fd", -1)             # <<<<<<<<<<<<<<
  *             drm_params.crtc_id = drm_display.get("crtc_id", -1)
  *             drm_params.connector_id = drm_display.get("connector_id", -1)
  */
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_drm_display, __pyx_n_s_get); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 988, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_drm_display, __pyx_n_s_get); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 992, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_tuple__10, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 988, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_tuple__10, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 992, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 988, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 992, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __pyx_v_drm_params.fd = __pyx_t_7;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":989
+    /* "vidcutter/libs/pympv/mpv.pyx":993
  *         if drm_display:
  *             drm_params.fd = drm_display.get("fd", -1)
  *             drm_params.crtc_id = drm_display.get("crtc_id", -1)             # <<<<<<<<<<<<<<
  *             drm_params.connector_id = drm_display.get("connector_id", -1)
  *             arp = drm_display.get("atomic_request_ptr", None)
  */
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_drm_display, __pyx_n_s_get); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 989, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_drm_display, __pyx_n_s_get); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 993, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_tuple__11, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 989, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_tuple__11, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 993, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_2); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 989, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_2); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 993, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __pyx_v_drm_params.crtc_id = __pyx_t_7;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":990
+    /* "vidcutter/libs/pympv/mpv.pyx":994
  *             drm_params.fd = drm_display.get("fd", -1)
  *             drm_params.crtc_id = drm_display.get("crtc_id", -1)
  *             drm_params.connector_id = drm_display.get("connector_id", -1)             # <<<<<<<<<<<<<<
  *             arp = drm_display.get("atomic_request_ptr", None)
  *             if arp is not None:
  */
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_drm_display, __pyx_n_s_get); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 990, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_drm_display, __pyx_n_s_get); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 994, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_tuple__12, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 990, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_tuple__12, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 994, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 990, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 994, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __pyx_v_drm_params.connector_id = __pyx_t_7;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":991
+    /* "vidcutter/libs/pympv/mpv.pyx":995
  *             drm_params.crtc_id = drm_display.get("crtc_id", -1)
  *             drm_params.connector_id = drm_display.get("connector_id", -1)
  *             arp = drm_display.get("atomic_request_ptr", None)             # <<<<<<<<<<<<<<
  *             if arp is not None:
  *                 drm_params.atomic_request_ptr = <_drmModeAtomicReq **>get_pointer(arp, "drmModeAtomicReq*")
  */
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_drm_display, __pyx_n_s_get); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 991, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_drm_display, __pyx_n_s_get); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 995, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_tuple__13, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 991, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_tuple__13, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 995, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __pyx_v_arp = __pyx_t_2;
     __pyx_t_2 = 0;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":992
+    /* "vidcutter/libs/pympv/mpv.pyx":996
  *             drm_params.connector_id = drm_display.get("connector_id", -1)
  *             arp = drm_display.get("atomic_request_ptr", None)
  *             if arp is not None:             # <<<<<<<<<<<<<<
@@ -19438,17 +19522,17 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext___init__(struct __pyx_
     __pyx_t_3 = (__pyx_t_6 != 0);
     if (__pyx_t_3) {
 
-      /* "vidcutter/libs/pympv/mpv.pyx":993
+      /* "vidcutter/libs/pympv/mpv.pyx":997
  *             arp = drm_display.get("atomic_request_ptr", None)
  *             if arp is not None:
  *                 drm_params.atomic_request_ptr = <_drmModeAtomicReq **>get_pointer(arp, "drmModeAtomicReq*")             # <<<<<<<<<<<<<<
  *             drm_params.render_fd = drm_display.get("render_fd", -1)
  *             params.add_voidp(MPV_RENDER_PARAM_DRM_DISPLAY, &drm_params)
  */
-      __pyx_t_8 = __Pyx_PyObject_AsString(__pyx_v_arp); if (unlikely((!__pyx_t_8) && PyErr_Occurred())) __PYX_ERR(0, 993, __pyx_L1_error)
+      __pyx_t_8 = __Pyx_PyObject_AsString(__pyx_v_arp); if (unlikely((!__pyx_t_8) && PyErr_Occurred())) __PYX_ERR(0, 997, __pyx_L1_error)
       __pyx_v_drm_params.atomic_request_ptr = ((struct _drmModeAtomicReq **)__pyx_f_9vidcutter_4libs_3mpv_get_pointer(__pyx_t_8, __pyx_kp_s_drmModeAtomicReq));
 
-      /* "vidcutter/libs/pympv/mpv.pyx":992
+      /* "vidcutter/libs/pympv/mpv.pyx":996
  *             drm_params.connector_id = drm_display.get("connector_id", -1)
  *             arp = drm_display.get("atomic_request_ptr", None)
  *             if arp is not None:             # <<<<<<<<<<<<<<
@@ -19457,34 +19541,34 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext___init__(struct __pyx_
  */
     }
 
-    /* "vidcutter/libs/pympv/mpv.pyx":994
+    /* "vidcutter/libs/pympv/mpv.pyx":998
  *             if arp is not None:
  *                 drm_params.atomic_request_ptr = <_drmModeAtomicReq **>get_pointer(arp, "drmModeAtomicReq*")
  *             drm_params.render_fd = drm_display.get("render_fd", -1)             # <<<<<<<<<<<<<<
  *             params.add_voidp(MPV_RENDER_PARAM_DRM_DISPLAY, &drm_params)
  *         if drm_osd_size:
  */
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_drm_display, __pyx_n_s_get); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 994, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_drm_display, __pyx_n_s_get); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 998, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_tuple__14, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 994, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_tuple__14, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 998, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 994, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 998, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __pyx_v_drm_params.render_fd = __pyx_t_7;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":995
+    /* "vidcutter/libs/pympv/mpv.pyx":999
  *                 drm_params.atomic_request_ptr = <_drmModeAtomicReq **>get_pointer(arp, "drmModeAtomicReq*")
  *             drm_params.render_fd = drm_display.get("render_fd", -1)
  *             params.add_voidp(MPV_RENDER_PARAM_DRM_DISPLAY, &drm_params)             # <<<<<<<<<<<<<<
  *         if drm_osd_size:
  *             _drm_osd_size.width, _drm_osd_size.height = drm_osd_size
  */
-    __pyx_t_1 = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv__RenderParams *)__pyx_v_params->__pyx_vtab)->add_voidp(__pyx_v_params, MPV_RENDER_PARAM_DRM_DISPLAY, (&__pyx_v_drm_params), NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 995, __pyx_L1_error)
+    __pyx_t_1 = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv__RenderParams *)__pyx_v_params->__pyx_vtab)->add_voidp(__pyx_v_params, MPV_RENDER_PARAM_DRM_DISPLAY, (&__pyx_v_drm_params), NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 999, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":987
+    /* "vidcutter/libs/pympv/mpv.pyx":991
  *             self._wl_display = wl_display
  *             params.add_voidp(MPV_RENDER_PARAM_WL_DISPLAY, get_pointer("wl_display", wl_display))
  *         if drm_display:             # <<<<<<<<<<<<<<
@@ -19493,17 +19577,17 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext___init__(struct __pyx_
  */
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":996
+  /* "vidcutter/libs/pympv/mpv.pyx":1000
  *             drm_params.render_fd = drm_display.get("render_fd", -1)
  *             params.add_voidp(MPV_RENDER_PARAM_DRM_DISPLAY, &drm_params)
  *         if drm_osd_size:             # <<<<<<<<<<<<<<
  *             _drm_osd_size.width, _drm_osd_size.height = drm_osd_size
  *             params.add_voidp(MPV_RENDER_PARAM_DRM_OSD_SIZE, &_drm_osd_size)
  */
-  __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_v_drm_osd_size); if (unlikely(__pyx_t_3 < 0)) __PYX_ERR(0, 996, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_v_drm_osd_size); if (unlikely(__pyx_t_3 < 0)) __PYX_ERR(0, 1000, __pyx_L1_error)
   if (__pyx_t_3) {
 
-    /* "vidcutter/libs/pympv/mpv.pyx":997
+    /* "vidcutter/libs/pympv/mpv.pyx":1001
  *             params.add_voidp(MPV_RENDER_PARAM_DRM_DISPLAY, &drm_params)
  *         if drm_osd_size:
  *             _drm_osd_size.width, _drm_osd_size.height = drm_osd_size             # <<<<<<<<<<<<<<
@@ -19516,7 +19600,7 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext___init__(struct __pyx_
       if (unlikely(size != 2)) {
         if (size > 2) __Pyx_RaiseTooManyValuesError(2);
         else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-        __PYX_ERR(0, 997, __pyx_L1_error)
+        __PYX_ERR(0, 1001, __pyx_L1_error)
       }
       #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
       if (likely(PyTuple_CheckExact(sequence))) {
@@ -19529,21 +19613,21 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext___init__(struct __pyx_
       __Pyx_INCREF(__pyx_t_1);
       __Pyx_INCREF(__pyx_t_2);
       #else
-      __pyx_t_1 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 997, __pyx_L1_error)
+      __pyx_t_1 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1001, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_2 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 997, __pyx_L1_error)
+      __pyx_t_2 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1001, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
       #endif
     } else {
       Py_ssize_t index = -1;
-      __pyx_t_4 = PyObject_GetIter(__pyx_v_drm_osd_size); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 997, __pyx_L1_error)
+      __pyx_t_4 = PyObject_GetIter(__pyx_v_drm_osd_size); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 1001, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       __pyx_t_9 = Py_TYPE(__pyx_t_4)->tp_iternext;
       index = 0; __pyx_t_1 = __pyx_t_9(__pyx_t_4); if (unlikely(!__pyx_t_1)) goto __pyx_L11_unpacking_failed;
       __Pyx_GOTREF(__pyx_t_1);
       index = 1; __pyx_t_2 = __pyx_t_9(__pyx_t_4); if (unlikely(!__pyx_t_2)) goto __pyx_L11_unpacking_failed;
       __Pyx_GOTREF(__pyx_t_2);
-      if (__Pyx_IternextUnpackEndCheck(__pyx_t_9(__pyx_t_4), 2) < 0) __PYX_ERR(0, 997, __pyx_L1_error)
+      if (__Pyx_IternextUnpackEndCheck(__pyx_t_9(__pyx_t_4), 2) < 0) __PYX_ERR(0, 1001, __pyx_L1_error)
       __pyx_t_9 = NULL;
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       goto __pyx_L12_unpacking_done;
@@ -19551,28 +19635,28 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext___init__(struct __pyx_
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       __pyx_t_9 = NULL;
       if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-      __PYX_ERR(0, 997, __pyx_L1_error)
+      __PYX_ERR(0, 1001, __pyx_L1_error)
       __pyx_L12_unpacking_done:;
     }
-    __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 997, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 1001, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_10 = __Pyx_PyInt_As_int(__pyx_t_2); if (unlikely((__pyx_t_10 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 997, __pyx_L1_error)
+    __pyx_t_10 = __Pyx_PyInt_As_int(__pyx_t_2); if (unlikely((__pyx_t_10 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 1001, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __pyx_v__drm_osd_size.width = __pyx_t_7;
     __pyx_v__drm_osd_size.height = __pyx_t_10;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":998
+    /* "vidcutter/libs/pympv/mpv.pyx":1002
  *         if drm_osd_size:
  *             _drm_osd_size.width, _drm_osd_size.height = drm_osd_size
  *             params.add_voidp(MPV_RENDER_PARAM_DRM_OSD_SIZE, &_drm_osd_size)             # <<<<<<<<<<<<<<
  * 
  *         err = mpv_render_context_create(&self._ctx, self._mpv._ctx, params.params)
  */
-    __pyx_t_2 = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv__RenderParams *)__pyx_v_params->__pyx_vtab)->add_voidp(__pyx_v_params, MPV_RENDER_PARAM_DRM_OSD_SIZE, (&__pyx_v__drm_osd_size), NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 998, __pyx_L1_error)
+    __pyx_t_2 = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv__RenderParams *)__pyx_v_params->__pyx_vtab)->add_voidp(__pyx_v_params, MPV_RENDER_PARAM_DRM_OSD_SIZE, (&__pyx_v__drm_osd_size), NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1002, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":996
+    /* "vidcutter/libs/pympv/mpv.pyx":1000
  *             drm_params.render_fd = drm_display.get("render_fd", -1)
  *             params.add_voidp(MPV_RENDER_PARAM_DRM_DISPLAY, &drm_params)
  *         if drm_osd_size:             # <<<<<<<<<<<<<<
@@ -19581,7 +19665,7 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext___init__(struct __pyx_
  */
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1000
+  /* "vidcutter/libs/pympv/mpv.pyx":1004
  *             params.add_voidp(MPV_RENDER_PARAM_DRM_OSD_SIZE, &_drm_osd_size)
  * 
  *         err = mpv_render_context_create(&self._ctx, self._mpv._ctx, params.params)             # <<<<<<<<<<<<<<
@@ -19590,7 +19674,7 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext___init__(struct __pyx_
  */
   __pyx_v_err = mpv_render_context_create((&__pyx_v_self->_ctx), __pyx_v_self->_mpv->_ctx, __pyx_v_params->params);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1001
+  /* "vidcutter/libs/pympv/mpv.pyx":1005
  * 
  *         err = mpv_render_context_create(&self._ctx, self._mpv._ctx, params.params)
  *         if err < 0:             # <<<<<<<<<<<<<<
@@ -19600,16 +19684,16 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext___init__(struct __pyx_
   __pyx_t_3 = ((__pyx_v_err < 0) != 0);
   if (unlikely(__pyx_t_3)) {
 
-    /* "vidcutter/libs/pympv/mpv.pyx":1002
+    /* "vidcutter/libs/pympv/mpv.pyx":1006
  *         err = mpv_render_context_create(&self._ctx, self._mpv._ctx, params.params)
  *         if err < 0:
  *             raise MPVError(err)             # <<<<<<<<<<<<<<
  *         self.inited = True
  * 
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_MPVError); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1002, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_MPVError); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1006, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_err); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 1002, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_err); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 1006, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __pyx_t_5 = NULL;
     if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_1))) {
@@ -19624,14 +19708,14 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext___init__(struct __pyx_
     __pyx_t_2 = (__pyx_t_5) ? __Pyx_PyObject_Call2Args(__pyx_t_1, __pyx_t_5, __pyx_t_4) : __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_4);
     __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1002, __pyx_L1_error)
+    if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1006, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_Raise(__pyx_t_2, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __PYX_ERR(0, 1002, __pyx_L1_error)
+    __PYX_ERR(0, 1006, __pyx_L1_error)
 
-    /* "vidcutter/libs/pympv/mpv.pyx":1001
+    /* "vidcutter/libs/pympv/mpv.pyx":1005
  * 
  *         err = mpv_render_context_create(&self._ctx, self._mpv._ctx, params.params)
  *         if err < 0:             # <<<<<<<<<<<<<<
@@ -19640,7 +19724,7 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext___init__(struct __pyx_
  */
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1003
+  /* "vidcutter/libs/pympv/mpv.pyx":1007
  *         if err < 0:
  *             raise MPVError(err)
  *         self.inited = True             # <<<<<<<<<<<<<<
@@ -19649,7 +19733,7 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext___init__(struct __pyx_
  */
   __pyx_v_self->inited = 1;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":946
+  /* "vidcutter/libs/pympv/mpv.pyx":950
  *         bint inited
  * 
  *     def __init__(self, mpv,             # <<<<<<<<<<<<<<
@@ -19674,7 +19758,7 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext___init__(struct __pyx_
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":1006
+/* "vidcutter/libs/pympv/mpv.pyx":1010
  * 
  *     @_errors
  *     def set_icc_profile(self, icc_blob):             # <<<<<<<<<<<<<<
@@ -19713,7 +19797,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_2set_icc_profile
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("set_icc_profile", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1012
+  /* "vidcutter/libs/pympv/mpv.pyx":1016
  *             int err
  * 
  *         if not isinstance(icc_blob, bytes):             # <<<<<<<<<<<<<<
@@ -19724,14 +19808,14 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_2set_icc_profile
   __pyx_t_2 = ((!(__pyx_t_1 != 0)) != 0);
   if (unlikely(__pyx_t_2)) {
 
-    /* "vidcutter/libs/pympv/mpv.pyx":1013
+    /* "vidcutter/libs/pympv/mpv.pyx":1017
  * 
  *         if not isinstance(icc_blob, bytes):
  *             raise PyMPVError("icc_blob should be a bytes instance")             # <<<<<<<<<<<<<<
  *         val.data = <void *><char *>icc_blob
  *         val.size = len(icc_blob)
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_PyMPVError); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 1013, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_PyMPVError); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 1017, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __pyx_t_5 = NULL;
     if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_4))) {
@@ -19745,14 +19829,14 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_2set_icc_profile
     }
     __pyx_t_3 = (__pyx_t_5) ? __Pyx_PyObject_Call2Args(__pyx_t_4, __pyx_t_5, __pyx_kp_s_icc_blob_should_be_a_bytes_insta) : __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_kp_s_icc_blob_should_be_a_bytes_insta);
     __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 1013, __pyx_L1_error)
+    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 1017, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_Raise(__pyx_t_3, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __PYX_ERR(0, 1013, __pyx_L1_error)
+    __PYX_ERR(0, 1017, __pyx_L1_error)
 
-    /* "vidcutter/libs/pympv/mpv.pyx":1012
+    /* "vidcutter/libs/pympv/mpv.pyx":1016
  *             int err
  * 
  *         if not isinstance(icc_blob, bytes):             # <<<<<<<<<<<<<<
@@ -19761,27 +19845,27 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_2set_icc_profile
  */
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1014
+  /* "vidcutter/libs/pympv/mpv.pyx":1018
  *         if not isinstance(icc_blob, bytes):
  *             raise PyMPVError("icc_blob should be a bytes instance")
  *         val.data = <void *><char *>icc_blob             # <<<<<<<<<<<<<<
  *         val.size = len(icc_blob)
  * 
  */
-  __pyx_t_6 = __Pyx_PyObject_AsWritableString(__pyx_v_icc_blob); if (unlikely((!__pyx_t_6) && PyErr_Occurred())) __PYX_ERR(0, 1014, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyObject_AsWritableString(__pyx_v_icc_blob); if (unlikely((!__pyx_t_6) && PyErr_Occurred())) __PYX_ERR(0, 1018, __pyx_L1_error)
   __pyx_v_val.data = ((void *)((char *)__pyx_t_6));
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1015
+  /* "vidcutter/libs/pympv/mpv.pyx":1019
  *             raise PyMPVError("icc_blob should be a bytes instance")
  *         val.data = <void *><char *>icc_blob
  *         val.size = len(icc_blob)             # <<<<<<<<<<<<<<
  * 
  *         param.type = MPV_RENDER_PARAM_ICC_PROFILE
  */
-  __pyx_t_7 = PyObject_Length(__pyx_v_icc_blob); if (unlikely(__pyx_t_7 == ((Py_ssize_t)-1))) __PYX_ERR(0, 1015, __pyx_L1_error)
+  __pyx_t_7 = PyObject_Length(__pyx_v_icc_blob); if (unlikely(__pyx_t_7 == ((Py_ssize_t)-1))) __PYX_ERR(0, 1019, __pyx_L1_error)
   __pyx_v_val.size = __pyx_t_7;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1017
+  /* "vidcutter/libs/pympv/mpv.pyx":1021
  *         val.size = len(icc_blob)
  * 
  *         param.type = MPV_RENDER_PARAM_ICC_PROFILE             # <<<<<<<<<<<<<<
@@ -19790,7 +19874,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_2set_icc_profile
  */
   __pyx_v_param.type = MPV_RENDER_PARAM_ICC_PROFILE;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1018
+  /* "vidcutter/libs/pympv/mpv.pyx":1022
  * 
  *         param.type = MPV_RENDER_PARAM_ICC_PROFILE
  *         param.data = &val             # <<<<<<<<<<<<<<
@@ -19799,7 +19883,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_2set_icc_profile
  */
   __pyx_v_param.data = (&__pyx_v_val);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1020
+  /* "vidcutter/libs/pympv/mpv.pyx":1024
  *         param.data = &val
  * 
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -19814,7 +19898,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_2set_icc_profile
       #endif
       /*try:*/ {
 
-        /* "vidcutter/libs/pympv/mpv.pyx":1021
+        /* "vidcutter/libs/pympv/mpv.pyx":1025
  * 
  *         with nogil:
  *             err = mpv_render_context_set_parameter(self._ctx, param)             # <<<<<<<<<<<<<<
@@ -19824,7 +19908,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_2set_icc_profile
         __pyx_v_err = mpv_render_context_set_parameter(__pyx_v_self->_ctx, __pyx_v_param);
       }
 
-      /* "vidcutter/libs/pympv/mpv.pyx":1020
+      /* "vidcutter/libs/pympv/mpv.pyx":1024
  *         param.data = &val
  * 
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -19843,7 +19927,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_2set_icc_profile
       }
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1022
+  /* "vidcutter/libs/pympv/mpv.pyx":1026
  *         with nogil:
  *             err = mpv_render_context_set_parameter(self._ctx, param)
  *         return err             # <<<<<<<<<<<<<<
@@ -19851,13 +19935,13 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_2set_icc_profile
  *     @_errors
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_err); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 1022, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_err); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 1026, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_r = __pyx_t_3;
   __pyx_t_3 = 0;
   goto __pyx_L0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1006
+  /* "vidcutter/libs/pympv/mpv.pyx":1010
  * 
  *     @_errors
  *     def set_icc_profile(self, icc_blob):             # <<<<<<<<<<<<<<
@@ -19878,7 +19962,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_2set_icc_profile
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":1025
+/* "vidcutter/libs/pympv/mpv.pyx":1029
  * 
  *     @_errors
  *     def set_ambient_light(self, lux):             # <<<<<<<<<<<<<<
@@ -19912,17 +19996,17 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_4set_ambient_lig
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("set_ambient_light", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1031
+  /* "vidcutter/libs/pympv/mpv.pyx":1035
  *             int err
  * 
  *         val = lux             # <<<<<<<<<<<<<<
  *         param.type = MPV_RENDER_PARAM_AMBIENT_LIGHT
  *         param.data = &val
  */
-  __pyx_t_1 = __Pyx_PyInt_As_int(__pyx_v_lux); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 1031, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_As_int(__pyx_v_lux); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 1035, __pyx_L1_error)
   __pyx_v_val = __pyx_t_1;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1032
+  /* "vidcutter/libs/pympv/mpv.pyx":1036
  * 
  *         val = lux
  *         param.type = MPV_RENDER_PARAM_AMBIENT_LIGHT             # <<<<<<<<<<<<<<
@@ -19931,7 +20015,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_4set_ambient_lig
  */
   __pyx_v_param.type = MPV_RENDER_PARAM_AMBIENT_LIGHT;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1033
+  /* "vidcutter/libs/pympv/mpv.pyx":1037
  *         val = lux
  *         param.type = MPV_RENDER_PARAM_AMBIENT_LIGHT
  *         param.data = &val             # <<<<<<<<<<<<<<
@@ -19940,7 +20024,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_4set_ambient_lig
  */
   __pyx_v_param.data = (&__pyx_v_val);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1035
+  /* "vidcutter/libs/pympv/mpv.pyx":1039
  *         param.data = &val
  * 
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -19955,7 +20039,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_4set_ambient_lig
       #endif
       /*try:*/ {
 
-        /* "vidcutter/libs/pympv/mpv.pyx":1036
+        /* "vidcutter/libs/pympv/mpv.pyx":1040
  * 
  *         with nogil:
  *             err = mpv_render_context_set_parameter(self._ctx, param)             # <<<<<<<<<<<<<<
@@ -19965,7 +20049,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_4set_ambient_lig
         __pyx_v_err = mpv_render_context_set_parameter(__pyx_v_self->_ctx, __pyx_v_param);
       }
 
-      /* "vidcutter/libs/pympv/mpv.pyx":1035
+      /* "vidcutter/libs/pympv/mpv.pyx":1039
  *         param.data = &val
  * 
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -19984,7 +20068,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_4set_ambient_lig
       }
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1037
+  /* "vidcutter/libs/pympv/mpv.pyx":1041
  *         with nogil:
  *             err = mpv_render_context_set_parameter(self._ctx, param)
  *         return err             # <<<<<<<<<<<<<<
@@ -19992,13 +20076,13 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_4set_ambient_lig
  *     def get_next_frame_info(self):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_err); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1037, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_err); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1041, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_r = __pyx_t_2;
   __pyx_t_2 = 0;
   goto __pyx_L0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1025
+  /* "vidcutter/libs/pympv/mpv.pyx":1029
  * 
  *     @_errors
  *     def set_ambient_light(self, lux):             # <<<<<<<<<<<<<<
@@ -20017,7 +20101,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_4set_ambient_lig
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":1039
+/* "vidcutter/libs/pympv/mpv.pyx":1043
  *         return err
  * 
  *     def get_next_frame_info(self):             # <<<<<<<<<<<<<<
@@ -20054,7 +20138,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_6get_next_frame_
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get_next_frame_info", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1044
+  /* "vidcutter/libs/pympv/mpv.pyx":1048
  *             mpv_render_param param
  * 
  *         param.type = MPV_RENDER_PARAM_NEXT_FRAME_INFO             # <<<<<<<<<<<<<<
@@ -20063,7 +20147,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_6get_next_frame_
  */
   __pyx_v_param.type = MPV_RENDER_PARAM_NEXT_FRAME_INFO;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1045
+  /* "vidcutter/libs/pympv/mpv.pyx":1049
  * 
  *         param.type = MPV_RENDER_PARAM_NEXT_FRAME_INFO
  *         param.data = &info             # <<<<<<<<<<<<<<
@@ -20072,7 +20156,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_6get_next_frame_
  */
   __pyx_v_param.data = (&__pyx_v_info);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1046
+  /* "vidcutter/libs/pympv/mpv.pyx":1050
  *         param.type = MPV_RENDER_PARAM_NEXT_FRAME_INFO
  *         param.data = &info
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -20087,7 +20171,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_6get_next_frame_
       #endif
       /*try:*/ {
 
-        /* "vidcutter/libs/pympv/mpv.pyx":1047
+        /* "vidcutter/libs/pympv/mpv.pyx":1051
  *         param.data = &info
  *         with nogil:
  *             err = mpv_render_context_get_info(self._ctx, param)             # <<<<<<<<<<<<<<
@@ -20097,7 +20181,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_6get_next_frame_
         __pyx_v_err = mpv_render_context_get_info(__pyx_v_self->_ctx, __pyx_v_param);
       }
 
-      /* "vidcutter/libs/pympv/mpv.pyx":1046
+      /* "vidcutter/libs/pympv/mpv.pyx":1050
  *         param.type = MPV_RENDER_PARAM_NEXT_FRAME_INFO
  *         param.data = &info
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -20116,7 +20200,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_6get_next_frame_
       }
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1048
+  /* "vidcutter/libs/pympv/mpv.pyx":1052
  *         with nogil:
  *             err = mpv_render_context_get_info(self._ctx, param)
  *         if err < 0:             # <<<<<<<<<<<<<<
@@ -20126,16 +20210,16 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_6get_next_frame_
   __pyx_t_1 = ((__pyx_v_err < 0) != 0);
   if (unlikely(__pyx_t_1)) {
 
-    /* "vidcutter/libs/pympv/mpv.pyx":1049
+    /* "vidcutter/libs/pympv/mpv.pyx":1053
  *             err = mpv_render_context_get_info(self._ctx, param)
  *         if err < 0:
  *             raise MPVError(err)             # <<<<<<<<<<<<<<
  * 
  *         return RenderFrameInfo()._from_struct(&info)
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_MPVError); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 1049, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_MPVError); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 1053, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_err); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 1049, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_err); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 1053, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __pyx_t_5 = NULL;
     if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
@@ -20150,14 +20234,14 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_6get_next_frame_
     __pyx_t_2 = (__pyx_t_5) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_5, __pyx_t_4) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4);
     __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1049, __pyx_L1_error)
+    if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1053, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_Raise(__pyx_t_2, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __PYX_ERR(0, 1049, __pyx_L1_error)
+    __PYX_ERR(0, 1053, __pyx_L1_error)
 
-    /* "vidcutter/libs/pympv/mpv.pyx":1048
+    /* "vidcutter/libs/pympv/mpv.pyx":1052
  *         with nogil:
  *             err = mpv_render_context_get_info(self._ctx, param)
  *         if err < 0:             # <<<<<<<<<<<<<<
@@ -20166,7 +20250,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_6get_next_frame_
  */
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1051
+  /* "vidcutter/libs/pympv/mpv.pyx":1055
  *             raise MPVError(err)
  * 
  *         return RenderFrameInfo()._from_struct(&info)             # <<<<<<<<<<<<<<
@@ -20174,16 +20258,16 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_6get_next_frame_
  *     def set_update_callback(self, cb):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_2 = __Pyx_PyObject_CallNoArg(((PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_RenderFrameInfo)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1051, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_CallNoArg(((PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_RenderFrameInfo)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1055, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv_RenderFrameInfo *)((struct __pyx_obj_9vidcutter_4libs_3mpv_RenderFrameInfo *)__pyx_t_2)->__pyx_vtab)->_from_struct(((struct __pyx_obj_9vidcutter_4libs_3mpv_RenderFrameInfo *)__pyx_t_2), (&__pyx_v_info)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 1051, __pyx_L1_error)
+  __pyx_t_3 = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv_RenderFrameInfo *)((struct __pyx_obj_9vidcutter_4libs_3mpv_RenderFrameInfo *)__pyx_t_2)->__pyx_vtab)->_from_struct(((struct __pyx_obj_9vidcutter_4libs_3mpv_RenderFrameInfo *)__pyx_t_2), (&__pyx_v_info)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 1055, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_r = __pyx_t_3;
   __pyx_t_3 = 0;
   goto __pyx_L0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1039
+  /* "vidcutter/libs/pympv/mpv.pyx":1043
  *         return err
  * 
  *     def get_next_frame_info(self):             # <<<<<<<<<<<<<<
@@ -20205,7 +20289,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_6get_next_frame_
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":1053
+/* "vidcutter/libs/pympv/mpv.pyx":1057
  *         return RenderFrameInfo()._from_struct(&info)
  * 
  *     def set_update_callback(self, cb):             # <<<<<<<<<<<<<<
@@ -20231,7 +20315,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_8set_update_call
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("set_update_callback", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1054
+  /* "vidcutter/libs/pympv/mpv.pyx":1058
  * 
  *     def set_update_callback(self, cb):
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -20246,7 +20330,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_8set_update_call
       #endif
       /*try:*/ {
 
-        /* "vidcutter/libs/pympv/mpv.pyx":1055
+        /* "vidcutter/libs/pympv/mpv.pyx":1059
  *     def set_update_callback(self, cb):
  *         with nogil:
  *             mpv_render_context_set_update_callback(self._ctx, &_c_updatecb, <void *>cb)             # <<<<<<<<<<<<<<
@@ -20256,7 +20340,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_8set_update_call
         mpv_render_context_set_update_callback(__pyx_v_self->_ctx, (&__pyx_f_9vidcutter_4libs_3mpv__c_updatecb), ((void *)__pyx_v_cb));
       }
 
-      /* "vidcutter/libs/pympv/mpv.pyx":1054
+      /* "vidcutter/libs/pympv/mpv.pyx":1058
  * 
  *     def set_update_callback(self, cb):
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -20275,7 +20359,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_8set_update_call
       }
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1056
+  /* "vidcutter/libs/pympv/mpv.pyx":1060
  *         with nogil:
  *             mpv_render_context_set_update_callback(self._ctx, &_c_updatecb, <void *>cb)
  *         self.update_cb = cb             # <<<<<<<<<<<<<<
@@ -20288,7 +20372,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_8set_update_call
   __Pyx_DECREF(__pyx_v_self->update_cb);
   __pyx_v_self->update_cb = __pyx_v_cb;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1053
+  /* "vidcutter/libs/pympv/mpv.pyx":1057
  *         return RenderFrameInfo()._from_struct(&info)
  * 
  *     def set_update_callback(self, cb):             # <<<<<<<<<<<<<<
@@ -20303,7 +20387,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_8set_update_call
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":1058
+/* "vidcutter/libs/pympv/mpv.pyx":1062
  *         self.update_cb = cb
  * 
  *     def update(self):             # <<<<<<<<<<<<<<
@@ -20334,7 +20418,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_10update(struct 
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("update", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1060
+  /* "vidcutter/libs/pympv/mpv.pyx":1064
  *     def update(self):
  *         cdef uint64_t ret
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -20349,7 +20433,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_10update(struct 
       #endif
       /*try:*/ {
 
-        /* "vidcutter/libs/pympv/mpv.pyx":1061
+        /* "vidcutter/libs/pympv/mpv.pyx":1065
  *         cdef uint64_t ret
  *         with nogil:
  *             ret = mpv_render_context_update(self._ctx)             # <<<<<<<<<<<<<<
@@ -20359,7 +20443,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_10update(struct 
         __pyx_v_ret = mpv_render_context_update(__pyx_v_self->_ctx);
       }
 
-      /* "vidcutter/libs/pympv/mpv.pyx":1060
+      /* "vidcutter/libs/pympv/mpv.pyx":1064
  *     def update(self):
  *         cdef uint64_t ret
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -20378,7 +20462,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_10update(struct 
       }
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1062
+  /* "vidcutter/libs/pympv/mpv.pyx":1066
  *         with nogil:
  *             ret = mpv_render_context_update(self._ctx)
  *         return ret             # <<<<<<<<<<<<<<
@@ -20386,13 +20470,13 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_10update(struct 
  *     @_errors
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_uint64_t(__pyx_v_ret); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1062, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_uint64_t(__pyx_v_ret); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1066, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1058
+  /* "vidcutter/libs/pympv/mpv.pyx":1062
  *         self.update_cb = cb
  * 
  *     def update(self):             # <<<<<<<<<<<<<<
@@ -20411,7 +20495,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_10update(struct 
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":1065
+/* "vidcutter/libs/pympv/mpv.pyx":1069
  * 
  *     @_errors
  *     def render(self,             # <<<<<<<<<<<<<<
@@ -20437,7 +20521,7 @@ static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_13RenderContext_13render(PyObjec
     static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_opengl_fbo,&__pyx_n_s_flip_y,&__pyx_n_s_depth,&__pyx_n_s_block_for_target_time,&__pyx_n_s_skip_rendering,0};
     PyObject* values[5] = {0,0,0,0,0};
 
-    /* "vidcutter/libs/pympv/mpv.pyx":1066
+    /* "vidcutter/libs/pympv/mpv.pyx":1070
  *     @_errors
  *     def render(self,
  *                opengl_fbo=None,             # <<<<<<<<<<<<<<
@@ -20446,7 +20530,7 @@ static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_13RenderContext_13render(PyObjec
  */
     values[0] = ((PyObject *)Py_None);
 
-    /* "vidcutter/libs/pympv/mpv.pyx":1067
+    /* "vidcutter/libs/pympv/mpv.pyx":1071
  *     def render(self,
  *                opengl_fbo=None,
  *                flip_y=False,             # <<<<<<<<<<<<<<
@@ -20455,7 +20539,7 @@ static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_13RenderContext_13render(PyObjec
  */
     values[1] = ((PyObject *)Py_False);
 
-    /* "vidcutter/libs/pympv/mpv.pyx":1068
+    /* "vidcutter/libs/pympv/mpv.pyx":1072
  *                opengl_fbo=None,
  *                flip_y=False,
  *                depth=None,             # <<<<<<<<<<<<<<
@@ -20464,7 +20548,7 @@ static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_13RenderContext_13render(PyObjec
  */
     values[2] = ((PyObject *)Py_None);
 
-    /* "vidcutter/libs/pympv/mpv.pyx":1069
+    /* "vidcutter/libs/pympv/mpv.pyx":1073
  *                flip_y=False,
  *                depth=None,
  *                block_for_target_time=True,             # <<<<<<<<<<<<<<
@@ -20473,7 +20557,7 @@ static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_13RenderContext_13render(PyObjec
  */
     values[3] = ((PyObject *)Py_True);
 
-    /* "vidcutter/libs/pympv/mpv.pyx":1070
+    /* "vidcutter/libs/pympv/mpv.pyx":1074
  *                depth=None,
  *                block_for_target_time=True,
  *                skip_rendering=False):             # <<<<<<<<<<<<<<
@@ -20531,7 +20615,7 @@ static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_13RenderContext_13render(PyObjec
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "render") < 0)) __PYX_ERR(0, 1065, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "render") < 0)) __PYX_ERR(0, 1069, __pyx_L3_error)
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -20557,7 +20641,7 @@ static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_13RenderContext_13render(PyObjec
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("render", 0, 0, 5, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 1065, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("render", 0, 0, 5, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 1069, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("vidcutter.libs.mpv.RenderContext.render", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -20565,7 +20649,7 @@ static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_13RenderContext_13render(PyObjec
   __pyx_L4_argument_unpacking_done:;
   __pyx_r = __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_12render(((struct __pyx_obj_9vidcutter_4libs_3mpv_RenderContext *)__pyx_v_self), __pyx_v_opengl_fbo, __pyx_v_flip_y, __pyx_v_depth, __pyx_v_block_for_target_time, __pyx_v_skip_rendering);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1065
+  /* "vidcutter/libs/pympv/mpv.pyx":1069
  * 
  *     @_errors
  *     def render(self,             # <<<<<<<<<<<<<<
@@ -20595,29 +20679,29 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_12render(struct 
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("render", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1075
+  /* "vidcutter/libs/pympv/mpv.pyx":1079
  *             mpv_opengl_fbo fbo
  * 
  *         params = _RenderParams()             # <<<<<<<<<<<<<<
  * 
  *         if opengl_fbo:
  */
-  __pyx_t_1 = __Pyx_PyObject_CallNoArg(((PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv__RenderParams)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1075, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_CallNoArg(((PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv__RenderParams)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1079, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_params = ((struct __pyx_obj_9vidcutter_4libs_3mpv__RenderParams *)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1077
+  /* "vidcutter/libs/pympv/mpv.pyx":1081
  *         params = _RenderParams()
  * 
  *         if opengl_fbo:             # <<<<<<<<<<<<<<
  *             memset(&fbo, 0, sizeof(fbo))
  *             fbo.fbo = opengl_fbo.get("fbo", 0) or 0
  */
-  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_v_opengl_fbo); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 1077, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_v_opengl_fbo); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 1081, __pyx_L1_error)
   if (__pyx_t_2) {
 
-    /* "vidcutter/libs/pympv/mpv.pyx":1078
+    /* "vidcutter/libs/pympv/mpv.pyx":1082
  * 
  *         if opengl_fbo:
  *             memset(&fbo, 0, sizeof(fbo))             # <<<<<<<<<<<<<<
@@ -20626,23 +20710,23 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_12render(struct 
  */
     (void)(memset((&__pyx_v_fbo), 0, (sizeof(__pyx_v_fbo))));
 
-    /* "vidcutter/libs/pympv/mpv.pyx":1079
+    /* "vidcutter/libs/pympv/mpv.pyx":1083
  *         if opengl_fbo:
  *             memset(&fbo, 0, sizeof(fbo))
  *             fbo.fbo = opengl_fbo.get("fbo", 0) or 0             # <<<<<<<<<<<<<<
  *             fbo.w = opengl_fbo["w"]
  *             fbo.h = opengl_fbo["h"]
  */
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_opengl_fbo, __pyx_n_s_get); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1079, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_opengl_fbo, __pyx_n_s_get); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1083, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_tuple__15, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 1079, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_tuple__15, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 1083, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 1079, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 1083, __pyx_L1_error)
     if (!__pyx_t_2) {
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     } else {
-      __pyx_t_5 = __Pyx_PyInt_As_int(__pyx_t_4); if (unlikely((__pyx_t_5 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 1079, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyInt_As_int(__pyx_t_4); if (unlikely((__pyx_t_5 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 1083, __pyx_L1_error)
       __pyx_t_3 = __pyx_t_5;
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       goto __pyx_L4_bool_binop_done;
@@ -20651,49 +20735,49 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_12render(struct 
     __pyx_L4_bool_binop_done:;
     __pyx_v_fbo.fbo = __pyx_t_3;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":1080
+    /* "vidcutter/libs/pympv/mpv.pyx":1084
  *             memset(&fbo, 0, sizeof(fbo))
  *             fbo.fbo = opengl_fbo.get("fbo", 0) or 0
  *             fbo.w = opengl_fbo["w"]             # <<<<<<<<<<<<<<
  *             fbo.h = opengl_fbo["h"]
  *             fbo.internal_format = opengl_fbo.get("internal_format", 0) or 0
  */
-    __pyx_t_4 = __Pyx_PyObject_Dict_GetItem(__pyx_v_opengl_fbo, __pyx_n_s_w); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 1080, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_Dict_GetItem(__pyx_v_opengl_fbo, __pyx_n_s_w); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 1084, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_3 = __Pyx_PyInt_As_int(__pyx_t_4); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 1080, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyInt_As_int(__pyx_t_4); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 1084, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __pyx_v_fbo.w = __pyx_t_3;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":1081
+    /* "vidcutter/libs/pympv/mpv.pyx":1085
  *             fbo.fbo = opengl_fbo.get("fbo", 0) or 0
  *             fbo.w = opengl_fbo["w"]
  *             fbo.h = opengl_fbo["h"]             # <<<<<<<<<<<<<<
  *             fbo.internal_format = opengl_fbo.get("internal_format", 0) or 0
  *             params.add_voidp(MPV_RENDER_PARAM_OPENGL_FBO, &fbo)
  */
-    __pyx_t_4 = __Pyx_PyObject_Dict_GetItem(__pyx_v_opengl_fbo, __pyx_n_s_h); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 1081, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_Dict_GetItem(__pyx_v_opengl_fbo, __pyx_n_s_h); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 1085, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_3 = __Pyx_PyInt_As_int(__pyx_t_4); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 1081, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyInt_As_int(__pyx_t_4); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 1085, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __pyx_v_fbo.h = __pyx_t_3;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":1082
+    /* "vidcutter/libs/pympv/mpv.pyx":1086
  *             fbo.w = opengl_fbo["w"]
  *             fbo.h = opengl_fbo["h"]
  *             fbo.internal_format = opengl_fbo.get("internal_format", 0) or 0             # <<<<<<<<<<<<<<
  *             params.add_voidp(MPV_RENDER_PARAM_OPENGL_FBO, &fbo)
  *         if flip_y:
  */
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_opengl_fbo, __pyx_n_s_get); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 1082, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_opengl_fbo, __pyx_n_s_get); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 1086, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_tuple__16, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1082, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_tuple__16, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1086, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 1082, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 1086, __pyx_L1_error)
     if (!__pyx_t_2) {
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     } else {
-      __pyx_t_5 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_5 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 1082, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_5 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 1086, __pyx_L1_error)
       __pyx_t_3 = __pyx_t_5;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       goto __pyx_L6_bool_binop_done;
@@ -20702,18 +20786,18 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_12render(struct 
     __pyx_L6_bool_binop_done:;
     __pyx_v_fbo.internal_format = __pyx_t_3;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":1083
+    /* "vidcutter/libs/pympv/mpv.pyx":1087
  *             fbo.h = opengl_fbo["h"]
  *             fbo.internal_format = opengl_fbo.get("internal_format", 0) or 0
  *             params.add_voidp(MPV_RENDER_PARAM_OPENGL_FBO, &fbo)             # <<<<<<<<<<<<<<
  *         if flip_y:
  *             params.add_int(MPV_RENDER_PARAM_FLIP_Y, 1)
  */
-    __pyx_t_1 = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv__RenderParams *)__pyx_v_params->__pyx_vtab)->add_voidp(__pyx_v_params, MPV_RENDER_PARAM_OPENGL_FBO, (&__pyx_v_fbo), NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1083, __pyx_L1_error)
+    __pyx_t_1 = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv__RenderParams *)__pyx_v_params->__pyx_vtab)->add_voidp(__pyx_v_params, MPV_RENDER_PARAM_OPENGL_FBO, (&__pyx_v_fbo), NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1087, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":1077
+    /* "vidcutter/libs/pympv/mpv.pyx":1081
  *         params = _RenderParams()
  * 
  *         if opengl_fbo:             # <<<<<<<<<<<<<<
@@ -20722,28 +20806,28 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_12render(struct 
  */
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1084
+  /* "vidcutter/libs/pympv/mpv.pyx":1088
  *             fbo.internal_format = opengl_fbo.get("internal_format", 0) or 0
  *             params.add_voidp(MPV_RENDER_PARAM_OPENGL_FBO, &fbo)
  *         if flip_y:             # <<<<<<<<<<<<<<
  *             params.add_int(MPV_RENDER_PARAM_FLIP_Y, 1)
  *         if depth is not None:
  */
-  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_v_flip_y); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 1084, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_v_flip_y); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 1088, __pyx_L1_error)
   if (__pyx_t_2) {
 
-    /* "vidcutter/libs/pympv/mpv.pyx":1085
+    /* "vidcutter/libs/pympv/mpv.pyx":1089
  *             params.add_voidp(MPV_RENDER_PARAM_OPENGL_FBO, &fbo)
  *         if flip_y:
  *             params.add_int(MPV_RENDER_PARAM_FLIP_Y, 1)             # <<<<<<<<<<<<<<
  *         if depth is not None:
  *             params.add_int(MPV_RENDER_PARAM_DEPTH, depth)
  */
-    __pyx_t_1 = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv__RenderParams *)__pyx_v_params->__pyx_vtab)->add_int(__pyx_v_params, MPV_RENDER_PARAM_FLIP_Y, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1085, __pyx_L1_error)
+    __pyx_t_1 = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv__RenderParams *)__pyx_v_params->__pyx_vtab)->add_int(__pyx_v_params, MPV_RENDER_PARAM_FLIP_Y, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1089, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":1084
+    /* "vidcutter/libs/pympv/mpv.pyx":1088
  *             fbo.internal_format = opengl_fbo.get("internal_format", 0) or 0
  *             params.add_voidp(MPV_RENDER_PARAM_OPENGL_FBO, &fbo)
  *         if flip_y:             # <<<<<<<<<<<<<<
@@ -20752,7 +20836,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_12render(struct 
  */
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1086
+  /* "vidcutter/libs/pympv/mpv.pyx":1090
  *         if flip_y:
  *             params.add_int(MPV_RENDER_PARAM_FLIP_Y, 1)
  *         if depth is not None:             # <<<<<<<<<<<<<<
@@ -20763,19 +20847,19 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_12render(struct 
   __pyx_t_6 = (__pyx_t_2 != 0);
   if (__pyx_t_6) {
 
-    /* "vidcutter/libs/pympv/mpv.pyx":1087
+    /* "vidcutter/libs/pympv/mpv.pyx":1091
  *             params.add_int(MPV_RENDER_PARAM_FLIP_Y, 1)
  *         if depth is not None:
  *             params.add_int(MPV_RENDER_PARAM_DEPTH, depth)             # <<<<<<<<<<<<<<
  *         if not block_for_target_time:
  *             params.add_int(MPV_RENDER_PARAM_BLOCK_FOR_TARGET_TIME, 0)
  */
-    __pyx_t_3 = __Pyx_PyInt_As_int(__pyx_v_depth); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 1087, __pyx_L1_error)
-    __pyx_t_1 = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv__RenderParams *)__pyx_v_params->__pyx_vtab)->add_int(__pyx_v_params, MPV_RENDER_PARAM_DEPTH, __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1087, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyInt_As_int(__pyx_v_depth); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 1091, __pyx_L1_error)
+    __pyx_t_1 = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv__RenderParams *)__pyx_v_params->__pyx_vtab)->add_int(__pyx_v_params, MPV_RENDER_PARAM_DEPTH, __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1091, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":1086
+    /* "vidcutter/libs/pympv/mpv.pyx":1090
  *         if flip_y:
  *             params.add_int(MPV_RENDER_PARAM_FLIP_Y, 1)
  *         if depth is not None:             # <<<<<<<<<<<<<<
@@ -20784,29 +20868,29 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_12render(struct 
  */
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1088
+  /* "vidcutter/libs/pympv/mpv.pyx":1092
  *         if depth is not None:
  *             params.add_int(MPV_RENDER_PARAM_DEPTH, depth)
  *         if not block_for_target_time:             # <<<<<<<<<<<<<<
  *             params.add_int(MPV_RENDER_PARAM_BLOCK_FOR_TARGET_TIME, 0)
  *         if skip_rendering:
  */
-  __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_v_block_for_target_time); if (unlikely(__pyx_t_6 < 0)) __PYX_ERR(0, 1088, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_v_block_for_target_time); if (unlikely(__pyx_t_6 < 0)) __PYX_ERR(0, 1092, __pyx_L1_error)
   __pyx_t_2 = ((!__pyx_t_6) != 0);
   if (__pyx_t_2) {
 
-    /* "vidcutter/libs/pympv/mpv.pyx":1089
+    /* "vidcutter/libs/pympv/mpv.pyx":1093
  *             params.add_int(MPV_RENDER_PARAM_DEPTH, depth)
  *         if not block_for_target_time:
  *             params.add_int(MPV_RENDER_PARAM_BLOCK_FOR_TARGET_TIME, 0)             # <<<<<<<<<<<<<<
  *         if skip_rendering:
  *             params.add_int(MPV_RENDER_PARAM_SKIP_RENDERING, 1)
  */
-    __pyx_t_1 = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv__RenderParams *)__pyx_v_params->__pyx_vtab)->add_int(__pyx_v_params, MPV_RENDER_PARAM_BLOCK_FOR_TARGET_TIME, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1089, __pyx_L1_error)
+    __pyx_t_1 = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv__RenderParams *)__pyx_v_params->__pyx_vtab)->add_int(__pyx_v_params, MPV_RENDER_PARAM_BLOCK_FOR_TARGET_TIME, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1093, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":1088
+    /* "vidcutter/libs/pympv/mpv.pyx":1092
  *         if depth is not None:
  *             params.add_int(MPV_RENDER_PARAM_DEPTH, depth)
  *         if not block_for_target_time:             # <<<<<<<<<<<<<<
@@ -20815,28 +20899,28 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_12render(struct 
  */
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1090
+  /* "vidcutter/libs/pympv/mpv.pyx":1094
  *         if not block_for_target_time:
  *             params.add_int(MPV_RENDER_PARAM_BLOCK_FOR_TARGET_TIME, 0)
  *         if skip_rendering:             # <<<<<<<<<<<<<<
  *             params.add_int(MPV_RENDER_PARAM_SKIP_RENDERING, 1)
  * 
  */
-  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_v_skip_rendering); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 1090, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_v_skip_rendering); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 1094, __pyx_L1_error)
   if (__pyx_t_2) {
 
-    /* "vidcutter/libs/pympv/mpv.pyx":1091
+    /* "vidcutter/libs/pympv/mpv.pyx":1095
  *             params.add_int(MPV_RENDER_PARAM_BLOCK_FOR_TARGET_TIME, 0)
  *         if skip_rendering:
  *             params.add_int(MPV_RENDER_PARAM_SKIP_RENDERING, 1)             # <<<<<<<<<<<<<<
  * 
  *         with nogil:
  */
-    __pyx_t_1 = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv__RenderParams *)__pyx_v_params->__pyx_vtab)->add_int(__pyx_v_params, MPV_RENDER_PARAM_SKIP_RENDERING, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1091, __pyx_L1_error)
+    __pyx_t_1 = ((struct __pyx_vtabstruct_9vidcutter_4libs_3mpv__RenderParams *)__pyx_v_params->__pyx_vtab)->add_int(__pyx_v_params, MPV_RENDER_PARAM_SKIP_RENDERING, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1095, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":1090
+    /* "vidcutter/libs/pympv/mpv.pyx":1094
  *         if not block_for_target_time:
  *             params.add_int(MPV_RENDER_PARAM_BLOCK_FOR_TARGET_TIME, 0)
  *         if skip_rendering:             # <<<<<<<<<<<<<<
@@ -20845,7 +20929,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_12render(struct 
  */
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1093
+  /* "vidcutter/libs/pympv/mpv.pyx":1097
  *             params.add_int(MPV_RENDER_PARAM_SKIP_RENDERING, 1)
  * 
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -20860,7 +20944,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_12render(struct 
       #endif
       /*try:*/ {
 
-        /* "vidcutter/libs/pympv/mpv.pyx":1094
+        /* "vidcutter/libs/pympv/mpv.pyx":1098
  * 
  *         with nogil:
  *             ret = mpv_render_context_render(self._ctx, params.params)             # <<<<<<<<<<<<<<
@@ -20870,7 +20954,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_12render(struct 
         __pyx_v_ret = mpv_render_context_render(__pyx_v_self->_ctx, __pyx_v_params->params);
       }
 
-      /* "vidcutter/libs/pympv/mpv.pyx":1093
+      /* "vidcutter/libs/pympv/mpv.pyx":1097
  *             params.add_int(MPV_RENDER_PARAM_SKIP_RENDERING, 1)
  * 
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -20889,7 +20973,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_12render(struct 
       }
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1095
+  /* "vidcutter/libs/pympv/mpv.pyx":1099
  *         with nogil:
  *             ret = mpv_render_context_render(self._ctx, params.params)
  *         return ret             # <<<<<<<<<<<<<<
@@ -20897,13 +20981,13 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_12render(struct 
  *     def report_swap(self):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_ret); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1095, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_ret); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1099, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1065
+  /* "vidcutter/libs/pympv/mpv.pyx":1069
  * 
  *     @_errors
  *     def render(self,             # <<<<<<<<<<<<<<
@@ -20924,7 +21008,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_12render(struct 
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":1097
+/* "vidcutter/libs/pympv/mpv.pyx":1101
  *         return ret
  * 
  *     def report_swap(self):             # <<<<<<<<<<<<<<
@@ -20950,7 +21034,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_14report_swap(st
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("report_swap", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1098
+  /* "vidcutter/libs/pympv/mpv.pyx":1102
  * 
  *     def report_swap(self):
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -20965,17 +21049,17 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_14report_swap(st
       #endif
       /*try:*/ {
 
-        /* "vidcutter/libs/pympv/mpv.pyx":1099
+        /* "vidcutter/libs/pympv/mpv.pyx":1103
  *     def report_swap(self):
  *         with nogil:
  *             mpv_render_context_report_swap(self._ctx)             # <<<<<<<<<<<<<<
  * 
- *     def free(self):
+ *     def close(self):
  */
         mpv_render_context_report_swap(__pyx_v_self->_ctx);
       }
 
-      /* "vidcutter/libs/pympv/mpv.pyx":1098
+      /* "vidcutter/libs/pympv/mpv.pyx":1102
  * 
  *     def report_swap(self):
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -20994,7 +21078,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_14report_swap(st
       }
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1097
+  /* "vidcutter/libs/pympv/mpv.pyx":1101
  *         return ret
  * 
  *     def report_swap(self):             # <<<<<<<<<<<<<<
@@ -21009,134 +21093,8 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_14report_swap(st
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":1101
+/* "vidcutter/libs/pympv/mpv.pyx":1105
  *             mpv_render_context_report_swap(self._ctx)
- * 
- *     def free(self):             # <<<<<<<<<<<<<<
- *         if not self.inited:
- *             return
- */
-
-/* Python wrapper */
-static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_13RenderContext_17free(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_13RenderContext_17free(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
-  PyObject *__pyx_r = 0;
-  __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("free (wrapper)", 0);
-  __pyx_r = __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_16free(((struct __pyx_obj_9vidcutter_4libs_3mpv_RenderContext *)__pyx_v_self));
-
-  /* function exit code */
-  __Pyx_RefNannyFinishContext();
-  return __pyx_r;
-}
-
-static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_16free(struct __pyx_obj_9vidcutter_4libs_3mpv_RenderContext *__pyx_v_self) {
-  PyObject *__pyx_r = NULL;
-  __Pyx_RefNannyDeclarations
-  int __pyx_t_1;
-  __Pyx_RefNannySetupContext("free", 0);
-
-  /* "vidcutter/libs/pympv/mpv.pyx":1102
- * 
- *     def free(self):
- *         if not self.inited:             # <<<<<<<<<<<<<<
- *             return
- *         with nogil:
- */
-  __pyx_t_1 = ((!(__pyx_v_self->inited != 0)) != 0);
-  if (__pyx_t_1) {
-
-    /* "vidcutter/libs/pympv/mpv.pyx":1103
- *     def free(self):
- *         if not self.inited:
- *             return             # <<<<<<<<<<<<<<
- *         with nogil:
- *             mpv_render_context_free(self._ctx)
- */
-    __Pyx_XDECREF(__pyx_r);
-    __pyx_r = Py_None; __Pyx_INCREF(Py_None);
-    goto __pyx_L0;
-
-    /* "vidcutter/libs/pympv/mpv.pyx":1102
- * 
- *     def free(self):
- *         if not self.inited:             # <<<<<<<<<<<<<<
- *             return
- *         with nogil:
- */
-  }
-
-  /* "vidcutter/libs/pympv/mpv.pyx":1104
- *         if not self.inited:
- *             return
- *         with nogil:             # <<<<<<<<<<<<<<
- *             mpv_render_context_free(self._ctx)
- *         self.inited = False
- */
-  {
-      #ifdef WITH_THREAD
-      PyThreadState *_save;
-      Py_UNBLOCK_THREADS
-      __Pyx_FastGIL_Remember();
-      #endif
-      /*try:*/ {
-
-        /* "vidcutter/libs/pympv/mpv.pyx":1105
- *             return
- *         with nogil:
- *             mpv_render_context_free(self._ctx)             # <<<<<<<<<<<<<<
- *         self.inited = False
- * 
- */
-        mpv_render_context_free(__pyx_v_self->_ctx);
-      }
-
-      /* "vidcutter/libs/pympv/mpv.pyx":1104
- *         if not self.inited:
- *             return
- *         with nogil:             # <<<<<<<<<<<<<<
- *             mpv_render_context_free(self._ctx)
- *         self.inited = False
- */
-      /*finally:*/ {
-        /*normal exit:*/{
-          #ifdef WITH_THREAD
-          __Pyx_FastGIL_Forget();
-          Py_BLOCK_THREADS
-          #endif
-          goto __pyx_L6;
-        }
-        __pyx_L6:;
-      }
-  }
-
-  /* "vidcutter/libs/pympv/mpv.pyx":1106
- *         with nogil:
- *             mpv_render_context_free(self._ctx)
- *         self.inited = False             # <<<<<<<<<<<<<<
- * 
- *     def close(self):
- */
-  __pyx_v_self->inited = 0;
-
-  /* "vidcutter/libs/pympv/mpv.pyx":1101
- *             mpv_render_context_report_swap(self._ctx)
- * 
- *     def free(self):             # <<<<<<<<<<<<<<
- *         if not self.inited:
- *             return
- */
-
-  /* function exit code */
-  __pyx_r = Py_None; __Pyx_INCREF(Py_None);
-  __pyx_L0:;
-  __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_RefNannyFinishContext();
-  return __pyx_r;
-}
-
-/* "vidcutter/libs/pympv/mpv.pyx":1108
- *         self.inited = False
  * 
  *     def close(self):             # <<<<<<<<<<<<<<
  *         if not self.inited:
@@ -21144,25 +21102,25 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_16free(struct __
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_13RenderContext_19close(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_13RenderContext_19close(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
+static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_13RenderContext_17close(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_13RenderContext_17close(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("close (wrapper)", 0);
-  __pyx_r = __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_18close(((struct __pyx_obj_9vidcutter_4libs_3mpv_RenderContext *)__pyx_v_self));
+  __pyx_r = __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_16close(((struct __pyx_obj_9vidcutter_4libs_3mpv_RenderContext *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_18close(struct __pyx_obj_9vidcutter_4libs_3mpv_RenderContext *__pyx_v_self) {
+static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_16close(struct __pyx_obj_9vidcutter_4libs_3mpv_RenderContext *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   int __pyx_t_1;
   __Pyx_RefNannySetupContext("close", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1109
+  /* "vidcutter/libs/pympv/mpv.pyx":1106
  * 
  *     def close(self):
  *         if not self.inited:             # <<<<<<<<<<<<<<
@@ -21172,7 +21130,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_18close(struct _
   __pyx_t_1 = ((!(__pyx_v_self->inited != 0)) != 0);
   if (__pyx_t_1) {
 
-    /* "vidcutter/libs/pympv/mpv.pyx":1110
+    /* "vidcutter/libs/pympv/mpv.pyx":1107
  *     def close(self):
  *         if not self.inited:
  *             return             # <<<<<<<<<<<<<<
@@ -21183,7 +21141,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_18close(struct _
     __pyx_r = Py_None; __Pyx_INCREF(Py_None);
     goto __pyx_L0;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":1109
+    /* "vidcutter/libs/pympv/mpv.pyx":1106
  * 
  *     def close(self):
  *         if not self.inited:             # <<<<<<<<<<<<<<
@@ -21192,7 +21150,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_18close(struct _
  */
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1111
+  /* "vidcutter/libs/pympv/mpv.pyx":1108
  *         if not self.inited:
  *             return
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -21207,7 +21165,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_18close(struct _
       #endif
       /*try:*/ {
 
-        /* "vidcutter/libs/pympv/mpv.pyx":1112
+        /* "vidcutter/libs/pympv/mpv.pyx":1109
  *             return
  *         with nogil:
  *             mpv_render_context_free(self._ctx)             # <<<<<<<<<<<<<<
@@ -21217,7 +21175,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_18close(struct _
         mpv_render_context_free(__pyx_v_self->_ctx);
       }
 
-      /* "vidcutter/libs/pympv/mpv.pyx":1111
+      /* "vidcutter/libs/pympv/mpv.pyx":1108
  *         if not self.inited:
  *             return
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -21236,7 +21194,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_18close(struct _
       }
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1113
+  /* "vidcutter/libs/pympv/mpv.pyx":1110
  *         with nogil:
  *             mpv_render_context_free(self._ctx)
  *         self.inited = False             # <<<<<<<<<<<<<<
@@ -21245,8 +21203,8 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_18close(struct _
  */
   __pyx_v_self->inited = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1108
- *         self.inited = False
+  /* "vidcutter/libs/pympv/mpv.pyx":1105
+ *             mpv_render_context_report_swap(self._ctx)
  * 
  *     def close(self):             # <<<<<<<<<<<<<<
  *         if not self.inited:
@@ -21261,7 +21219,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_18close(struct _
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":1115
+/* "vidcutter/libs/pympv/mpv.pyx":1112
  *         self.inited = False
  * 
  *     def __dealloc__(self):             # <<<<<<<<<<<<<<
@@ -21270,17 +21228,17 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_18close(struct _
  */
 
 /* Python wrapper */
-static void __pyx_pw_9vidcutter_4libs_3mpv_13RenderContext_21__dealloc__(PyObject *__pyx_v_self); /*proto*/
-static void __pyx_pw_9vidcutter_4libs_3mpv_13RenderContext_21__dealloc__(PyObject *__pyx_v_self) {
+static void __pyx_pw_9vidcutter_4libs_3mpv_13RenderContext_19__dealloc__(PyObject *__pyx_v_self); /*proto*/
+static void __pyx_pw_9vidcutter_4libs_3mpv_13RenderContext_19__dealloc__(PyObject *__pyx_v_self) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__dealloc__ (wrapper)", 0);
-  __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_20__dealloc__(((struct __pyx_obj_9vidcutter_4libs_3mpv_RenderContext *)__pyx_v_self));
+  __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_18__dealloc__(((struct __pyx_obj_9vidcutter_4libs_3mpv_RenderContext *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
 }
 
-static void __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_20__dealloc__(struct __pyx_obj_9vidcutter_4libs_3mpv_RenderContext *__pyx_v_self) {
+static void __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_18__dealloc__(struct __pyx_obj_9vidcutter_4libs_3mpv_RenderContext *__pyx_v_self) {
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -21290,14 +21248,14 @@ static void __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_20__dealloc__(struct 
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__dealloc__", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1116
+  /* "vidcutter/libs/pympv/mpv.pyx":1113
  * 
  *     def __dealloc__(self):
  *         self.close()             # <<<<<<<<<<<<<<
  * 
  * cdef class OpenGLRenderContext(RenderContext):
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_close); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1116, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_close); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1113, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
@@ -21311,12 +21269,12 @@ static void __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_20__dealloc__(struct 
   }
   __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3) : __Pyx_PyObject_CallNoArg(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1116, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1113, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1115
+  /* "vidcutter/libs/pympv/mpv.pyx":1112
  *         self.inited = False
  * 
  *     def __dealloc__(self):             # <<<<<<<<<<<<<<
@@ -21342,19 +21300,19 @@ static void __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_20__dealloc__(struct 
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_13RenderContext_23__reduce_cython__(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_13RenderContext_23__reduce_cython__(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
+static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_13RenderContext_21__reduce_cython__(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_13RenderContext_21__reduce_cython__(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__reduce_cython__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_22__reduce_cython__(((struct __pyx_obj_9vidcutter_4libs_3mpv_RenderContext *)__pyx_v_self));
+  __pyx_r = __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_20__reduce_cython__(((struct __pyx_obj_9vidcutter_4libs_3mpv_RenderContext *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_22__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_9vidcutter_4libs_3mpv_RenderContext *__pyx_v_self) {
+static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_20__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_9vidcutter_4libs_3mpv_RenderContext *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -21399,19 +21357,19 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_22__reduce_cytho
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_13RenderContext_25__setstate_cython__(PyObject *__pyx_v_self, PyObject *__pyx_v___pyx_state); /*proto*/
-static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_13RenderContext_25__setstate_cython__(PyObject *__pyx_v_self, PyObject *__pyx_v___pyx_state) {
+static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_13RenderContext_23__setstate_cython__(PyObject *__pyx_v_self, PyObject *__pyx_v___pyx_state); /*proto*/
+static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_13RenderContext_23__setstate_cython__(PyObject *__pyx_v_self, PyObject *__pyx_v___pyx_state) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__setstate_cython__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_24__setstate_cython__(((struct __pyx_obj_9vidcutter_4libs_3mpv_RenderContext *)__pyx_v_self), ((PyObject *)__pyx_v___pyx_state));
+  __pyx_r = __pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_22__setstate_cython__(((struct __pyx_obj_9vidcutter_4libs_3mpv_RenderContext *)__pyx_v_self), ((PyObject *)__pyx_v___pyx_state));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_24__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_9vidcutter_4libs_3mpv_RenderContext *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state) {
+static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_22__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_9vidcutter_4libs_3mpv_RenderContext *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -21448,7 +21406,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_13RenderContext_24__setstate_cyt
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":1119
+/* "vidcutter/libs/pympv/mpv.pyx":1116
  * 
  * cdef class OpenGLRenderContext(RenderContext):
  *     def __init__(self, mpv,             # <<<<<<<<<<<<<<
@@ -21505,12 +21463,12 @@ static int __pyx_pw_9vidcutter_4libs_3mpv_19OpenGLRenderContext_1__init__(PyObje
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_get_proc_address)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 0, 2, 2, 1); __PYX_ERR(0, 1119, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("__init__", 0, 2, 2, 1); __PYX_ERR(0, 1116, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
         const Py_ssize_t used_pos_args = (pos_args < 2) ? pos_args : 2;
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, __pyx_v_kwargs, values, used_pos_args, "__init__") < 0)) __PYX_ERR(0, 1119, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, __pyx_v_kwargs, values, used_pos_args, "__init__") < 0)) __PYX_ERR(0, 1116, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) < 2) {
       goto __pyx_L5_argtuple_error;
@@ -21523,7 +21481,7 @@ static int __pyx_pw_9vidcutter_4libs_3mpv_19OpenGLRenderContext_1__init__(PyObje
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("__init__", 0, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 1119, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("__init__", 0, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 1116, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_DECREF(__pyx_v_args); __pyx_v_args = 0;
   __Pyx_DECREF(__pyx_v_kwargs); __pyx_v_kwargs = 0;
@@ -21552,39 +21510,39 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_19OpenGLRenderContext___init__(struct 
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__init__", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1123
+  /* "vidcutter/libs/pympv/mpv.pyx":1120
  *                  *args, **kwargs):
  *         init_params = {
  *             "get_proc_address": get_proc_address             # <<<<<<<<<<<<<<
  *         }
  *         RenderContext.__init__(self, mpv, RenderContext.API_OPENGL,
  */
-  __pyx_t_1 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1123, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1120, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_get_proc_address, __pyx_v_get_proc_address) < 0) __PYX_ERR(0, 1123, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_get_proc_address, __pyx_v_get_proc_address) < 0) __PYX_ERR(0, 1120, __pyx_L1_error)
   __pyx_v_init_params = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1125
+  /* "vidcutter/libs/pympv/mpv.pyx":1122
  *             "get_proc_address": get_proc_address
  *         }
  *         RenderContext.__init__(self, mpv, RenderContext.API_OPENGL,             # <<<<<<<<<<<<<<
  *                                init_params, *args, **kwargs)
  * 
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_RenderContext), __pyx_n_s_init); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1125, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_RenderContext), __pyx_n_s_init); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1122, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_RenderContext), __pyx_n_s_API_OPENGL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1125, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_RenderContext), __pyx_n_s_API_OPENGL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1122, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1126
+  /* "vidcutter/libs/pympv/mpv.pyx":1123
  *         }
  *         RenderContext.__init__(self, mpv, RenderContext.API_OPENGL,
  *                                init_params, *args, **kwargs)             # <<<<<<<<<<<<<<
  * 
  * class CallbackThread(Thread):
  */
-  __pyx_t_3 = PyTuple_New(4); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 1125, __pyx_L1_error)
+  __pyx_t_3 = PyTuple_New(4); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 1122, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_INCREF(((PyObject *)__pyx_v_self));
   __Pyx_GIVEREF(((PyObject *)__pyx_v_self));
@@ -21599,31 +21557,31 @@ static int __pyx_pf_9vidcutter_4libs_3mpv_19OpenGLRenderContext___init__(struct 
   PyTuple_SET_ITEM(__pyx_t_3, 3, __pyx_v_init_params);
   __pyx_t_2 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1125
+  /* "vidcutter/libs/pympv/mpv.pyx":1122
  *             "get_proc_address": get_proc_address
  *         }
  *         RenderContext.__init__(self, mpv, RenderContext.API_OPENGL,             # <<<<<<<<<<<<<<
  *                                init_params, *args, **kwargs)
  * 
  */
-  __pyx_t_2 = PyNumber_Add(__pyx_t_3, __pyx_v_args); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1125, __pyx_L1_error)
+  __pyx_t_2 = PyNumber_Add(__pyx_t_3, __pyx_v_args); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1122, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1126
+  /* "vidcutter/libs/pympv/mpv.pyx":1123
  *         }
  *         RenderContext.__init__(self, mpv, RenderContext.API_OPENGL,
  *                                init_params, *args, **kwargs)             # <<<<<<<<<<<<<<
  * 
  * class CallbackThread(Thread):
  */
-  __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_2, __pyx_v_kwargs); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 1125, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_2, __pyx_v_kwargs); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 1122, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1119
+  /* "vidcutter/libs/pympv/mpv.pyx":1116
  * 
  * cdef class OpenGLRenderContext(RenderContext):
  *     def __init__(self, mpv,             # <<<<<<<<<<<<<<
@@ -21759,7 +21717,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_19OpenGLRenderContext_4__setstat
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":1129
+/* "vidcutter/libs/pympv/mpv.pyx":1126
  * 
  * class CallbackThread(Thread):
  *     def __init__(self):             # <<<<<<<<<<<<<<
@@ -21792,16 +21750,16 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_14CallbackThread___init__(CYTHON
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__init__", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1130
+  /* "vidcutter/libs/pympv/mpv.pyx":1127
  * class CallbackThread(Thread):
  *     def __init__(self):
  *         Thread.__init__(self)             # <<<<<<<<<<<<<<
  *         self.daemon = True
  *         self.lock = Semaphore()
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_Thread); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1130, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_Thread); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1127, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_init); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 1130, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_init); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 1127, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_t_2 = NULL;
@@ -21816,28 +21774,28 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_14CallbackThread___init__(CYTHON
   }
   __pyx_t_1 = (__pyx_t_2) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_2, __pyx_v_self) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_v_self);
   __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1130, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1127, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1131
+  /* "vidcutter/libs/pympv/mpv.pyx":1128
  *     def __init__(self):
  *         Thread.__init__(self)
  *         self.daemon = True             # <<<<<<<<<<<<<<
  *         self.lock = Semaphore()
  *         self.lock.acquire(True)
  */
-  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_daemon, Py_True) < 0) __PYX_ERR(0, 1131, __pyx_L1_error)
+  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_daemon, Py_True) < 0) __PYX_ERR(0, 1128, __pyx_L1_error)
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1132
+  /* "vidcutter/libs/pympv/mpv.pyx":1129
  *         Thread.__init__(self)
  *         self.daemon = True
  *         self.lock = Semaphore()             # <<<<<<<<<<<<<<
  *         self.lock.acquire(True)
  *         self.callback = None
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_Semaphore); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 1132, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_Semaphore); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 1129, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_t_2 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
@@ -21851,22 +21809,22 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_14CallbackThread___init__(CYTHON
   }
   __pyx_t_1 = (__pyx_t_2) ? __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2) : __Pyx_PyObject_CallNoArg(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1132, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1129, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_lock, __pyx_t_1) < 0) __PYX_ERR(0, 1132, __pyx_L1_error)
+  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_lock, __pyx_t_1) < 0) __PYX_ERR(0, 1129, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1133
+  /* "vidcutter/libs/pympv/mpv.pyx":1130
  *         self.daemon = True
  *         self.lock = Semaphore()
  *         self.lock.acquire(True)             # <<<<<<<<<<<<<<
  *         self.callback = None
  *         self.isshutdown = False
  */
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_lock); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 1133, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_lock); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 1130, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_acquire); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1133, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_acquire); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1130, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_t_3 = NULL;
@@ -21881,30 +21839,30 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_14CallbackThread___init__(CYTHON
   }
   __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_3, Py_True) : __Pyx_PyObject_CallOneArg(__pyx_t_2, Py_True);
   __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1133, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1130, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1134
+  /* "vidcutter/libs/pympv/mpv.pyx":1131
  *         self.lock = Semaphore()
  *         self.lock.acquire(True)
  *         self.callback = None             # <<<<<<<<<<<<<<
  *         self.isshutdown = False
  * 
  */
-  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_callback, Py_None) < 0) __PYX_ERR(0, 1134, __pyx_L1_error)
+  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_callback, Py_None) < 0) __PYX_ERR(0, 1131, __pyx_L1_error)
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1135
+  /* "vidcutter/libs/pympv/mpv.pyx":1132
  *         self.lock.acquire(True)
  *         self.callback = None
  *         self.isshutdown = False             # <<<<<<<<<<<<<<
  * 
  *     def shutdown(self):
  */
-  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_isshutdown, Py_False) < 0) __PYX_ERR(0, 1135, __pyx_L1_error)
+  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_isshutdown, Py_False) < 0) __PYX_ERR(0, 1132, __pyx_L1_error)
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1129
+  /* "vidcutter/libs/pympv/mpv.pyx":1126
  * 
  * class CallbackThread(Thread):
  *     def __init__(self):             # <<<<<<<<<<<<<<
@@ -21927,7 +21885,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_14CallbackThread___init__(CYTHON
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":1137
+/* "vidcutter/libs/pympv/mpv.pyx":1134
  *         self.isshutdown = False
  * 
  *     def shutdown(self):             # <<<<<<<<<<<<<<
@@ -21960,34 +21918,34 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_14CallbackThread_2shutdown(CYTHO
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("shutdown", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1138
+  /* "vidcutter/libs/pympv/mpv.pyx":1135
  * 
  *     def shutdown(self):
  *         self.isshutdown = True             # <<<<<<<<<<<<<<
  *         self.callback = None
  *         self.lock.release()
  */
-  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_isshutdown, Py_True) < 0) __PYX_ERR(0, 1138, __pyx_L1_error)
+  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_isshutdown, Py_True) < 0) __PYX_ERR(0, 1135, __pyx_L1_error)
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1139
+  /* "vidcutter/libs/pympv/mpv.pyx":1136
  *     def shutdown(self):
  *         self.isshutdown = True
  *         self.callback = None             # <<<<<<<<<<<<<<
  *         self.lock.release()
  * 
  */
-  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_callback, Py_None) < 0) __PYX_ERR(0, 1139, __pyx_L1_error)
+  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_callback, Py_None) < 0) __PYX_ERR(0, 1136, __pyx_L1_error)
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1140
+  /* "vidcutter/libs/pympv/mpv.pyx":1137
  *         self.isshutdown = True
  *         self.callback = None
  *         self.lock.release()             # <<<<<<<<<<<<<<
  * 
  *     def call(self):
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_lock); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1140, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_lock); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1137, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_release); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 1140, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_release); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 1137, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_t_2 = NULL;
@@ -22002,12 +21960,12 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_14CallbackThread_2shutdown(CYTHO
   }
   __pyx_t_1 = (__pyx_t_2) ? __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2) : __Pyx_PyObject_CallNoArg(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1140, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1137, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1137
+  /* "vidcutter/libs/pympv/mpv.pyx":1134
  *         self.isshutdown = False
  * 
  *     def shutdown(self):             # <<<<<<<<<<<<<<
@@ -22030,7 +21988,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_14CallbackThread_2shutdown(CYTHO
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":1142
+/* "vidcutter/libs/pympv/mpv.pyx":1139
  *         self.lock.release()
  * 
  *     def call(self):             # <<<<<<<<<<<<<<
@@ -22063,16 +22021,16 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_14CallbackThread_4call(CYTHON_UN
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("call", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1143
+  /* "vidcutter/libs/pympv/mpv.pyx":1140
  * 
  *     def call(self):
  *         self.lock.release()             # <<<<<<<<<<<<<<
  * 
  *     def set(self, callback):
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_lock); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1143, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_lock); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1140, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_release); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 1143, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_release); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 1140, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_t_2 = NULL;
@@ -22087,12 +22045,12 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_14CallbackThread_4call(CYTHON_UN
   }
   __pyx_t_1 = (__pyx_t_2) ? __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2) : __Pyx_PyObject_CallNoArg(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1143, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1140, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1142
+  /* "vidcutter/libs/pympv/mpv.pyx":1139
  *         self.lock.release()
  * 
  *     def call(self):             # <<<<<<<<<<<<<<
@@ -22115,7 +22073,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_14CallbackThread_4call(CYTHON_UN
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":1145
+/* "vidcutter/libs/pympv/mpv.pyx":1142
  *         self.lock.release()
  * 
  *     def set(self, callback):             # <<<<<<<<<<<<<<
@@ -22158,11 +22116,11 @@ static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_14CallbackThread_7set(PyObject *
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_callback)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("set", 1, 2, 2, 1); __PYX_ERR(0, 1145, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("set", 1, 2, 2, 1); __PYX_ERR(0, 1142, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "set") < 0)) __PYX_ERR(0, 1145, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "set") < 0)) __PYX_ERR(0, 1142, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -22175,7 +22133,7 @@ static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_14CallbackThread_7set(PyObject *
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("set", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 1145, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("set", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 1142, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("vidcutter.libs.mpv.CallbackThread.set", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -22196,16 +22154,16 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_14CallbackThread_6set(CYTHON_UNU
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("set", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1146
+  /* "vidcutter/libs/pympv/mpv.pyx":1143
  * 
  *     def set(self, callback):
  *         self.callback = callback             # <<<<<<<<<<<<<<
  * 
  *     def run(self):
  */
-  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_callback, __pyx_v_callback) < 0) __PYX_ERR(0, 1146, __pyx_L1_error)
+  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_callback, __pyx_v_callback) < 0) __PYX_ERR(0, 1143, __pyx_L1_error)
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1145
+  /* "vidcutter/libs/pympv/mpv.pyx":1142
  *         self.lock.release()
  * 
  *     def set(self, callback):             # <<<<<<<<<<<<<<
@@ -22225,7 +22183,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_14CallbackThread_6set(CYTHON_UNU
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":1148
+/* "vidcutter/libs/pympv/mpv.pyx":1145
  *         self.callback = callback
  * 
  *     def run(self):             # <<<<<<<<<<<<<<
@@ -22262,7 +22220,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_14CallbackThread_8run(CYTHON_UNU
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("run", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1149
+  /* "vidcutter/libs/pympv/mpv.pyx":1146
  * 
  *     def run(self):
  *         while not self.isshutdown:             # <<<<<<<<<<<<<<
@@ -22270,23 +22228,23 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_14CallbackThread_8run(CYTHON_UNU
  *             self.mpv_callback(self.callback) if self.callback else None
  */
   while (1) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_isshutdown); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1149, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_isshutdown); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1146, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 1149, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 1146, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __pyx_t_3 = ((!__pyx_t_2) != 0);
     if (!__pyx_t_3) break;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":1150
+    /* "vidcutter/libs/pympv/mpv.pyx":1147
  *     def run(self):
  *         while not self.isshutdown:
  *             self.lock.acquire(True)             # <<<<<<<<<<<<<<
  *             self.mpv_callback(self.callback) if self.callback else None
  * 
  */
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_lock); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 1150, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_lock); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 1147, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_acquire); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 1150, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_acquire); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 1147, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __pyx_t_4 = NULL;
@@ -22301,26 +22259,26 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_14CallbackThread_8run(CYTHON_UNU
     }
     __pyx_t_1 = (__pyx_t_4) ? __Pyx_PyObject_Call2Args(__pyx_t_5, __pyx_t_4, Py_True) : __Pyx_PyObject_CallOneArg(__pyx_t_5, Py_True);
     __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1150, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1147, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":1151
+    /* "vidcutter/libs/pympv/mpv.pyx":1148
  *         while not self.isshutdown:
  *             self.lock.acquire(True)
  *             self.mpv_callback(self.callback) if self.callback else None             # <<<<<<<<<<<<<<
  * 
  *     def mpv_callback(self, callback):
  */
-    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_callback); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 1151, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_callback); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 1148, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_5); if (unlikely(__pyx_t_3 < 0)) __PYX_ERR(0, 1151, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_5); if (unlikely(__pyx_t_3 < 0)) __PYX_ERR(0, 1148, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     if (__pyx_t_3) {
-      __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_mpv_callback); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 1151, __pyx_L1_error)
+      __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_mpv_callback); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 1148, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_callback); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 1151, __pyx_L1_error)
+      __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_callback); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 1148, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
       __pyx_t_7 = NULL;
       if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_4))) {
@@ -22335,7 +22293,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_14CallbackThread_8run(CYTHON_UNU
       __pyx_t_5 = (__pyx_t_7) ? __Pyx_PyObject_Call2Args(__pyx_t_4, __pyx_t_7, __pyx_t_6) : __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_6);
       __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-      if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 1151, __pyx_L1_error)
+      if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 1148, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       __pyx_t_1 = __pyx_t_5;
@@ -22347,7 +22305,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_14CallbackThread_8run(CYTHON_UNU
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1148
+  /* "vidcutter/libs/pympv/mpv.pyx":1145
  *         self.callback = callback
  * 
  *     def run(self):             # <<<<<<<<<<<<<<
@@ -22372,7 +22330,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_14CallbackThread_8run(CYTHON_UNU
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":1153
+/* "vidcutter/libs/pympv/mpv.pyx":1150
  *             self.mpv_callback(self.callback) if self.callback else None
  * 
  *     def mpv_callback(self, callback):             # <<<<<<<<<<<<<<
@@ -22415,11 +22373,11 @@ static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_14CallbackThread_11mpv_callback(
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_callback)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("mpv_callback", 1, 2, 2, 1); __PYX_ERR(0, 1153, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("mpv_callback", 1, 2, 2, 1); __PYX_ERR(0, 1150, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "mpv_callback") < 0)) __PYX_ERR(0, 1153, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "mpv_callback") < 0)) __PYX_ERR(0, 1150, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -22432,7 +22390,7 @@ static PyObject *__pyx_pw_9vidcutter_4libs_3mpv_14CallbackThread_11mpv_callback(
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("mpv_callback", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 1153, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("mpv_callback", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 1150, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("vidcutter.libs.mpv.CallbackThread.mpv_callback", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -22465,7 +22423,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_14CallbackThread_10mpv_callback(
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("mpv_callback", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1154
+  /* "vidcutter/libs/pympv/mpv.pyx":1151
  * 
  *     def mpv_callback(self, callback):
  *         try:             # <<<<<<<<<<<<<<
@@ -22481,7 +22439,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_14CallbackThread_10mpv_callback(
     __Pyx_XGOTREF(__pyx_t_3);
     /*try:*/ {
 
-      /* "vidcutter/libs/pympv/mpv.pyx":1155
+      /* "vidcutter/libs/pympv/mpv.pyx":1152
  *     def mpv_callback(self, callback):
  *         try:
  *             callback()             # <<<<<<<<<<<<<<
@@ -22501,12 +22459,12 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_14CallbackThread_10mpv_callback(
       }
       __pyx_t_4 = (__pyx_t_6) ? __Pyx_PyObject_CallOneArg(__pyx_t_5, __pyx_t_6) : __Pyx_PyObject_CallNoArg(__pyx_t_5);
       __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
-      if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 1155, __pyx_L3_error)
+      if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 1152, __pyx_L3_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-      /* "vidcutter/libs/pympv/mpv.pyx":1154
+      /* "vidcutter/libs/pympv/mpv.pyx":1151
  * 
  *     def mpv_callback(self, callback):
  *         try:             # <<<<<<<<<<<<<<
@@ -22523,7 +22481,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_14CallbackThread_10mpv_callback(
     __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":1156
+    /* "vidcutter/libs/pympv/mpv.pyx":1153
  *         try:
  *             callback()
  *         except Exception as e:             # <<<<<<<<<<<<<<
@@ -22533,29 +22491,29 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_14CallbackThread_10mpv_callback(
     __pyx_t_7 = __Pyx_PyErr_ExceptionMatches(((PyObject *)(&((PyTypeObject*)PyExc_Exception)[0])));
     if (__pyx_t_7) {
       __Pyx_AddTraceback("vidcutter.libs.mpv.CallbackThread.mpv_callback", __pyx_clineno, __pyx_lineno, __pyx_filename);
-      if (__Pyx_GetException(&__pyx_t_4, &__pyx_t_5, &__pyx_t_6) < 0) __PYX_ERR(0, 1156, __pyx_L5_except_error)
+      if (__Pyx_GetException(&__pyx_t_4, &__pyx_t_5, &__pyx_t_6) < 0) __PYX_ERR(0, 1153, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_INCREF(__pyx_t_5);
       __pyx_v_e = __pyx_t_5;
 
-      /* "vidcutter/libs/pympv/mpv.pyx":1157
+      /* "vidcutter/libs/pympv/mpv.pyx":1154
  *             callback()
  *         except Exception as e:
  *             sys.stderr.write("pympv error during callback: %s\n" % e)             # <<<<<<<<<<<<<<
  * 
  * cdef void _c_callback(void* d) with gil:
  */
-      __Pyx_GetModuleGlobalName(__pyx_t_9, __pyx_n_s_sys); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 1157, __pyx_L5_except_error)
+      __Pyx_GetModuleGlobalName(__pyx_t_9, __pyx_n_s_sys); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 1154, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_9);
-      __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_t_9, __pyx_n_s_stderr); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 1157, __pyx_L5_except_error)
+      __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_t_9, __pyx_n_s_stderr); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 1154, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_10);
       __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-      __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_t_10, __pyx_n_s_write); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 1157, __pyx_L5_except_error)
+      __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_t_10, __pyx_n_s_write); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 1154, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_9);
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-      __pyx_t_10 = __Pyx_PyString_FormatSafe(__pyx_kp_s_pympv_error_during_callback_s, __pyx_v_e); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 1157, __pyx_L5_except_error)
+      __pyx_t_10 = __Pyx_PyString_FormatSafe(__pyx_kp_s_pympv_error_during_callback_s, __pyx_v_e); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 1154, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_10);
       __pyx_t_11 = NULL;
       if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_9))) {
@@ -22570,7 +22528,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_14CallbackThread_10mpv_callback(
       __pyx_t_8 = (__pyx_t_11) ? __Pyx_PyObject_Call2Args(__pyx_t_9, __pyx_t_11, __pyx_t_10) : __Pyx_PyObject_CallOneArg(__pyx_t_9, __pyx_t_10);
       __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-      if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 1157, __pyx_L5_except_error)
+      if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 1154, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
@@ -22582,7 +22540,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_14CallbackThread_10mpv_callback(
     goto __pyx_L5_except_error;
     __pyx_L5_except_error:;
 
-    /* "vidcutter/libs/pympv/mpv.pyx":1154
+    /* "vidcutter/libs/pympv/mpv.pyx":1151
  * 
  *     def mpv_callback(self, callback):
  *         try:             # <<<<<<<<<<<<<<
@@ -22602,7 +22560,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_14CallbackThread_10mpv_callback(
     __pyx_L8_try_end:;
   }
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1153
+  /* "vidcutter/libs/pympv/mpv.pyx":1150
  *             self.mpv_callback(self.callback) if self.callback else None
  * 
  *     def mpv_callback(self, callback):             # <<<<<<<<<<<<<<
@@ -22630,7 +22588,7 @@ static PyObject *__pyx_pf_9vidcutter_4libs_3mpv_14CallbackThread_10mpv_callback(
   return __pyx_r;
 }
 
-/* "vidcutter/libs/pympv/mpv.pyx":1159
+/* "vidcutter/libs/pympv/mpv.pyx":1156
  *             sys.stderr.write("pympv error during callback: %s\n" % e)
  * 
  * cdef void _c_callback(void* d) with gil:             # <<<<<<<<<<<<<<
@@ -22654,7 +22612,7 @@ static void __pyx_f_9vidcutter_4libs_3mpv__c_callback(void *__pyx_v_d) {
   #endif
   __Pyx_RefNannySetupContext("_c_callback", 0);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1160
+  /* "vidcutter/libs/pympv/mpv.pyx":1157
  * 
  * cdef void _c_callback(void* d) with gil:
  *     cdef uint64_t name = <uint64_t>d             # <<<<<<<<<<<<<<
@@ -22663,15 +22621,15 @@ static void __pyx_f_9vidcutter_4libs_3mpv__c_callback(void *__pyx_v_d) {
  */
   __pyx_v_name = ((uint64_t)__pyx_v_d);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1161
+  /* "vidcutter/libs/pympv/mpv.pyx":1158
  * cdef void _c_callback(void* d) with gil:
  *     cdef uint64_t name = <uint64_t>d
  *     callback = _callbacks.get(name)             # <<<<<<<<<<<<<<
  *     callback.call()
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_9vidcutter_4libs_3mpv__callbacks, __pyx_n_s_get); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1161, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_9vidcutter_4libs_3mpv__callbacks, __pyx_n_s_get); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1158, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyInt_From_uint64_t(__pyx_v_name); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 1161, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyInt_From_uint64_t(__pyx_v_name); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 1158, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_t_4 = NULL;
   if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
@@ -22686,18 +22644,18 @@ static void __pyx_f_9vidcutter_4libs_3mpv__c_callback(void *__pyx_v_d) {
   __pyx_t_1 = (__pyx_t_4) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_4, __pyx_t_3) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1161, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1158, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_v_callback = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1162
+  /* "vidcutter/libs/pympv/mpv.pyx":1159
  *     cdef uint64_t name = <uint64_t>d
  *     callback = _callbacks.get(name)
  *     callback.call()             # <<<<<<<<<<<<<<
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_callback, __pyx_n_s_call); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1162, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_callback, __pyx_n_s_call); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1159, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
@@ -22711,12 +22669,12 @@ static void __pyx_f_9vidcutter_4libs_3mpv__c_callback(void *__pyx_v_d) {
   }
   __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3) : __Pyx_PyObject_CallNoArg(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1162, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1159, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1159
+  /* "vidcutter/libs/pympv/mpv.pyx":1156
  *             sys.stderr.write("pympv error during callback: %s\n" % e)
  * 
  * cdef void _c_callback(void* d) with gil:             # <<<<<<<<<<<<<<
@@ -26163,6 +26121,10 @@ static int __pyx_tp_clear_9vidcutter_4libs_3mpv_Context(PyObject *o) {
   return 0;
 }
 
+static PyObject *__pyx_getprop_9vidcutter_4libs_3mpv_7Context_api_version(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_9vidcutter_4libs_3mpv_7Context_11api_version_1__get__(o);
+}
+
 static PyObject *__pyx_getprop_9vidcutter_4libs_3mpv_7Context_name(PyObject *o, CYTHON_UNUSED void *x) {
   return __pyx_pw_9vidcutter_4libs_3mpv_7Context_4name_1__get__(o);
 }
@@ -26200,6 +26162,7 @@ static PyMethodDef __pyx_methods_9vidcutter_4libs_3mpv_Context[] = {
 };
 
 static struct PyGetSetDef __pyx_getsets_9vidcutter_4libs_3mpv_Context[] = {
+  {(char *)"api_version", __pyx_getprop_9vidcutter_4libs_3mpv_7Context_api_version, 0, (char *)0, 0},
   {(char *)"name", __pyx_getprop_9vidcutter_4libs_3mpv_7Context_name, 0, (char *)"Unique name for every context created.\n\n        Wraps: mpv_client_name\n        ", 0},
   {(char *)"time", __pyx_getprop_9vidcutter_4libs_3mpv_7Context_time, 0, (char *)"Internal mpv client time.\n\n        Has an arbitrary start offset, but will never wrap or go backwards.\n\n        Wraps: mpv_get_time_us\n        ", 0},
   {0, 0, 0, 0, 0}
@@ -26664,7 +26627,7 @@ static void __pyx_tp_dealloc_9vidcutter_4libs_3mpv_RenderContext(PyObject *o) {
     PyObject *etype, *eval, *etb;
     PyErr_Fetch(&etype, &eval, &etb);
     __Pyx_SET_REFCNT(o, Py_REFCNT(o) + 1);
-    __pyx_pw_9vidcutter_4libs_3mpv_13RenderContext_21__dealloc__(o);
+    __pyx_pw_9vidcutter_4libs_3mpv_13RenderContext_19__dealloc__(o);
     __Pyx_SET_REFCNT(o, Py_REFCNT(o) - 1);
     PyErr_Restore(etype, eval, etb);
   }
@@ -26726,10 +26689,9 @@ static PyMethodDef __pyx_methods_9vidcutter_4libs_3mpv_RenderContext[] = {
   {"update", (PyCFunction)__pyx_pw_9vidcutter_4libs_3mpv_13RenderContext_11update, METH_NOARGS, 0},
   {"render", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_9vidcutter_4libs_3mpv_13RenderContext_13render, METH_VARARGS|METH_KEYWORDS, 0},
   {"report_swap", (PyCFunction)__pyx_pw_9vidcutter_4libs_3mpv_13RenderContext_15report_swap, METH_NOARGS, 0},
-  {"free", (PyCFunction)__pyx_pw_9vidcutter_4libs_3mpv_13RenderContext_17free, METH_NOARGS, 0},
-  {"close", (PyCFunction)__pyx_pw_9vidcutter_4libs_3mpv_13RenderContext_19close, METH_NOARGS, 0},
-  {"__reduce_cython__", (PyCFunction)__pyx_pw_9vidcutter_4libs_3mpv_13RenderContext_23__reduce_cython__, METH_NOARGS, 0},
-  {"__setstate_cython__", (PyCFunction)__pyx_pw_9vidcutter_4libs_3mpv_13RenderContext_25__setstate_cython__, METH_O, 0},
+  {"close", (PyCFunction)__pyx_pw_9vidcutter_4libs_3mpv_13RenderContext_17close, METH_NOARGS, 0},
+  {"__reduce_cython__", (PyCFunction)__pyx_pw_9vidcutter_4libs_3mpv_13RenderContext_21__reduce_cython__, METH_NOARGS, 0},
+  {"__setstate_cython__", (PyCFunction)__pyx_pw_9vidcutter_4libs_3mpv_13RenderContext_23__setstate_cython__, METH_O, 0},
   {0, 0, 0, 0}
 };
 
@@ -27315,9 +27277,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedBuiltins(void) {
   __pyx_builtin_UnicodeEncodeError = __Pyx_GetBuiltinName(__pyx_n_s_UnicodeEncodeError); if (!__pyx_builtin_UnicodeEncodeError) __PYX_ERR(0, 66, __pyx_L1_error)
   __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 222, __pyx_L1_error)
   __pyx_builtin_id = __Pyx_GetBuiltinName(__pyx_n_s_id); if (!__pyx_builtin_id) __PYX_ERR(0, 303, __pyx_L1_error)
-  __pyx_builtin_enumerate = __Pyx_GetBuiltinName(__pyx_n_s_enumerate); if (!__pyx_builtin_enumerate) __PYX_ERR(0, 471, __pyx_L1_error)
+  __pyx_builtin_enumerate = __Pyx_GetBuiltinName(__pyx_n_s_enumerate); if (!__pyx_builtin_enumerate) __PYX_ERR(0, 475, __pyx_L1_error)
   __pyx_builtin_TypeError = __Pyx_GetBuiltinName(__pyx_n_s_TypeError); if (!__pyx_builtin_TypeError) __PYX_ERR(1, 2, __pyx_L1_error)
-  __pyx_builtin_DeprecationWarning = __Pyx_GetBuiltinName(__pyx_n_s_DeprecationWarning); if (!__pyx_builtin_DeprecationWarning) __PYX_ERR(0, 826, __pyx_L1_error)
+  __pyx_builtin_DeprecationWarning = __Pyx_GetBuiltinName(__pyx_n_s_DeprecationWarning); if (!__pyx_builtin_DeprecationWarning) __PYX_ERR(0, 830, __pyx_L1_error)
   return 0;
   __pyx_L1_error:;
   return -1;
@@ -27358,14 +27320,14 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_tuple__4);
   __Pyx_GIVEREF(__pyx_tuple__4);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":826
+  /* "vidcutter/libs/pympv/mpv.pyx":830
  *     def __init__(self):
  *         self.inited = False
  *         warnings.warn("OpenGLContext is deprecated, please switch to RenderContext", DeprecationWarning)             # <<<<<<<<<<<<<<
  * 
  *     def init_gl(self, exts, get_proc_address):
  */
-  __pyx_tuple__5 = PyTuple_Pack(2, __pyx_kp_s_OpenGLContext_is_deprecated_plea, __pyx_builtin_DeprecationWarning); if (unlikely(!__pyx_tuple__5)) __PYX_ERR(0, 826, __pyx_L1_error)
+  __pyx_tuple__5 = PyTuple_Pack(2, __pyx_kp_s_OpenGLContext_is_deprecated_plea, __pyx_builtin_DeprecationWarning); if (unlikely(!__pyx_tuple__5)) __PYX_ERR(0, 830, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__5);
   __Pyx_GIVEREF(__pyx_tuple__5);
 
@@ -27407,80 +27369,80 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_tuple__9);
   __Pyx_GIVEREF(__pyx_tuple__9);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":988
+  /* "vidcutter/libs/pympv/mpv.pyx":992
  *             params.add_voidp(MPV_RENDER_PARAM_WL_DISPLAY, get_pointer("wl_display", wl_display))
  *         if drm_display:
  *             drm_params.fd = drm_display.get("fd", -1)             # <<<<<<<<<<<<<<
  *             drm_params.crtc_id = drm_display.get("crtc_id", -1)
  *             drm_params.connector_id = drm_display.get("connector_id", -1)
  */
-  __pyx_tuple__10 = PyTuple_Pack(2, __pyx_n_s_fd, __pyx_int_neg_1); if (unlikely(!__pyx_tuple__10)) __PYX_ERR(0, 988, __pyx_L1_error)
+  __pyx_tuple__10 = PyTuple_Pack(2, __pyx_n_s_fd, __pyx_int_neg_1); if (unlikely(!__pyx_tuple__10)) __PYX_ERR(0, 992, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__10);
   __Pyx_GIVEREF(__pyx_tuple__10);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":989
+  /* "vidcutter/libs/pympv/mpv.pyx":993
  *         if drm_display:
  *             drm_params.fd = drm_display.get("fd", -1)
  *             drm_params.crtc_id = drm_display.get("crtc_id", -1)             # <<<<<<<<<<<<<<
  *             drm_params.connector_id = drm_display.get("connector_id", -1)
  *             arp = drm_display.get("atomic_request_ptr", None)
  */
-  __pyx_tuple__11 = PyTuple_Pack(2, __pyx_n_s_crtc_id, __pyx_int_neg_1); if (unlikely(!__pyx_tuple__11)) __PYX_ERR(0, 989, __pyx_L1_error)
+  __pyx_tuple__11 = PyTuple_Pack(2, __pyx_n_s_crtc_id, __pyx_int_neg_1); if (unlikely(!__pyx_tuple__11)) __PYX_ERR(0, 993, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__11);
   __Pyx_GIVEREF(__pyx_tuple__11);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":990
+  /* "vidcutter/libs/pympv/mpv.pyx":994
  *             drm_params.fd = drm_display.get("fd", -1)
  *             drm_params.crtc_id = drm_display.get("crtc_id", -1)
  *             drm_params.connector_id = drm_display.get("connector_id", -1)             # <<<<<<<<<<<<<<
  *             arp = drm_display.get("atomic_request_ptr", None)
  *             if arp is not None:
  */
-  __pyx_tuple__12 = PyTuple_Pack(2, __pyx_n_s_connector_id, __pyx_int_neg_1); if (unlikely(!__pyx_tuple__12)) __PYX_ERR(0, 990, __pyx_L1_error)
+  __pyx_tuple__12 = PyTuple_Pack(2, __pyx_n_s_connector_id, __pyx_int_neg_1); if (unlikely(!__pyx_tuple__12)) __PYX_ERR(0, 994, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__12);
   __Pyx_GIVEREF(__pyx_tuple__12);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":991
+  /* "vidcutter/libs/pympv/mpv.pyx":995
  *             drm_params.crtc_id = drm_display.get("crtc_id", -1)
  *             drm_params.connector_id = drm_display.get("connector_id", -1)
  *             arp = drm_display.get("atomic_request_ptr", None)             # <<<<<<<<<<<<<<
  *             if arp is not None:
  *                 drm_params.atomic_request_ptr = <_drmModeAtomicReq **>get_pointer(arp, "drmModeAtomicReq*")
  */
-  __pyx_tuple__13 = PyTuple_Pack(2, __pyx_n_s_atomic_request_ptr, Py_None); if (unlikely(!__pyx_tuple__13)) __PYX_ERR(0, 991, __pyx_L1_error)
+  __pyx_tuple__13 = PyTuple_Pack(2, __pyx_n_s_atomic_request_ptr, Py_None); if (unlikely(!__pyx_tuple__13)) __PYX_ERR(0, 995, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__13);
   __Pyx_GIVEREF(__pyx_tuple__13);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":994
+  /* "vidcutter/libs/pympv/mpv.pyx":998
  *             if arp is not None:
  *                 drm_params.atomic_request_ptr = <_drmModeAtomicReq **>get_pointer(arp, "drmModeAtomicReq*")
  *             drm_params.render_fd = drm_display.get("render_fd", -1)             # <<<<<<<<<<<<<<
  *             params.add_voidp(MPV_RENDER_PARAM_DRM_DISPLAY, &drm_params)
  *         if drm_osd_size:
  */
-  __pyx_tuple__14 = PyTuple_Pack(2, __pyx_n_s_render_fd, __pyx_int_neg_1); if (unlikely(!__pyx_tuple__14)) __PYX_ERR(0, 994, __pyx_L1_error)
+  __pyx_tuple__14 = PyTuple_Pack(2, __pyx_n_s_render_fd, __pyx_int_neg_1); if (unlikely(!__pyx_tuple__14)) __PYX_ERR(0, 998, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__14);
   __Pyx_GIVEREF(__pyx_tuple__14);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1079
+  /* "vidcutter/libs/pympv/mpv.pyx":1083
  *         if opengl_fbo:
  *             memset(&fbo, 0, sizeof(fbo))
  *             fbo.fbo = opengl_fbo.get("fbo", 0) or 0             # <<<<<<<<<<<<<<
  *             fbo.w = opengl_fbo["w"]
  *             fbo.h = opengl_fbo["h"]
  */
-  __pyx_tuple__15 = PyTuple_Pack(2, __pyx_n_s_fbo, __pyx_int_0); if (unlikely(!__pyx_tuple__15)) __PYX_ERR(0, 1079, __pyx_L1_error)
+  __pyx_tuple__15 = PyTuple_Pack(2, __pyx_n_s_fbo, __pyx_int_0); if (unlikely(!__pyx_tuple__15)) __PYX_ERR(0, 1083, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__15);
   __Pyx_GIVEREF(__pyx_tuple__15);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1082
+  /* "vidcutter/libs/pympv/mpv.pyx":1086
  *             fbo.w = opengl_fbo["w"]
  *             fbo.h = opengl_fbo["h"]
  *             fbo.internal_format = opengl_fbo.get("internal_format", 0) or 0             # <<<<<<<<<<<<<<
  *             params.add_voidp(MPV_RENDER_PARAM_OPENGL_FBO, &fbo)
  *         if flip_y:
  */
-  __pyx_tuple__16 = PyTuple_Pack(2, __pyx_n_s_internal_format, __pyx_int_0); if (unlikely(!__pyx_tuple__16)) __PYX_ERR(0, 1082, __pyx_L1_error)
+  __pyx_tuple__16 = PyTuple_Pack(2, __pyx_n_s_internal_format, __pyx_int_0); if (unlikely(!__pyx_tuple__16)) __PYX_ERR(0, 1086, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__16);
   __Pyx_GIVEREF(__pyx_tuple__16);
 
@@ -27628,77 +27590,77 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_GIVEREF(__pyx_tuple__35);
   __pyx_codeobj__36 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__35, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_vidcutter_libs_pympv_mpv_pyx, __pyx_n_s_remove, 355, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__36)) __PYX_ERR(0, 355, __pyx_L1_error)
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1129
+  /* "vidcutter/libs/pympv/mpv.pyx":1126
  * 
  * class CallbackThread(Thread):
  *     def __init__(self):             # <<<<<<<<<<<<<<
  *         Thread.__init__(self)
  *         self.daemon = True
  */
-  __pyx_tuple__37 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__37)) __PYX_ERR(0, 1129, __pyx_L1_error)
+  __pyx_tuple__37 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__37)) __PYX_ERR(0, 1126, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__37);
   __Pyx_GIVEREF(__pyx_tuple__37);
-  __pyx_codeobj__38 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__37, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_vidcutter_libs_pympv_mpv_pyx, __pyx_n_s_init, 1129, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__38)) __PYX_ERR(0, 1129, __pyx_L1_error)
+  __pyx_codeobj__38 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__37, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_vidcutter_libs_pympv_mpv_pyx, __pyx_n_s_init, 1126, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__38)) __PYX_ERR(0, 1126, __pyx_L1_error)
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1137
+  /* "vidcutter/libs/pympv/mpv.pyx":1134
  *         self.isshutdown = False
  * 
  *     def shutdown(self):             # <<<<<<<<<<<<<<
  *         self.isshutdown = True
  *         self.callback = None
  */
-  __pyx_tuple__39 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__39)) __PYX_ERR(0, 1137, __pyx_L1_error)
+  __pyx_tuple__39 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__39)) __PYX_ERR(0, 1134, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__39);
   __Pyx_GIVEREF(__pyx_tuple__39);
-  __pyx_codeobj__40 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__39, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_vidcutter_libs_pympv_mpv_pyx, __pyx_n_s_shutdown, 1137, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__40)) __PYX_ERR(0, 1137, __pyx_L1_error)
+  __pyx_codeobj__40 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__39, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_vidcutter_libs_pympv_mpv_pyx, __pyx_n_s_shutdown, 1134, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__40)) __PYX_ERR(0, 1134, __pyx_L1_error)
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1142
+  /* "vidcutter/libs/pympv/mpv.pyx":1139
  *         self.lock.release()
  * 
  *     def call(self):             # <<<<<<<<<<<<<<
  *         self.lock.release()
  * 
  */
-  __pyx_tuple__41 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__41)) __PYX_ERR(0, 1142, __pyx_L1_error)
+  __pyx_tuple__41 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__41)) __PYX_ERR(0, 1139, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__41);
   __Pyx_GIVEREF(__pyx_tuple__41);
-  __pyx_codeobj__42 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__41, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_vidcutter_libs_pympv_mpv_pyx, __pyx_n_s_call, 1142, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__42)) __PYX_ERR(0, 1142, __pyx_L1_error)
+  __pyx_codeobj__42 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__41, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_vidcutter_libs_pympv_mpv_pyx, __pyx_n_s_call, 1139, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__42)) __PYX_ERR(0, 1139, __pyx_L1_error)
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1145
+  /* "vidcutter/libs/pympv/mpv.pyx":1142
  *         self.lock.release()
  * 
  *     def set(self, callback):             # <<<<<<<<<<<<<<
  *         self.callback = callback
  * 
  */
-  __pyx_tuple__43 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_callback); if (unlikely(!__pyx_tuple__43)) __PYX_ERR(0, 1145, __pyx_L1_error)
+  __pyx_tuple__43 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_callback); if (unlikely(!__pyx_tuple__43)) __PYX_ERR(0, 1142, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__43);
   __Pyx_GIVEREF(__pyx_tuple__43);
-  __pyx_codeobj__44 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__43, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_vidcutter_libs_pympv_mpv_pyx, __pyx_n_s_set, 1145, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__44)) __PYX_ERR(0, 1145, __pyx_L1_error)
+  __pyx_codeobj__44 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__43, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_vidcutter_libs_pympv_mpv_pyx, __pyx_n_s_set, 1142, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__44)) __PYX_ERR(0, 1142, __pyx_L1_error)
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1148
+  /* "vidcutter/libs/pympv/mpv.pyx":1145
  *         self.callback = callback
  * 
  *     def run(self):             # <<<<<<<<<<<<<<
  *         while not self.isshutdown:
  *             self.lock.acquire(True)
  */
-  __pyx_tuple__45 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__45)) __PYX_ERR(0, 1148, __pyx_L1_error)
+  __pyx_tuple__45 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__45)) __PYX_ERR(0, 1145, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__45);
   __Pyx_GIVEREF(__pyx_tuple__45);
-  __pyx_codeobj__46 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__45, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_vidcutter_libs_pympv_mpv_pyx, __pyx_n_s_run, 1148, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__46)) __PYX_ERR(0, 1148, __pyx_L1_error)
+  __pyx_codeobj__46 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__45, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_vidcutter_libs_pympv_mpv_pyx, __pyx_n_s_run, 1145, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__46)) __PYX_ERR(0, 1145, __pyx_L1_error)
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1153
+  /* "vidcutter/libs/pympv/mpv.pyx":1150
  *             self.mpv_callback(self.callback) if self.callback else None
  * 
  *     def mpv_callback(self, callback):             # <<<<<<<<<<<<<<
  *         try:
  *             callback()
  */
-  __pyx_tuple__47 = PyTuple_Pack(3, __pyx_n_s_self, __pyx_n_s_callback, __pyx_n_s_e); if (unlikely(!__pyx_tuple__47)) __PYX_ERR(0, 1153, __pyx_L1_error)
+  __pyx_tuple__47 = PyTuple_Pack(3, __pyx_n_s_self, __pyx_n_s_callback, __pyx_n_s_e); if (unlikely(!__pyx_tuple__47)) __PYX_ERR(0, 1150, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__47);
   __Pyx_GIVEREF(__pyx_tuple__47);
-  __pyx_codeobj__48 = (PyObject*)__Pyx_PyCode_New(2, 0, 3, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__47, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_vidcutter_libs_pympv_mpv_pyx, __pyx_n_s_mpv_callback, 1153, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__48)) __PYX_ERR(0, 1153, __pyx_L1_error)
+  __pyx_codeobj__48 = (PyObject*)__Pyx_PyCode_New(2, 0, 3, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__47, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_vidcutter_libs_pympv_mpv_pyx, __pyx_n_s_mpv_callback, 1150, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__48)) __PYX_ERR(0, 1150, __pyx_L1_error)
 
   /* "(tree fragment)":1
  * def __pyx_unpickle_EndOfFileReached(__pyx_type, long __pyx_checksum, __pyx_state):             # <<<<<<<<<<<<<<
@@ -27878,63 +27840,63 @@ static int __Pyx_modinit_type_init_code(void) {
   if (PyObject_SetAttr(__pyx_m, __pyx_n_s_Context, (PyObject *)&__pyx_type_9vidcutter_4libs_3mpv_Context) < 0) __PYX_ERR(0, 359, __pyx_L1_error)
   if (__Pyx_setup_reduce((PyObject*)&__pyx_type_9vidcutter_4libs_3mpv_Context) < 0) __PYX_ERR(0, 359, __pyx_L1_error)
   __pyx_ptype_9vidcutter_4libs_3mpv_Context = &__pyx_type_9vidcutter_4libs_3mpv_Context;
-  if (PyType_Ready(&__pyx_type_9vidcutter_4libs_3mpv_OpenGLContext) < 0) __PYX_ERR(0, 818, __pyx_L1_error)
+  if (PyType_Ready(&__pyx_type_9vidcutter_4libs_3mpv_OpenGLContext) < 0) __PYX_ERR(0, 822, __pyx_L1_error)
   #if PY_VERSION_HEX < 0x030800B1
   __pyx_type_9vidcutter_4libs_3mpv_OpenGLContext.tp_print = 0;
   #endif
   if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_type_9vidcutter_4libs_3mpv_OpenGLContext.tp_dictoffset && __pyx_type_9vidcutter_4libs_3mpv_OpenGLContext.tp_getattro == PyObject_GenericGetAttr)) {
     __pyx_type_9vidcutter_4libs_3mpv_OpenGLContext.tp_getattro = __Pyx_PyObject_GenericGetAttr;
   }
-  if (PyObject_SetAttr(__pyx_m, __pyx_n_s_OpenGLContext, (PyObject *)&__pyx_type_9vidcutter_4libs_3mpv_OpenGLContext) < 0) __PYX_ERR(0, 818, __pyx_L1_error)
-  if (__Pyx_setup_reduce((PyObject*)&__pyx_type_9vidcutter_4libs_3mpv_OpenGLContext) < 0) __PYX_ERR(0, 818, __pyx_L1_error)
+  if (PyObject_SetAttr(__pyx_m, __pyx_n_s_OpenGLContext, (PyObject *)&__pyx_type_9vidcutter_4libs_3mpv_OpenGLContext) < 0) __PYX_ERR(0, 822, __pyx_L1_error)
+  if (__Pyx_setup_reduce((PyObject*)&__pyx_type_9vidcutter_4libs_3mpv_OpenGLContext) < 0) __PYX_ERR(0, 822, __pyx_L1_error)
   __pyx_ptype_9vidcutter_4libs_3mpv_OpenGLContext = &__pyx_type_9vidcutter_4libs_3mpv_OpenGLContext;
   __pyx_vtabptr_9vidcutter_4libs_3mpv__RenderParams = &__pyx_vtable_9vidcutter_4libs_3mpv__RenderParams;
   __pyx_vtable_9vidcutter_4libs_3mpv__RenderParams.add_voidp = (PyObject *(*)(struct __pyx_obj_9vidcutter_4libs_3mpv__RenderParams *, enum mpv_render_param_type, void *, struct __pyx_opt_args_9vidcutter_4libs_3mpv_13_RenderParams_add_voidp *__pyx_optional_args))__pyx_f_9vidcutter_4libs_3mpv_13_RenderParams_add_voidp;
   __pyx_vtable_9vidcutter_4libs_3mpv__RenderParams.add_int = (PyObject *(*)(struct __pyx_obj_9vidcutter_4libs_3mpv__RenderParams *, enum mpv_render_param_type, int))__pyx_f_9vidcutter_4libs_3mpv_13_RenderParams_add_int;
   __pyx_vtable_9vidcutter_4libs_3mpv__RenderParams.add_string = (PyObject *(*)(struct __pyx_obj_9vidcutter_4libs_3mpv__RenderParams *, enum mpv_render_param_type, char *))__pyx_f_9vidcutter_4libs_3mpv_13_RenderParams_add_string;
-  if (PyType_Ready(&__pyx_type_9vidcutter_4libs_3mpv__RenderParams) < 0) __PYX_ERR(0, 877, __pyx_L1_error)
+  if (PyType_Ready(&__pyx_type_9vidcutter_4libs_3mpv__RenderParams) < 0) __PYX_ERR(0, 881, __pyx_L1_error)
   #if PY_VERSION_HEX < 0x030800B1
   __pyx_type_9vidcutter_4libs_3mpv__RenderParams.tp_print = 0;
   #endif
   if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_type_9vidcutter_4libs_3mpv__RenderParams.tp_dictoffset && __pyx_type_9vidcutter_4libs_3mpv__RenderParams.tp_getattro == PyObject_GenericGetAttr)) {
     __pyx_type_9vidcutter_4libs_3mpv__RenderParams.tp_getattro = __Pyx_PyObject_GenericGetAttr;
   }
-  if (__Pyx_SetVtable(__pyx_type_9vidcutter_4libs_3mpv__RenderParams.tp_dict, __pyx_vtabptr_9vidcutter_4libs_3mpv__RenderParams) < 0) __PYX_ERR(0, 877, __pyx_L1_error)
-  if (PyObject_SetAttr(__pyx_m, __pyx_n_s_RenderParams, (PyObject *)&__pyx_type_9vidcutter_4libs_3mpv__RenderParams) < 0) __PYX_ERR(0, 877, __pyx_L1_error)
-  if (__Pyx_setup_reduce((PyObject*)&__pyx_type_9vidcutter_4libs_3mpv__RenderParams) < 0) __PYX_ERR(0, 877, __pyx_L1_error)
+  if (__Pyx_SetVtable(__pyx_type_9vidcutter_4libs_3mpv__RenderParams.tp_dict, __pyx_vtabptr_9vidcutter_4libs_3mpv__RenderParams) < 0) __PYX_ERR(0, 881, __pyx_L1_error)
+  if (PyObject_SetAttr(__pyx_m, __pyx_n_s_RenderParams, (PyObject *)&__pyx_type_9vidcutter_4libs_3mpv__RenderParams) < 0) __PYX_ERR(0, 881, __pyx_L1_error)
+  if (__Pyx_setup_reduce((PyObject*)&__pyx_type_9vidcutter_4libs_3mpv__RenderParams) < 0) __PYX_ERR(0, 881, __pyx_L1_error)
   __pyx_ptype_9vidcutter_4libs_3mpv__RenderParams = &__pyx_type_9vidcutter_4libs_3mpv__RenderParams;
   __pyx_vtabptr_9vidcutter_4libs_3mpv_RenderFrameInfo = &__pyx_vtable_9vidcutter_4libs_3mpv_RenderFrameInfo;
   __pyx_vtable_9vidcutter_4libs_3mpv_RenderFrameInfo._from_struct = (PyObject *(*)(struct __pyx_obj_9vidcutter_4libs_3mpv_RenderFrameInfo *, struct mpv_render_frame_info *))__pyx_f_9vidcutter_4libs_3mpv_15RenderFrameInfo__from_struct;
-  if (PyType_Ready(&__pyx_type_9vidcutter_4libs_3mpv_RenderFrameInfo) < 0) __PYX_ERR(0, 924, __pyx_L1_error)
+  if (PyType_Ready(&__pyx_type_9vidcutter_4libs_3mpv_RenderFrameInfo) < 0) __PYX_ERR(0, 928, __pyx_L1_error)
   #if PY_VERSION_HEX < 0x030800B1
   __pyx_type_9vidcutter_4libs_3mpv_RenderFrameInfo.tp_print = 0;
   #endif
   if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_type_9vidcutter_4libs_3mpv_RenderFrameInfo.tp_dictoffset && __pyx_type_9vidcutter_4libs_3mpv_RenderFrameInfo.tp_getattro == PyObject_GenericGetAttr)) {
     __pyx_type_9vidcutter_4libs_3mpv_RenderFrameInfo.tp_getattro = __Pyx_PyObject_GenericGetAttr;
   }
-  if (__Pyx_SetVtable(__pyx_type_9vidcutter_4libs_3mpv_RenderFrameInfo.tp_dict, __pyx_vtabptr_9vidcutter_4libs_3mpv_RenderFrameInfo) < 0) __PYX_ERR(0, 924, __pyx_L1_error)
-  if (__Pyx_setup_reduce((PyObject*)&__pyx_type_9vidcutter_4libs_3mpv_RenderFrameInfo) < 0) __PYX_ERR(0, 924, __pyx_L1_error)
+  if (__Pyx_SetVtable(__pyx_type_9vidcutter_4libs_3mpv_RenderFrameInfo.tp_dict, __pyx_vtabptr_9vidcutter_4libs_3mpv_RenderFrameInfo) < 0) __PYX_ERR(0, 928, __pyx_L1_error)
+  if (__Pyx_setup_reduce((PyObject*)&__pyx_type_9vidcutter_4libs_3mpv_RenderFrameInfo) < 0) __PYX_ERR(0, 928, __pyx_L1_error)
   __pyx_ptype_9vidcutter_4libs_3mpv_RenderFrameInfo = &__pyx_type_9vidcutter_4libs_3mpv_RenderFrameInfo;
-  if (PyType_Ready(&__pyx_type_9vidcutter_4libs_3mpv_RenderContext) < 0) __PYX_ERR(0, 933, __pyx_L1_error)
+  if (PyType_Ready(&__pyx_type_9vidcutter_4libs_3mpv_RenderContext) < 0) __PYX_ERR(0, 937, __pyx_L1_error)
   #if PY_VERSION_HEX < 0x030800B1
   __pyx_type_9vidcutter_4libs_3mpv_RenderContext.tp_print = 0;
   #endif
   if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_type_9vidcutter_4libs_3mpv_RenderContext.tp_dictoffset && __pyx_type_9vidcutter_4libs_3mpv_RenderContext.tp_getattro == PyObject_GenericGetAttr)) {
     __pyx_type_9vidcutter_4libs_3mpv_RenderContext.tp_getattro = __Pyx_PyObject_GenericGetAttr;
   }
-  if (PyObject_SetAttr(__pyx_m, __pyx_n_s_RenderContext, (PyObject *)&__pyx_type_9vidcutter_4libs_3mpv_RenderContext) < 0) __PYX_ERR(0, 933, __pyx_L1_error)
-  if (__Pyx_setup_reduce((PyObject*)&__pyx_type_9vidcutter_4libs_3mpv_RenderContext) < 0) __PYX_ERR(0, 933, __pyx_L1_error)
+  if (PyObject_SetAttr(__pyx_m, __pyx_n_s_RenderContext, (PyObject *)&__pyx_type_9vidcutter_4libs_3mpv_RenderContext) < 0) __PYX_ERR(0, 937, __pyx_L1_error)
+  if (__Pyx_setup_reduce((PyObject*)&__pyx_type_9vidcutter_4libs_3mpv_RenderContext) < 0) __PYX_ERR(0, 937, __pyx_L1_error)
   __pyx_ptype_9vidcutter_4libs_3mpv_RenderContext = &__pyx_type_9vidcutter_4libs_3mpv_RenderContext;
   __pyx_type_9vidcutter_4libs_3mpv_OpenGLRenderContext.tp_base = __pyx_ptype_9vidcutter_4libs_3mpv_RenderContext;
-  if (PyType_Ready(&__pyx_type_9vidcutter_4libs_3mpv_OpenGLRenderContext) < 0) __PYX_ERR(0, 1118, __pyx_L1_error)
+  if (PyType_Ready(&__pyx_type_9vidcutter_4libs_3mpv_OpenGLRenderContext) < 0) __PYX_ERR(0, 1115, __pyx_L1_error)
   #if PY_VERSION_HEX < 0x030800B1
   __pyx_type_9vidcutter_4libs_3mpv_OpenGLRenderContext.tp_print = 0;
   #endif
   if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_type_9vidcutter_4libs_3mpv_OpenGLRenderContext.tp_dictoffset && __pyx_type_9vidcutter_4libs_3mpv_OpenGLRenderContext.tp_getattro == PyObject_GenericGetAttr)) {
     __pyx_type_9vidcutter_4libs_3mpv_OpenGLRenderContext.tp_getattro = __Pyx_PyObject_GenericGetAttr;
   }
-  if (PyObject_SetAttr(__pyx_m, __pyx_n_s_OpenGLRenderContext, (PyObject *)&__pyx_type_9vidcutter_4libs_3mpv_OpenGLRenderContext) < 0) __PYX_ERR(0, 1118, __pyx_L1_error)
-  if (__Pyx_setup_reduce((PyObject*)&__pyx_type_9vidcutter_4libs_3mpv_OpenGLRenderContext) < 0) __PYX_ERR(0, 1118, __pyx_L1_error)
+  if (PyObject_SetAttr(__pyx_m, __pyx_n_s_OpenGLRenderContext, (PyObject *)&__pyx_type_9vidcutter_4libs_3mpv_OpenGLRenderContext) < 0) __PYX_ERR(0, 1115, __pyx_L1_error)
+  if (__Pyx_setup_reduce((PyObject*)&__pyx_type_9vidcutter_4libs_3mpv_OpenGLRenderContext) < 0) __PYX_ERR(0, 1115, __pyx_L1_error)
   __pyx_ptype_9vidcutter_4libs_3mpv_OpenGLRenderContext = &__pyx_type_9vidcutter_4libs_3mpv_OpenGLRenderContext;
   if (PyType_Ready(&__pyx_type_9vidcutter_4libs_3mpv___pyx_scope_struct___errors) < 0) __PYX_ERR(0, 318, __pyx_L1_error)
   #if PY_VERSION_HEX < 0x030800B1
@@ -29443,24 +29405,24 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":407
+  /* "vidcutter/libs/pympv/mpv.pyx":411
  *             mpv_resume(self._ctx)
  * 
  *     @_errors             # <<<<<<<<<<<<<<
  *     def request_event(self, event, enable):
  *         """Enable or disable a given event.
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_errors); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 407, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_errors); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 411, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":408
+  /* "vidcutter/libs/pympv/mpv.pyx":412
  * 
  *     @_errors
  *     def request_event(self, event, enable):             # <<<<<<<<<<<<<<
  *         """Enable or disable a given event.
  * 
  */
-  __Pyx_GetNameInClass(__pyx_t_4, (PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_Context, __pyx_n_s_request_event); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 408, __pyx_L1_error)
+  __Pyx_GetNameInClass(__pyx_t_4, (PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_Context, __pyx_n_s_request_event); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 412, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __pyx_t_1 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_6))) {
@@ -29475,31 +29437,31 @@ if (!__Pyx_RefNanny) {
   __pyx_t_7 = (__pyx_t_1) ? __Pyx_PyObject_Call2Args(__pyx_t_6, __pyx_t_1, __pyx_t_4) : __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_t_4);
   __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 407, __pyx_L1_error)
+  if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 411, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_Context->tp_dict, __pyx_n_s_request_event, __pyx_t_7) < 0) __PYX_ERR(0, 408, __pyx_L1_error)
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_Context->tp_dict, __pyx_n_s_request_event, __pyx_t_7) < 0) __PYX_ERR(0, 412, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   PyType_Modified(__pyx_ptype_9vidcutter_4libs_3mpv_Context);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":425
+  /* "vidcutter/libs/pympv/mpv.pyx":429
  *         return err
  * 
  *     @_errors             # <<<<<<<<<<<<<<
  *     def set_log_level(self, loglevel):
  *         """Wraps: mpv_request_log_messages"""
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_errors); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 425, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_errors); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 429, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":426
+  /* "vidcutter/libs/pympv/mpv.pyx":430
  * 
  *     @_errors
  *     def set_log_level(self, loglevel):             # <<<<<<<<<<<<<<
  *         """Wraps: mpv_request_log_messages"""
  *         assert self._ctx
  */
-  __Pyx_GetNameInClass(__pyx_t_4, (PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_Context, __pyx_n_s_set_log_level); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 426, __pyx_L1_error)
+  __Pyx_GetNameInClass(__pyx_t_4, (PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_Context, __pyx_n_s_set_log_level); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 430, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __pyx_t_1 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_6))) {
@@ -29514,31 +29476,31 @@ if (!__Pyx_RefNanny) {
   __pyx_t_7 = (__pyx_t_1) ? __Pyx_PyObject_Call2Args(__pyx_t_6, __pyx_t_1, __pyx_t_4) : __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_t_4);
   __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 425, __pyx_L1_error)
+  if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 429, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_Context->tp_dict, __pyx_n_s_set_log_level, __pyx_t_7) < 0) __PYX_ERR(0, 426, __pyx_L1_error)
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_Context->tp_dict, __pyx_n_s_set_log_level, __pyx_t_7) < 0) __PYX_ERR(0, 430, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   PyType_Modified(__pyx_ptype_9vidcutter_4libs_3mpv_Context);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":436
+  /* "vidcutter/libs/pympv/mpv.pyx":440
  *         return err
  * 
  *     @_errors             # <<<<<<<<<<<<<<
  *     def load_config(self, filename):
  *         """Wraps: mpv_load_config_file"""
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_errors); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 436, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_errors); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 440, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":437
+  /* "vidcutter/libs/pympv/mpv.pyx":441
  * 
  *     @_errors
  *     def load_config(self, filename):             # <<<<<<<<<<<<<<
  *         """Wraps: mpv_load_config_file"""
  *         assert self._ctx
  */
-  __Pyx_GetNameInClass(__pyx_t_4, (PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_Context, __pyx_n_s_load_config); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 437, __pyx_L1_error)
+  __Pyx_GetNameInClass(__pyx_t_4, (PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_Context, __pyx_n_s_load_config); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 441, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __pyx_t_1 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_6))) {
@@ -29553,31 +29515,31 @@ if (!__Pyx_RefNanny) {
   __pyx_t_7 = (__pyx_t_1) ? __Pyx_PyObject_Call2Args(__pyx_t_6, __pyx_t_1, __pyx_t_4) : __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_t_4);
   __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 436, __pyx_L1_error)
+  if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 440, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_Context->tp_dict, __pyx_n_s_load_config, __pyx_t_7) < 0) __PYX_ERR(0, 437, __pyx_L1_error)
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_Context->tp_dict, __pyx_n_s_load_config, __pyx_t_7) < 0) __PYX_ERR(0, 441, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   PyType_Modified(__pyx_ptype_9vidcutter_4libs_3mpv_Context);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":569
+  /* "vidcutter/libs/pympv/mpv.pyx":573
  *         return result
  * 
  *     @_errors             # <<<<<<<<<<<<<<
  *     def get_property_async(self, prop, data=None):
  *         """Gets the value of a property asynchronously.
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_errors); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 569, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_errors); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 573, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":570
+  /* "vidcutter/libs/pympv/mpv.pyx":574
  * 
  *     @_errors
  *     def get_property_async(self, prop, data=None):             # <<<<<<<<<<<<<<
  *         """Gets the value of a property asynchronously.
  * 
  */
-  __Pyx_GetNameInClass(__pyx_t_4, (PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_Context, __pyx_n_s_get_property_async); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 570, __pyx_L1_error)
+  __Pyx_GetNameInClass(__pyx_t_4, (PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_Context, __pyx_n_s_get_property_async); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 574, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __pyx_t_1 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_6))) {
@@ -29592,31 +29554,31 @@ if (!__Pyx_RefNanny) {
   __pyx_t_7 = (__pyx_t_1) ? __Pyx_PyObject_Call2Args(__pyx_t_6, __pyx_t_1, __pyx_t_4) : __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_t_4);
   __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 569, __pyx_L1_error)
+  if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 573, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_Context->tp_dict, __pyx_n_s_get_property_async, __pyx_t_7) < 0) __PYX_ERR(0, 570, __pyx_L1_error)
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_Context->tp_dict, __pyx_n_s_get_property_async, __pyx_t_7) < 0) __PYX_ERR(0, 574, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   PyType_Modified(__pyx_ptype_9vidcutter_4libs_3mpv_Context);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":631
+  /* "vidcutter/libs/pympv/mpv.pyx":635
  *         return v
  * 
  *     @_errors             # <<<<<<<<<<<<<<
  *     def set_property(self, prop, value=True, asynchronous=False, data=None):
  *         """Wraps: mpv_set_property and mpv_set_property_async"""
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_errors); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 631, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_errors); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 635, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":632
+  /* "vidcutter/libs/pympv/mpv.pyx":636
  * 
  *     @_errors
  *     def set_property(self, prop, value=True, asynchronous=False, data=None):             # <<<<<<<<<<<<<<
  *         """Wraps: mpv_set_property and mpv_set_property_async"""
  *         assert self._ctx
  */
-  __Pyx_GetNameInClass(__pyx_t_4, (PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_Context, __pyx_n_s_set_property); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 632, __pyx_L1_error)
+  __Pyx_GetNameInClass(__pyx_t_4, (PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_Context, __pyx_n_s_set_property); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 636, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __pyx_t_1 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_6))) {
@@ -29631,31 +29593,31 @@ if (!__Pyx_RefNanny) {
   __pyx_t_7 = (__pyx_t_1) ? __Pyx_PyObject_Call2Args(__pyx_t_6, __pyx_t_1, __pyx_t_4) : __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_t_4);
   __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 631, __pyx_L1_error)
+  if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 635, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_Context->tp_dict, __pyx_n_s_set_property, __pyx_t_7) < 0) __PYX_ERR(0, 632, __pyx_L1_error)
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_Context->tp_dict, __pyx_n_s_set_property, __pyx_t_7) < 0) __PYX_ERR(0, 636, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   PyType_Modified(__pyx_ptype_9vidcutter_4libs_3mpv_Context);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":669
+  /* "vidcutter/libs/pympv/mpv.pyx":673
  *         return err
  * 
  *     @_errors             # <<<<<<<<<<<<<<
  *     def set_option(self, prop, value=True):
  *         """Wraps: mpv_set_option"""
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_errors); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 669, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_errors); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 673, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":670
+  /* "vidcutter/libs/pympv/mpv.pyx":674
  * 
  *     @_errors
  *     def set_option(self, prop, value=True):             # <<<<<<<<<<<<<<
  *         """Wraps: mpv_set_option"""
  *         assert self._ctx
  */
-  __Pyx_GetNameInClass(__pyx_t_4, (PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_Context, __pyx_n_s_set_option); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 670, __pyx_L1_error)
+  __Pyx_GetNameInClass(__pyx_t_4, (PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_Context, __pyx_n_s_set_option); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 674, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __pyx_t_1 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_6))) {
@@ -29670,31 +29632,31 @@ if (!__Pyx_RefNanny) {
   __pyx_t_7 = (__pyx_t_1) ? __Pyx_PyObject_Call2Args(__pyx_t_6, __pyx_t_1, __pyx_t_4) : __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_t_4);
   __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 669, __pyx_L1_error)
+  if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 673, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_Context->tp_dict, __pyx_n_s_set_option, __pyx_t_7) < 0) __PYX_ERR(0, 670, __pyx_L1_error)
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_Context->tp_dict, __pyx_n_s_set_option, __pyx_t_7) < 0) __PYX_ERR(0, 674, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   PyType_Modified(__pyx_ptype_9vidcutter_4libs_3mpv_Context);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":691
+  /* "vidcutter/libs/pympv/mpv.pyx":695
  *         return err
  * 
  *     @_errors             # <<<<<<<<<<<<<<
  *     def initialize(self):
  *         """Wraps: mpv_initialize"""
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_errors); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 691, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_errors); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 695, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":692
+  /* "vidcutter/libs/pympv/mpv.pyx":696
  * 
  *     @_errors
  *     def initialize(self):             # <<<<<<<<<<<<<<
  *         """Wraps: mpv_initialize"""
  *         assert self._ctx
  */
-  __Pyx_GetNameInClass(__pyx_t_4, (PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_Context, __pyx_n_s_initialize); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 692, __pyx_L1_error)
+  __Pyx_GetNameInClass(__pyx_t_4, (PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_Context, __pyx_n_s_initialize); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 696, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __pyx_t_1 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_6))) {
@@ -29709,31 +29671,31 @@ if (!__Pyx_RefNanny) {
   __pyx_t_7 = (__pyx_t_1) ? __Pyx_PyObject_Call2Args(__pyx_t_6, __pyx_t_1, __pyx_t_4) : __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_t_4);
   __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 691, __pyx_L1_error)
+  if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 695, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_Context->tp_dict, __pyx_n_s_initialize, __pyx_t_7) < 0) __PYX_ERR(0, 692, __pyx_L1_error)
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_Context->tp_dict, __pyx_n_s_initialize, __pyx_t_7) < 0) __PYX_ERR(0, 696, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   PyType_Modified(__pyx_ptype_9vidcutter_4libs_3mpv_Context);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":744
+  /* "vidcutter/libs/pympv/mpv.pyx":748
  *         self.callbackthread.start()
  * 
  *     @_errors             # <<<<<<<<<<<<<<
  *     def observe_property(self, prop, data=None):
  *         """Wraps: mpv_observe_property"""
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_errors); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 744, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_errors); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 748, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":745
+  /* "vidcutter/libs/pympv/mpv.pyx":749
  * 
  *     @_errors
  *     def observe_property(self, prop, data=None):             # <<<<<<<<<<<<<<
  *         """Wraps: mpv_observe_property"""
  *         assert self._ctx
  */
-  __Pyx_GetNameInClass(__pyx_t_4, (PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_Context, __pyx_n_s_observe_property); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 745, __pyx_L1_error)
+  __Pyx_GetNameInClass(__pyx_t_4, (PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_Context, __pyx_n_s_observe_property); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 749, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __pyx_t_1 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_6))) {
@@ -29748,31 +29710,31 @@ if (!__Pyx_RefNanny) {
   __pyx_t_7 = (__pyx_t_1) ? __Pyx_PyObject_Call2Args(__pyx_t_6, __pyx_t_1, __pyx_t_4) : __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_t_4);
   __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 744, __pyx_L1_error)
+  if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 748, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_Context->tp_dict, __pyx_n_s_observe_property, __pyx_t_7) < 0) __PYX_ERR(0, 745, __pyx_L1_error)
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_Context->tp_dict, __pyx_n_s_observe_property, __pyx_t_7) < 0) __PYX_ERR(0, 749, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   PyType_Modified(__pyx_ptype_9vidcutter_4libs_3mpv_Context);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":766
+  /* "vidcutter/libs/pympv/mpv.pyx":770
  *         return err
  * 
  *     @_errors             # <<<<<<<<<<<<<<
  *     def unobserve_property(self, data):
  *         """Wraps: mpv_unobserve_property"""
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_errors); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 766, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_errors); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 770, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":767
+  /* "vidcutter/libs/pympv/mpv.pyx":771
  * 
  *     @_errors
  *     def unobserve_property(self, data):             # <<<<<<<<<<<<<<
  *         """Wraps: mpv_unobserve_property"""
  *         assert self._ctx
  */
-  __Pyx_GetNameInClass(__pyx_t_4, (PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_Context, __pyx_n_s_unobserve_property); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 767, __pyx_L1_error)
+  __Pyx_GetNameInClass(__pyx_t_4, (PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_Context, __pyx_n_s_unobserve_property); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 771, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __pyx_t_1 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_6))) {
@@ -29787,54 +29749,54 @@ if (!__Pyx_RefNanny) {
   __pyx_t_7 = (__pyx_t_1) ? __Pyx_PyObject_Call2Args(__pyx_t_6, __pyx_t_1, __pyx_t_4) : __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_t_4);
   __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 766, __pyx_L1_error)
+  if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 770, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_Context->tp_dict, __pyx_n_s_unobserve_property, __pyx_t_7) < 0) __PYX_ERR(0, 767, __pyx_L1_error)
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_Context->tp_dict, __pyx_n_s_unobserve_property, __pyx_t_7) < 0) __PYX_ERR(0, 771, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   PyType_Modified(__pyx_ptype_9vidcutter_4libs_3mpv_Context);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":934
+  /* "vidcutter/libs/pympv/mpv.pyx":938
  * 
  * cdef class RenderContext(object):
  *     API_OPENGL = "opengl"             # <<<<<<<<<<<<<<
  *     UPDATE_FRAME = MPV_RENDER_UPDATE_FRAME
  * 
  */
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_RenderContext->tp_dict, __pyx_n_s_API_OPENGL, __pyx_n_s_opengl) < 0) __PYX_ERR(0, 934, __pyx_L1_error)
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_RenderContext->tp_dict, __pyx_n_s_API_OPENGL, __pyx_n_s_opengl) < 0) __PYX_ERR(0, 938, __pyx_L1_error)
   PyType_Modified(__pyx_ptype_9vidcutter_4libs_3mpv_RenderContext);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":935
+  /* "vidcutter/libs/pympv/mpv.pyx":939
  * cdef class RenderContext(object):
  *     API_OPENGL = "opengl"
  *     UPDATE_FRAME = MPV_RENDER_UPDATE_FRAME             # <<<<<<<<<<<<<<
  * 
  *     cdef:
  */
-  __pyx_t_7 = __Pyx_PyInt_From_enum__mpv_render_update_flag(MPV_RENDER_UPDATE_FRAME); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 935, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_PyInt_From_enum__mpv_render_update_flag(MPV_RENDER_UPDATE_FRAME); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 939, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_RenderContext->tp_dict, __pyx_n_s_UPDATE_FRAME, __pyx_t_7) < 0) __PYX_ERR(0, 935, __pyx_L1_error)
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_RenderContext->tp_dict, __pyx_n_s_UPDATE_FRAME, __pyx_t_7) < 0) __PYX_ERR(0, 939, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   PyType_Modified(__pyx_ptype_9vidcutter_4libs_3mpv_RenderContext);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1005
+  /* "vidcutter/libs/pympv/mpv.pyx":1009
  *         self.inited = True
  * 
  *     @_errors             # <<<<<<<<<<<<<<
  *     def set_icc_profile(self, icc_blob):
  *         cdef:
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_errors); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 1005, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_errors); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 1009, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1006
+  /* "vidcutter/libs/pympv/mpv.pyx":1010
  * 
  *     @_errors
  *     def set_icc_profile(self, icc_blob):             # <<<<<<<<<<<<<<
  *         cdef:
  *             mpv_render_param param
  */
-  __Pyx_GetNameInClass(__pyx_t_4, (PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_RenderContext, __pyx_n_s_set_icc_profile); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 1006, __pyx_L1_error)
+  __Pyx_GetNameInClass(__pyx_t_4, (PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_RenderContext, __pyx_n_s_set_icc_profile); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 1010, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __pyx_t_1 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_6))) {
@@ -29849,31 +29811,31 @@ if (!__Pyx_RefNanny) {
   __pyx_t_7 = (__pyx_t_1) ? __Pyx_PyObject_Call2Args(__pyx_t_6, __pyx_t_1, __pyx_t_4) : __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_t_4);
   __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1005, __pyx_L1_error)
+  if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1009, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_RenderContext->tp_dict, __pyx_n_s_set_icc_profile, __pyx_t_7) < 0) __PYX_ERR(0, 1006, __pyx_L1_error)
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_RenderContext->tp_dict, __pyx_n_s_set_icc_profile, __pyx_t_7) < 0) __PYX_ERR(0, 1010, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   PyType_Modified(__pyx_ptype_9vidcutter_4libs_3mpv_RenderContext);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1024
+  /* "vidcutter/libs/pympv/mpv.pyx":1028
  *         return err
  * 
  *     @_errors             # <<<<<<<<<<<<<<
  *     def set_ambient_light(self, lux):
  *         cdef:
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_errors); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 1024, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_errors); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 1028, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1025
+  /* "vidcutter/libs/pympv/mpv.pyx":1029
  * 
  *     @_errors
  *     def set_ambient_light(self, lux):             # <<<<<<<<<<<<<<
  *         cdef:
  *             mpv_render_param param
  */
-  __Pyx_GetNameInClass(__pyx_t_4, (PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_RenderContext, __pyx_n_s_set_ambient_light); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 1025, __pyx_L1_error)
+  __Pyx_GetNameInClass(__pyx_t_4, (PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_RenderContext, __pyx_n_s_set_ambient_light); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 1029, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __pyx_t_1 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_6))) {
@@ -29888,31 +29850,31 @@ if (!__Pyx_RefNanny) {
   __pyx_t_7 = (__pyx_t_1) ? __Pyx_PyObject_Call2Args(__pyx_t_6, __pyx_t_1, __pyx_t_4) : __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_t_4);
   __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1024, __pyx_L1_error)
+  if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1028, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_RenderContext->tp_dict, __pyx_n_s_set_ambient_light, __pyx_t_7) < 0) __PYX_ERR(0, 1025, __pyx_L1_error)
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_RenderContext->tp_dict, __pyx_n_s_set_ambient_light, __pyx_t_7) < 0) __PYX_ERR(0, 1029, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   PyType_Modified(__pyx_ptype_9vidcutter_4libs_3mpv_RenderContext);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1064
+  /* "vidcutter/libs/pympv/mpv.pyx":1068
  *         return ret
  * 
  *     @_errors             # <<<<<<<<<<<<<<
  *     def render(self,
  *                opengl_fbo=None,
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_errors); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 1064, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_errors); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 1068, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1065
+  /* "vidcutter/libs/pympv/mpv.pyx":1069
  * 
  *     @_errors
  *     def render(self,             # <<<<<<<<<<<<<<
  *                opengl_fbo=None,
  *                flip_y=False,
  */
-  __Pyx_GetNameInClass(__pyx_t_4, (PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_RenderContext, __pyx_n_s_render); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 1065, __pyx_L1_error)
+  __Pyx_GetNameInClass(__pyx_t_4, (PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_RenderContext, __pyx_n_s_render); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 1069, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __pyx_t_1 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_6))) {
@@ -29927,114 +29889,114 @@ if (!__Pyx_RefNanny) {
   __pyx_t_7 = (__pyx_t_1) ? __Pyx_PyObject_Call2Args(__pyx_t_6, __pyx_t_1, __pyx_t_4) : __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_t_4);
   __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1064, __pyx_L1_error)
+  if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1068, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_RenderContext->tp_dict, __pyx_n_s_render, __pyx_t_7) < 0) __PYX_ERR(0, 1065, __pyx_L1_error)
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_9vidcutter_4libs_3mpv_RenderContext->tp_dict, __pyx_n_s_render, __pyx_t_7) < 0) __PYX_ERR(0, 1069, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   PyType_Modified(__pyx_ptype_9vidcutter_4libs_3mpv_RenderContext);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1128
+  /* "vidcutter/libs/pympv/mpv.pyx":1125
  *                                init_params, *args, **kwargs)
  * 
  * class CallbackThread(Thread):             # <<<<<<<<<<<<<<
  *     def __init__(self):
  *         Thread.__init__(self)
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_Thread); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1128, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_Thread); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1125, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
-  __pyx_t_6 = PyTuple_New(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 1128, __pyx_L1_error)
+  __pyx_t_6 = PyTuple_New(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 1125, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_GIVEREF(__pyx_t_7);
   PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_7);
   __pyx_t_7 = 0;
-  __pyx_t_7 = __Pyx_CalculateMetaclass(NULL, __pyx_t_6); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1128, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_CalculateMetaclass(NULL, __pyx_t_6); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1125, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
-  __pyx_t_4 = __Pyx_Py3MetaclassPrepare(__pyx_t_7, __pyx_t_6, __pyx_n_s_CallbackThread, __pyx_n_s_CallbackThread, (PyObject *) NULL, __pyx_n_s_vidcutter_libs_mpv, (PyObject *) NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 1128, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_Py3MetaclassPrepare(__pyx_t_7, __pyx_t_6, __pyx_n_s_CallbackThread, __pyx_n_s_CallbackThread, (PyObject *) NULL, __pyx_n_s_vidcutter_libs_mpv, (PyObject *) NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 1125, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1129
+  /* "vidcutter/libs/pympv/mpv.pyx":1126
  * 
  * class CallbackThread(Thread):
  *     def __init__(self):             # <<<<<<<<<<<<<<
  *         Thread.__init__(self)
  *         self.daemon = True
  */
-  __pyx_t_1 = __Pyx_CyFunction_New(&__pyx_mdef_9vidcutter_4libs_3mpv_14CallbackThread_1__init__, 0, __pyx_n_s_CallbackThread___init, NULL, __pyx_n_s_vidcutter_libs_mpv, __pyx_d, ((PyObject *)__pyx_codeobj__38)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1129, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_CyFunction_New(&__pyx_mdef_9vidcutter_4libs_3mpv_14CallbackThread_1__init__, 0, __pyx_n_s_CallbackThread___init, NULL, __pyx_n_s_vidcutter_libs_mpv, __pyx_d, ((PyObject *)__pyx_codeobj__38)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1126, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (__Pyx_SetNameInClass(__pyx_t_4, __pyx_n_s_init, __pyx_t_1) < 0) __PYX_ERR(0, 1129, __pyx_L1_error)
+  if (__Pyx_SetNameInClass(__pyx_t_4, __pyx_n_s_init, __pyx_t_1) < 0) __PYX_ERR(0, 1126, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1137
+  /* "vidcutter/libs/pympv/mpv.pyx":1134
  *         self.isshutdown = False
  * 
  *     def shutdown(self):             # <<<<<<<<<<<<<<
  *         self.isshutdown = True
  *         self.callback = None
  */
-  __pyx_t_1 = __Pyx_CyFunction_New(&__pyx_mdef_9vidcutter_4libs_3mpv_14CallbackThread_3shutdown, 0, __pyx_n_s_CallbackThread_shutdown, NULL, __pyx_n_s_vidcutter_libs_mpv, __pyx_d, ((PyObject *)__pyx_codeobj__40)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1137, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_CyFunction_New(&__pyx_mdef_9vidcutter_4libs_3mpv_14CallbackThread_3shutdown, 0, __pyx_n_s_CallbackThread_shutdown, NULL, __pyx_n_s_vidcutter_libs_mpv, __pyx_d, ((PyObject *)__pyx_codeobj__40)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1134, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (__Pyx_SetNameInClass(__pyx_t_4, __pyx_n_s_shutdown, __pyx_t_1) < 0) __PYX_ERR(0, 1137, __pyx_L1_error)
+  if (__Pyx_SetNameInClass(__pyx_t_4, __pyx_n_s_shutdown, __pyx_t_1) < 0) __PYX_ERR(0, 1134, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1142
+  /* "vidcutter/libs/pympv/mpv.pyx":1139
  *         self.lock.release()
  * 
  *     def call(self):             # <<<<<<<<<<<<<<
  *         self.lock.release()
  * 
  */
-  __pyx_t_1 = __Pyx_CyFunction_New(&__pyx_mdef_9vidcutter_4libs_3mpv_14CallbackThread_5call, 0, __pyx_n_s_CallbackThread_call, NULL, __pyx_n_s_vidcutter_libs_mpv, __pyx_d, ((PyObject *)__pyx_codeobj__42)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1142, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_CyFunction_New(&__pyx_mdef_9vidcutter_4libs_3mpv_14CallbackThread_5call, 0, __pyx_n_s_CallbackThread_call, NULL, __pyx_n_s_vidcutter_libs_mpv, __pyx_d, ((PyObject *)__pyx_codeobj__42)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1139, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (__Pyx_SetNameInClass(__pyx_t_4, __pyx_n_s_call, __pyx_t_1) < 0) __PYX_ERR(0, 1142, __pyx_L1_error)
+  if (__Pyx_SetNameInClass(__pyx_t_4, __pyx_n_s_call, __pyx_t_1) < 0) __PYX_ERR(0, 1139, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1145
+  /* "vidcutter/libs/pympv/mpv.pyx":1142
  *         self.lock.release()
  * 
  *     def set(self, callback):             # <<<<<<<<<<<<<<
  *         self.callback = callback
  * 
  */
-  __pyx_t_1 = __Pyx_CyFunction_New(&__pyx_mdef_9vidcutter_4libs_3mpv_14CallbackThread_7set, 0, __pyx_n_s_CallbackThread_set, NULL, __pyx_n_s_vidcutter_libs_mpv, __pyx_d, ((PyObject *)__pyx_codeobj__44)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1145, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_CyFunction_New(&__pyx_mdef_9vidcutter_4libs_3mpv_14CallbackThread_7set, 0, __pyx_n_s_CallbackThread_set, NULL, __pyx_n_s_vidcutter_libs_mpv, __pyx_d, ((PyObject *)__pyx_codeobj__44)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1142, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (__Pyx_SetNameInClass(__pyx_t_4, __pyx_n_s_set, __pyx_t_1) < 0) __PYX_ERR(0, 1145, __pyx_L1_error)
+  if (__Pyx_SetNameInClass(__pyx_t_4, __pyx_n_s_set, __pyx_t_1) < 0) __PYX_ERR(0, 1142, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1148
+  /* "vidcutter/libs/pympv/mpv.pyx":1145
  *         self.callback = callback
  * 
  *     def run(self):             # <<<<<<<<<<<<<<
  *         while not self.isshutdown:
  *             self.lock.acquire(True)
  */
-  __pyx_t_1 = __Pyx_CyFunction_New(&__pyx_mdef_9vidcutter_4libs_3mpv_14CallbackThread_9run, 0, __pyx_n_s_CallbackThread_run, NULL, __pyx_n_s_vidcutter_libs_mpv, __pyx_d, ((PyObject *)__pyx_codeobj__46)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1148, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_CyFunction_New(&__pyx_mdef_9vidcutter_4libs_3mpv_14CallbackThread_9run, 0, __pyx_n_s_CallbackThread_run, NULL, __pyx_n_s_vidcutter_libs_mpv, __pyx_d, ((PyObject *)__pyx_codeobj__46)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1145, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (__Pyx_SetNameInClass(__pyx_t_4, __pyx_n_s_run, __pyx_t_1) < 0) __PYX_ERR(0, 1148, __pyx_L1_error)
+  if (__Pyx_SetNameInClass(__pyx_t_4, __pyx_n_s_run, __pyx_t_1) < 0) __PYX_ERR(0, 1145, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1153
+  /* "vidcutter/libs/pympv/mpv.pyx":1150
  *             self.mpv_callback(self.callback) if self.callback else None
  * 
  *     def mpv_callback(self, callback):             # <<<<<<<<<<<<<<
  *         try:
  *             callback()
  */
-  __pyx_t_1 = __Pyx_CyFunction_New(&__pyx_mdef_9vidcutter_4libs_3mpv_14CallbackThread_11mpv_callback, 0, __pyx_n_s_CallbackThread_mpv_callback, NULL, __pyx_n_s_vidcutter_libs_mpv, __pyx_d, ((PyObject *)__pyx_codeobj__48)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1153, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_CyFunction_New(&__pyx_mdef_9vidcutter_4libs_3mpv_14CallbackThread_11mpv_callback, 0, __pyx_n_s_CallbackThread_mpv_callback, NULL, __pyx_n_s_vidcutter_libs_mpv, __pyx_d, ((PyObject *)__pyx_codeobj__48)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1150, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (__Pyx_SetNameInClass(__pyx_t_4, __pyx_n_s_mpv_callback, __pyx_t_1) < 0) __PYX_ERR(0, 1153, __pyx_L1_error)
+  if (__Pyx_SetNameInClass(__pyx_t_4, __pyx_n_s_mpv_callback, __pyx_t_1) < 0) __PYX_ERR(0, 1150, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "vidcutter/libs/pympv/mpv.pyx":1128
+  /* "vidcutter/libs/pympv/mpv.pyx":1125
  *                                init_params, *args, **kwargs)
  * 
  * class CallbackThread(Thread):             # <<<<<<<<<<<<<<
  *     def __init__(self):
  *         Thread.__init__(self)
  */
-  __pyx_t_1 = __Pyx_Py3ClassCreate(__pyx_t_7, __pyx_n_s_CallbackThread, __pyx_t_6, __pyx_t_4, NULL, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1128, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_Py3ClassCreate(__pyx_t_7, __pyx_n_s_CallbackThread, __pyx_t_6, __pyx_t_4, NULL, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1125, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_CallbackThread, __pyx_t_1) < 0) __PYX_ERR(0, 1128, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_CallbackThread, __pyx_t_1) < 0) __PYX_ERR(0, 1125, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
