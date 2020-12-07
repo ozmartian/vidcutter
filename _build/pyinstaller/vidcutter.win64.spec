@@ -9,8 +9,8 @@ block_cipher = None
 
 a = Analysis(['..\\..\\vidcutter\\__main__.py'],
              pathex=[
-                  os.path.join(sys.modules['PyQt5'].__path__[0], 'Qt', 'bin'),
-                  'C:\\Program Files (x86)\\Windows Kits\\10\\Redist\\ucrt\\DLLs\\x64',
+                 os.path.join(sys.modules['PyQt5'].__path__[0], 'Qt', 'bin'),
+                 'C:\\Program Files (x86)\\Windows Kits\\10\\Redist\\ucrt\\DLLs\\x64',
                  '..\\..'
              ],
              binaries=[],

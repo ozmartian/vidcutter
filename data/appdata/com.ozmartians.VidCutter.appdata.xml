@@ -57,6 +57,18 @@
   <update_contact>pete_AT_ozmartians.com</update_contact>
   <developer_name>Pete Alexandrou</developer_name>
   <releases>
+    <release date="2020-03-02" version="6.0.0.7">
+      <description>
+        <p>Maintenance release updating:</p>
+        <ul>
+          <li>KDE Platform 5.14</li>
+          <li>PyQt5 5.13.2</li>
+          <li>mpv 0.32.0</li>
+          <li>FFmpeg 4.2.2</li>
+          <li>codec + other updates</li>
+        </ul>
+      </description>
+    </release>
     <release date="2019-09-21" version="6.0.0.6">
       <description>
         <p>Maintenance release updating:</p>

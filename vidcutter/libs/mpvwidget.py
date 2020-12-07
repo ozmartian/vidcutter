@@ -72,6 +72,7 @@ class mpvWidget(QOpenGLWidget):
         self.filename = file
         self.mpvError = mpv.MPVError
         self.originalParent = None
+        self.opengl = None
         self.logger = logging.getLogger(__name__)
         locale.setlocale(locale.LC_NUMERIC, 'C')
 
@@ -93,8 +94,8 @@ class mpvWidget(QOpenGLWidget):
 
         self.mpv.initialize()
 
-        self.opengl = self.mpv.opengl_cb_api()
-        self.opengl.set_update_callback(self.updateHandler)
+        # self.opengl = self.mpv.opengl_cb_api()
+        # self.opengl.set_update_callback(self.updateHandler)
 
         if sys.platform == 'win32':
             try:
@@ -102,7 +103,7 @@ class mpvWidget(QOpenGLWidget):
             except mpv.MPVError:
                 self.option('opengl-backend', 'angle')
 
-        self.frameSwapped.connect(self.swapped, Qt.DirectConnection)
+        # self.frameSwapped.connect(self.swapped, Qt.DirectConnection)
 
         self.mpv.observe_property('time-pos')
         self.mpv.observe_property('duration')
@@ -117,40 +118,45 @@ class mpvWidget(QOpenGLWidget):
         if os.getenv('DEBUG', False) or getattr(self.parent, 'verboseLogs', False):
             return 'all=v'
         else:
-            return 'all=error'
+            return 'all=error'  
 
     def setLogLevel(self, loglevel):
         self.mpv.set_log_level(loglevel)
 
     def shutdown(self):
         self.makeCurrent()
-        if self.opengl:
-            self.opengl.set_update_callback(None)
-        self.opengl.uninit_gl()
+        # if self.opengl:
+        #     self.opengl.set_update_callback(None)
+        self.opengl.free()
         self.mpv.command('quit')
 
     def initializeGL(self):
-        if self.opengl:
-            self.opengl.init_gl(None, getProcAddress)
-            if self.filename is not None:
-                self.initialized.emit(self.filename)
+        self.opengl = mpv.RenderContext(self.mpv, 'opengl', {'get_proc_address':getProcAddress})
+        self.opengl.set_update_callback(self.updateHandler)
+        if self.filename is not None:
+            self.initialized.emit(self.filename)
+        # if self.opengl:
+        #     self.opengl.init_gl(None, getProcAddress)
+        #     if self.filename is not None:
+        #         self.initialized.emit(self.filename)
 
     def paintGL(self):
         if self.opengl:
             GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
-            self.opengl.draw(self.defaultFramebufferObject(), self.width(), -self.height())
+            self.opengl.render({'fbo':self.defaultFramebufferObject(), 'w':self.width(), 'h':self.height()}, True)
+            # self.opengl.draw(self.defaultFramebufferObject(), self.width(), -self.height())
 
-    @pyqtSlot()
-    def swapped(self):
-        if self.opengl:
-            self.opengl.report_flip(0)
+    # @pyqtSlot()
+    # def swapped(self):
+    #     if self.opengl:
+    #         self.opengl.report_flip(0)
 
     def updateHandler(self):
         if self.window().isMinimized():
             self.makeCurrent()
             self.paintGL()
             self.context().swapBuffers(self.context().surface())
-            self.swapped()
+            # self.swapped()
             self.doneCurrent()
         else:
             self.update()

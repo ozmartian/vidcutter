@@ -1,4 +1,4 @@
-version: 6.0.0.{build}
+version: 6.0.5.{build}
 
 pull_requests:
   do_not_increment_build_number: true
@@ -63,7 +63,7 @@ install:
   # - for /f "delims=" %%a in ('C:\Python36-x64\python.exe version.py') do @set APPVER=%%a
   - call build.pyinstaller.win.signed.bat 64 %PFX_PASSWORD%
   - cd ..\InnoSetup\Output
-  - appveyor PushArtifact VidCutter-6.0.0-setup-win64.exe
+  - appveyor PushArtifact VidCutter-6.0.5-setup-win64.exe
   # ---------------------------------------- 32-bit build ----------------------------------------
   - cd ..\..\..
   - set PYTHONHOME=C:\Python36
@@ -100,7 +100,7 @@ install:
   # - for /f "delims=" %%a in ('C:\Python36\python.exe version.py') do @set APPVER=%%a
   - call build.pyinstaller.win.signed.bat 32 %PFX_PASSWORD%
   - cd ..\InnoSetup\Output
-  - appveyor PushArtifact VidCutter-6.0.0-setup-win32.exe
+  - appveyor PushArtifact VidCutter-6.0.5-setup-win32.exe
   # completion
   # SUCCESS
   - appveyor exit

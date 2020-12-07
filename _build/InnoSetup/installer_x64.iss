@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #ifndef AppVersion
-    #define AppVersion "6.0.0.0"
+    #define AppVersion "6.0.5.0"
 #endif
 
 [Setup]
@@ -17,7 +17,7 @@ AppPublisher=Pete Alexandrou
 AppPublisherURL=https://vidcutter.ozmartians.com
 DefaultDirName={pf}\VidCutter
 DefaultGroupName=VidCutter
-OutputBaseFilename=VidCutter-6.0.0-setup-win64
+OutputBaseFilename=VidCutter-6.0.5-setup-win64
 SetupIconFile=..\..\data\icons\vidcutter.ico
 UninstallDisplayIcon={app}\vidcutter.exe
 Compression=lzma2
@@ -26,7 +26,7 @@ SolidCompression=yes
 ShowLanguageDialog=no
 VersionInfoVersion={#AppVersion}
 VersionInfoCompany=ozmartians.com
-VersionInfoCopyright=(c) 2018 Pete Alexandrou
+VersionInfoCopyright=(c) 2020 Pete Alexandrou
 VersionInfoProductName=VidCutter x64
 VersionInfoProductVersion={#AppVersion}
 ArchitecturesAllowed=x64

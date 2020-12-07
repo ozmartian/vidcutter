@@ -30,7 +30,6 @@ MediaInfo.dll
 *.so
 *.pyd
 pkg2appimage
-
 _packaging/flatpak/.flatpak-builder
 _packaging/flatpak/build
 _packaging/flatpak/*repo*

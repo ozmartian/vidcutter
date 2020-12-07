@@ -1,5 +1,3 @@
-# coding=utf-8
-
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
@@ -20,305 +18,14 @@ libmpv is a client library for the media player mpv
 For more info see: https://github.com/mpv-player/mpv/blob/master/libmpv/client.h
 """
 
-import sys
+import cython
+import sys, warnings
 from threading import Thread, Semaphore
 from libc.stdlib cimport malloc, free
-from libc.string cimport strcpy
+from libc.string cimport strcpy, strlen, memset
+from cpython.pycapsule cimport PyCapsule_IsValid, PyCapsule_GetPointer
 
-# from client cimport *
-
-############################################################################
-
-cdef extern from "<mpv/client.h>":
-
-    ctypedef signed char int8_t
-
-    ctypedef short int16_t
-
-    ctypedef int int32_t
-
-    ctypedef long int64_t
-
-    ctypedef unsigned char uint8_t
-
-    ctypedef unsigned short uint16_t
-
-    ctypedef unsigned int uint32_t
-
-    ctypedef unsigned long uint64_t
-
-    ctypedef signed char int_least8_t
-
-    ctypedef short int_least16_t
-
-    ctypedef int int_least32_t
-
-    ctypedef long int_least64_t
-
-    ctypedef unsigned char uint_least8_t
-
-    ctypedef unsigned short uint_least16_t
-
-    ctypedef unsigned int uint_least32_t
-
-    ctypedef unsigned long uint_least64_t
-
-    ctypedef signed char int_fast8_t
-
-    ctypedef long int_fast16_t
-
-    ctypedef long int_fast32_t
-
-    ctypedef long int_fast64_t
-
-    ctypedef unsigned char uint_fast8_t
-
-    ctypedef unsigned long uint_fast16_t
-
-    ctypedef unsigned long uint_fast32_t
-
-    ctypedef unsigned long uint_fast64_t
-
-    ctypedef long long intptr_t
-
-    ctypedef unsigned long long uintptr_t
-
-    ctypedef long intmax_t
-
-    ctypedef unsigned long uintmax_t
-
-    unsigned long mpv_client_api_version() nogil
-
-    cdef struct mpv_handle:
-        pass
-
-    cdef enum mpv_error:
-        MPV_ERROR_SUCCESS
-        MPV_ERROR_EVENT_QUEUE_FULL
-        MPV_ERROR_NOMEM
-        MPV_ERROR_UNINITIALIZED
-        MPV_ERROR_INVALID_PARAMETER
-        MPV_ERROR_OPTION_NOT_FOUND
-        MPV_ERROR_OPTION_FORMAT
-        MPV_ERROR_OPTION_ERROR
-        MPV_ERROR_PROPERTY_NOT_FOUND
-        MPV_ERROR_PROPERTY_FORMAT
-        MPV_ERROR_PROPERTY_UNAVAILABLE
-        MPV_ERROR_PROPERTY_ERROR
-        MPV_ERROR_COMMAND
-        MPV_ERROR_LOADING_FAILED
-        MPV_ERROR_AO_INIT_FAILED
-        MPV_ERROR_VO_INIT_FAILED
-        MPV_ERROR_NOTHING_TO_PLAY
-        MPV_ERROR_UNKNOWN_FORMAT
-        MPV_ERROR_UNSUPPORTED
-        MPV_ERROR_NOT_IMPLEMENTED
-
-    const char *mpv_error_string(int error) nogil
-
-    void mpv_free(void *data) nogil
-
-    const char *mpv_client_name(mpv_handle *ctx) nogil
-
-    mpv_handle *mpv_create() nogil
-
-    int mpv_initialize(mpv_handle *ctx) nogil
-
-    void mpv_detach_destroy(mpv_handle *ctx) nogil
-
-    void mpv_terminate_destroy(mpv_handle *ctx) nogil
-
-    int mpv_load_config_file(mpv_handle *ctx, const char *filename) nogil
-
-    void mpv_suspend(mpv_handle *ctx) nogil
-
-    void mpv_resume(mpv_handle *ctx) nogil
-
-    int64_t mpv_get_time_us(mpv_handle *ctx) nogil
-
-    cdef enum mpv_format:
-        MPV_FORMAT_NONE
-        MPV_FORMAT_STRING
-        MPV_FORMAT_OSD_STRING
-        MPV_FORMAT_FLAG
-        MPV_FORMAT_INT64
-        MPV_FORMAT_DOUBLE
-        MPV_FORMAT_NODE
-        MPV_FORMAT_NODE_ARRAY
-        MPV_FORMAT_NODE_MAP
-
-    cdef struct ____mpv_node_u_mpv_node_list:
-        pass
-
-    ctypedef ____mpv_node_u_mpv_node_list ____mpv_node_u_mpv_node_list_t
-
-    cdef union __mpv_node_u:
-        char *string
-        int flag
-        int64_t int64
-        double double_
-        mpv_node_list *list
-
-    ctypedef __mpv_node_u __mpv_node_u_t
-
-    cdef struct mpv_node:
-        __mpv_node_u_t u
-        mpv_format format
-
-    cdef struct mpv_node_list:
-        int num
-        mpv_node *values
-        char **keys
-
-    void mpv_free_node_contents(mpv_node *node) nogil
-
-    int mpv_set_option(mpv_handle *ctx, const char *name, mpv_format format, void *data) nogil
-
-    int mpv_set_option_string(mpv_handle *ctx, const char *name, const char *data) nogil
-
-    int mpv_command(mpv_handle *ctx, const char **args) nogil
-
-    int mpv_command_node(mpv_handle *ctx, mpv_node *args, mpv_node *result) nogil
-
-    int mpv_command_string(mpv_handle *ctx, const char *args) nogil
-
-    int mpv_command_async(mpv_handle *ctx, uint64_t reply_userdata, const char **args) nogil
-
-    int mpv_command_node_async(mpv_handle *ctx, uint64_t reply_userdata, mpv_node *args) nogil
-
-    int mpv_set_property(mpv_handle *ctx, const char *name, mpv_format format, void *data) nogil
-
-    int mpv_set_property_string(mpv_handle *ctx, const char *name, const char *data) nogil
-
-    int mpv_set_property_async(mpv_handle *ctx, uint64_t reply_userdata, const char *name, mpv_format format, void *data) nogil
-
-    int mpv_get_property(mpv_handle *ctx, const char *name, mpv_format format, void *data) nogil
-
-    char *mpv_get_property_string(mpv_handle *ctx, const char *name) nogil
-
-    char *mpv_get_property_osd_string(mpv_handle *ctx, const char *name) nogil
-
-    int mpv_get_property_async(mpv_handle *ctx, uint64_t reply_userdata, const char *name, mpv_format format) nogil
-
-    int mpv_observe_property(mpv_handle *mpv, uint64_t reply_userdata, const char *name, mpv_format format) nogil
-
-    int mpv_unobserve_property(mpv_handle *mpv, uint64_t registered_reply_userdata) nogil
-
-    enum mpv_event_id:
-        MPV_EVENT_NONE
-        MPV_EVENT_SHUTDOWN
-        MPV_EVENT_LOG_MESSAGE
-        MPV_EVENT_GET_PROPERTY_REPLY
-        MPV_EVENT_SET_PROPERTY_REPLY
-        MPV_EVENT_COMMAND_REPLY
-        MPV_EVENT_START_FILE
-        MPV_EVENT_END_FILE
-        MPV_EVENT_FILE_LOADED
-        MPV_EVENT_TRACKS_CHANGED
-        MPV_EVENT_TRACK_SWITCHED
-        MPV_EVENT_IDLE
-        MPV_EVENT_PAUSE
-        MPV_EVENT_UNPAUSE
-        MPV_EVENT_TICK
-        MPV_EVENT_SCRIPT_INPUT_DISPATCH
-        MPV_EVENT_CLIENT_MESSAGE
-        MPV_EVENT_VIDEO_RECONFIG
-        MPV_EVENT_AUDIO_RECONFIG
-        MPV_EVENT_METADATA_UPDATE
-        MPV_EVENT_SEEK
-        MPV_EVENT_PLAYBACK_RESTART
-        MPV_EVENT_PROPERTY_CHANGE
-        MPV_EVENT_CHAPTER_CHANGE
-
-    const char *mpv_event_name(mpv_event_id event) nogil
-
-    cdef struct mpv_event_property:
-        const char *name
-        mpv_format format
-        void *data
-
-    enum mpv_log_level:
-        MPV_LOG_LEVEL_NONE
-        MPV_LOG_LEVEL_FATAL
-        MPV_LOG_LEVEL_ERROR
-        MPV_LOG_LEVEL_WARN
-        MPV_LOG_LEVEL_INFO
-        MPV_LOG_LEVEL_V
-        MPV_LOG_LEVEL_DEBUG
-        MPV_LOG_LEVEL_TRACE
-
-    cdef struct mpv_event_log_message:
-        const char *prefix
-        const char *level
-        const char *text
-        int log_level
-
-    enum mpv_end_file_reason:
-        MPV_END_FILE_REASON_EOF
-        MPV_END_FILE_REASON_STOP
-        MPV_END_FILE_REASON_QUIT
-        MPV_END_FILE_REASON_ERROR
-
-    cdef struct mpv_event_end_file:
-        int reason
-        int error
-
-    cdef struct mpv_event_script_input_dispatch:
-        int arg0
-        const char *type
-
-    cdef struct mpv_event_client_message:
-        int num_args
-        const char **args
-
-    cdef struct mpv_event:
-        mpv_event_id event_id
-        int error
-        uint64_t reply_userdata
-        void *data
-
-    int mpv_request_event(mpv_handle *ctx, mpv_event_id event, int enable) nogil
-
-    int mpv_request_log_messages(mpv_handle *ctx, const char *min_level) nogil
-
-    mpv_event *mpv_wait_event(mpv_handle *ctx, double timeout) nogil
-
-    void mpv_wakeup(mpv_handle *ctx) nogil
-
-    void mpv_set_wakeup_callback(mpv_handle *ctx, void (*cb)(void *), void *d) nogil
-
-    int mpv_get_wakeup_pipe(mpv_handle *ctx) nogil
-
-    void mpv_wait_async_requests(mpv_handle *ctx) nogil
-
-    enum mpv_sub_api:
-        MPV_SUB_API_OPENGL_CB
-
-    void *mpv_get_sub_api(mpv_handle *ctx, mpv_sub_api sub_api) nogil
-
-cdef extern from "<mpv/opengl_cb.h>":
-    struct mpv_opengl_cb_context:
-        pass
-
-    ctypedef void (*mpv_opengl_cb_update_fn)(void *cb_ctx)
-    ctypedef void *(*mpv_opengl_cb_get_proc_address_fn)(void *fn_ctx,
-                                                        const char *name) nogil
-
-    void mpv_opengl_cb_set_update_callback(mpv_opengl_cb_context *ctx,
-                                           mpv_opengl_cb_update_fn callback,
-                                           void *callback_ctx) nogil
-
-    int mpv_opengl_cb_init_gl(mpv_opengl_cb_context *ctx, const char *exts,
-                                    mpv_opengl_cb_get_proc_address_fn get_proc_address,
-                                    void *get_proc_address_ctx) nogil
-
-    int mpv_opengl_cb_draw(mpv_opengl_cb_context *ctx, int fbo, int w, int h) nogil
-
-    int mpv_opengl_cb_report_flip(mpv_opengl_cb_context *ctx, int64_t time) nogil
-
-    int mpv_opengl_cb_uninit_gl(mpv_opengl_cb_context *ctx) nogil
-
-############################################################################
+from client cimport *
 
 __version__ = "0.3.0"
 __author__ = "Andre D"
@@ -339,7 +46,7 @@ if _CAPI_MAJOR != _REQUIRED_CAPI_MAJOR or _CAPI_MINOR < _MIN_CAPI_MINOR:
             (_REQUIRED_CAPI_MAJOR, _MIN_CAPI_MINOR, _CAPI_MAJOR, _CAPI_MINOR)
     )
 
-cdef extern from "<Python.h>":
+cdef extern from "Python.h":
     void PyEval_InitThreads()
 
 _is_py3 = sys.version_info >= (3,)
@@ -630,6 +337,9 @@ class MPVError(Exception):
             e = _strdec(err_c)
         Exception.__init__(self, e)
 
+class PyMPVError(Exception):
+    pass
+
 cdef _callbacks = dict()
 cdef _reply_userdatas = dict()
 
@@ -817,7 +527,7 @@ cdef class Context(object):
         elif node.format == MPV_FORMAT_STRING:
             free(node.u.string)
 
-    def command(self, *cmdlist, async=False, data=None):
+    def command(self, *cmdlist, asynchronous=False, data=None):
         """Send a command to mpv.
 
         Non-async success returns the command's response data, otherwise None
@@ -826,10 +536,10 @@ cdef class Context(object):
         Accepts parameters as args
 
         Keyword Arguments:
-        async: True will return right away, status comes in as MPV_EVENT_COMMAND_REPLY
+        asynchronous: True will return right away, status comes in as MPV_EVENT_COMMAND_REPLY
         data: Only valid if async, gets sent back as reply_userdata in the Event
 
-        Wraps: mpv_f and mpv_command_node_async
+        Wraps: mpv_command_node and mpv_command_node_async
         """
         assert self._ctx
         cdef mpv_node node = self._prep_native_value(cmdlist, self._format_for(cmdlist))
@@ -839,7 +549,7 @@ cdef class Context(object):
         result = None
         try:
             data_id = id(data)
-            if not async:
+            if not asynchronous:
                 with nogil:
                     err = mpv_command_node(self._ctx, &node, &noderesult)
                 try:
@@ -923,7 +633,7 @@ cdef class Context(object):
         return v
 
     @_errors
-    def set_property(self, prop, value=True, async=False, data=None):
+    def set_property(self, prop, value=True, asynchronous=False, data=None):
         """Wraps: mpv_set_property and mpv_set_property_async"""
         assert self._ctx
         prop = _strenc(prop)
@@ -934,7 +644,7 @@ cdef class Context(object):
         cdef const char* prop_c
         try:
             prop_c = prop
-            if not async:
+            if not asynchronous:
                 with nogil:
                     err = mpv_set_property(
                         self._ctx,
@@ -1009,7 +719,7 @@ cdef class Context(object):
     def set_wakeup_callback(self, callback):
         """Wraps: mpv_set_wakeup_callback"""
         assert self._ctx
-        cdef uintptr_t name = <uintptr_t>id(self)
+        cdef uint64_t name = <uint64_t>id(self)
         self.callback = callback
         self.callbackthread.set(callback)
         with nogil:
@@ -1076,6 +786,8 @@ cdef class Context(object):
         return err
 
     def shutdown(self):
+        if self._ctx == NULL:
+            return
         cdef uint64_t ctxid = <uint64_t>id(self)
         with nogil:
             mpv_terminate_destroy(self._ctx)
@@ -1102,7 +814,7 @@ cdef class Context(object):
         self.shutdown()
 
 cdef void *_c_getprocaddress(void *ctx, const char *name) with gil:
-    return <void *><uintptr_t>(<object>ctx)(name)
+    return <void *><intptr_t>(<object>ctx)(name)
 
 cdef void _c_updatecb(void *ctx) with gil:
     (<object>ctx)()
@@ -1115,6 +827,7 @@ cdef class OpenGLContext(object):
 
     def __init__(self):
         self.inited = False
+        warnings.warn("OpenGLContext is deprecated, please switch to RenderContext", DeprecationWarning)
 
     def init_gl(self, exts, get_proc_address):
         exts = _strenc(exts) if exts is not None else None
@@ -1130,13 +843,9 @@ cdef class OpenGLContext(object):
         self.inited = True
 
     def set_update_callback(self, cb):
-        if cb is None:
-            with nogil:
-                mpv_opengl_cb_set_update_callback(self._ctx, NULL, NULL)
-        else:
-            self.update_cb = cb
-            with nogil:
-                mpv_opengl_cb_set_update_callback(self._ctx, &_c_updatecb, <void *>cb)
+        self.update_cb = cb
+        with nogil:
+            mpv_opengl_cb_set_update_callback(self._ctx, &_c_updatecb, <void *>cb)
 
     def draw(self, fbo, w, h):
         cdef:
@@ -1166,6 +875,259 @@ cdef class OpenGLContext(object):
 
     def __dealloc__(self):
         self.uninit_gl()
+
+DEF MAX_RENDER_PARAMS = 32
+
+cdef class _RenderParams(object):
+    cdef:
+        mpv_render_param params[MAX_RENDER_PARAMS + 1]
+        object owned
+
+    def __init__(self):
+        self.owned = []
+        self.params[0].type = MPV_RENDER_PARAM_INVALID
+
+    cdef add_voidp(self, mpv_render_param_type t, void *p, bint owned=False):
+        count = len(self.owned)
+        if count >= MAX_RENDER_PARAMS:
+            if owned:
+                free(p)
+            raise PyMPVError("RenderParams overflow")
+
+        self.params[count].type = t
+        self.params[count].data = p
+        self.params[count + 1].type = MPV_RENDER_PARAM_INVALID
+        self.owned.append(owned)
+
+    cdef add_int(self, mpv_render_param_type t, int val):
+        cdef int *p = <int *>malloc(sizeof(int))
+        p[0] = val
+        self.add_voidp(t, p)
+
+    cdef add_string(self, mpv_render_param_type t, char *s):
+        cdef char *p = <char *>malloc(strlen(s) + 1)
+        strcpy(p, s)
+        self.add_voidp(t, p)
+
+    def __dealloc__(self):
+        for i, j in enumerate(self.owned):
+            if j:
+                free(self.params[i].data)
+
+cdef void *get_pointer(const char *name, object obj):
+    cdef void *p
+    if PyCapsule_IsValid(obj, name):
+        p = PyCapsule_GetPointer(obj, name)
+    elif isinstance(obj, int) or isinstance(obj, long) and obj:
+        p = <void *><intptr_t>obj
+    else:
+        raise PyMPVError("Unknown or invalid pointer object: %r" % obj)
+    return p
+
+@cython.internal
+cdef class RenderFrameInfo(object):
+    cdef _from_struct(self, mpv_render_frame_info *info):
+        self.present = bool(info[0].flags & MPV_RENDER_FRAME_INFO_PRESENT)
+        self.redraw = bool(info[0].flags & MPV_RENDER_FRAME_INFO_REDRAW)
+        self.repeat = bool(info[0].flags & MPV_RENDER_FRAME_INFO_REPEAT)
+        self.block_vsync = bool(info[0].flags & MPV_RENDER_FRAME_INFO_BLOCK_VSYNC)
+        self.target_time = info[0].target_time
+        return self
+
+cdef class RenderContext(object):
+    API_OPENGL = "opengl"
+    UPDATE_FRAME = MPV_RENDER_UPDATE_FRAME
+
+    cdef:
+        Context _mpv
+        mpv_render_context *_ctx
+        object update_cb
+        object _x11_display
+        object _wl_display
+        object _get_proc_address
+        bint inited
+
+    def __init__(self, mpv,
+                 api_type,
+                 opengl_init_params=None,
+                 advanced_control=False,
+                 x11_display=None,
+                 wl_display=None,
+                 drm_display=None,
+                 drm_osd_size=None
+                 ):
+
+        cdef:
+            mpv_opengl_init_params gl_params
+            mpv_opengl_drm_params drm_params
+            mpv_opengl_drm_osd_size _drm_osd_size
+
+        self._mpv = mpv
+
+        memset(&gl_params, 0, sizeof(gl_params))
+        memset(&drm_params, 0, sizeof(drm_params))
+        memset(&_drm_osd_size, 0, sizeof(_drm_osd_size))
+
+        params = _RenderParams()
+
+        if api_type == self.API_OPENGL:
+            params.add_string(MPV_RENDER_PARAM_API_TYPE, MPV_RENDER_API_TYPE_OPENGL)
+        else:
+            raise PyMPVError("Unknown api_type %r" % api_type)
+
+        if opengl_init_params is not None:
+            self._get_proc_address = opengl_init_params["get_proc_address"]
+            gl_params.get_proc_address = &_c_getprocaddress
+            gl_params.get_proc_address_ctx = <void *>self._get_proc_address
+            params.add_voidp(MPV_RENDER_PARAM_OPENGL_INIT_PARAMS, &gl_params)
+        if advanced_control:
+            params.add_int(MPV_RENDER_PARAM_ADVANCED_CONTROL, 1)
+        if x11_display:
+            self._x11_display = x11_display
+            params.add_voidp(MPV_RENDER_PARAM_X11_DISPLAY, get_pointer("Display", x11_display))
+        if wl_display:
+            self._wl_display = wl_display
+            params.add_voidp(MPV_RENDER_PARAM_WL_DISPLAY, get_pointer("wl_display", wl_display))
+        if drm_display:
+            drm_params.fd = drm_display.get("fd", -1)
+            drm_params.crtc_id = drm_display.get("crtc_id", -1)
+            drm_params.connector_id = drm_display.get("connector_id", -1)
+            arp = drm_display.get("atomic_request_ptr", None)
+            if arp is not None:
+                drm_params.atomic_request_ptr = <_drmModeAtomicReq **>get_pointer(arp, "drmModeAtomicReq*")
+            drm_params.render_fd = drm_display.get("render_fd", -1)
+            params.add_voidp(MPV_RENDER_PARAM_DRM_DISPLAY, &drm_params)
+        if drm_osd_size:
+            _drm_osd_size.width, _drm_osd_size.height = drm_osd_size
+            params.add_voidp(MPV_RENDER_PARAM_DRM_OSD_SIZE, &_drm_osd_size)
+
+        err = mpv_render_context_create(&self._ctx, self._mpv._ctx, params.params)
+        if err < 0:
+            raise MPVError(err)
+        self.inited = True
+
+    @_errors
+    def set_icc_profile(self, icc_blob):
+        cdef:
+            mpv_render_param param
+            mpv_byte_array val
+            int err
+
+        if not isinstance(icc_blob, bytes):
+            raise PyMPVError("icc_blob should be a bytes instance")
+        val.data = <void *><char *>icc_blob
+        val.size = len(icc_blob)
+
+        param.type = MPV_RENDER_PARAM_ICC_PROFILE
+        param.data = &val
+
+        with nogil:
+            err = mpv_render_context_set_parameter(self._ctx, param)
+        return err
+
+    @_errors
+    def set_ambient_light(self, lux):
+        cdef:
+            mpv_render_param param
+            int val
+            int err
+
+        val = lux
+        param.type = MPV_RENDER_PARAM_AMBIENT_LIGHT
+        param.data = &val
+
+        with nogil:
+            err = mpv_render_context_set_parameter(self._ctx, param)
+        return err
+
+    def get_next_frame_info(self):
+        cdef:
+            mpv_render_frame_info info
+            mpv_render_param param
+
+        param.type = MPV_RENDER_PARAM_NEXT_FRAME_INFO
+        param.data = &info
+        with nogil:
+            err = mpv_render_context_get_info(self._ctx, param)
+        if err < 0:
+            raise MPVError(err)
+
+        return RenderFrameInfo()._from_struct(&info)
+
+    def set_update_callback(self, cb):
+        with nogil:
+            mpv_render_context_set_update_callback(self._ctx, &_c_updatecb, <void *>cb)
+        self.update_cb = cb
+
+    def update(self):
+        cdef uint64_t ret
+        with nogil:
+            ret = mpv_render_context_update(self._ctx)
+        return ret
+
+    @_errors
+    def render(self,
+               opengl_fbo=None,
+               flip_y=False,
+               depth=None,
+               block_for_target_time=True,
+               skip_rendering=False):
+
+        cdef:
+            mpv_opengl_fbo fbo
+
+        params = _RenderParams()
+
+        if opengl_fbo:
+            memset(&fbo, 0, sizeof(fbo))
+            fbo.fbo = opengl_fbo.get("fbo", 0) or 0
+            fbo.w = opengl_fbo["w"]
+            fbo.h = opengl_fbo["h"]
+            fbo.internal_format = opengl_fbo.get("internal_format", 0) or 0
+            params.add_voidp(MPV_RENDER_PARAM_OPENGL_FBO, &fbo)
+        if flip_y:
+            params.add_int(MPV_RENDER_PARAM_FLIP_Y, 1)
+        if depth is not None:
+            params.add_int(MPV_RENDER_PARAM_DEPTH, depth)
+        if not block_for_target_time:
+            params.add_int(MPV_RENDER_PARAM_BLOCK_FOR_TARGET_TIME, 0)
+        if skip_rendering:
+            params.add_int(MPV_RENDER_PARAM_SKIP_RENDERING, 1)
+
+        with nogil:
+            ret = mpv_render_context_render(self._ctx, params.params)
+        return ret
+
+    def report_swap(self):
+        with nogil:
+            mpv_render_context_report_swap(self._ctx)
+
+    def free(self):
+        if not self.inited:
+            return
+        with nogil:
+            mpv_render_context_free(self._ctx)
+        self.inited = False
+
+    def close(self):
+        if not self.inited:
+            return
+        with nogil:
+            mpv_render_context_free(self._ctx)
+        self.inited = False
+
+    def __dealloc__(self):
+        self.close()
+
+cdef class OpenGLRenderContext(RenderContext):
+    def __init__(self, mpv,
+                 get_proc_address,
+                 *args, **kwargs):
+        init_params = {
+            "get_proc_address": get_proc_address
+        }
+        RenderContext.__init__(self, mpv, RenderContext.API_OPENGL,
+                               init_params, *args, **kwargs)
 
 class CallbackThread(Thread):
     def __init__(self):
@@ -1199,6 +1161,6 @@ class CallbackThread(Thread):
             sys.stderr.write("pympv error during callback: %s\n" % e)
 
 cdef void _c_callback(void* d) with gil:
-    cdef uintptr_t name = <uintptr_t>d
+    cdef uint64_t name = <uint64_t>d
     callback = _callbacks.get(name)
     callback.call()
