@@ -95,15 +95,13 @@ for Windows).
 
 #### Arch Linux
 
-Users can install directly from AUR, package is available in both stable and git-latest versions:
-
-    AUR: vidcutter, vidcutter-git
-    
-Using an AUR helper like pacaur (replace pacaur with yaourt or other AUR helper):
-
+Users can install directly from Arch's community repo since VidCutter has been added to Arch's official repos. There is also an AUR development version available.
+   
     LATEST STABLE RELEASE:
 
-        pacaur -S vidcutter
+        pacman -S vidcutter
+
+Using an AUR helper like pacaur (replace pacaur with any other AUR helper):
 
     LATEST DEVELOPMENT RELEASE:
     
