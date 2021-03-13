@@ -79,12 +79,14 @@ class Config:
             'nt': {  # Windows
                 'ffmpeg': ['ffmpeg.exe'],
                 'ffprobe': ['ffprobe.exe'],
-                'mediainfo': ['MediaInfo.exe']
+                'mediainfo': ['MediaInfo.exe'],
+                'mkvmerge': ['mkvmerge.exe']
             },
             'posix': {  # Linux + macOS
                 'ffmpeg': ['ffmpeg', 'avconv'],
                 'ffprobe': ['ffprobe', 'avprobe'],
-                'mediainfo': ['mediainfo']
+                'mediainfo': ['mediainfo'],
+                'mkvmerge': ['mkvmerge']
             }
         }
 

@@ -32,8 +32,8 @@ from bisect import bisect_left
 from functools import partial
 from typing import List, Optional, Union
 
-from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QDir, QFileInfo, QObject, QProcess, QProcessEnvironment, QSettings,
-                          QSize, QStandardPaths, QStorageInfo, QTemporaryFile, QTime)
+from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QDir, QFile, QFileInfo, QObject, QProcess, QProcessEnvironment,
+                          QSettings, QSize, QStandardPaths, QStorageInfo, QTemporaryFile, QTime)
 from PyQt5.QtGui import QPainter, QPixmap
 from PyQt5.QtWidgets import QMessageBox, QWidget
 
@@ -107,11 +107,12 @@ class VideoService(QObject):
 
     @staticmethod
     def findBackends(settings: QSettings) -> Munch:
-        tools = Munch(ffmpeg=None, ffprobe=None, mediainfo=None)
+        tools = Munch(ffmpeg=None, ffprobe=None, mediainfo=None, mkvmerge=None)
         settings.beginGroup('tools')
         tools.ffmpeg = settings.value('ffmpeg', None, type=str)
         tools.ffprobe = settings.value('ffprobe', None, type=str)
         tools.mediainfo = settings.value('mediainfo', None, type=str)
+        tools.mkvmerge = settings.value('mkvmerge', None, type=str)
         for tool in list(tools.keys()):
             path = tools[tool]
             if path is None or not len(path) or not os.path.isfile(path):
@@ -134,6 +135,8 @@ class VideoService(QObject):
             raise ToolNotFoundException('FFprobe missing')
         if tools.mediainfo is None:
             raise ToolNotFoundException('MediaInfo missing')
+        if tools.mkvmerge is None:
+            raise ToolNotFoundException('Mkvmerge missing')
         return tools
 
     @staticmethod
@@ -264,8 +267,16 @@ class VideoService(QObject):
         else:
             args = '-i "{}"'.format(source)
             result = self.cmdExec(self.backends.ffmpeg, args, True)
-            vcodec = re.search(r'Stream.*Video:\s(\w+)', result).group(1)
-            acodec = re.search(r'Stream.*Audio:\s(\w+)', result).group(1)
+            match = re.search(r'Stream.*Video:\s(\w+)', result)
+            if match:
+                vcodec = match.group(1)
+            else:
+                vcodec = None
+            match = re.search(r'Stream.*Audio:\s(\w+)', result)
+            if match:
+                acodec = match.group(1)
+            else:
+                acodec = None
             return vcodec, acodec
 
     def parseMappings(self, allstreams: bool = True) -> str:
@@ -403,7 +414,11 @@ class VideoService(QObject):
                     args.remove('-map')
                     del args[pos]
                     self.smartcut_jobs[index].procs[name].setArguments(args)
-                    self.smartcut_jobs[index].procs[name].started.disconnect()
+                    try:
+                        self.smartcut_jobs[index].procs[name].started.disconnect()
+                    except TypeError as e:
+                        self.logger.exception('Failed to disconnect SmartCut job {0}.'.format(name), exc_info=True)
+
                     self.smartcut_jobs[index].procs[name].start()
                     return
                 else:
@@ -447,10 +462,37 @@ class VideoService(QObject):
         VideoService.cleanup(joinlist)
         self.finished.emit(final_join, self.smartcut_jobs[index].output)
 
+    def mkvcut(self, source: str, dest: str, nclips: int,
+               split_str: str, workdir: str, chapters: List[str]=None) -> None:
+        clips_file_base, ext = os.path.splitext(os.path.basename(dest))
+        args = ' '.join(['-o', '"' + os.path.join(workdir, clips_file_base + ext) + '"',
+                         '"' + source + '"', '--split', 'parts:' + split_str])
+        self.cmdExec(os.path.abspath(self.backends.mkvmerge), args, output=True)
+        for index in range(0, nclips):
+            self.progress.emit(index)
+
+        if nclips > 1:
+            merge_string = ['-o', '"' + dest + '"',
+                            '"' + os.path.join(workdir, clips_file_base + '-{0:03d}'.format(1)) + ext + '"']
+            for i in range(2, nclips + 1):
+                merge_string.append('--no-global-tags')
+                merge_string.append('+')
+                merge_string.append('"' + os.path.join(workdir, clips_file_base + '-{0:03d}'.format(i)) + ext + '"')
+
+            if chapters is not None:
+                merge_string.append('--generate-chapters')
+                merge_string.append('when-appending')
+            self.cmdExec(os.path.abspath(self.backends.mkvmerge), ' '.join(merge_string), output=True)
+        else:
+            split_file = os.path.join(workdir, clips_file_base) + ext
+            if QFile.exists(dest):
+                QFile.remove(dest)
+            QFile.copy(split_file, dest)
+
     @staticmethod
     def cleanup(files: List[str]) -> None:
         try:
-            [os.remove(file) for file in files]
+            [os.remove(file) for file in files if file]
         except FileNotFoundError:
             pass
 
@@ -577,7 +619,11 @@ class VideoService(QObject):
                     keyframe_times.append(timecode[:-3])
                 else:
                     keyframe_times.append(float(timecode))
-        last_keyframe = self.duration().toString('h:mm:ss.zzz')
+        if formatted_time:
+            last_keyframe = self.duration().toString('h:mm:ss.zzz')
+        else:
+            last_keyframe = self.parent.qtime2delta(self.duration())
+        self.logger.info('getKeyframes last keyframe: {0}, repr: {0!r}'.format(last_keyframe))
         if keyframe_times[-1] != last_keyframe:
             keyframe_times.append(last_keyframe)
         if source == self.source and not formatted_time:
@@ -619,6 +665,8 @@ class VideoService(QObject):
             video_bsf, audio_bsf = self.getBSF(inputs[0])
             # 1. transcode to mpeg transport streams
             for file in inputs:
+                if not file:
+                    continue
                 name, _ = os.path.splitext(file)
                 outfile = '{}.ts'.format(name)
                 outfiles.append(outfile)
@@ -700,5 +748,6 @@ class VideoService(QObject):
         if VideoService.frozen and getattr(sys, '_MEIPASS', False):
             app_path = sys._MEIPASS
         else:
-            app_path = os.path.dirname(os.path.realpath(sys.argv[0]))
+            app_path = os.path.realpath(os.path.join(os.path.dirname(__file__),'..','..'))
+
         return app_path if path is None else os.path.join(app_path, path)

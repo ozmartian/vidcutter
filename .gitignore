@@ -34,3 +34,4 @@ _packaging/flatpak/.flatpak-builder
 _packaging/flatpak/build
 _packaging/flatpak/*repo*
 _packaging/flatpak/ozmartian
+venv
