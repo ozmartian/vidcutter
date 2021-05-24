@@ -72,7 +72,7 @@ Native installers for Windows and macOS are available on the releases page with 
 For macOS users of Homebrew, VidCutter can be easily installed as a "cask". With Homebrew already installed, just run the following terminal command:
 
 ```
-$ brew cask install vidcutter
+$ brew install vidcutter
 ```
 
 #### Chocolatey package
