@@ -11,11 +11,9 @@
 [![Screenshot 3](https://cdn.rawgit.com/ozmartian/vidcutter/gh-pages/images/vidcutter-03-thumb.png)](https://cdn.rawgit.com/ozmartian/vidcutter/gh-pages/images/vidcutter-03.png) 
 [![Screenshot 4](https://cdn.rawgit.com/ozmartian/vidcutter/gh-pages/images/vidcutter-04-thumb.png)](https://cdn.rawgit.com/ozmartian/vidcutter/gh-pages/images/vidcutter-04.png)
 
-### VidCutter 6 released on Flathub!
+### VidCutter @ Flathub
 
-VidCutter is now available as a flatpak at [Flathub](https://www.flathub.org) and is the most reliable option for Linux. All dependencies come bundled with it, including the very latest stable releases of mpv, FFmpeg, MediaInfo and associated codec libraries. Most linux distribution sofware centres like Plasma Discover and GNOME/Ubuntu Software are able to be expanded to also support searching and installing flatpaks from Flathub too. Unlike other packaged versions of VidCutter, the flatpak is purpose-built from the ground up with all dependencies built from source and containing only what the app requires resulting in a noticeably smaller total package file size.
-
-The flatpak is also an exclusive early release of upcoming version 6 which should be released across all platforms and usual channels towards the end of May so checkout the flatpak if you want an earlier peak.
+VidCutter is available as a flatpak at [Flathub](https://www.flathub.org) and is the most reliable option for Linux users using a distribution without available native packages. All dependencies come bundled with it, including the very latest stable releases of mpv, FFmpeg, MediaInfo and associated codec libraries. Most linux distribution sofware centres like Plasma Discover and GNOME/Ubuntu Software are able to be expanded to also support searching and installing flatpaks from Flathub too. Unlike other packaged versions of VidCutter, the flatpak is purpose-built from the ground up with all dependencies built from source and containing only what the app requires resulting in a noticeably smaller total package file size.
 
 Click the icon below for VidCutter's page @ Flathub:
 
@@ -31,9 +29,9 @@ $ flatpak install flathub com.ozmartians.VidCutter
 $ flatpak run com.ozmartians.VidCutter
 ```
 
-### VidCutter snap Now Available!
+### VidCutter @ Snapcraft
 
-The latest version of VidCutter can now be installed as a snap package via the Ubuntu Snapcraft store at https://snapcraft.io/vidcutter or install it via the terminal as follows:
+The latest version of VidCutter can be installed as a snap package via the Snapcraft store at https://snapcraft.io/vidcutter or install it via the terminal as follows:
 
 ```
 $ snap install vidcutter
