@@ -19,7 +19,7 @@ The flatpak is also an exclusive early release of upcoming version 6 which shoul
 
 Click the icon below for VidCutter's page @ Flathub:
 
-[![VidCutter @ Flathub](https://flatpak.org/img/favicon57.png)](https://flathub.org/apps/details/com.ozmartians.VidCutter)
+<a href='https://flathub.org/apps/details/com.ozmartians.VidCutter'><img width='240' alt='Download on Flathub' src='https://flathub.org/assets/badges/flathub-badge-en.png'/></a>
 
 or via the terminal:
 
