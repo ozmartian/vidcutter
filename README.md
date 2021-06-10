@@ -11,6 +11,8 @@
 [![Screenshot 3](https://cdn.rawgit.com/ozmartian/vidcutter/gh-pages/images/vidcutter-03-thumb.png)](https://cdn.rawgit.com/ozmartian/vidcutter/gh-pages/images/vidcutter-03.png) 
 [![Screenshot 4](https://cdn.rawgit.com/ozmartian/vidcutter/gh-pages/images/vidcutter-04-thumb.png)](https://cdn.rawgit.com/ozmartian/vidcutter/gh-pages/images/vidcutter-04.png)
 
+***
+
 ### flatpak (Linux)
 
 <a href='https://flathub.org/apps/details/com.ozmartians.VidCutter'><img width='240' alt='Install via Flathub' src='https://flathub.org/assets/badges/flathub-badge-en.png'/></a>
@@ -35,6 +37,46 @@ or via the terminal:
 $ sudo snap install vidcutter
 ```
 
+***
+
+### Arch Linux
+
+Users can install directly from Arch's community repo since VidCutter has been added to Arch's official repos. There is also an AUR development version available.
+   
+    LATEST STABLE RELEASE:
+
+        sudo pacman -S vidcutter
+
+Using an AUR helper like yay (replace yay with any other AUR helper):
+
+    LATEST DEVELOPMENT RELEASE:
+    
+        yay -S vidcutter-git
+
+### Ubuntu based (e.g. Mint/Debian/KDE Neon)
+
+Users can install the latest release via:
+
+    ppa:ozmartian/apps
+
+The following set of commands will get you up and running:
+
+    sudo add-apt-repository ppa:ozmartian/apps
+    sudo apt update
+    sudo apt install vidcutter
+
+### openSUSE
+
+https://software.opensuse.org/package/vidcutter
+
+VidCutter is available from openSUSE Leap 15.0 + Tumbleweed official distributions repos. Community built packages for other openSUSE releases/versions can be found @ https://software.opensuse.org/package/vidcutter. 
+
+VidCutter is also available from the popular Packman third-party repository. Instructions to enable it can be found here:
+
+   https://en.opensuse.org/Additional_package_repositories#Packman
+
+***
+
 ### Windows installer
 
 [![Latest Releases](http://tvlinker.ozmartians.com/images/button-latest-release.png)](https://github.com/ozmartian/vidcutter/releases/latest)
@@ -54,61 +96,6 @@ for Windows).
   ```
 
 ***
-
-### Linux Packages
-
-#### Arch Linux
-
-Users can install directly from Arch's community repo since VidCutter has been added to Arch's official repos. There is also an AUR development version available.
-   
-    LATEST STABLE RELEASE:
-
-        sudo pacman -S vidcutter
-
-Using an AUR helper like yay (replace yay with any other AUR helper):
-
-    LATEST DEVELOPMENT RELEASE:
-    
-        yay -S vidcutter-git
-
-#### Ubuntu (incl. Mint/Debian/KDE Neon)
-
-Users can install the latest release via:
-
-    ppa:ozmartian/apps
-
-The following set of commands will get you up and running:
-
-    sudo add-apt-repository ppa:ozmartian/apps
-    sudo apt update
-    sudo apt install vidcutter
-
-#### openSUSE
-
-https://software.opensuse.org/package/vidcutter
-
-VidCutter is available from openSUSE Leap 15.0 + Tumbleweed official distributions repos. Community built packages for other openSUSE releases/versions can be found @ https://software.opensuse.org/package/vidcutter. 
-
-VidCutter is also available from the popular Packman third-party repository. Instructions to enable it can be found here:
-
-   https://en.opensuse.org/Additional_package_repositories#Packman
-
-#### Fedora
-
-Due to Fedora's restrictive policies on media licensing you'll need to install a VidCutter package from a third-party repository to have all common media formats supported. At the time of writing RPMFusion and UnitedRPMs both contain VidCutter RPMs as well as all the required dependencies so you can simply install the VidCutter RPM package from these sources without needing to do anything else for an up to date version of the app with all common libraries, codecs and formats supported right away.
-
-I also maintain a custom COPR repository at:
-
-    suspiria/VidCutter
-    
-I keep this updated myself so it will alwats carry the very latest release version but you will still need to enable one of the third-party repos for the multimedia dependencies. RPMFusion and UnitedRPMs only take a couple of days to update their repos when new versions are released so only bother with COPR if you're "must have the very latest version" type of addict.
-
-Commands for a Fedora install using the COPR repo are:
-
-    sudo dnf copr enable suspiria/VidCutter
-    sudo dnf install vidcutter
-    
-Check https://copr.fedorainfracloud.org/coprs/suspiria/VidCutter for more detailed instructions on enabling third-party repos for your multimedia dependencies.
 
 ## Command-line for debugging (Linux/macOS only)
   ```
