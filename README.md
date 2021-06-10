@@ -11,9 +11,7 @@
 [![Screenshot 3](https://cdn.rawgit.com/ozmartian/vidcutter/gh-pages/images/vidcutter-03-thumb.png)](https://cdn.rawgit.com/ozmartian/vidcutter/gh-pages/images/vidcutter-03.png) 
 [![Screenshot 4](https://cdn.rawgit.com/ozmartian/vidcutter/gh-pages/images/vidcutter-04-thumb.png)](https://cdn.rawgit.com/ozmartian/vidcutter/gh-pages/images/vidcutter-04.png)
 
-### VidCutter flatpak
-
-Click the icon below for VidCutter @ Flathub:
+### flatpak (Linux)
 
 <a href='https://flathub.org/apps/details/com.ozmartians.VidCutter'><img width='240' alt='Install via Flathub' src='https://flathub.org/assets/badges/flathub-badge-en.png'/></a>
 
@@ -27,7 +25,7 @@ $ flatpak install flathub com.ozmartians.VidCutter
 $ flatpak run com.ozmartians.VidCutter
 ```
 
-### VidCutter snap
+### snap (Linux)
 
 <a href='https://snapcraft.io/vidcutter'><img alt='Install via Snap store' src='https://snapcraft.io/static/images/badges/en/snap-store-black.svg'/></a>
 
