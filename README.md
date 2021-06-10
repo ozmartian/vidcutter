@@ -55,7 +55,7 @@ for Windows).
 
 ***
 
-### Linux Users
+### Linux Packages
 
 #### Arch Linux
 
@@ -71,7 +71,7 @@ Using an AUR helper like yay (replace yay with any other AUR helper):
     
         yay -S vidcutter-git
 
-#### Ubuntu/Mint/Debian/KDE Neon and other Ubuntu flavors 
+#### Ubuntu (incl. Mint/Debian/KDE Neon)
 
 Users can install the latest release via:
 
