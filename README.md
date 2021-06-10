@@ -11,13 +11,11 @@
 [![Screenshot 3](https://cdn.rawgit.com/ozmartian/vidcutter/gh-pages/images/vidcutter-03-thumb.png)](https://cdn.rawgit.com/ozmartian/vidcutter/gh-pages/images/vidcutter-03.png) 
 [![Screenshot 4](https://cdn.rawgit.com/ozmartian/vidcutter/gh-pages/images/vidcutter-04-thumb.png)](https://cdn.rawgit.com/ozmartian/vidcutter/gh-pages/images/vidcutter-04.png)
 
-### VidCutter @ Flathub
+### VidCutter flatpak
 
-VidCutter is available as a flatpak at [Flathub](https://www.flathub.org) and is the most reliable option for Linux users using a distribution without available native packages. All dependencies come bundled with it, including the very latest stable releases of mpv, FFmpeg, MediaInfo and associated codec libraries. Most linux distribution sofware centres like Plasma Discover and GNOME/Ubuntu Software are able to be expanded to also support searching and installing flatpaks from Flathub too. Unlike other packaged versions of VidCutter, the flatpak is purpose-built from the ground up with all dependencies built from source and containing only what the app requires resulting in a noticeably smaller total package file size.
+Click the icon below for VidCutter @ Flathub:
 
-Click the icon below for VidCutter's page @ Flathub:
-
-<a href='https://flathub.org/apps/details/com.ozmartians.VidCutter'><img width='240' alt='Download on Flathub' src='https://flathub.org/assets/badges/flathub-badge-en.png'/></a>
+<a href='https://flathub.org/apps/details/com.ozmartians.VidCutter'><img width='240' alt='Install via Flathub' src='https://flathub.org/assets/badges/flathub-badge-en.png'/></a>
 
 or via the terminal:
 
@@ -27,6 +25,16 @@ $ flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub
   
 $ flatpak install flathub com.ozmartians.VidCutter
 $ flatpak run com.ozmartians.VidCutter
+```
+
+### VidCutter snap
+
+<a href='https://snapcraft.io/vidcutter'><img alt='Install via Snap store' src='https://snapcraft.io/static/images/badges/en/snap-store-black.svg'/></a>
+
+or via the terminal:
+
+```
+$ sudo snap install vidcutter
 ```
 
 ### Windows installer
