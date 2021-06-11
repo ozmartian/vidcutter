@@ -25,6 +25,16 @@ $ flatpak install flathub com.ozmartians.VidCutter
 $ flatpak run com.ozmartians.VidCutter
 ```
 
+### snap (Linux)
+
+<a href='https://snapcraft.io/vidcutter'><img alt='Install via Snap store' src='https://snapcraft.io/static/images/badges/en/snap-store-black.svg'/></a>
+
+or via the terminal:
+
+```
+$ sudo snap install vidcutter
+```
+
 ***
 
 ### Arch Linux
