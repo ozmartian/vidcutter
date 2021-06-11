@@ -11,8 +11,6 @@
 [![Screenshot 3](https://cdn.rawgit.com/ozmartian/vidcutter/gh-pages/images/vidcutter-03-thumb.png)](https://cdn.rawgit.com/ozmartian/vidcutter/gh-pages/images/vidcutter-03.png) 
 [![Screenshot 4](https://cdn.rawgit.com/ozmartian/vidcutter/gh-pages/images/vidcutter-04-thumb.png)](https://cdn.rawgit.com/ozmartian/vidcutter/gh-pages/images/vidcutter-04.png)
 
-***
-
 ### flatpak (Linux)
 
 <a href='https://flathub.org/apps/details/com.ozmartians.VidCutter'><img width='240' alt='Install via Flathub' src='https://flathub.org/assets/badges/flathub-badge-en.png'/></a>
@@ -25,16 +23,6 @@ $ flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub
   
 $ flatpak install flathub com.ozmartians.VidCutter
 $ flatpak run com.ozmartians.VidCutter
-```
-
-### snap (Linux)
-
-<a href='https://snapcraft.io/vidcutter'><img alt='Install via Snap store' src='https://snapcraft.io/static/images/badges/en/snap-store-black.svg'/></a>
-
-or via the terminal:
-
-```
-$ sudo snap install vidcutter
 ```
 
 ***
