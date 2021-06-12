@@ -104,7 +104,7 @@ $ python3 setup.py build_ext -i
 $ python3 -m vidcutter
 ```
 
-Working installations of **libmpv** and **ffmpeg** must be pre-installed for your specific OS.
+Working installations of **libmpv** and **ffmpeg** must be pre-installed for your specific OS. For Linux, package names are usually named **libmpv1** or **mpv** and **ffmpeg**.
 
 You will need Python packages **pyopengl** and **simplejson** pre-installed, via pip install or alternatives, and a working PyQt5 + Qt5 libraries installation. Windows users can simply **pip install PyQt5** to be up and running, Linux users should install a relevant PyQt5 package from their Linux distribution's package manager. Linux package names for PyQt5 are usually named **python-pyqt5** or **python3-pyqt5**.
 
