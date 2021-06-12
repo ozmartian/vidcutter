@@ -95,6 +95,19 @@ for Windows).
 
 ***
 
+### Running from Python source
+
+In order to run from source code you need to first build a Python extension and then run the app as follows, from within the source code folder:
+
+```
+$ python3 setup.py build_ext -i
+$ python3 -m vidcutter
+```
+
+You will need Python packages **pyopengl** and **simplejson** pre-installed, via pip install or alternatives, and a working PyQt5 + Qt5 libraries installation. Windows users can simply **pip install PyQt5** to be up and running, Linux users should install a relevant PyQt5 package from their Linux distribution's package manager. Linux package names for PyQt5 are usually named **python-pyqt5** or **python3-pyqt5**.
+
+***
+
 ## Command-line for debugging (Linux/macOS only)
   ```
   $ vidcutter --help
