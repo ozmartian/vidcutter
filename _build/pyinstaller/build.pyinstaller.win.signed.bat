@@ -68,7 +68,7 @@ if exist "dist\vidcutter.exe" (
 
     REM ......................call Inno Setup installer build script......................
     cd ..\InnoSetup
-    call "C:\Program Files (x86)\Inno Setup 5\iscc.exe" installer_%BINARCH%.iss
+    call "C:\Program Files (x86)\Inno Setup 6\iscc.exe" installer_%BINARCH%.iss
 
     REM ................sign final redistributable EXE with self-signed certificate..........
     SignTool.exe sign /f "..\certs\code-sign.pfx" /t http://timestamp.comodoca.com/authenticode /p %PASS% output\VidCutter-%APPVER%-setup-win%ARCH%.exe

@@ -9,7 +9,7 @@ branches:
 
 skip_non_tags: false
 
-image: Visual Studio 2015
+image: Visual Studio 2019
 
 shallow_clone: true
 
@@ -24,7 +24,7 @@ environment:
     secure: dU7R+yCfZACwkvslBf988A==
   APPVEYOR_SKIP_FINALIZE_ON_EXIT: false
   PYTHONUNBUFFERED: 1
-  PYTHONHOME: C:\Python36-x64
+  PYTHONHOME: C:\Python39-x64
 
 # init:
 #   - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
@@ -35,20 +35,21 @@ install:
   - set PATH=%PYTHONHOME%;%PYTHONHOME%\scripts;%PYTHONHOME%\tools\scripts;%PATH%
   - cd C:\projects\vidcutter
   # Installing latest pip + setuptools + dependencies
-  - C:\Python36-x64\python.exe -m pip install -U pip setuptools
-  - C:\Python36-x64\python.exe -m pip install PyOpenGL PyQt5 PyInstaller xmltodict simplejson
+  - C:\Python39-x64\python.exe -m pip install -U pip setuptools
+  - C:\Python39-x64\python.exe -m pip install PyOpenGL PyQt5 PyInstaller xmltodict simplejson
   # Setting up libmpv build subfolders...
   - mkdir "_build\pyinstaller\temp"
   - mkdir "_build\pyinstaller\libmpv"
   - mkdir "_build\pyinstaller\libmpv\64"
   # Setup build environment for MSVC++
-  - call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x64
-  - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
+  # - call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x64
+  # - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
+  - call "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Auxiliary\Build\vcvarsall.bat" x86_amd64
   # - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
   # Build Cython/C extension for libmpv binding...
-  - C:\Python36-x64\python.exe setup.py build_ext -i
+  - C:\Python39-x64\python.exe setup.py build_ext -i
   # Retrieve URL for latest available version of libmpv
-  - for /f "delims=" %%a in ('C:\Python36-x64\python.exe helpers.py get_latest_win32_libmpv_64') do @set LIBMPV=%%a
+  - for /f "delims=" %%a in ('C:\Python39-x64\python.exe helpers.py get_latest_win32_libmpv_64') do @set LIBMPV=%%a
   # Downloading latest libmpv 64-bit build...
   - curl -L -fsS -o _build\pyinstaller\temp\mpv-dev.7z https://downloads.sourceforge.net/project/mpv-player-windows%LIBMPV%
   # - curl -L -fsS -o _build\pyinstaller\temp\mpv-dev.7z https://mpv.srsfckn.biz/mpv-dev-20170718.7z
@@ -61,7 +62,7 @@ install:
   # - copy "C:\Windows\System32\d3dcompiler_47.dll" "..\libmpv\64\"
   # Freezing w/ PyInstaller
   - cd ..
-  # - for /f "delims=" %%a in ('C:\Python36-x64\python.exe version.py') do @set APPVER=%%a
+  # - for /f "delims=" %%a in ('C:\Python39-x64\python.exe version.py') do @set APPVER=%%a
   - call build.pyinstaller.win.signed.bat 64 %PFX_PASSWORD%
   # - del /q "..\..\..\mpv-1.dll"
   - cd ..\InnoSetup\Output
@@ -70,13 +71,13 @@ install:
 
   # # ---------------------------------------- 32-bit build ----------------------------------------
   # - cd ..\..\..
-  # - set PYTHONHOME=C:\Python36
+  # - set PYTHONHOME=C:\Python39
   # - set PATH=%PYTHONHOME%;%PYTHONHOME%\scripts;%PYTHONHOME%\tools\scripts;%PATH%
   # # Installing latest pip + setuptools + dependencies
-  # - C:\Python36\python.exe -m pip install -U pip setuptools
-  # - C:\Python36\python.exe -m pip install PyOpenGL PyQt5 PyInstaller xmltodict simplejson
+  # - C:\Python39\python.exe -m pip install -U pip setuptools
+  # - C:\Python39\python.exe -m pip install PyOpenGL PyQt5 PyInstaller xmltodict simplejson
   # # # Installing latest git checkout of PyInstaller...
-  # # - C:\Python36\python.exe -m pip install git+https://github.com/pyinstaller/pyinstaller.git@develop
+  # # - C:\Python39\python.exe -m pip install git+https://github.com/pyinstaller/pyinstaller.git@develop
   # # Setting up libmpv build subfolders...
   # # - mkdir "_build\pyinstaller\temp"
   # # - mkdir "_build\pyinstaller\libmpv"
@@ -87,9 +88,9 @@ install:
   # - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
   # # - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x86
   # # Build Cython/C extension for libmpv binding...
-  # - C:\Python36\python.exe setup.py build_ext -i
+  # - C:\Python39\python.exe setup.py build_ext -i
   # # Retrieve URL for latest available version of libmpv
-  # - for /f "delims=" %%a in ('C:\Python36\python.exe helpers.py get_latest_win32_libmpv_32') do @set LIBMPV=%%a
+  # - for /f "delims=" %%a in ('C:\Python39\python.exe helpers.py get_latest_win32_libmpv_32') do @set LIBMPV=%%a
   # # Downloading latest libmpv 32-bit build...
   # - curl -L -fsS -o _build\pyinstaller\temp\mpv-dev.7z https://downloads.sourceforge.net/project/mpv-player-windows%LIBMPV%
   # # - curl -L -fsS -o _build\pyinstaller\temp\mpv-dev.7z https://mpv.srsfckn.biz/mpv-dev-20170718.7z
@@ -101,7 +102,7 @@ install:
   # # - copy "C:\Windows\SysWOW64\d3dcompiler_47.dll" "..\libmpv\32\"
   # # Freezing w/ PyInstaller
   # - cd ..
-  # # - for /f "delims=" %%a in ('C:\Python36\python.exe version.py') do @set APPVER=%%a
+  # # - for /f "delims=" %%a in ('C:\Python39\python.exe version.py') do @set APPVER=%%a
   # - call build.pyinstaller.win.signed.bat 32 %PFX_PASSWORD%
   # - cd ..\InnoSetup\Output
   # - appveyor PushArtifact VidCutter-6.0.5-setup-win32.exe
