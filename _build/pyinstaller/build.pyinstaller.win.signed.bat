@@ -17,7 +17,7 @@ if [%2]==[] (
 
 if ["%ARCH%"]==["64"] (
     SET BINARCH=x64
-    SET PYPATH=C:\Python39
+    SET PYPATH=C:\Python36-x64
     SET FFMPEG_URL=https://www.gyan.dev/ffmpeg/builds/packages/ffmpeg-4.4-full_build.7z
     SET FFMPEG=ffmpeg-4.4-full_build.7z
     SET MEDIAINFO_URL=https://mediaarea.net/download/binary/mediainfo/21.03/MediaInfo_CLI_21.03_Windows_x64.zip
@@ -68,7 +68,7 @@ if exist "dist\vidcutter.exe" (
 
     REM ......................call Inno Setup installer build script......................
     cd ..\InnoSetup
-    call "C:\Program Files (x86)\Inno Setup 6\iscc.exe" installer_%BINARCH%.iss
+    call "C:\Program Files (x86)\Inno Setup 5\iscc.exe" installer_%BINARCH%.iss
 
     REM ................sign final redistributable EXE with self-signed certificate..........
     SignTool.exe sign /f "..\certs\code-sign.pfx" /t http://timestamp.comodoca.com/authenticode /p %PASS% output\VidCutter-%APPVER%-setup-win%ARCH%.exe
