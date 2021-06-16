@@ -4,7 +4,7 @@ $ErrorActionPreference = 'Stop';
 $packageName= 'vidcutter'
 $toolsDir   = "$(Split-Path -parent $MyInvocation.MyCommand.Definition)"
 # $url        = 'https://github.com/ozmartian/vidcutter/releases/download/6.0.0/VidCutter-6.0.5.1-setup-win32.exe'
-$url64 		  = 'https://ci.appveyor.com/api/buildjobs/6e92yh0mu6yii87v/artifacts/VidCutter-6.0.5.1-setup-win64.exe'
+$url64        = 'https://github.com/ozmartian/vidcutter/releases/download/6.0.5.1/VidCutter-6.0.5.1-setup-win64.exe'
 
 $packageArgs = @{
   packageName   = $packageName
