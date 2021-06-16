@@ -24,6 +24,7 @@ apps:
         environment:
             PYTHONPATH: $SNAP/usr/lib/python3/dist-packages
             LD_LIBRARY_PATH: $LD_LIBRARY_PATH:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/blas:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/lapack:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/samba:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/vdpau
+            QT_QPA_PLATFORMTHEME: gtk3
 
 parts:
     prepare:
@@ -56,6 +57,7 @@ parts:
             - gnome-themes-standard
             - shared-mime-info
             - libqt5gui5
+            - qt5-style-plugins
             - libgdk-pixbuf2.0-0
             - mesa-vdpau-drivers
             - libvdpau-va-gl1
