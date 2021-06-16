@@ -55,7 +55,7 @@ install:
   # - curl -L -fsS -o _build\pyinstaller\temp\mpv-dev.7z https://10gbps-io.dl.sourceforge.net/project/mpv-player-windows/libmpv/mpv-dev-x86_64-20180227-git-a4c436b.7z
   - cd _build/pyinstaller/temp
   - 7z e mpv-dev.7z mpv-1.dll -o"..\libmpv\64\"
-  # - copy "..\libmpv\64\mpv-1.dll" "..\..\.."
+  - move "..\libmpv\64\mpv-1.dll" "..\..\.."
   # Copy DLLs from Windows for ANGLE Direct3D engine support..
   # - copy "C:\Windows\System32\d3dcompiler_43.dll" "..\libmpv\64\"
   # - copy "C:\Windows\System32\d3dcompiler_47.dll" "..\libmpv\64\"
