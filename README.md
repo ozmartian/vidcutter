@@ -77,6 +77,8 @@ VidCutter is also available from the popular Packman third-party repository. Ins
 
 ### Windows installer
 
+Download the latest Windows installer by clicking the button below.
+
 [![Latest Releases](http://tvlinker.ozmartians.com/images/button-latest-release.png)](https://github.com/ozmartian/vidcutter/releases/latest)
 
 #### Chocolatey package
