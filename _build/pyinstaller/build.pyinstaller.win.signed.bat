@@ -17,7 +17,7 @@ if [%2]==[] (
 
 if ["%ARCH%"]==["64"] (
     SET BINARCH=x64
-    SET PYPATH=C:\Python36-x64
+    SET PYPATH=C:\Python39-x64
     SET FFMPEG_URL=https://www.gyan.dev/ffmpeg/builds/packages/ffmpeg-4.4-full_build.7z
     SET FFMPEG=ffmpeg-4.4-full_build.7z
     SET MEDIAINFO_URL=https://mediaarea.net/download/binary/mediainfo/21.03/MediaInfo_CLI_21.03_Windows_x64.zip
@@ -25,7 +25,7 @@ if ["%ARCH%"]==["64"] (
 )
 rem if ["%ARCH%"]==["32"] (
 rem     SET BINARCH=x86
-rem     SET PYPATH=C:\Python36
+rem     SET PYPATH=C:\Python39
 rem     REM SET FFMPEG_URL=https://ffmpeg.zeranoe.com/builds/win32/shared/ffmpeg-latest-win32-shared.zip
 rem     SET FFMPEG_URL=https://ffmpeg.zeranoe.com/builds/win32/shared/ffmpeg-4.0.2-win32-shared.zip
 rem     REM SET FFMPEG=ffmpeg-latest-win32-shared.zip
