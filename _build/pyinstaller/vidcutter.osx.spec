@@ -20,6 +20,7 @@ a = Analysis(['../../vidcutter/__main__.py'],
              binaries=[],
              datas=[
                  ('../../vidcutter/__init__.py', '.'),
+                 ('../../vidcutter/libs/*.so', '.'),
                  ('../../CHANGELOG', '.'),
                  ('../../LICENSE', '.'),
                  ('../../README.md', '.'),
