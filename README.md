@@ -42,13 +42,13 @@ Users can install directly from Arch's community repo since VidCutter has been a
    
     LATEST STABLE RELEASE:
 
-        sudo pacman -S vidcutter
+        $ sudo pacman -S vidcutter
 
 Using an AUR helper like yay (replace yay with any other AUR helper):
 
     LATEST DEVELOPMENT RELEASE:
     
-        yay -S vidcutter-git
+        $ yay -S vidcutter-git
 
 ### Ubuntu based (e.g. Mint/Debian/KDE Neon)
 
@@ -58,9 +58,9 @@ Users can install the latest release via:
 
 The following set of commands will get you up and running:
 
-    sudo add-apt-repository ppa:ozmartian/apps
-    sudo apt update
-    sudo apt install vidcutter
+    $ sudo add-apt-repository ppa:ozmartian/apps
+    $ sudo apt update
+    $ sudo apt install vidcutter
 
 ### openSUSE
 
