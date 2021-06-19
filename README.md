@@ -129,7 +129,8 @@ You will need Python packages **pyopengl** and **simplejson** pre-installed, via
 ***
 
 ## Command-line for debugging (Linux/macOS only)
-  ```
+
+```
   $ vidcutter --help
 
 Usage: vidcutter [options] [video] [project]
@@ -153,4 +154,4 @@ Options:
 Arguments:
   video          Preload video file
   project        Open VidCutter project file (.vcp)
-  ```
+```
