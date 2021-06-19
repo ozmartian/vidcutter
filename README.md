@@ -98,7 +98,7 @@ for Windows).
 
 ### macOS
 
-There are currently issues with macOS Big Sur reported so only bother with VidCutter if you're on macOS Catalina or below until futher notice.
+**Only macOS Catalina and below is currently supported. Big Sur is unstable until further notice**
 
 Download the latest macOS installer by clicking the button below.
 
