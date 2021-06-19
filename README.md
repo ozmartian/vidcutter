@@ -98,7 +98,7 @@ for Windows).
 
 ### macOS
 
-**Only macOS Catalina and below is currently supported. Big Sur is unstable until further notice**
+**Only macOS Catalina and below is currently supported. Big Sur is unstable until further notice.**
 
 Download the latest macOS installer by clicking the button below.
 
