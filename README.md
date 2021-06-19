@@ -74,7 +74,7 @@ VidCutter is also available from the popular Packman third-party repository. Ins
 
 ***
 
-### Windows installer
+### Microsoft Windows
 
 Download the latest Windows installer by clicking the button below.
 
@@ -82,16 +82,33 @@ Download the latest Windows installer by clicking the button below.
 
 #### Chocolatey package
 
-VidCutter has finally been approved + published in the [Chocolatey](https://chocolatey.org) public repository (its a package manager like in Linux but
+VidCutter is available from [Chocolatey](https://chocolatey.org) (its a package manager like in Linux but
 for Windows).
 
-  To install VidCutter, run the following command from the command line or from PowerShell:
+  To install VidCutter, run the following command from the command line or PowerShell:
   ```
   C:\> choco install vidcutter
   ```
-  To upgrade VidCutter, run the following command from the command line or from PowerShell:
+  To upgrade VidCutter, run the following command from the command line or PowerShell:
   ```
   C:\> choco upgrade vidcutter
+  ```
+
+***
+
+### macOS
+
+Download the latest macOS installer by clicking the button below.
+
+[![Latest Releases](http://tvlinker.ozmartians.com/images/button-latest-release.png)](https://github.com/ozmartian/vidcutter/releases/latest)
+
+#### Homebrew package
+
+VidCutter is available from [Homebrew](https://brew.sh) as a cask.
+
+  To install VidCutter, run the following command in a terminal:
+  ```
+  $ brew install --cask vidcutter
   ```
 
 ***
