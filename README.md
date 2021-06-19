@@ -98,6 +98,8 @@ for Windows).
 
 ### macOS
 
+There are currently issues with macOS Big Sur reported so only bother with VidCutter if you're on macOS Catalina or below until futher notice.
+
 Download the latest macOS installer by clicking the button below.
 
 [![Latest Releases](http://tvlinker.ozmartians.com/images/button-latest-release.png)](https://github.com/ozmartian/vidcutter/releases/latest)
