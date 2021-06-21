@@ -1,5 +1,5 @@
 name: vidcutter
-version: 6.0.5
+version: 6.0.5.1
 type: app
 base: core20
 architectures:
@@ -16,26 +16,45 @@ icon: data/icons/hicolor/512x512/apps/com.ozmartians.VidCutter.png
 grade: stable
 confinement: strict
 
+plugs:
+    browser-sandbox:
+        allow-sandbox: false
+        interface: browser-support
+    gsettings: null
+    gtk-3-themes:
+        default-provider: gtk-common-themes
+        interface: content
+        target: $SNAP/data-dir/themes
+    icon-themes:
+        default-provider: gtk-common-themes
+        interface: content
+        target: $SNAP/data-dir/icons
+    sound-themes:
+        default-provider: gtk-common-themes
+        interface: content
+        target: $SNAP/data-dir/sounds
+
 apps:
     vidcutter:
         command: bin/desktop-launch $SNAP/bin/vidcutter
-        plugs: [unity7, x11, wayland, desktop, desktop-legacy, home, audio-playback, pulseaudio, gsettings, opengl, mount-observe, network, network-bind, network-manager, removable-media]
+        plugs: [unity7, x11, wayland, desktop, desktop-legacy, home, audio-playback, pulseaudio, gsettings, opengl, mount-observe, network, network-bind, network-manager, network-observe, raw-usb, removable-media, screen-inhibit-control]
         desktop: share/applications/com.ozmartians.VidCutter.desktop
         environment:
             PYTHONPATH: $SNAP/usr/lib/python3/dist-packages
-            LD_LIBRARY_PATH: $LD_LIBRARY_PATH:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/blas:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/lapack:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/samba:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/vdpau
+            LD_LIBRARY_PATH: $LD_LIBRARY_PATH:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/blas:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/lapack:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/samba:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/vdpau:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/dri
             QT_QPA_PLATFORMTHEME: gtk3
+            # DISABLE_WAYLAND: 1
 
 parts:
     prepare:
         plugin: nil
         build-packages:
             - software-properties-common
-        override-build: |
-            add-apt-repository ppa:savoury1/ffmpeg4 -y
-            add-apt-repository ppa:savoury1/mpv -y
-            apt update
-            apt upgrade -yy
+        # override-build: |
+        #     add-apt-repository ppa:savoury1/ffmpeg4 -y
+        #     add-apt-repository ppa:savoury1/mpv -y
+        #     apt update
+        #     apt upgrade -yy
         prime: [-*]
 
     desktop-qt5:
