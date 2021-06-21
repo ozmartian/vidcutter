@@ -64,9 +64,9 @@ The following set of commands will get you up and running:
 
 ### openSUSE
 
-VidCutter is available from openSUSE's official repos. Community built packages for other openSUSE releases/versions can be found @ https://software.opensuse.org/package/vidcutter.
+VidCutter is available from openSUSE's official repos. Community built packages can be found @ https://software.opensuse.org/package/vidcutter.
 
-VidCutter is also available from the popular Packman third-party repository. Instructions to enable it can be found @ https://en.opensuse.org/Additional_package_repositories#Packman.
+VidCutter is also available from the popular Packman repository. Instructions to enable it can be found @ https://en.opensuse.org/Additional_package_repositories#Packman.
 
 ***
 
