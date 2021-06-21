@@ -36,7 +36,7 @@ $ sudo snap install vidcutter
 
 ***
 
-### Arch Linux
+### Arch Linux  (incl. Manjaro/etc.)
 
 Users can install directly from Arch's community repo since VidCutter has been added to Arch's official repos. There is also an AUR development version available.
    
@@ -50,7 +50,7 @@ Using an AUR helper like yay (replace yay with any other AUR helper):
     
         $ yay -S vidcutter-git
 
-### Ubuntu based (e.g. Mint/Debian/KDE Neon)
+### Ubuntu (incl. Mint/Debian/KDE Neon/etc.)
 
 Users can install the latest release via:
 
