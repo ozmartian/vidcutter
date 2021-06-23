@@ -68,6 +68,10 @@ VidCutter is available from openSUSE's official repos. Community built packages 
 
 VidCutter is also available from the popular Packman repository. Instructions to enable it can be found @ https://en.opensuse.org/Additional_package_repositories#Packman.
 
+### Fedora
+
+Try United RPMs at https://unitedrpms.github.io and https://github.com/UnitedRPMs/unitedrpms.
+
 ***
 
 ### Microsoft Windows
