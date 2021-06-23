@@ -165,7 +165,7 @@ int main(int argc, char *argv[]) {
     snprintf(new_env[1], LENGTH, "PATH=%1$s/usr/bin/:%1$s/usr/sbin/:%1$s/usr/games/:%1$s/bin/:%1$s/sbin/:%2$s", appdir, old_env);
 
     old_env = getenv("LD_LIBRARY_PATH") ?: "";
-    snprintf(new_env[2], LENGTH, "LD_LIBRARY_PATH=%1$s/usr/lib/:%1$s/usr/lib/i386-linux-gnu/:%1$s/usr/lib/x86_64-linux-gnu/:%1$s/usr/lib32/:%1$s/usr/lib64/:%1$s/lib/:%1$s/lib/i386-linux-gnu/:%1$s/lib/x86_64-linux-gnu/:%1$s/lib32/:%1$s/lib64/:%2$s", appdir, old_env);
+    snprintf(new_env[2], LENGTH, "LD_LIBRARY_PATH=%1$s/usr/lib/:%1$s/usr/lib/i386-linux-gnu/:%1$s/usr/lib/x86_64-linux-gnu/:%1$s/usr/lib/x86_64-linux-gnu/samba:%1$s/usr/lib/x86_64-linux-gnu/vdpau:%1$s/usr/lib/x86_64-linux-gnu/dri:%1$s/usr/lib32/:%1$s/usr/lib64/:%1$s/lib/:%1$s/lib/i386-linux-gnu/:%1$s/lib/x86_64-linux-gnu/:%1$s/lib32/:%1$s/lib64/:%2$s", appdir, old_env);
 
     old_env = getenv("XDG_DATA_DIRS") ?: "";
     snprintf(new_env[3], LENGTH, "XDG_DATA_DIRS=%s/usr/share/:%s", appdir, old_env);

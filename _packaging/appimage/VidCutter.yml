@@ -1,32 +1,31 @@
 app: VidCutter
 # binpatch: true
 
+version: 6.0.5.1
+
 ingredients:
-  dist: trusty
+  dist: hirsute
   sources: 
-    - deb http://archive.ubuntu.com/ubuntu/ trusty main restricted universe multiverse
-  ppas:
-    - mc3man/testing6
-    - jonathonf/ffmpeg-3
-    - deadsnakes/ppa
+    - deb http://archive.ubuntu.com/ubuntu/ hirsute main restricted universe multiverse
   packages:
-    - python3.6-dev
+    - python3-dev
+    - python3-pip
+    - python3-setuptools
     - libmpv-dev
+    - python3-pyqt5
+    - python3-pyqt5.qtx11extras
+    - python3-opengl
+    - python3-simplejson
     - libmpv1
     - ffmpeg
     - mediainfo
     - openssl
+    - qt5-gtk-platformtheme
+    - samba-libs
 
 script:
   - umask 022
   - PYTHONHOME=$(pwd)/usr
-  - rm -f usr/bin/python3 usr/bin/python3.6
-  - ln -s python3.6m usr/bin/python3
-  - ln -s python3.6m usr/bin/python3.6
-  - wget https://bootstrap.pypa.io/get-pip.py
-  - usr/bin/python3.6 ./get-pip.py
-  - rm ./get-pip.py
-  - usr/bin/python3.6 -m pip install -t usr/lib/python3/dist-packages PyQt5 PyOpenGL simplejson
   - find usr/lib/python3/dist-packages/PyQt5 -name "*Qt*WebEngine*" | xargs rm -rf
   - rm -rf usr/lib/python3/dist-packages/PyQt5/Qt/plugins/audio
   - rm -rf usr/lib/python3/dist-packages/PyQt5/Qt/plugins/gamepads
@@ -42,17 +41,17 @@ script:
   - rm -rf usr/lib/python3/dist-packages/PyQt5/Qt/plugins/sensors
   - rm -rf usr/lib/python3/dist-packages/PyQt5/Qt/plugins/sqldrivers
   - strip usr/lib/python3/dist-packages/PyQt5/*.so
-  - strip usr/lib/python3/dist-packages/PyQt5/Qt/lib/*
+  # - strip usr/lib/python3/dist-packages/PyQt5/Qt/lib/*
   - PKGRES=$(find . -name pkg_resources \! -path "*_vendor*")
   - [ ${PKGRES} != "./usr/lib/python3/dist-packages/pkg_resources" ] && mv ${PKGRES} usr/lib/python3/dist-packages
   - cp -R usr/lib/python3/dist-packages/pkg_resources usr/lib/python3/dist-packages/pkg_resources.BAK
-  - env QT_APPIMAGE=1 usr/bin/python3.6 -m pip install -t usr/lib/python3/dist-packages ../../../..
+  - env QT_APPIMAGE=1 python3 -m pip install -t usr/lib/python3/dist-packages ../../../..
   - mkdir -p usr/share/applications usr/share/mime/packages usr/share/metainfo 2> /dev/null
   - cp -R ../../../../data/icons/hicolor usr/share/icons
   - cp ../../../../data/desktop/* usr/share/applications
   - cp ../../../../data/appdata/* usr/share/metainfo
   - cp ../../../../data/mime/* usr/share/mime/packages
-  - usr/bin/python3.6 -m pip uninstall -y pip
+  # - usr/bin/python3 -m pip uninstall -y pip
   - mv usr/lib/python3/dist-packages/pkg_resources.BAK usr/lib/python3/dist-packages/pkg_resources
   - rm -rf usr/local
   - rm -f usr/bin/ffplay usr/bin/ffserver
@@ -73,7 +72,7 @@ script:
   - cp -f usr/share/applications/com.ozmartians.VidCutter.desktop .
   - ln -s com.ozmartians.VidCutter.desktop vidcutter.desktop
   - cp -f ../../scripts/* usr/bin/
-  - cp -f ../../qt5/* usr/lib/python3/dist-packages/PyQt5/Qt/plugins/platformthemes/
+  - cp -f ../../qt5/* usr/lib/x86_64-linux-gnu/qt5/plugins/platformthemes/
 
 post:
   - find /usr/lib/x86_64-linux-gnu/ -name libcairo.so.2* | xargs -I{} cp -P {} usr/lib/x86_64-linux-gnu
@@ -81,7 +80,7 @@ post:
   - find /usr/lib/x86_64-linux-gnu/ -name libpango-1.0.so.0* | xargs -I{} cp -P {} usr/lib/x86_64-linux-gnu
   - find /usr/lib/x86_64-linux-gnu/ -name libpangocairo-1.0.so.0* | xargs -I{} cp -P {} usr/lib/x86_64-linux-gnu
   - cp -f ../../scripts/* usr/bin/
-  - cp -f ../../qt5/* usr/lib/python3/dist-packages/PyQt5/Qt/plugins/platformthemes/
+  - cp -f ../../qt5/* usr/lib/x86_64-linux-gnu/qt5/plugins/platformthemes/
   # - rm -f ./AppRun
   # - gcc -fPIC -o ./AppRun ../../AppRun.c
   # - strip ./AppRun

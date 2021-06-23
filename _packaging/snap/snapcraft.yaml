@@ -88,6 +88,7 @@ parts:
             - xdg-user-dirs
             - libgtk2.0-0
             - libslang2
+            - qt5-gtk-platformtheme
 
     vidcutter:
         plugin: python
@@ -107,3 +108,4 @@ parts:
             - mediainfo
             - libslang2
             - libblas3
+            - qt5-gtk-platformtheme
