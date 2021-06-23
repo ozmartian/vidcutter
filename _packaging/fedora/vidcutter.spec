@@ -3,7 +3,7 @@
 %global pkgname com.ozmartians.VidCutter
 
 Name:           %{pkg_name}
-Version:        6.0.0
+Version:        6.0.5.1
 Release:        0%{?dist}
 Summary:        the simplest + fastest media cutter & joiner
 Group:          Applications/Multimedia
@@ -61,6 +61,8 @@ rm -rf %{pkg_name}.egg-info
 
 
 %changelog
+* Tue Jun 22 2021 Pete Alexandrou <pete AT ozmartians DOT com> 6.0.5.1-1
+- 6.0.5.1 release
 * Sun Aug 19 2018 Pete Alexandrou <pete AT ozmartians DOT com> 6.0.0-1
 - 6.0.0 release
 * Mon Feb 05 2018 Pete Alexandrou <pete AT ozmartians DOT com> 5.5.0-2
