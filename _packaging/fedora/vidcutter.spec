@@ -47,7 +47,7 @@ rm -rf %{pkg_name}.egg-info
 %license LICENSE
 %doc README.md
 %{python3_sitearch}/%{pkg_name}
-%{python3_sitearch}/%{pkg_name}-%{version}-py?.?.egg-info
+%{python3_sitearch}/%{pkg_name}-%{version}*.egg-info
 %{_bindir}/%{pkg_name}
 %{_datadir}/applications/%{pkgname}.desktop
 %{_datadir}/icons/hicolor/*/apps/%{pkgname}.png
