@@ -1,7 +1,7 @@
 %global pkgname com.ozmartians.VidCutter
 
 Name:           vidcutter
-Version:        6.0.0
+Version:        6.0.5.1
 Release:        0
 Summary:        the simplest + fastest media cutter & joiner
 License:        GPL-3.0+
