@@ -76,6 +76,10 @@ VidCutter is also available from the popular Packman repository. Instructions to
 
 Fedora 34 & Rawhide builds via copr @ https://copr.fedorainfracloud.org/coprs/suspiria/VidCutter
 
+```
+$ dnf copr enable suspiria/VidCutter
+```
+
 Also available at United RPMs at https://unitedrpms.github.io and https://github.com/UnitedRPMs/unitedrpms
 
 ***
