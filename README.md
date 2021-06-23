@@ -34,6 +34,10 @@ or via the terminal:
 $ sudo snap install vidcutter
 ```
 
+### AppImage (Linux)
+
+https://github.com/ozmartian/vidcutter/releases/download/6.0.5.1/VidCutter-6.0.5.1-x86_64.AppImage
+
 ***
 
 ### Arch Linux  (incl. Manjaro/etc.)
