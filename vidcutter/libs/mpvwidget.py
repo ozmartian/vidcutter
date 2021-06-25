@@ -44,7 +44,13 @@ elif sys.platform == 'darwin':
                 return '/System/Library/Frameworks/'+name+'.framework/'+name
             util.find_library = new_util_find_library
     except ImportError:
-        pass
+        from ctypes import util
+        orig_util_find_library = util.find_library
+        def new_util_find_library( name ):
+            res = orig_util_find_library( name )
+            if res: return res
+            return '/System/Library/Frameworks/'+name+'.framework/'+name
+        util.find_library = new_util_find_library
 else:
     from OpenGL import GL
     from OpenGL.platform import PLATFORM
