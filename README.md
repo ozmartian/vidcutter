@@ -36,7 +36,7 @@ $ sudo snap install vidcutter
 
 ### AppImage (Linux)
 
-[![AppImage](https://upload.wikimedia.org/wikipedia/commons/7/73/App-image-logo.svg)](https://github.com/ozmartian/vidcutter/releases/download/6.0.5.1/VidCutter-6.0.5.1-x86_64.AppImage) 
+[![AppImage](https://appimage.github.io/img/logo3.svg)](https://github.com/ozmartian/vidcutter/releases/download/6.0.5.1/VidCutter-6.0.5.1-x86_64.AppImage) 
 
 Download at https://github.com/ozmartian/vidcutter/releases/download/6.0.5.1/VidCutter-6.0.5.1-x86_64.AppImage and execute. You may need to set execute permissions if you encounter problems getting it to run:
 
