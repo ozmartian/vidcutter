@@ -48,7 +48,7 @@ $ chmod +x VidCutter-6.0.5.1-x86_64.AppImage
 
 ### Arch Linux  (incl. Manjaro/etc.)
 
-Users can install directly from Arch's community repo since VidCutter has been added to Arch's official repos. There is also an AUR development version available.
+Users can install the stable version directly from the Arch Linux community repo packages or via AUR for the development version.
    
     LATEST STABLE RELEASE:
 
