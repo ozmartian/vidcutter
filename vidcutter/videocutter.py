@@ -1641,6 +1641,10 @@ class VideoCutter(QWidget):
         pass
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
+        if event.key() in {Qt.Key_Q, Qt.Key_W} and event.modifiers() == Qt.ControlModifier:
+            self.parent.close()
+            return
+
         if self.mediaAvailable:
 
             if event.key() == Qt.Key_Space:
