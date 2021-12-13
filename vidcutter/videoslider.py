@@ -246,8 +246,8 @@ class VideoSlider(QSlider):
     def initThumbs(self) -> None:
         framesize = self.parent.videoService.framesize()
         thumbsize = QSize(
-            VideoService.config.thumbnails['TIMELINE'].height() * (framesize.width() / framesize.height()),
-            VideoService.config.thumbnails['TIMELINE'].height())
+            int(VideoService.config.thumbnails['TIMELINE'].height() * (framesize.width() / framesize.height())),
+            int(VideoService.config.thumbnails['TIMELINE'].height()))
         positions, frametimes = [], []
         thumbs = int(math.ceil((self.rect().width() - (self.offset * 2)) / thumbsize.width()))
         for pos in range(thumbs):
