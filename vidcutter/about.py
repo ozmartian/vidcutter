@@ -309,7 +309,7 @@ class CreditsTab(BaseTab):
             </tr>
         </table>
         <p>
-            Click on a project name for more information from its official website.
+            Click on a project name to visit the official website.
         </p>''' % ('#EA95FF' if self.parent.theme == 'dark' else '#441D4E'))
 
 
