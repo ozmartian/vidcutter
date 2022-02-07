@@ -124,12 +124,13 @@ class VideoCutter(QWidget):
         self.videoService.error.connect(self.completeOnError)
         self.videoService.addScenes.connect(self.addScenes)
 
-        self.project_files = {
-            # Should return 4 match groups: clip start timestamp, end timestamp, [unused], chapter name
-            # EDL does not have chapter names -> add an empty match group in their place
-            'edl': re.compile(r'(\d+(?:\.?\d+)?)\t(\d+(?:\.?\d+)?)\t([01])()'),
-            'vcp': re.compile(r'(\d+(?:\.?\d+)?)\t(\d+(?:\.?\d+)?)\t([01])\t(".*")$')
-        }
+        # File format: tab-separated fields:
+        #   1. clip start timestamp
+        #   2. clip end timestamp
+        #   3. [unused] (originally MPlayer EDL "action" field, either 0 or 1)
+        #   4. [no field] OR chapter name in "double quotes"
+        # The regex must return exactly 4 match groups; the last one may be empty for EDL files.
+        self.project_file_line_regex = re.compile(r'(\d+(?:\.?\d+)?)\t(\d+(?:\.?\d+)?)\t([01]).?($|(?<=\t)".*")')
 
         self._initIcons()
         self._initActions()
@@ -833,8 +834,6 @@ class VideoCutter(QWidget):
             if project_file != os.path.join(QDir.tempPath(), self.parent.TEMP_PROJECT_FILE):
                 self.lastFolder = QFileInfo(project_file).absolutePath()
             file = QFile(project_file)
-            info = QFileInfo(file)
-            project_type = info.suffix()
             if not file.open(QFile.ReadOnly | QFile.Text):
                 QMessageBox.critical(self.parent, 'Open project file',
                                      'Cannot read project file {0}:\n\n{1}'.format(project_file, file.errorString()))
@@ -856,17 +855,24 @@ class VideoCutter(QWidget):
                                              'Could not make sense of the selected project file. Try viewing it in a '
                                              'text editor to ensure it is valid and not corrupted.')
                         return
-                    if project_type == 'vcp' and linenum == 1:
-                        self.loadMedia(line)
-                        time.sleep(1)
+                    mo = self.project_file_line_regex.match(line)
+                    if linenum == 1 and not mo:
+                        # First line doesn't match the usual line format, maybe it is a filename?
+                        if os.path.isfile(line):
+                            self.loadMedia(line)
+                            time.sleep(1)
+                        else:
+                            qApp.restoreOverrideCursor()
+                            QMessageBox.critical(self.parent, 'Invalid project file',
+                                                 'Line {0} is neither a valid clip timestamp, nor an existing media file:\n\n{1}'.format(linenum, line))
+                            return
                     else:
-                        mo = self.project_files[project_type].match(line)
                         if mo:
                             start, stop, _, chapter = mo.groups()
                             clip_start = self.delta2QTime(float(start))
                             clip_end = self.delta2QTime(float(stop))
                             clip_image = self.captureImage(self.currentMedia, clip_start)
-                            if project_type == 'vcp' and self.createChapters and len(chapter):
+                            if self.createChapters and len(chapter):
                                 chapter = chapter[1:len(chapter) - 1]
                                 if not len(chapter):
                                     chapter = None
