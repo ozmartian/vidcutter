@@ -951,12 +951,12 @@ class VideoCutter(QWidget):
                 stop_time = timedelta(hours=clip[1].hour(), minutes=clip[1].minute(), seconds=clip[1].second(),
                                       milliseconds=clip[1].msec())
                 if ptype == 'VidCutter Project (*.vcp)':
-                    if self.createChapters:
-                        chapter = '"{}"'.format(clip[4]) if clip[4] is not None else '""'
+                    if self.createChapters and clip[4] is not None:
+                        chapter = clip[4]
                     else:
                         chapter = ''
                     # noinspection PyUnresolvedReferences
-                    QTextStream(file) << '{0}\t{1}\t{2}\t{3}\n'.format(self.delta2String(start_time),
+                    QTextStream(file) << '{0}\t{1}\t{2}\t"{3}"\n'.format(self.delta2String(start_time),
                                                                        self.delta2String(stop_time), 0, chapter)
                 else:
                     # noinspection PyUnresolvedReferences
