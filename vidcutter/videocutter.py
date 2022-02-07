@@ -926,9 +926,9 @@ class VideoCutter(QWidget):
         project_file, _ = os.path.splitext(self.currentMedia)
         if reboot:
             project_save = os.path.join(QDir.tempPath(), self.parent.TEMP_PROJECT_FILE)
-            ptype = 'VidCutter Project (*.vcp)'
+            project_type = 'vcp'
         else:
-            project_save, ptype = QFileDialog.getSaveFileName(
+            project_save, _ = QFileDialog.getSaveFileName(
                 parent=self.parent,
                 caption='Save project',
                 directory='{}.vcp'.format(project_file),
@@ -937,12 +937,14 @@ class VideoCutter(QWidget):
                 options=self.getFileDialogOptions())
         if project_save is not None and len(project_save.strip()):
             file = QFile(project_save)
+            info = QFileInfo(file)
+            project_type = info.suffix()
             if not file.open(QFile.WriteOnly | QFile.Text):
                 QMessageBox.critical(self.parent, 'Cannot save project',
                                      'Cannot save project file at {0}:\n\n{1}'.format(project_save, file.errorString()))
                 return
             qApp.setOverrideCursor(Qt.WaitCursor)
-            if ptype == 'VidCutter Project (*.vcp)':
+            if project_type == 'vcp':
                 # noinspection PyUnresolvedReferences
                 QTextStream(file) << '{}\n'.format(self.currentMedia)
             for clip in self.clipTimes:
@@ -950,7 +952,7 @@ class VideoCutter(QWidget):
                                        milliseconds=clip[0].msec())
                 stop_time = timedelta(hours=clip[1].hour(), minutes=clip[1].minute(), seconds=clip[1].second(),
                                       milliseconds=clip[1].msec())
-                if ptype == 'VidCutter Project (*.vcp)':
+                if project_type == 'vcp':
                     if self.createChapters and clip[4] is not None:
                         chapter = clip[4]
                     else:
