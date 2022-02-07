@@ -883,6 +883,7 @@ class VideoCutter(QWidget):
             self.blackdetectAction.setEnabled(True)
             self.inCut = False
             self.newproject = True
+            self.renderClipIndex()
             QTimer.singleShot(2000, self.selectClip)
             qApp.restoreOverrideCursor()
             if project_file != os.path.join(QDir.tempPath(), self.parent.TEMP_PROJECT_FILE):
