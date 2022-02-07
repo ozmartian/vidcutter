@@ -941,6 +941,10 @@ class VideoCutter(QWidget):
             file = QFile(project_save)
             info = QFileInfo(file)
             project_type = info.suffix()
+            if project_type not in ['vcp', 'edl']:
+                QMessageBox.critical(self.parent, 'Cannot save project',
+                                     'Invalid project file extension "{0}".\nOnly .edl and .vcp are supported.'.format(project_type))
+                return
             if not file.open(QFile.WriteOnly | QFile.Text):
                 QMessageBox.critical(self.parent, 'Cannot save project',
                                      'Cannot save project file at {0}:\n\n{1}'.format(project_save, file.errorString()))
