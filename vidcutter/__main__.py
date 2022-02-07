@@ -94,7 +94,7 @@ class MainWindow(QMainWindow):
     @pyqtSlot(str)
     def file_opener(self, filename: str) -> None:
         try:
-            if QFileInfo(filename).suffix() == 'vcp':
+            if QFileInfo(filename).suffix() in ['edl', 'vcp']:
                 self.cutter.openProject(project_file=filename)
                 if filename == os.path.join(QDir.tempPath(), MainWindow.TEMP_PROJECT_FILE):
                     os.remove(os.path.join(QDir.tempPath(), MainWindow.TEMP_PROJECT_FILE))
