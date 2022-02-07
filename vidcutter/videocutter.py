@@ -125,7 +125,9 @@ class VideoCutter(QWidget):
         self.videoService.addScenes.connect(self.addScenes)
 
         self.project_files = {
-            'edl': re.compile(r'(\d+(?:\.?\d+)?)\t(\d+(?:\.?\d+)?)\t([01])'),
+            # Should return 4 match groups: clip start timestamp, end timestamp, [unused], chapter name
+            # EDL does not have chapter names -> add an empty match group in their place
+            'edl': re.compile(r'(\d+(?:\.?\d+)?)\t(\d+(?:\.?\d+)?)\t([01])()'),
             'vcp': re.compile(r'(\d+(?:\.?\d+)?)\t(\d+(?:\.?\d+)?)\t([01])\t(".*")$')
         }
 
