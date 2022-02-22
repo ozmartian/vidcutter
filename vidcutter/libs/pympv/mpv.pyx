@@ -30,8 +30,8 @@ from client cimport *
 __version__ = "0.3.0"
 __author__ = "Andre D"
 
-_REQUIRED_CAPI_MAJOR = 1
-_MIN_CAPI_MINOR = 9
+_REQUIRED_CAPI_MAJOR = 2
+_MIN_CAPI_MINOR = 0
 
 cdef unsigned long _CAPI_VERSION
 with nogil:
@@ -47,7 +47,7 @@ if _CAPI_MAJOR != _REQUIRED_CAPI_MAJOR or _CAPI_MINOR < _MIN_CAPI_MINOR:
     )
 
 cdef extern from "Python.h":
-    void PyEval_InitThreads()
+    void Py_Initialize()
 
 _is_py3 = sys.version_info >= (3,)
 _strdec_err = "surrogateescape" if _is_py3 else "strict"
@@ -67,7 +67,7 @@ def _strenc(s):
         # In python2, assume bytes and walk right through
         return s
 
-PyEval_InitThreads()
+Py_Initialize()
 
 class Errors:
     """Set of known error codes from MpvError and Event responses.
@@ -114,21 +114,21 @@ class Events:
     start_file = MPV_EVENT_START_FILE
     end_file = MPV_EVENT_END_FILE
     file_loaded = MPV_EVENT_FILE_LOADED
-    tracks_changed = MPV_EVENT_TRACKS_CHANGED
-    tracks_switched = MPV_EVENT_TRACK_SWITCHED
+    # tracks_changed = MPV_EVENT_TRACKS_CHANGED
+    # tracks_switched = MPV_EVENT_TRACK_SWITCHED
     idle = MPV_EVENT_IDLE
-    pause = MPV_EVENT_PAUSE
-    unpause = MPV_EVENT_UNPAUSE
+    # pause = MPV_EVENT_PAUSE
+    # unpause = MPV_EVENT_UNPAUSE
     tick = MPV_EVENT_TICK
-    script_input_dispatch = MPV_EVENT_SCRIPT_INPUT_DISPATCH
+    # script_input_dispatch = MPV_EVENT_SCRIPT_INPUT_DISPATCH
     client_message = MPV_EVENT_CLIENT_MESSAGE
     video_reconfig = MPV_EVENT_VIDEO_RECONFIG
     audio_reconfig = MPV_EVENT_AUDIO_RECONFIG
-    metadata_update = MPV_EVENT_METADATA_UPDATE
+    # metadata_update = MPV_EVENT_METADATA_UPDATE
     seek = MPV_EVENT_SEEK
     playback_restart = MPV_EVENT_PLAYBACK_RESTART
     property_change = MPV_EVENT_PROPERTY_CHANGE
-    chapter_change = MPV_EVENT_CHAPTER_CHANGE
+    # chapter_change = MPV_EVENT_CHAPTER_CHANGE
 
 
 class LogLevels:
@@ -166,17 +166,17 @@ cdef class EndOfFileReached(object):
         return self
 
 
-cdef class InputDispatch(object):
-    """Data field for MPV_EVENT_SCRIPT_INPUT_DISPATCH events.
+# cdef class InputDispatch(object):
+#     """Data field for MPV_EVENT_SCRIPT_INPUT_DISPATCH events.
 
-    Wraps: mpv_event_script_input_dispatch
-    """
-    cdef public object arg0, type
+#     Wraps: mpv_event_script_input_dispatch
+#     """
+#     cdef public object arg0, type
 
-    cdef _init(self, mpv_event_script_input_dispatch* input):
-        self.arg0 = input.arg0
-        self.type = _strdec(input.type)
-        return self
+#     cdef _init(self, mpv_event_script_input_dispatch* input):
+#         self.arg0 = input.arg0
+#         self.type = _strdec(input.type)
+#         return self
 
 
 cdef class LogMessage(object):
@@ -276,8 +276,8 @@ cdef class Event(object):
             return Property()._init(<mpv_event_property*>data)
         elif self.id == MPV_EVENT_LOG_MESSAGE:
             return LogMessage()._init(<mpv_event_log_message*>data)
-        elif self.id == MPV_EVENT_SCRIPT_INPUT_DISPATCH:
-            return InputDispatch()._init(<mpv_event_script_input_dispatch*>data)
+        # elif self.id == MPV_EVENT_SCRIPT_INPUT_DISPATCH:
+        #     return InputDispatch()._init(<mpv_event_script_input_dispatch*>data)
         elif self.id == MPV_EVENT_CLIENT_MESSAGE:
             climsg = <mpv_event_client_message*>data
             args = []
@@ -396,17 +396,17 @@ cdef class Context(object):
             time = mpv_get_time_us(self._ctx)
         return time
 
-    def suspend(self):
-        """Wraps: mpv_suspend"""
-        assert self._ctx
-        with nogil:
-            mpv_suspend(self._ctx)
+    # def suspend(self):
+    #     """Wraps: mpv_suspend"""
+    #     assert self._ctx
+    #     with nogil:
+    #         mpv_suspend(self._ctx)
 
-    def resume(self):
-        """Wraps: mpv_resume"""
-        assert self._ctx
-        with nogil:
-            mpv_resume(self._ctx)
+    # def resume(self):
+    #     """Wraps: mpv_resume"""
+    #     assert self._ctx
+    #     with nogil:
+    #         mpv_resume(self._ctx)
 
     @_errors
     def request_event(self, event, enable):
@@ -798,17 +798,17 @@ cdef class Context(object):
         self.reply_userdata = None
         self._ctx = NULL
 
-    def opengl_cb_api(self):
-        cdef void *cb
+    # def opengl_cb_api(self):
+    #     cdef void *cb
 
-        _ctx = mpv_get_sub_api(self._ctx, MPV_SUB_API_OPENGL_CB)
-        if not _ctx:
-            raise MPVError("OpenGL API not available")
+    #     _ctx = mpv_get_sub_api(self._ctx, MPV_SUB_API_OPENGL_CB)
+    #     if not _ctx:
+    #         raise MPVError("OpenGL API not available")
 
-        ctx = OpenGLContext()
-        ctx._ctx = <mpv_opengl_cb_context*>_ctx
+    #     ctx = OpenGLContext()
+    #     ctx._ctx = <mpv_opengl_cb_context*>_ctx
 
-        return ctx
+    #     return ctx
 
     def __dealloc__(self):
         self.shutdown()
@@ -819,62 +819,62 @@ cdef void *_c_getprocaddress(void *ctx, const char *name) with gil:
 cdef void _c_updatecb(void *ctx) with gil:
     (<object>ctx)()
 
-cdef class OpenGLContext(object):
-    cdef:
-        mpv_opengl_cb_context *_ctx
-        bint inited
-        object update_cb
+# cdef class OpenGLContext(object):
+#     cdef:
+#         mpv_opengl_cb_context *_ctx
+#         bint inited
+#         object update_cb
 
-    def __init__(self):
-        self.inited = False
-        warnings.warn("OpenGLContext is deprecated, please switch to RenderContext", DeprecationWarning)
+#     def __init__(self):
+#         self.inited = False
+#         warnings.warn("OpenGLContext is deprecated, please switch to RenderContext", DeprecationWarning)
 
-    def init_gl(self, exts, get_proc_address):
-        exts = _strenc(exts) if exts is not None else None
-        cdef char* extsc = NULL
-        if exts is not None:
-            extsc = exts
-        with nogil:
-            err = mpv_opengl_cb_init_gl(self._ctx, extsc, &_c_getprocaddress,
-                                        <void *>get_proc_address)
-        if err < 0:
-            raise MPVError(err)
+#     def init_gl(self, exts, get_proc_address):
+#         exts = _strenc(exts) if exts is not None else None
+#         cdef char* extsc = NULL
+#         if exts is not None:
+#             extsc = exts
+#         with nogil:
+#             err = mpv_opengl_cb_init_gl(self._ctx, extsc, &_c_getprocaddress,
+#                                         <void *>get_proc_address)
+#         if err < 0:
+#             raise MPVError(err)
 
-        self.inited = True
+#         self.inited = True
 
-    def set_update_callback(self, cb):
-        self.update_cb = cb
-        with nogil:
-            mpv_opengl_cb_set_update_callback(self._ctx, &_c_updatecb, <void *>cb)
+#     def set_update_callback(self, cb):
+#         self.update_cb = cb
+#         with nogil:
+#             mpv_opengl_cb_set_update_callback(self._ctx, &_c_updatecb, <void *>cb)
 
-    def draw(self, fbo, w, h):
-        cdef:
-            int fboc = fbo
-            int wc = w
-            int hc = h
-        with nogil:
-            err = mpv_opengl_cb_draw(self._ctx, fboc, wc, hc)
-        if err < 0:
-            raise MPVError(err)
+#     def draw(self, fbo, w, h):
+#         cdef:
+#             int fboc = fbo
+#             int wc = w
+#             int hc = h
+#         with nogil:
+#             err = mpv_opengl_cb_draw(self._ctx, fboc, wc, hc)
+#         if err < 0:
+#             raise MPVError(err)
 
-    def report_flip(self, time):
-        cdef int64_t ctime = time
-        with nogil:
-            err = mpv_opengl_cb_report_flip(self._ctx, ctime)
-        if err < 0:
-            raise MPVError(err)
+#     def report_flip(self, time):
+#         cdef int64_t ctime = time
+#         with nogil:
+#             err = mpv_opengl_cb_report_flip(self._ctx, ctime)
+#         if err < 0:
+#             raise MPVError(err)
 
-    def uninit_gl(self):
-        if not self.inited:
-            return
-        with nogil:
-            err = mpv_opengl_cb_uninit_gl(self._ctx)
-        if err < 0:
-            raise MPVError(err)
-        self.inited = False
+#     def uninit_gl(self):
+#         if not self.inited:
+#             return
+#         with nogil:
+#             err = mpv_opengl_cb_uninit_gl(self._ctx)
+#         if err < 0:
+#             raise MPVError(err)
+#         self.inited = False
 
-    def __dealloc__(self):
-        self.uninit_gl()
+#     def __dealloc__(self):
+#         self.uninit_gl()
 
 DEF MAX_RENDER_PARAMS = 32
 
