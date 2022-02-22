@@ -247,7 +247,7 @@ class mpvWidget(QOpenGLWidget):
 
     def version(self) -> str:
         ver = self.mpv.api_version
-        return '{0}.{1}'.format(ver[0], ver[1])
+        return '{0}.{1}'.format(ver[1], ver[0])
 
     def option(self, option: str, val):
         if isinstance(val, bool):
