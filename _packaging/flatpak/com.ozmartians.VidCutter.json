@@ -1,22 +1,19 @@
-{
+    {
     "app-id": "com.ozmartians.VidCutter",
     "runtime": "org.kde.Platform",
-    "runtime-version": "5.15",
+    "runtime-version": "5.15-21.08",
     "sdk": "org.kde.Sdk",
     "command": "vidcutter",
     "finish-args": [
         "--device=dri",
-        "--env=DCONF_USER_CONFIG_DIR=.config/dconf",
         "--env=LC_NUMERIC=C",
         "--env=LD_LIBRARY_PATH=/app/lib",
         "--filesystem=host",
-        "--filesystem=xdg-run/dconf",
         "--share=ipc",
         "--share=network",
         "--socket=pulseaudio",
         "--socket=wayland",
         "--socket=x11",
-        "--talk-name=ca.desrt.dconf",
         "--talk-name=com.canonical.Unity.LauncherEntry"
     ],
     "cleanup": [
@@ -41,8 +38,8 @@
         ],
         "sources": [{
             "type": "archive",
-            "url": "https://files.pythonhosted.org/packages/b8/73/31c8177f3d236e9a5424f7267659c70ccea604dab0585bfcd55828397746/PyOpenGL-3.1.5.tar.gz",
-            "sha256": "4107ba0d0390da5766a08c242cf0cf3404c377ed293c5f6d701e457c57ba3424"
+            "url": "https://files.pythonhosted.org/packages/5b/01/f8fd986bc7f456f1a925ee0239f0391838ade92cdb6e5b674ffb8b86cfd6/PyOpenGL-3.1.6.tar.gz",
+            "sha256": "8ea6c8773927eda7405bffc6f5bb93be81569a7b05c8cac50cd94e969dce5e27"
         }]
     },
     {
@@ -53,17 +50,17 @@
         ],
         "sources": [{
             "type": "archive",
-            "url": "https://files.pythonhosted.org/packages/49/45/a16db4f0fa383aaf0676fb7e3c660304fe390415c243f41a77c7f917d59b/simplejson-3.17.2.tar.gz",
-            "sha256": "75ecc79f26d99222a084fbdd1ce5aad3ac3a8bd535cd9059528452da38b68841"
+            "url": "https://files.pythonhosted.org/packages/7a/47/c7cc3d4ed15f09917838a2fb4e1759eafb6d2f37ebf7043af984d8b36cf7/simplejson-3.17.6.tar.gz",
+            "sha256": "cf98038d2abf63a1ada5730e91e84c642ba6c225b0198c3684151b1f80c5f8a6"
         }]
     },
     {
         "name": "PyQt5",
-        "cleanup": ["/bin/sip*", "/include", "/lib/python3.8/site-packages/*.pyi"],
+        "cleanup": ["/bin/sip*", "/include", "/lib/python3.9/site-packages/*.pyi"],
         "config-opts": ["--disable-static", "--enable-x11"],
         "buildsystem": "simple",
         "build-commands": [
-            "python3 configure.py --confirm-license --no-docstrings --assume-shared --no-sip-files --no-qml-plugin --no-tools --no-qsci-api -d ${FLATPAK_DEST}/lib/python3.8/site-packages --sip=${FLATPAK_DEST}/bin/sip --sip-incdir=${FLATPAK_DEST}/include --stubsdir=${FLATPAK_DEST}/lib/python3.8/site-packages --disable=QtSensors --disable=QtWebEngine --disable=QtQuick --disable=QtQml --disable=QtTest --disable=QtWebChannel --disable=QtWebEngineCore --disable=QWebEngineWidgets --disable=QtQuickWidgets --disable=QtSql --disable=QtXmlPatterns --disable=QtMultimedia --disable=QtMultimediaWidgets --disable=QtLocation --disable=QtDesigner --disable=QtOpenGL --disable=QtBluetooth --disable=QtWebKit --disable=QtWebKitWidgets --disable=QtNfc --disable=QtPositioning",            
+            "python3 configure.py --confirm-license --no-docstrings --assume-shared --no-sip-files --no-qml-plugin --no-tools --no-qsci-api -d ${FLATPAK_DEST}/lib/python3.9/site-packages --sip=${FLATPAK_DEST}/bin/sip --sip-incdir=${FLATPAK_DEST}/include --stubsdir=${FLATPAK_DEST}/lib/python3.9/site-packages --disable=QtSensors --disable=QtWebEngine --disable=QtQuick --disable=QtQml --disable=QtTest --disable=QtWebChannel --disable=QtWebEngineCore --disable=QWebEngineWidgets --disable=QtQuickWidgets --disable=QtSql --disable=QtXmlPatterns --disable=QtMultimedia --disable=QtMultimediaWidgets --disable=QtLocation --disable=QtDesigner --disable=QtOpenGL --disable=QtBluetooth --disable=QtWebKit --disable=QtWebKitWidgets --disable=QtNfc --disable=QtPositioning",            
             "make -j $(nproc)",
             "make install"
         ],
@@ -76,7 +73,7 @@
             "name": "sip",
             "buildsystem": "simple",
             "build-commands": [
-                "python3 configure.py --sip-module PyQt5.sip -b ${FLATPAK_DEST}/bin -d ${FLATPAK_DEST}/lib/python3.8/site-packages -e ${FLATPAK_DEST}/include -v ${FLATPAK_DEST}/share/sip --stubsdir=${FLATPAK_DEST}/lib/python3.8/site-packages",
+                "python3 configure.py --sip-module PyQt5.sip -b ${FLATPAK_DEST}/bin -d ${FLATPAK_DEST}/lib/python3.9/site-packages -e ${FLATPAK_DEST}/include -v ${FLATPAK_DEST}/share/sip --stubsdir=${FLATPAK_DEST}/lib/python3.9/site-packages",
                 "make",
                 "make install"
             ],
@@ -94,8 +91,8 @@
             ],
             "sources": [{
                 "type": "archive",
-                "url": "https://files.pythonhosted.org/packages/b1/40/dd8f081f04a12912b65417979bf2097def0af0f20c89083ada3670562ac5/PyQt5_sip-12.9.0.tar.gz",
-                "sha256": "d3e4489d7c2b0ece9d203ae66e573939f7f60d4d29e089c9f11daa17cfeaae32"
+                "url": "https://files.pythonhosted.org/packages/a3/82/08a09deda701feb930aa6462f2f22e07cbcb9aa7c1ef361a090221b4587e/PyQt5_sip-12.10.1.tar.gz",
+                "sha256": "97e008795c453488f51a5c97dbff29cda7841afb1ca842c9e819d8e6cc0ae724"
            }]
         }]
     }, 
@@ -110,13 +107,13 @@
         ],
         "sources": [{
             "type": "archive",
-            "url": "https://github.com/mpv-player/mpv/archive/v0.33.1.tar.gz",
-            "sha256": "100a116b9f23bdcda3a596e9f26be3a69f166a4f1d00910d1789b6571c46f3a9"
+            "url": "https://github.com/mpv-player/mpv/archive/v0.34.1.tar.gz",
+            "sha256": "32ded8c13b6398310fa27767378193dc1db6d78b006b70dbcbd3123a1445e746"
         },
         {
             "type": "file",
-            "url": "https://waf.io/waf-2.0.22",
-            "sha256": "0a09ad26a2cfc69fa26ab871cb558165b60374b5a653ff556a0c6aca63a00df1",
+            "url": "https://waf.io/waf-2.0.23",
+            "sha256": "28a2e4583314a162cfcbffefb8a9202c1d7869040d30b5852da479b76d9c0491",
             "dest-filename": "waf"
         }],
         "modules": [{
@@ -125,8 +122,8 @@
             "config-opts": ["--disable-static"],
             "sources": [{
                 "type": "archive",
-                "url": "https://github.com/libass/libass/releases/download/0.15.1/libass-0.15.1.tar.xz",
-                "sha256": "1cdd39c9d007b06e737e7738004d7f38cf9b1e92843f37307b24e7ff63ab8e53"
+                "url": "https://github.com/libass/libass/releases/download/0.15.2/libass-0.15.2.tar.xz",
+                "sha256": "1be2df9c4485a57d78bb18c0a8ed157bc87a5a8dd48c661961c625cb112832fd"
             }],
             "modules": [{
                 "name": "fribidi",
@@ -242,8 +239,8 @@
             },
             "sources": [{
                 "type": "archive",
-                "url": "http://ffmpeg.org/releases/ffmpeg-4.4.tar.xz",
-                "sha256": "06b10a183ce5371f915c6bb15b7b1fffbe046e8275099c96affc29e17645d909"
+                "url": "https://ffmpeg.org/releases/ffmpeg-5.0.1.tar.xz",
+                "sha256": "ef2efae259ce80a240de48ec85ecb062cecca26e4352ffb3fda562c21a93007b"
             }],     
             "modules": [{
                 "name": "ffnvcodec",
@@ -284,8 +281,8 @@
                 ],
                 "sources": [{
                     "type": "archive",
-                    "url": "https://github.com/webmproject/libvpx/archive/v1.10.0.tar.gz",
-                    "sha256": "85803ccbdbdd7a3b03d930187cb055f1353596969c1f92ebec2db839fa4f834a"
+                    "url": "https://github.com/webmproject/libvpx/archive/refs/tags/v1.11.0.tar.gz",
+                    "sha256": "965e51c91ad9851e2337aebcc0f517440c637c506f3a03948062e3d5ea129a83"
                 }]
             },
             {
@@ -479,12 +476,15 @@
         "post-install": [
             "mkdir -p ${FLATPAK_DEST}/share/fonts",
             "cp vidcutter/fonts/* ${FLATPAK_DEST}/share/fonts",
+            "cp -R data/icons/ ${FLATPAK_DEST}/share/icons",
+            "mkdir -p ${FLATPAK_DEST}/share/applications",
+            "cp data/desktop/com.ozmartians.VidCutter.desktop ${FLATPAK_DEST}/share/applications",
             "mkdir -p ${FLATPAK_DEST}/usr",
             "ln -sf ${FLATPAK_DEST}/share ${FLATPAK_DEST}/usr"
         ],
         "sources": [{
             "type": "git",
-            "commit": "3279dfa6a4f3604ba847afa598786d72b49a0617",
+            "commit": "4cf1458d832e6ac7a824d7963c6dc3a0e5c17574",
             "url": "https://github.com/ozmartian/vidcutter.git"
         }]
     }]
