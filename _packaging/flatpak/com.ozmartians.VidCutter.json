@@ -1,4 +1,4 @@
-    {
+{
     "app-id": "com.ozmartians.VidCutter",
     "runtime": "org.kde.Platform",
     "runtime-version": "5.15-21.08",
@@ -60,7 +60,7 @@
         "config-opts": ["--disable-static", "--enable-x11"],
         "buildsystem": "simple",
         "build-commands": [
-            "python3 configure.py --confirm-license --no-docstrings --assume-shared --no-sip-files --no-qml-plugin --no-tools --no-qsci-api -d ${FLATPAK_DEST}/lib/python3.9/site-packages --sip=${FLATPAK_DEST}/bin/sip --sip-incdir=${FLATPAK_DEST}/include --stubsdir=${FLATPAK_DEST}/lib/python3.9/site-packages --disable=QtSensors --disable=QtWebEngine --disable=QtQuick --disable=QtQml --disable=QtTest --disable=QtWebChannel --disable=QtWebEngineCore --disable=QWebEngineWidgets --disable=QtQuickWidgets --disable=QtSql --disable=QtXmlPatterns --disable=QtMultimedia --disable=QtMultimediaWidgets --disable=QtLocation --disable=QtDesigner --disable=QtOpenGL --disable=QtBluetooth --disable=QtWebKit --disable=QtWebKitWidgets --disable=QtNfc --disable=QtPositioning",            
+            "python3 configure.py --confirm-license --no-docstrings --assume-shared --no-sip-files --no-qml-plugin --no-tools --no-qsci-api -d ${FLATPAK_DEST}/lib/python3.9/site-packages --sip=${FLATPAK_DEST}/bin/sip --sip-incdir=${FLATPAK_DEST}/include --stubsdir=${FLATPAK_DEST}/lib/python3.9/site-packages --disable=QtSensors --disable=QtWebEngine --disable=QtQuick --disable=QtQml --disable=QtTest --disable=QtWebChannel --disable=QtWebEngineCore --disable=QWebEngineWidgets --disable=QtQuickWidgets --disable=QtSql --disable=QtXmlPatterns --disable=QtMultimedia --disable=QtMultimediaWidgets --disable=QtLocation --disable=QtDesigner --disable=QtOpenGL --disable=QtBluetooth --disable=QtWebKit --disable=QtWebKitWidgets --disable=QtNfc --disable=QtPositioning",
             "make -j $(nproc)",
             "make install"
         ],
@@ -87,7 +87,7 @@
             "name": "PyQt5_sip",
             "buildsystem": "simple",
             "build-commands": [
-                "python3 setup.py install --root ${FLATPAK_DEST}"
+                "python3 setup.py install --prefix=${FLATPAK_DEST} --root=/"
             ],
             "sources": [{
                 "type": "archive",
@@ -95,7 +95,7 @@
                 "sha256": "97e008795c453488f51a5c97dbff29cda7841afb1ca842c9e819d8e6cc0ae724"
            }]
         }]
-    }, 
+    },
     {
         "name": "libmpv",
         "cleanup": ["/include", "/lib/pkgconfig"],
@@ -128,111 +128,46 @@
             "modules": [{
                 "name": "fribidi",
                 "cleanup": ["/bin", "/include", "/lib/pkgconfig", "/lib/*.la", "/share/man"],
-                "buildsystem": "simple",
-                "build-commands": [
-                    "meson setup --prefix=${FLATPAK_DEST} --buildtype=release build -D docs=false",
-                    "ninja -C build",
-                    "ninja -C build install"
+                "buildsystem": "meson",
+                "config-opts": [
+                    "--buildtype=release",
+                    "-Ddocs=false"
                 ],
                 "sources": [{
                     "type": "git",
-                    "url": "https://github.com/fribidi/fribidi.git"
+                    "url": "https://github.com/fribidi/fribidi.git",
+                    "tag": "v1.0.12",
+                    "commit": "6428d8469e536bcbb6e12c7b79ba6659371c435a"
                 }]
             }]
         },
         {
             "name": "ffmpeg",
             "cleanup": ["/include", "/lib/pkgconfig", "/share/ffmpeg/examples"],
+            "config-opts": [
+                "--enable-shared",
+                "--disable-static",
+                "--disable-debug",
+                "--enable-gnutls",
+                "--disable-doc",
+                "--disable-ffplay",
+                "--enable-gpl",
+                "--enable-libass",
+                "--enable-libfribidi",
+                "--enable-libmp3lame",
+                "--enable-libpulse",
+                "--enable-libtheora",
+                "--enable-libvorbis",
+                "--enable-libvpx",
+                "--enable-libx264",
+                "--enable-libx265",
+                "--enable-libxvid"
+            ],
             "build-options": {
                 "arch": {
-                    "aarch64": {
-                        "config-opts": [
-                            "--enable-shared",
-                            "--disable-static",
-                            "--disable-debug",
-                            "--enable-gnutls",
-                            "--disable-doc",
-                            "--disable-ffplay",
-                            "--enable-gpl",
-                            "--enable-libass",
-                            "--enable-libfribidi",
-                            "--enable-libmp3lame",
-                            "--enable-libpulse",
-                            "--enable-libtheora",
-                            "--enable-libvorbis",
-                            "--enable-libvpx",
-                            "--enable-libx264",
-                            "--enable-libx265",
-                            "--enable-libxvid",
-                            "--enable-version3"
-                        ]
-                    },
-                    "arm": {
-                        "config-opts": [
-                            "--enable-shared",
-                            "--disable-static",
-                            "--disable-debug",
-                            "--enable-gnutls",
-                            "--disable-doc",
-                            "--disable-ffplay",
-                            "--enable-gpl",
-                            "--enable-libass",
-                            "--enable-libfribidi",
-                            "--enable-libmp3lame",
-                            "--enable-libpulse",
-                            "--enable-libtheora",
-                            "--enable-libvorbis",
-                            "--enable-libvpx",
-                            "--enable-libx264",
-                            "--enable-libx265",
-                            "--enable-libxvid",
-                            "--enable-version3"
-                        ]
-                    },
-                    "i386": {
-                        "config-opts": [
-                            "--enable-shared",
-                            "--disable-static",
-                            "--disable-debug",
-                            "--enable-gnutls",
-                            "--disable-doc",
-                            "--disable-ffplay",
-                            "--enable-gpl",
-                            "--enable-libass",
-                            "--enable-libfribidi",
-                            "--enable-libmp3lame",
-                            "--enable-libpulse",
-                            "--enable-libtheora",
-                            "--enable-libvorbis",
-                            "--enable-libvpx",
-                            "--enable-libx264",
-                            "--enable-libx265",
-                            "--enable-libxvid",
-                            "--enable-nvdec",
-                            "--enable-version3"
-                        ]
-                    },
                     "x86_64": {
                         "config-opts": [
-                            "--enable-shared",
-                            "--disable-static",
-                            "--disable-debug",
-                            "--enable-gnutls",
-                            "--disable-doc",
-                            "--disable-ffplay",
-                            "--enable-gpl",
-                            "--enable-libass",
-                            "--enable-libfribidi",
-                            "--enable-libmp3lame",
-                            "--enable-libpulse",
-                            "--enable-libtheora",
-                            "--enable-libvorbis",
-                            "--enable-libvpx",
-                            "--enable-libx264",
-                            "--enable-libx265",
-                            "--enable-libxvid",
-                            "--enable-nvdec",
-                            "--enable-version3"
+                            "--enable-nvdec"
                         ]
                     }
                 }
@@ -241,10 +176,12 @@
                 "type": "archive",
                 "url": "https://ffmpeg.org/releases/ffmpeg-5.0.1.tar.xz",
                 "sha256": "ef2efae259ce80a240de48ec85ecb062cecca26e4352ffb3fda562c21a93007b"
-            }],     
+            }],
             "modules": [{
                 "name": "ffnvcodec",
-                "only-arches": ["i386", "x86_64"],
+                "only-arches": [
+                    "x86_64"
+                ],
                 "buildsystem": "simple",
                 "build-commands": [
                     "make",
@@ -252,7 +189,9 @@
                 ],
                 "sources": [{
                     "type": "git",
-                    "url": "https://git.videolan.org/git/ffmpeg/nv-codec-headers.git"
+                    "url": "https://git.videolan.org/git/ffmpeg/nv-codec-headers.git",
+                    "tag": "n11.1.5.1",
+                    "commit": "84483da70d903239d4536763fde8c7e6c4e80784"
                 }]
             },
             {
@@ -287,48 +226,23 @@
             },
             {
                 "name": "x264",
+                "config-opts": [
+                    "--prefix=${FLATPAK_DEST}",
+                    "--enable-shared",
+                    "--disable-cli",
+                    "--disable-lavf",
+                    "--enable-pic"
+                ],
                 "build-options": {
                     "arch": {
                         "aarch64": {
                             "cxxflags": "-fPIC",
                             "config-opts": [
-                                "--prefix=${FLATPAK_DEST}",
-                                "--enable-shared",
-                                "--disable-cli",
-                                "--disable-lavf",
-                                "--enable-pic",
                                 "--disable-lto"
-                            ]
-                        },
-                        "arm": {
-                            "cxxflags": "-fPIC",
-                            "config-opts": [
-                                "--prefix=${FLATPAK_DEST}",
-                                "--enable-shared",
-                                "--disable-cli",
-                                "--disable-lavf",
-                                "--enable-pic",
-                                "--disable-lto",
-                                "--disable-asm"
-                            ]
-                        },
-                        "i386": {
-                            "config-opts": [
-                                "--prefix=${FLATPAK_DEST}",
-                                "--enable-shared",
-                                "--disable-cli",
-                                "--disable-lavf",
-                                "--enable-pic",
-                                "--disable-asm"
                             ]
                         },
                         "x86_64": {
                             "config-opts": [
-                                "--prefix=${FLATPAK_DEST}",
-                                "--enable-shared",
-                                "--disable-cli",
-                                "--disable-lavf",
-                                "--enable-pic",
                                 "--disable-asm"
                             ]
                         }
@@ -344,46 +258,10 @@
                 }]
             },
             {
-                "name": "x265_32",
-                "only-arches": ["i386"],
+                "name": "x265",
                 "buildsystem": "simple",
                 "build-options": {
                     "arch": {
-                        "arm": {
-                            "cxxflags": "-fPIC"
-                        },
-                        "aarch64": {
-                            "cxxflags": "-fPIC"
-                        }
-                    }
-                },
-                "build-commands": [ 
-                    "mkdir source/build-8 source/build-10 source/build-12",
-                    "cd source/build-12 && cmake .. -DCMAKE_INSTALL_PREFIX=${FLATPAK_DEST} -DENABLE_ASSEMBLY='FALSE' -DHIGH_BIT_DEPTH='TRUE' -DMAIN12='TRUE' -DEXPORT_C_API='FALSE' -DENABLE_CLI='FALSE' -DENABLE_SHARED='FALSE'",
-                    "cd source/build-12 && make",
-                    "cd source/build-10 && cmake .. -DCMAKE_INSTALL_PREFIX=${FLATPAK_DEST} -DENABLE_ASSEMBLY='FALSE' -DHIGH_BIT_DEPTH='TRUE' -DEXPORT_C_API='FALSE' -DENABLE_CLI='FALSE' -DENABLE_SHARED='FALSE'",
-                    "cd source/build-10 && make",
-                    "ln -s ../build-10/libx265.a source/build-8/libx265_main10.a",
-                    "ln -s ../build-12/libx265.a source/build-8/libx265_main12.a",
-                    "cd source/build-8 && cmake .. -DCMAKE_INSTALL_PREFIX=${FLATPAK_DEST} -DENABLE_ASSEMBLY='FALSE' -DENABLE_SHARED='TRUE' -DENABLE_CLI='FALSE' -DENABLE_HDR10_PLUS='TRUE' -DEXTRA_LIB='x265_main10.a;x265_main12.a' -DEXTRA_LINK_FLAGS='-L.' -DLINKED_10BIT='TRUE' -DLINKED_12BIT='TRUE'",
-                    "cd source/build-8 && make",
-                    "cd source/build-8 && make install"
-                ],
-                "sources": [{
-                    "type": "archive",
-                    "url": "https://bitbucket.org/multicoreware/x265_git/downloads/x265_3.3.tar.gz",
-                    "sha256": "c6d744a87eda55560da715f56f878640554ddc06e2d0fcbd822fa330affc22cc"
-                }]
-            },
-            {
-                "name": "x265_64",
-                "skip-arches": ["i386"],
-                "buildsystem": "simple",
-                "build-options": {
-                    "arch": {
-                        "arm": {
-                            "cxxflags": "-fPIC"
-                        },
                         "aarch64": {
                             "cxxflags": "-fPIC"
                         }
@@ -450,7 +328,8 @@
             ],
             "sources": [{
                 "type": "git",
-                "url": "https://github.com/MediaArea/ZenLib.git"
+                "url": "https://github.com/MediaArea/ZenLib.git",
+                "commit": "5fe5d611141e720edecff87e51a2d4d0ad0586b1"
             }]
         },
         {
@@ -463,7 +342,8 @@
             ],
             "sources": [{
                 "type": "git",
-                "url": "https://github.com/MediaArea/MediaInfoLib.git"
+                "url": "https://github.com/MediaArea/MediaInfoLib.git",
+                "commit": "382a3a62311053e0c92e6b05c41f4c630044953e"
             }]
         }]
     },
@@ -474,17 +354,15 @@
             "pip3 install --prefix=${FLATPAK_DEST} ."
         ],
         "post-install": [
-            "mkdir -p ${FLATPAK_DEST}/share/fonts",
+            "install -d ${FLATPAK_DEST}/share/fonts",
             "cp vidcutter/fonts/* ${FLATPAK_DEST}/share/fonts",
-            "cp -R data/icons/ ${FLATPAK_DEST}/share/icons",
-            "mkdir -p ${FLATPAK_DEST}/share/applications",
-            "cp data/desktop/com.ozmartians.VidCutter.desktop ${FLATPAK_DEST}/share/applications",
-            "mkdir -p ${FLATPAK_DEST}/usr",
-            "ln -sf ${FLATPAK_DEST}/share ${FLATPAK_DEST}/usr"
+            "install -d ${FLATPAK_DEST}/share/icons/",
+            "cp -R data/icons/hicolor ${FLATPAK_DEST}/share/icons/",
+            "install -Dm644 -t ${FLATPAK_DEST}/share/applications data/desktop/com.ozmartians.VidCutter.desktop"
         ],
         "sources": [{
             "type": "git",
-            "commit": "4cf1458d832e6ac7a824d7963c6dc3a0e5c17574",
+            "commit": "5c4f83d047863dbb1b33ae00fe161de54456c7f5",
             "url": "https://github.com/ozmartian/vidcutter.git"
         }]
     }]
