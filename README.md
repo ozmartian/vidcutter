@@ -34,18 +34,6 @@ or via the terminal:
 $ sudo snap install vidcutter
 ```
 
-### AppImage (Linux)
-
-[![AppImage](https://appimage.github.io/img/logo3.svg)](https://github.com/ozmartian/vidcutter/releases/download/6.0.5.1/VidCutter-6.0.5.1-x86_64.AppImage) 
-
-Download at https://github.com/ozmartian/vidcutter/releases/download/6.0.5.1/VidCutter-6.0.5.1-x86_64.AppImage and execute. You may need to set execute permissions if you encounter problems getting it to run:
-
-```
-$ chmod +x VidCutter-6.0.5.1-x86_64.AppImage
-```
-
-***
-
 ### Arch Linux  (incl. Manjaro/etc.)
 
 Users can install the stable version directly from the Arch Linux community repo packages or via AUR for the development version.
