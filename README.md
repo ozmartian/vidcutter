@@ -1,6 +1,6 @@
 ![VidCutter](http://vidcutter.ozmartians.com/vidcutter-banner.png)
 
-[![AUR-GIT](https://img.shields.io/aur/version/vidcutter-git.svg)](https://aur.archlinux.org/packages/vidcutter-git)
+[![AUR-GIT](https://img.shields.io/aur/version/vidcutter-git)](https://aur.archlinux.org/packages/vidcutter-git)
 [![Build Status](https://ci.appveyor.com/api/projects/status/jgasythb2vqsxy7v?svg=true)](https://ci.appveyor.com/project/ozmartian/vidcutter/build/artifacts)
 [![Build Status](https://ci.appveyor.com/api/projects/status/sl8iyqp0232sehuf?svg=true)](https://ci.appveyor.com/project/ozmartian/vidcutter-osx/build/artifacts)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/21fd4f414d5545369e74dd78d3da67cc)](https://www.codacy.com/gh/ozmartian/vidcutter/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ozmartian/vidcutter&amp;utm_campaign=Badge_Grade)
