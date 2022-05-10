@@ -42,7 +42,7 @@ apps:
         environment:
             PYTHONPATH: $SNAP/usr/lib/python3/dist-packages
             LD_LIBRARY_PATH: $LD_LIBRARY_PATH:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/blas:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/lapack:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/samba:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/vdpau:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/dri
-            QT_QPA_PLATFORMTHEME: gtk3
+            # QT_QPA_PLATFORMTHEME: gtk3
             # DISABLE_WAYLAND: 1
 
 parts:
