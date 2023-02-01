@@ -26,7 +26,11 @@ import logging
 import sys
 from datetime import datetime
 
-from PyQt5.Qt import PYQT_VERSION_STR
+# PyQt5 5.15.8 changed the import name
+try:
+    from PyQt5.Qt import PYQT_VERSION_STR
+except ImportError:
+    from PyQt5.QtCore import PYQT_VERSION_STR
 from PyQt5.QtCore import QFile, QObject, QSize, QTextStream, Qt
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import (QDialog, QDialogButtonBox, QHBoxLayout, QLabel, QScrollArea, QSizePolicy, QStyleFactory,
