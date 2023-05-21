@@ -18,8 +18,8 @@ if [%2]==[] (
 if ["%ARCH%"]==["64"] (
     SET BINARCH=x64
     SET PYPATH=C:\Python39-x64
-    SET FFMPEG_URL=https://www.gyan.dev/ffmpeg/builds/packages/ffmpeg-4.4-full_build.7z
-    SET FFMPEG=ffmpeg-4.4-full_build.7z
+    SET FFMPEG_URL=https://www.gyan.dev/ffmpeg/builds/packages/ffmpeg-5.1.2-full_build.7z
+    SET FFMPEG=ffmpeg-5.1.2-full_build.7z
     SET MEDIAINFO_URL=https://mediaarea.net/download/binary/mediainfo/21.03/MediaInfo_CLI_21.03_Windows_x64.zip
     SET MEDIAINFO=MediaInfo_CLI_21.03_Windows_x64.zip
 )
@@ -49,10 +49,10 @@ if not exist "temp\%MEDIAINFO%" ( call curl -k -L -# -o temp\%MEDIAINFO% "%MEDIA
 
 REM ......................extract files & move them to top-level binary folder ......................
 cd temp\
-7z x "%FFMPEG%" ffmpeg-4.4-full_build\bin
-del /q ffmpeg-4.4-full_build\bin\ffplay.exe
+7z x "%FFMPEG%" ffmpeg-5.1.2-full_build\bin
+del /q ffmpeg-5.1.2-full_build\bin\ffplay.exe
 unzip "%MEDIAINFO%" MediaInfo.exe
-move ffmpeg-4.4-full_build\bin\*.* ..\..\..\bin\
+move ffmpeg-5.1.2-full_build\bin\*.* ..\..\..\bin\
 move MediaInfo.exe ..\..\..\bin\
 cd ..
 
