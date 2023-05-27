@@ -634,9 +634,14 @@ class VideoService(QObject):
             self.checkDiskSpace(output)
             outfiles = []
             video_bsf, audio_bsf = self.getBSF(inputs[0])
+            ts = False
             # 1. transcode to mpeg transport streams
             for file in inputs:
-                name, _ = os.path.splitext(file)
+                name, extension = os.path.splitext(file)
+                if extension == '.ts':
+                    ts = True
+                    outfiles = inputs
+                    break
                 outfile = '{}.ts'.format(name)
                 outfiles.append(outfile)
                 if os.path.isfile(outfile):
@@ -654,8 +659,9 @@ class VideoService(QObject):
                     metadata = '-i "{}" -map_metadata 1 '.format(ffmetadata)
                 else:
                     metadata = ''
+                # Since the audio track will lose when specify audio_bsf to ts file
                 args = '-v error -i "concat:{0}" {1}-c copy {2} "{3}"' \
-                       .format("|".join(map(str, outfiles)), metadata, audio_bsf, output)
+                       .format("|".join(map(str, outfiles)), metadata, "" if ts else audio_bsf, output)
                 result = self.cmdExec(self.backends.ffmpeg, args)
                 # 3. cleanup mpegts files
                 [os.remove(file) for file in outfiles]
