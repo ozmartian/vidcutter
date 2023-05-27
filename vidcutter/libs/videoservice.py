@@ -33,7 +33,7 @@ from functools import partial
 from typing import List, Optional, Union
 
 from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QDir, QFileInfo, QObject, QProcess, QProcessEnvironment, QSettings,
-                          QSize, QStandardPaths, QStorageInfo, QTemporaryFile, QTime)
+                          QSize, QStandardPaths, QStorageInfo, QTemporaryFile, QTime, QMetaMethod)
 from PyQt5.QtGui import QPainter, QPixmap
 from PyQt5.QtWidgets import QMessageBox, QWidget
 
@@ -403,7 +403,18 @@ class VideoService(QObject):
                     args.remove('-map')
                     del args[pos]
                     self.smartcut_jobs[index].procs[name].setArguments(args)
-                    self.smartcut_jobs[index].procs[name].started.disconnect()
+                    try:
+                        self.smartcut_jobs[index].procs[name].started.disconnect()
+                    except TypeError as error:
+                        self.logger.exception(error)
+                        # Sometimes the signal seems to be not connected,
+                        # so we need to catch the exception, check it
+                        # and continue if it's not connected.
+                        proc = self.smartcut_jobs[index].procs[name]
+                        is_connected = proc.isSignalConnected(getSignal(proc, "started"))
+                        self.logger.error("Is signal connected ?: %s", is_connected)
+                        if is_connected:
+                            raise
                     self.smartcut_jobs[index].procs[name].start()
                     return
                 else:
@@ -708,3 +719,21 @@ class VideoService(QObject):
         else:
             app_path = os.path.dirname(os.path.realpath(sys.argv[0]))
         return app_path if path is None else os.path.join(app_path, path)
+
+
+def getSignal(oObject: QObject, strSignalName: str) -> QMetaMethod | None:
+    """Returns the QMetaMethod for the given signal name, or None if not found.
+
+    see:
+    - Answer: python - How to find if a signal is connected to anything - Stack Overflow
+      https://stackoverflow.com/a/68621792/12721873
+    """
+    oMetaObj = oObject.metaObject()
+    for i in range(oMetaObj.methodCount()):
+        oMetaMethod = oMetaObj.method(i)
+        if not oMetaMethod.isValid():
+            continue
+        if oMetaMethod.methodType() == QMetaMethod.Signal and \
+            oMetaMethod.name() == strSignalName:
+            return oMetaMethod
+    return None
