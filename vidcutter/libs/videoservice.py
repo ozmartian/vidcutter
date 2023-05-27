@@ -590,18 +590,20 @@ class VideoService(QObject):
 
     def getGOPbisections(self, source: str, start: float, end: float) -> dict:
         keyframes = self.getKeyframes(source)
-        start_pos = bisect_left(keyframes, start)
-        end_pos = bisect_left(keyframes, end)
+        start_for_bisect_left = start + keyframes[0]
+        end_for_bisect_left = end + keyframes[0]
+        start_pos = bisect_left(keyframes, start_for_bisect_left)
+        end_pos = bisect_left(keyframes, end_for_bisect_left)
         return {
             'start': (
-                keyframes[start_pos - 1] if start_pos > 0 else keyframes[start_pos],
-                keyframes[start_pos],
-                keyframes[start_pos + 1]
+                (keyframes[start_pos - 1] if start_pos > 0 else keyframes[start_pos]) - keyframes[0],
+                keyframes[start_pos] - keyframes[0],
+                keyframes[start_pos + 1] - keyframes[0]
             ),
             'end': (
-                keyframes[end_pos - 2] if end_pos != (len(keyframes) - 1) else keyframes[end_pos - 1],
-                keyframes[end_pos - 1] if end_pos != (len(keyframes) - 1) else keyframes[end_pos],
-                keyframes[end_pos]
+                (keyframes[end_pos - 2] if end_pos != (len(keyframes) - 1) else keyframes[end_pos - 1]) - keyframes[0],
+                (keyframes[end_pos - 1] if end_pos != (len(keyframes) - 1) else keyframes[end_pos]) - keyframes[0],
+                keyframes[end_pos] - keyframes[0]
             )
         }
 
