@@ -561,7 +561,7 @@ class VideoService(QObject):
             self.logger.exception('FFprobe JSON decoding error', exc_info=True)
             raise
 
-    def getKeyframes(self, source: str, formatted_time: bool = False) -> list:
+    def getKeyframes(self, source: str, formatted_time: bool = False) -> list[str] | list[float]:
         if len(self.keyframes) and source == self.source:
             return self.keyframes
         timecode = '0:00:00.000000' if formatted_time else 0
@@ -581,7 +581,7 @@ class VideoService(QObject):
                     keyframe_times.append(timecode[:-3])
                 else:
                     keyframe_times.append(float(timecode))
-        last_keyframe = self.duration().toString('h:mm:ss.zzz')
+        last_keyframe = self.duration().toString('h:mm:ss.zzz') if formatted_time else self.parent.qtime2delta(self.duration())
         if keyframe_times[-1] != last_keyframe:
             keyframe_times.append(last_keyframe)
         if source == self.source and not formatted_time:
