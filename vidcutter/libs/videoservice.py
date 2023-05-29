@@ -30,7 +30,7 @@ import shlex
 import sys
 from bisect import bisect_left
 from functools import partial
-from typing import List, Optional, Union
+from typing import List, Optional, TypedDict, Union
 
 from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QDir, QFileInfo, QObject, QProcess, QProcessEnvironment, QSettings,
                           QSize, QStandardPaths, QStorageInfo, QTemporaryFile, QTime, QMetaMethod)
@@ -47,6 +47,15 @@ try:
     from simplejson import loads, JSONDecodeError
 except ImportError:
     from json import loads, JSONDecodeError
+
+
+class SmartCutJob(TypedDict):
+    output: str
+    bitrate: int
+    allstreams: bool
+    procs: dict[str, QProcess]
+    files: dict[str, str]
+    results: dict[str, bool]
 
 
 class VideoService(QObject):
@@ -319,7 +328,7 @@ class VideoService(QObject):
             return args
 
     def smartinit(self, clips: int):
-        self.smartcut_jobs = []
+        self.smartcut_jobs: list[SmartCutJob] = []
         # noinspection PyUnusedLocal
         [
             self.smartcut_jobs.append(Munch(output='', bitrate=0, allstreams=True, procs={}, files={}, results={}))
