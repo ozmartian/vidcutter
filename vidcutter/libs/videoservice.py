@@ -326,6 +326,20 @@ class VideoService(QObject):
             for index in range(clips)
         ]
 
+    @staticmethod
+    def get_path_made_zero(source: str, output: str) -> str:
+        name, _ = os.path.splitext(source)
+        work_folder = os.path.dirname(output)
+        return QDir.toNativeSeparators(os.path.join(work_folder, os.path.basename(f"{name}_made_zero.ts")))
+
+    def make_zero(self, source: str, output: str) -> str:
+        path_made_zero = self.get_path_made_zero(source, output)
+        args = '-v error -i "{0}" -c copy -map 0 -muxpreload 0 -muxdelay 0 -avoid_negative_ts make_zero -y "{1}"'.format(source, path_made_zero)
+        result = self.cmdExec(self.backends.ffmpeg, args)
+        if not result:
+            raise Exception("Failed to make zero")
+        return path_made_zero
+
     def smartcut(self, index: int, source: str, output: str, start: float, end: float, allstreams: bool = True) -> None:
         output_file, output_ext = os.path.splitext(output)
         bisections = self.getGOPbisections(source, start, end)
@@ -601,20 +615,20 @@ class VideoService(QObject):
 
     def getGOPbisections(self, source: str, start: float, end: float) -> dict:
         keyframes = self.getKeyframes(source)
-        start_for_bisect_left = start + keyframes[0]
-        end_for_bisect_left = end + keyframes[0]
+        start_for_bisect_left = start
+        end_for_bisect_left = end
         start_pos = bisect_left(keyframes, start_for_bisect_left)
         end_pos = bisect_left(keyframes, end_for_bisect_left)
         return {
             'start': (
-                (keyframes[start_pos - 1] if start_pos > 0 else keyframes[start_pos]) - keyframes[0],
-                keyframes[start_pos] - keyframes[0],
-                keyframes[start_pos + 1] - keyframes[0]
+                keyframes[start_pos - 1] if start_pos > 0 else keyframes[start_pos],
+                keyframes[start_pos],
+                keyframes[start_pos + 1],
             ),
             'end': (
-                (keyframes[end_pos - 2] if end_pos != (len(keyframes) - 1) else keyframes[end_pos - 1]) - keyframes[0],
-                (keyframes[end_pos - 1] if end_pos != (len(keyframes) - 1) else keyframes[end_pos]) - keyframes[0],
-                keyframes[end_pos] - keyframes[0]
+                keyframes[end_pos - 2] if end_pos != (len(keyframes) - 1) else keyframes[end_pos - 1],
+                keyframes[end_pos - 1] if end_pos != (len(keyframes) - 1) else keyframes[end_pos],
+                keyframes[end_pos],
             )
         }
 

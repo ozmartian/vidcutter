@@ -1334,9 +1334,9 @@ class VideoCutter(QWidget):
 
     def saveMedia(self) -> None:
         clips = len(self.clipTimes)
-        source_file, source_ext = os.path.splitext(self.currentMedia if self.currentMedia is not None
+        source_file_stem, source_ext = os.path.splitext(self.currentMedia if self.currentMedia is not None
                                                    else self.clipTimes[0][3])
-        suggestedFilename = '{0}_EDIT{1}'.format(source_file, source_ext)
+        suggestedFilename = '{0}_EDIT{1}'.format(source_file_stem, source_ext)
         filefilter = 'Video files (*{0})'.format(source_ext)
         if clips > 0:
             self.finalFilename, _ = QFileDialog.getSaveFileName(
@@ -1347,8 +1347,8 @@ class VideoCutter(QWidget):
                 options=self.getFileDialogOptions())
             if self.finalFilename is None or not len(self.finalFilename.strip()):
                 return
-            file, ext = os.path.splitext(self.finalFilename)
-            if len(ext) == 0 and len(source_ext):
+            output_file_stem, output_ext = os.path.splitext(self.finalFilename)
+            if len(output_ext) == 0 and len(source_ext):
                 self.finalFilename += source_ext
             self.lastFolder = QFileInfo(self.finalFilename).absolutePath()
             self.toolbar_save.setDisabled(True)
@@ -1358,7 +1358,7 @@ class VideoCutter(QWidget):
                 self.seekSlider.showProgress(6 if clips > 1 else 5)
                 self.parent.lock_gui(True)
                 self.videoService.smartinit(clips)
-                self.smartcutter(file, source_file, source_ext)
+                self.smartcutter(source_file_stem, source_ext, output_file_stem)
                 return
             steps = 3 if clips > 1 else 2
             self.seekSlider.showProgress(steps)
@@ -1370,12 +1370,12 @@ class VideoCutter(QWidget):
                     filelist.append(clip[3])
                 else:
                     duration = self.delta2QTime(clip[0].msecsTo(clip[1])).toString(self.timeformat)
-                    filename = '{0}_{1}{2}'.format(file, '{0:0>2}'.format(index), source_ext)
+                    filename = '{0}_{1}{2}'.format(output_file_stem, '{0:0>2}'.format(index), source_ext)
                     if not self.keepClips:
                         filename = os.path.join(self.workFolder, os.path.basename(filename))
                     filename = QDir.toNativeSeparators(filename)
                     filelist.append(filename)
-                    if not self.videoService.cut(source='{0}{1}'.format(source_file, source_ext),
+                    if not self.videoService.cut(source='{0}{1}'.format(source_file_stem, source_ext),
                                                  output=filename,
                                                  frametime=clip[0].toString(self.timeformat),
                                                  duration=duration,
@@ -1389,8 +1389,8 @@ class VideoCutter(QWidget):
                         return
             self.joinMedia(filelist)
 
-    def smartcutter(self, file: str, source_file: str, source_ext: str) -> None:
-        self.smartcut_monitor = Munch(clips=[], results=[], externals=0)
+    def smartcutter(self, source_file_stem: str, source_ext: str, output_file_stem: str) -> None:
+        self.smartcut_monitor = Munch(clips=[], results=[], externals=0, source_made_zero=None)
         for index, clip in enumerate(self.clipTimes):
             if len(clip[3]):
                 self.smartcut_monitor.clips.append(clip[3])
@@ -1398,14 +1398,19 @@ class VideoCutter(QWidget):
                 if index == len(self.clipTimes):
                     self.smartmonitor()
             else:
-                filename = '{0}_{1}{2}'.format(file, '{0:0>2}'.format(index), source_ext)
+                absolute_output_path = '{0}_{1}{2}'.format(output_file_stem, '{0:0>2}'.format(index), source_ext)
                 if not self.keepClips:
-                    filename = os.path.join(self.workFolder, os.path.basename(filename))
-                filename = QDir.toNativeSeparators(filename)
-                self.smartcut_monitor.clips.append(filename)
+                    absolute_output_path = os.path.join(self.workFolder, os.path.basename(absolute_output_path))
+                source = '{0}{1}'.format(source_file_stem, source_ext)
+                # Because PTS may not start from 0.000 (or almost 0.000) in case when .ts file.
+                # So searching key frame bisections may not work correctly without making PTS start from 0.000.
+                if source_ext == '.ts':
+                    self.smartcut_monitor.source_made_zero = self.videoService.make_zero(source, absolute_output_path)
+                absolute_output_path = QDir.toNativeSeparators(absolute_output_path)
+                self.smartcut_monitor.clips.append(absolute_output_path)
                 self.videoService.smartcut(index=index,
-                                           source='{0}{1}'.format(source_file, source_ext),
-                                           output=filename,
+                                           source=self.smartcut_monitor.source_made_zero if source_ext == '.ts' else source,
+                                           output=absolute_output_path,
                                            start=VideoCutter.qtime2delta(clip[0]),
                                            end=VideoCutter.qtime2delta(clip[1]),
                                            allstreams=True)
@@ -1419,6 +1424,8 @@ class VideoCutter(QWidget):
         if len(self.smartcut_monitor.results) == len(self.smartcut_monitor.clips) - self.smartcut_monitor.externals:
             if False not in self.smartcut_monitor.results:
                 self.joinMedia(self.smartcut_monitor.clips)
+            if self.smartcut_monitor.source_made_zero:
+                QFile.remove(self.smartcut_monitor.source_made_zero)
 
     def joinMedia(self, filelist: list) -> None:
         if len(filelist) > 1:
