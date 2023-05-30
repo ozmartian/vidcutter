@@ -684,7 +684,7 @@ class VideoService(QObject):
                     metadata = ''
                 # Since the audio track will lose when specify audio_bsf to ts file
                 args = '-v error -i "concat:{0}" {1}-c copy {2} "{3}"' \
-                       .format("|".join(map(str, outfiles)), metadata, "" if ts else audio_bsf, output)
+                       .format("|".join(map(str, outfiles)), metadata, "-map 0" if ts else audio_bsf, output)
                 result = self.cmdExec(self.backends.ffmpeg, args)
                 # 3. cleanup mpegts files
                 [os.remove(file) for file in outfiles]
