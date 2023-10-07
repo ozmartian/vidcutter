@@ -1,7 +1,7 @@
 {
     "app-id": "com.ozmartians.VidCutter",
     "runtime": "org.kde.Platform",
-    "runtime-version": "5.15-21.08",
+    "runtime-version": "5.15-22.08",
     "sdk": "org.kde.Sdk",
     "command": "vidcutter",
     "finish-args": [
@@ -38,8 +38,8 @@
         ],
         "sources": [{
             "type": "archive",
-            "url": "https://files.pythonhosted.org/packages/5b/01/f8fd986bc7f456f1a925ee0239f0391838ade92cdb6e5b674ffb8b86cfd6/PyOpenGL-3.1.6.tar.gz",
-            "sha256": "8ea6c8773927eda7405bffc6f5bb93be81569a7b05c8cac50cd94e969dce5e27"
+            "url": "https://files.pythonhosted.org/packages/72/b6/970868d44b619292f1f54501923c69c9bd0ab1d2d44cf02590eac2706f4f/PyOpenGL-3.1.7.tar.gz",
+            "sha256": "eef31a3888e6984fd4d8e6c9961b184c9813ca82604d37fe3da80eb000a76c86"
         }]
     },
     {
@@ -50,8 +50,8 @@
         ],
         "sources": [{
             "type": "archive",
-            "url": "https://files.pythonhosted.org/packages/7a/47/c7cc3d4ed15f09917838a2fb4e1759eafb6d2f37ebf7043af984d8b36cf7/simplejson-3.17.6.tar.gz",
-            "sha256": "cf98038d2abf63a1ada5730e91e84c642ba6c225b0198c3684151b1f80c5f8a6"
+            "url": "https://files.pythonhosted.org/packages/79/79/3ccb95bb4154952532f280f7a41979fbfb0fbbaee4d609810ecb01650afa/simplejson-3.19.2.tar.gz",
+            "sha256": "9eb442a2442ce417801c912df68e1f6ccfcd41577ae7274953ab3ad24ef7d82c"
         }]
     },
     {
@@ -66,8 +66,8 @@
         ],
         "sources": [{
             "type": "archive",
-            "url": "https://files.pythonhosted.org/packages/8e/a4/d5e4bf99dd50134c88b95e926d7b81aad2473b47fde5e3e4eac2c69a8942/PyQt5-5.15.4.tar.gz",
-            "sha256": "2a69597e0dd11caabe75fae133feca66387819fc9bc050f547e5551bce97e5be"
+            "url": "https://files.pythonhosted.org/packages/5c/46/b4b6eae1e24d9432905ef1d4e7c28b6610e28252527cdc38f2a75997d8b5/PyQt5-5.15.9.tar.gz",
+            "sha256": "dc41e8401a90dc3e2b692b411bd5492ab559ae27a27424eed4bd3915564ec4c0"
         }],
           "modules": [{
             "name": "sip",
@@ -91,8 +91,8 @@
             ],
             "sources": [{
                 "type": "archive",
-                "url": "https://files.pythonhosted.org/packages/a3/82/08a09deda701feb930aa6462f2f22e07cbcb9aa7c1ef361a090221b4587e/PyQt5_sip-12.10.1.tar.gz",
-                "sha256": "97e008795c453488f51a5c97dbff29cda7841afb1ca842c9e819d8e6cc0ae724"
+                "url": "https://files.pythonhosted.org/packages/99/61/6954ff8f8ab550a8fec56a2f29be362f281ee71b6edc7615b905adb0e6a9/PyQt5_sip-12.12.2.tar.gz",
+                "sha256": "10d9bfa9f59f0fd1cad81be187479316ffc95684f573efea94512cb4257d2b17"
            }]
         }]
     },
@@ -107,13 +107,13 @@
         ],
         "sources": [{
             "type": "archive",
-            "url": "https://github.com/mpv-player/mpv/archive/v0.34.1.tar.gz",
-            "sha256": "32ded8c13b6398310fa27767378193dc1db6d78b006b70dbcbd3123a1445e746"
+            "url": "https://github.com/mpv-player/mpv/archive/v0.36.0.tar.gz",
+            "sha256": "29abc44f8ebee013bb2f9fe14d80b30db19b534c679056e4851ceadf5a5e8bf6"
         },
         {
             "type": "file",
-            "url": "https://waf.io/waf-2.0.23",
-            "sha256": "28a2e4583314a162cfcbffefb8a9202c1d7869040d30b5852da479b76d9c0491",
+            "url": "https://waf.io/waf-2.0.26",
+            "sha256": "dcec3e179f9c33a66544f1b3d7d91f20f6373530510fa6a858cddb6bfdcde14b",
             "dest-filename": "waf"
         }],
         "modules": [{
@@ -122,8 +122,8 @@
             "config-opts": ["--disable-static"],
             "sources": [{
                 "type": "archive",
-                "url": "https://github.com/libass/libass/releases/download/0.15.2/libass-0.15.2.tar.xz",
-                "sha256": "1be2df9c4485a57d78bb18c0a8ed157bc87a5a8dd48c661961c625cb112832fd"
+                "url": "https://github.com/libass/libass/releases/download/0.17.1/libass-0.17.1.tar.gz",
+                "sha256": "d653be97198a0543c69111122173c41a99e0b91426f9e17f06a858982c2fb03d"
             }],
             "modules": [{
                 "name": "fribidi",
@@ -174,8 +174,8 @@
             },
             "sources": [{
                 "type": "archive",
-                "url": "https://ffmpeg.org/releases/ffmpeg-5.0.1.tar.xz",
-                "sha256": "ef2efae259ce80a240de48ec85ecb062cecca26e4352ffb3fda562c21a93007b"
+                "url": "https://ffmpeg.org/releases/ffmpeg-5.1.2.tar.xz",
+                "sha256": "619e706d662c8420859832ddc259cd4d4096a48a2ce1eefd052db9e440eef3dc"
             }],
             "modules": [{
                 "name": "ffnvcodec",
@@ -188,10 +188,9 @@
                     "make install PREFIX=${FLATPAK_DEST}"
                 ],
                 "sources": [{
-                    "type": "git",
-                    "url": "https://git.videolan.org/git/ffmpeg/nv-codec-headers.git",
-                    "tag": "n11.1.5.1",
-                    "commit": "84483da70d903239d4536763fde8c7e6c4e80784"
+                    "type": "archive",
+                    "url": "https://github.com/FFmpeg/nv-codec-headers/releases/download/n12.1.14.0/nv-codec-headers-12.1.14.0.tar.gz",
+                    "sha256": "62b30ab37e4e9be0d0c5b37b8fee4b094e38e570984d56e1135a6b6c2c164c9f"
                 }]
             },
             {
@@ -220,8 +219,8 @@
                 ],
                 "sources": [{
                     "type": "archive",
-                    "url": "https://github.com/webmproject/libvpx/archive/refs/tags/v1.11.0.tar.gz",
-                    "sha256": "965e51c91ad9851e2337aebcc0f517440c637c506f3a03948062e3d5ea129a83"
+                    "url": "https://github.com/webmproject/libvpx/archive/refs/tags/v1.13.1.tar.gz",
+                    "sha256": "00dae80465567272abd077f59355f95ac91d7809a2d3006f9ace2637dd429d14"
                 }]
             },
             {
@@ -281,8 +280,8 @@
                 ],
                 "sources": [{
                     "type": "archive",
-                    "url": "https://bitbucket.org/multicoreware/x265_git/downloads/x265_3.3.tar.gz",
-                    "sha256": "c6d744a87eda55560da715f56f878640554ddc06e2d0fcbd822fa330affc22cc"
+                    "url": "https://bitbucket.org/multicoreware/x265_git/downloads/x265_3.5.tar.gz",
+                    "sha256": "e70a3335cacacbba0b3a20ec6fecd6783932288ebc8163ad74bcc9606477cae8"
                 }]
             },
             {
@@ -316,6 +315,7 @@
         "subdir": "Project/GNU/CLI",
         "sources": [{
             "type": "git",
+            "tag": "v23.10",
             "url": "https://github.com/MediaArea/MediaInfo.git"
         }],
         "modules": [{
@@ -328,8 +328,8 @@
             ],
             "sources": [{
                 "type": "git",
-                "url": "https://github.com/MediaArea/ZenLib.git",
-                "commit": "5fe5d611141e720edecff87e51a2d4d0ad0586b1"
+                "tag": "v0.4.41",
+                "url": "https://github.com/MediaArea/ZenLib.git"
             }]
         },
         {
@@ -342,8 +342,8 @@
             ],
             "sources": [{
                 "type": "git",
-                "url": "https://github.com/MediaArea/MediaInfoLib.git",
-                "commit": "382a3a62311053e0c92e6b05c41f4c630044953e"
+                "tag": "v23.1",
+                "url": "https://github.com/MediaArea/MediaInfoLib.git"
             }]
         }]
     },
@@ -362,7 +362,7 @@
         ],
         "sources": [{
             "type": "git",
-            "commit": "5c4f83d047863dbb1b33ae00fe161de54456c7f5",
+            "commit": "8f01c76f0ec727fa336cb2cb6a645a58e3a29e64",
             "url": "https://github.com/ozmartian/vidcutter.git"
         }]
     }]
