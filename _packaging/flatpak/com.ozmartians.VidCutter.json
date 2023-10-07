@@ -13,7 +13,7 @@
         "--share=network",
         "--socket=pulseaudio",
         "--socket=wayland",
-        "--socket=x11",
+        "--socket=fallback-x11",
         "--talk-name=com.canonical.Unity.LauncherEntry"
     ],
     "cleanup": [
@@ -38,8 +38,8 @@
         ],
         "sources": [{
             "type": "archive",
-            "url": "https://files.pythonhosted.org/packages/72/b6/970868d44b619292f1f54501923c69c9bd0ab1d2d44cf02590eac2706f4f/PyOpenGL-3.1.7.tar.gz",
-            "sha256": "eef31a3888e6984fd4d8e6c9961b184c9813ca82604d37fe3da80eb000a76c86"
+            "url": "https://files.pythonhosted.org/packages/5b/01/f8fd986bc7f456f1a925ee0239f0391838ade92cdb6e5b674ffb8b86cfd6/PyOpenGL-3.1.6.tar.gz",
+            "sha256": "8ea6c8773927eda7405bffc6f5bb93be81569a7b05c8cac50cd94e969dce5e27"
         }]
     },
     {
@@ -66,8 +66,8 @@
         ],
         "sources": [{
             "type": "archive",
-            "url": "https://files.pythonhosted.org/packages/5c/46/b4b6eae1e24d9432905ef1d4e7c28b6610e28252527cdc38f2a75997d8b5/PyQt5-5.15.9.tar.gz",
-            "sha256": "dc41e8401a90dc3e2b692b411bd5492ab559ae27a27424eed4bd3915564ec4c0"
+            "url": "https://files.pythonhosted.org/packages/8e/a4/d5e4bf99dd50134c88b95e926d7b81aad2473b47fde5e3e4eac2c69a8942/PyQt5-5.15.4.tar.gz",
+            "sha256": "2a69597e0dd11caabe75fae133feca66387819fc9bc050f547e5551bce97e5be"
         }],
           "modules": [{
             "name": "sip",
@@ -91,8 +91,8 @@
             ],
             "sources": [{
                 "type": "archive",
-                "url": "https://files.pythonhosted.org/packages/99/61/6954ff8f8ab550a8fec56a2f29be362f281ee71b6edc7615b905adb0e6a9/PyQt5_sip-12.12.2.tar.gz",
-                "sha256": "10d9bfa9f59f0fd1cad81be187479316ffc95684f573efea94512cb4257d2b17"
+                "url": "https://files.pythonhosted.org/packages/a3/82/08a09deda701feb930aa6462f2f22e07cbcb9aa7c1ef361a090221b4587e/PyQt5_sip-12.10.1.tar.gz",
+                "sha256": "97e008795c453488f51a5c97dbff29cda7841afb1ca842c9e819d8e6cc0ae724"
            }]
         }]
     },
@@ -226,7 +226,6 @@
             {
                 "name": "x264",
                 "config-opts": [
-                    "--prefix=${FLATPAK_DEST}",
                     "--enable-shared",
                     "--disable-cli",
                     "--disable-lavf",
@@ -280,8 +279,8 @@
                 ],
                 "sources": [{
                     "type": "archive",
-                    "url": "https://bitbucket.org/multicoreware/x265_git/downloads/x265_3.5.tar.gz",
-                    "sha256": "e70a3335cacacbba0b3a20ec6fecd6783932288ebc8163ad74bcc9606477cae8"
+                    "url": "https://bitbucket.org/multicoreware/x265_git/downloads/x265_3.3.tar.gz",
+                    "sha256": "c6d744a87eda55560da715f56f878640554ddc06e2d0fcbd822fa330affc22cc"
                 }]
             },
             {
@@ -315,7 +314,7 @@
         "subdir": "Project/GNU/CLI",
         "sources": [{
             "type": "git",
-            "tag": "v23.10",
+            "commit": "efdde33b336394d058fe6a75447d3cca3ac81900",
             "url": "https://github.com/MediaArea/MediaInfo.git"
         }],
         "modules": [{
@@ -328,7 +327,7 @@
             ],
             "sources": [{
                 "type": "git",
-                "tag": "v0.4.41",
+                "commit": "1250d326306f4036d78dfdb7b24b344e729eb9f3",
                 "url": "https://github.com/MediaArea/ZenLib.git"
             }]
         },
@@ -342,7 +341,7 @@
             ],
             "sources": [{
                 "type": "git",
-                "tag": "v23.1",
+                "commit": "a475e4ee71901e0f377688024c128e1634f180e1",
                 "url": "https://github.com/MediaArea/MediaInfoLib.git"
             }]
         }]
