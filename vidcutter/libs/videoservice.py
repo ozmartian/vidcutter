@@ -30,10 +30,10 @@ import shlex
 import sys
 from bisect import bisect_left
 from functools import partial
-from typing import List, Optional, Union
+from typing import List, Optional, TypedDict, Union
 
 from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QDir, QFileInfo, QObject, QProcess, QProcessEnvironment, QSettings,
-                          QSize, QStandardPaths, QStorageInfo, QTemporaryFile, QTime)
+                          QSize, QStandardPaths, QStorageInfo, QTemporaryFile, QTime, QMetaMethod)
 from PyQt5.QtGui import QPainter, QPixmap
 from PyQt5.QtWidgets import QMessageBox, QWidget
 
@@ -47,6 +47,15 @@ try:
     from simplejson import loads, JSONDecodeError
 except ImportError:
     from json import loads, JSONDecodeError
+
+
+class SmartCutJob(TypedDict):
+    output: str
+    bitrate: int
+    allstreams: bool
+    procs: dict[str, QProcess]
+    files: dict[str, str]
+    results: dict[str, bool]
 
 
 class VideoService(QObject):
@@ -319,12 +328,26 @@ class VideoService(QObject):
             return args
 
     def smartinit(self, clips: int):
-        self.smartcut_jobs = []
+        self.smartcut_jobs: list[SmartCutJob] = []
         # noinspection PyUnusedLocal
         [
             self.smartcut_jobs.append(Munch(output='', bitrate=0, allstreams=True, procs={}, files={}, results={}))
             for index in range(clips)
         ]
+
+    @staticmethod
+    def get_path_made_zero(source: str, output: str) -> str:
+        name, _ = os.path.splitext(source)
+        work_folder = os.path.dirname(output)
+        return QDir.toNativeSeparators(os.path.join(work_folder, os.path.basename(f"{name}_made_zero.ts")))
+
+    def make_zero(self, source: str, output: str) -> str:
+        path_made_zero = self.get_path_made_zero(source, output)
+        args = '-v error -i "{0}" -c copy -map 0 -muxpreload 0 -muxdelay 0 -avoid_negative_ts make_zero -y "{1}"'.format(source, path_made_zero)
+        result = self.cmdExec(self.backends.ffmpeg, args)
+        if not result:
+            raise Exception("Failed to make zero")
+        return path_made_zero
 
     def smartcut(self, index: int, source: str, output: str, start: float, end: float, allstreams: bool = True) -> None:
         output_file, output_ext = os.path.splitext(output)
@@ -403,7 +426,18 @@ class VideoService(QObject):
                     args.remove('-map')
                     del args[pos]
                     self.smartcut_jobs[index].procs[name].setArguments(args)
-                    self.smartcut_jobs[index].procs[name].started.disconnect()
+                    try:
+                        self.smartcut_jobs[index].procs[name].started.disconnect()
+                    except TypeError as error:
+                        self.logger.exception(error)
+                        # Sometimes the signal seems to be not connected,
+                        # so we need to catch the exception, check it
+                        # and continue if it's not connected.
+                        proc = self.smartcut_jobs[index].procs[name]
+                        is_connected = proc.isSignalConnected(getSignal(proc, "started"))
+                        self.logger.error("Is signal connected ?: %s", is_connected)
+                        if is_connected:
+                            raise
                     self.smartcut_jobs[index].procs[name].start()
                     return
                 else:
@@ -561,7 +595,7 @@ class VideoService(QObject):
             self.logger.exception('FFprobe JSON decoding error', exc_info=True)
             raise
 
-    def getKeyframes(self, source: str, formatted_time: bool = False) -> list:
+    def getKeyframes(self, source: str, formatted_time: bool = False) -> list[str] | list[float]:
         if len(self.keyframes) and source == self.source:
             return self.keyframes
         timecode = '0:00:00.000000' if formatted_time else 0
@@ -570,14 +604,18 @@ class VideoService(QObject):
         result = self.cmdExec(self.backends.ffprobe, args, output=True, suppresslog=True, mergechannels=False)
         keyframe_times = []
         for line in result.split('\n'):
-            if line.split(',')[1] != 'N/A':
-                timecode = line.split(',')[1]
+            split_line = line.split(',')
+            # May ['\r'] in case when .ts renamed from .m2ts
+            if len(split_line) <= 1:
+                continue
+            if split_line[1] != 'N/A':
+                timecode = split_line[1]
             if re.search(',K', line):
                 if formatted_time:
                     keyframe_times.append(timecode[:-3])
                 else:
                     keyframe_times.append(float(timecode))
-        last_keyframe = self.duration().toString('h:mm:ss.zzz')
+        last_keyframe = self.duration().toString('h:mm:ss.zzz') if formatted_time else self.parent.qtime2delta(self.duration())
         if keyframe_times[-1] != last_keyframe:
             keyframe_times.append(last_keyframe)
         if source == self.source and not formatted_time:
@@ -586,18 +624,20 @@ class VideoService(QObject):
 
     def getGOPbisections(self, source: str, start: float, end: float) -> dict:
         keyframes = self.getKeyframes(source)
-        start_pos = bisect_left(keyframes, start)
-        end_pos = bisect_left(keyframes, end)
+        start_for_bisect_left = start
+        end_for_bisect_left = end
+        start_pos = bisect_left(keyframes, start_for_bisect_left)
+        end_pos = bisect_left(keyframes, end_for_bisect_left)
         return {
             'start': (
                 keyframes[start_pos - 1] if start_pos > 0 else keyframes[start_pos],
                 keyframes[start_pos],
-                keyframes[start_pos + 1]
+                keyframes[start_pos + 1],
             ),
             'end': (
                 keyframes[end_pos - 2] if end_pos != (len(keyframes) - 1) else keyframes[end_pos - 1],
                 keyframes[end_pos - 1] if end_pos != (len(keyframes) - 1) else keyframes[end_pos],
-                keyframes[end_pos]
+                keyframes[end_pos],
             )
         }
 
@@ -617,9 +657,14 @@ class VideoService(QObject):
             self.checkDiskSpace(output)
             outfiles = []
             video_bsf, audio_bsf = self.getBSF(inputs[0])
+            ts = False
             # 1. transcode to mpeg transport streams
             for file in inputs:
-                name, _ = os.path.splitext(file)
+                name, extension = os.path.splitext(file)
+                if extension == '.ts':
+                    ts = True
+                    outfiles = inputs
+                    break
                 outfile = '{}.ts'.format(name)
                 outfiles.append(outfile)
                 if os.path.isfile(outfile):
@@ -637,8 +682,9 @@ class VideoService(QObject):
                     metadata = '-i "{}" -map_metadata 1 '.format(ffmetadata)
                 else:
                     metadata = ''
+                # Since the audio track will lose when specify audio_bsf to ts file
                 args = '-v error -i "concat:{0}" {1}-c copy {2} "{3}"' \
-                       .format("|".join(map(str, outfiles)), metadata, audio_bsf, output)
+                       .format("|".join(map(str, outfiles)), metadata, "-map 0" if ts else audio_bsf, output)
                 result = self.cmdExec(self.backends.ffmpeg, args)
                 # 3. cleanup mpegts files
                 [os.remove(file) for file in outfiles]
@@ -702,3 +748,21 @@ class VideoService(QObject):
         else:
             app_path = os.path.dirname(os.path.realpath(sys.argv[0]))
         return app_path if path is None else os.path.join(app_path, path)
+
+
+def getSignal(oObject: QObject, strSignalName: str) -> QMetaMethod | None:
+    """Returns the QMetaMethod for the given signal name, or None if not found.
+
+    see:
+    - Answer: python - How to find if a signal is connected to anything - Stack Overflow
+      https://stackoverflow.com/a/68621792/12721873
+    """
+    oMetaObj = oObject.metaObject()
+    for i in range(oMetaObj.methodCount()):
+        oMetaMethod = oMetaObj.method(i)
+        if not oMetaMethod.isValid():
+            continue
+        if oMetaMethod.methodType() == QMetaMethod.Signal and \
+            oMetaMethod.name() == strSignalName:
+            return oMetaMethod
+    return None
