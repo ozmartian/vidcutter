@@ -264,8 +264,16 @@ class VideoService(QObject):
         else:
             args = '-i "{}"'.format(source)
             result = self.cmdExec(self.backends.ffmpeg, args, True)
-            vcodec = re.search(r'Stream.*Video:\s(\w+)', result).group(1)
-            acodec = re.search(r'Stream.*Audio:\s(\w+)', result).group(1)
+            match = re.search(r'Stream.*Video:\s(\w+)', result)
+            if match:
+                vcodec = match.group(1)
+            else:
+                vcodec = None
+            match = re.search(r'Stream.*Audio:\s(\w+)', result)
+            if match:
+                acodec = match.group(1)
+            else:
+                acodec = None
             return vcodec, acodec
 
     def parseMappings(self, allstreams: bool = True) -> str:
@@ -403,7 +411,11 @@ class VideoService(QObject):
                     args.remove('-map')
                     del args[pos]
                     self.smartcut_jobs[index].procs[name].setArguments(args)
-                    self.smartcut_jobs[index].procs[name].started.disconnect()
+                    try:
+                        self.smartcut_jobs[index].procs[name].started.disconnect()
+                    except TypeError as e:
+                        self.logger.exception('Failed to disconnect SmartCut job {0}.'.format(name), exc_info=True)
+
                     self.smartcut_jobs[index].procs[name].start()
                     return
                 else:
@@ -450,7 +462,7 @@ class VideoService(QObject):
     @staticmethod
     def cleanup(files: List[str]) -> None:
         try:
-            [os.remove(file) for file in files]
+            [os.remove(file) for file in files if file]
         except FileNotFoundError:
             pass
 
@@ -577,7 +589,11 @@ class VideoService(QObject):
                     keyframe_times.append(timecode[:-3])
                 else:
                     keyframe_times.append(float(timecode))
-        last_keyframe = self.duration().toString('h:mm:ss.zzz')
+        if formatted_time:
+            last_keyframe = self.duration().toString('h:mm:ss.zzz')
+        else:
+            last_keyframe = self.parent.qtime2delta(self.duration())
+        self.logger.info('getKeyframes last keyframe: {0}, repr: {0!r}'.format(last_keyframe))
         if keyframe_times[-1] != last_keyframe:
             keyframe_times.append(last_keyframe)
         if source == self.source and not formatted_time:
@@ -619,6 +635,8 @@ class VideoService(QObject):
             video_bsf, audio_bsf = self.getBSF(inputs[0])
             # 1. transcode to mpeg transport streams
             for file in inputs:
+                if not file:
+                    continue
                 name, _ = os.path.splitext(file)
                 outfile = '{}.ts'.format(name)
                 outfiles.append(outfile)
