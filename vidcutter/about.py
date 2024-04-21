@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 #######################################################################
@@ -247,7 +247,8 @@ class AboutTab(BaseTab):
             return self.parent.mpv_service.version()
         except Exception:
             self.parent.logger.exception('mpv version error', exc_info=True)
-            return self.missing
+            return 'n/a'
+            #return self.missing
 
     @cached_property
     def ffmpeg_version(self) -> str:

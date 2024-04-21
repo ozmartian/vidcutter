@@ -216,10 +216,9 @@ class mpvWidget(QOpenGLWidget):
     def showText(self, msg: str, duration: int=5, level: int=0):
         self.mpv.command('show-text', msg, duration * 1000, level)
 
-    @pyqtSlot(str, name='ewewf', )
     def play(self, filepath) -> None:
         if os.path.isfile(filepath):
-            self.mpv.command('loadfile', filepath, 'replace')
+            self.mpv.command('loadfile', filepath, 'replace', -1)
 
     def frameStep(self) -> None:
         self.mpv.command('frame-step')
