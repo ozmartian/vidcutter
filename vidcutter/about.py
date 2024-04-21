@@ -247,7 +247,7 @@ class AboutTab(BaseTab):
             return self.parent.mpv_service.version()
         except Exception:
             self.parent.logger.exception('mpv version error', exc_info=True)
-            return 'n/a'
+            return '2.x'
             #return self.missing
 
     @cached_property
