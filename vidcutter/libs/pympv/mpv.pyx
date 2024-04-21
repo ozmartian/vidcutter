@@ -1,3 +1,5 @@
+# cython: language_level=3
+
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
@@ -32,8 +34,6 @@ __author__ = "Andre D"
 
 _REQUIRED_CAPI_MAJOR = 2
 _MIN_CAPI_MINOR = 0
-#_REQUIRED_CAPI_MAJOR = 1
-#_MIN_CAPI_MINOR = 109
 
 cdef unsigned long _CAPI_VERSION
 with nogil:
@@ -48,28 +48,19 @@ if _CAPI_MAJOR != _REQUIRED_CAPI_MAJOR or _CAPI_MINOR < _MIN_CAPI_MINOR:
             (_REQUIRED_CAPI_MAJOR, _MIN_CAPI_MINOR, _CAPI_MAJOR, _CAPI_MINOR)
     )
 
-cdef extern from "Python.h":
-    void Py_Initialize()
-
-_is_py3 = sys.version_info >= (3,)
-_strdec_err = "surrogateescape" if _is_py3 else "strict"
 # mpv -> Python
-def _strdec(s):
-    try:
-        return s.decode("utf-8", _strdec_err)
-    except UnicodeDecodeError:
-        # In python2, bail to bytes on failure
-        return bytes(s)
+cdef str _strdec(bytes s):
+    return s.decode("utf-8", "surrogateescape")
 
 # Python -> mpv
-def _strenc(s):
-    try:
-        return s.encode("utf-8", _strdec_err)
-    except UnicodeEncodeError:
-        # In python2, assume bytes and walk right through
-        return s
+cdef bytes _strenc(str s):
+    return s.encode("utf-8", "surrogateescape")
 
-Py_Initialize()
+# TODO: Remove this call once Python 3.6 is EOL: it is automatically called by
+# Py_Initialize() since Python 3.7 and will be removed in Python 3.11.
+cdef extern from "Python.h":
+    void PyEval_InitThreads()
+PyEval_InitThreads()
 
 class Errors:
     """Set of known error codes from MpvError and Event responses.
@@ -116,21 +107,14 @@ class Events:
     start_file = MPV_EVENT_START_FILE
     end_file = MPV_EVENT_END_FILE
     file_loaded = MPV_EVENT_FILE_LOADED
-    # tracks_changed = MPV_EVENT_TRACKS_CHANGED
-    # tracks_switched = MPV_EVENT_TRACK_SWITCHED
     idle = MPV_EVENT_IDLE
-    # pause = MPV_EVENT_PAUSE
-    # unpause = MPV_EVENT_UNPAUSE
     tick = MPV_EVENT_TICK
-    # script_input_dispatch = MPV_EVENT_SCRIPT_INPUT_DISPATCH
     client_message = MPV_EVENT_CLIENT_MESSAGE
     video_reconfig = MPV_EVENT_VIDEO_RECONFIG
     audio_reconfig = MPV_EVENT_AUDIO_RECONFIG
-    # metadata_update = MPV_EVENT_METADATA_UPDATE
     seek = MPV_EVENT_SEEK
     playback_restart = MPV_EVENT_PLAYBACK_RESTART
     property_change = MPV_EVENT_PROPERTY_CHANGE
-    # chapter_change = MPV_EVENT_CHAPTER_CHANGE
 
 
 class LogLevels:
@@ -166,19 +150,6 @@ cdef class EndOfFileReached(object):
         self.reason = eof.reason
         self.error = eof.error
         return self
-
-
-# cdef class InputDispatch(object):
-#     """Data field for MPV_EVENT_SCRIPT_INPUT_DISPATCH events.
-
-#     Wraps: mpv_event_script_input_dispatch
-#     """
-#     cdef public object arg0, type
-
-#     cdef _init(self, mpv_event_script_input_dispatch* input):
-#         self.arg0 = input.arg0
-#         self.type = _strdec(input.type)
-#         return self
 
 
 cdef class LogMessage(object):
@@ -278,8 +249,6 @@ cdef class Event(object):
             return Property()._init(<mpv_event_property*>data)
         elif self.id == MPV_EVENT_LOG_MESSAGE:
             return LogMessage()._init(<mpv_event_log_message*>data)
-        # elif self.id == MPV_EVENT_SCRIPT_INPUT_DISPATCH:
-        #     return InputDispatch()._init(<mpv_event_script_input_dispatch*>data)
         elif self.id == MPV_EVENT_CLIENT_MESSAGE:
             climsg = <mpv_event_client_message*>data
             args = []
@@ -302,7 +271,7 @@ cdef class Event(object):
         return _strdec(name_c)
 
     cdef _init(self, mpv_event* event, ctx):
-        cdef uint64_t ctxid = <uint64_t>id(ctx)
+        ctxid = id(ctx)
         self.id = event.event_id
         self.data = self._data(event)
         userdata = _reply_userdatas[ctxid].get(event.reply_userdata, None)
@@ -342,8 +311,8 @@ class MPVError(Exception):
 class PyMPVError(Exception):
     pass
 
-cdef _callbacks = dict()
-cdef _reply_userdatas = dict()
+cdef dict _callbacks = {}
+cdef dict _reply_userdatas = {}
 
 class _ReplyUserData(object):
     def __init__(self, data):
@@ -367,10 +336,6 @@ cdef class Context(object):
     """
     cdef mpv_handle *_ctx
     cdef object callback, callbackthread, reply_userdata
-
-    @property
-    def api_version(self):
-        return _CAPI_MINOR, _CAPI_MAJOR, _CAPI_VERSION
 
     @property
     def name(self):
@@ -397,18 +362,6 @@ cdef class Context(object):
         with nogil:
             time = mpv_get_time_us(self._ctx)
         return time
-
-    # def suspend(self):
-    #     """Wraps: mpv_suspend"""
-    #     assert self._ctx
-    #     with nogil:
-    #         mpv_suspend(self._ctx)
-
-    # def resume(self):
-    #     """Wraps: mpv_resume"""
-    #     assert self._ctx
-    #     with nogil:
-    #         mpv_resume(self._ctx)
 
     @_errors
     def request_event(self, event, enable):
@@ -736,7 +689,7 @@ cdef class Context(object):
         return pipe
 
     def __cinit__(self):
-        cdef uint64_t ctxid = <uint64_t>id(self)
+        ctxid = id(self)
         with nogil:
             self._ctx = mpv_create()
         if not self._ctx:
@@ -790,7 +743,7 @@ cdef class Context(object):
     def shutdown(self):
         if self._ctx == NULL:
             return
-        cdef uint64_t ctxid = <uint64_t>id(self)
+        ctxid = id(self)
         with nogil:
             mpv_terminate_destroy(self._ctx)
         self.callbackthread.shutdown()
@@ -800,83 +753,14 @@ cdef class Context(object):
         self.reply_userdata = None
         self._ctx = NULL
 
-    # def opengl_cb_api(self):
-    #     cdef void *cb
-
-    #     _ctx = mpv_get_sub_api(self._ctx, MPV_SUB_API_OPENGL_CB)
-    #     if not _ctx:
-    #         raise MPVError("OpenGL API not available")
-
-    #     ctx = OpenGLContext()
-    #     ctx._ctx = <mpv_opengl_cb_context*>_ctx
-
-    #     return ctx
-
     def __dealloc__(self):
         self.shutdown()
 
-cdef void *_c_getprocaddress(void *ctx, const char *name) with gil:
+cdef void *_c_getprocaddress(void *ctx, const char *name) noexcept with gil:
     return <void *><intptr_t>(<object>ctx)(name)
 
-cdef void _c_updatecb(void *ctx) with gil:
+cdef void _c_updatecb(void *ctx) noexcept with gil:
     (<object>ctx)()
-
-# cdef class OpenGLContext(object):
-#     cdef:
-#         mpv_opengl_cb_context *_ctx
-#         bint inited
-#         object update_cb
-
-#     def __init__(self):
-#         self.inited = False
-#         warnings.warn("OpenGLContext is deprecated, please switch to RenderContext", DeprecationWarning)
-
-#     def init_gl(self, exts, get_proc_address):
-#         exts = _strenc(exts) if exts is not None else None
-#         cdef char* extsc = NULL
-#         if exts is not None:
-#             extsc = exts
-#         with nogil:
-#             err = mpv_opengl_cb_init_gl(self._ctx, extsc, &_c_getprocaddress,
-#                                         <void *>get_proc_address)
-#         if err < 0:
-#             raise MPVError(err)
-
-#         self.inited = True
-
-#     def set_update_callback(self, cb):
-#         self.update_cb = cb
-#         with nogil:
-#             mpv_opengl_cb_set_update_callback(self._ctx, &_c_updatecb, <void *>cb)
-
-#     def draw(self, fbo, w, h):
-#         cdef:
-#             int fboc = fbo
-#             int wc = w
-#             int hc = h
-#         with nogil:
-#             err = mpv_opengl_cb_draw(self._ctx, fboc, wc, hc)
-#         if err < 0:
-#             raise MPVError(err)
-
-#     def report_flip(self, time):
-#         cdef int64_t ctime = time
-#         with nogil:
-#             err = mpv_opengl_cb_report_flip(self._ctx, ctime)
-#         if err < 0:
-#             raise MPVError(err)
-
-#     def uninit_gl(self):
-#         if not self.inited:
-#             return
-#         with nogil:
-#             err = mpv_opengl_cb_uninit_gl(self._ctx)
-#         if err < 0:
-#             raise MPVError(err)
-#         self.inited = False
-
-#     def __dealloc__(self):
-#         self.uninit_gl()
 
 DEF MAX_RENDER_PARAMS = 32
 
@@ -956,19 +840,19 @@ cdef class RenderContext(object):
                  x11_display=None,
                  wl_display=None,
                  drm_display=None,
-                 drm_osd_size=None
+                 drm_draw_surface_size=None
                  ):
 
         cdef:
             mpv_opengl_init_params gl_params
             mpv_opengl_drm_params drm_params
-            mpv_opengl_drm_osd_size _drm_osd_size
+            mpv_opengl_drm_draw_surface_size _drm_draw_surface_size
 
         self._mpv = mpv
 
         memset(&gl_params, 0, sizeof(gl_params))
         memset(&drm_params, 0, sizeof(drm_params))
-        memset(&_drm_osd_size, 0, sizeof(_drm_osd_size))
+        memset(&_drm_draw_surface_size, 0, sizeof(_drm_draw_surface_size))
 
         params = _RenderParams()
 
@@ -999,9 +883,9 @@ cdef class RenderContext(object):
                 drm_params.atomic_request_ptr = <_drmModeAtomicReq **>get_pointer(arp, "drmModeAtomicReq*")
             drm_params.render_fd = drm_display.get("render_fd", -1)
             params.add_voidp(MPV_RENDER_PARAM_DRM_DISPLAY, &drm_params)
-        if drm_osd_size:
-            _drm_osd_size.width, _drm_osd_size.height = drm_osd_size
-            params.add_voidp(MPV_RENDER_PARAM_DRM_OSD_SIZE, &_drm_osd_size)
+        if drm_draw_surface_size:
+            _drm_draw_surface_size.width, _drm_draw_surface_size.height = drm_draw_surface_size
+            params.add_voidp(MPV_RENDER_PARAM_DRM_DRAW_SURFACE_SIZE, &_drm_draw_surface_size)
 
         err = mpv_render_context_create(&self._ctx, self._mpv._ctx, params.params)
         if err < 0:
@@ -1104,13 +988,6 @@ cdef class RenderContext(object):
         with nogil:
             mpv_render_context_report_swap(self._ctx)
 
-    def free(self):
-        if not self.inited:
-            return
-        with nogil:
-            mpv_render_context_free(self._ctx)
-        self.inited = False
-
     def close(self):
         if not self.inited:
             return
@@ -1162,7 +1039,7 @@ class CallbackThread(Thread):
         except Exception as e:
             sys.stderr.write("pympv error during callback: %s\n" % e)
 
-cdef void _c_callback(void* d) with gil:
+cdef void _c_callback(void* d) noexcept with gil:
     cdef uint64_t name = <uint64_t>d
     callback = _callbacks.get(name)
     callback.call()

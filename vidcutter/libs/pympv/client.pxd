@@ -106,15 +106,9 @@ cdef extern from "mpv/client.h":
 
     int mpv_initialize(mpv_handle *ctx) nogil
 
-    void mpv_detach_destroy(mpv_handle *ctx) nogil
-
     void mpv_terminate_destroy(mpv_handle *ctx) nogil
 
     int mpv_load_config_file(mpv_handle *ctx, const char *filename) nogil
-
-    # void mpv_suspend(mpv_handle *ctx) nogil
-
-    # void mpv_resume(mpv_handle *ctx) nogil
 
     int64_t mpv_get_time_us(mpv_handle *ctx) nogil
 
@@ -200,21 +194,14 @@ cdef extern from "mpv/client.h":
         MPV_EVENT_START_FILE
         MPV_EVENT_END_FILE
         MPV_EVENT_FILE_LOADED
-        # MPV_EVENT_TRACKS_CHANGED
-        # MPV_EVENT_TRACK_SWITCHED
         MPV_EVENT_IDLE
-        # MPV_EVENT_PAUSE
-        # MPV_EVENT_UNPAUSE
         MPV_EVENT_TICK
-        # MPV_EVENT_SCRIPT_INPUT_DISPATCH
         MPV_EVENT_CLIENT_MESSAGE
         MPV_EVENT_VIDEO_RECONFIG
         MPV_EVENT_AUDIO_RECONFIG
-        # MPV_EVENT_METADATA_UPDATE
         MPV_EVENT_SEEK
         MPV_EVENT_PLAYBACK_RESTART
         MPV_EVENT_PROPERTY_CHANGE
-        # MPV_EVENT_CHAPTER_CHANGE
 
     const char *mpv_event_name(mpv_event_id event) nogil
 
@@ -249,9 +236,9 @@ cdef extern from "mpv/client.h":
         int reason
         int error
 
-    # cdef struct mpv_event_script_input_dispatch:
-    #     int arg0
-    #     const char *type
+    cdef struct mpv_event_script_input_dispatch:
+        int arg0
+        const char *type
 
     cdef struct mpv_event_client_message:
         int num_args
@@ -282,29 +269,6 @@ cdef extern from "mpv/client.h":
 
     void *mpv_get_sub_api(mpv_handle *ctx, mpv_sub_api sub_api) nogil
 
-# cdef extern from "mpv/opengl_cb.h":
-#     struct mpv_opengl_cb_context:
-#         pass
-
-#     ctypedef void (*mpv_opengl_cb_update_fn)(void *cb_ctx) nogil
-#     ctypedef void *(*mpv_opengl_cb_get_proc_address_fn)(void *fn_ctx,
-#                                                         const char *name) nogil
-
-#     void mpv_opengl_cb_set_update_callback(mpv_opengl_cb_context *ctx,
-#                                            mpv_opengl_cb_update_fn callback,
-#                                            void *callback_ctx) nogil
-
-#     int mpv_opengl_cb_init_gl(mpv_opengl_cb_context *ctx, const char *exts,
-#                               mpv_opengl_cb_get_proc_address_fn get_proc_address,
-#                               void *get_proc_address_ctx) nogil
-
-#     int mpv_opengl_cb_draw(mpv_opengl_cb_context *ctx, int fbo, int w, int h) nogil
-
-#     int mpv_opengl_cb_report_flip(mpv_opengl_cb_context *ctx, int64_t time) nogil
-
-#     int mpv_opengl_cb_uninit_gl(mpv_opengl_cb_context *ctx) nogil
-
-
 cdef extern from "mpv/render.h":
     struct mpv_render_context:
         pass
@@ -325,9 +289,15 @@ cdef extern from "mpv/render.h":
         MPV_RENDER_PARAM_BLOCK_FOR_TARGET_TIME
         MPV_RENDER_PARAM_SKIP_RENDERING
         MPV_RENDER_PARAM_DRM_DISPLAY
-        MPV_RENDER_PARAM_DRM_OSD_SIZE
+        MPV_RENDER_PARAM_DRM_DRAW_SURFACE_SIZE
+        MPV_RENDER_PARAM_DRM_DISPLAY_V2
+        MPV_RENDER_PARAM_SW_SIZE
+        MPV_RENDER_PARAM_SW_FORMAT
+        MPV_RENDER_PARAM_SW_STRIDE
+        MPV_RENDER_PARAM_SW_POINTER
 
     char *MPV_RENDER_API_TYPE_OPENGL
+    char *MPV_RENDER_API_TYPE_SW
 
     enum mpv_render_frame_info_flag:
         MPV_RENDER_FRAME_INFO_PRESENT
@@ -373,7 +343,6 @@ cdef extern from "mpv/render_gl.h":
     struct mpv_opengl_init_params:
         void *(*get_proc_address)(void *ctx, const char *name)
         void *get_proc_address_ctx
-        const char *extra_exts
 
     struct mpv_opengl_fbo:
         int fbo
@@ -391,6 +360,6 @@ cdef extern from "mpv/render_gl.h":
         _drmModeAtomicReq **atomic_request_ptr
         int render_fd
 
-    struct mpv_opengl_drm_osd_size:
+    struct mpv_opengl_drm_draw_surface_size:
         int width
         int height
