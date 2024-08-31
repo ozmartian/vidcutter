@@ -146,7 +146,7 @@ class mpvWidget(QOpenGLWidget):
         self.makeCurrent()
         # if self.opengl:
         #     self.opengl.set_update_callback(None)
-        self.opengl.free()
+        #self.opengl.free()
         self.mpv.command('quit')
 
     def initializeGL(self):
@@ -171,14 +171,14 @@ class mpvWidget(QOpenGLWidget):
     #         self.opengl.report_flip(0)
 
     def updateHandler(self):
-        if self.window().isMinimized():
-            self.makeCurrent()
-            self.paintGL()
-            self.context().swapBuffers(self.context().surface())
-            # self.swapped()
-            self.doneCurrent()
-        else:
-            self.update()
+        # if self.window().isMinimized():
+        #     self.makeCurrent()
+        #     self.paintGL()
+        #     self.context().swapBuffers(self.context().surface())
+        #     # self.swapped()
+        #     self.doneCurrent()
+        # else:
+        self.update()
 
     def eventHandler(self):
         while self.mpv:
