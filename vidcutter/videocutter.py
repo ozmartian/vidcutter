@@ -125,8 +125,8 @@ class VideoCutter(QWidget):
         self.videoService.addScenes.connect(self.addScenes)
 
         self.project_files = {
-            'edl': re.compile(r'(\d+(?:\.?\d+)?)\t(\d+(?:\.?\d+)?)\t([01])'),
-            'vcp': re.compile(r'(\d+(?:\.?\d+)?)\t(\d+(?:\.?\d+)?)\t([01])\t(".*")$')
+            'edl': re.compile(r'(\d+(?:\.\d+)?)\t(\d+(?:\.\d+)?)\t([01])'),
+            'vcp': re.compile(r'(\d+(?:\.\d+)?)\t(\d+(?:\.\d+)?)\t([01])(?:\t"(.*)")?$')
         }
 
         self._initIcons()
@@ -437,7 +437,7 @@ class VideoCutter(QWidget):
         if sys.platform != 'darwin':
             controlsLayout.addSpacing(5)
 
-        layout = QVBoxLayout()  
+        layout = QVBoxLayout()
         layout.setSpacing(0)
         layout.setContentsMargins(10, 10, 10, 0)
         layout.addLayout(self.videoLayout)
@@ -864,8 +864,7 @@ class VideoCutter(QWidget):
                             clip_start = self.delta2QTime(float(start))
                             clip_end = self.delta2QTime(float(stop))
                             clip_image = self.captureImage(self.currentMedia, clip_start)
-                            if project_type == 'vcp' and self.createChapters and len(chapter):
-                                chapter = chapter[1:len(chapter) - 1]
+                            if project_type == 'vcp' and self.createChapters and chapter is not None:
                                 if not len(chapter):
                                     chapter = None
                             else:
@@ -941,7 +940,7 @@ class VideoCutter(QWidget):
                                      'Cannot save project file at {0}:\n\n{1}'.format(project_save, file.errorString()))
                 return
             qApp.setOverrideCursor(Qt.WaitCursor)
-            if ptype == 'VidCutter Project (*.vcp)':
+            if ptype == 'VidCutter Project (*.vcp)' or ptype == 'VidCutter Project':
                 # noinspection PyUnresolvedReferences
                 QTextStream(file) << '{}\n'.format(self.currentMedia)
             for clip in self.clipTimes:
@@ -949,11 +948,11 @@ class VideoCutter(QWidget):
                                        milliseconds=clip[0].msec())
                 stop_time = timedelta(hours=clip[1].hour(), minutes=clip[1].minute(), seconds=clip[1].second(),
                                       milliseconds=clip[1].msec())
-                if ptype == 'VidCutter Project (*.vcp)':
+                if ptype == 'VidCutter Project (*.vcp)' or ptype == 'VidCutter Project':
                     if self.createChapters:
                         chapter = '"{}"'.format(clip[4]) if clip[4] is not None else '""'
                     else:
-                        chapter = ''
+                        chapter = '""'
                     # noinspection PyUnresolvedReferences
                     QTextStream(file) << '{0}\t{1}\t{2}\t{3}\n'.format(self.delta2String(start_time),
                                                                        self.delta2String(stop_time), 0, chapter)
@@ -1360,6 +1359,13 @@ class VideoCutter(QWidget):
                 self.videoService.smartinit(clips)
                 self.smartcutter(file, source_file, source_ext)
                 return
+            videoWithForcedKeyframes = f'{source_file}-forced{source_ext}'
+            self.videoService.forceKeyframes(
+                source='{0}{1}'.format(source_file, source_ext),
+                clipTimes=self.clipTimes,
+                fps=eval(self.videoService.streams.video.avg_frame_rate),
+                output=videoWithForcedKeyframes)
+
             steps = 3 if clips > 1 else 2
             self.seekSlider.showProgress(steps)
             self.parent.lock_gui(True)
@@ -1375,7 +1381,8 @@ class VideoCutter(QWidget):
                         filename = os.path.join(self.workFolder, os.path.basename(filename))
                     filename = QDir.toNativeSeparators(filename)
                     filelist.append(filename)
-                    if not self.videoService.cut(source='{0}{1}'.format(source_file, source_ext),
+                    # if not self.videoService.cut(source='{0}{1}'.format(source_file, source_ext),
+                    if not self.videoService.cut(source=videoWithForcedKeyframes,
                                                  output=filename,
                                                  frametime=clip[0].toString(self.timeformat),
                                                  duration=duration,
@@ -1391,6 +1398,13 @@ class VideoCutter(QWidget):
 
     def smartcutter(self, file: str, source_file: str, source_ext: str) -> None:
         self.smartcut_monitor = Munch(clips=[], results=[], externals=0)
+        videoWithForcedKeyframes = f'{source_file}-forced{source_ext}'
+        self.videoService.forceKeyframes(
+            source='{0}{1}'.format(source_file, source_ext),
+            clipTimes=self.clipTimes,
+            fps=eval(self.videoService.streams.video.avg_frame_rate),
+            output=videoWithForcedKeyframes)
+        keyframes = self.videoService.getKeyframes(videoWithForcedKeyframes)
         for index, clip in enumerate(self.clipTimes):
             if len(clip[3]):
                 self.smartcut_monitor.clips.append(clip[3])
@@ -1403,11 +1417,14 @@ class VideoCutter(QWidget):
                     filename = os.path.join(self.workFolder, os.path.basename(filename))
                 filename = QDir.toNativeSeparators(filename)
                 self.smartcut_monitor.clips.append(filename)
+
+                # source='{0}{1}'.format(source_file, source_ext)
                 self.videoService.smartcut(index=index,
-                                           source='{0}{1}'.format(source_file, source_ext),
+                                           source=videoWithForcedKeyframes,
                                            output=filename,
                                            start=VideoCutter.qtime2delta(clip[0]),
                                            end=VideoCutter.qtime2delta(clip[1]),
+                                           keyframes=keyframes,
                                            allstreams=True)
 
     @pyqtSlot(bool, str)
