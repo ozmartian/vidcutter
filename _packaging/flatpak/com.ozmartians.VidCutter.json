@@ -1,7 +1,7 @@
 {
     "app-id": "com.ozmartians.VidCutter",
     "runtime": "org.kde.Platform",
-    "runtime-version": "5.15-23.08",
+    "runtime-version": "5.15-24.08",
     "sdk": "org.kde.Sdk",
     "command": "vidcutter",
     "finish-args": [
@@ -178,8 +178,8 @@
             },
             "sources": [{
                 "type": "archive",
-                "url": "https://ffmpeg.org/releases/ffmpeg-6.1.tar.xz",
-                "sha256": "488c76e57dd9b3bee901f71d5c95eaf1db4a5a31fe46a28654e837144207c270"
+                "url": "https://ffmpeg.org/releases/ffmpeg-6.1.2.tar.xz",
+                "sha256": "3b624649725ecdc565c903ca6643d41f33bd49239922e45c9b1442c63dca4e38"
             }],
             "modules": [{
                 "name": "ffnvcodec",
@@ -365,7 +365,7 @@
         ],
         "sources": [{
             "type": "git",
-            "commit": "591a60b0eb78e7103cabf19297b4290eefbb04fe",
+            "commit": "9233c35fa69fd766f63ab89f586fa2069c90e34d",
             "url": "https://github.com/ozmartian/vidcutter.git"
         }]
     }]
