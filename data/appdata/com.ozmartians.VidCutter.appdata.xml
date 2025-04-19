@@ -57,6 +57,15 @@
   <update_contact>pete_AT_ozmartians.com</update_contact>
   <developer_name>Pete Alexandrou</developer_name>
   <releases>
+    <release date="2025-04-19" version="6.0.5.4">
+      <description>
+        <p>Maintenance release updating:</p>
+        <ul>
+          <li>KDE Platform 5.15-24.08</li>
+          <li>FFmpeg 6.1.2</li>
+        </ul>
+      </description>
+    </release>   
     <release date="2023-10-07" version="6.0.5.3">
       <description>
         <p>Maintenance release updating:</p>
