@@ -124,10 +124,13 @@ class VideoCutter(QWidget):
         self.videoService.error.connect(self.completeOnError)
         self.videoService.addScenes.connect(self.addScenes)
 
-        self.project_files = {
-            'edl': re.compile(r'(\d+(?:\.?\d+)?)\t(\d+(?:\.?\d+)?)\t([01])'),
-            'vcp': re.compile(r'(\d+(?:\.?\d+)?)\t(\d+(?:\.?\d+)?)\t([01])\t(".*")$')
-        }
+        # File format: tab-separated fields:
+        #   1. clip start timestamp
+        #   2. clip end timestamp
+        #   3. [unused] (originally MPlayer EDL "action" field, either 0 or 1)
+        #   4. [no field] OR chapter name in "double quotes"
+        # The regex must return exactly 4 match groups; the last one may be empty for EDL files.
+        self.project_file_line_regex = re.compile(r'(\d+(?:\.?\d+)?)\t(\d+(?:\.?\d+)?)\t([01]).?($|(?<=\t)".*")')
 
         self._initIcons()
         self._initActions()
@@ -831,8 +834,6 @@ class VideoCutter(QWidget):
             if project_file != os.path.join(QDir.tempPath(), self.parent.TEMP_PROJECT_FILE):
                 self.lastFolder = QFileInfo(project_file).absolutePath()
             file = QFile(project_file)
-            info = QFileInfo(file)
-            project_type = info.suffix()
             if not file.open(QFile.ReadOnly | QFile.Text):
                 QMessageBox.critical(self.parent, 'Open project file',
                                      'Cannot read project file {0}:\n\n{1}'.format(project_file, file.errorString()))
@@ -854,17 +855,24 @@ class VideoCutter(QWidget):
                                              'Could not make sense of the selected project file. Try viewing it in a '
                                              'text editor to ensure it is valid and not corrupted.')
                         return
-                    if project_type == 'vcp' and linenum == 1:
-                        self.loadMedia(line)
-                        time.sleep(1)
+                    mo = self.project_file_line_regex.match(line)
+                    if linenum == 1 and not mo:
+                        # First line doesn't match the usual line format, maybe it is a filename?
+                        if os.path.isfile(line):
+                            self.loadMedia(line)
+                            time.sleep(1)
+                        else:
+                            qApp.restoreOverrideCursor()
+                            QMessageBox.critical(self.parent, 'Invalid project file',
+                                                 'Line {0} is neither a valid clip timestamp, nor an existing media file:\n\n{1}'.format(linenum, line))
+                            return
                     else:
-                        mo = self.project_files[project_type].match(line)
                         if mo:
                             start, stop, _, chapter = mo.groups()
                             clip_start = self.delta2QTime(float(start))
                             clip_end = self.delta2QTime(float(stop))
                             clip_image = self.captureImage(self.currentMedia, clip_start)
-                            if project_type == 'vcp' and self.createChapters and len(chapter):
+                            if self.createChapters and len(chapter):
                                 chapter = chapter[1:len(chapter) - 1]
                                 if not len(chapter):
                                     chapter = None
@@ -883,6 +891,7 @@ class VideoCutter(QWidget):
             self.blackdetectAction.setEnabled(True)
             self.inCut = False
             self.newproject = True
+            self.renderClipIndex()
             QTimer.singleShot(2000, self.selectClip)
             qApp.restoreOverrideCursor()
             if project_file != os.path.join(QDir.tempPath(), self.parent.TEMP_PROJECT_FILE):
@@ -925,9 +934,9 @@ class VideoCutter(QWidget):
         project_file, _ = os.path.splitext(self.currentMedia)
         if reboot:
             project_save = os.path.join(QDir.tempPath(), self.parent.TEMP_PROJECT_FILE)
-            ptype = 'VidCutter Project (*.vcp)'
+            project_type = 'vcp'
         else:
-            project_save, ptype = QFileDialog.getSaveFileName(
+            project_save, _ = QFileDialog.getSaveFileName(
                 parent=self.parent,
                 caption='Save project',
                 directory='{}.vcp'.format(project_file),
@@ -936,12 +945,18 @@ class VideoCutter(QWidget):
                 options=self.getFileDialogOptions())
         if project_save is not None and len(project_save.strip()):
             file = QFile(project_save)
+            info = QFileInfo(file)
+            project_type = info.suffix()
+            if project_type not in ['vcp', 'edl']:
+                QMessageBox.critical(self.parent, 'Cannot save project',
+                                     'Invalid project file extension "{0}".\nOnly .edl and .vcp are supported.'.format(project_type))
+                return
             if not file.open(QFile.WriteOnly | QFile.Text):
                 QMessageBox.critical(self.parent, 'Cannot save project',
                                      'Cannot save project file at {0}:\n\n{1}'.format(project_save, file.errorString()))
                 return
             qApp.setOverrideCursor(Qt.WaitCursor)
-            if ptype == 'VidCutter Project (*.vcp)':
+            if project_type == 'vcp':
                 # noinspection PyUnresolvedReferences
                 QTextStream(file) << '{}\n'.format(self.currentMedia)
             for clip in self.clipTimes:
@@ -949,13 +964,13 @@ class VideoCutter(QWidget):
                                        milliseconds=clip[0].msec())
                 stop_time = timedelta(hours=clip[1].hour(), minutes=clip[1].minute(), seconds=clip[1].second(),
                                       milliseconds=clip[1].msec())
-                if ptype == 'VidCutter Project (*.vcp)':
-                    if self.createChapters:
-                        chapter = '"{}"'.format(clip[4]) if clip[4] is not None else '""'
+                if project_type == 'vcp':
+                    if self.createChapters and clip[4] is not None:
+                        chapter = clip[4]
                     else:
                         chapter = ''
                     # noinspection PyUnresolvedReferences
-                    QTextStream(file) << '{0}\t{1}\t{2}\t{3}\n'.format(self.delta2String(start_time),
+                    QTextStream(file) << '{0}\t{1}\t{2}\t"{3}"\n'.format(self.delta2String(start_time),
                                                                        self.delta2String(stop_time), 0, chapter)
                 else:
                     # noinspection PyUnresolvedReferences
