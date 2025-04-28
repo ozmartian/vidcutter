@@ -451,7 +451,7 @@ class VideoService(QObject):
     def cleanup(files: List[str]) -> None:
         try:
             [os.remove(file) for file in files]
-        except FileNotFoundError:
+        except (FileNotFoundError, TypeError):
             pass
 
     def join(self, inputs: List[str], output: str, allstreams: bool=True, chapters: Optional[List[str]]=None) -> bool:
@@ -570,6 +570,7 @@ class VideoService(QObject):
         result = self.cmdExec(self.backends.ffprobe, args, output=True, suppresslog=True, mergechannels=False)
         keyframe_times = []
         for line in result.split('\n'):
+            if ',' not in line: continue
             if line.split(',')[1] != 'N/A':
                 timecode = line.split(',')[1]
             if re.search(',K', line):
@@ -577,7 +578,10 @@ class VideoService(QObject):
                     keyframe_times.append(timecode[:-3])
                 else:
                     keyframe_times.append(float(timecode))
-        last_keyframe = self.duration().toString('h:mm:ss.zzz')
+        if formatted_time:
+            last_keyframe = self.duration().toString('h:mm:ss.zzz')
+        else:
+            last_keyframe = float(self.duration().msecsSinceStartOfDay() / 1000.0)
         if keyframe_times[-1] != last_keyframe:
             keyframe_times.append(last_keyframe)
         if source == self.source and not formatted_time:
@@ -619,6 +623,7 @@ class VideoService(QObject):
             video_bsf, audio_bsf = self.getBSF(inputs[0])
             # 1. transcode to mpeg transport streams
             for file in inputs:
+                if not file: continue
                 name, _ = os.path.splitext(file)
                 outfile = '{}.ts'.format(name)
                 outfiles.append(outfile)
