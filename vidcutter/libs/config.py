@@ -23,6 +23,7 @@
 #######################################################################
 
 from enum import Enum
+from typing import Dict, List
 
 from PyQt5.QtCore import QSize
 
@@ -40,41 +41,41 @@ class Config:
         )
 
     @property
-    def thumbnails(self) -> dict:
+    def thumbnails(self) -> Dict[str, QSize]:
         return {'INDEX': QSize(100, 70), 'TIMELINE': QSize(105, 60)}
 
     @property
-    def video_codecs(self) -> list:
+    def video_codecs(self) -> List[str]:
         return ['flv', 'h263', 'libvpx', 'libx264', 'libx265', 'libxvid', 'mpeg2video', 'mpeg4', 'msmpeg4', 'wmv2']
 
     @property
-    def audio_codecs(self) -> list:
+    def audio_codecs(self) -> List[str]:
         return ['aac', 'ac3', 'libfaac', 'libmp3lame', 'libvo_aacenc', 'libvorbis', 'mp2', 'wmav2']
 
     @property
-    def formats(self) -> list:
+    def formats(self) -> List[str]:
         return [
             '3g2', '3gp', 'aac', 'ac3', 'avi', 'dv', 'flac', 'flv', 'm4a', 'm4v', 'mka', 'mkv', 'mov', 'mp3',
             'mp4', 'mpg', 'ogg', 'vob', 'wav', 'webm', 'wma', 'wmv'
         ]
 
     @property
-    def mpeg_formats(self) -> list:
+    def mpeg_formats(self) -> List[str]:
         return [
             'h264', 'hevc', 'mpeg4', 'divx', 'xvid', 'webm', 'ivf', 'vp9', 'mpeg2video', 'mpg2', 'mp2', 'mp3',
             'aac'
         ]
 
     @property
-    def encoding(self) -> dict:
+    def encoding(self) -> Dict[str, List[str]]:
         return {
-            'hevc': 'libx265 -tune zerolatency -preset ultrafast -x265-params crf=23 -qp 4 -flags +cgop',
-            'h264': 'libx264 -tune film -preset ultrafast -x264-params crf=23 -qp 0 -flags +cgop',
-            'vp9': 'libvpx-vp9 -deadline best -quality best'
+            'hevc': ['libx265', '-tune', 'zerolatency', '-preset', 'ultrafast', '-x265-params', 'crf=23', '-qp', '4', '-flags', '+cgop'],
+            'h264': ['libx264', '-tune', 'film', '-preset', 'ultrafast', '-x264-params', 'crf=18', '-qp', '0', '-flags', '+cgop'],
+            'vp9': ['libvpx-vp9', '-deadline', 'best', '-quality', 'best'],
         }
 
     @property
-    def binaries(self) -> dict:
+    def binaries(self) -> Dict[str, Dict[str, List[str]]]:
         return {
             'nt': {  # Windows
                 'ffmpeg': ['ffmpeg.exe'],
@@ -89,7 +90,7 @@ class Config:
         }
 
     @property
-    def filters(self) -> dict:
+    def filters(self) -> Dict[str, List[str]]:
         return {
             'all': [
                 '3g2', '3gp', 'amv', 'asf', 'asx', 'avi', 'bin', 'dat', 'div', 'divx', 'f4v', 'flv',
