@@ -1651,6 +1651,14 @@ class VideoCutter(QWidget):
                 self.playMedia()
                 return
 
+            if event.key() == Qt.Key_BracketLeft:
+                self.clipStart()
+                return
+
+            if event.key() == Qt.Key_BracketRight:
+                self.clipEnd()
+                return
+
             if event.key() == Qt.Key_Escape and self.isFullScreen():
                 self.toggleFullscreen()
                 return
