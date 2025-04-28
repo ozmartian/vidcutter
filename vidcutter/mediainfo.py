@@ -94,7 +94,7 @@ class MediaInfo(QDialog):
         okButton.accepted.connect(self.close)
         button_layout = QHBoxLayout()
         mediainfo_version = self.parent.videoService.cmdExec(self.parent.videoService.backends.mediainfo,
-                                                             '--version', True)
+                                                             ['--version'], True)
         if len(mediainfo_version) >= 2:
             mediainfo_version = mediainfo_version.split('\n')[1]
             mediainfo_label = QLabel('<div style="font-size:11px;"><b>Media information by:</b><br/>%s @ '
